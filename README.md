@@ -142,6 +142,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 
 - [Package docs](docs/README.md)
 - [Overview](docs/overview.md)
+- [Worked extension examples](docs/extension-contracts.md)
 - Configuration files: [`config/capell-filament-peek.php`](config/capell-filament-peek.php).
 - [Troubleshooting](#troubleshooting)
 - [Screenshot contract](docs/screenshots.json)
