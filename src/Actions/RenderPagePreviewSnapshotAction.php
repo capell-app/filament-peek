@@ -475,10 +475,18 @@ final class RenderPagePreviewSnapshotAction
      */
     private function previewMedia(Page $page, array $formState): EloquentCollection
     {
-        $media = $this->newMediaCollection($page->relationLoaded('media')
-            ? $page->media->map(fn (Media $media): Media => clone $media)
-                ->all()
-            : []);
+        $media = [];
+        $pageMedia = $page->getRelation('media');
+
+        if ($page->relationLoaded('media') && $pageMedia instanceof EloquentCollection) {
+            foreach ($pageMedia as $candidate) {
+                if ($candidate instanceof Media) {
+                    $media[] = clone $candidate;
+                }
+            }
+        }
+
+        $media = $this->newMediaCollection($media);
 
         foreach ([
             'image' => MediaCollectionEnum::Image,

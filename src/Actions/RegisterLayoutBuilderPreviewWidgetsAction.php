@@ -74,7 +74,8 @@ final class RegisterLayoutBuilderPreviewWidgetsAction
 
                 $previewBlock = clone $block;
                 $previewBlock->translation?->setRelation('language', $language);
-                $previewBlock->setRelation('image', $previewBlock->media->firstWhere('type', MediaCollectionEnum::Image->value));
+                $previewBlockMedia = $previewBlock->media;
+                $previewBlock->setRelation('image', $previewBlockMedia->firstWhere('type', MediaCollectionEnum::Image->value));
                 $previewBlock->setRelation(
                     'backgroundImage',
                     $previewBlock->media->firstWhere('type', MediaCollectionEnum::BackgroundImage->value),

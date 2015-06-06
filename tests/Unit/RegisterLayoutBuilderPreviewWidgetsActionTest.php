@@ -64,13 +64,22 @@ it('registers preview layout blocks with unsaved widget asset state for public r
 
     $registered = RegisterLayoutBuilderPreviewWidgetsAction::run($page, $language, $state);
     $previewBlock = CapellLayoutManager::getStoredContainerWidget('main', 'asset-rail', 1);
-    $previewAsset = $previewBlock?->assets->first();
+    $previewAsset = $previewBlock instanceof Widget ? $previewBlock->assets->firstOrFail() : null;
+
+    if (! $previewAsset instanceof WidgetAsset) {
+        throw new RuntimeException('Expected the preview asset to be stored.');
+    }
 
     expect($registered)->toBeTrue()
         ->and($previewBlock)->toBeInstanceOf(Widget::class)
         ->and($previewAsset)->toBeInstanceOf(WidgetAsset::class)
         ->and($previewAsset->meta)->toBe(['caption' => 'Unsaved caption'])
-        ->and($previewAsset->asset)->toBeInstanceOf(Page::class)
-        ->and($previewAsset->asset->is($linkedPage))->toBeTrue()
+        ->and($previewAsset->asset)->toBeInstanceOf(Page::class);
+
+    if (! $previewAsset->asset instanceof Page) {
+        throw new RuntimeException('Expected the preview asset to resolve to a page.');
+    }
+
+    expect($previewAsset->asset->is($linkedPage))->toBeTrue()
         ->and($savedAsset->fresh()->meta)->toBe(['caption' => 'Saved caption']);
 });

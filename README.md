@@ -45,17 +45,59 @@ Screenshot contract: `docs/screenshots.json`.
 
 ## Technical Shape
 
-- Service providers: `Capell\FilamentPeek\Providers\FilamentPeekServiceProvider`.
-- Config files: `packages/filament-peek/config/capell-filament-peek.php`.
-- Filament classes: `PeekPagePreviewAction`, `FilamentPeekPanelExtender`, `PagePeekPreviewActionExtender`.
-- Route files: `packages/filament-peek/routes/web.php`.
-- Extension contracts: `StoresLayoutBuilderPreviewState`.
-- Actions: `CreatePagePreviewSnapshotAction`, `FindPagePreviewSnapshotAction`, `RegisterLayoutBuilderPreviewWidgetsAction`, `RenderPagePreviewSnapshotAction`, `StoreLayoutBuilderPreviewStateAction`.
-- Data objects: `LayoutBuilderPreviewStateData`, `PagePreviewSnapshotData`.
-- Manifest contributions: `route: Capell\FilamentPeek\Manifest\FilamentPeekRoutesContribution`.
-- Health checks: `Capell\FilamentPeek\Health\FilamentPeekHealthCheck`.
-- Blade views: `packages/filament-peek/resources/views/page-preview-modal.blade.php`, `packages/filament-peek/resources/views/preview-error.blade.php`, `packages/filament-peek/resources/views/preview-ribbon.blade.php`.
-- Cache tags: `filament-peek-preview`.
+### Service providers
+
+- `Capell\FilamentPeek\Providers\FilamentPeekServiceProvider`
+
+### Config files
+
+- `packages/filament-peek/config/capell-filament-peek.php`
+
+### Filament classes
+
+- `PeekPagePreviewAction`
+- `FilamentPeekPanelExtender`
+- `PagePeekPreviewActionExtender`
+
+### Route files
+
+- `packages/filament-peek/routes/web.php`
+
+### Extension contracts
+
+- `StoresLayoutBuilderPreviewState`
+
+### Actions
+
+- `CreatePagePreviewSnapshotAction`
+- `FindPagePreviewSnapshotAction`
+- `RegisterLayoutBuilderPreviewWidgetsAction`
+- `RenderPagePreviewSnapshotAction`
+- `StoreLayoutBuilderPreviewStateAction`
+
+### Data objects
+
+- `LayoutBuilderPreviewStateData`
+- `PagePreviewSnapshotData`
+
+### Manifest contributions
+
+- `route: Capell\FilamentPeek\Manifest\FilamentPeekRoutesContribution`
+
+### Health checks
+
+- `Capell\FilamentPeek\Health\FilamentPeekHealthCheck`
+
+### Blade views
+
+- `packages/filament-peek/resources/views/page-preview-modal.blade.php`
+- `packages/filament-peek/resources/views/preview-error.blade.php`
+- `packages/filament-peek/resources/views/preview-ribbon.blade.php`
+
+### Cache tags
+
+- `filament-peek-preview`
+
 
 ## Data Model
 
@@ -66,7 +108,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 - Required packages: `capell-app/admin`, `capell-app/frontend`.
 - Admin navigation: no admin page or resource contribution is declared.
 - Admin/editor extensions: none declared.
-- Permissions: none declared in `capell.json`.
+- Permissions: no package permission declarations or Shield gates detected; host access rules still apply.
 - Public routes: loads `routes/web.php`; registers `FilamentPeekRoutesContribution`.
 - Database changes: no package migrations declared.
 - Config: `config/capell-filament-peek.php`.
@@ -94,8 +136,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 ## Quick Start
 
 1. Install the package: `composer require capell-app/filament-peek`.
-2. Review `config/capell-filament-peek.php` before enabling the package.
-3. Open the package admin surface at `/pages/{first-record}/edit` and confirm Filament Peek is available.
+2. Open the package admin surface at `/pages/{first-record}/edit` and confirm Filament Peek is available.
 
 ## Next Steps
 
