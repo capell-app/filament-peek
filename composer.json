@@ -1,0 +1,148 @@
+{
+    "name": "capell-app/capell-packages",
+    "description": "Pacakges for capell.",
+    "home": "https://capell.app",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Howdu",
+            "email": "cms.multi2@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "rector": "rector",
+        "lint": "pint",
+        "analyze": "phpstan analyse --memory-limit=-1 --configuration=phpstan.neon",
+        "prettier": "npx prettier --write \"packages/**/*.{css,js,yml,json,md,blade.php}\"",
+        "ide-models-helper": "@php ./vendor/bin/testbench ide-helper:models --dir=\"packages\" -WE",
+        "preflight": [
+            "@prettier",
+            "@rector",
+            "@ide-models-helper",
+            "@lint",
+            "@analyze"
+        ],
+        "test:unit": "php -d memory_limit=-1 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml",
+        "test": [
+            "@test:unit"
+        ]
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../capell/packages/*",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "./packages/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-fileinfo": "*",
+        "ext-intl": "*",
+        "ext-simplexml": "*",
+        "awcodes/filament-badgeable-column": "^2.0",
+        "awcodes/filament-curator": "^3.0",
+        "awcodes/filament-table-repeater": "2.x",
+        "awcodes/filament-tiptap-editor": "^2.0|^3.0",
+        "awobaz/compoships": "^2.3",
+        "bezhansalleh/filament-shield": "^3.0",
+        "bkwld/cloner": "^3.11",
+        "blade-ui-kit/blade-heroicons": "^2.5",
+        "blendbyte/filament-title-with-slug": "^1.0",
+        "capell-app/blog": "*",
+        "capell-app/layout": "*",
+        "codewithdennis/filament-simple-alert": "^3.0",
+        "dotswan/filament-code-editor": "^1.1",
+        "filament/filament": "^3.2",
+        "filament/forms": "^3.2",
+        "filament/notifications": "^3.2",
+        "filament/spatie-laravel-tags-plugin": "^3.2",
+        "filament/spatie-laravel-translatable-plugin": "^3.2",
+        "filament/tables": "^3.2",
+        "guava/filament-icon-picker": "^2.0",
+        "guzzlehttp/guzzle": "^7.5",
+        "howdu/filament-record-switcher": "^1.0",
+        "icamys/php-sitemap-generator": "^4.4.1",
+        "kalnoy/nestedset": "^6.0.2",
+        "laravel/framework": "^11.0|^12.0",
+        "laravel/prompts": "^0.3",
+        "leandrocfe/filament-apex-charts": "^3.0",
+        "lorisleiva/laravel-actions": "^2.8",
+        "michaloravec/laravel-paginateroute": "^1.0",
+        "oddvalue/laravel-drafts": "^1.0|^2.0",
+        "openai-php/laravel": "*",
+        "owen-it/laravel-auditing": "^13.1|^14.0",
+        "owenvoke/blade-fontawesome": "^2.8",
+        "ryangjchandler/filament-navigation": "^1.0|dev-chore/add-laravel-12-support",
+        "silber/page-cache": "^1.0.9",
+        "spatie/laravel-data": "^4.5",
+        "spatie/laravel-package-tools": "^1.14.1",
+        "staudenmeir/eloquent-has-many-deep": "^1.1",
+        "staudenmeir/eloquent-json-relations": "^1.1",
+        "stijnvanouplines/blade-country-flags": "^1.0|dev-l12-compatibility",
+        "symfony/filesystem": "^7.2",
+        "symfony/process": "^7.2",
+        "symplify/monorepo-builder": "^10.3.3",
+        "tanmuhittin/laravel-google-translate": "^2.4",
+        "tapp/filament-auditing": "^3.0",
+        "tapp/filament-authentication-log": "^3.0|^4.0",
+        "torann/geoip": "^3.0",
+        "voku/html-min": "^4.5",
+        "webbingbrasil/filament-advancedfilter": "^3.0",
+        "wildside/userstamps": "^2.3"
+    },
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "*",
+        "fakerphp/faker": "^1.9.1",
+        "larastan/larastan": "^3.3.1",
+        "laravel/pint": "^1.22",
+        "nunomaduro/collision": "^6.4|^7.0|^8.0",
+        "orchestra/testbench": "*",
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-arch": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "pestphp/pest-plugin-livewire": "^3.0",
+        "phpstan/phpstan": "^1.10.0|^2.0",
+        "phpstan/phpstan-deprecation-rules": "^1.1.2|^2.0",
+        "phpstan/phpstan-phpunit": "^1.3.7|^2.0",
+        "phpunit/phpunit": "^9.6.3|^10.0|^11.0",
+        "rector/rector": "^2.0",
+        "spatie/laravel-ray": "^1.36"
+    },
+    "autoload": {
+        "psr-4": {
+            "Capell\\Blog\\": "packages/blog/src",
+            "Capell\\Layout\\": "packages/layout/src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Capell\\Packages\\Tests\\": "tests/packages",
+            "Capell\\Packages\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "Capell\\Packages\\Tests\\Database\\Seeders\\\\": "tests/database/seeders"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "process-timeout": 0,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

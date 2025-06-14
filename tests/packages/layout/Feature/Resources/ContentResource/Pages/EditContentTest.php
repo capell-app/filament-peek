@@ -1,0 +1,83 @@
+<?php
+
+declare(strict_types=1);
+
+use Capell\Admin\Filament\Actions\DeleteAction;
+use Capell\Admin\Filament\Resources\ContentResource\Pages\EditContent;
+use Capell\Core\Models\Content;
+use Capell\Core\Models\Site;
+use Capell\Tests\Support\Concerns\CreatesAdminUser;
+
+use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Livewire\livewire;
+
+uses(CreatesAdminUser::class)
+    ->group('content');
+
+beforeEach(function (): void {
+    test()->actingAsAdmin();
+});
+
+it('can save', function (): void {
+    $content = Content::factory()->create();
+    $newData = Content::factory()
+        ->site(Site::factory()->create())
+        ->parent(Content::factory()->create())
+        ->make();
+
+    livewire(EditContent::class, [
+        'record' => $content->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertFormFieldExists('meta.image_id')
+        ->fillForm([
+            'type_id' => $newData->type->getKey(),
+            'name' => $newData->name,
+            'parent_uuid' => $newData->parent->uuid,
+            'site_id' => $newData->site->getKey(),
+        ])
+        ->assertFormSet([
+            'name' => $newData->name,
+            'type_id' => $newData->type->getKey(),
+            'parent_uuid' => $newData->parent->uuid,
+            'site_id' => $newData->site->getKey(),
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($content->refresh())
+        ->name->toBe($newData->name)
+        ->type_id->toBe($content->type->getKey())
+        ->parent_uuid->toBe($newData->parent->uuid)
+        ->site_id->toBe($newData->site->getKey())
+        ->meta->image_id->toBeNull();
+});
+
+test('validates edit content', function (): void {
+    $content = Content::factory()->create();
+
+    livewire(EditContent::class, [
+        'record' => $content->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->fillForm([
+            'name' => null,
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'required']);
+});
+
+it('can delete', function (): void {
+    $content = Content::factory()->create();
+
+    livewire(EditContent::class, [
+        'record' => $content->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->callAction(DeleteAction::class)
+        ->assertHasNoFormErrors();
+
+    assertSoftDeleted($content, ['id' => $content->id]);
+});
+
+todo('test create action');

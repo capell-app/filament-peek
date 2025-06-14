@@ -1,0 +1,11 @@
+{
+    "name": "capell-app",
+    "scripts": {
+        "prettier": "npx prettier --write 'packages/**/*.{css,js,yml,json,md,blade.php}'"
+    },
+    "devDependencies": {
+        "prettier": "^3.5.2",
+        "prettier-plugin-blade": "^2.1.21",
+        "prettier-plugin-tailwindcss": "^0.6.11"
+    }
+}

@@ -1,0 +1,345 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Layout\Services\Creator;
+
+use Capell\Admin\Enums\WidgetTypeEnum;
+use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\WidgetComponentEnum;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Language;
+use Capell\Core\Models\Type;
+use Capell\Core\Models\Widget;
+
+class WidgetCreator
+{
+    /**
+     * @var class-string<Type>
+     */
+    private string $typeModel;
+
+    /**
+     * @var class-string<Widget>
+     */
+    private string $widgetModel;
+
+    public function __construct()
+    {
+        $this->widgetModel = CapellCore::getModel('widget');
+        $this->typeModel = CapellCore::getModel('type');
+    }
+
+    public function createWidgets(Language $language): void
+    {
+        $this->widgetModel = CapellCore::getModel('widget');
+        $this->typeModel = CapellCore::getModel('type');
+
+        $contentsWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Contents, 'type' => TypeEnum::Widget]);
+        $mediaWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Media, 'type' => TypeEnum::Widget]);
+        $navigationWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Navigation, 'type' => TypeEnum::Widget]);
+        $pageContentWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::PageContents, 'type' => TypeEnum::Widget]);
+        $pageResultsWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::PageResults, 'type' => TypeEnum::Widget]);
+        $pagesWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Pages, 'type' => TypeEnum::Widget]);
+        $systemWidgetType = $this->typeModel::firstWhere(['key' => WidgetTypeEnum::System, 'type' => TypeEnum::Widget]);
+
+        $this->breadcrumbWidget($systemWidgetType);
+        $this->childrenWidget($pageResultsWidgetType, $language);
+        $this->contentsWidgets($contentsWidgetType);
+        $this->galleryWidget($mediaWidgetType, $language);
+        $this->latestPagesWidget($pageResultsWidgetType, $language);
+        $this->mediaCarouselWidget($mediaWidgetType);
+        $this->navigationWidget($navigationWidgetType);
+        $this->pageContentWidget($pageContentWidgetType);
+        $this->pageSlotWidget($systemWidgetType);
+        $this->pagesCardWidget($pagesWidgetType);
+        $this->relatedPagesWidget($systemWidgetType, $language);
+        $this->siblingsWidget($pageResultsWidgetType, $language);
+        $this->tagsWidget($systemWidgetType, $language);
+    }
+
+    private function breadcrumbWidget(Type $systemWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'breadcrumbs',
+        ], [
+            'name' => __('capell-admin::generic.breadcrumbs'),
+            'type_id' => $systemWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::PageBreadcrumbs,
+            ],
+            'admin' => [
+                'notes' => 'Hierarchy navigation trail of parent pages',
+            ],
+        ]);
+    }
+
+    private function childrenWidget(Type $pageResultsWidgetType, Language $language): void
+    {
+        $widget = $this->widgetModel::firstOrCreate([
+            'key' => 'children',
+        ], [
+            'name' => __('capell-admin::generic.page_children'),
+            'type_id' => $pageResultsWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::PageChildren,
+                'with_children_count' => true,
+                'with_summary' => true,
+                'with_image' => true,
+                'margin' => ['b-lg'],
+            ],
+            'admin' => [
+                'icon' => 'heroicon-c-users',
+                'notes' => 'Displays a list of child pages of the current page',
+            ],
+        ]);
+
+        $widget->translations()->firstOrCreate([
+            'language_id' => $language->id,
+        ], [
+            'title' => __('capell-admin::heading.page_children'),
+        ]);
+    }
+
+    private function contentsWidgets(Type $contentsWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'contents-assets',
+        ], [
+            'name' => __('capell-admin::generic.contents'),
+            'type_id' => $contentsWidgetType->id,
+            'meta' => [
+                'limit' => 6,
+                'pagination' => false,
+                'with_summary' => true,
+                'with_link_text' => true,
+                'with_image' => true,
+                'columns' => 1,
+            ],
+            'admin' => [
+                'icon' => 'heroicon-o-rectangle-stack',
+                'notes' => 'Displays a list of content resources',
+            ],
+        ]);
+    }
+
+    private function galleryWidget(Type $mediaWidgetType, Language $language): void
+    {
+        $widget = $this->widgetModel::firstOrCreate([
+            'key' => 'gallery',
+        ], [
+            'name' => __('capell-admin::generic.gallery'),
+            'type_id' => $mediaWidgetType->id,
+            'meta' => [
+                'widget_theme' => 'masonry',
+                'spacing' => 'lg',
+                'margin' => ['lg'],
+            ],
+            'admin' => [
+                'notes' => 'Displays a breadcrumb navigation trail',
+            ],
+        ]);
+        $widget->translations()->firstOrCreate([
+            'language_id' => $language->id,
+        ], [
+            'title' => __('capell-admin::heading.gallery'),
+        ]);
+    }
+
+    private function latestPagesWidget(Type $pageResultsWidgetType, Language $language): void
+    {
+        $widget = $this->widgetModel::firstOrCreate([
+            'key' => 'latest-pages',
+        ], [
+            'name' => __('capell-admin::generic.latest_pages'),
+            'type_id' => $pageResultsWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::PageLatest,
+                'limit' => 6,
+                'pagination' => false,
+                'with_summary' => true,
+                'with_link_text' => true,
+                'with_image' => true,
+                'columns' => 1,
+            ],
+            'admin' => [
+                'icon' => 'heroicon-o-rectangle-stack',
+                'notes' => 'Displays a list of latest pages',
+            ],
+        ]);
+
+        $widget->translations()->firstOrCreate([
+            'language_id' => $language->id,
+        ], [
+            'title' => __('capell-admin::heading.latest_pages'),
+        ]);
+    }
+
+    private function mediaCarouselWidget(Type $mediaWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'media-carousel',
+        ], [
+            'name' => __('capell-admin::generic.media_carousel'),
+            'type_id' => $mediaWidgetType->id,
+            'meta' => [
+                'file_view' => 'capell::components.widget.assets.media.carousel',
+                'limit' => 20,
+                'container' => 'full',
+                'background_color' => 'light-gray',
+                'padding' => ['lg'],
+            ],
+            'admin' => [
+                'notes' => 'Displays a carousel of media items',
+            ],
+        ]);
+    }
+
+    private function navigationWidget(Type $navigationWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'navigation',
+        ], [
+            'name' => __('capell-admin::generic.navigation'),
+            'type_id' => $navigationWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::Navigation,
+                'margin' => ['b-lg'],
+            ],
+            'admin' => [
+                'notes' => 'Displays a navigation menu',
+            ],
+        ]);
+    }
+
+    private function pageContentWidget(Type $pageContentWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'page-content',
+        ], [
+            'name' => __('capell-admin::generic.page_content'),
+            'type_id' => $pageContentWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::PageContent,
+                'margin' => ['t-lg'],
+                'page_content' => ['title', 'content', 'contents'],
+            ],
+            'admin' => [
+                'notes' => 'Content for the current page',
+            ],
+        ]);
+    }
+
+    private function pagesCardWidget(Type $pagesWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'pages-card',
+        ], [
+            'name' => __('capell-admin::generic.pages_card'),
+            'type_id' => $pagesWidgetType->id,
+            'meta' => [
+                'limit' => 10,
+                'with_image' => true,
+                'with_summary' => true,
+                'with_link_text' => true,
+                'spacing' => 'lg',
+                'margin' => ['t-lg'],
+            ],
+        ]);
+    }
+
+    private function pageSlotWidget(Type $systemWidgetType): void
+    {
+        $this->widgetModel::firstOrCreate([
+            'key' => 'page-slot',
+        ], [
+            'name' => __('capell-admin::generic.page_slot'),
+            'type_id' => $systemWidgetType->id,
+            'meta' => [
+                'component' => 'capell::widget.slot',
+                'type' => 'slot',
+            ],
+            'admin' => [
+                'notes' => 'Displays the dynamic content of the current page',
+            ],
+        ]);
+    }
+
+    private function relatedPagesWidget(Type $systemWidgetType, Language $language): void
+    {
+        $widget = $this->widgetModel::firstOrCreate([
+            'key' => 'related-pages',
+        ], [
+            'name' => __('capell-admin::generic.related_pages'),
+            'type_id' => $systemWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::PageRelated,
+                'limit' => 6,
+                'pagination' => false,
+                'with_summary' => true,
+                'with_link_text' => true,
+                'with_image' => true,
+                'columns' => 1,
+            ],
+            'admin' => [
+                'icon' => 'heroicon-c-link',
+                'notes' => 'Displays a list of related pages',
+            ],
+        ]);
+
+        $widget->translations()->firstOrCreate([
+            'language_id' => $language->id,
+        ], [
+            'title' => __('capell-admin::heading.related_pages'),
+        ]);
+    }
+
+    private function siblingsWidget(Type $pageResultsWidgetType, Language $language): void
+    {
+        $widget = $this->widgetModel::firstOrCreate([
+            'key' => 'siblings',
+        ], [
+            'name' => __('capell-admin::generic.page_siblings'),
+            'type_id' => $pageResultsWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::PageSiblings,
+                'with_children_count' => true,
+                'with_summary' => true,
+                'margin' => ['b-lg'],
+            ],
+            'admin' => [
+                'icon' => 'heroicon-c-user-group',
+                'notes' => 'Displays a list of sibling pages with the same parent as the current page',
+            ],
+        ]);
+        $widget->translations()->firstOrCreate([
+            'language_id' => $language->id,
+        ], [
+            'title' => __('capell-admin::heading.page_siblings'),
+        ]);
+    }
+
+    private function tagsWidget(Type $systemWidgetType, Language $language): void
+    {
+        $widget = $this->widgetModel::firstOrCreate([
+            'key' => 'tags',
+        ], [
+            'name' => __('capell-admin::generic.tags'),
+            'type_id' => $systemWidgetType->id,
+            'meta' => [
+                'component' => WidgetComponentEnum::Tags,
+                'size' => 'sm',
+                'margin' => ['lg'],
+            ],
+            'admin' => [
+                'notes' => 'List of tags',
+            ],
+        ]);
+
+        $widget->translations()->firstOrCreate([
+            'language_id' => $language->id,
+        ], [
+            'title' => __('capell-admin::generic.tags'),
+        ]);
+    }
+}

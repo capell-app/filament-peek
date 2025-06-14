@@ -1,0 +1,91 @@
+<?php
+
+declare(strict_types=1);
+
+use Capell\Admin\Exceptions\InvalidPageTypeException;
+use Capell\Admin\Filament\Resources\PageResource;
+use Capell\Blog\Filament\Resources\ArticleResource;
+use Capell\Core\Models\Page;
+use Capell\Core\Models\Site;
+use Capell\Tests\Support\Concerns\CreatesAdminUser;
+use Filament\Actions\DeleteAction;
+
+use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
+
+uses(CreatesAdminUser::class)
+    ->group('page', 'article');
+
+beforeEach(function (): void {
+    test()->actingAsAdmin();
+});
+
+test('can render article', function (): void {
+    get(ArticleResource::getUrl('edit', [
+        'record' => Page::factory()->article()->create(),
+    ]))->assertSuccessful();
+});
+
+test('can not render article', function (): void {
+    test()->withoutExceptionHandling();
+
+    get(PageResource::getUrl('edit', [
+        'record' => Page::factory()->article()->create(),
+    ]));
+})->throws(InvalidPageTypeException::class);
+
+test('can not render page', function (): void {
+    test()->withoutExceptionHandling();
+
+    get(ArticleResource::getUrl('edit', [
+        'record' => Page::factory()->create(),
+    ]));
+})->throws(InvalidPageTypeException::class);
+
+it('can save', function (): void {
+    $site = Site::factory()->hasSiteDomains()->create();
+    $languages = $site->siteDomains->map->language_id;
+
+    $page = Page::factory()->recycle($site)->article()->create();
+
+    test()->setupPage($page, $languages);
+
+    $newData = Page::factory()
+        ->site($site)
+        ->article()
+        ->make();
+
+    livewire(ArticleResource\Pages\EditArticle::class, [
+        'record' => $page->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertFormSet([
+            'name' => $page->name,
+            'layout_id' => $page->layout->getKey(),
+            'type_id' => $page->type->getKey(),
+            'site_id' => $page->site->getKey(),
+        ])
+        ->fillForm([
+            'name' => $newData->name,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($page->refresh())
+        ->name->toBe($newData->name)
+        ->meta->image_id->toBeNull();
+});
+
+it('can delete', function (): void {
+    $content = Page::factory()->article()->create();
+
+    livewire(ArticleResource\Pages\EditArticle::class, [
+        'record' => $content->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->callAction(DeleteAction::class)
+        ->assertHasNoFormErrors();
+
+    assertSoftDeleted($content, ['id' => $content->id]);
+});

@@ -1,0 +1,126 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Layout;
+
+use Capell\Admin\Actions\CreatedModelAction;
+use Capell\Admin\Actions\DeletedModelAction;
+use Capell\Admin\Facades\CapellAdmin;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models;
+use Capell\Core\Packages\AbstractPackageServiceProvider;
+use Capell\Layout\Models\Content;
+use Capell\Layout\Models\Widget;
+use Capell\Layout\Models\WidgetAsset;
+use Capella\Layout\LayoutManager;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\LaravelPackageTools\Package;
+use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
+
+class LayoutServiceProvider extends AbstractPackageServiceProvider
+{
+    public static string $name = 'capell-layout';
+
+    public function bootingPackage(): void
+    {
+        self::registerModels();
+
+        self::registerRelationships();
+
+        self::registerFormSchemas();
+
+        CapellCore::addCloneableRelations('page', 'widgetAssets');
+
+        CapellCore::addDraftableRelations('page', 'widgetAssets');
+
+        Filament::serving(function (): void {
+            $createDeleteModels = [
+                CapellCore::getModel('content'),
+            ];
+
+            foreach ($createDeleteModels as $modelClass) {
+                $modelClass::registerModelEvent('created', function (Model $model): void {
+                    CreatedModelAction::run($model);
+                });
+
+                $modelClass::registerModelEvent('deleted', function (Model $model): void {
+                    DeletedModelAction::run($model);
+                });
+            }
+        });
+    }
+
+    public function configurePackage(Package $package): void
+    {
+        $package->name(self::$name)
+            ->hasMigrations(LayoutManager::getMigrations());
+    }
+
+    private static function registerModels(): void
+    {
+        CapellCore::registerModel('content', Content::class);
+        CapellCore::registerModel('widget', Widget::class);
+        CapellCore::registerModel('widget_asset', WidgetAsset::class);
+    }
+
+    private static function registerRelationships(): void
+    {
+        Models\Media::resolveRelationUsing('pages', fn (Models\Media $model): HasManyThrough => $model->hasManyThrough(Models\Page::class, WidgetAsset::class));
+
+        Models\Media::resolveRelationUsing('widgets', fn (Models\Media $model): MorphToMany => $model->morphToMany(Widget::class, 'asset', 'widget_assets'));
+
+        Models\Page::resolveRelationUsing('media', fn (Models\Page $model): HasManyThrough => $model->hasManyThrough(
+            Models\Media::class,
+            WidgetAsset::class,
+            'page_id',
+            'id',
+            'id',
+            'asset_id'
+        )
+            ->where('widget_assets.asset_type', Models\Media::class));
+
+        Models\Page::resolveRelationUsing('pages', fn (Models\Page $model): HasManyThrough => $model->hasManyThrough(
+            Models\Page::class,
+            WidgetAsset::class,
+            'page_id',
+            'id',
+            'id',
+            'asset_id'
+        )
+            ->where('widget_assets.asset_type', Models\Page::class));
+
+        Models\Page::resolveRelationUsing('widgetAssets', fn (Models\Page $model): HasMany => $model->hasMany(WidgetAsset::class));
+
+        Models\Layout::resolveRelationUsing('layoutWidgets', fn (Models\Layout $model): BelongsToJson => $model->belongsToJson(Widget::class, 'widgets', 'key'));
+
+        Models\Page::resolveRelationUsing('widgets', fn (Models\Page $model): MorphToMany => $model->morphToMany(Widget::class, 'asset', 'widget_assets'));
+
+        Models\Page::resolveRelationUsing('contents', fn (Models\Page $model): HasManyThrough => $model->hasManyThrough(
+            Content::class,
+            WidgetAsset::class,
+            'page_id',
+            'id',
+            'id',
+            'asset_id'
+        )
+            ->where('widget_assets.asset_type', Content::class));
+
+        Models\Tag::resolveRelationUsing('contents', fn (Models\Tag $model): MorphToMany => $model->morphedByMany(Content::class, 'taggable'));
+
+        Models\Site::resolveRelationUsing('contents', fn (Models\Site $model): HasMany => $model->hasMany(Content::class, 'layout_id'));
+
+        Models\Type::resolveRelationUsing('contents', fn (Models\Type $model): HasMany => $model->hasMany(Content::class, 'type_id'));
+
+        Models\Type::resolveRelationUsing('widgets', fn (Models\Type $model): HasMany => $model->hasMany(Widget::class, 'type_id'));
+    }
+
+    private static function registerFormSchemas(): void
+    {
+        CapellAdmin::registerSchema();
+    }
+}

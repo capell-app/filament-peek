@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Layout\Filament\Schemas\Widget;
+
+use Capell\Admin\Filament\Components\Forms\CacheFrequencySelect;
+use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
+use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
+use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Admin\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
+use Capell\Admin\Filament\Components\Forms\Widget\WidgetDisplaySection;
+use Capell\Admin\Filament\Components\Forms\Widget\WidgetResultsSettingsSchema;
+use Capell\Admin\Filament\Components\Forms\Widget\WidgetSettingsSchema;
+use Capell\Admin\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
+use Filament\Forms;
+
+class ResultsWidgetSchema extends AbstractWidgetSchema
+{
+    public static function make(Forms\Form $form): array
+    {
+        $operation = $form->getOperation();
+
+        return match ($operation) {
+            'create', 'createOption', 'replicate', 'editOption' => [
+                WidgetTranslationsRepeater::make($operation),
+            ],
+            default => [
+                FixedWidthSidebar::make()
+                    ->mainSchema([
+                        WidgetTranslationsRepeater::make($operation),
+                    ])
+                    ->sidebarSchema([
+                        Forms\Components\Section::make()
+                            ->columns(1)
+                            ->schema(WidgetSettingsSchema::make($form)),
+                    ]),
+                Forms\Components\Tabs::make('tabs')
+                    ->visibleOn('edit')
+                    ->columnSpanFull()
+                    ->tabs([
+                        WidgetSettingsTab::make([
+                            Forms\Components\Group::make()
+                                ->statePath('meta')
+                                ->columns()
+                                ->schema([
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\TextInput::make('limit')
+                                                ->label(__('capell-admin::form.limit')),
+                                            Forms\Components\Checkbox::make('pagination')
+                                                ->label(__('capell-admin::form.pagination'))
+                                                ->default(true),
+                                            CacheFrequencySelect::make('cache_frequency'),
+                                        ]),
+                                    Forms\Components\Fieldset::make(__('capell-admin::generic.display'))
+                                        ->columns(['default' => 1, 'md' => 2, 'lg' => 3, 'xl' => 4])
+                                        ->columnSpanFull()
+                                        ->schema(WidgetResultsSettingsSchema::make()),
+                                    WidgetDisplaySection::make(),
+                                    WidgetComponentFilesSection::make(),
+                                ]),
+                        ]),
+                        WidgetAdminTab::make(),
+                    ]),
+            ],
+        };
+    }
+}

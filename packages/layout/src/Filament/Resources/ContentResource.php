@@ -1,0 +1,490 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Layout\Filament\Resources;
+
+use Capell\Admin\Actions\ReplicateContentAction;
+use Capell\Admin\Enums\SchemaEnum;
+use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Filament\Components\Forms\Content\ContentDetailsSchema;
+use Capell\Admin\Filament\Components\Forms\TypeSchema;
+use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
+use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
+use Capell\Admin\Filament\Components\Tables\Columns\BadgeableColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\Content\ContentNameColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\ImageColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\LanguagesColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\StatusColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\TypeNameColumn;
+use Capell\Admin\Filament\Components\Tables\Filters\StatusFilter;
+use Capell\Admin\Filament\Resources\ContentResource\Pages;
+use Capell\Admin\Filament\Resources\ContentResource\RelationManagers\ContentAssetsRelationManager;
+use Capell\Admin\Filament\Resources\ContentResource\RelationManagers\PagesRelationManager;
+use Capell\Admin\Filament\Resources\ContentResource\RelationManagers\WidgetsRelationManager;
+use Capell\Admin\Filament\Schemas\Content\DefaultContentSchema;
+use Capell\Admin\Livewire\Assets\Table\ContentsTable;
+use Capell\Core\Enums\TagTypeEnum;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class ContentResource extends Resource
+{
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema(self::getFormSchema($form));
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withDrafts()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+
+    public static function getFormSchema(Form $form): array
+    {
+        return [
+            Forms\Components\Grid::make()
+                ->hiddenOn(['edit', 'editOption'])
+                ->schema(ContentDetailsSchema::make()),
+            TypeSchema::make()
+                ->schema(
+                    fn (Get $get, TypeSchema $component): array => $component
+                        ->getSchema(
+                            $form,
+                            SchemaEnum::Content,
+                            key: $get('type_id'),
+                            defaultSchema: DefaultContentSchema::getKey()
+                        )
+                ),
+        ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'translations.title'];
+    }
+
+    public static function getModel(): string
+    {
+        return CapellCore::getModel('content');
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        if (! config('capell-admin.resources.content.navigation_badge')) {
+            return null;
+        }
+
+        return number_format(static::getModel()::count());
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return (string) (__('capell-admin::navigation.group_contents'));
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return (string) (__('capell-admin::navigation.contents'));
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListContents::route('/'),
+            'create' => Pages\CreateContent::route('/create'),
+            'edit' => Pages\EditContent::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getNavigationIcon(): ?string
+    {
+        return CapellAdmin::getAssetIcon('content');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('capell-admin::generic.contents');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            ContentAssetsRelationManager::class,
+            WidgetsRelationManager::class,
+            PagesRelationManager::class,
+        ];
+    }
+
+    public static function getTableFilters(): array
+    {
+        return [
+            Tables\Filters\SelectFilter::make('site_id')
+                ->label(__('capell-admin::form.site'))
+                ->options(function (): array {
+                    /** @var Models\Site $model */
+                    $model = CapellCore::getModel('site');
+
+                    return $model::query()
+                        ->ordered()
+                        ->pluck('name', 'id')
+                        ->prepend(__('capell-admin::form.none'), 0)
+                        ->toArray();
+                })
+                ->modifyQueryUsing(
+                    fn (Builder $query, array $state): Builder => $query->when(
+                        $state['value'],
+                        fn (Builder $query, int $siteId): Builder => $query->where('site_id', $siteId),
+                    )
+                        ->when(
+                            $state['value'] === 0,
+                            fn (Builder $query): Builder => $query->whereNull('site_id'),
+                        )
+                ),
+
+            Tables\Filters\SelectFilter::make('type_id')
+                ->label(__('capell-admin::form.type'))
+                ->relationship(
+                    name: 'type',
+                    titleAttribute: 'name',
+                    modifyQueryUsing: fn (Builder $query): Builder => $query->contentType()->enabled()
+                ),
+
+            Tables\Filters\Filter::make('filter')
+                ->columnSpan(['default' => 1, 'md' => 3])
+                ->columns(['default' => 1, 'md' => 3])
+                ->form([
+                    Forms\Components\Select::make('language_id')
+                        ->label(__('capell-admin::table.language'))
+                        ->options(function (Pages\ListContents|ContentsTable $livewire): array {
+                            $siteId = self::getSiteId($livewire);
+
+                            /* @var \Capell\Core\Models\Language $model */
+                            $model = CapellCore::getModel('language');
+
+                            return $model::when(
+                                $siteId,
+                                fn (Builder $query, int $siteId): Builder => $query->whereHas(
+                                    'sites',
+                                    fn (BuilderContract $query) => $query->where('sites.id', $siteId)
+                                )
+                            )
+                                ->ordered()
+                                ->pluck('name', 'id')
+                                ->toArray();
+                        }),
+
+                    Forms\Components\Select::make('parent_uuid')
+                        ->label(__('capell-admin::form.parent'))
+                        ->options(function (Pages\ListContents|ContentsTable $livewire, Get $get) {
+                            $siteId = self::getSiteId($livewire);
+
+                            $contents = CapellCore::getModel('content')::with([
+                                'site',
+                                'ancestors',
+                            ])
+                                ->whereHas('children')
+                                ->whereHas('type', fn (BuilderContract $query) => $query->enabled())
+                                ->when($siteId, fn (Builder $query) => $query->where('site_id', $siteId))
+                                ->when(
+                                    $get('language_id'),
+                                    fn (Builder $query, $languageId) => $query->whereHas(
+                                        'translations',
+                                        fn (BuilderContract $query) => $query->where('translations.language_id', $languageId)
+                                    )
+                                )
+                                ->orderBy('site_id')
+                                ->orderBy('_lft')
+                                ->get();
+
+                            return $contents->mapWithKeys(function (Models\Content $content) use ($siteId) {
+                                $label = '';
+
+                                if (! $siteId && $content->site) {
+                                    $label .= $content->site->name.' » ';
+                                }
+
+                                if ($content->ancestors->isNotEmpty()) {
+                                    $label .= $content->ancestors->pluck('name')
+                                        ->map(fn ($item) => Str::limit($item, 30))
+                                        ->implode(' » ')
+                                        .' » ';
+                                }
+
+                                $label .= Str::limit($content->name, 40);
+
+                                return [$content->uuid => $label];
+                            });
+                        }),
+
+                    Forms\Components\Select::make('tags')
+                        ->label(__('capell-admin::form.tags'))
+                        ->relationship(name: 'tags', titleAttribute: 'name', modifyQueryUsing: function (Builder $query, Pages\ListContents|ContentsTable $livewire, Get $get): void {
+                            $siteId = self::getSiteId($livewire);
+
+                            if (! $siteId) {
+                                $query->with('site')
+                                    ->orderBy('site_id');
+                            } else {
+                                $query->where(
+                                    fn (Builder $query) => $query->where('site_id', $siteId)->orWhereNull('site_id')
+                                );
+                                $query->whereHas('contents', fn (BuilderContract $query) => $query->where('site_id', $siteId));
+                            }
+
+                            if ($language_id = $get('language_id')) {
+                                $code = CapellCore::getModel('language')::find($language_id, 'code')->code;
+                                $query->whereRaw('JSON_EXTRACT(`tags`.`name`, '.DB::getPdo()->quote('$.'.$code).') IS NOT NULL');
+                            }
+                        })
+                        ->getOptionLabelFromRecordUsing(function (Models\Tag $record, Pages\ListContents|ContentsTable $livewire, Get $get): string {
+                            $label = '';
+
+                            $siteId = self::getSiteId($livewire);
+
+                            if (! $siteId && $record->site) {
+                                $label .= $record->site->name.' » ';
+                            }
+
+                            if ($language_id = $get('language_id')) {
+                                $code = CapellCore::getModel('language')::find($language_id, 'code')->code;
+
+                                $label .= $record->getTranslation('name', $code, 'en');
+                            } else {
+                                $label .= $record->getTranslation('name', 'en');
+                            }
+
+                            return $label;
+                        }),
+                ])
+                ->query(function (Builder $query, array $data): void {
+                    $query
+                        ->when(
+                            $data['language_id'] ?? null,
+                            fn (Builder $query) => $query->whereHas(
+                                'translations',
+                                fn (BuilderContract $query) => $query->where(
+                                    'language_id',
+                                    (int) $data['language_id']
+                                )
+                            )
+                        )
+                        ->when(
+                            $data['tags'] ?? null,
+                            fn (Builder $query) => $query->whereHas(
+                                'tags',
+                                fn (BuilderContract $query) => $query->where(
+                                    'tags.id',
+                                    (int) $data['tags']
+                                )
+                            )
+                        )
+                        ->when(
+                            $data['parent_uuid'] ?? null,
+                            fn (Builder $query) => $query->where('parent_uuid', $data['parent_uuid'])
+                        );
+                })
+                ->indicateUsing(function (array $data): array {
+                    $indicators = [];
+
+                    if (! empty($data['language_id'])) {
+                        $indicators['language_id'] = __(
+                            'capell-admin::filter.language',
+                            ['search' => CapellCore::getModel('language')::find($data['language_id'], 'name')?->name]
+                        );
+                    }
+
+                    if (! empty($data['parent_uuid'])) {
+                        $indicators['parent_uuid'] = __(
+                            'capell-admin::filter.parent',
+                            [
+                                'search' => CapellCore::getModel('content')::select('name')->firstWhere(
+                                    'uuid',
+                                    $data['parent_uuid']
+                                )
+                                    ?->name,
+                            ]
+                        );
+                    }
+
+                    if (! empty($data['tags'])) {
+                        $indicators['tags'] = __(
+                            'capell-admin::filter.tag',
+                            ['search' => CapellCore::getModel('tag')::find($data['tags'], 'name')?->name]
+                        );
+                    }
+
+                    return $indicators;
+                }),
+
+            Tables\Filters\SelectFilter::make('publish_status')
+                ->label(__('capell-admin::table.publish_status'))
+                ->placeholder(__('capell-admin::generic.all'))
+                ->options([
+                    'published' => __('capell-admin::generic.published'),
+                    'unpublished' => __('capell-admin::generic.unpublished'),
+                    'expired' => __('capell-admin::generic.expired'),
+                ])
+                ->query(fn (Builder $query, array $state): Builder => match ($state['value'] ?? null) {
+                    'published' => $query->published(),
+                    'unpublished' => $query->pending(),
+                    'expired' => $query->expired(),
+                    default => $query,
+                }),
+
+            StatusFilter::make('status'),
+
+            Tables\Filters\TrashedFilter::make(),
+        ];
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(
+                fn (Builder $query): Builder => $query
+                    ->with([
+                        'ancestors',
+                        'creator',
+                        'editor',
+                        'image',
+                        'parent.type',
+                        'site',
+                        'tags',
+                        'translation.language',
+                        'translations.language',
+                        'type',
+                    ])
+                    ->withCount([
+                        'children',
+                        'assets',
+                    ])
+                    ->withoutGlobalScopes([
+                        SoftDeletingScope::class,
+                    ])
+            )
+            ->columns(self::getTableColumns())
+            ->filters(self::getTableFilters())
+            ->filtersFormWidth('4xl')
+            ->filtersFormColumns([
+                'sm' => 2,
+                'lg' => 3,
+            ])
+            ->columnToggleFormColumns(3)
+            ->actions([
+                EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    ReplicateAction::make()
+                        ->replicaModelAction(ReplicateContentAction::class),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                    ->color('gray'),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
+            ])
+            ->recordClasses(fn (Models\Content $record): ?string => match (true) {
+                (bool) $record->deleted_at => 'table-row-warning',
+                default => null,
+            });
+    }
+
+    private static function getSiteId(Pages\ListContents|ContentsTable $livewire)
+    {
+        return match (true) {
+            $livewire instanceof Pages\ListContents => $livewire->activeTab,
+            $livewire instanceof ContentsTable => $livewire->getTableFilterState('filter')['site_id'] ?? null,
+            default => null,
+        };
+    }
+
+    private static function getTableColumns(): array
+    {
+        return [
+            IdentifierColumn::make('id'),
+            ContentNameColumn::make('name'),
+            Tables\Columns\TextColumn::make('translation.title')
+                ->label(__('capell-admin::table.title'))
+                ->searchable()
+                ->html()
+                ->toggleable(isToggledHiddenByDefault: true),
+            LanguagesColumn::make('translations.language'),
+            Tables\Columns\TextColumn::make('parent.name')
+                ->label(__('capell-admin::table.parent'))
+                ->searchable()
+                ->sortable()
+                ->limit(60)
+                ->linkRecord()
+                ->toggleable(isToggledHiddenByDefault: true),
+            PageNameColumn::make('page.name')
+                ->label(__('capell-admin::table.page'))
+                ->withParents()
+                ->toggleable(isToggledHiddenByDefault: true),
+            TypeNameColumn::make('type.name'),
+            Tables\Columns\SpatieTagsColumn::make('tags')
+                ->label(__('capell-admin::table.tags'))
+                ->type(TagTypeEnum::CONTENT->value)
+                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('children_count')
+                ->label(__('capell-admin::table.children'))
+                ->alignCenter()
+                ->numeric()
+                ->sortable()
+                ->toggleable()
+                ->color('primary')
+                ->url(
+                    fn (Models\Content $record, int $state): ?string => $state !== 0
+                        ? self::getUrl('index', ['tableFilters' => ['filter' => ['parent_uuid' => $record->uuid]]])
+                        : null
+                ),
+            BadgeableColumn::make('resources_count')
+                ->label(__('capell-admin::table.resources'))
+                ->alignCenter()
+                ->numeric()
+                ->sortable()
+                ->toggleable()
+                ->separator('')
+                ->formatStateUsing(fn (Models\Content $record): string => $record->assets_count ? '' : ' &mdash; '),
+            SiteColumn::make('site.name')
+                ->hidden(
+                    fn (Pages\ListContents $livewire): bool => $livewire->activeTab
+                        || ! empty($livewire->getTableFilterState('filter')['site_id'])
+                ),
+            ImageColumn::make('image')
+                ->toggleable(),
+            StatusColumn::make('status'),
+            DateColumn::make('publish_from')
+                ->label(__('capell-admin::table.publish_from'))
+                ->toggleable(isToggledHiddenByDefault: true),
+            DateColumn::make('publish_to')
+                ->label(__('capell-admin::table.publish_to'))
+                ->toggleable(isToggledHiddenByDefault: true),
+            DateColumn::make('created_at'),
+            DateColumn::make('updated_at'),
+            DateColumn::make('deleted_at'),
+        ];
+    }
+}

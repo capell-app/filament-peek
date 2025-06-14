@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Layout\Actions;
+
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Content;
+use Lorisleiva\Actions\Concerns\AsObject;
+
+/**
+ * @method static Content run(array $data)
+ */
+class CreateContentAction
+{
+    use AsObject;
+
+    public function createTranslations(Content $content, array $translations): void
+    {
+        foreach ($translations as $translation) {
+            $content->translations()->create([
+                'language_id' => $translation['language_id'],
+                'title' => $translation['title'],
+                'content' => $translation['content'],
+            ]);
+        }
+    }
+
+    public function handle(array $data): Content
+    {
+        /** @var Content $model */
+        $model = CapellCore::getModel('content');
+
+        if (empty($data['name']) && ! empty($data['translations'])) {
+            $data['name'] = collect($data['translations'])->first()['title'];
+        }
+
+        $content = $model::create($data);
+
+        if (! empty($data['translations'])) {
+            $this->createTranslations($content, $data['translations']);
+        }
+
+        return $content;
+    }
+}

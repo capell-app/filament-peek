@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Gizmo\View\Components\Widget\Pages;
+
+use Capell\Gizmo\View\Components\Widget\AbstractWidget;
+use Illuminate\Support\Collection;
+
+abstract class AbstractPagesWidget extends AbstractWidget
+{
+    protected string $defaultView = 'capell::components.widget.page.pages';
+
+    protected Collection $pages;
+
+    public function render(array $data = [])
+    {
+        if ($this->skipRender) {
+            return '';
+        }
+
+        $data['pages'] = $this->pages;
+
+        return parent::render($data);
+    }
+}

@@ -1,0 +1,236 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Packages\Tests\packages;
+
+use Awcodes\Curator\CuratorServiceProvider;
+use Awcodes\FilamentBadgeableColumn\BadgeableColumnServiceProvider;
+use Awcodes\FilamentTableRepeater\FilamentTableRepeaterServiceProvider;
+use BezhanSalleh\FilamentShield\FilamentShieldServiceProvider;
+use BezhanSalleh\FilamentShield\Support\Utils;
+use Bkwld\Cloner\ServiceProvider as ClonerServiceProvider;
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
+use Camya\Filament\FilamentTitleWithSlugServiceProvider;
+use Capell\Core\CapellCoreManager;
+use Capell\Core\CapellServiceProvider;
+use Capell\Core\Models\Page;
+use Capell\Core\Models\PageTranslation;
+use Capell\Tests\Models\User;
+use Capell\Tests\Policies\RolePolicy;
+use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
+use CodeWithDennis\SimpleAlert\SimpleAlertServiceProvider;
+use Dotswan\FilamentCodeEditor\FilamentCodeEditorServiceProvider;
+use Filament\Actions\ActionsServiceProvider;
+use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Notifications\NotificationsServiceProvider;
+use Filament\SpatieLaravelTranslatablePluginServiceProvider;
+use Filament\Support\SupportServiceProvider;
+use Filament\Tables\TablesServiceProvider;
+use Filament\Widgets\WidgetsServiceProvider;
+use FilamentTiptapEditor\FilamentTiptapEditorServiceProvider;
+use Guava\FilamentIconPicker\FilamentIconPickerServiceProvider;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageServiceProvider;
+use Kalnoy\Nestedset\NestedSetServiceProvider;
+use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\Concerns\WithWorkbench;
+use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
+use RyanChandler\FilamentNavigation\FilamentNavigationServiceProvider;
+use Silber\PageCache;
+use Spatie\LaravelData\LaravelDataServiceProvider;
+use Spatie\LaravelRay\RayServiceProvider;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionServiceProvider;
+use Spatie\Tags\TagsServiceProvider;
+use StijnVanouplines\BladeCountryFlags\BladeCountryFlagsServiceProvider;
+use Tapp\FilamentAuthenticationLog\FilamentAuthenticationLogServiceProvider;
+
+abstract class AbstractTestCase extends \Orchestra\Testbench\TestCase
+{
+    use InteractsWithSession;
+    use LazilyRefreshDatabase;
+    use WithFaker;
+    use WithWorkbench;
+
+    protected function setUp(): void
+    {
+        if (getenv('TEST_TOKEN')) {
+            putenv('VIEW_COMPILED_PATH=storage/framework/views/phpunit-parallel-'.getenv('TEST_TOKEN'));
+        }
+
+        parent::setUp();
+
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->loadPackageMigrations(CapellCoreManager::getMigrations());
+
+        Http::preventStrayRequests();
+
+        Relation::morphMap([
+            'user' => User::class,
+        ]);
+
+        Model::shouldBeStrict();
+
+        // $this->app->setLocale('en_GB');
+
+        $this->setUpDatabase();
+
+        $this->withoutVite();
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        $this->registerPackageConfigs();
+
+        Gate::policy(Utils::getRoleModel(), RolePolicy::class);
+    }
+
+    /**
+     * Set up the database.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     */
+    protected function setUpDatabase()
+    {
+        Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
+    }
+
+    protected function getPackageProviders($app): array
+    {
+        return [
+            ActionsServiceProvider::class,
+            BadgeableColumnServiceProvider::class,
+            BladeCaptureDirectiveServiceProvider::class,
+            BladeCountryFlagsServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            ClonerServiceProvider::class,
+            CuratorServiceProvider::class,
+            SpatieLaravelTranslatablePluginServiceProvider::class,
+            FilamentAuthenticationLogServiceProvider::class,
+            FilamentClearCacheServiceProvider::class,
+            FilamentCodeEditorServiceProvider::class,
+            FilamentNavigationServiceProvider::class,
+            FilamentTableRepeaterServiceProvider::class,
+            FilamentServiceProvider::class,
+            FilamentShieldServiceProvider::class,
+            FilamentTiptapEditorServiceProvider::class,
+            FilamentTitleWithSlugServiceProvider::class,
+            FormsServiceProvider::class,
+            SimpleAlertServiceProvider::class,
+            FilamentIconPickerServiceProvider::class,
+            ImageServiceProvider::class,
+            LaravelDataServiceProvider::class,
+            LivewireServiceProvider::class,
+            NestedSetServiceProvider::class,
+            NotificationsServiceProvider::class,
+            PageCache\LaravelServiceProvider::class,
+            PermissionServiceProvider::class,
+            RayServiceProvider::class,
+            SupportServiceProvider::class,
+            CapellServiceProvider::class,
+            TablesServiceProvider::class,
+            TagsServiceProvider::class,
+            WidgetsServiceProvider::class,
+        ];
+    }
+
+    protected function registerPackageConfigs(?array $packages = null)
+    {
+        if ($packages === null || $packages === []) {
+            $packages = $this->getDefaultPackages();
+        }
+
+        foreach ($packages as $package_key => $package) {
+            $config = require __DIR__.'/..'.$this->getPackageFile($package);
+
+            $this->registerPackageConfig($package_key, $config);
+        }
+
+        // config('filament-shield.register_role_policy.enabled', false);
+        Config::set('filament-shield.auth_provider_model.fqcn', User::class);
+
+        // Prevent role being assigned to created user
+        Config::set('filament-shield.panel_user.enabled', false);
+
+        Config::set('auth.providers.users.model', User::class);
+
+        Config::set('filesystems.disks.page_cache', [
+            'driver' => 'local',
+            'root' => public_path('page-cache'),
+            'throw' => false,
+        ]);
+    }
+
+    protected function getDefaultPackages(): array
+    {
+        return [
+            'filament-shield' => [
+                'user' => 'bezhansalleh',
+                'name' => 'filament-shield',
+                'file' => 'filament-shield',
+            ],
+            'authentication-log' => [
+                'user' => 'rappasoft',
+                'name' => 'laravel-authentication-log',
+                'file' => 'authentication-log',
+            ],
+        ];
+    }
+
+    protected function setupPage(Page $page, Collection $languages): void
+    {
+        $languages->each(function (int $languageId) use ($page): void {
+            $page->translations()->save(PageTranslation::factory()->make([
+                'language_id' => $languageId,
+                'title' => Str::title($page->name.' '.$languageId),
+                'slug' => Str::slug($page->name.' '.$languageId),
+            ]));
+        });
+
+        $page->refresh();
+    }
+
+    protected function loadPackageMigrations(array $migrations): void
+    {
+        $path = realpath(__DIR__.'/../../packages/core/database/migrations');
+
+        array_walk($migrations, fn (&$migration): string => $migration = sprintf('%s/%s.php', $path, $migration));
+
+        $this->loadMigrationsFrom($migrations);
+    }
+
+    private function getPackageFile(array $package): string
+    {
+        $path = '/../vendor/'.basename((string) $package['user']).'/'.basename((string) $package['name']).'/config';
+        $file = basename((string) $package['file']).'.php';
+
+        return sprintf('%s/%s', $path, $file);
+    }
+
+    private function registerPackageConfig(string $package, array $config): void
+    {
+        foreach ($config as $key => $value) {
+            if (is_array($value)) {
+                $this->registerPackageConfig(sprintf('%s.%s', $package, $key), $value);
+
+                continue;
+            }
+
+            config()->set(sprintf('%s.%s', $package, $key), $value);
+        }
+    }
+}

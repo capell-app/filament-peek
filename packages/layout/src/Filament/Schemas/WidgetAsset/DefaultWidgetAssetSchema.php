@@ -1,0 +1,82 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\Layout\Filament\Schemas\WidgetAsset;
+
+use Capell\Admin\Enums\SchemaEnum;
+use Capell\Admin\Filament\Components\Forms\MediaSchema;
+use Capell\Admin\Filament\Resources\ContentResource;
+use Capell\Admin\Filament\Resources\PageResource;
+use Capell\Admin\Filament\Schemas\AbstractSchema;
+use Capell\Core\Models;
+use Filament\Forms;
+
+class DefaultWidgetAssetSchema extends AbstractSchema
+{
+    protected static SchemaEnum $schemaType = SchemaEnum::WidgetAsset;
+
+    public static function make(Forms\Form $form): array
+    {
+        return [
+            self::getResourceableFormSchema($form),
+        ];
+    }
+
+    protected static function getContentFormSchema(Forms\Form $form): array
+    {
+        return ContentResource::getFormSchema($form);
+    }
+
+    protected static function getFormSchema(Models\WidgetAsset $record, Forms\Form $form): array
+    {
+        return match ($record->asset_type) {
+            'content' => static::getContentFormSchema($form),
+            'page' => static::getPageFormSchema($form),
+            'media' => static::getMediaFormSchema(),
+        };
+    }
+
+    protected static function getMediaFormSchema(): array
+    {
+        return MediaSchema::make();
+    }
+
+    protected static function getPageFormSchema(Forms\Form $form): array
+    {
+        return PageResource::getFormSchema($form);
+    }
+
+    protected static function getResourceableFormSchema(Forms\Form $form): Forms\Components\Group
+    {
+        return Forms\Components\Group::make()
+            ->relationship('asset')
+            ->when(
+                in_array($form->getOperation(), ['create', 'createOption'], true),
+                fn (Forms\Components\Group $component): Forms\Components\Group => $component
+                    ->dehydrated()
+                    ->saveRelationshipsUsing(fn (): false => false),
+            )
+            ->mutateRelationshipDataBeforeCreateUsing(
+                function (Models\WidgetAsset $record, array $data, Forms\Get $get): array {
+                    switch ($record->asset_type) {
+                        case 'media':
+                            if (blank($data['title'])) {
+                                $data['title'] = pathinfo((string) $data['originalFilename'], PATHINFO_FILENAME);
+                            }
+
+                            unset($data['originalFilename']);
+                            break;
+                        case 'content':
+                        case 'page':
+                            $data['name'] = collect($get('asset.translations'))->first()['title'];
+
+                            break;
+                    }
+
+                    return $data;
+                }
+            )
+            ->schema(fn (Models\WidgetAsset $record): array => static::getFormSchema($record, $form));
+    }
+}
