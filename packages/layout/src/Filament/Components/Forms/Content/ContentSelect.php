@@ -11,6 +11,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Layout\Actions\CreateContentAction;
 use Capell\Layout\Enums\LayoutModelEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\ContentResource;
 use Capell\Layout\Models\Content;
 use Closure;
@@ -122,8 +123,14 @@ class ContentSelect extends Forms\Components\Select
                     ->fillForm(function (): array {
                         $site = Models\Site::default()->first();
 
+                        /** @var class-string<Models\Type> $model */
+                        $model = CapellCore::getModel(ModelEnum::Type);
+
                         return [
-                            'type_id' => CapellCore::getModel(ModelEnum::Type)::contentType()->default()->value('id'),
+                            'type_id' => $model::query()
+                                ->where('type', LayoutTypeEnum::Content->value)
+                                ->default()
+                                ->value('id'),
                             'translations' => $site->translations->mapWithKeys(fn ($translation) => [
                                 (string) Str::uuid() => [
                                     'language_id' => $translation->language_id,

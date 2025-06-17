@@ -14,10 +14,18 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ArticlePageFactory extends PageFactory
 {
+    public function definition(): array
+    {
+        return [
+            ...parent::definition(),
+            'type_id' => fn () => Type::factory()->page()->state(['group' => 'article']),
+            'parent_uuid' => null,
+        ];
+    }
+
     public function article(?Page $parent = null): self
     {
         return $this->state(fn (): array => [
-            'type_id' => Type::pageType()->firstWhere('key', 'article') ?? Type::factory()->state(['key' => 'article']),
             'parent_uuid' => $parent?->getUuid(),
         ]);
     }

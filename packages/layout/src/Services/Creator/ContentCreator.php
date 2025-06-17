@@ -8,6 +8,7 @@ use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Layout\Enums\LayoutModelEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Models\Content;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -32,9 +33,15 @@ class ContentCreator
     public function createContent(array $data, ?Models\Site $site, Collection $languages): Content
     {
         if (! empty($data['type'])) {
-            $type = $this->typeModel::contentType()->where('key', $data['type'])->first();
+            $type = $this->typeModel::query()
+                ->where('type', LayoutTypeEnum::Content->value)
+                ->where('key', $data['type'])
+                ->first();
         } else {
-            $type = $this->typeModel::contentType()->default()->first();
+            $type = $this->typeModel::query()
+                ->where('type', LayoutTypeEnum::Content->value)
+                ->default()
+                ->first();
         }
 
         $meta = [];
@@ -70,7 +77,7 @@ class ContentCreator
     {
         $this->typeModel::firstOrCreate([
             'default' => true,
-            'type' => \Capell\Layout\Enums\LayoutTypeEnum::Content,
+            'type' => LayoutTypeEnum::Content,
         ], [
             'name' => __('capell-admin::generic.default'),
             'key' => 'default',

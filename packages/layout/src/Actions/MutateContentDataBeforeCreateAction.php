@@ -7,6 +7,7 @@ namespace Capell\Layout\Actions;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Exception;
 use Lorisleiva\Actions\Concerns\AsObject;
 
@@ -29,7 +30,8 @@ class MutateContentDataBeforeCreateAction
         /** @var class-string<Models\Type> $model */
         $model = CapellCore::getModel(ModelEnum::Type);
 
-        $contentType = $model::contentType()
+        $contentType = $model::query()
+            ->where('type', LayoutTypeEnum::Content->value)
             ->orderBy('default', 'desc')
             ->orderBy('id')
             ->first();

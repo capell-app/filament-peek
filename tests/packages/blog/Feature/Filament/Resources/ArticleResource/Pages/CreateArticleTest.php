@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Actions\Page\CreatePageAction;
+use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\EditArticle;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\ListArticles;
 use Capell\Blog\Services\BlogCreator;
@@ -27,9 +28,9 @@ beforeEach(function (): void {
 
 describe('from edit article', function (): void {
     test('can create new article', function (): void {
-        $page = Page::factory()->article()->create();
+        $page = (new ArticlePageFactory())->create();
 
-        $newData = Page::factory()->recycle($page->site)->article()->make();
+        $newData = (new ArticlePageFactory())->recycle($page->site)->make();
 
         $slug = str($newData->name)->slug();
 
@@ -61,7 +62,7 @@ describe('from edit article', function (): void {
     });
 
     test('required fields are required', function (): void {
-        $page = Page::factory()->article()->create();
+        $page = (new ArticlePageFactory())->create();
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
@@ -91,11 +92,7 @@ describe('from list article', function (): void {
             ->hasTranslations()
             ->create();
 
-        $newData = Page::factory()
-            ->recycle($site)
-            ->article()
-            ->type($type)
-            ->make();
+        $newData = Page::factory()->recycle($site)->type($type)->make();
 
         $blogPage = BlogCreator::createBlogPage($site);
 
@@ -137,7 +134,7 @@ describe('from list article', function (): void {
         $language = Language::factory()->create();
         $site = Site::factory()->recycle($language)->hasSiteDomains()->create();
 
-        $newData = Page::factory()->article()->make();
+        $newData = (new ArticlePageFactory())->make();
 
         livewire(ListArticles::class)
             ->assertSuccessful()

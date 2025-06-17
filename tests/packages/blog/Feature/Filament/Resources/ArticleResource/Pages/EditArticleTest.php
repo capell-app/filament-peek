@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Capell\Admin\Exceptions\InvalidPageTypeException;
 use Capell\Admin\Filament\Resources\PageResource;
+use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\ArticleResource;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -23,7 +24,7 @@ beforeEach(function (): void {
 
 test('can render article', function (): void {
     get(ArticleResource::getUrl('edit', [
-        'record' => Page::factory()->article()->create(),
+        'record' => (new ArticlePageFactory())->create(),
     ]))->assertSuccessful();
 });
 
@@ -31,7 +32,7 @@ test('can not render article', function (): void {
     test()->withoutExceptionHandling();
 
     get(PageResource::getUrl('edit', [
-        'record' => Page::factory()->article()->create(),
+        'record' => (new ArticlePageFactory())->create(),
     ]));
 })->throws(InvalidPageTypeException::class);
 
@@ -47,14 +48,11 @@ it('can save', function (): void {
     $site = Site::factory()->hasSiteDomains()->create();
     $languages = $site->siteDomains->map->language_id;
 
-    $page = Page::factory()->recycle($site)->article()->create();
+    $page = (new ArticlePageFactory())->recycle($site)->create();
 
     test()->setupPage($page, $languages);
 
-    $newData = Page::factory()
-        ->site($site)
-        ->article()
-        ->make();
+    $newData = (new ArticlePageFactory())->site($site)->make();
 
     livewire(ArticleResource\Pages\EditArticle::class, [
         'record' => $page->getRouteKey(),
@@ -78,7 +76,7 @@ it('can save', function (): void {
 });
 
 it('can delete', function (): void {
-    $content = Page::factory()->article()->create();
+    $content = (new ArticlePageFactory())->create();
 
     livewire(ArticleResource\Pages\EditArticle::class, [
         'record' => $content->getRouteKey(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Resources\PageResource\Pages\ListPages;
+use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Core\Models\Page;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
@@ -17,10 +18,9 @@ beforeEach(function (): void {
 });
 
 test('can list pages', function (): void {
-    CapellAdmin::addResourcePage('article', 'TestClass');
+    CapellAdmin::registerResource('article', 'default', 'TestClass');
 
-    // TODO figure out how to work a cusotm facotry article page
-    Page::factory()->article()->create();
+    (new ArticlePageFactory())->create();
 
     $pages = Page::factory()->count(5)->create();
 

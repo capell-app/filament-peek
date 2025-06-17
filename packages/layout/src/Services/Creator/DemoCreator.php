@@ -10,6 +10,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Core\Models\Page;
 use Capell\Layout\Enums\LayoutModelEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Models\Content;
@@ -201,7 +202,10 @@ class DemoCreator
             ]);
         }
 
-        $contentType = $this->typeModel::contentType()->default()->first();
+        $contentType = $this->typeModel::query()
+            ->where('type', LayoutTypeEnum::Content->value)
+            ->default()
+            ->first();
 
         $parentContent = $this->contentModel::firstOrCreate([
             'name' => 'FAQs',
@@ -405,7 +409,7 @@ class DemoCreator
         // Create widget
         $widget = $this->widgetModel::firstOrCreate(['key' => 'example-navigation'], [
             'name' => __('capell-admin::generic.navigation'),
-            'type_id' => $this->typeModel::firstWhere(['key' => 'navigation', 'type' => \Capell\Layout\Enums\LayoutTypeEnum::Widget])->id,
+            'type_id' => $this->typeModel::firstWhere(['key' => 'navigation', 'type' => LayoutTypeEnum::Widget])->id,
             'meta' => [
                 'navigation' => $handle,
                 'margin' => ['lg'],

@@ -7,7 +7,6 @@ namespace Capell\Blog;
 use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaEnum;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Blog\Actions\CreateBlogPagesAction;
 use Capell\Blog\Actions\InstallBlogAction;
 use Capell\Blog\Commands\BlogDemoCommand;
 use Capell\Blog\Enums\BlogModelEnum;
@@ -23,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
-use Lorisleiva\Actions\Facades\Actions;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 
@@ -53,12 +51,18 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ]);
         }
 
-        // TODO error does not work
-        // Actions::registerCommandsForAction(CreateBlogPagesAction::class);
-
         CapellAdmin::serving(function (): void {
-            $this->registerDefaultPages();
+            CapellCore::addDefaultPage('blog', 'Blog', function ($site, $languages): void {
+                BlogCreator::createBlogPage($site, languages: $languages);
+            });
 
+            CapellCore::addDefaultPage('archives', 'Blog Archives', function ($site, $languages): void {
+                $blogPage = BlogLoader::getBlogPage($site);
+
+                $archivesPage = BlogCreator::createArchivesPage($site, $blogPage, languages: $languages);
+
+                BlogCreator::createArchivePage($site, $archivesPage, languages: $languages);
+            });
         });
     }
 
@@ -87,26 +91,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         parent::registeringPackage();
 
         CapellCore::registerPackage(self::$name, self::class);
-    }
 
-    private function registerDefaultPages(): void
-    {
         CapellAdmin::registerResource(ResourceEnum::Page, 'article', Resources\ArticleResource::class);
 
         CapellCore::registerComponent('Widget', 'Article', 'capell-blog::widget.page.article');
 
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\ArticleDefaultPageSchema::class);
-
-        CapellCore::addDefaultPage('blog', 'Blog', function ($site, $languages): void {
-            BlogCreator::createBlogPage($site, languages: $languages);
-        });
-
-        CapellCore::addDefaultPage('archives', 'Blog Archives', function ($site, $languages): void {
-            $blogPage = BlogLoader::getBlogPage($site);
-
-            $archivesPage = BlogCreator::createArchivesPage($site, $blogPage, languages: $languages);
-
-            BlogCreator::createArchivePage($site, $archivesPage, languages: $languages);
-        });
     }
 }

@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
@@ -50,6 +51,10 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             'widget_asset' => WidgetAsset::class,
         ]);
 
+        foreach (config('capell-layout.livewire_components', []) as $name => $class) {
+            Livewire::component($name, $class);
+        }
+
         Filament::serving(function (): void {
             $createDeleteModels = [
                 CapellCore::getModel(LayoutModelEnum::Content->name),
@@ -70,6 +75,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
+            ->hasConfigFile()
             ->hasViews(self::$name)
             ->hasTranslations()
             ->hasMigrations(CapellLayoutManager::getMigrations());

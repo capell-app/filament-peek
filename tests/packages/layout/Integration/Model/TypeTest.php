@@ -30,7 +30,7 @@ it('can scope content type', function (): void {
     Type::factory()->create(['type' => LayoutTypeEnum::Content]);
     Type::factory()->create(['type' => CoreTypeEnum::Page]);
 
-    $result = Type::contentType()->get();
+    $result = Type::query()->where('type', LayoutTypeEnum::Content->value)->get();
 
     expect($result)->toHaveCount(1);
 });

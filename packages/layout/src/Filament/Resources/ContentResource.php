@@ -24,6 +24,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Layout\Actions\ReplicateContentAction;
 use Capell\Layout\Enums\LayoutModelEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Components\Forms\Content\ContentDetailsSchema;
 use Capell\Layout\Filament\Components\Tables\Columns\Content\ContentNameColumn;
 use Capell\Layout\Filament\Resources\ContentResource\Pages;
@@ -170,7 +171,12 @@ class ContentResource extends Resource
                 ->relationship(
                     name: 'type',
                     titleAttribute: 'name',
-                    modifyQueryUsing: fn (Builder $query): Builder => $query->contentType()->enabled()
+                    /** @param Builder<Models\Type> $query */
+                    modifyQueryUsing: fn (Builder $query): Builder => $query->where(
+                        'type',
+                        LayoutTypeEnum::Content->value
+                    )
+                        ->enabled()
                 ),
 
             Tables\Filters\Filter::make('filter')

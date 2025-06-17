@@ -13,6 +13,7 @@ use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Layout\Enums\LayoutModelEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\SchemaEnum;
 use Capell\Layout\Filament\Components\Forms\LayoutBuilder\LayoutBuilderAddWidgetSchema;
 use Capell\Layout\Filament\Resources\WidgetResource;
@@ -598,8 +599,14 @@ class LayoutBuilder extends Component implements Forms\Contracts\HasForms, HasAc
                     $model = CapellCore::getModel(ModelEnum::Type);
 
                     $data['asset']['type_id'] = match ($arguments['type']) {
-                        'content' => $model::contentType()->default()->value('id'),
-                        'page' => $model::pageType()->default()->value('id'),
+                        'content' => $model::query()
+                            ->where('type', LayoutTypeEnum::Content->value)
+                            ->default()
+                            ->value('id'),
+                        'page' => $model::query()
+                            ->pageType()
+                            ->default()
+                            ->value('id'),
                     };
 
                     if ($site) {
