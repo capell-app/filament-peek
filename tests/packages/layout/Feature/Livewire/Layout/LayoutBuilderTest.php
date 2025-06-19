@@ -172,7 +172,7 @@ test('Can add container', function (): void {
     $layout = (new LayoutFactory())->containers()->create();
 
     $containerKey = array_key_first($layout->containers).'-2';
-    $containerHtmlClass = 'test-class';
+    $htmlClass = 'test-class';
 
     livewire(LayoutBuilder::class, [
         'layout_id' => $layout->id,
@@ -186,7 +186,7 @@ test('Can add container', function (): void {
             data: [
                 'key' => $containerKey,
                 'meta' => [
-                    'html_class' => $containerHtmlClass,
+                    'html_class' => $htmlClass,
                 ],
             ]
         )
@@ -196,10 +196,9 @@ test('Can add container', function (): void {
     $layout->refresh();
 
     expect($layout->containers)
-        ->toHaveKey($containerKey);
-
-    expect($layout->containers[$containerKey]['meta']['html_class'])
-        ->toEqual($containerHtmlClass);
+        ->toHaveKey($containerKey)
+        ->and($layout->containers[$containerKey]['meta']['html_class'])
+        ->toEqual($htmlClass);
 });
 
 test('Can clone layout', function (): void {

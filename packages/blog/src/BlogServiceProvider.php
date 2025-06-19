@@ -30,6 +30,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 {
     public static string $name = 'capell-blog';
 
+    public static string $description = 'Capell Blog Package';
+
     public function bootingPackage(): void
     {
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
@@ -91,7 +93,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     {
         parent::registeringPackage();
 
-        CapellCore::registerPackage(self::$name, self::class);
+        CapellCore::registerPackage(self::$name, self::class, sort: 9);
 
         CapellAdmin::registerResource(
             ResourceEnum::Page,

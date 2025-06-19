@@ -25,12 +25,15 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Livewire;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
 class LayoutServiceProvider extends AbstractPackageServiceProvider
 {
     public static string $name = 'capell-layout';
+
+    public static string $description = 'Capell Layout & Widgets Package';
 
     public function bootingPackage(): void
     {
@@ -60,7 +63,11 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ->hasConfigFile()
             ->hasViews(self::$name)
             ->hasTranslations()
-            ->hasMigrations(CapellLayoutManager::getMigrations());
+            ->hasMigrations(CapellLayoutManager::getMigrations())
+            ->hasInstallCommand(function (InstallCommand $command): InstallCommand {
+                return $command->publishMigrations()
+                    ->publishAssets();
+            });
     }
 
     public function registeringPackage(): void
@@ -229,7 +236,8 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         CapellAdmin::registerSchemas('Widget', Enums\WidgetSchemaEnum::cases());
         CapellAdmin::registerSchemas('WidgetAsset', Enums\WidgetAssetSchemaEnum::cases());
         CapellAdmin::registerSchemas('LayoutContainer', Enums\LayoutContainerSchemaEnum::cases());
-        CapellAdmin::registerSchemas('LayoutContainerWidget', Enums\LayoutContainerWidgetSchemaEnum::cases());
+        CapellAdmin::registerSchemas('LayoutWidget', Enums\LayoutWidgetSchemaEnum::cases());
+        CapellAdmin::registerSchema(SchemaEnum::Layout, Schemas\Layout\DefaultLayoutSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\DefaultPageSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\LandingPageSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\ResultsPageSchema::class);

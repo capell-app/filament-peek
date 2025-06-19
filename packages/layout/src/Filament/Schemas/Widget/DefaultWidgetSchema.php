@@ -46,7 +46,7 @@ class DefaultWidgetSchema extends AbstractWidgetSchema
         };
     }
 
-    private static function getExtraSchema(): array
+    protected static function getExtraSchema(): array
     {
         return [
             ImageMediaPicker::make('image_id')

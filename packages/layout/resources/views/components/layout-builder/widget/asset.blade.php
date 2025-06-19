@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 ?>
 
-@use(Capell\Layout\Livewire\LayoutBuilder;use Capell\Core\Models;use Capell\Admin\Facades\CapellAdmin;use Filament\Actions\Action;use Filament\Support\Enums\ActionSize;use Filament\Support\Enums\IconPosition;use Filament\Support\Enums\FontWeight)
-
 @props([
     'containerKey',
     'description' => null,
@@ -38,30 +36,30 @@ declare(strict_types=1);
 
     if (! $image) {
         $image = match (get_class($asset)) {
-            Models\Page::class, Models\Content::class => $asset->image,
+            Models\Page::class, Content::class => $asset->image,
             Models\Media::class => $asset,
             default => null,
         };
     }
 
     $mediaCount = match (get_class($asset)) {
-        Models\Content::class => $asset->media->count(),
+        Content::class => $asset->media->count(),
         default => null,
     };
 
     $relatedCount = match (get_class($asset)) {
-        Models\Content::class => $asset->related->count(),
+        Content::class => $asset->related->count(),
         default => null,
     };
 
     $actionsCount = match (get_class($asset)) {
-        Models\Content::class => count($asset->actions),
+        Content::class => count($asset->actions),
         default => null,
     };
 
     if (! $name) {
         $name = match (get_class($asset)) {
-            Models\Page::class, Models\Content::class => $asset->name,
+            Models\Page::class, Content::class => $asset->name,
             Models\Media::class => $asset->title,
             default => null,
         };
@@ -69,7 +67,7 @@ declare(strict_types=1);
 
     if (! $description) {
         $description = match (get_class($asset)) {
-            Models\Page::class, Models\Content::class => $asset->translation?->title &&
+            Models\Page::class, Content::class => $asset->translation?->title &&
             $asset->translation->title !== $asset->name
                 ? $asset->translation->title
                 : null,
@@ -241,7 +239,7 @@ declare(strict_types=1);
                     icon="heroicon-o-arrow-top-right-on-square"
                     target="_blank"
                     tag="a"
-                    :href="CapellAdmin::getResourceUrl($assetType, $asset->getKey())"
+                    :href="CapellAdmin::getResource(ucwords($assetType))::getUrl('edit', ['record' => $asset->getKey()])"
                 >
                     {{ __('capell-admin::button.edit_resource', ['type' => $assetType]) }}
                 </x-filament::dropdown.list.item>

@@ -112,7 +112,7 @@ class BlogCreator
             'type' => TypeEnum::Page,
         ], [
             'name' => __('capell-blog::generic.blog_archive_page'),
-            'group' => TypeGroupEnum::System,
+            'group' => TypeGroupEnum::System->value,
             'admin' => [
                 'schema' => ResultsPageSchema::getKey(),
                 'icon' => 'heroicon-o-archive-box',
@@ -135,7 +135,7 @@ class BlogCreator
     {
         return Layout::firstOrCreate(['key' => 'archives'], [
             'name' => __('capell-blog::generic.archives_page'),
-            'group' => LayoutGroupEnum::System,
+            'group' => LayoutGroupEnum::System->value,
             'containers' => [
                 'main' => [
                     'meta' => [
@@ -260,7 +260,7 @@ class BlogCreator
         return Layout::firstOrCreate(['key' => 'article'], [
             'key' => 'article',
             'name' => __('capell-blog::generic.article'),
-            'group' => LayoutGroupEnum::Default,
+            'group' => LayoutGroupEnum::Default->value,
             'containers' => [
                 'main' => [
                     'meta' => [
@@ -335,7 +335,7 @@ class BlogCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-blog::generic.article'),
-            'group' => TypeGroupEnum::System,
+            'group' => TypeGroupEnum::System->value,
             'admin' => [
                 'schema' => ArticleWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-newspaper',
@@ -406,7 +406,7 @@ class BlogCreator
             'type' => TypeEnum::Page,
         ], [
             'name' => __('capell-blog::generic.blog'),
-            'group' => TypeGroupEnum::System,
+            'group' => TypeGroupEnum::System->value,
             'admin' => [
                 'schema' => ResultsPageSchema::getKey(),
                 'icon' => 'heroicon-o-newspaper',

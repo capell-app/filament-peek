@@ -109,7 +109,7 @@ class ContentResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return (string) (__('capell-admin::navigation.group_contents'));
+        return (string) (__('capell-admin::navigation.group_library'));
     }
 
     public static function getNavigationLabel(): string

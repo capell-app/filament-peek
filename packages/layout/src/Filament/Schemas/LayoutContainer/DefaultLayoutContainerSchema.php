@@ -27,7 +27,6 @@ class DefaultLayoutContainerSchema extends AbstractSchema
                 ->schema([
                     ColumnSpanInput::make(),
                     Forms\Components\Grid::make(['md' => 2])
-                        ->visibleOn(['edit', 'editOption'])
                         ->schema([
                             ContainerWidthSelect::make('container'),
                             HtmlClassInput::make('html_class'),

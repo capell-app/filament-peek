@@ -35,7 +35,7 @@ class PageContentWidgetSchema extends AbstractWidgetSchema
         };
     }
 
-    private static function getTabs(): Forms\Components\Tabs
+    protected static function getTabs(): Forms\Components\Tabs
     {
         return Forms\Components\Tabs::make()
             ->columnSpanFull()

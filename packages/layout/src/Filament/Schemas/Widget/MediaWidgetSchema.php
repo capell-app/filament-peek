@@ -28,14 +28,14 @@ class MediaWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getCreateSchema(Forms\Form $form): array
+    protected static function getCreateSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()
@@ -57,14 +57,14 @@ class MediaWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getEditOptionSchema(Forms\Form $form): array
+    protected static function getEditOptionSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
         ];
     }
 
-    private static function getTabs(): Forms\Components\Tabs
+    protected static function getTabs(): Forms\Components\Tabs
     {
         return Forms\Components\Tabs::make('tabs')
             ->visibleOn(['edit', 'editOption'])

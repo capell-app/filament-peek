@@ -36,7 +36,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
         ];
     }
 
-    private static function getActionsTab(): Forms\Components\Tabs\Tab
+    protected static function getActionsTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('actions')
             ->label(__('capell-admin::generic.links'))
@@ -47,7 +47,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
             ]);
     }
 
-    private static function getMediaTab(): Forms\Components\Tabs\Tab
+    protected static function getMediaTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('media')
             ->label(__('capell-admin::generic.media'))
@@ -59,7 +59,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
             ]);
     }
 
-    private static function getRelatedTab(): Forms\Components\Tabs\Tab
+    protected static function getRelatedTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('related')
             ->label(__('capell-admin::generic.related'))
@@ -70,7 +70,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
             ]);
     }
 
-    private static function getSettingsTab(): Forms\Components\Tabs\Tab
+    protected static function getSettingsTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('settings')
             ->label(__('capell-admin::generic.settings'))

@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Capell\Blog\Filament\Resources;
 
 use Capell\Admin\Filament\Resources\PageResource;
+use Capell\Blog\Actions\GetArticleLayoutAction;
 use Capell\Blog\Enums\BlogModelEnum;
 use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages;
 use Capell\Blog\Models\Article;
 use Capell\Blog\Services\Loader\BlogLoader;
+use Capell\Core\Actions\GetNameFromTranslationsAction;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Filament\Forms\Form;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Override;
 
@@ -23,8 +26,6 @@ class ArticleResource extends PageResource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $slug = 'article';
-
-    protected static bool $withParent = false;
 
     /**
      * @return class-string<Article>
@@ -69,12 +70,20 @@ class ArticleResource extends PageResource
     }
 
     #[Override]
+    public static function getFormSchema(Form $form): array
+    {
+        return [
+            static::getFormTypeSchema($form),
+        ];
+    }
+
+    #[Override]
     public static function mutateFormDataBeforeCreate(array &$data = [], array $formData = []): void
     {
         /* @var class-string<\Capell\Core\Models\Layout> $model */
         $model = CapellCore::getModel(ModelEnum::Layout);
 
-        $data['layout_id'] = $model::query()->where('key', 'article')->value('id');
+        $data['layout_id'] = GetArticleLayoutAction::run()?->id;
 
         /* @var class-string<\Capell\Core\Models\Type> $model */
         $model = CapellCore::getModel(ModelEnum::Type);
@@ -84,11 +93,23 @@ class ArticleResource extends PageResource
             ->where('group', BlogTypeGroupEnum::Article)
             ->value('id');
 
-        if (empty($data['parent_uuid'])) {
-            /* @var class-string<\Capell\Core\Models\Site> $model */
-            $model = CapellCore::getModel(ModelEnum::Site);
+        $siteId = $data['site_id'] ?? $formData['site_id'] ?? null;
 
-            $data['parent_uuid'] = BlogLoader::getBlogPage($model::find($data['site_id']))?->uuid;
+        /* @var class-string<\Capell\Core\Models\Site> $model */
+        $model = CapellCore::getModel(ModelEnum::Site);
+
+        $site = $model::find($siteId);
+
+        if (empty($data['site_id']) && $site) {
+            $data['site_id'] = $site->id;
+        }
+
+        if (empty($data['parent_uuid']) && $site) {
+            $data['parent_uuid'] = BlogLoader::getBlogPage($site)?->uuid;
+        }
+
+        if (empty($data['name'])) {
+            $data['name'] = GetNameFromTranslationsAction::run(collect($data['translations']), $site);
         }
     }
 

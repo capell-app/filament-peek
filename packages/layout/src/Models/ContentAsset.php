@@ -30,6 +30,9 @@ use Wildside\Userstamps\Userstamps;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentAsset query()
  *
  * @mixin \Eloquent
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ContentAsset withAssets(bool $withDrafts = true)
+ *
  * @mixin Eloquent
  */
 class ContentAsset extends Model implements PageCacheable

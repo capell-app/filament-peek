@@ -32,14 +32,14 @@ class AssetsWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getCreateOptionSchema(Forms\Form $form): array
+    protected static function getCreateOptionSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()

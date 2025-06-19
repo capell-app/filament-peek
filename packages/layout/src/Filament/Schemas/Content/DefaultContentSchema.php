@@ -49,7 +49,7 @@ class DefaultContentSchema extends AbstractSchema
         };
     }
 
-    private static function getCreateFormSchema(Forms\Form $form): array
+    protected static function getCreateFormSchema(Forms\Form $form): array
     {
         return [
             Forms\Components\Section::make()
@@ -59,7 +59,7 @@ class DefaultContentSchema extends AbstractSchema
         ];
     }
 
-    private static function getCreateOptionFormSchema(Forms\Form $form): array
+    protected static function getCreateOptionFormSchema(Forms\Form $form): array
     {
         return [
             ...ContentSettingsSchema::make($form),
@@ -70,7 +70,7 @@ class DefaultContentSchema extends AbstractSchema
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()
@@ -94,7 +94,7 @@ class DefaultContentSchema extends AbstractSchema
 
     }
 
-    private static function getEditOptionFormSchema(Forms\Form $form): array
+    protected static function getEditOptionFormSchema(Forms\Form $form): array
     {
         return [
             ContentTranslationsRepeater::make($form),

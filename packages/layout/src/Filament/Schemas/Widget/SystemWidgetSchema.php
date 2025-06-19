@@ -46,7 +46,7 @@ class SystemWidgetSchema extends AbstractWidgetSchema
         };
     }
 
-    private static function getFilesSchema(): array
+    protected static function getFilesSchema(): array
     {
         return [
             Forms\Components\Group::make()

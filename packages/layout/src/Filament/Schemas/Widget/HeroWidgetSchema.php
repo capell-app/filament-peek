@@ -31,7 +31,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getCreateOptionSchema(Forms\Form $form): array
+    protected static function getCreateOptionSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
@@ -39,7 +39,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()
@@ -61,7 +61,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getTabs(Forms\Form $form): Forms\Components\Tabs
+    protected static function getTabs(Forms\Form $form): Forms\Components\Tabs
     {
         return Forms\Components\Tabs::make('tabs')
             ->columnSpanFull()
@@ -89,7 +89,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
             ]);
     }
 
-    private static function getMetaSchema(): array
+    protected static function getMetaSchema(): array
     {
         return [
             Forms\Components\Grid::make(['default' => 2, 'xl' => 3])

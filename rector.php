@@ -18,7 +18,4 @@ return RectorConfig::configure()
         earlyReturn: true,
         rectorPreset: true,
     )
-    ->withTypeCoverageLevel(2)
-    ->withDeadCodeLevel(2)
-    ->withCodeQualityLevel(2)
     ->withPhpSets(php84: true);

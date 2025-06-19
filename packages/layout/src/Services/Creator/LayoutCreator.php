@@ -36,7 +36,7 @@ class LayoutCreator
         return $this->layoutModel::firstOrCreate(['default' => true], [
             'key' => 'default',
             'name' => __('capell-admin::generic.default'),
-            'group' => LayoutGroupEnum::Default,
+            'group' => LayoutGroupEnum::Default->value,
             'containers' => [
                 'main' => [
                     'meta' => [
@@ -68,7 +68,7 @@ class LayoutCreator
     {
         return $this->layoutModel::firstOrCreate(['key' => 'home'], [
             'name' => __('capell-admin::generic.home'),
-            'group' => LayoutGroupEnum::Default,
+            'group' => LayoutGroupEnum::Default->value,
             'containers' => [
                 'main' => [
                     'widgets' => [
@@ -83,7 +83,7 @@ class LayoutCreator
     {
         return $this->layoutModel::firstOrCreate(['key' => 'results'], [
             'name' => __('capell-admin::generic.results_page'),
-            'group' => LayoutGroupEnum::System,
+            'group' => LayoutGroupEnum::System->value,
             'containers' => [
                 'main' => [
                     'meta' => [
@@ -115,7 +115,7 @@ class LayoutCreator
     {
         return $this->layoutModel::firstOrCreate(['key' => 'tags'], [
             'name' => __('capell-admin::generic.tags_page'),
-            'group' => LayoutGroupEnum::System,
+            'group' => LayoutGroupEnum::System->value,
             'containers' => [
                 'main' => [
                     'meta' => [

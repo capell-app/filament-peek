@@ -63,7 +63,7 @@ class NavigationWidgetSchema extends AbstractWidgetSchema
         };
     }
 
-    private static function navigationSelect(): Forms\Components\Group
+    protected static function navigationSelect(): Forms\Components\Group
     {
         return Forms\Components\Group::make()
             ->statePath('meta')
