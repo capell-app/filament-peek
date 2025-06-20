@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Database\Factories;
 
-use Capell\Core\Models\Content;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
+use Capell\Layout\Models\Content;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
 
@@ -32,7 +32,7 @@ class ContentFactory extends Factory
             'name' => $this->faker->sentence,
             'parent_id' => null,
             'parent_uuid' => null,
-            'type_id' => Type::factory()->content(),
+            'type_id' => (new ContentTypeFactory()),
             'site_id' => null,
             'uuid' => $this->faker->uuid,
             'meta' => fn (array $attributes): array => [

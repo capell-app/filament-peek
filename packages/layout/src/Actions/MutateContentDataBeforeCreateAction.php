@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Actions;
 
+use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
+use Capell\Layout\Enums\LayoutTypeEnum;
+use Exception;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -24,7 +27,11 @@ class MutateContentDataBeforeCreateAction
 
     private function getDefaultType(): Models\Type
     {
-        $contentType = CapellCore::getModel('type')::contentType()
+        /** @var class-string<Models\Type> $model */
+        $model = CapellCore::getModel(ModelEnum::Type);
+
+        $contentType = $model::query()
+            ->where('type', LayoutTypeEnum::Content)
             ->orderBy('default', 'desc')
             ->orderBy('id')
             ->first();

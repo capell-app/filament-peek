@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Widgets\LatestPagesWidget;
+use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Core\Models\Page;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
@@ -16,7 +17,7 @@ it('renders the pages widget', function (): void {
 
     Page::factory(5)->create();
 
-    ArticlePage::factory(5)->article()->create();
+    (new ArticlePageFactory())->count(5)->create();
 
     livewire(LatestPagesWidget::class)
         ->assertOk()

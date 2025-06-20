@@ -31,11 +31,16 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "../capell/packages/*",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "https://github.com/capell-app/core"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/capell-app/admin"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/capell-app/frontend"
         },
         {
             "type": "path",
@@ -127,9 +132,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Capell\\Packages\\Tests\\": "tests/packages",
-            "Capell\\Packages\\Tests\\Database\\Factories\\": "tests/database/factories",
-            "Capell\\Packages\\Tests\\Database\\Seeders\\\\": "tests/database/seeders"
+            "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories",
+            "Capell\\Layout\\Database\\Factories\\": "packages/layout/database/factories",
+            "Capell\\Tests\\": "tests",
+            "Capell\\Tests\\Blog\\": "tests/packages/blog",
+            "Capell\\Tests\\Layout\\": "tests/packages/layout"
         }
     },
     "config": {

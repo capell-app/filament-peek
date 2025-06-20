@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\packages\blog;
+namespace Capell\Tests\Blog;
 
 use Capell\Admin\AdminServiceProvider;
 use Capell\Blog\BlogServiceProvider;

@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Capell\Gizmo\Filament\Schemas\Widget;
+namespace Capell\Layout\Filament\Schemas\Widget;
 
-use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Components\Forms\BackgroundSettingsFieldset;
+use Capell\Admin\Actions\FixCuratorMetaDataAction;
 use Capell\Admin\Filament\Components\Forms\CarouselSettingsSchema;
 use Capell\Admin\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
-use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
-use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetSettingsSchema;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
-use Capell\Admin\Filament\Schemas\Widget\AbstractWidgetSchema;
+use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
 use Filament\Forms;
 
 class HeroWidgetSchema extends AbstractWidgetSchema
@@ -32,7 +31,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getCreateOptionSchema(Forms\Form $form): array
+    protected static function getCreateOptionSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
@@ -40,7 +39,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()
@@ -62,7 +61,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getTabs(Forms\Form $form): Forms\Components\Tabs
+    protected static function getTabs(Forms\Form $form): Forms\Components\Tabs
     {
         return Forms\Components\Tabs::make('tabs')
             ->columnSpanFull()
@@ -76,7 +75,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
                         ->statePath('meta')
                         ->mutateDehydratedStateUsing(function (array $state): array {
                             if (isset($state['background_image_id'])) {
-                                $state['background_image_id'] = CapellAdmin::fixMediaFormData($state['background_image_id']);
+                                $state['background_image_id'] = FixCuratorMetaDataAction::run($state['background_image_id']);
                             }
 
                             return $state;
@@ -90,7 +89,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
             ]);
     }
 
-    private static function getMetaSchema(): array
+    protected static function getMetaSchema(): array
     {
         return [
             Forms\Components\Grid::make(['default' => 2, 'xl' => 3])

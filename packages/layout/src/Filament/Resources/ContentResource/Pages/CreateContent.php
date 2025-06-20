@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources\ContentResource\Pages;
 
-use Capell\Admin\Actions\MutateContentDataBeforeCreateAction;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Resources\ContentResource;
+use Capell\Layout\Actions\MutateContentDataBeforeCreateAction;
+use Capell\Layout\Enums\LayoutResourceEnum;
+use Capell\Layout\Filament\Resources\ContentResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateContent extends CreateRecord
@@ -14,7 +15,7 @@ class CreateContent extends CreateRecord
     /** @return class-string<ContentResource> */
     public static function getResource(): string
     {
-        return CapellAdmin::getFilamentResource('content');
+        return CapellAdmin::getResource(LayoutResourceEnum::Content->name);
     }
 
     protected function fillForm(): void

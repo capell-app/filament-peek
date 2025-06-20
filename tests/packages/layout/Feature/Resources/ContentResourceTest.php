@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Resources\ContentResource;
-use Capell\Core\Models\Content;
-use Capell\Core\Models\Type;
+use Capell\Layout\Database\Factories\ContentTypeFactory;
+use Capell\Layout\Filament\Resources\ContentResource;
+use Capell\Layout\Models\Content;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Laravel\get;
@@ -29,7 +29,7 @@ test('user cannot see contents', function (): void {
 test('admin can see create content', function (): void {
     test()->actingAsAdmin();
 
-    Type::factory()->content()->default()->create();
+    (new ContentTypeFactory())->default()->create();
 
     get(ContentResource::getUrl('create'))->assertOk();
 });

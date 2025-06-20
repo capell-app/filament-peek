@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Actions\Page\CreatePageAction;
+use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\EditArticle;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\ListArticles;
 use Capell\Blog\Services\BlogCreator;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
+use Capell\Core\Models\PageTranslation;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
@@ -27,25 +29,24 @@ beforeEach(function (): void {
 
 describe('from edit article', function (): void {
     test('can create new article', function (): void {
-        $page = Page::factory()->article()->create();
+        $page = (new ArticlePageFactory())->create();
 
-        $newData = Page::factory()->recycle($page->site)->article()->make();
+        $newData = (new ArticlePageFactory())->recycle($page->site)->make();
 
-        $slug = str($newData->name)->slug();
+        $slug = str($newData->name)->slug()->toString();
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
             ->mountAction(CreatePageAction::class)
             ->setActionData([
-                'name' => $newData->name,
-                'type_id' => $page->type_id,
-                'site_id' => $page->site_id,
+                'type_id' => $newData->type_id,
+                'site_id' => $newData->site_id,
             ])
             ->set('mountedActionsData.0.translations', [
                 0 => [
                     'title' => $newData->name,
                     'language_id' => $page->site->language_id,
-                    'slug' => $slug->toString(),
+                    'slug' => $slug,
                 ],
             ])
             ->callMountedAction()
@@ -55,13 +56,19 @@ describe('from edit article', function (): void {
             'name' => $newData->name,
         ]);
 
+        assertDatabaseHas(PageTranslation::class, [
+            'title' => $newData->name,
+            'slug' => $slug,
+            'language_id' => $page->site->language_id,
+        ]);
+
         assertDatabaseHas(PageUrl::class, [
             'url' => '/'.$slug,
         ]);
     });
 
     test('required fields are required', function (): void {
-        $page = Page::factory()->article()->create();
+        $page = (new ArticlePageFactory())->create();
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
@@ -91,11 +98,7 @@ describe('from list article', function (): void {
             ->hasTranslations()
             ->create();
 
-        $newData = Page::factory()
-            ->recycle($site)
-            ->article()
-            ->type($type)
-            ->make();
+        $newData = Page::factory()->recycle($site)->type($type)->make();
 
         $blogPage = BlogCreator::createBlogPage($site);
 
@@ -132,12 +135,12 @@ describe('from list article', function (): void {
 
     test('can create new article from list page', function (): void {
         $type = BlogCreator::createArticlePageType();
-        BlogCreator::createArticleLayout();
+        $layout = BlogCreator::createArticleLayout();
 
         $language = Language::factory()->create();
         $site = Site::factory()->recycle($language)->hasSiteDomains()->create();
 
-        $newData = Page::factory()->article()->make();
+        $newData = (new ArticlePageFactory())->make();
 
         livewire(ListArticles::class)
             ->assertSuccessful()
@@ -157,7 +160,7 @@ describe('from list article', function (): void {
             )
             ->assertActionDataSet([
                 'name' => $newData->name,
-                'layout_id' => $newData->layout_id,
+                'layout_id' => $layout->id,
                 'type_id' => $type->id,
                 'site_id' => $site->id,
             ])
@@ -168,7 +171,7 @@ describe('from list article', function (): void {
             'name' => $newData->name,
             'type_id' => $type->id,
             'site_id' => $site->id,
-            'layout_id' => $newData->layout_id,
+            'layout_id' => $layout->id,
         ]);
 
         $page = Page::query()

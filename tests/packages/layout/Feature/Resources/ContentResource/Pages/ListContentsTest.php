@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
-use Capell\Admin\Filament\Resources\ContentResource\Pages\ListContents;
-use Capell\Core\Models\Content;
+use Capell\Layout\Filament\Resources\ContentResource\Pages\ListContents;
+use Capell\Layout\Models\Content;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -32,7 +32,7 @@ test('can list contents', function (): void {
 
 test('can search contents', function (): void {
     $contents = Content::factory()
-        ->sequence(fn (Sequence $sequence) => ['name' => "Language({$sequence->index})"])
+        ->sequence(fn (Sequence $sequence): array => ['name' => sprintf('Language(%d)', $sequence->index)])
         ->count(3)
         ->create();
 

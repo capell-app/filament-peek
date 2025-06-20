@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Enums\WidgetTypeEnum;
 use Capell\Admin\Filament\Actions\ReplicateAction;
-use Capell\Admin\Filament\Resources\WidgetResource\Pages\EditWidget;
-use Capell\Admin\Services\Creator\WidgetTypeCreator;
 use Capell\Core\Models\Navigation;
-use Capell\Core\Models\Widget;
+use Capell\Layout\Enums\WidgetTypeEnum;
+use Capell\Layout\Filament\Resources\WidgetResource\Pages\EditWidget;
+use Capell\Layout\Models\Widget;
+use Capell\Layout\Services\Creator\WidgetTypeCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Actions\DeleteAction;
 
@@ -102,7 +102,7 @@ it('can delete', function (): void {
     assertSoftDeleted($widget, ['id' => $widget->id]);
 });
 
-test('can edit widget type', function (WidgetTypeEnum $typeEum): void {
+test('can edit widget', function (WidgetTypeEnum $typeEum): void {
     $typeCreator = new WidgetTypeCreator;
 
     $type = match ($typeEum) {

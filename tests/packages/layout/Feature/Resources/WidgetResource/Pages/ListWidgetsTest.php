@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
-use Capell\Admin\Filament\Resources\WidgetResource\Pages\ListWidgets;
-use Capell\Core\Models\Widget;
+use Capell\Layout\Filament\Resources\WidgetResource\Pages\ListWidgets;
+use Capell\Layout\Models\Widget;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -31,7 +31,7 @@ test('can list widgets', function (): void {
 
 test('can search widgets', function (): void {
     $widgets = Widget::factory()
-        ->sequence(fn (Sequence $sequence) => ['name' => "Language({$sequence->index})"])
+        ->sequence(fn (Sequence $sequence): array => ['name' => sprintf('Language(%d)', $sequence->index)])
         ->count(3)
         ->create();
 

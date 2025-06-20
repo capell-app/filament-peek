@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Schemas\Widget;
 
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
-use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
-use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetDisplaySection;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetSettingsSchema;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
 use Filament\Forms;
 
 class SystemWidgetSchema extends AbstractWidgetSchema
@@ -46,7 +46,7 @@ class SystemWidgetSchema extends AbstractWidgetSchema
         };
     }
 
-    private static function getFilesSchema(): array
+    protected static function getFilesSchema(): array
     {
         return [
             Forms\Components\Group::make()

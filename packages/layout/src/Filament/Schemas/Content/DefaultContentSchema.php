@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Schemas\Content;
 
 use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Capell\Admin\Enums\SchemaEnum;
 use Capell\Admin\Filament\Components\Forms\CallToActionText;
-use Capell\Admin\Filament\Components\Forms\Content\ContentDetailsSchema;
-use Capell\Admin\Filament\Components\Forms\Content\ContentPublishSection;
-use Capell\Admin\Filament\Components\Forms\Content\ContentSettingsSchema;
-use Capell\Admin\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Page\PageSelect;
 use Capell\Admin\Filament\Schemas\AbstractSchema;
+use Capell\Layout\Enums\SchemaEnum;
+use Capell\Layout\Filament\Components\Forms\Content\ContentDetailsSchema;
+use Capell\Layout\Filament\Components\Forms\Content\ContentPublishSection;
+use Capell\Layout\Filament\Components\Forms\Content\ContentSettingsSchema;
+use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Filament\Forms;
 
 class DefaultContentSchema extends AbstractSchema
 {
-    protected static SchemaEnum $schemaType = SchemaEnum::Content;
+    protected static string $schemaType = SchemaEnum::Content->value;
 
     public static function getMetaSchema(): array
     {
@@ -49,7 +49,7 @@ class DefaultContentSchema extends AbstractSchema
         };
     }
 
-    private static function getCreateFormSchema(Forms\Form $form): array
+    protected static function getCreateFormSchema(Forms\Form $form): array
     {
         return [
             Forms\Components\Section::make()
@@ -59,7 +59,7 @@ class DefaultContentSchema extends AbstractSchema
         ];
     }
 
-    private static function getCreateOptionFormSchema(Forms\Form $form): array
+    protected static function getCreateOptionFormSchema(Forms\Form $form): array
     {
         return [
             ...ContentSettingsSchema::make($form),
@@ -70,7 +70,7 @@ class DefaultContentSchema extends AbstractSchema
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()
@@ -94,7 +94,7 @@ class DefaultContentSchema extends AbstractSchema
 
     }
 
-    private static function getEditOptionFormSchema(Forms\Form $form): array
+    protected static function getEditOptionFormSchema(Forms\Form $form): array
     {
         return [
             ContentTranslationsRepeater::make($form),

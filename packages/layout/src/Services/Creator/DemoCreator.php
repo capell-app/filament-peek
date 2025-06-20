@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Capell\Layout\Services\Creator;
 
 use Capell\Admin\Services\Creator\NavigationCreator;
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Core\Models\Page;
+use Capell\Layout\Enums\LayoutModelEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
+use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
@@ -33,32 +36,36 @@ class DemoCreator
      */
     private readonly string $typeModel;
 
-    public function __construct()
-    {
-        $this->contentModel = CapellCore::getModel('content');
-        $this->widgetModel = CapellCore::getModel('widget');
-        $this->typeModel = CapellCore::getModel('type');
-    }
+    /**
+     * @var class-string<Models\Media>
+     */
+    private readonly string $mediaModel;
 
     /**
-     * @param  Collection|Models\Language[]  $languages
+     * @var class-string<Page>
      */
-    public function createContents(Collection $languages): void
+    private readonly string $pageModel;
+
+    /**
+     * @var class-string<Models\Tag>
+     */
+    private readonly string $tagModel;
+
+    public function __construct()
     {
-        $contentType = $this->typeModel::default()->first();
-
-        $this->contentModel::factory()->type($contentType)->withTranslations($languages)->count(10)->create();
-
-        $parent = $this->contentModel::factory()->type($contentType)->withTranslations($languages)->create();
-
-        $this->contentModel::factory()->type($contentType)->withTranslations($languages)->parent($parent)->count(10)->create();
+        $this->contentModel = CapellCore::getModel(LayoutModelEnum::Content->name);
+        $this->widgetModel = CapellCore::getModel(LayoutModelEnum::Widget->name);
+        $this->typeModel = CapellCore::getModel(ModelEnum::Type);
+        $this->mediaModel = CapellCore::getModel(ModelEnum::Media);
+        $this->pageModel = CapellCore::getModel(ModelEnum::Page);
+        $this->tagModel = CapellCore::getModel(ModelEnum::Tag);
     }
 
-    public function createStaticWidget(Collection $languages): Models\Widget
+    public function createStaticWidget(Collection $languages): Widget
     {
         $widget = $this->widgetModel::firstOrCreate(['key' => 'example-content'], [
             'name' => 'Example Static Contents',
-            'type_id' => $this->typeModel::widgetType()->default()->first()->id,
+            'type_id' => $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)->default()->first()->id,
             'meta' => [
                 'size' => 'sm',
                 'margin' => ['lg'],
@@ -82,7 +89,7 @@ class DemoCreator
         return $widget;
     }
 
-    public function createGalleryWidget($occurrence = 1): Models\Widget
+    public function createGalleryWidget($occurrence = 1): Widget
     {
         $widget = $this->widgetModel::where('key', 'gallery')->first();
 
@@ -106,7 +113,7 @@ class DemoCreator
         return $widget;
     }
 
-    public function createPageCardsWidget(Collection $languages, Page $page, int $occurrence = 1, ?string $title = null): Models\Widget
+    public function createPageCardsWidget(Collection $languages, Page $page, int $occurrence = 1, ?string $title = null): Widget
     {
         $widget = $this->widgetModel::firstWhere('key', 'pages-card');
 
@@ -114,7 +121,7 @@ class DemoCreator
             $widget = $this->widgetModel::create([
                 'key' => 'pages-card',
                 'name' => __('capell-admin::generic.pages_tile'),
-                'type_id' => $this->typeModel::firstWhere('key', WidgetTypeEnum::Pages->value)->id,
+                'type_id' => $this->typeModel::firstWhere('key', WidgetTypeEnum::Pages)->id,
                 'meta' => [
                     'component' => WidgetComponentEnum::LivewirePages,
                     'columns' => 4,
@@ -158,9 +165,9 @@ class DemoCreator
         return $widget;
     }
 
-    public function createFaqWidget(Collection $languages): Models\Widget
+    public function createFaqWidget(Collection $languages): Widget
     {
-        $widgetType = $this->typeModel::widgetType()->firstWhere('key', 'assets');
+        $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)->firstWhere('key', 'assets');
 
         $widget = $this->widgetModel::firstOrCreate(['key' => 'faq'], [
             'key' => 'faq',
@@ -181,7 +188,10 @@ class DemoCreator
             ]);
         }
 
-        $contentType = $this->typeModel::contentType()->default()->first();
+        $contentType = $this->typeModel::query()
+            ->where('type', LayoutTypeEnum::Content)
+            ->default()
+            ->first();
 
         $parentContent = $this->contentModel::firstOrCreate([
             'name' => 'FAQs',
@@ -270,7 +280,7 @@ class DemoCreator
         return $widget;
     }
 
-    public function createMediaCarouselWidget(): Models\Widget
+    public function createMediaCarouselWidget(): Widget
     {
         $widget = $this->widgetModel::where('key', 'media-carousel')->first();
 
@@ -284,23 +294,25 @@ class DemoCreator
             ->limit(1)
             ->first();
 
-        $image = $this->mediaModel::query()
-            ->where('type', 'LIKE', 'image/%')
-            ->inRandomOrder()
-            ->first();
+        if ($video) {
+            $image = $this->mediaModel::query()
+                ->where('type', 'LIKE', 'image/%')
+                ->inRandomOrder()
+                ->first();
 
-        $widget->assets()->firstOrcreate(
-            [
-                'asset_id' => $video->uuid,
-                'asset_type' => app($this->mediaModel)->getMorphClass(),
-            ],
-            [
-                'meta' => [
-                    'media_type' => 'video',
-                    'image_id' => $image->id,
+            $widget->assets()->firstOrcreate(
+                [
+                    'asset_id' => $video->uuid,
+                    'asset_type' => app($this->mediaModel)->getMorphClass(),
                 ],
-            ]
-        );
+                [
+                    'meta' => [
+                        'media_type' => 'video',
+                        'image_id' => $image?->id,
+                    ],
+                ]
+            );
+        }
 
         $media = $this->mediaModel::query()
             ->where('type', 'LIKE', 'image/%')
@@ -318,7 +330,7 @@ class DemoCreator
         return $widget;
     }
 
-    public function createArticlesCardWidget(Collection $languages, Page $page, int $occurrence = 1): Models\Widget
+    public function createArticlesCardWidget(Collection $languages, Page $page, int $occurrence = 1): Widget
     {
         $widget = $this->widgetModel::firstWhere('key', 'articles-card');
 
@@ -326,7 +338,7 @@ class DemoCreator
             $widget = $this->widgetModel::firstOrCreate([
                 'key' => 'articles-card',
                 'name' => __('capell-admin::generic.articles'),
-                'type_id' => $this->typeModel::firstWhere('key', WidgetTypeEnum::Pages->value)->id,
+                'type_id' => $this->typeModel::firstWhere('key', WidgetTypeEnum::Pages)->id,
                 'meta' => [
                     'limit' => 10,
                     'with_image' => true,
@@ -347,10 +359,10 @@ class DemoCreator
         return $widget;
     }
 
-    public function createStaticNavigationWidget(Collection $languages, Page $page): Models\Widget
+    public function createStaticNavigationWidget(Collection $languages, Page $page): Widget
     {
-        /* class-string<Models\Navigation */
-        $model = CapellCore::getModel('navigation');
+        /** @var class-string<Models\Navigation> $model */
+        $model = CapellCore::getModel(ModelEnum::Navigation);
 
         // Create menu + items
         $name = 'Example Menu';
@@ -385,7 +397,7 @@ class DemoCreator
         // Create widget
         $widget = $this->widgetModel::firstOrCreate(['key' => 'example-navigation'], [
             'name' => __('capell-admin::generic.navigation'),
-            'type_id' => $this->typeModel::firstWhere(['key' => 'navigation', 'type' => TypeEnum::Widget])->id,
+            'type_id' => $this->typeModel::firstWhere(['key' => 'navigation', 'type' => LayoutTypeEnum::Widget])->id,
             'meta' => [
                 'navigation' => $handle,
                 'margin' => ['lg'],

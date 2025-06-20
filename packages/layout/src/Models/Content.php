@@ -5,28 +5,28 @@ declare(strict_types=1);
 namespace Capell\Layout\Models;
 
 use Bkwld\Cloner\Cloneable;
-use Capell\Core\Concerns\HasDraftsAndNestedSet;
-use Capell\Core\Concerns\HasMetaData;
-use Capell\Core\Concerns\HasResources;
-use Capell\Core\Concerns\HasTags;
-use Capell\Core\Concerns\HasTranslations;
-use Capell\Core\Concerns\HasTypes;
-use Capell\Core\Concerns\Publishable;
-use Capell\Core\Contracts\CacheablePageInterface;
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Contracts\PageCacheable;
+use Capell\Core\Models\Concerns\HasAssets;
+use Capell\Core\Models\Concerns\HasDraftsAndNestedSet;
+use Capell\Core\Models\Concerns\HasMetaData;
+use Capell\Core\Models\Concerns\HasPageCache;
+use Capell\Core\Models\Concerns\HasPublishDates;
+use Capell\Core\Models\Concerns\HasTags;
+use Capell\Core\Models\Concerns\HasTranslations;
+use Capell\Core\Models\Concerns\HasTypes;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Tag;
-use Capell\Core\Models\Translation;
+use Capell\Core\Models\Type;
 use Capell\Layout\Database\Factories\ContentFactory;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Observers\ContentObserver;
 use Eloquent;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,37 +42,15 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Wildside\Userstamps\Userstamps;
 
 /**
- * @property int $id
- * @property string $name
- * @property int $type_id
- * @property int|null $site_id
- * @property array<array-key, mixed>|null $meta
- * @property int $order
- * @property \Illuminate\Support\Carbon|null $publish_from
- * @property \Illuminate\Support\Carbon|null $publish_to
- * @property string $uuid
- * @property \Illuminate\Support\Carbon|null $published_at
- * @property bool $is_published
- * @property bool $is_current
- * @property string|null $publisher_type
- * @property int|null $publisher_id
- * @property string|null $parent_uuid
- * @property int $_lft
- * @property int $_rgt
- * @property int|null $parent_id
- * @property int|null $created_by
- * @property int|null $updated_by
- * @property int|null $deleted_by
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ContentAsset> $assets
+ * @property-read int|null $assets_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \OwenIt\Auditing\Models\Audit> $audits
  * @property-read int|null $audits_count
  * @property-read \Kalnoy\Nestedset\Collection<int, Content> $children
  * @property-read int|null $children_count
- * @property-read \App\Models\User|null $creator
- * @property-read \App\Models\User|null $destroyer
- * @property-read \App\Models\User|null $editor
+ * @property-read \Illuminate\Foundation\Auth\User|null $creator
+ * @property-read \Illuminate\Foundation\Auth\User|null $destroyer
+ * @property-read \Illuminate\Foundation\Auth\User|null $editor
  * @property-read array $actions
  * @property-read mixed $draft
  * @property-read \Capell\Core\Enums\PublishStatusEnum $publish_status
@@ -85,18 +63,17 @@ use Wildside\Userstamps\Userstamps;
  * @property-read \Kalnoy\Nestedset\Collection<int, Page> $pages
  * @property-read int|null $pages_count
  * @property-read Content|null $parent
- * @property-read Model|Eloquent|null $publisher
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ContentAsset> $assets
- * @property-read int|null $assets_count
+ * @property-read Model|Eloquent $publisher
  * @property-read \Kalnoy\Nestedset\Collection<int, Content> $revisions
  * @property-read int|null $revisions_count
+ * @property-write mixed $parent_id
  * @property \Illuminate\Database\Eloquent\Collection<int, Tag> $tags
  * @property-read Site|null $site
  * @property-read int|null $tags_count
- * @property-read Translation|null $translation
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Translation> $translations
+ * @property-read \Capell\Core\Models\Translation|null $translation
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Capell\Core\Models\Translation> $translations
  * @property-read int|null $translations_count
- * @property-read Type $type
+ * @property-read Type|null $type
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Widget> $widgets
  * @property-read int|null $widgets_count
  * @property-read \Illuminate\Database\Eloquent\Collection|Media[] $media
@@ -115,8 +92,8 @@ use Wildside\Userstamps\Userstamps;
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content descendantsAndSelf($id, array $columns = [])
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content descendantsOf($id, array $columns = [], $andSelf = false)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content excludeRevision(\Illuminate\Database\Eloquent\Model|int $exclude)
- * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content expired()
- * @method static \Capell\Core\Database\Factories\ContentFactory factory($count = null, $state = [])
+ * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content expired(\Illuminate\Database\Eloquent\Model $model)
+ * @method static \Capell\Layout\Database\Factories\ContentFactory factory($count = null, $state = [])
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content fixSubtree($root)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content fixTree($root = null)
  * @method static \Kalnoy\Nestedset\Collection<int, static> get($columns = ['*'])
@@ -137,8 +114,8 @@ use Wildside\Userstamps\Userstamps;
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content orWhereNodeBetween($values)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content orWhereNotDescendantOf($id)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content ordered(string $dir = 'asc')
- * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content pending()
- * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content published()
+ * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content pending(\Illuminate\Database\Eloquent\Model $model)
+ * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content published(\Illuminate\Database\Eloquent\Model $model)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content query()
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content rebuildSubtree($root, array $data, $delete = false)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content rebuildTree(array $data, $delete = false, $root = null)
@@ -160,7 +137,7 @@ use Wildside\Userstamps\Userstamps;
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withAnyTagsOfAnyType($tags)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withAnyTagsOfType(array|string $type)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withDepth(string $as = 'depth')
- * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withResourceables(bool $withDrafts = true)
+ * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withAssets(bool $withDrafts = true)
  * @method static Builder<static>|Content withTrashed()
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withWhereHasLanguage(int $language_id)
  * @method static \Kalnoy\Nestedset\QueryBuilder<static>|Content withoutCurrent()
@@ -173,9 +150,10 @@ use Wildside\Userstamps\Userstamps;
  * @mixin Eloquent
  */
 #[ObservedBy(ContentObserver::class)]
-class Content extends Model implements Auditable, CacheablePageInterface
+class Content extends Model implements Auditable, PageCacheable
 {
     use Cloneable;
+    use HasAssets;
     use HasDrafts {
         bootHasDrafts as protected;
     }
@@ -189,7 +167,7 @@ class Content extends Model implements Auditable, CacheablePageInterface
     use HasJsonRelationships;
     use HasMetaData;
     use HasPageCache;
-    use HasResources;
+    use HasPublishDates;
     use HasTags;
     use HasTranslations;
     use HasTypes;
@@ -199,7 +177,6 @@ class Content extends Model implements Auditable, CacheablePageInterface
         NodeTrait::applyNestedSetScope as applyNestedSetScopeParent;
     }
     use \OwenIt\Auditing\Auditable;
-    use Publishable;
     use SoftDeletes;
     use Userstamps;
 
@@ -249,6 +226,11 @@ class Content extends Model implements Auditable, CacheablePageInterface
         return static::where('uuid', $value)->select($select)->first();
     }
 
+    public static function getMorphRelations(): array
+    {
+        return ['image', 'type', 'translation'];
+    }
+
     public function applyNestedSetScope($query, $table = null)
     {
         $builder = $this->usesSoftDelete()
@@ -293,7 +275,7 @@ class Content extends Model implements Auditable, CacheablePageInterface
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class)
-            ->where('type', TypeEnum::Content);
+            ->where('type', LayoutTypeEnum::Content);
     }
 
     public function site(): BelongsTo

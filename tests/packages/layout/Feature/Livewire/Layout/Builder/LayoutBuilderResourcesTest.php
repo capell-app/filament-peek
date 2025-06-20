@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Livewire\LayoutBuilder;
+use Capell\Core\Models\Layout;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
-use Capell\Core\Models\Widget;
-use Capell\Core\Models\WidgetAsset;
-use Capell\Layout\Models\Layout;
+use Capell\Layout\Database\Factories\LayoutFactory;
+use Capell\Layout\Livewire\LayoutBuilder;
+use Capell\Layout\Models\Widget;
+use Capell\Layout\Models\WidgetAsset;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ beforeEach(function (): void {
 });
 
 test('Can save without affecting widget assets', function (bool $withPage): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $page = Page::factory()->layout($layout)->create();
 
     $containerKey = array_key_first($layout->containers);
@@ -56,7 +57,7 @@ test('Can save without affecting widget assets', function (bool $withPage): void
 })->with(['with page' => true, 'without page' => false]);
 
 test('Can sync new widget assets to page layout', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $page = Page::factory()->layout($layout)->create();
 
     $containerKey = array_key_first($layout->containers);
@@ -123,7 +124,7 @@ test('Can sync new widget assets to page layout', function (): void {
 });
 
 test('Can sync new widget assets to layout', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
 
     // 5 to add
     $media = Media::factory()->count(2)->create();
@@ -174,7 +175,7 @@ test('Can sync new widget assets to layout', function (): void {
 });
 
 test('Can sync new page assets', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $page = Page::factory()->layout($layout)->create();
 
     $containerKey = array_key_first($layout->containers);
@@ -229,7 +230,7 @@ test('Can sync new page assets', function (): void {
 test('Can reorder assets', function (): void {
     $widget = Widget::factory()->create();
 
-    $layout = Layout::factory()->state([
+    $layout = (new LayoutFactory())->state([
         'containers' => [
             'test' => [
                 'widgets' => [
@@ -281,7 +282,7 @@ test('Can reorder assets', function (): void {
 });
 
 test('Can select all widget assets', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
     $containerWidget = $layout->containers[$containerKey]['widgets'][$widgetIndex];
@@ -328,7 +329,7 @@ test('Can select all widget assets', function (): void {
 });
 
 test('can add media asset', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $media = Media::factory()->make();
 
     $containerKey = array_key_first($layout->containers);
@@ -376,7 +377,7 @@ test('can add media asset', function (): void {
 });
 
 test('can add page asset', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $newData = Page::factory()->make();
 
     $containerKey = array_key_first($layout->containers);
@@ -431,7 +432,7 @@ test('can add page asset', function (): void {
 });
 
 test('can add media asset to existing widget with page layout', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $pageLayout = Page::factory()->layout($layout)->create();
 
     $media = Media::factory()->make();
@@ -489,7 +490,7 @@ test('can add media asset to existing widget with page layout', function (): voi
 });
 
 test('can add media asset to widget with page layout', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $pageLayout = Page::factory()->layout($layout)->create();
 
     $media = Media::factory()->make();
@@ -541,7 +542,7 @@ test('can add media asset to widget with page layout', function (): void {
 });
 
 test('can add page asset to existing widget with page layout', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $pageLayout = Page::factory()
         ->layout($layout)
         ->create();
@@ -606,7 +607,7 @@ test('can add page asset to existing widget with page layout', function (): void
 });
 
 test('can add page asset to widget with page layout', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $pageLayout = Page::factory()
         ->layout($layout)
         ->create();
@@ -669,7 +670,7 @@ test('can add page asset to widget with page layout', function (): void {
 });
 
 test('can select assets', function (string $assetType): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
 
@@ -687,7 +688,7 @@ test('can select assets', function (string $assetType): void {
 })->with(['page', 'media', 'content']);
 
 test('can edit asset', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
     $containerWidget = $layout->containers[$containerKey]['widgets'][$widgetIndex];
@@ -730,7 +731,7 @@ test('can edit asset', function (): void {
 });
 
 test('can remove widget assets', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
     $containerWidget = $layout->containers[$containerKey]['widgets'][$widgetIndex];
@@ -770,7 +771,7 @@ test('can remove widget assets', function (): void {
 });
 
 test('can remove page assets', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $page = Page::factory()->layout($layout)->create();
 
     $containerKey = array_key_first($layout->containers);
@@ -823,7 +824,7 @@ test('can remove page assets', function (): void {
 });
 
 test('can not remove assets if no records selected', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
     $containerWidget = $layout->containers[$containerKey]['widgets'][$widgetIndex];
@@ -862,7 +863,7 @@ test('can not remove assets if no records selected', function (): void {
 })->todo();
 
 test('Can revert page assets', function (): void {
-    $layout = Layout::factory()->containers()->create();
+    $layout = (new LayoutFactory())->containers()->create();
     $page = Page::factory()->layout($layout)->create();
 
     $containerKey = array_key_first($layout->containers);

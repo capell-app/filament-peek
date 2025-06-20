@@ -6,7 +6,8 @@ namespace Capell\Layout\Filament\Actions\Page;
 
 use Capell\Admin\Enums\ModalWidthEnum;
 use Capell\Core\Models\Type;
-use Capell\Core\Models\Widget;
+use Capell\Layout\Enums\LayoutTypeEnum;
+use Capell\Layout\Models\Widget;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
 
@@ -26,7 +27,8 @@ class CreateWidgetAction extends CreateAction
 
                 $data = $form->getRawState();
 
-                $data['type_id'] = Type::widgetType()->default()->value('id');
+                $data['type_id'] = Type::query()->where('type', LayoutTypeEnum::Widget)->default()->value('id');
+
                 $data['status'] = true;
 
                 return $data;

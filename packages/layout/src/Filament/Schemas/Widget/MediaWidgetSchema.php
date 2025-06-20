@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Schemas\Widget;
 
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
-use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
-use Capell\Admin\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetDisplaySection;
-use Capell\Admin\Filament\Components\Forms\Widget\WidgetSettingsSchema;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Filament\Forms;
 
 class MediaWidgetSchema extends AbstractWidgetSchema
@@ -28,14 +28,14 @@ class MediaWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getCreateSchema(Forms\Form $form): array
+    protected static function getCreateSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
         ];
     }
 
-    private static function getEditFormSchema(Forms\Form $form): array
+    protected static function getEditFormSchema(Forms\Form $form): array
     {
         return [
             FixedWidthSidebar::make()
@@ -57,14 +57,14 @@ class MediaWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    private static function getEditOptionSchema(Forms\Form $form): array
+    protected static function getEditOptionSchema(Forms\Form $form): array
     {
         return [
             WidgetAssetsRepeater::make($form),
         ];
     }
 
-    private static function getTabs(): Forms\Components\Tabs
+    protected static function getTabs(): Forms\Components\Tabs
     {
         return Forms\Components\Tabs::make('tabs')
             ->visibleOn(['edit', 'editOption'])

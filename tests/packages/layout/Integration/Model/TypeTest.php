@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
-use Capell\Core\Enums\TypeEnum;
-use Capell\Core\Models;
+use Capell\Core\Enums\TypeEnum as CoreTypeEnum;
+use Capell\Core\Models\Type;
+use Capell\Layout\Database\Factories\ContentTypeFactory;
+use Capell\Layout\Database\Factories\WidgetTypeFactory;
+use Capell\Layout\Enums\LayoutTypeEnum;
+use Capell\Layout\Models;
 
 it('has many contents', function (): void {
-    $type = Models\Type::factory()->content()->create();
+    $type = (new ContentTypeFactory())->create();
 
     Models\Content::factory()->create(['type_id' => $type->id]);
 
@@ -15,7 +19,7 @@ it('has many contents', function (): void {
 });
 
 it('has many widgets', function (): void {
-    $type = Models\Type::factory()->widget()->create();
+    $type = (new WidgetTypeFactory())->create();
 
     Models\Widget::factory()->create(['type_id' => $type->id]);
 
@@ -24,19 +28,19 @@ it('has many widgets', function (): void {
 });
 
 it('can scope content type', function (): void {
-    Models\Type::factory()->create(['type' => TypeEnum::Content]);
-    Models\Type::factory()->create(['type' => TypeEnum::Page]);
+    Type::factory()->create(['type' => LayoutTypeEnum::Content]);
+    Type::factory()->create(['type' => CoreTypeEnum::Page]);
 
-    $result = Models\Type::contentType()->get();
+    $result = Type::query()->where('type', LayoutTypeEnum::Content)->get();
 
     expect($result)->toHaveCount(1);
 });
 
 it('can scope widget type', function (): void {
-    Models\Type::factory()->create(['type' => TypeEnum::Widget]);
-    Models\Type::factory()->create(['type' => TypeEnum::Content]);
+    Type::factory()->create(['type' => LayoutTypeEnum::Widget]);
+    Type::factory()->create(['type' => LayoutTypeEnum::Content]);
 
-    $result = Models\Type::widgetType()->get();
+    $result = Type::query()->where('type', LayoutTypeEnum::Widget)->get();
 
     expect($result)->toHaveCount(1);
 });

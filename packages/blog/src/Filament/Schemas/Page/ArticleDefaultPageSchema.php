@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\Blog\Filament\Schemas\Page;
 
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Actions\FixCuratorMetaDataAction;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\ImageMediaPicker;
 use Capell\Admin\Filament\Components\Forms\Page\LayoutSelect;
@@ -14,6 +14,7 @@ use Capell\Admin\Filament\Components\Forms\Page\PageSettingsSchema;
 use Capell\Admin\Filament\Components\Forms\Page\PageTagsInput;
 use Capell\Admin\Filament\Components\Forms\PublishToggle;
 use Capell\Admin\Filament\Schemas\Page\DefaultPageSchema;
+use Capell\Core\Enums\LayoutGroupEnum;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,7 +61,7 @@ class ArticleDefaultPageSchema extends DefaultPageSchema
                                         ->statePath('meta')
                                         ->mutateDehydratedStateUsing(function (array $state): array {
                                             if (isset($state['image_id'])) {
-                                                $state['image_id'] = CapellAdmin::fixMediaFormData($state['image_id']);
+                                                $state['image_id'] = FixCuratorMetaDataAction::run($state['image_id']);
                                             }
 
                                             return $state;
@@ -101,7 +102,7 @@ class ArticleDefaultPageSchema extends DefaultPageSchema
                                 ->statePath('meta')
                                 ->mutateDehydratedStateUsing(function (array $state): array {
                                     if (isset($state['image_id'])) {
-                                        $state['image_id'] = CapellAdmin::fixMediaFormData($state['image_id']);
+                                        $state['image_id'] = FixCuratorMetaDataAction::run($state['image_id']);
                                     }
 
                                     return $state;
@@ -139,7 +140,7 @@ class ArticleDefaultPageSchema extends DefaultPageSchema
                         fn (Builder $query, Forms\Get $get): Builder => $query->when(
                             ! $get('is_system'),
                             fn (Builder $query): Builder => $query->where(
-                                fn (Builder $query) => $query->where('group', '!=', 'system')
+                                fn (Builder $query) => $query->where('group', '!=', LayoutGroupEnum::System)
                                     ->orWhereNull('group')
                             )
                         )

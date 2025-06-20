@@ -7,11 +7,14 @@ namespace Capell\Layout\Filament\Resources\ContentResource\RelationManagers;
 use Capell\Admin\Filament\Components\Tables\Columns\CuratorColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
-use Capell\Admin\Filament\Resources\ContentResource;
 use Capell\Admin\Filament\Resources\MediaResource;
+use Capell\Core\Actions\EditPageUrlAction;
 use Capell\Core\Enums\TypeEnum;
-use Capell\Core\Models;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Concerns\HasAssetsRelationManager;
+use Capell\Layout\Filament\Resources\ContentResource;
+use Capell\Layout\Models\Content;
+use Capell\Layout\Models\ContentAsset;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -42,7 +45,7 @@ class ContentAssetsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withResourceables(withDrafts: true))
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withAssets())
             ->description(__('capell-admin::generic.content_assets_description'))
             ->columns([
                 Tables\Columns\TextColumn::make('asset_id')
@@ -58,11 +61,11 @@ class ContentAssetsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('asset_type')
                     ->badge(),
             ])
-            ->recordUrl(fn (Models\ContentAsset $record): ?string => match ($record->asset_type) {
+            ->recordUrl(fn (ContentAsset $record): ?string => match ($record->asset_type) {
                 // TODO: Implement for other asset types
-                TypeEnum::Content->value => ContentResource::getUrl('edit', ['record' => $record->asset]),
+                LayoutTypeEnum::Content->value => ContentResource::getUrl('edit', ['record' => $record->asset]),
                 TypeEnum::Media->value => MediaResource::getUrl('edit', ['record' => $record->asset]),
-                TypeEnum::Page->value => $record->asset->edit_url,
+                TypeEnum::Page->value => EditPageUrlAction::run($record->asset),
                 default => null,
             })
             ->filters([
@@ -71,11 +74,11 @@ class ContentAssetsRelationManager extends RelationManager
                         Forms\Components\Select::make('type')
                             ->label(__('capell-admin::form.type'))
                             ->reactive()
-                            ->options(fn (): array => Models\ContentAsset::getTypes()),
+                            ->options(fn (): array => ContentAsset::getTypes()),
                     ]),
                 Tables\Filters\SelectFilter::make('type_id')
                     ->label(__('capell-admin::form.type'))
-                    ->options(fn (): array => Models\Content::getTypes()),
+                    ->options(fn (): array => Content::getTypes()),
             ])
             ->headerActions([
                 self::createResourcesAction(),

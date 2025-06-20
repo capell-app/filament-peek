@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Packages\Tests\packages;
+namespace Capell\Tests\packages;
 
 use Awcodes\Curator\CuratorServiceProvider;
 use Awcodes\FilamentBadgeableColumn\BadgeableColumnServiceProvider;
@@ -19,7 +19,6 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\PageTranslation;
 use Capell\Tests\Models\User;
 use Capell\Tests\Policies\RolePolicy;
-use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\SimpleAlert\SimpleAlertServiceProvider;
 use Dotswan\FilamentCodeEditor\FilamentCodeEditorServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
@@ -46,6 +45,7 @@ use Intervention\Image\ImageServiceProvider;
 use Kalnoy\Nestedset\NestedSetServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
+use Orchestra\Testbench\TestCase;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use RyanChandler\FilamentNavigation\FilamentNavigationServiceProvider;
 use Silber\PageCache;
@@ -57,12 +57,14 @@ use Spatie\Tags\TagsServiceProvider;
 use StijnVanouplines\BladeCountryFlags\BladeCountryFlagsServiceProvider;
 use Tapp\FilamentAuthenticationLog\FilamentAuthenticationLogServiceProvider;
 
-abstract class AbstractTestCase extends \Orchestra\Testbench\TestCase
+abstract class AbstractTestCase extends TestCase
 {
     use InteractsWithSession;
     use LazilyRefreshDatabase;
     use WithFaker;
     use WithWorkbench;
+
+    protected array $packageMigrations = [];
 
     protected function setUp(): void
     {
@@ -74,7 +76,14 @@ abstract class AbstractTestCase extends \Orchestra\Testbench\TestCase
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        $this->loadPackageMigrations(CapellCoreManager::getMigrations());
+        $this->loadPackageMigrations(
+            __DIR__.'/../../vendor/capell-app/core/database/migrations',
+            CapellCoreManager::getMigrations()
+        );
+
+        if ($this->packageMigrations) {
+            $this->loadMigrationsFrom($this->packageMigrations);
+        }
 
         Http::preventStrayRequests();
 
@@ -121,7 +130,6 @@ abstract class AbstractTestCase extends \Orchestra\Testbench\TestCase
             CuratorServiceProvider::class,
             SpatieLaravelTranslatablePluginServiceProvider::class,
             FilamentAuthenticationLogServiceProvider::class,
-            FilamentClearCacheServiceProvider::class,
             FilamentCodeEditorServiceProvider::class,
             FilamentNavigationServiceProvider::class,
             FilamentTableRepeaterServiceProvider::class,
@@ -204,13 +212,18 @@ abstract class AbstractTestCase extends \Orchestra\Testbench\TestCase
         $page->refresh();
     }
 
-    protected function loadPackageMigrations(array $migrations): void
+    protected function getPackageMigrations(string $path, array $migrations): array
     {
-        $path = realpath(__DIR__.'/../../packages/core/database/migrations');
+        $path = realpath($path);
 
         array_walk($migrations, fn (&$migration): string => $migration = sprintf('%s/%s.php', $path, $migration));
 
-        $this->loadMigrationsFrom($migrations);
+        return $migrations;
+    }
+
+    protected function loadPackageMigrations(string $path, array $migrations): void
+    {
+        $this->loadMigrationsFrom($this->getPackageMigrations($path, $migrations));
     }
 
     private function getPackageFile(array $package): string

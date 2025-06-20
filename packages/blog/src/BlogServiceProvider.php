@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Capell\Blog;
 
+use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaEnum;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Blog\Actions\CreateBlogPagesAction;
-use Capell\Blog\Actions\InstallBlogAction;
+use Capell\Blog\Actions\InstallBlogPackageAction;
 use Capell\Blog\Commands\BlogDemoCommand;
+use Capell\Blog\Enums\BlogModelEnum;
+use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Filament\Resources;
 use Capell\Blog\Filament\Schemas;
 use Capell\Blog\Services\BlogCreator;
 use Capell\Blog\Services\Loader\BlogLoader;
 use Capell\Blog\Services\Sitemap\ArchivePageSitemap;
-use Capell\Core\Enums\ComponentEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
 use Composer\InstalledVersions;
@@ -29,6 +30,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 {
     public static string $name = 'capell-blog';
 
+    public static string $description = 'Capell Blog Package';
+
     public function bootingPackage(): void
     {
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
@@ -37,7 +40,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             Livewire::component($name, $class);
         }
 
-        CapellCore::registerModel('article', Models\Article::class);
+        CapellCore::registerModel(BlogModelEnum::Article, Models\Article::class);
 
         Relation::morphMap([
             'article' => Models\Article::class,
@@ -51,13 +54,18 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ]);
         }
 
-        CapellCore::serving(function (): void {
-            CapellCore::registerPackage(self::$name, self::class);
-        });
-
         CapellAdmin::serving(function (): void {
-            $this->registerDefaultPages();
+            CapellCore::addDefaultPage('blog', 'Blog', function ($site, $languages): void {
+                BlogCreator::createBlogPage($site, languages: $languages);
+            });
 
+            CapellCore::addDefaultPage('archives', 'Blog Archives', function ($site, $languages): void {
+                $blogPage = BlogLoader::getBlogPage($site);
+
+                $archivesPage = BlogCreator::createArchivesPage($site, $blogPage, languages: $languages);
+
+                BlogCreator::createArchivePage($site, $archivesPage, languages: $languages);
+            });
         });
     }
 
@@ -70,41 +78,50 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ->hasTranslations()
             ->hasCommands([
                 BlogDemoCommand::class,
-                CreateBlogPagesAction::class,
             ])
             ->hasInstallCommand(function (InstallCommand $command): void {
-                $command->startWith(function (): void {
-                    InstallBlogAction::run();
-                })
-                    ->endWith(function (InstallCommand $installCommand): void {
-                        $installCommand->askToStarRepoOnGitHub('capell-app/site');
-                    });
+                $command->startWith(function (InstallCommand $command): void {
+                    $command->info('Installing Capell Blog Package...');
+                    InstallBlogPackageAction::run();
+                });
             });
-
-        CapellCore::registerPackage(self::$name, self::class);
-
-        CapellAdmin::setFilamentResource('article', Resources\ArticleResource::class);
-
-        CapellAdmin::addResourcePage('article', Resources\ArticleResource::class);
-
-        CapellAdmin::addComponent(ComponentEnum::Widget, 'capell-blog::widget.page.article');
-
-        CapellAdmin::addTypeSchema(SchemaEnum::Widget, Schemas\Widget\ArticleWidgetSchema::class);
-        CapellAdmin::addTypeSchema(SchemaEnum::Page, Schemas\Page\ArticleDefaultPageSchema::class);
     }
 
-    private function registerDefaultPages(): void
+    public function registeringPackage(): void
     {
-        CapellCore::addDefaultPage('blog', 'Blog', function ($site, $languages): void {
-            BlogCreator::createBlogPage($site, languages: $languages);
-        });
+        parent::registeringPackage();
 
-        CapellCore::addDefaultPage('archives', 'Blog Archives', function ($site, $languages): void {
-            $blogPage = BlogLoader::getBlogPage($site);
+        CapellCore::registerPackage(
+            self::$name,
+            self::class,
+            sort: 9,
+            permissions: $this->getPackagePermissions(),
+            demoCommand: true,
+            demoParams: ['sites'],
+        );
 
-            $archivesPage = BlogCreator::createArchivesPage($site, $blogPage, languages: $languages);
+        CapellAdmin::registerResource(
+            ResourceEnum::Page,
+            class: Resources\ArticleResource::class,
+            name: BlogResourceEnum::Article->name
+        );
 
-            BlogCreator::createArchivePage($site, $archivesPage, languages: $languages);
-        });
+        CapellCore::registerComponent('Widget', 'Article', 'capell-blog::widget.page.article');
+
+        CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\ArticleDefaultPageSchema::class);
+    }
+
+    private function getPackagePermissions(): array
+    {
+        return [
+            'create_article',
+            'replicate_article',
+            'reorder_article',
+            'restore_any_article',
+            'restore_article',
+            'update_article',
+            'view_any_article',
+            'view_article',
+        ];
     }
 }

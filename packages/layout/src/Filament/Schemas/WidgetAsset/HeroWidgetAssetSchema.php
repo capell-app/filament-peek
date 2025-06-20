@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Capell\Gizmo\Filament\Schemas\WidgetAsset;
+namespace Capell\Layout\Filament\Schemas\WidgetAsset;
 
 use Capell\Admin\Filament\Components\Forms\ActionsRepeater;
-use Capell\Admin\Filament\Components\Forms\BackgroundSettingsFieldset;
 use Capell\Admin\Filament\Components\Forms\ColorSchemeComponent;
-use Capell\Admin\Filament\Components\Forms\Content\ContentTranslationsRepeater;
-use Capell\Admin\Filament\Components\Forms\Content\RelatedRepeater;
 use Capell\Admin\Filament\Components\Forms\MediaRepeater;
-use Capell\Admin\Filament\Schemas\WidgetAsset\DefaultWidgetAssetSchema;
+use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
+use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
+use Capell\Layout\Filament\Components\Forms\Content\RelatedRepeater;
 use Filament\Forms;
 use Override;
 
@@ -37,7 +36,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
         ];
     }
 
-    private static function getActionsTab(): Forms\Components\Tabs\Tab
+    protected static function getActionsTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('actions')
             ->label(__('capell-admin::generic.links'))
@@ -48,7 +47,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
             ]);
     }
 
-    private static function getMediaTab(): Forms\Components\Tabs\Tab
+    protected static function getMediaTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('media')
             ->label(__('capell-admin::generic.media'))
@@ -60,7 +59,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
             ]);
     }
 
-    private static function getRelatedTab(): Forms\Components\Tabs\Tab
+    protected static function getRelatedTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('related')
             ->label(__('capell-admin::generic.related'))
@@ -71,7 +70,7 @@ class HeroWidgetAssetSchema extends DefaultWidgetAssetSchema
             ]);
     }
 
-    private static function getSettingsTab(): Forms\Components\Tabs\Tab
+    protected static function getSettingsTab(): Forms\Components\Tabs\Tab
     {
         return Forms\Components\Tabs\Tab::make('settings')
             ->label(__('capell-admin::generic.settings'))

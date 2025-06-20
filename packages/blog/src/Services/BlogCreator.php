@@ -5,18 +5,25 @@ declare(strict_types=1);
 namespace Capell\Blog\Services;
 
 use Capell\Admin\Actions\AddPageToNavigationAction;
-use Capell\Admin\Enums\WidgetTypeEnum;
 use Capell\Admin\Filament\Schemas\Page\ResultsPageSchema;
+use Capell\Admin\Services\Creator\LayoutCreator;
 use Capell\Admin\Services\Creator\PageTypeCreator;
+use Capell\Blog\Enums\BlogResourceEnum;
+use Capell\Blog\Enums\BlogTypeGroupEnum;
 use Capell\Blog\Filament\Schemas\Page\ArticleDefaultPageSchema;
 use Capell\Blog\Filament\Schemas\Widget\ArticleWidgetSchema;
+use Capell\Core\Enums\LayoutGroupEnum;
 use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Core\Models\Language;
+use Capell\Core\Models\Layout;
 use Capell\Core\Models\Navigation;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
-use Capell\Layout\Models\Layout;
+use Capell\Layout\Enums\LayoutTypeEnum;
+use Capell\Layout\Enums\WidgetComponentEnum;
+use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Models\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -105,7 +112,7 @@ class BlogCreator
             'type' => TypeEnum::Page,
         ], [
             'name' => __('capell-blog::generic.blog_archive_page'),
-            'group' => 'system',
+            'group' => TypeGroupEnum::System->value,
             'admin' => [
                 'schema' => ResultsPageSchema::getKey(),
                 'icon' => 'heroicon-o-archive-box',
@@ -128,7 +135,7 @@ class BlogCreator
     {
         return Layout::firstOrCreate(['key' => 'archives'], [
             'name' => __('capell-blog::generic.archives_page'),
-            'group' => 'system',
+            'group' => LayoutGroupEnum::System->value,
             'containers' => [
                 'main' => [
                     'meta' => [
@@ -166,7 +173,7 @@ class BlogCreator
             'key' => 'archives',
         ], [
             'name' => __('capell-blog::generic.archive'),
-            'type_id' => Type::firstWhere(['key' => WidgetTypeEnum::System, 'type' => TypeEnum::Widget])?->id,
+            'type_id' => Type::firstWhere(['key' => WidgetTypeEnum::System, 'type' => LayoutTypeEnum::Widget])?->id,
             'meta' => [
                 'component' => 'capell-blog::widget.page.archives',
                 'page_group' => 'article',
@@ -253,7 +260,7 @@ class BlogCreator
         return Layout::firstOrCreate(['key' => 'article'], [
             'key' => 'article',
             'name' => __('capell-blog::generic.article'),
-            'group' => 'default',
+            'group' => LayoutGroupEnum::Default->value,
             'containers' => [
                 'main' => [
                     'meta' => [
@@ -289,13 +296,13 @@ class BlogCreator
             'type' => TypeEnum::Page,
         ], [
             'name' => __('capell-blog::generic.article'),
-            'group' => 'article',
+            'group' => BlogTypeGroupEnum::Article->value,
             'admin' => [
                 'accessible' => false,
                 'content_editor' => 'ContentEditor',
                 'icon' => 'heroicon-o-newspaper',
                 'schema' => ArticleDefaultPageSchema::getKey(),
-                'resource' => 'article',
+                'resource' => BlogResourceEnum::Article->name,
                 'with_tags' => true,
                 'exclude' => true,
             ],
@@ -325,10 +332,10 @@ class BlogCreator
     {
         return Type::firstOrCreate([
             'key' => 'article',
-            'type' => TypeEnum::Widget,
+            'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-blog::generic.article'),
-            'group' => 'system',
+            'group' => TypeGroupEnum::System->value,
             'admin' => [
                 'schema' => ArticleWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-newspaper',
@@ -399,7 +406,7 @@ class BlogCreator
             'type' => TypeEnum::Page,
         ], [
             'name' => __('capell-blog::generic.blog'),
-            'group' => 'system',
+            'group' => TypeGroupEnum::System->value,
             'admin' => [
                 'schema' => ResultsPageSchema::getKey(),
                 'icon' => 'heroicon-o-newspaper',
@@ -428,7 +435,7 @@ class BlogCreator
             'key' => 'latest-articles',
         ], [
             'name' => __('capell-blog::generic.blog'),
-            'type_id' => Type::firstWhere(['key' => WidgetTypeEnum::PageResults, 'type' => TypeEnum::Widget])?->id,
+            'type_id' => Type::firstWhere(['key' => WidgetTypeEnum::PageResults, 'type' => LayoutTypeEnum::Widget])?->id,
             'meta' => [
                 'component' => WidgetComponentEnum::LivewirePages,
                 'limit' => 5,
