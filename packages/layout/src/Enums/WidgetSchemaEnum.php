@@ -14,5 +14,6 @@ enum WidgetSchemaEnum: string
     case PageContent = Schemas\Widget\PageContentWidgetSchema::class;
     case Assets = Schemas\Widget\AssetsWidgetSchema::class;
     case Results = Schemas\Widget\ResultsWidgetSchema::class;
+    case Related = Schemas\Widget\RelatedWidgetSchema::class;
     case System = Schemas\Widget\SystemWidgetSchema::class;
 }

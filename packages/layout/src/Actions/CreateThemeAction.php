@@ -42,10 +42,7 @@ class CreateThemeAction
                         'light-gray' => 'rgb(242, 242, 242)',
                         'gray' => 'rgb(162, 156, 149)',
                     ],
-                    'link_color' => 'rgb(174, 230, 242)',
-                ],
-                'admin' => [
-
+                    'link_color' => 'rgb(91, 204, 228)',
                 ],
             ]
         );

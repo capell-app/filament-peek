@@ -11,6 +11,7 @@ use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
+use Capell\Layout\Enums\WidgetSchemaEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Models\Widget;
 use Illuminate\Support\Collection;
@@ -66,7 +67,7 @@ class WidgetCreator
             'name' => __('capell-admin::generic.breadcrumbs'),
             'type_id' => $systemWidgetType->id,
             'meta' => [
-                'component' => WidgetComponentEnum::PageBreadcrumbs,
+                'component' => WidgetComponentEnum::Breadcrumbs,
             ],
             'admin' => [
                 'notes' => 'Hierarchy navigation trail of parent pages',
@@ -283,6 +284,8 @@ class WidgetCreator
                 'component' => WidgetComponentEnum::PageRelated,
                 'limit' => 6,
                 'pagination' => false,
+                'exclude_types' => ['home'],
+                'exclude_parent' => true,
                 'with_summary' => true,
                 'with_link_text' => true,
                 'with_image' => true,
@@ -291,6 +294,7 @@ class WidgetCreator
             'admin' => [
                 'icon' => 'heroicon-c-link',
                 'notes' => 'Displays a list of related pages',
+                'schema' => WidgetSchemaEnum::Related->value,
             ],
         ]);
 

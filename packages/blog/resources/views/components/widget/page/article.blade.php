@@ -33,7 +33,6 @@ declare(strict_types=1);
             :$containerKey
             :image="$pageRecord->image"
             :heading-size="$headingSize"
-            size="lg"
             :content="$pageRecord->translation->content"
             :contents="$pageRecord->translation->content ? null : $pageRecord->translation->contents"
             :text-align="$widget->meta['align'] ?? $widget->type->meta['align'] ?? null"

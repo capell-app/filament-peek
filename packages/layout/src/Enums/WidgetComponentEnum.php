@@ -12,7 +12,7 @@ enum WidgetComponentEnum: string
 
     case Navigation = 'capell::widget.navigation';
 
-    case PageBreadcrumbs = 'capell::widget.page.breadcrumbs';
+    case Breadcrumbs = 'capell::widget.breadcrumbs';
     case PageChildren = 'capell::widget.pages.children';
     case PageContent = 'capell::widget.page.content';
     case PageLatest = 'capell::widget.pages.latest';

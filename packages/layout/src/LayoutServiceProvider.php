@@ -10,11 +10,13 @@ use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Data\AssetData;
+use Capell\Core\Data\TypeData;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
 use Capell\Layout\Actions\InstallPackageAction;
 use Capell\Layout\Commands\DemoCommand;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\LayoutResource;
 use Capell\Layout\Filament\Schemas;
 use Capell\Layout\Models\Content;
@@ -135,6 +137,16 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ResourceEnum::Layout,
             class: LayoutResource::class,
         );
+
+        foreach (LayoutTypeEnum::cases() as $layoutType) {
+            CapellCore::registerType(
+                new TypeData(
+                    name: $layoutType->value,
+                    resourceClass: $layoutType->getResource(),
+                    table: $layoutType->getTable()
+                )
+            );
+        }
 
         CapellCore::registerAsset(
             new AssetData(
@@ -303,7 +315,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
         Models\Type::resolveRelationUsing(
             'widgetType',
-            fn (Models\Type $model): Builder => $model->where('type', Enums\LayoutTypeEnum::Widget)
+            fn (Models\Type $model): Builder => $model->where('type', LayoutTypeEnum::Widget)
         );
 
         return $this;

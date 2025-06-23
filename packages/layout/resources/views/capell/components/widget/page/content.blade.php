@@ -49,7 +49,6 @@ declare(strict_types=1);
             :text-align="$widget->meta['align'] ?? $widget->type->meta['align'] ?? null"
             :title="in_array('title', $pageContents, true) && ! (empty($widgetData['meta']['hide_title']) && $hasHero) ? $pageRecord->translation->title : null"
             :title-component="$widgetData['title_component'] ?? 'capell::heading'"
-            size="lg"
         />
 
         @if (! empty($widget->translation?->actions))

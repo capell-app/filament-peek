@@ -10,6 +10,7 @@ use Capell\Admin\Services\Creator\LayoutCreator;
 use Capell\Admin\Services\Creator\PageTypeCreator;
 use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
+use Capell\Blog\Enums\WidgetComponentEnum as BlogWidgetComponentEnum;
 use Capell\Blog\Filament\Schemas\Page\ArticleDefaultPageSchema;
 use Capell\Blog\Filament\Schemas\Widget\ArticleWidgetSchema;
 use Capell\Core\Enums\LayoutGroupEnum;
@@ -410,13 +411,14 @@ class BlogCreator
             'admin' => [
                 'schema' => ResultsPageSchema::getKey(),
                 'icon' => 'heroicon-o-newspaper',
+                'exclude_parent',
             ],
             'meta' => [
-                'component' => 'capell-blog::livewire.page.blog',
+                'component' => BlogWidgetComponentEnum::BlogPage,
                 'page_group' => 'article',
                 'limit' => 10,
                 'pagination' => true,
-                'exclude_parent_page' => true,
+                'exclude_parent' => true,
                 'with_image' => true,
                 'with_published' => true,
                 'with_summary' => true,

@@ -2051,6 +2051,9 @@
     .max-h-\[5rem\] {
         max-height: 5rem;
     }
+    .max-h-\[6rem\] {
+        max-height: 6rem;
+    }
     .max-h-\[32vh\] {
         max-height: 32vh;
     }
@@ -2330,13 +2333,13 @@
     .gap-6 {
         gap: calc(var(--spacing) * 6);
     }
-    :where(.space-y-1 > :not(:last-child)) {
+    :where(.space-y-0\.5 > :not(:last-child)) {
         --tw-space-y-reverse: 0;
         margin-block-start: calc(
-            calc(var(--spacing) * 1) * var(--tw-space-y-reverse)
+            calc(var(--spacing) * 0.5) * var(--tw-space-y-reverse)
         );
         margin-block-end: calc(
-            calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse))
+            calc(var(--spacing) * 0.5) * calc(1 - var(--tw-space-y-reverse))
         );
     }
     :where(.space-y-2 > :not(:last-child)) {
@@ -4932,9 +4935,6 @@
         .lg\:gap-x-4 {
             column-gap: calc(var(--spacing) * 4);
         }
-        .lg\:gap-x-5 {
-            column-gap: calc(var(--spacing) * 5);
-        }
         .lg\:gap-x-6 {
             column-gap: calc(var(--spacing) * 6);
         }
@@ -5528,6 +5528,16 @@
         .\@md\:col-span-8 {
             grid-column: span 8 / span 8;
         }
+    }
+    @container item (min-width:28rem) {
+        .\@md\/item\:line-clamp-5 {
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            display: -webkit-box;
+            overflow: hidden;
+        }
+    }
+    @container (min-width:28rem) {
         .\@md\:grid {
             display: grid;
         }

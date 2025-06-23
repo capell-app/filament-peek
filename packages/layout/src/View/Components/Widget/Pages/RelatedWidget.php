@@ -38,12 +38,25 @@ class RelatedWidget extends AbstractPagesWidget
              */
             modifyQuery: fn (Builder $query) => $query
                 ->where('pages.id', '!=', $pageRecord->id)
+                ->when(
+                    $this->widget->meta['exclude_parent'] ?? false && $pageRecord->parent_id,
+                    fn (BuilderContract $query) => $query->where('pages.id', '!=', $pageRecord->parent_id)
+                )
                 ->whereHas(
                     'type',
                     /**
                      * @param  Type  $query
                      */
-                    fn (BuilderContract $query) => $query->enabled()->visible()->accessible()
+                    fn (BuilderContract $query) => $query->enabled()
+                        ->visible()
+                        ->accessible()
+                        ->when(
+                            $this->widget->meta['exclude_types'] ?? false,
+                            fn (BuilderContract $query) => $query->whereNotIn(
+                                'types.key',
+                                $this->widget->meta['exclude_types'] ?? []
+                            )
+                        )
                 )
                 ->when(
                     $tags && $tags->isNotEmpty(),

@@ -34,9 +34,7 @@ class EditWidget extends EditRecord implements PageCacheNotifiable
     use HasRecordSwitcher{
         afterSave as recordSwitcherAfterSave;
     }
-    use HasTypeRelationManagers {
-        getRelationManagers as getRelationManagersTrait;
-    }
+    use HasTypeRelationManagers;
 
     /** @return class-string<WidgetResource> */
     public static function getResource(): string
@@ -46,7 +44,7 @@ class EditWidget extends EditRecord implements PageCacheNotifiable
 
     public function getRelationManagers(): array
     {
-        $relationManagers = $this->getRelationManagersTrait();
+        $relationManagers = $this->getTypeRelationManagers();
 
         if (! in_array(RelationManagers\WidgetAssetsRelationManager::class, $relationManagers, true)) {
             $relationManagers[] = RelationManagers\WidgetAssetsRelationManager::class;

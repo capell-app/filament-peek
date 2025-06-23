@@ -104,7 +104,11 @@ class WidgetResource extends Resource
             ...CreateWidgetDetailsSchema::make($form),
             TypeSchema::make()
                 ->schema(
-                    function (Forms\Get $get, TypeSchema $component) use ($form): array {
+                    function (Forms\Get $get, TypeSchema $component, ?Widget $record) use ($form): array {
+                        if ($record?->admin['schema']) {
+                            return app($record->admin['schema'])::make($form);
+                        }
+
                         $typeId = $get('type_id');
 
                         $type = $typeId ? CapellCore::getModel(ModelEnum::Type)::find($typeId, ['admin']) : null;

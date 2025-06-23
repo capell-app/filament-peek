@@ -13,15 +13,24 @@ use Capell\Admin\Filament\Components\Forms\Page\PagePublishSection;
 use Capell\Admin\Filament\Components\Forms\Page\PageSettingsSchema;
 use Capell\Admin\Filament\Components\Forms\Page\PageTagsInput;
 use Capell\Admin\Filament\Components\Forms\PublishToggle;
+use Capell\Admin\Filament\Resources\PageResource\RelationManagers\AuditsRelationManager;
 use Capell\Admin\Filament\Schemas\Page\DefaultPageSchema;
 use Capell\Core\Enums\LayoutGroupEnum;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Override;
 
 class ArticleDefaultPageSchema extends DefaultPageSchema
 {
+    public static function relationManagers(Model $record): array
+    {
+        return [
+            AuditsRelationManager::class,
+        ];
+    }
+
     protected static function getCreateFormSchema(Forms\Form $form): array
     {
         return [
