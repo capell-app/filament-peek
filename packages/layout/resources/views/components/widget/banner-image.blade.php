@@ -62,7 +62,6 @@ $theme = Frontend::getTheme();
         ])
     >
         <x-capell::media
-            :$containerKey
             :media="$widget->image"
             size="xxl"
             :rounded="false"

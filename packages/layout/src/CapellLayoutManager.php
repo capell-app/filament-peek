@@ -45,12 +45,13 @@ class CapellLayoutManager
         return static::$containerWidgets[$containerKey][$widgetKey][$occurrence] ?? null;
     }
 
-    /**
-     * Get all widgets for a container
-     */
-    public static function getContainerWidgets(string $containerKey): Collection
+    public static function getContainerWidgets(?string $containerKey = null): Collection
     {
-        return collect(static::$containerWidgets[$containerKey] ?? []);
+        $widgets = $containerKey
+            ? (static::$containerWidgets[$containerKey] ?? [])
+            : static::$containerWidgets;
+
+        return collect($widgets);
     }
 
     /**

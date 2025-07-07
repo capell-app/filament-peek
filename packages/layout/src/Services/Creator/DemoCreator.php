@@ -16,6 +16,7 @@ use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
+use Capell\Layout\Filament\Schemas\Content\TestimonialContentSchema;
 use Capell\Layout\Filament\Schemas\Widget\HeroWidgetSchema;
 use Capell\Layout\Filament\Schemas\WidgetAsset\HeroWidgetAssetSchema;
 use Capell\Layout\Models\Content;
@@ -72,7 +73,6 @@ class DemoCreator
         $siteId = Site::default()?->value('id');
         $widget = $this->widgetModel::firstOrCreate(['key' => 'example-content'], [
             'name' => 'Example Content',
-            'type_id' => $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)->default()->first()->id,
             'meta' => [
                 'size' => 'md',
                 'margin' => '',
@@ -120,7 +120,6 @@ class DemoCreator
 
         $widget = $this->widgetModel::firstOrCreate(['key' => 'example-split-content'], [
             'name' => 'Example Split Content',
-            'type_id' => $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)->default()->first()->id,
             'meta' => [
                 'align' => 'center',
                 'size' => 'md',
@@ -166,7 +165,6 @@ class DemoCreator
         $siteId = Site::default()?->value('id');
         $widget = $this->widgetModel::firstOrCreate(['key' => 'banner-full-width'], [
             'name' => 'Banner Full Width',
-            'type_id' => $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)->default()->first()->id,
             'meta' => [
                 'component' => 'capell-layout::widget.banner-image',
                 'margin' => ['lg'],
@@ -203,18 +201,6 @@ class DemoCreator
         }
 
         return $widget;
-    }
-
-    public function createImageWidget(): Widget
-    {
-        return $this->widgetModel::firstOrCreate(['key' => 'example-image'], [
-            'name' => 'Example Image',
-            'type_id' => $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Default, 'type' => LayoutTypeEnum::Widget])->id,
-            'meta' => [
-                'component' => 'capell-layout::widget.banner-image',
-                'background_image_id' => $this->getExampleMedia()?->id,
-            ],
-        ]);
     }
 
     public function createGalleryWidget(): Widget
@@ -579,7 +565,7 @@ class DemoCreator
         ]);
     }
 
-    public function createWidgetAssets(Widget $widget, Page $page): void
+    public function createWidgetAssets(Widget $widget, Page $page, string $container, int $occurrence = 1): void
     {
         if ($widget->assets()->exists()) {
             return;
@@ -587,19 +573,19 @@ class DemoCreator
 
         $features = [
             [
-                'title' => 'Hero welcome message',
+                'title' => 'Welcome to Our Platform',
                 'content' => '<p>Welcome to our website! We are glad to have you here.</p>',
             ],
             [
-                'title' => 'Hero call to action',
+                'title' => 'Get Started Today',
                 'content' => '<p>Take the first step towards your goals. Join us today!</p>',
             ],
             [
-                'title' => 'Hero introduction',
+                'title' => 'Discover Our Projects',
                 'content' => '<p>Check out our latest projects and initiatives.</p>',
             ],
             [
-                'title' => 'Hero video introduction',
+                'title' => 'Watch Our Story',
                 'content' => '<p>Watch our introduction video to learn more about us.</p>',
             ],
         ];
@@ -653,9 +639,9 @@ class DemoCreator
 
             $widget->assets()->create([
                 'page_id' => $page->id,
-                'container' => 'hero',
-                'occurrence' => 1,
-                'asset_type' => 'content',
+                'container' => $container,
+                'occurrence' => $occurrence,
+                'asset_type' => app($this->contentModel)->getMorphClass(),
                 'asset_id' => $content->uuid,
             ]);
         }
@@ -748,8 +734,7 @@ class DemoCreator
             }
 
             $widget->assets()->create([
-                'occurrence' => 1,
-                'asset_type' => 'content',
+                'asset_type' => app($this->contentModel)->getMorphClass(),
                 'asset_id' => $content->uuid,
             ]);
         });
@@ -757,13 +742,15 @@ class DemoCreator
         return $widget;
     }
 
-    public function createBannerShowcase(): Widget
+    public function createBannersWidget(): Widget
     {
-        $widget = $this->widgetModel::firstOrCreate(['key' => 'banner-showcase'], [
+        $widget = $this->widgetModel::firstOrCreate(['key' => 'banners'], [
             'name' => 'Banner Showcase',
             'type_id' => $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Contents, 'type' => LayoutTypeEnum::Widget])->id,
             'meta' => [
-                'view_file' => 'capell-layout::components.widget.assets.banner-showcase',
+                'align' => 'center',
+                'background_overlay' => true,
+                'view_file' => 'capell-layout::components.widget.assets.banners',
             ],
         ]);
 
@@ -781,8 +768,47 @@ class DemoCreator
             }
 
             $widget->assets()->create([
-                'occurrence' => 1,
-                'asset_type' => 'content',
+                'asset_type' => app($this->contentModel)->getMorphClass(),
+                'asset_id' => $content->uuid,
+            ]);
+        });
+
+        return $widget;
+    }
+
+    public function createTestimonialsWidget(Collection $languages): Widget
+    {
+        $widget = $this->widgetModel::firstOrCreate(['key' => 'testimonials'], [
+            'name' => 'Testimonials',
+            'type_id' => $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Contents, 'type' => LayoutTypeEnum::Widget])->id,
+            'meta' => [
+                'align' => 'center',
+                'background_overlay' => true,
+                'background_color' => 'dark-gray',
+                'background_image_id' => $this->getExampleMedia()?->id,
+                'view_file' => 'capell-layout::components.widget.assets.testimonials',
+            ],
+        ]);
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        $languages->each(function (Models\Language $language) use ($widget): void {
+            $widget->translations()->firstOrCreate(['language_id' => $language->id], [
+                'title' => 'What Our Clients Say',
+            ]);
+        });
+
+        $testimonials = $this->createTestimonials($languages);
+
+        $testimonials->each(function (Content $content) use ($widget): void {
+            if ($widget->assets()->where('asset_id', $content->uuid)->exists()) {
+                return;
+            }
+
+            $widget->assets()->create([
+                'asset_type' => app($this->contentModel)->getMorphClass(),
                 'asset_id' => $content->uuid,
             ]);
         });
@@ -982,5 +1008,74 @@ class DemoCreator
         }
 
         return $contentFeatures;
+    }
+
+    private function createTestimonials(Collection $languages): Collection
+    {
+        $testimonalContent = Content::create([
+            'name' => 'Testimonials',
+            'meta' => [
+                'icon' => 'heroicon-o-chat-bubble-left-right',
+                'image_id' => $this->getExampleMedia()?->id,
+            ],
+        ]);
+
+        $testimonials = [
+            [
+                'name' => 'John Doe',
+                'position' => 'CEO of Example Corp',
+                'content' => '<p>Capell has transformed our business with their innovative solutions and exceptional service.</p>',
+                'image_id' => $this->getExampleMedia()?->id,
+            ],
+            [
+                'name' => 'Jane Smith',
+                'position' => 'CTO of Tech Innovations',
+                'content' => '<p>The team at Capell is incredibly knowledgeable and always goes the extra mile for us.</p>',
+                'image_id' => $this->getExampleMedia()?->id,
+            ],
+            [
+                'name' => 'Alice Johnson',
+                'position' => 'Marketing Director at Creative Agency',
+                'content' => '<p>We have seen significant growth since partnering with Capell. Their expertise is unmatched.</p>',
+                'image_id' => $this->getExampleMedia()?->id,
+            ],
+        ];
+
+        $testimonialsCollection = new Collection();
+
+        $testimonialType = Models\Type::updateOrCreate([
+            'key' => 'testimonial',
+            'type' => LayoutTypeEnum::Content,
+        ], [
+            'name' => 'Testimonial',
+            'admin' => [
+                'icon' => 'heroicon-o-chat-bubble-left-right',
+                'schema' => TestimonialContentSchema::getKey(),
+            ],
+        ]);
+
+        foreach ($testimonials as $testimonial) {
+            $content = Content::firstOrCreate([
+                'name' => $testimonial['name'],
+                'parent_uuid' => $testimonalContent->uuid,
+                'type_id' => $testimonialType->id,
+            ], [
+                'meta' => [
+                    'image_id' => $testimonial['image_id'],
+                    'position' => $testimonial['position'],
+                ],
+            ]);
+
+            $languages->each(function (Models\Language $language) use ($content, $testimonial): void {
+                $content->translations()->firstOrCreate(['language_id' => $language->id], [
+                    'title' => $testimonial['name'],
+                    'content' => sprintf('<p>%s</p>', $testimonial['content']),
+                ]);
+            });
+
+            $testimonialsCollection->push($content);
+        }
+
+        return $testimonialsCollection;
     }
 }

@@ -15,6 +15,7 @@ declare(strict_types=1);
     'backgroundColor' => $widget->meta['background_color'] ?? '',
     'backgroundImage' => ! empty($widget->meta['background_image_id']) ? Capell\Core\Models\Media::find($widget->meta['background_image_id']) : null,
     'backgroundRepeat' => $widget->meta['background_repeat'] ?? 'no-repeat',
+    'backgroundOverlay' => $widget->meta['background_overlay'] ?? false,
     'backgroundSize' => $widget->meta['background_size'] ?? '',
     'class' => '',
     'container',
@@ -26,7 +27,7 @@ declare(strict_types=1);
     'margin' => ! empty($widget->meta['margin']) ? (array) $widget->meta['margin'] : [],
     'padding' => ! empty($widget->meta['padding']) ? (array) $widget->meta['padding'] : [],
     'pageContainer' => $widget->meta['container'] ?? $theme->meta['container'] ?? null,
-    'widget' => '',
+    'widget',
 ])
 @aware([
     'containerColspan' => null,
@@ -75,12 +76,19 @@ declare(strict_types=1);
             'bg-no-repeat' => $backgroundRepeat === 'no-repeat' && $backgroundImage,
             'bg-fixed' => $backgroundAttachment === 'fixed' && $backgroundImage,
             'bg-scroll' => $backgroundAttachment === 'scroll' && $backgroundImage,
+            'relative overflow-hidden' => $backgroundOverlay,
         ])
     }}
     @if ($backgroundColor && ! in_array($backgroundColor, $defaultColors, true) || $backgroundImage)
         style="{{ $backgroundColor && ! in_array($backgroundColor, $defaultColors, true) ? 'background-color:'.$backgroundColor.';' : '' }}{{ $backgroundImage ? 'background-image:url('.$backgroundImage->url.');' : '' }}"
     @endif
 >
+    @if ($backgroundOverlay)
+        <div
+            class="absolute inset-0 z-0 bg-black/40 shadow-[inset_0_0_8rem_4rem_rgba(0,0,0,0.7)]"
+        ></div>
+    @endif
+
     @if ($containerWidth !== 'full')
         <div
             @class([

@@ -5,6 +5,7 @@ declare(strict_types=1);
 ?>
 
 @php
+    use Capell\Core\Facades\CapellCore;
     use Capell\Core\Models\Media;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Services\Loader\LayoutLoader;
@@ -36,6 +37,8 @@ declare(strict_types=1);
     } else {
         $backgroundImage = null;
     }
+
+    $currentColspan = $colspan;
 @endphp
 
 @if ($colspan === 12 && $previousColspan && $previousColspan !== 12)
@@ -119,6 +122,12 @@ declare(strict_types=1);
             );
 
             if (! $widget) {
+                CapellCore::log(
+                    'Unable to find container widget',
+                    'error',
+                    ['containerKey' => $containerKey, 'widgetData' => $widgetData]
+                );
+
                 continue;
             }
 
@@ -127,6 +136,8 @@ declare(strict_types=1);
             $component = $widget->getComponent();
 
             if (! $component) {
+                CapellCore::log("Unable to find component for widget {$widget->key} ({$widget->id})", 'error');
+
                 continue;
             }
 

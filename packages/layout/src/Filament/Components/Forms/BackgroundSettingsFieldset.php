@@ -71,6 +71,10 @@ class BackgroundSettingsFieldset
                                         'fixed' => __('capell-admin::form.background_fixed'),
                                         'scroll' => __('capell-admin::form.background_scroll'),
                                     ]),
+
+                                Forms\Components\Checkbox::make('background_overlay')
+                                    ->label(__('capell-admin::form.background_overlay'))
+                                    ->helperText(__('capell-admin::generic.background_overlay_helper_text')),
                             ]),
                     ]),
                 ImageMediaPicker::make('background_image_id')

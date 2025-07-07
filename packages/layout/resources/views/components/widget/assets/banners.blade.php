@@ -16,6 +16,7 @@ declare(strict_types=1);
 @props([
     'containerKey',
     'containerIndex',
+    'backgroundOverlay' => $widget->meta['background_overlay'] ?? false,
     'loop',
     'total' => $widget->assets->isNotEmpty() ? $widget->assets->count() : 1,
     'widget',
@@ -23,7 +24,7 @@ declare(strict_types=1);
 ])
 
 <section
-    class="widget-banner-showcase relative flex w-full items-center justify-center overflow-hidden"
+    class="widget-banner relative flex w-full items-center justify-center overflow-hidden"
 >
     <div class="embla relative grid h-full w-full">
         <div class="embla__viewport h-full w-full overflow-hidden">
@@ -64,10 +65,11 @@ declare(strict_types=1);
                                     ])
                                 "
                             />
-                            <!-- Overlay for better text contrast -->
-                            <div
-                                class="absolute inset-0 z-10 bg-black/50"
-                            ></div>
+                            @if ($backgroundOverlay)
+                                <div
+                                    class="absolute inset-0 z-10 bg-black/40 shadow-[inset_0_0_8rem_4rem_rgba(0,0,0,0.7)]"
+                                ></div>
+                            @endif
                         @endif
 
                         @if ($title || $content)
@@ -76,7 +78,7 @@ declare(strict_types=1);
                             >
                                 @if ($title)
                                     <h4
-                                        class="text-2xl font-bold text-white drop-shadow-lg md:text-4xl"
+                                        class="font-heading text-2xl font-bold text-white md:text-4xl"
                                     >
                                         @if ($linkedPageUrl)
                                             <a
@@ -93,7 +95,7 @@ declare(strict_types=1);
 
                                 @if ($content)
                                     <div
-                                        class="max-w-2xl text-lg text-white drop-shadow-md md:text-2xl"
+                                        class="max-w-2xl text-lg text-white md:text-2xl"
                                     >
                                         {!! $content !!}
                                     </div>
@@ -102,7 +104,7 @@ declare(strict_types=1);
                                 @if ($widgetAsset->asset->linkedPage?->translation)
                                     <x-capell::button
                                         :url="$linkedPageUrl"
-                                        color="default"
+                                        color="primary"
                                         icon="heroicon-o-chevron-right"
                                     >
                                         {{ $widgetAsset->asset->linkedPage->translation->link_text }}

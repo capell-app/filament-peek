@@ -88,7 +88,7 @@ class LayoutLoader
                         Content::class => [
                             'image',
                             'media',
-                            'page' => fn (BuilderContract $query) => $query->with([
+                            'linkedPage' => fn (BuilderContract $query) => $query->with([
                                 'translation' => fn (BuilderContract $query) => $query->with('language')->where('language_id', $language->id),
                                 'pageUrl' => fn (BuilderContract $query) => $query->with('siteDomain')->where('language_id', $language->id),
                             ]),

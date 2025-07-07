@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Layout\Listeners;
 
 use Capell\Core\Contracts\EventSubscriber;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
@@ -13,8 +14,6 @@ use Capell\Frontend\Enums\ListenerEnum;
 use Capell\Layout\CapellLayoutManager;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Services\Creator\LayoutLoader;
-use Exception;
-use Illuminate\Support\Facades\Log;
 
 class LayoutLoaded implements EventSubscriber
 {
@@ -60,26 +59,28 @@ class LayoutLoaded implements EventSubscriber
                 $widgetKey = $widgetData['widget_key'];
                 $occurrence = $widgetData['occurrence'] ?? 1;
 
-                try {
-                    $widget = LayoutLoader::getLayoutWidget(
-                        $layout,
-                        $widgetKey,
-                        $language,
-                        $page,
-                        $containerKey,
-                        $occurrence,
-                    );
+                $widget = LayoutLoader::getLayoutWidget(
+                    $layout,
+                    $widgetKey,
+                    $language,
+                    $page,
+                    $containerKey,
+                    $occurrence,
+                );
 
-                    if ($widget instanceof Widget) {
-                        CapellLayoutManager::storeContainerWidget($containerKey, $widgetKey, $widget, $occurrence);
-                    }
-                } catch (Exception $e) {
-                    Log::error('Failed to load widget: '.$e->getMessage(), [
-                        'containerKey' => $containerKey,
-                        'widgetKey' => $widgetKey,
-                        'occurrence' => $occurrence,
-                    ]);
+                if (! $widget instanceof Widget) {
+                    CapellCore::log(
+                        'Widget not found for layout',
+                        type: 'error',
+                        context: [
+                            'containerKey' => $containerKey,
+                            'widgetKey' => $widgetKey,
+                            'occurrence' => $occurrence,
+                        ]
+                    );
                 }
+
+                CapellLayoutManager::storeContainerWidget($containerKey, $widgetKey, $widget, $occurrence);
             }
         }
     }

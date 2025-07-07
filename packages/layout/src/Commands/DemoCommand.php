@@ -143,7 +143,7 @@ class DemoCommand extends Command
 
         $heroWidget = $this->demoCreator->createHeroWidget();
 
-        $this->demoCreator->createWidgetAssets($heroWidget, $page);
+        $this->demoCreator->createWidgetAssets($heroWidget, $page, container: 'hero');
 
         $containers = ['hero' => [
             'meta' => [
@@ -199,8 +199,9 @@ class DemoCommand extends Command
                 ['widget_key' => $this->demoCreator->createContentWidget($languages)->key],
                 ['widget_key' => $this->demoCreator->createStatisticsWidget()->key],
                 ['widget_key' => $this->demoCreator->createBusinessFeaturesWidget($page->site)->key],
-                ['widget_key' => $this->demoCreator->createBannerShowcase()->key],
+                ['widget_key' => $this->demoCreator->createBannersWidget()->key],
                 ['widget_key' => $this->demoCreator->createClientLogosWidget($languages)->key],
+                ['widget_key' => $this->demoCreator->createTestimonialsWidget($languages)->key],
             ],
         ];
 

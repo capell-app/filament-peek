@@ -75,7 +75,6 @@ declare(strict_types=1);
             ])
         >
             <x-capell::media
-                :$containerKey
                 :media="$widget->image"
                 class="h-full w-full"
             />

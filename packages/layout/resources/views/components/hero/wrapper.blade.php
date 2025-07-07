@@ -8,8 +8,7 @@ declare(strict_types=1);
     'key',
     'total',
     'carouselArrows' => false,
-    'carouselArrowClass' => 'hover:text-primary focus:text-primary absolute bottom-0 top-0 flex w-10 cursor-pointer
-items-center justify-center text-center hover:bg-white/50 disabled:opacity-50',
+    'carouselArrowClass' => 'hover:text-primary focus:text-primary absolute bottom-0 top-0 flex w-10 cursor-pointer items-center justify-center text-center hover:bg-white/50 disabled:opacity-50',
     'carouselAuto' => false,
     'carouselAutDelay' => 8000,
     'carouselLoop' => false,
