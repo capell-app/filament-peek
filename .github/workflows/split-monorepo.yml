@@ -19,7 +19,7 @@ jobs:
       matrix:
         package:
           - blog
-          - pro
+          - layout
     steps:
       - uses: actions/checkout@v4
       - id: previous-tag
