@@ -41,6 +41,13 @@
         {
             "type": "vcs",
             "url": "https://github.com/capell-app/frontend"
+        },
+        {
+            "type": "path",
+            "url": "./packages/*",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "require": {
