@@ -18,9 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - admin
-          - core
-          - frontend
+          - blog
+          - layout
     steps:
       - uses: actions/checkout@v4
       - id: previous-tag

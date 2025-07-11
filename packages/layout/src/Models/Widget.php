@@ -76,6 +76,8 @@ use Wildside\Userstamps\Userstamps;
  * @method static Builder<static>|Widget withWhereHasLanguage(int $language_id)
  * @method static Builder<static>|Widget withoutTrashed()
  *
+ * @property-read Media|null $backgroundImage
+ *
  * @mixin \Eloquent
  */
 #[ObservedBy(WidgetObserver::class)]
@@ -115,19 +117,6 @@ class Widget extends Model implements PageCacheable, Statusable
     ];
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'admin' => 'json',
-        'meta' => 'json',
-        'publish_from' => 'datetime',
-        'publish_to' => 'datetime',
-        'status' => 'boolean',
-    ];
-
-    /**
      * Relations on this model that should be cloned
      *
      * @var array|string[]
@@ -147,7 +136,7 @@ class Widget extends Model implements PageCacheable, Statusable
     public function getComponent(): ?string
     {
         return $this->getMetaComponent()
-            ?? config('capell-frontend.default_widget', 'capell::widget.default');
+            ?? config('capell-layout.default_widget', 'capell-layout::widget.default');
     }
 
     public function getMetaComponent(): ?string
@@ -169,6 +158,11 @@ class Widget extends Model implements PageCacheable, Statusable
     public function image(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'meta->image_id');
+    }
+
+    public function backgroundImage(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'meta->background_image_id');
     }
 
     public function type(): BelongsTo
@@ -251,5 +245,21 @@ class Widget extends Model implements PageCacheable, Statusable
                 SQL,
             }.' AS layouts_count'
         );
+    }
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'admin' => 'json',
+            'meta' => 'json',
+            'publish_from' => 'datetime',
+            'publish_to' => 'datetime',
+            'status' => 'boolean',
+        ];
     }
 }

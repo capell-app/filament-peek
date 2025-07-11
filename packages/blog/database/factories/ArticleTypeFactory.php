@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Database\Factories;
 
+use Capell\Admin\Filament\Schemas\Type\PageTypeSchema;
 use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
-use Capell\Blog\Filament\Schemas\Page\ArticleDefaultPageSchema;
+use Capell\Blog\Filament\Schemas\Page\ArticlePageSchema;
 use Capell\Core\Database\Factories\TypeFactory;
 use Capell\Core\Models\Page;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,7 +24,8 @@ class ArticleTypeFactory extends TypeFactory
             ->set(
                 'admin',
                 [
-                    'schema' => ArticleDefaultPageSchema::getKey(),
+                    'type_schema' => PageTypeSchema::getKey(),
+                    'schema' => ArticlePageSchema::getKey(),
                     'resource' => BlogResourceEnum::Article->name,
                 ]
             );

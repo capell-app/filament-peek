@@ -147,6 +147,9 @@ use Wildside\Userstamps\Userstamps;
  * @method static Builder<static>|Content withoutTrashed()
  *
  * @mixin \Eloquent
+ *
+ * @property-read Page|null $linkedPage
+ *
  * @mixin Eloquent
  */
 #[ObservedBy(ContentObserver::class)]
@@ -196,17 +199,6 @@ class Content extends Model implements Auditable, PageCacheable
         'order',
         'site_id',
         'type_id',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'publish_from' => 'datetime',
-        'publish_to' => 'datetime',
-        'meta' => 'json',
     ];
 
     /**
@@ -288,9 +280,9 @@ class Content extends Model implements Auditable, PageCacheable
         return $this->belongsTo(Media::class, 'meta->image_id');
     }
 
-    public function page(): BelongsTo
+    public function linkedPage(): BelongsTo
     {
-        return $this->belongsTo(Page::class, 'meta->page_id');
+        return $this->belongsTo(Page::class, 'meta->page_uuid', 'uuid');
     }
 
     public function media(): BelongsToJson
@@ -344,8 +336,22 @@ class Content extends Model implements Auditable, PageCacheable
         // Handled in boot
     }
 
-    protected function getActionsAttribute(): array
+    protected function actions(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        return $this->meta['actions'] ?? [];
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: fn () => $this->meta['actions'] ?? []);
+    }
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'publish_from' => 'datetime',
+            'publish_to' => 'datetime',
+            'meta' => 'json',
+        ];
     }
 }

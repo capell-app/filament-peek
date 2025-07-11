@@ -7,28 +7,31 @@ declare(strict_types=1);
 @php
     use Capell\Frontend\Actions\ReplacePageDataAction;
     use Capell\Frontend\Facades\Frontend;
+
+    $page = Frontend::getPage();
+    $pageParams = Frontend::getPageParams();
+    $site = Frontend::getSite();
 @endphp
 
 @props([
     'container',
     'containerKey',
+    'containerWidth' => null,
     'loop',
-    'pageRecord' => Frontend::getPage(),
-    'pageRecordParams' => Frontend::getPageParams(),
-    'site' => Frontend::getSite(),
     'widget',
 ])
 @php
-    $currentPageLabel = ReplacePageDataAction::run($pageRecord->translation->label, $pageRecordParams);
+    $currentPageLabel = ReplacePageDataAction::run($page->translation->label, $pageParams);
 @endphp
 
 <nav
     class="widget-breadcrumbs my-4 text-gray-800"
     aria-label="{{ __('capell-frontend::generic.breadcrumbs') }}"
 >
-    <x-capell::widget.wrapper
+    <x-capell-layout::widget.wrapper
         :$container
         :$containerKey
+        :$containerWidth
         :index="$loop->index"
         :margin="[]"
         :$widget
@@ -75,7 +78,7 @@ declare(strict_types=1);
                 </div>
             </li>
         </ol>
-    </x-capell::widget.wrapper>
+    </x-capell-layout::widget.wrapper>
 </nav>
 
 <?php

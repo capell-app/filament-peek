@@ -8,13 +8,13 @@ declare(strict_types=1);
     'key',
     'total',
     'carouselArrows' => false,
-    'carouselArrowClass' => 'hover:text-primary focus:text-primary absolute bottom-0 top-0 flex w-10 cursor-pointer
-items-center justify-center text-center hover:bg-white/50 disabled:opacity-50',
+    'carouselArrowClass' => 'hover:text-primary focus:text-primary absolute bottom-0 top-0 flex w-10 cursor-pointer items-center justify-center text-center hover:bg-white/50 disabled:opacity-50',
     'carouselAuto' => false,
     'carouselAutDelay' => 8000,
     'carouselLoop' => false,
     'carouselPagination' => true,
-    'carouselType' => 'fade',
+    'carouselSpacing' => true,
+    'carouselType' => 'slide',
 ])
 
 <div
@@ -28,7 +28,12 @@ items-center justify-center text-center hover:bg-white/50 disabled:opacity-50',
     ])
 >
     <div class="embla__viewport min-h-full w-full overflow-hidden">
-        <div class="embla__container flex min-h-full select-none">
+        <div
+            @class([
+                'embla__container flex min-h-full touch-pan-y touch-pinch-zoom select-none',
+                '-ml-4' => $carouselSpacing && $carouselType === 'slide',
+            ])
+        >
             {{ $slot }}
         </div>
     </div>

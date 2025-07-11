@@ -7,12 +7,13 @@ namespace Capell\Layout\Filament\Schemas\Widget;
 use Capell\Admin\Filament\Components\Forms\CacheFrequencySelect;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
-use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetResultsSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
+use Capell\Layout\Filament\Schemas\AbstractWidgetSchema;
 use Filament\Forms;
 
 class ResultsWidgetSchema extends AbstractWidgetSchema
@@ -23,12 +24,14 @@ class ResultsWidgetSchema extends AbstractWidgetSchema
 
         return match ($operation) {
             'create', 'createOption', 'replicate', 'editOption' => [
-                WidgetTranslationsRepeater::make($operation),
+                WidgetTranslationsRepeater::make($form)
+                    ->section(fn (string $operation): bool => $operation === 'create'),
             ],
             default => [
                 FixedWidthSidebar::make()
                     ->mainSchema([
-                        WidgetTranslationsRepeater::make($operation),
+                        WidgetTranslationsRepeater::make($form)
+                            ->section(),
                     ])
                     ->sidebarSchema([
                         Forms\Components\Section::make()
@@ -39,7 +42,7 @@ class ResultsWidgetSchema extends AbstractWidgetSchema
                     ->visibleOn('edit')
                     ->columnSpanFull()
                     ->tabs([
-                        WidgetSettingsTab::make([
+                        WidgetDisplayTab::make([
                             Forms\Components\Group::make()
                                 ->statePath('meta')
                                 ->columns()
@@ -53,7 +56,7 @@ class ResultsWidgetSchema extends AbstractWidgetSchema
                                                 ->default(true),
                                             CacheFrequencySelect::make('cache_frequency'),
                                         ]),
-                                    Forms\Components\Fieldset::make(__('capell-admin::generic.display'))
+                                    Forms\Components\Fieldset::make(__('capell-admin::generic.display_settings'))
                                         ->columns(['default' => 1, 'md' => 2, 'lg' => 3, 'xl' => 4])
                                         ->columnSpanFull()
                                         ->schema(WidgetResultsSettingsSchema::make()),

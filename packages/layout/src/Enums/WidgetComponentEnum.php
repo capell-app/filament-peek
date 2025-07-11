@@ -6,24 +6,36 @@ namespace Capell\Layout\Enums;
 
 enum WidgetComponentEnum: string
 {
-    case Default = 'capell::widget.default';
+    case Default = 'capell-layout::widget.default';
 
-    case LivewirePages = 'capell::livewire.widget.pages';
+    case BannerImage = 'capell-layout::widget.banner-image';
 
-    case Navigation = 'capell::widget.navigation';
+    case LivewirePages = 'capell-layout::livewire.widget.pages';
 
-    case PageBreadcrumbs = 'capell::widget.page.breadcrumbs';
-    case PageChildren = 'capell::widget.pages.children';
-    case PageContent = 'capell::widget.page.content';
-    case PageLatest = 'capell::widget.pages.latest';
-    case PageRelated = 'capell::widget.pages.related';
-    case PageSiblings = 'capell::widget.pages.siblings';
-    case PageSitemap = 'capell::widget.page.sitemap';
+    case Navigation = 'capell-layout::widget.navigation';
 
-    case Resources = 'capell::widget.assets';
-    case ResourcesAccordion = 'capell::widget.assets.accordion';
-    case ResourcesMedia = 'capell::widget.assets.media';
-    case ResourcesMediaCarousel = 'capell::widget.assets.media.carousel';
+    case NavigationTabs = 'capell-layout::widget.navigation.tabs';
 
-    case Tags = 'capell::widget.tag.tags';
+    case Hero = 'capell-layout::widget.hero';
+
+    case PageChildren = 'capell-layout::widget.pages.children';
+    case PageLatest = 'capell-layout::widget.pages.latest';
+    case PageRelated = 'capell-layout::widget.pages.related';
+    case PageSiblings = 'capell-layout::widget.pages.siblings';
+
+    case Archives = 'capell-layout::widget.page.archives';
+    case Breadcrumbs = 'capell-layout::widget.page.breadcrumbs';
+    case PageContent = 'capell-layout::widget.page.content';
+    case Pages = 'capell-layout::widget.page.pages';
+
+    case Assets = 'capell-layout::widget.assets';
+    case AssetAccordion = 'capell-layout::widget.assets.accordion';
+    case AssetBanner = 'capell-layout::widget.assets.banners';
+    case AssetBlock = 'capell-layout::widget.assets.blocks';
+    case AssetCarousel = 'capell-layout::widget.assets.carousel';
+    case AssetFeatures = 'capell-layout::widget.assets.features';
+    case AssetMedia = 'capell-layout::widget.assets.media';
+    case AssetTestimonials = 'capell-layout::widget.assets.testimonials';
+
+    case Tags = 'capell-layout::widget.tag.tags';
 }

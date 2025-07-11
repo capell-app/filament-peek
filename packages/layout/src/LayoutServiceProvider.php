@@ -9,19 +9,29 @@ use Capell\Admin\Actions\DeletedModelAction;
 use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Filament\Components\Forms\Editor\RichEditor;
 use Capell\Core\Data\AssetData;
+use Capell\Core\Data\TypeData;
+use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models;
+use Capell\Core\Models\PageTranslation;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
-use Capell\Layout\Actions\InstallLayoutPackageAction;
-use Capell\Layout\Commands\LayoutDemoCommand;
+use Capell\Layout\Actions\InstallPackageAction;
+use Capell\Layout\Commands\DemoCommand;
+use Capell\Layout\Enums\AssetEnum;
+use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\LayoutResource;
 use Capell\Layout\Filament\Schemas;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\ContentAsset;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
+use Exception;
 use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,9 +41,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Livewire;
+use RuntimeException;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
+use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 
 class LayoutServiceProvider extends AbstractPackageServiceProvider
 {
@@ -47,7 +59,9 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ->registerEvents()
             ->registerListeners()
             ->registerRelationships()
-            ->registerSchemas();
+            ->registerSchemas()
+            ->registerSchemaHooks()
+            ->registerPublishCommands();
 
         CapellCore::addCloneableRelations('page', 'widgetAssets');
         CapellCore::addDraftableRelations('page', 'widgetAssets');
@@ -66,6 +80,26 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         foreach (config('capell-layout.blade_components') as $name => $component) {
             Blade::component($name, $component);
         }
+
+        $viewPath = realpath(__DIR__.'/../resources/views/capell');
+
+        if (! $viewPath || ! is_dir($viewPath)) {
+            throw new Exception('Theme view path not found: '.$viewPath);
+        }
+
+        app('view')->prependNamespace('capell', $viewPath);
+
+        Blade::componentNamespace('Capell\\Layout\\View\\Components', 'capell-layout');
+        Blade::anonymousComponentNamespace('Capell\\Layout\\View\\Components');
+
+        $publishDir = self::getPublishedDirectory();
+
+        FilamentAsset::register([
+            AlpineComponent::make('layout-builder', $publishDir.'/build/js/layout-builder.js')
+                ->loadedOnRequest(),
+        ],
+            package: 'capell-layout'
+        );
     }
 
     public function configurePackage(Package $package): void
@@ -74,9 +108,8 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ->hasConfigFile()
             ->hasViews(self::$name)
             ->hasTranslations()
-            ->hasMigrations(CapellLayoutManager::getMigrations())
             ->hasCommands([
-                LayoutDemoCommand::class,
+                DemoCommand::class,
             ])
             ->hasInstallCommand(
                 fn (InstallCommand $command): InstallCommand => $command
@@ -84,11 +117,15 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                         $command->info('Installing Capell Layout Package...');
                     })
                     ->publishAssets()
-                    ->publishMigrations()
                     ->endWith(function (InstallCommand $command): void {
+                        $command->call(
+                            'capell:publish-migrations',
+                            ['--migrations' => CapellLayoutManager::getMigrations(), '--path' => __DIR__.'/../database/migrations']
+                        );
+
                         $command->call('migrate');
 
-                        InstallLayoutPackageAction::run();
+                        InstallPackageAction::run();
                     })
             );
     }
@@ -97,15 +134,16 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     {
         parent::registeringPackage();
 
-        // Register the CapellLayoutManager as a singleton
         App::singleton(CapellLayoutManager::class, fn (): CapellLayoutManager => new CapellLayoutManager());
 
         CapellCore::registerPackage(
             self::$name,
-            self::class,
+            class: self::class,
+            path: __DIR__,
             permissions: $this->getPackagePermissions(),
             demoCommand: true,
-            demoParams: ['sites'],
+            demoParams: ['author', 'sites'],
+            publishAssetsCommand: true,
         );
 
         CapellAdmin::registerResource(
@@ -123,9 +161,39 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             class: LayoutResource::class,
         );
 
+        foreach (LayoutTypeEnum::cases() as $layoutType) {
+            CapellCore::registerType(
+                new TypeData(
+                    name: $layoutType->value,
+                    table: $layoutType->getTable()
+                )
+            );
+        }
+
+        foreach (Enums\ComponentTypeEnum::cases() as $componentType) {
+            CapellCore::registerComponents($componentType->name, $componentType->value::cases());
+        }
+
         CapellCore::registerAsset(
-            new AssetData(name: 'content', model: Content::class, icon: 'heroicon-o-document-text')
+            new AssetData(
+                name: AssetEnum::Content->name,
+                model: Content::class,
+                icon: 'heroicon-o-document-text',
+                component: Enums\AssetComponentEnum::Content->value,
+                hasTranslation: true,
+            )
         );
+    }
+
+    protected function getPublishedDirectory(): string
+    {
+        $dir = realpath(__DIR__.'/../publishes');
+
+        if (! $dir) {
+            throw new RuntimeException('Publish directory not found.');
+        }
+
+        return $dir;
     }
 
     private function getPackagePermissions(): array
@@ -212,7 +280,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 'id',
                 'asset_id'
             )
-                ->where('widget_assets.asset_type', Models\Media::class)
+                ->where('widget_assets.asset_type', app(Models\Media::class)->getMorphClass())
         );
 
         Models\Page::resolveRelationUsing(
@@ -225,7 +293,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 'id',
                 'asset_id'
             )
-                ->where('widget_assets.asset_type', Models\Page::class)
+                ->where('widget_assets.asset_type', app(Models\Page::class)->getMorphClass())
         );
 
         Models\Page::resolveRelationUsing(
@@ -252,15 +320,11 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
         Models\Page::resolveRelationUsing(
             'contents',
-            fn (Models\Page $model): HasManyThrough => $model->hasManyThrough(
+            fn (Models\Page $model): HasManyJson => $model->hasManyJson(
                 Content::class,
-                WidgetAsset::class,
-                'page_id',
-                'id',
-                'id',
-                'asset_id'
+                'meta->page_uuid',
+                'uuid',
             )
-                ->where('widget_assets.asset_type', Content::class)
         );
 
         Models\Tag::resolveRelationUsing(
@@ -285,8 +349,18 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
         Models\Type::resolveRelationUsing(
             'widgetType',
-            fn (Models\Type $model): Builder => $model->where('type', Enums\LayoutTypeEnum::Widget)
+            fn (Models\Type $model): Builder => $model->where('type', LayoutTypeEnum::Widget)
         );
+
+        return $this;
+    }
+
+    private function registerPublishCommands(): self
+    {
+        $vendorAssets = $this->package->basePath('/../resources/dist');
+        $appAssets = public_path('vendor/'.$this->package->shortName());
+
+        $this->publishes([$vendorAssets => $appAssets], $this->package->shortName().'-assets');
 
         return $this;
     }
@@ -298,10 +372,54 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         CapellAdmin::registerSchemas('WidgetAsset', Enums\WidgetAssetSchemaEnum::cases());
         CapellAdmin::registerSchemas('LayoutContainer', Enums\LayoutContainerSchemaEnum::cases());
         CapellAdmin::registerSchemas('LayoutWidget', Enums\LayoutWidgetSchemaEnum::cases());
+        CapellAdmin::registerSchema(SchemaEnum::Type, Schemas\Type\WidgetTypeSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Layout, Schemas\Layout\DefaultLayoutSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\DefaultPageSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\LandingPageSchema::class);
         CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\ResultsPageSchema::class);
+
+        return $this;
+    }
+
+    private function registerSchemaHooks(): static
+    {
+        CapellAdmin::registerSchemaHook(
+            SchemaEnum::Page->value,
+            'translations.contents.before',
+            fn (Forms\Form $form, array $context = []): array => [
+                Forms\Components\Group::make()
+                    ->statePath('meta')
+                    ->visible(
+                        function (?PageTranslation $record, Forms\Get $get, string $operation) use ($form): bool {
+                            if (in_array($operation, ['create', 'createOption'], true)) {
+                                return false;
+                            }
+
+                            $layoutId = $get('../../../layout_id')
+                                ?: ($form?->getRawState()['layout_id'] ?? null)
+                                    ?: $record?->page->layout_id
+                                        ?: null;
+
+                            if (! $layoutId) {
+                                return false;
+                            }
+
+                            $layout = CapellCore::getModel(ModelEnum::Layout)::find($layoutId);
+
+                            if (! in_array('hero', $layout->widgets, true)) {
+                                return false;
+                            }
+
+                            return true;
+                        }
+                    )
+                    ->schema([
+                        RichEditor::make('hero')
+                            ->label(__('capell-layout::generic.hero'))
+                            ->helperText(__('capell-layout::generic.hero_info')),
+                    ]),
+            ]
+        );
 
         return $this;
     }

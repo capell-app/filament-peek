@@ -8,9 +8,9 @@ use Capell\Admin\Filament\Components\Forms\TypeSchema;
 use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
 use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Admin\Filament\Components\Tables\Columns\BadgeableColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\CuratorColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
-use Capell\Admin\Filament\Components\Tables\Columns\ImageColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\LanguagesColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
@@ -32,7 +32,6 @@ use Capell\Layout\Filament\Resources\ContentResource\RelationManagers\ContentAss
 use Capell\Layout\Filament\Resources\ContentResource\RelationManagers\PagesRelationManager;
 use Capell\Layout\Filament\Resources\ContentResource\RelationManagers\WidgetsRelationManager;
 use Capell\Layout\Filament\Schemas\Content\DefaultContentSchema;
-use Capell\Layout\Livewire\Assets\Table\ContentsTable;
 use Capell\Layout\Models\Content;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -77,12 +76,15 @@ class ContentResource extends Resource
                 ->schema(ContentDetailsSchema::make()),
             TypeSchema::make()
                 ->schema(
-                    fn (Get $get, TypeSchema $component): array => $component
-                        ->getSchema(
-                            $form,
-                            SchemaEnum::Content->value,
-                            schema: DefaultContentSchema::getKey()
-                        )
+                    function (Get $get, TypeSchema $component) use ($form): array {
+                        $typeId = $get('type_id');
+
+                        $type = $typeId ? CapellCore::getModel(ModelEnum::Type)::find($typeId, ['admin']) : null;
+
+                        $adminSchema = $type->admin['schema'] ?? DefaultContentSchema::getKey();
+
+                        return $component->getSchema($form, SchemaEnum::Content->value, $adminSchema);
+                    }
                 ),
         ];
     }
@@ -127,7 +129,7 @@ class ContentResource extends Resource
 
     public static function getNavigationIcon(): ?string
     {
-        return CapellCore::getAsset('content')->getIcon();
+        return CapellCore::getAsset(LayoutTypeEnum::Content->name)->getIcon();
     }
 
     public static function getPluralModelLabel(): string
@@ -189,7 +191,7 @@ class ContentResource extends Resource
                 ->form([
                     Forms\Components\Select::make('language_id')
                         ->label(__('capell-admin::table.language'))
-                        ->options(function (Pages\ListContents|ContentsTable $livewire): array {
+                        ->options(function (Tables\Contracts\HasTable $livewire): array {
                             $siteId = self::getSiteId($livewire);
 
                             /* @var class-string<\Capell\Core\Models\Language> $model */
@@ -209,7 +211,7 @@ class ContentResource extends Resource
 
                     Forms\Components\Select::make('parent_uuid')
                         ->label(__('capell-admin::form.parent'))
-                        ->options(function (Pages\ListContents|ContentsTable $livewire, Get $get) {
+                        ->options(function (Tables\Contracts\HasTable $livewire, Get $get) {
                             $siteId = self::getSiteId($livewire);
 
                             /** @var class-string<Content> $model */
@@ -255,7 +257,7 @@ class ContentResource extends Resource
 
                     Forms\Components\Select::make('tags')
                         ->label(__('capell-admin::form.tags'))
-                        ->relationship(name: 'tags', titleAttribute: 'name', modifyQueryUsing: function (Builder $query, Pages\ListContents|ContentsTable $livewire, Get $get): void {
+                        ->relationship(name: 'tags', titleAttribute: 'name', modifyQueryUsing: function (Builder $query, Tables\Contracts\HasTable $livewire, Get $get): void {
                             $siteId = self::getSiteId($livewire);
 
                             if (! $siteId) {
@@ -273,7 +275,7 @@ class ContentResource extends Resource
                                 $query->whereRaw('JSON_EXTRACT(`tags`.`name`, '.DB::getPdo()->quote('$.'.$code).') IS NOT NULL');
                             }
                         })
-                        ->getOptionLabelFromRecordUsing(function (Models\Tag $record, Pages\ListContents|ContentsTable $livewire, Get $get): string {
+                        ->getOptionLabelFromRecordUsing(function (Models\Tag $record, Tables\Contracts\HasTable $livewire, Get $get): string {
                             $label = '';
 
                             $siteId = self::getSiteId($livewire);
@@ -408,8 +410,8 @@ class ContentResource extends Resource
                         SoftDeletingScope::class,
                     ])
             )
-            ->columns(self::getTableColumns())
-            ->filters(self::getTableFilters())
+            ->columns(static::getTableColumns())
+            ->filters(static::getTableFilters())
             ->filtersFormWidth('4xl')
             ->filtersFormColumns([
                 'sm' => 2,
@@ -436,16 +438,7 @@ class ContentResource extends Resource
             });
     }
 
-    private static function getSiteId(Pages\ListContents|ContentsTable $livewire)
-    {
-        return match (true) {
-            $livewire instanceof Pages\ListContents => $livewire->activeTab,
-            $livewire instanceof ContentsTable => $livewire->getTableFilterState('filter')['site_id'] ?? null,
-            default => null,
-        };
-    }
-
-    private static function getTableColumns(): array
+    public static function getTableColumns(): array
     {
         return [
             IdentifierColumn::make('id'),
@@ -463,7 +456,7 @@ class ContentResource extends Resource
                 ->limit(60)
                 ->linkRecord()
                 ->toggleable(isToggledHiddenByDefault: true),
-            PageNameColumn::make('page.name')
+            PageNameColumn::make('linkedPage.name')
                 ->label(__('capell-admin::table.page'))
                 ->withParents()
                 ->toggleable(isToggledHiddenByDefault: true),
@@ -484,8 +477,8 @@ class ContentResource extends Resource
                         ? self::getUrl('index', ['tableFilters' => ['filter' => ['parent_uuid' => $record->uuid]]])
                         : null
                 ),
-            BadgeableColumn::make('resources_count')
-                ->label(__('capell-admin::table.resources'))
+            BadgeableColumn::make('assets_count')
+                ->label(__('capell-admin::table.assets'))
                 ->alignCenter()
                 ->numeric()
                 ->sortable()
@@ -494,10 +487,12 @@ class ContentResource extends Resource
                 ->formatStateUsing(fn (Content $record): string => $record->assets_count ? '' : ' &mdash; '),
             SiteColumn::make('site.name')
                 ->hidden(
-                    fn (Pages\ListContents $livewire): bool => $livewire->activeTab
+                    fn (Tables\Contracts\HasTable $livewire): bool => $livewire->activeTab
                         || ! empty($livewire->getTableFilterState('filter')['site_id'])
                 ),
-            ImageColumn::make('image')
+            CuratorColumn::make('asset.image_id')
+                ->label(__('capell-admin::table.image'))
+                ->relationship('image')
                 ->toggleable(),
             StatusColumn::make('status'),
             DateColumn::make('publish_from')
@@ -510,5 +505,13 @@ class ContentResource extends Resource
             DateColumn::make('updated_at'),
             DateColumn::make('deleted_at'),
         ];
+    }
+
+    private static function getSiteId(Tables\Contracts\HasTable $livewire)
+    {
+        return match (true) {
+            $livewire instanceof Pages\ListContents => $livewire->activeTab,
+            default => $livewire->getTableFilterState('filter')['site_id'] ?? null,
+        };
     }
 }

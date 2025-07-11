@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources\WidgetResource\RelationManagers;
 
+use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Filament\Components\Forms\AssetTypeToggleButtons;
 use Capell\Admin\Filament\Components\Tables\Columns\CuratorColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
-use Capell\Admin\Filament\Resources\MediaResource;
 use Capell\Core\Actions\EditPageUrlAction;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Models;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Concerns\HasAssetsRelationManager;
-use Capell\Layout\Filament\Resources\ContentResource;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\WidgetAsset;
 use Filament\Forms;
@@ -39,15 +39,15 @@ class WidgetAssetsRelationManager extends RelationManager
     public function form(Forms\Form $form): Forms\Form
     {
         return $form
-            ->schema(static::getResourceableForm());
+            ->schema(static::getAssetForm());
     }
 
     public function table(Table $table): Table
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->withAssets())
-            ->heading(__('capell-admin::heading.widget_page_resources'))
-            ->description(__('capell-admin::generic.widget_page_resources_description'))
+            ->heading(__('capell-admin::heading.widget_page_assets'))
+            ->description(__('capell-admin::generic.widget_page_assets_description'))
             ->columns([
                 NameColumn::make('asset.name'),
                 Tables\Columns\TextColumn::make('asset_type')
@@ -62,12 +62,15 @@ class WidgetAssetsRelationManager extends RelationManager
                     ->withParents()
                     ->sortable(),
             ])
-            ->recordUrl(fn (WidgetAsset $record): string => match ($record->asset_type) {
-                // TODO: Implement for other asset types
-                LayoutTypeEnum::Content->value => ContentResource::getUrl('edit', ['record' => $record->asset]),
-                TypeEnum::Media->value => MediaResource::getUrl('edit', ['record' => $record->asset]),
-                TypeEnum::Page->value => EditPageUrlAction::run($record->asset),
-            })
+            ->recordUrl(
+                fn (WidgetAsset $record): ?string => match ($record->asset_type) {
+                    TypeEnum::Page->value => EditPageUrlAction::run($record->asset),
+                    default => CapellAdmin::getResource(ucfirst($record->asset_type))::getUrl(
+                        'edit',
+                        ['record' => $record->asset]
+                    ),
+                }
+            )
             ->filters([
                 Tables\Filters\Filter::make('filter')
                     ->columnSpanFull()
@@ -87,11 +90,8 @@ class WidgetAssetsRelationManager extends RelationManager
                                     ->toArray()
                             ),
 
-                        Forms\Components\ToggleButtons::make('type')
-                            ->label(__('capell-admin::form.type'))
-                            ->reactive()
-                            ->options(fn (): array => WidgetAsset::getTypes())
-                            ->inline(),
+                        AssetTypeToggleButtons::make('type')
+                            ->reactive(),
 
                         Forms\Components\Select::make('type_id')
                             ->label(__('capell-admin::form.type'))

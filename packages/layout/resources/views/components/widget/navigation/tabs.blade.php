@@ -6,11 +6,14 @@ declare(strict_types=1);
 
 @props([
     'container' => '',
+    'containerKey',
+    'containerWidth' => null,
 ])
-<x-capell::widget.wrapper
+<x-capell-layout::widget.wrapper
     class="widget-navigation-bar"
     :$container
     :$containerKey
+    :$containerWidth
     :index="$loop->index"
     :$widget
 >
@@ -32,6 +35,6 @@ declare(strict_types=1);
             </li>
         @endforeach
     </ul>
-</x-capell::widget.wrapper>
+</x-capell-layout::widget.wrapper>
 
 <?php

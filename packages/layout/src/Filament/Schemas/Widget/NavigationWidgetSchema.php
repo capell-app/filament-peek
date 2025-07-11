@@ -7,11 +7,12 @@ namespace Capell\Layout\Filament\Schemas\Widget;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\NavigationSelect;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
-use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
+use Capell\Layout\Filament\Schemas\AbstractWidgetSchema;
 use Filament\Forms;
 
 class NavigationWidgetSchema extends AbstractWidgetSchema
@@ -24,20 +25,22 @@ class NavigationWidgetSchema extends AbstractWidgetSchema
             'create' => [
                 Forms\Components\Section::make()
                     ->schema([self::navigationSelect()]),
-                WidgetTranslationsRepeater::make($operation),
+                WidgetTranslationsRepeater::make($form)
+                    ->section(),
             ],
             'createOption', 'replicate' => [
                 self::navigationSelect(),
-                WidgetTranslationsRepeater::make($operation),
+                WidgetTranslationsRepeater::make($form),
             ],
             'editOption' => [
                 self::navigationSelect(),
-                WidgetTranslationsRepeater::make($operation),
+                WidgetTranslationsRepeater::make($form),
             ],
             default => [
                 FixedWidthSidebar::make()
                     ->mainSchema([
-                        WidgetTranslationsRepeater::make($operation),
+                        WidgetTranslationsRepeater::make($form)
+                            ->section(),
                     ])
                     ->sidebarSchema([
                         Forms\Components\Section::make()
@@ -48,7 +51,7 @@ class NavigationWidgetSchema extends AbstractWidgetSchema
                     ->visibleOn(['edit', 'editOption'])
                     ->columnSpanFull()
                     ->tabs([
-                        WidgetSettingsTab::make([
+                        WidgetDisplayTab::make([
                             Forms\Components\Group::make()
                                 ->statePath('meta')
                                 ->columns()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Components\Forms;
 
+use Capell\Admin\Filament\Components\Forms\CustomColorInput;
 use Capell\Admin\Filament\Components\Forms\ImageMediaPicker;
 use Capell\Layout\Models\WidgetAsset;
 use Filament\Forms;
@@ -11,17 +12,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class BackgroundSettingsFieldset
 {
-    public static function make(string $backgroundName = 'background_image_id', array $schema = []): Forms\Components\Fieldset
+    public static function make(): Forms\Components\Fieldset
     {
         return Forms\Components\Fieldset::make(__('capell-admin::form.background_settings'))
             ->schema([
                 Forms\Components\Grid::make()
                     ->columnSpan(1)
                     ->schema([
-                        ...$schema,
+                        CustomColorInput::make(
+                            name: 'background_color',
+                            label: __('capell-admin::form.background_color'),
+                        ),
 
                         Forms\Components\Grid::make()
-                            ->visible(fn (Forms\Get $get): bool => (bool) $get($backgroundName))
+                            ->visible(fn (Forms\Get $get): bool => (bool) $get('background_image_id'))
                             ->columnSpanFull()
                             ->schema([
                                 Forms\Components\Select::make('background_size')
@@ -67,9 +71,13 @@ class BackgroundSettingsFieldset
                                         'fixed' => __('capell-admin::form.background_fixed'),
                                         'scroll' => __('capell-admin::form.background_scroll'),
                                     ]),
+
+                                Forms\Components\Checkbox::make('background_overlay')
+                                    ->label(__('capell-admin::form.background_overlay'))
+                                    ->helperText(__('capell-admin::generic.background_overlay_helper_text')),
                             ]),
                     ]),
-                ImageMediaPicker::make($backgroundName)
+                ImageMediaPicker::make('background_image_id')
                     ->reactive()
                     ->dehydrateStateUsing(function (ImageMediaPicker $component, $state): ?string {
                         if (! $state) {

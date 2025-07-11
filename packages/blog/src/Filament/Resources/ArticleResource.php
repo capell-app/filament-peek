@@ -72,17 +72,12 @@ class ArticleResource extends PageResource
     #[Override]
     public static function getFormSchema(Form $form): array
     {
-        return [
-            static::getFormTypeSchema($form),
-        ];
+        return static::getFormTypeSchema($form);
     }
 
     #[Override]
     public static function mutateFormDataBeforeCreate(array &$data = [], array $formData = []): void
     {
-        /* @var class-string<\Capell\Core\Models\Layout> $model */
-        $model = CapellCore::getModel(ModelEnum::Layout);
-
         $data['layout_id'] = GetArticleLayoutAction::run()?->id;
 
         /* @var class-string<\Capell\Core\Models\Type> $model */
@@ -98,17 +93,21 @@ class ArticleResource extends PageResource
         /* @var class-string<\Capell\Core\Models\Site> $model */
         $model = CapellCore::getModel(ModelEnum::Site);
 
-        $site = $model::find($siteId);
+        $site = $model::find($siteId) ?: $model::default()->first();
 
-        if (empty($data['site_id']) && $site) {
+        if (! $site) {
+            return;
+        }
+
+        if (empty($data['site_id'])) {
             $data['site_id'] = $site->id;
         }
 
-        if (empty($data['parent_uuid']) && $site) {
+        if (empty($data['parent_uuid'])) {
             $data['parent_uuid'] = BlogLoader::getBlogPage($site)?->uuid;
         }
 
-        if (empty($data['name'])) {
+        if (empty($data['name']) && ! empty($data['translations'])) {
             $data['name'] = GetNameFromTranslationsAction::run(collect($data['translations']), $site);
         }
     }

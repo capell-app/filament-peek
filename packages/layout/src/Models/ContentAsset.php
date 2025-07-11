@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Layout\Models;
 
 use Capell\Core\Contracts\PageCacheable;
-use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasPageCache;
 use Capell\Layout\Database\Factories\ContentAssetFactory;
@@ -59,11 +58,6 @@ class ContentAsset extends Model implements PageCacheable
 
     protected static string $factory = ContentAssetFactory::class;
 
-    public static function getTypes(): array
-    {
-        return TypeEnum::getResourceTypes();
-    }
-
     public function content(): BelongsTo
     {
         return $this->belongsTo(Content::class);
@@ -74,8 +68,8 @@ class ContentAsset extends Model implements PageCacheable
         return $this->morphTo('asset', 'asset_type', 'asset_id', 'uuid');
     }
 
-    public function getAssetKeyAttribute(): string
+    protected function assetKey(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        return $this->asset_type.'.'.$this->asset_id;
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: fn (): string => $this->asset_type.'.'.$this->asset_id);
     }
 }

@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Capell\Layout\Listeners;
 
 use Capell\Core\Contracts\EventSubscriber;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
+use Capell\Core\Models\Page;
 use Capell\Frontend\CapellFrontend;
 use Capell\Frontend\Enums\ListenerEnum;
 use Capell\Layout\CapellLayoutManager;
 use Capell\Layout\Models\Widget;
-use Exception;
-use Illuminate\Support\Facades\Log;
+use Capell\Layout\Services\Creator\LayoutLoader;
 
 class LayoutLoaded implements EventSubscriber
 {
@@ -27,31 +29,28 @@ class LayoutLoaded implements EventSubscriber
 
         $layout = $context->getLayout();
 
-        if (! $layout instanceof Layout) {
-            return;
-        }
+        $language = $context->getLanguage();
 
-        $this->loadLayoutWidgets($layout);
+        $page = $context->getPage();
+
+        $this->loadLayoutWidgets($layout, $page, $language);
     }
 
-    /**
-     * Load widgets from the layout and store them in the CapellLayoutManager
-     */
-    protected function loadLayoutWidgets(Layout $layout): void
+    protected function loadLayoutWidgets(Layout $layout, Page $page, Language $language): void
     {
-        // Clear any previously stored widgets
         CapellLayoutManager::clearContainerWidgets();
 
-        // Get all containers from the layout
         $containers = $layout->containers ?? [];
 
         foreach ($containers as $containerKey => $container) {
             if (! isset($container['widgets'])) {
                 continue;
             }
+
             if (! is_array($container['widgets'])) {
                 continue;
             }
+
             foreach ($container['widgets'] as $widgetData) {
                 if (! isset($widgetData['widget_key'])) {
                     continue;
@@ -60,21 +59,28 @@ class LayoutLoaded implements EventSubscriber
                 $widgetKey = $widgetData['widget_key'];
                 $occurrence = $widgetData['occurrence'] ?? 1;
 
-                try {
-                    // Find the widget by key
-                    $widget = Widget::where('key', $widgetKey)->first();
+                $widget = LayoutLoader::getLayoutWidget(
+                    $layout,
+                    $widgetKey,
+                    $language,
+                    $page,
+                    $containerKey,
+                    $occurrence,
+                );
 
-                    if ($widget) {
-                        // Store the widget in the CapellLayoutManager
-                        CapellLayoutManager::storeContainerWidget($containerKey, $widgetKey, $widget, $occurrence);
-                    }
-                } catch (Exception $e) {
-                    Log::error('Failed to load widget: '.$e->getMessage(), [
-                        'containerKey' => $containerKey,
-                        'widgetKey' => $widgetKey,
-                        'occurrence' => $occurrence,
-                    ]);
+                if (! $widget instanceof Widget) {
+                    CapellCore::log(
+                        'Widget not found for layout',
+                        type: 'error',
+                        context: [
+                            'containerKey' => $containerKey,
+                            'widgetKey' => $widgetKey,
+                            'occurrence' => $occurrence,
+                        ]
+                    );
                 }
+
+                CapellLayoutManager::storeContainerWidget($containerKey, $widgetKey, $widget, $occurrence);
             }
         }
     }

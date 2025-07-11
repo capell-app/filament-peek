@@ -9,6 +9,10 @@ declare(strict_types=1);
     use Capell\Frontend\Actions\ReplacePageDataAction;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Services\Loader\PageLoader;
+
+    $page = Frontend::getPage();
+    $pageParams = Frontend::getPageParams();
+    $theme = Frontend::getTheme();
 @endphp
 
 @props([
@@ -19,10 +23,7 @@ declare(strict_types=1);
     'colorScheme' => $widget->meta['color_scheme'] ?? $theme->meta['color_scheme'] ?? null,
     'heroContent' => null,
     'loop',
-    'pageRecord' => Frontend::getPage(),
-    'pageRecordParams' => Frontend::getPageParams(),
     'total' => $widget->assets->isNotEmpty() ? $widget->assets->count() : 1,
-    'theme' => Frontend::getTheme(),
     'slideClass' => '',
     'widget',
     'widgetIndex',
@@ -43,13 +44,13 @@ declare(strict_types=1);
         'bg-gray-50 dark:bg-gray-900' => $colorScheme === 'light',
         'bg-gray-800 dark:bg-gray-900' => $colorScheme === 'dark',
         'min-h-screen' => $height === 'full',
-        'max-h-screen' => $height !== 'full',
+        'lg:max-h-screen' => $height !== 'full',
         'min-h-[700px] lg:min-h-[900px]' => $height === 'large',
         'min-h-[500px] md:min-h-[600px]' => $height === 'medium',
         'min-h-[300px] sm:min-h-[400px]' => $height === 'small',
     ])
 >
-    <x-capell-gizmo::hero.wrapper
+    <x-capell-layout::hero.wrapper
         :key="$containerKey.'-widget-'.$widgetIndex"
         :total="$total"
         :carousel-arrows="$widget->meta['carousel_arrows'] ?? false"
@@ -64,20 +65,21 @@ declare(strict_types=1);
                 $content = $pageRecord->translation->meta['hero'] ?? $widget->translation->content;
             @endphp
 
-            <x-capell-gizmo::hero.slide
+            <x-capell-layout::hero.slide
                 :background-image="$widget->image ?: $backgroundImage"
                 :background-color="$widget->meta['background_color'] ?? ($theme['meta']['background_color'] ?? '')"
                 :background-size="$widget->meta['background_size'] ?? 'cover'"
                 :background-position="$widget->meta['background_position'] ?? 'center'"
                 :background-attachment="$widget->meta['background_attachment'] ?? 'scroll'"
                 :background-repeat="$widget->meta['background_repeat'] ?? 'no-repeat'"
+                :carousel-type="$widget->meta['carousel_type'] ?? null"
                 :first="true"
                 :total="1"
                 :color-scheme="$colorScheme"
                 container-class="container"
             >
                 <div class="@lg:py-16 flex select-text py-20">
-                    <x-capell-gizmo::hero.content
+                    <x-capell-layout::hero.content
                         :title="
                             $widget->translation
                             ? ReplacePageDataAction::run($widget->translation->title, $pageRecordParams)
@@ -87,9 +89,9 @@ declare(strict_types=1);
                         size="lg"
                     >
                         {!! ReplacePageDataAction::run($content, $pageRecordParams) !!}
-                    </x-capell-gizmo::hero.content>
+                    </x-capell-layout::hero.content>
                 </div>
-            </x-capell-gizmo::hero.slide>
+            </x-capell-layout::hero.slide>
         @else
             @foreach ($widget->assets as $widgetAsset)
                 @php
@@ -127,7 +129,7 @@ declare(strict_types=1);
                     }
                 @endphp
 
-                <x-capell-gizmo::hero.slide
+                <x-capell-layout::hero.slide
                     :background-image="$bgImage"
                     :background-color="($asset->meta['background_color'] ?? null) ?: $backgroundColor"
                     :background-size="
@@ -155,7 +157,8 @@ declare(strict_types=1);
                 >
                     <div
                         @class([
-                            '@container pb-22 grid min-h-full select-text gap-4 gap-x-10 gap-y-6 pt-8 lg:gap-x-16 lg:gap-y-8 lg:pt-16',
+                            '@container pb-22 grid select-text gap-4 gap-x-10 gap-y-8 pt-8 lg:min-h-full lg:gap-x-16 lg:pt-16',
+                            'lg:max-h-screen' => $height !== 'full',
                             'lg:grid-cols-12' => $images?->isNotEmpty(),
                         ])
                     >
@@ -163,12 +166,12 @@ declare(strict_types=1);
                             @class([
                                 'flex min-h-[20vh] flex-col justify-center',
                                 'items-center text-center' => ! $images?->isNotEmpty(),
-                                'md:col-span-8 lg:col-span-7' => $images?->isNotEmpty(),
+                                'lg:col-span-8 xl:col-span-7' => $images?->isNotEmpty(),
                                 'py-[4vh]' => ! $asset->image && ! $bgImage,
                             ])
                         >
                             @if ($asset->translation)
-                                <x-capell-gizmo::hero.content
+                                <x-capell-layout::hero.content
                                     :title="$asset->translation->title"
                                     :heading-size="$loop->first ? 'h1' : 'h2'"
                                     :$url
@@ -191,11 +194,11 @@ declare(strict_types=1);
                                     @if ($loop->first && $heroContent)
                                         {{ $heroContent }}
                                     @endif
-                                </x-capell-gizmo::hero.content>
+                                </x-capell-layout::hero.content>
                             @endif
 
                             @if ($asset->related?->isNotEmpty())
-                                <x-capell-gizmo::hero.related
+                                <x-capell-layout::hero.related
                                     class="w-full"
                                     :features="$asset->related"
                                     :key="$containerKey.'-widget-'.$widgetIndex.'-features'"
@@ -213,14 +216,12 @@ declare(strict_types=1);
 
                         @if ($images?->isNotEmpty())
                             <div
-                                class="relative z-30 w-full md:col-span-4 lg:col-span-5"
+                                class="relative z-30 w-full lg:col-span-4 xl:col-span-5"
                             >
                                 @foreach ($images as $media)
                                     @capture($mediaContent)
-                                        <x-dynamic-component
+                                        <x-capell::media
                                             format="webp"
-                                            :component="$media->hasCuration('thumbnail') ? 'curator-curation' : 'curator-glider'"
-                                            curation="thumbnail"
                                             :media="$media"
                                             class="h-full max-h-[400px] w-full object-cover object-center"
                                             loading="lazy"
@@ -241,10 +242,10 @@ declare(strict_types=1);
                             </div>
                         @endif
                     </div>
-                </x-capell-gizmo::hero.slide>
+                </x-capell-layout::hero.slide>
             @endforeach
         @endif
-    </x-capell-gizmo::hero.wrapper>
+    </x-capell-layout::hero.wrapper>
 </section>
 
 <?php

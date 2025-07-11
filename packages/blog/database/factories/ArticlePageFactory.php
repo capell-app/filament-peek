@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Database\Factories;
 
+use Capell\Admin\Enums\ContentEditorEnum;
+use Capell\Admin\Filament\Schemas\Type\PageTypeSchema;
 use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
-use Capell\Blog\Filament\Schemas\Page\ArticleDefaultPageSchema;
+use Capell\Blog\Filament\Schemas\Page\ArticlePageSchema;
 use Capell\Core\Database\Factories\PageFactory;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Type;
@@ -26,10 +28,10 @@ class ArticlePageFactory extends PageFactory
                 ->state([
                     'group' => BlogTypeGroupEnum::Article->value,
                     'admin' => [
-                        'accessible' => false,
-                        'content_editor' => 'ContentEditor',
+                        'content_editor' => ContentEditorEnum::RichEditor->value,
                         'icon' => 'heroicon-o-newspaper',
-                        'schema' => ArticleDefaultPageSchema::getKey(),
+                        'type_schema' => PageTypeSchema::getKey(),
+                        'schema' => ArticlePageSchema::getKey(),
                         'resource' => BlogResourceEnum::Article->name,
                         'with_tags' => true,
                         'exclude' => true,

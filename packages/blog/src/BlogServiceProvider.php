@@ -8,20 +8,25 @@ use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Blog\Actions\InstallBlogPackageAction;
-use Capell\Blog\Commands\BlogDemoCommand;
+use Capell\Blog\Commands\DemoCommand;
 use Capell\Blog\Enums\BlogModelEnum;
 use Capell\Blog\Enums\BlogResourceEnum;
+use Capell\Blog\Enums\WidgetComponentEnum;
 use Capell\Blog\Filament\Resources;
 use Capell\Blog\Filament\Schemas;
+use Capell\Blog\Listeners\AddBlogPagesToNavigation;
 use Capell\Blog\Services\BlogCreator;
 use Capell\Blog\Services\Loader\BlogLoader;
 use Capell\Blog\Services\Sitemap\ArchivePageSitemap;
+use Capell\Core\Events\NavigationCreating;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
+use Capell\Layout\Enums\ComponentTypeEnum;
 use Composer\InstalledVersions;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -54,6 +59,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ]);
         }
 
+        Event::listen(
+            NavigationCreating::class,
+            AddBlogPagesToNavigation::class,
+        );
+
         CapellAdmin::serving(function (): void {
             CapellCore::addDefaultPage('blog', 'Blog', function ($site, $languages): void {
                 BlogCreator::createBlogPage($site, languages: $languages);
@@ -77,7 +87,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ->hasViews(self::$name)
             ->hasTranslations()
             ->hasCommands([
-                BlogDemoCommand::class,
+                DemoCommand::class,
             ])
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command->startWith(function (InstallCommand $command): void {
@@ -93,11 +103,12 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
         CapellCore::registerPackage(
             self::$name,
-            self::class,
+            class: self::class,
+            path: __DIR__,
             sort: 9,
             permissions: $this->getPackagePermissions(),
             demoCommand: true,
-            demoParams: ['sites'],
+            demoParams: ['author', 'sites'],
         );
 
         CapellAdmin::registerResource(
@@ -106,9 +117,9 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             name: BlogResourceEnum::Article->name
         );
 
-        CapellCore::registerComponent('Widget', 'Article', 'capell-blog::widget.page.article');
+        CapellCore::registerComponents(ComponentTypeEnum::Widget->value, WidgetComponentEnum::cases());
 
-        CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\ArticleDefaultPageSchema::class);
+        CapellAdmin::registerSchema(SchemaEnum::Page, Schemas\Page\ArticlePageSchema::class);
     }
 
     private function getPackagePermissions(): array

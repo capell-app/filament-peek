@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources\ContentResource\RelationManagers;
 
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Tables\Columns\CuratorColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
-use Capell\Admin\Filament\Resources\MediaResource;
 use Capell\Core\Actions\EditPageUrlAction;
+use Capell\Core\Data\AssetData;
 use Capell\Core\Enums\TypeEnum;
-use Capell\Layout\Enums\LayoutTypeEnum;
+use Capell\Core\Facades\CapellCore;
 use Capell\Layout\Filament\Concerns\HasAssetsRelationManager;
-use Capell\Layout\Filament\Resources\ContentResource;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\ContentAsset;
 use Filament\Forms;
@@ -33,13 +33,12 @@ class ContentAssetsRelationManager extends RelationManager
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('capell-admin::tab.resources');
+        return __('capell-admin::tab.assets');
     }
 
     public function form(Forms\Form $form): Forms\Form
     {
-        return $form
-            ->schema(static::getResourceableForm());
+        return $form->schema(static::getAssetForm())->columns(1);
     }
 
     public function table(Table $table): Table
@@ -61,21 +60,25 @@ class ContentAssetsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('asset_type')
                     ->badge(),
             ])
-            ->recordUrl(fn (ContentAsset $record): ?string => match ($record->asset_type) {
-                // TODO: Implement for other asset types
-                LayoutTypeEnum::Content->value => ContentResource::getUrl('edit', ['record' => $record->asset]),
-                TypeEnum::Media->value => MediaResource::getUrl('edit', ['record' => $record->asset]),
-                TypeEnum::Page->value => EditPageUrlAction::run($record->asset),
-                default => null,
-            })
+            ->recordUrl(
+                fn (ContentAsset $record): ?string => match ($record->asset_type) {
+                    TypeEnum::Page->value => EditPageUrlAction::run($record->asset),
+                    default => CapellAdmin::getResource(ucfirst($record->asset_type))::getUrl(
+                        'edit',
+                        ['record' => $record->asset]
+                    ),
+                }
+            )
             ->filters([
-                Tables\Filters\Filter::make('filter')
-                    ->form([
-                        Forms\Components\Select::make('type')
-                            ->label(__('capell-admin::form.type'))
-                            ->reactive()
-                            ->options(fn (): array => ContentAsset::getTypes()),
-                    ]),
+                Tables\Filters\SelectFilter::make('asset_type')
+                    ->label(__('capell-admin::form.asset_type'))
+                    ->options(
+                        fn (): array => CapellCore::getAssets()
+                            ->mapWithKeys(
+                                static fn (AssetData $asset): array => [$asset->getKey() => $asset->getLabel()]
+                            )
+                            ->toArray()
+                    ),
                 Tables\Filters\SelectFilter::make('type_id')
                     ->label(__('capell-admin::form.type'))
                     ->options(fn (): array => Content::getTypes()),

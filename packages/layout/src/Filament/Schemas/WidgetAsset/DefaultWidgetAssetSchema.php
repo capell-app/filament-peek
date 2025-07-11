@@ -6,20 +6,17 @@ namespace Capell\Layout\Filament\Schemas\WidgetAsset;
 
 use Capell\Admin\Filament\Components\Forms\MediaSchema;
 use Capell\Admin\Filament\Resources\PageResource;
-use Capell\Admin\Filament\Schemas\AbstractSchema;
-use Capell\Layout\Enums\SchemaEnum;
 use Capell\Layout\Filament\Resources\ContentResource;
+use Capell\Layout\Filament\Schemas\AbstractWidgetAssetSchema;
 use Capell\Layout\Models\WidgetAsset;
 use Filament\Forms;
 
-class DefaultWidgetAssetSchema extends AbstractSchema
+class DefaultWidgetAssetSchema extends AbstractWidgetAssetSchema
 {
-    protected static string $schemaType = SchemaEnum::WidgetAsset->value;
-
     public static function make(Forms\Form $form): array
     {
         return [
-            self::getResourceableFormSchema($form),
+            self::getAssetFormSchema($form),
         ];
     }
 
@@ -47,7 +44,7 @@ class DefaultWidgetAssetSchema extends AbstractSchema
         return PageResource::getFormSchema($form);
     }
 
-    protected static function getResourceableFormSchema(Forms\Form $form): Forms\Components\Group
+    protected static function getAssetFormSchema(Forms\Form $form): Forms\Components\Group
     {
         return Forms\Components\Group::make()
             ->relationship('asset')

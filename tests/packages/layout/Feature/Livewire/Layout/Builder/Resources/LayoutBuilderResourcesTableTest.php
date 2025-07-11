@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -47,6 +48,7 @@ it('can render assets table', function (string $assetType): void {
         'siteId' => $page->site_id,
         'type' => $assetType,
         'widgetIndex' => $widgetIndex,
+        'hasPageAssets' => false,
     ])
         ->assertSuccessful();
 })->with($types);
@@ -65,6 +67,7 @@ describe('layout', function () use ($types): void {
             'actionId' => 'select-assets',
             'containerKey' => $containerKey,
             'widgetIndex' => $widgetIndex,
+            'hasPageAssets' => false,
         ])
             ->assertSuccessful()
             ->assertCountTableRecords(5)
@@ -85,6 +88,7 @@ describe('layout', function () use ($types): void {
             'actionId' => 'select-assets',
             'containerKey' => $containerKey,
             'widgetIndex' => $widgetIndex,
+            'hasPageAssets' => false,
         ])
             ->assertSuccessful()
             ->assertCountTableRecords(4)
@@ -104,6 +108,7 @@ describe('layout', function () use ($types): void {
             'actionId' => 'select-assets',
             'containerKey' => $containerKey,
             'widgetIndex' => $widgetIndex,
+            'hasPageAssets' => false,
         ])
             ->assertSuccessful()
             ->assertCountTableRecords(5)
@@ -173,6 +178,7 @@ describe('layout', function () use ($types): void {
             'actionId' => 'select-assets',
             'containerKey' => $containerKey,
             'widgetIndex' => $widgetIndex,
+            'hasPageAssets' => false,
         ])
             ->assertSuccessful()
             ->assertCountTableRecords(4)
@@ -229,7 +235,7 @@ describe('page layout', function () use ($types): void {
             ->count(2)
             ->widget($widget)
             ->page($page, $containerKey, $containerWidget['occurrence'])
-            ->asset('page')
+            ->asset(AssetEnum::Page)
             ->create();
 
         $pages = Page::factory()->count(4)->create();

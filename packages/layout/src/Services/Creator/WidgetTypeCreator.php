@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Services\Creator;
 
+use Capell\Admin\Enums\ContentEditorEnum;
+use Capell\Core\Enums\AssetComponentEnum as CapellAssetComponentEnum;
+use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Enums\ResourceComponentEnum as CapellResourceComponentEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
+use Capell\Layout\Enums\AssetComponentEnum;
+use Capell\Layout\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
-use Capell\Layout\Enums\ResourceComponentEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
+use Capell\Layout\Enums\WidgetTypeGroupEnum;
 use Capell\Layout\Filament\Schemas;
+use Capell\Layout\Filament\Schemas\Type\WidgetTypeSchema;
 
 class WidgetTypeCreator
 {
@@ -24,27 +29,6 @@ class WidgetTypeCreator
     public function __construct()
     {
         $this->typeModel = CapellCore::getModel(ModelEnum::Type);
-    }
-
-    public function contentsWidgetType(): Type
-    {
-        return $this->typeModel::firstOrCreate([
-            'key' => WidgetTypeEnum::Contents->value,
-            'type' => LayoutTypeEnum::Widget,
-        ], [
-            'name' => __('capell-admin::generic.contents'),
-            'group' => 'assets',
-            'admin' => [
-                'schema' => Schemas\Widget\AssetsWidgetSchema::getKey(),
-                'icon' => 'heroicon-o-rectangle-stack',
-                'asset_types' => ['content'],
-            ],
-            'meta' => [
-                'component' => WidgetComponentEnum::Resources,
-                'component_item' => ResourceComponentEnum::Content->value,
-                'margin' => ['lg'],
-            ],
-        ]);
     }
 
     public function createWidgetTypes(): void
@@ -69,7 +53,9 @@ class WidgetTypeCreator
             'name' => __('capell-admin::generic.default'),
             'default' => true,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'icon' => 'heroicon-o-puzzle-piece',
+                'content_editor' => ContentEditorEnum::ContentBuilder->value,
             ],
             'meta' => [
                 'component' => WidgetComponentEnum::Default,
@@ -85,16 +71,16 @@ class WidgetTypeCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-admin::generic.media'),
-            'group' => 'assets',
+            'group' => WidgetTypeGroupEnum::Asset->value,
             'admin' => [
                 'schema' => Schemas\Widget\MediaWidgetSchema::getKey(),
-                'icon' => CapellCore::getAsset('media')->getIcon(),
-                'asset_types' => ['media'],
+                'icon' => CapellCore::getAsset(AssetEnum::Media->name)->getIcon(),
+                'asset_types' => [AssetEnum::Media->value],
             ],
             'meta' => [
-                'component' => WidgetComponentEnum::Resources,
-                'component_item' => CapellResourceComponentEnum::Media,
-                'file_view' => 'capell::components.widget.assets.media.index',
+                'component' => WidgetComponentEnum::Assets,
+                'component_item' => CapellAssetComponentEnum::Media,
+                'view_file' => 'capell-layout::components.widget.assets.media',
             ],
         ]);
     }
@@ -106,8 +92,9 @@ class WidgetTypeCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-admin::generic.navigation'),
-            'group' => 'pages',
+            'group' => WidgetTypeGroupEnum::Page->value,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'schema' => Schemas\Widget\NavigationWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-clipboard-document-list',
             ],
@@ -124,7 +111,9 @@ class WidgetTypeCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-admin::generic.page_content'),
+            'group' => WidgetTypeGroupEnum::Page->value,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'schema' => Schemas\Widget\PageContentWidgetSchema::getKey(),
                 'layout_container_widget_schema' => Schemas\LayoutWidget\PageLayoutWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-document-text',
@@ -143,7 +132,9 @@ class WidgetTypeCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-admin::generic.page_results'),
+            'group' => WidgetTypeGroupEnum::Asset->value,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'schema' => Schemas\Widget\ResultsWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-list-bullet',
             ],
@@ -160,14 +151,15 @@ class WidgetTypeCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-admin::generic.pages'),
-            'group' => 'assets',
+            'group' => WidgetTypeGroupEnum::Asset->value,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'schema' => Schemas\Widget\AssetsWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-document-text',
-                'asset_types' => ['page'],
+                'asset_types' => [AssetEnum::Page->value],
             ],
             'meta' => [
-                'component' => WidgetComponentEnum::Resources,
+                'component' => WidgetComponentEnum::Assets,
             ],
         ]);
     }
@@ -178,15 +170,20 @@ class WidgetTypeCreator
             'key' => WidgetTypeEnum::Assets->value,
             'type' => LayoutTypeEnum::Widget,
         ], [
-            'name' => __('capell-admin::generic.resources'),
-            'group' => 'assets',
+            'name' => __('capell-admin::generic.assets'),
+            'group' => WidgetTypeGroupEnum::Asset->value,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'schema' => Schemas\Widget\AssetsWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-rectangle-stack',
-                'asset_types' => ['content', 'media', 'page'],
+                'asset_types' => [
+                    AssetEnum::Page->value,
+                    AssetEnum::Media->value,
+                    LayoutAssetEnum::Content->value,
+                ],
             ],
             'meta' => [
-                'component' => WidgetComponentEnum::Resources,
+                'component' => WidgetComponentEnum::Assets,
             ],
         ]);
     }
@@ -198,14 +195,37 @@ class WidgetTypeCreator
             'type' => LayoutTypeEnum::Widget,
         ], [
             'name' => __('capell-admin::generic.system'),
-            'group' => 'system',
+            'group' => WidgetTypeGroupEnum::System->value,
             'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
                 'schema' => Schemas\Widget\SystemWidgetSchema::getKey(),
                 'layout_container_widget_schema' => Schemas\LayoutWidget\DefaultLayoutWidgetSchema::getKey(),
                 'icon' => 'heroicon-o-wrench',
             ],
             'meta' => [
                 'component' => WidgetComponentEnum::Default,
+            ],
+        ]);
+    }
+
+    public function contentsWidgetType(): Type
+    {
+        return $this->typeModel::firstOrCreate([
+            'key' => WidgetTypeEnum::Contents->value,
+            'type' => LayoutTypeEnum::Widget,
+        ], [
+            'name' => __('capell-admin::generic.contents'),
+            'group' => WidgetTypeGroupEnum::Asset->value,
+            'admin' => [
+                'type_schema' => WidgetTypeSchema::getKey(),
+                'schema' => Schemas\Widget\AssetsWidgetSchema::getKey(),
+                'icon' => 'heroicon-o-rectangle-stack',
+                'asset_types' => [LayoutAssetEnum::Content->value],
+            ],
+            'meta' => [
+                'component' => WidgetComponentEnum::Assets,
+                'component_item' => AssetComponentEnum::Content->value,
+                'margin' => ['lg'],
             ],
         ]);
     }

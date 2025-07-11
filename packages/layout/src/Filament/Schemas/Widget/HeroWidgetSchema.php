@@ -10,11 +10,12 @@ use Capell\Admin\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
-use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
+use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
+use Capell\Layout\Filament\Schemas\AbstractWidgetSchema;
 use Filament\Forms;
 
 class HeroWidgetSchema extends AbstractWidgetSchema
@@ -44,8 +45,8 @@ class HeroWidgetSchema extends AbstractWidgetSchema
         return [
             FixedWidthSidebar::make()
                 ->mainSchema([
-                    Forms\Components\Section::make(__('capell-admin::generic.widget_resources'))
-                        ->description(__('capell-admin::generic.widget_resources_info'))
+                    Forms\Components\Section::make(__('capell-admin::generic.widget_assets'))
+                        ->description(__('capell-admin::generic.widget_assets_info'))
                         ->compact()
                         ->schema([
                             WidgetAssetsRepeater::make($form)
@@ -68,9 +69,9 @@ class HeroWidgetSchema extends AbstractWidgetSchema
             ->tabs([
                 Forms\Components\Tabs\Tab::make(__('capell-admin::tab.content'))
                     ->schema([
-                        WidgetTranslationsRepeater::make($form->getOperation()),
+                        WidgetTranslationsRepeater::make($form),
                     ]),
-                WidgetSettingsTab::make([
+                WidgetDisplayTab::make([
                     Forms\Components\Grid::make()
                         ->statePath('meta')
                         ->mutateDehydratedStateUsing(function (array $state): array {

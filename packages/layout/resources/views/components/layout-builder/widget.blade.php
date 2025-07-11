@@ -4,28 +4,50 @@ declare(strict_types=1);
 
 ?>
 
-@use(Capell\Admin\Facades\CapellAdmin;use Capell\Core\Facades\CapellCore;use Capell\Core\Models\Type;use Capell\Layout\Enums\LayoutResourceEnum;use Capell\Layout\Models\Content;use Filament\Support\Enums\ActionSize;use Filament\Support\Enums\FontWeight;use Filament\Support\Enums\IconSize;use Illuminate\Support\HtmlString;use Illuminate\View\ComponentAttributeBag)
-
 @props([
     'containerKey',
     'containerWidget',
     'loop',
     'occurrence',
-    'assetTypes',
     'assets',
     'assetsCount',
     'widget',
     'widgetIndex',
 ])
 @php
+    use Capell\Admin\Facades\CapellAdmin;
+    use Capell\Core\Facades\CapellCore;
+    use Capell\Core\Models\Type;
+    use Capell\Layout\Enums\LayoutResourceEnum;
+    use Capell\Layout\Models\Content;
+    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\FontWeight;
+    use Filament\Support\Enums\IconSize;
+    use Illuminate\Support\HtmlString;
+    use Illuminate\View\ComponentAttributeBag;
+
     $occurrence = $containerWidget['occurrence'] ?? 1;
+
     $type = $widget->admin['type'] ?? ($widget->type->admin['type'] ?? []);
-    $assetTypes = $widget->type->admin['asset_types'] ?? [];
-    $widgetIcon = $widget->admin['icon'] ?? ($widget->type->admin['icon'] ?? null) ?: 'heroicon-o-document-text';
+
+    $assetTypes = ! empty($widget->admin['asset_types'])
+        ? $widget->admin['asset_types']
+        : ($widget->type->admin['asset_types'] ?? []);
+
+    $widgetIcon = ! empty($widget->admin['icon'])
+        ? $widget->admin['icon']
+        : ($widget->type->admin['icon'] ?? 'heroicon-o-document-text');
+
     $hasPageAssets = $this->hasPageAssets($containerKey, $widgetIndex);
+
     $editWidgetAction = ($this->editWidgetAction)(['containerKey' => $containerKey, 'widgetIndex' => $widgetIndex]);
 
     $editContainerWidgetAction = ($this->editContainerWidgetAction)([
+        'containerKey' => $containerKey,
+        'widgetIndex' => $widgetIndex,
+    ]);
+
+    $editWidgetTypeAction = ($this->editWidgetTypeAction)([
         'containerKey' => $containerKey,
         'widgetIndex' => $widgetIndex,
     ]);
@@ -34,6 +56,8 @@ declare(strict_types=1);
         'containerKey' => $containerKey,
         'widgetIndex' => $widgetIndex,
     ]);
+
+    $image = $widget->image ?: $widget->backgroundImage;
 @endphp
 
 <div
@@ -74,7 +98,7 @@ declare(strict_types=1);
                 class="flex grow items-center"
                 @if ($assetTypes) x-on:click="! isReordering ? toggleCollapse() : null" @endif
             >
-                <div class="mr-1 flex w-7 items-center">
+                <div class="mr-1 flex w-7 items-center gap-3">
                     <span
                         class="relative"
                         x-show="! isReordering"
@@ -131,7 +155,6 @@ declare(strict_types=1);
 
                 @if ($type)
                     <x-filament::badge
-                        class="ml-3"
                         size="xs"
                         color="info"
                     >
@@ -139,12 +162,12 @@ declare(strict_types=1);
                     </x-filament::badge>
                 @endif
 
-                @if ($widget->image)
+                @if ($image)
                     <x-curator-glider
                         class="ml-auto max-h-12 object-contain"
                         format="webp"
                         view="capell-admin::components.media.glider"
-                        :media="$widget->image"
+                        :media="$image"
                         :width="80"
                         :height="80"
                         fit="fit"
@@ -179,6 +202,10 @@ declare(strict_types=1);
                             <x-filament::dropdown.list>
                                 @if ($editContainerWidgetAction?->isVisible())
                                     {{ $editContainerWidgetAction }}
+                                @endif
+
+                                @if ($editWidgetTypeAction?->isVisible())
+                                    {{ $editWidgetTypeAction }}
                                 @endif
 
                                 @if ($convertPageAssetsAction?->isVisible())
@@ -238,7 +265,7 @@ declare(strict_types=1);
     </div>
 
     @if ($assetTypes)
-        <x-capell-layout::layout-builder.widget.assets
+        <x-capell-layout::layout-builder.assets
             :$containerKey
             :$hasPageAssets
             :$occurrence

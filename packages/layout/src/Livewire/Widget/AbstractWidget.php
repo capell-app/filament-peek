@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Livewire\Widget;
 
-use Capell\Core\Enums\ResourceComponentEnum;
+use Capell\Core\Enums\AssetComponentEnum;
 use Capell\Core\Models;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\Models\Widget;
@@ -29,11 +29,16 @@ abstract class AbstractWidget extends Component
 
     public array $widgetData = [];
 
-    protected string $defaultView = 'capell::components.widget.default';
+    protected static string $defaultView = 'capell-layout::components.widget.default';
 
     protected $skipRender = false;
 
     abstract protected function mountWidget(): void;
+
+    public static function getViewName(): string
+    {
+        return static::$defaultView;
+    }
 
     public function hydrate(): void
     {
@@ -51,6 +56,12 @@ abstract class AbstractWidget extends Component
         $this->loop = $loop;
 
         $this->initializeWidget();
+    }
+
+    #[Computed]
+    public function widget(): Widget
+    {
+        return once(fn () => Widget::firstWhere('key', $this->widgetData['widget_key']));
     }
 
     /**
@@ -82,15 +93,9 @@ abstract class AbstractWidget extends Component
         return view($this->getComponent(), $data);
     }
 
-    #[Computed]
-    public function widget(): Widget
-    {
-        return once(fn () => Widget::firstWhere('key', $this->widgetData['widget_key']));
-    }
-
     protected function getComponent(): string
     {
-        return $this->widget->meta['file_view'] ?? $this->widget->type->meta['file_view'] ?? $this->defaultView;
+        return $this->widget->meta['view_file'] ?? $this->widget->type->meta['view_file'] ?? static::$defaultView;
     }
 
     protected function getComponentItem(): string
@@ -100,7 +105,7 @@ abstract class AbstractWidget extends Component
 
     protected function getDefaultComponentItem(): string
     {
-        return ResourceComponentEnum::Card->value;
+        return AssetComponentEnum::Card->value;
     }
 
     protected function initializeWidget(): void

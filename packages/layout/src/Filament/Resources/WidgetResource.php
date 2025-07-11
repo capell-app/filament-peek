@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Resources;
 
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Forms\TypeSchema;
 use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
 use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
@@ -25,6 +26,7 @@ use Capell\Layout\Enums\SchemaEnum;
 use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Resources\WidgetResource\Pages;
 use Capell\Layout\Filament\Resources\WidgetResource\RelationManagers;
+use Capell\Layout\Filament\Schemas\AbstractWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\DefaultWidgetSchema;
 use Capell\Layout\Models\Widget;
 use Filament\Forms;
@@ -104,12 +106,22 @@ class WidgetResource extends Resource
             ...CreateWidgetDetailsSchema::make($form),
             TypeSchema::make()
                 ->schema(
-                    fn (Forms\Get $get, TypeSchema $component): array => $component
-                        ->getSchema(
-                            $form,
-                            SchemaEnum::Widget->name,
-                            schema: DefaultWidgetSchema::getKey(),
-                        )
+                    function (Forms\Get $get, TypeSchema $component, ?Widget $record) use ($form): array {
+                        if ($record?->admin['schema'] ?? null) {
+                            /** @var class-string<AbstractWidgetSchema> $schema */
+                            $schema = CapellAdmin::getSchema(SchemaEnum::Widget->value, $record->admin['schema']);
+
+                            return app($schema)::make($form);
+                        }
+
+                        $typeId = $get('type_id');
+
+                        $type = $typeId ? CapellCore::getModel(ModelEnum::Type)::find($typeId, ['admin']) : null;
+
+                        $adminSchema = $type->admin['schema'] ?? DefaultWidgetSchema::getKey();
+
+                        return $component->getSchema($form, SchemaEnum::Widget->name, $adminSchema);
+                    }
                 ),
         ];
     }
@@ -174,12 +186,11 @@ class WidgetResource extends Resource
         ];
     }
 
-    private static function getTableColumns(): array
+    public static function getTableColumns(): array
     {
         return [
             IdentifierColumn::make('id'),
             NameColumn::make('name')
-                ->description(fn (Widget $record): ?string => $record->admin['notes'] ?? null)
                 ->suffixBadges([
                     Badge::make('type.name')
                         ->label(fn (Widget $record): ?string => $record->type?->name)
@@ -190,12 +201,13 @@ class WidgetResource extends Resource
                     'widgets.admin->notes',
                     'widgets.meta->component',
                     'widgets.meta->component_item',
-                    'widgets.meta->file_view',
+                    'widgets.meta->view_file',
                     'types.name',
                     'types.admin->notes',
                     'types.meta->component',
                 ]),
             ImageColumn::make('meta.image')
+                ->visibility('public')
                 ->toggleable(isToggledHiddenByDefault: true),
             LanguagesColumn::make('translations.language'),
             Tables\Columns\TextColumn::make('translation.contents')
@@ -281,7 +293,7 @@ class WidgetResource extends Resource
                     return new HtmlString(implode('<br />', $components));
                 })
                 ->toggleable(isToggledHiddenByDefault: true),
-            Tables\Columns\TextColumn::make('widget_resources_count')
+            Tables\Columns\TextColumn::make('widget_assets_count')
                 ->label(__('capell-admin::table.total_resources'))
                 ->counts('widgetAssets')
                 ->sortable()

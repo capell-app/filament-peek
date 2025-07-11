@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Components\Forms\Widget;
 
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Filament\Components\Forms\AssetTypeToggleButtons;
 use Capell\Admin\Filament\Components\Forms\ImageMediaPicker;
 use Capell\Admin\Filament\Components\Forms\Page\PageSelect;
-use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Models;
 use Capell\Layout\Filament\Components\Forms\Content\ContentSelect;
 use Capell\Layout\Models\Content;
@@ -30,7 +30,7 @@ class WidgetAssetsRepeater
             ->reorderable()
             ->collapsed()
             ->defaultItems(0)
-            ->addActionLabel(__('capell-admin::button.add_resource'))
+            ->addActionLabel(__('capell-admin::button.add_asset'))
             ->itemLabel(function (Forms\ComponentContainer $container, array $state, string $uuid): string {
                 $order = collect($container->getParentComponent()->getState())
                     ->keys()
@@ -101,12 +101,8 @@ class WidgetAssetsRepeater
     private static function getCreateResourceSchema(): array
     {
         return [
-            Forms\Components\ToggleButtons::make('asset_type')
-                ->label(__('capell-admin::form.resource_type'))
-                ->hiddenLabel()
+            AssetTypeToggleButtons::make('asset_type')
                 ->required()
-                ->options(TypeEnum::getResourceTypes())
-                ->inline()
                 ->reactive()
                 ->afterStateUpdated(function (Forms\Set $set): void {
                     $set('asset_id', null);
@@ -115,12 +111,14 @@ class WidgetAssetsRepeater
                 ->visible(fn (Get $get): bool => $get('asset_type') === 'media')
                 ->schema([
                     ImageMediaPicker::make('asset_id')
+                        ->required()
                         ->withUuid(),
                 ]),
             Forms\Components\Group::make()
                 ->visible(fn (Get $get): bool => $get('asset_type') === 'page')
                 ->schema([
                     PageSelect::make('asset_id')
+                        ->required()
                         ->withUuid()
                         ->withCreateForm()
                         ->withEditForm(),
@@ -129,6 +127,7 @@ class WidgetAssetsRepeater
                 ->visible(fn (Get $get): bool => $get('asset_type') === 'content')
                 ->schema([
                     ContentSelect::make('asset_id')
+                        ->required()
                         ->withUuid()
                         ->withCreateForm()
                         ->withEditForm(),
@@ -146,7 +145,6 @@ class WidgetAssetsRepeater
                             ->withUuid()
                             ->required()
                             ->afterStateHydrated(static function (ImageMediaPicker $component, array|int|string|null $state): void {
-
                                 if (blank($state)) {
                                     $component->state([]);
 
@@ -175,10 +173,12 @@ class WidgetAssetsRepeater
                                 $component->state($items);
                             }),
                         'page' => PageSelect::make('asset_id')
+                            ->required()
                             ->withUuid()
                             ->withCreateForm()
                             ->withEditForm(),
                         'content' => ContentSelect::make('asset_id')
+                            ->required()
                             ->withUuid()
                             ->withCreateForm()
                             ->withEditForm(),
