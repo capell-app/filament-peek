@@ -17,9 +17,6 @@
             --tw-rotate-z: initial;
             --tw-skew-x: initial;
             --tw-skew-y: initial;
-            --tw-pan-x: initial;
-            --tw-pan-y: initial;
-            --tw-pinch-zoom: initial;
             --tw-space-y-reverse: 0;
             --tw-space-x-reverse: 0;
             --tw-divide-x-reverse: 0;
@@ -1936,9 +1933,6 @@
     .-ml-1 {
         margin-left: calc(var(--spacing) * -1);
     }
-    .-ml-4 {
-        margin-left: calc(var(--spacing) * -4);
-    }
     .-ml-px {
         margin-left: -1px;
     }
@@ -1956,9 +1950,6 @@
     }
     .ml-10 {
         margin-left: calc(var(--spacing) * 10);
-    }
-    .ml-\[calc\(var\(--carousel-spacing\)\*-1\)\] {
-        margin-left: calc(var(--carousel-spacing) * -1);
     }
     .ml-\[var\(--carousel-spacing\)\] {
         margin-left: var(--carousel-spacing);
@@ -2338,14 +2329,6 @@
     .cursor-pointer {
         cursor: pointer;
     }
-    .touch-pan-y {
-        --tw-pan-y: pan-y;
-        touch-action: var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,);
-    }
-    .touch-pinch-zoom {
-        --tw-pinch-zoom: pinch-zoom;
-        touch-action: var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,);
-    }
     .list-disc {
         list-style-type: disc;
     }
@@ -2363,9 +2346,6 @@
     }
     .flex-col {
         flex-direction: column;
-    }
-    .flex-row {
-        flex-direction: row;
     }
     .flex-wrap {
         flex-wrap: wrap;
@@ -6612,7 +6592,7 @@
         :where(h3):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
         margin-bottom: calc(var(--spacing) * 1);
     }
-    .\[\:is\(\.embla__button--disabled\)\]\:hidden:is(.embla button--disabled) {
+    .\[\:is\(\.swiper-button-disabled\)\]\:hidden.swiper-button-disabled {
         display: none;
     }
     .\[\:not\(\.is-snapped\)\]\:opacity-20:not(.is-snapped) {
@@ -6759,56 +6739,31 @@
 a {
     cursor: pointer;
 }
-.embla__viewport.is-draggable {
+.swiper.is-draggable {
     cursor: move;
     cursor: grab;
 }
-.embla__viewport.is-dragging {
+.swiper.is-dragging {
     cursor: grabbing;
 }
-.embla__slide__scroll {
+.swiper-slide-scroll {
     position: relative;
 }
-.embla__slide__scroll .embla__slide__img {
+.swiper-slide-scroll .swiper-slide-img {
     position: fixed;
 }
-.embla.embla__fade .embla__container,
-.embla.embla__fade .embla__slide__parallax {
-    transform: none !important;
-}
-.embla.embla__fade .embla__container {
-    margin-left: 0;
-    transform: none !important;
-}
-.embla.embla__fade .embla__ready .embla__slide {
-    display: none;
-}
-.embla.embla__fade .embla__slide {
-    opacity: 0;
-    flex: none;
-    width: 100%;
-    height: 100%;
-    transition: opacity 0.5s;
-    top: 0;
-    left: 0 !important;
-    right: 0 !important;
-}
-.embla.embla__fade .embla__slide.embla__slide--selected {
-    opacity: 1;
-    z-index: 1;
-    transition: opacity 0.3s;
-    display: flex;
-}
-.embla__disabled .embla__dots,
-.embla__disabled .embla__button {
+.swiper-disabled .swiper-pagination,
+.swiper-disabled .swiper-button-prev,
+.swiper-disabled .swiper-button-next {
     opacity: 0;
     pointer-events: none;
 }
-.embla__dot {
+.swiper-pagination-bullet {
     cursor: pointer;
     min-width: 24px;
     min-height: 12px;
     box-shadow: none;
+    opacity: 1;
     background: 0 0;
     border: none;
     outline: none;
@@ -6819,7 +6774,7 @@ a {
     display: flex;
     position: relative;
 }
-.embla__dot:after {
+.swiper-pagination-bullet:after {
     content: '';
     opacity: 0.7;
     background-color: #6b7280;
@@ -6831,14 +6786,15 @@ a {
         opacity 0.2s;
     display: block;
 }
-.embla__dot:hover:after,
-.embla__dot:focus:after,
-.embla__dot.embla__dot--selected:after {
+.swiper-pagination-bullet:hover:after,
+.swiper-pagination-bullet:focus:after,
+.swiper-pagination-bullet-active:after {
     background-color: #2563eb;
     background-color: rgb(var(--primary-color, 37, 99, 235));
     opacity: 1;
 }
-.embla__button:disabled {
+.swiper-button-prev:disabled,
+.swiper-button-next:disabled {
     opacity: 0.3;
 }
 html {
@@ -6899,18 +6855,6 @@ html {
     inherits: false;
 }
 @property --tw-skew-y {
-    syntax: '*';
-    inherits: false;
-}
-@property --tw-pan-x {
-    syntax: '*';
-    inherits: false;
-}
-@property --tw-pan-y {
-    syntax: '*';
-    inherits: false;
-}
-@property --tw-pinch-zoom {
     syntax: '*';
     inherits: false;
 }
