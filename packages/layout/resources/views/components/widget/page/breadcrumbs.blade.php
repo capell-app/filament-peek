@@ -26,6 +26,10 @@ declare(strict_types=1);
     $currentPageLabel = ReplacePageDataAction::run($page->translation->label, $pageParams);
 
     $ancestors = PageLoader::getPageAncestors($page, $language, $site);
+
+    if (! $ancestors) {
+        return;
+    }
 @endphp
 
 <nav
