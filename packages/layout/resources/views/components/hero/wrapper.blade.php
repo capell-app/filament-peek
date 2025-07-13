@@ -13,7 +13,6 @@ declare(strict_types=1);
     'carouselAutDelay' => 8000,
     'carouselLoop' => false,
     'carouselPagination' => true,
-    'carouselSpacing' => true,
     'carouselType' => 'slide',
 ])
 
@@ -21,10 +20,10 @@ declare(strict_types=1);
     data-auto="{{ (int) $carouselAuto }}"
     data-loop="{{ (int) $carouselLoop }}"
     data-delay="{{ $carouselAutoDelay }}"
+    data-fade="{{ $carouselType === 'fade' }}"
     @class([
-        'grid min-h-full',
+        'grid min-h-full w-full',
         'swiper relative' => $total > 1,
-        'swiper-fade' => $carouselType === 'fade',
     ])
 >
     <div class="swiper-wrapper min-h-full w-full">

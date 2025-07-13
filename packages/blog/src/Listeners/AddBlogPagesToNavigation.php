@@ -24,7 +24,7 @@ class AddBlogPagesToNavigation
 
         $blogPage = BlogLoader::getBlogPage($event->navigation->site);
 
-        if ($blogPage) {
+        if ($blogPage instanceof \Capell\Core\Models\Page) {
             AddPageToNavigationAction::run($blogPage, $event->navigation);
         }
     }

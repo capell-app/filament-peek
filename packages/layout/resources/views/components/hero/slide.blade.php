@@ -20,7 +20,6 @@ declare(strict_types=1);
     'backgroundAttachment' => '',
     'backgroundRepeat' => 'no-repeat',
     'backgroundOverlay' => null,
-    'carouselSpacing' => true,
     'carouselType' => 'slide',
     'colorScheme' => 'dark',
     'container_class' => 'container',
@@ -31,8 +30,7 @@ declare(strict_types=1);
 <div
     {{
         $attributes->class([
-            'swiper-slide min-h-full w-full shrink-0 basis-full select-none',
-            'pl-4' => $carouselSpacing && $carouselType === 'slide',
+            'swiper-slide',
             'swiper-slide-selected' => $first,
         ])
     }}

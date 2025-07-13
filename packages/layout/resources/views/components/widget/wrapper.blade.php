@@ -28,6 +28,7 @@ declare(strict_types=1);
     'margin' => ! empty($widget->meta['margin']) ? (array) $widget->meta['margin'] : [],
     'padding' => ! empty($widget->meta['padding']) ? (array) $widget->meta['padding'] : [],
     'pageContainer' => $widget->meta['container'] ?? $theme->meta['container'] ?? null,
+    'tag' => 'section',
     'widget',
 ])
 @php
@@ -37,7 +38,7 @@ declare(strict_types=1);
 @aware([
     'containerColspan' => null,
 ])
-<div
+<{{ $tag }}
     id="{{ $containerKey.'-'.$widget->key."-$index" }}"
     {{
         $attributes->class([
@@ -124,6 +125,6 @@ declare(strict_types=1);
     @else
         {{ $slot }}
     @endif
-</div>
+</{{ $tag }}>
 
 <?php

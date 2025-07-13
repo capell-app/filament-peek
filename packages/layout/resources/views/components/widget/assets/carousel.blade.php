@@ -21,7 +21,6 @@ declare(strict_types=1);
     'carouselLoop' => true,
     'carouselPagination' => false,
     'carouselWheel' => true,
-    'carouselSpacing' => '1rem',
     'colorScheme' => $widget->meta['color_scheme'] ?? 'dark',
     'container',
     'containerKey',
@@ -61,49 +60,46 @@ declare(strict_types=1);
         data-drag="{{ (int) $carouselDrag }}"
         data-wheel="{{ (int) $carouselWheel }}"
         @class(['relative py-10', 'swiper' => $total > 1])
-        @style(["--carousel-spacing:{$carouselSpacing}" => $carouselSpacing])
     >
         <div class="swiper-wrapper w-full overflow-hidden px-8">
-                @foreach ($widget->assets as $widgetAsset)
-                    @php
-                        $resource = $widgetAsset->asset;
-                        $media = $widgetAsset->image ?? ($resource instanceof Media ? $resource : $resource->media);
-                        $width = 400;
-                    @endphp
+            @foreach ($widget->assets as $widgetAsset)
+                @php
+                    $resource = $widgetAsset->asset;
+                    $media = $widgetAsset->image ?? ($resource instanceof Media ? $resource : $resource->media);
+                    $width = 400;
+                @endphp
 
-                    @continue(! $media?->width)
+                @continue(! $media?->width)
 
-                    @php
-                        $height = floor($width * ($media->height / $media->width));
-                    @endphp
+                @php
+                    $height = floor($width * ($media->height / $media->width));
+                @endphp
 
-                    <div
-                        @class([
-                            'swiper-slide transform-opacity [:not(.is-snapped)]:opacity-20 group relative h-64 min-w-0 max-w-full shrink-0 grow-0 basis-auto cursor-pointer select-none overflow-hidden text-white duration-200 ease-in-out',
-                            'ml-[var(--carousel-spacing)]' => $carouselSpacing,
-                        ])
-                        tabindex="0"
-                    >
-                        <x-capell::media
-                            :class="'swiper-slide-img h-64 bg-gray-50 shadow transition-transform duration-300 group-hover:scale-105 group-focus:scale-105'.($theme->withDarkMode ? ' dark:bg-gray-900' : '')"
-                            :$loop
-                            :media="$media"
-                            :srcset="['400w', '200w']"
-                            :width="$width"
-                            :height="$height"
-                            sizes="(max-width: 640px) 80vw, 20w"
-                            lightbox="true"
-                        />
-                        @if ($media->name)
-                            <div
-                                class="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-full transform items-center justify-center break-words bg-gray-600/75 px-2 py-4 text-sm font-medium leading-none leading-tight text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100"
-                            >
-                                {{ $media->title }}
-                            </div>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
+                <div
+                    @class([
+                        'swiper-slide group relative h-64 text-white',
+                    ])
+                    tabindex="0"
+                >
+                    <x-capell::media
+                        :class="'swiper-slide-img h-64 bg-gray-50 shadow transition-transform duration-300 group-hover:scale-105 group-focus:scale-105'.($theme->withDarkMode ? ' dark:bg-gray-900' : '')"
+                        :$loop
+                        :media="$media"
+                        :srcset="['400w', '200w']"
+                        :width="$width"
+                        :height="$height"
+                        sizes="(max-width: 640px) 80vw, 20w"
+                        lightbox="true"
+                    />
+                    @if ($media->name)
+                        <div
+                            class="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-full transform items-center justify-center break-words bg-gray-600/75 px-2 py-4 text-sm font-medium leading-none leading-tight text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100"
+                        >
+                            {{ $media->title }}
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         </div>
 
         @if ($total > 1)

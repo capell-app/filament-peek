@@ -30,7 +30,7 @@ class CreateThemeAction
             return Theme::updateOrCreate(
                 ['key' => LayoutServiceProvider::$name],
                 [
-                    'name' => CapellCore::getPackage('capell-layout')->name,
+                    'name' => CapellCore::getPackage('capell-layout')->shortName,
                     'type_id' => $type->id,
                     'status' => true,
                     'default' => true,

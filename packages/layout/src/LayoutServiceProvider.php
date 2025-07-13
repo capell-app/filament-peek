@@ -415,7 +415,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                     )
                     ->schema([
                         RichEditor::make('hero')
-                            ->label(__('capell-layout::generic.hero'))
+                            ->label(__('capell-layout::form.hero'))
                             ->helperText(__('capell-layout::generic.hero_info')),
                     ]),
             ]

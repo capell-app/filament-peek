@@ -49,21 +49,22 @@ declare(strict_types=1);
     @if ($widget->assets->isNotEmpty())
         <div class="swiper swiper-fade relative grid h-full w-full">
             <div class="swiper-wrapper h-full w-full">
-                    @foreach ($widget->assets as $widgetAsset)
-                        @php
-                            $title = '';
-                            $content = '';
-                            $image = $widgetAsset->asset instanceof Media ? $widgetAsset->asset : $widgetAsset->asset->image;
+                @foreach ($widget->assets as $widgetAsset)
+                    @php
+                        $title = '';
+                        $content = '';
+                        $image = $widgetAsset->asset instanceof Media ? $widgetAsset->asset : $widgetAsset->asset->image;
 
-                            if (CapellCore::getAsset($widgetAsset->asset_type)->hasTranslation()) {
-                                $title = $widgetAsset->asset->translation?->title;
-                                $content = $widgetAsset->asset->translation?->content;
-                            }
-                        @endphp
+                        if (CapellCore::getAsset($widgetAsset->asset_type)->hasTranslation()) {
+                            $title = $widgetAsset->asset->translation?->title;
+                            $content = $widgetAsset->asset->translation?->content;
+                        }
+                    @endphp
 
+                    <div class="swiper-slide">
                         <div
                             @class([
-                                'swiper-slide relative flex w-full shrink-0 basis-full flex-col space-y-4',
+                                'relative flex w-full shrink-0 basis-full flex-col space-y-4',
                                 'items-center justify-center text-center' => $align === 'center',
                                 'items-start justify-start text-left' => $align === 'left',
                                 'items-end justify-end text-right' => $align === 'right',
@@ -108,12 +109,14 @@ declare(strict_types=1);
                                 </div>
                             @endif
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
             @if ($total > 1)
                 <div class="swiper-controls mt-4">
-                    <div class="swiper-pagination flex justify-center gap-x-3"></div>
+                    <div
+                        class="swiper-pagination flex justify-center gap-x-3"
+                    ></div>
                 </div>
             @endif
         </div>
