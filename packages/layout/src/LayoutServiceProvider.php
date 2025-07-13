@@ -31,6 +31,7 @@ use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -95,8 +96,9 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         $publishDir = self::getPublishedDirectory();
 
         FilamentAsset::register([
-            AlpineComponent::make('layout-builder', $publishDir.'/build/js/layout-builder.js')
+            AlpineComponent::make('layout-builder', $publishDir.'/build/layout-builder.js')
                 ->loadedOnRequest(),
+            Css::make('capell-layout-filament', $publishDir.'/build/capell-layout-filament.css'),
         ],
             package: 'capell-layout'
         );
