@@ -8,15 +8,13 @@ use Capell\Admin\Filament\Components\Forms\ContentEditor;
 use Capell\Admin\Filament\Components\Forms\RepeaterTabs;
 use Capell\Admin\Filament\Components\Forms\TranslationLanguageSelect;
 use Capell\Admin\Filament\Components\Forms\TranslationsRepeater;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Translation;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Cache;
 
 final class ContentTranslationsRepeater
 {
@@ -27,11 +25,6 @@ final class ContentTranslationsRepeater
         bool $hasContent = true,
         bool $titleRequired = true
     ): RepeaterTabs {
-        $totalLanguages = (int) Cache::rememberForever(
-            'languages_total',
-            fn (): int => CapellCore::getModel(ModelEnum::Language)::count()
-        );
-
         $operation = $schema->getOperation();
 
         return TranslationsRepeater::make('translations')
@@ -40,7 +33,7 @@ final class ContentTranslationsRepeater
                 fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship()
             )
             ->schema([
-                ...($hasTitle ? self::getTitleSchema($titleRequired, $totalLanguages) : []),
+                ...($hasTitle ? self::getTitleSchema($titleRequired) : []),
                 ...($hasContent ? self::getContentSchema() : []),
                 ...$components,
             ]);
@@ -53,20 +46,19 @@ final class ContentTranslationsRepeater
         ];
     }
 
-    private static function getTitleSchema(bool $titleRequired, int $totalLanguages): array
+    private static function getTitleSchema(bool $titleRequired): array
     {
         return [
             Hidden::make('is_title_changed_manually')
                 ->default(false)
                 ->dehydrated(false),
 
-            Grid::make($totalLanguages === 1 ? 1 : 3)
+            Grid::make(3)
                 ->columnSpanFull()
                 ->schema([
                     TextInput::make('title')
                         ->label(__('capell-admin::form.title'))
                         ->required($titleRequired)
-                        ->columnSpan(fn ($operation, $record): int => $totalLanguages === 1 ? 1 : 3)
                         ->afterStateUpdated(
                             function (Get $get, Set $set, $state, TextInput $component): void {
                                 $namePath = '../../name';
@@ -93,9 +85,11 @@ final class ContentTranslationsRepeater
 
                                 $set($namePath, $state);
                             }
-                        ),
+                        )
+                        ->columnSpan(fn (?Translation $record): int => $record instanceof Translation && $record->exists ? 3 : 2),
 
-                    TranslationLanguageSelect::make(),
+                    TranslationLanguageSelect::make()
+                        ->hidden(fn (?Translation $record): bool => $record instanceof Translation && $record->exists),
                 ]),
         ];
     }

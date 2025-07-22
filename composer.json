@@ -56,7 +56,7 @@
         "ext-intl": "*",
         "ext-simplexml": "*",
         "awcodes/filament-badgeable-column": "^3.0",
-        "awcodes/filament-curator": "^4.0|dev-4.x",
+        "awcodes/filament-curator": "^4.0",
         "awobaz/compoships": "^2.3",
         "bezhansalleh/filament-shield": "^4.0",
         "bkwld/cloner": "^3.11",
@@ -129,8 +129,7 @@
         "psr-4": {
             "Capell\\Blog\\Database\\Factories\\": "packages/Blog/database/factories",
             "Capell\\Layout\\Database\\Factories\\": "packages/Layout/database/factories",
-            "Capell\\Tests\\Blog\\": "tests/packages/Blog",
-            "Capell\\Tests\\Layout\\": "tests/packages/Layout"
+            "Capell\\Tests\\": "tests/src"
         }
     },
     "config": {

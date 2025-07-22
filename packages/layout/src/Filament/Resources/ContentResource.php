@@ -13,8 +13,8 @@ use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\LanguagesColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\PublishStatusColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
-use Capell\Admin\Filament\Components\Tables\Columns\StatusColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\TypeNameColumn;
 use Capell\Admin\Filament\Components\Tables\Filters\StatusFilter;
 use Capell\Core\Enums\ModelEnum;
@@ -436,7 +436,7 @@ class ContentResource extends Resource
                 'sm' => 2,
                 'lg' => 3,
             ])
-            ->columnToggleFormColumns(3)
+            ->columnManagerColumns(3)
             ->recordActions([
                 EditAction::make(),
                 ActionGroup::make([
@@ -513,7 +513,7 @@ class ContentResource extends Resource
                 ->label(__('capell-admin::table.image'))
                 ->relationship('image')
                 ->toggleable(),
-            StatusColumn::make('status'),
+            PublishStatusColumn::make('status'),
             DateColumn::make('publish_from')
                 ->label(__('capell-admin::table.publish_from'))
                 ->toggleable(isToggledHiddenByDefault: true),

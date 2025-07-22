@@ -8,7 +8,7 @@ declare(strict_types=1);
     use Capell\Admin\Enums\AlertTypeEnum;
     use Capell\Admin\Enums\ResourceEnum;
     use Capell\Admin\Facades\CapellAdmin;
-    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\Size;
 
     $changeLayoutAction = $this->changeLayoutAction;
     $duplicateLayoutAction = $this->duplicateLayoutAction;
@@ -50,7 +50,7 @@ declare(strict_types=1);
 
                     @if ($duplicateLayoutAction->isVisible())
                         <span class="font-medium">
-                            {!! __('capell-admin::generic.copy_page_layout', ['link' => $duplicateLayoutAction->link()->size(ActionSize::Small)->render()]) !!}
+                            {!! __('capell-admin::generic.copy_page_layout', ['link' => $duplicateLayoutAction->link()->size(Size::Small)->toHtml()]) !!}
                         </span>
                     @endif
                 </div>

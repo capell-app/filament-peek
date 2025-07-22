@@ -66,7 +66,6 @@ class ArticlePageSchema extends DefaultPageSchema
                 ])
                 ->sidebarSchema([
                     Section::make()
-                        ->columns(['default' => 1, 'sm' => 2, 'lg' => 1])
                         ->schema([
                             ...PageSettingsSchema::make(
                                 $schema,
@@ -93,7 +92,6 @@ class ArticlePageSchema extends DefaultPageSchema
                                 ],
                                 resourceName: 'article',
                             ),
-                            PagePublishSection::make(),
                         ]),
                 ]),
         ];

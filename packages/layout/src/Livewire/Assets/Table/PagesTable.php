@@ -9,7 +9,7 @@ use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\LanguagesColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
-use Capell\Admin\Filament\Components\Tables\Columns\Page\PageStatusColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\PublishStatusColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\TypeNameColumn;
 use Capell\Admin\Filament\Components\Tables\Filters\DateFilter;
@@ -123,7 +123,7 @@ class PagesTable extends AbstractAssetsTable
                 ->disabledClick()
                 ->view('capell-admin::components.tables.columns.page-assets')
                 ->toggleable(isToggledHiddenByDefault: true),
-            PageStatusColumn::make('status'),
+            PublishStatusColumn::make('status'),
             DateColumn::make('created_at')->toggleable(isToggledHiddenByDefault: true),
             DateColumn::make('updated_at')->toggleable(),
         ];

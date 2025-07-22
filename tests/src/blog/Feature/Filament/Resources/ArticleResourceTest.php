@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+use Capell\Blog\Database\Factories\ArticlePageFactory;
+use Capell\Blog\Filament\Resources\ArticleResource;
+use Capell\Core\Models\Language;
+use Capell\Core\Models\Site;
+use Capell\Core\Models\SiteDomain;
+use src\Fixtures\Support\Concerns\CreatesAdminUser;
+use function Pest\Laravel\get;
+
+uses(CreatesAdminUser::class)
+    ->group('page', 'article');
+
+test('admin can see page articles', function (): void {
+    test()->actingAsAdmin();
+
+    get(ArticleResource::getUrl())
+        ->assertOk();
+});
+
+test('cannot see page article', function (): void {
+    test()->actingAsUser();
+
+    get(ArticleResource::getUrl())
+        ->assertForbidden();
+});
+
+test('admin can see create article', function (): void {
+    test()->actingAsAdmin();
+
+    $language = Language::factory()->default()->create();
+
+    Site::factory()
+        ->has(SiteDomain::factory()->state(['language_id' => $language->id]))
+        ->default()
+        ->create();
+
+    get(ArticleResource::getUrl('create'))
+        ->assertOk();
+});
+
+test('admin can see edit article', function (): void {
+    test()->actingAsAdmin();
+
+    $page = (new ArticlePageFactory())->create();
+
+    get(ArticleResource::getUrl('edit', ['record' => $page]))
+        ->assertOk();
+});

@@ -20,9 +20,9 @@ declare(strict_types=1);
     use Capell\Core\Models\Type;
     use Capell\Layout\Enums\LayoutResourceEnum;
     use Capell\Layout\Models\Content;
-    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
     use Illuminate\Support\HtmlString;
     use Illuminate\View\ComponentAttributeBag;
 
@@ -116,7 +116,7 @@ declare(strict_types=1);
                         @if ($assetTypes)
                             <x-filament::badge
                                 :color="$hasPageAssets ? 'primary' : 'gray'"
-                                :size="ActionSize::ExtraSmall"
+                                :size="Size::ExtraSmall"
                                 class="absolute -right-2 -top-2 inline-flex"
                             >
                                 {{ $assetsCount }}

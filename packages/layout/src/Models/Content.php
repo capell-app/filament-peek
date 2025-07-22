@@ -170,11 +170,11 @@ class Content extends Model implements Auditable, PageCacheable
     use HasDraftsAndNestedSet {
         HasDraftsAndNestedSet::parent as hasDraftsAndNestedSetParent;
     }
+
     /** @use HasFactory<ContentFactory> */
     use HasFactory;
 
     use HasJsonRelationships;
-
     use HasMetaData;
     use HasPageCache;
     use HasPublishDates;
