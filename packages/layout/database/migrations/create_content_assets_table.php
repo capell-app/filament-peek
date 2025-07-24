@@ -23,7 +23,7 @@ return new class extends Migration
     {
         Schema::create('content_assets', function (Blueprint $table): void {
             $table->id();
-            $table->foreignUuid('content_id')->index()->constrained()->cascadeOnDelete();
+            $table->foreignId('content_id')->index()->constrained()->cascadeOnDelete();
             $table->unsignedInteger('order')->default(0)->index();
             $table->uuidMorphs('asset');
             $table->userstamps();

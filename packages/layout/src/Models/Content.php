@@ -32,7 +32,6 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -181,7 +180,6 @@ class Content extends Model implements Auditable, PageCacheable
     use HasTags;
     use HasTranslations;
     use HasTypes;
-    use HasUuids;
     use NodeTrait {
         NodeTrait::bootNodeTrait as protected;
         NodeTrait::parent as nodeTraitParent;

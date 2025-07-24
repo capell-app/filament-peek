@@ -8,6 +8,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\SiteDomain;
 use src\Fixtures\Support\Concerns\CreatesAdminUser;
+
 use function Pest\Laravel\get;
 
 uses(CreatesAdminUser::class)

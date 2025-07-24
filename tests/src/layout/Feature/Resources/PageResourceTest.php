@@ -6,6 +6,7 @@ use Capell\Admin\Filament\Resources\PageResource;
 use Capell\Core\Models\Page;
 use Capell\Layout\Livewire\LayoutBuilder;
 use src\Fixtures\Support\Concerns\CreatesAdminUser;
+
 use function Pest\Laravel\get;
 
 uses(CreatesAdminUser::class)

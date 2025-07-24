@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use src\Fixtures\Models\User;
+
 use function Pest\Laravel\artisan;
 
 it('runs the install command successfully', function (): void {

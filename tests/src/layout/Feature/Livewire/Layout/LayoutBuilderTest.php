@@ -18,6 +18,7 @@ use Capell\Layout\Services\Creator\LayoutUpdater;
 use Capell\Layout\Services\Creator\WidgetCreator;
 use Capell\Layout\Services\Creator\WidgetTypeCreator;
 use src\Fixtures\Support\Concerns\CreatesAdminUser;
+
 use function Pest\Livewire\livewire;
 
 uses(CreatesAdminUser::class)->group('pages');

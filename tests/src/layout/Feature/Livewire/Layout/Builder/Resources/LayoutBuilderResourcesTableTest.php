@@ -16,6 +16,7 @@ use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Illuminate\Database\Eloquent\Model;
 use src\Fixtures\Support\Concerns\CreatesAdminUser;
+
 use function Pest\Livewire\livewire;
 
 uses(CreatesAdminUser::class)->group('pages');

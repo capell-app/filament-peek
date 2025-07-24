@@ -6,6 +6,7 @@ use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\ListArticles;
 use Capell\Core\Models\Page;
 use src\Fixtures\Support\Concerns\CreatesAdminUser;
+
 use function Pest\Livewire\livewire;
 
 uses(CreatesAdminUser::class)

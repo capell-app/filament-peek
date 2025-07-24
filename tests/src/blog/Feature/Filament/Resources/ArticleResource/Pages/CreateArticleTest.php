@@ -13,6 +13,7 @@ use Capell\Core\Models\PageTranslation;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
 use src\Fixtures\Support\Concerns\CreatesAdminUser;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 

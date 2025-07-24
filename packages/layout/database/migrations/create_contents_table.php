@@ -23,7 +23,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('contents', function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('name');
             $table->foreignId('type_id')->constrained();
             $table->foreignId('site_id')->nullable()->constrained()->cascadeOnDelete();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->unsignedInteger('order')->default(0)->index();
             $table->publishDates('publish');
             $this->draftsCreateSchema($table);
-            $table->foreignUuid('parent_id')->nullable()->constrained('contents')->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('parent_id')->nullable()->constrained('contents')->nullOnDelete()->cascadeOnUpdate();
             $table->unsignedInteger(NestedSet::LFT)->default(0);
             $table->unsignedInteger(NestedSet::RGT)->default(0);
             $table->userstamps();
@@ -54,7 +54,7 @@ return new class extends Migration
 
     private function draftsCreateSchema(Blueprint $table): void
     {
-        $uuid = 'draft_id';
+        $uuid = config('drafts.column_names.uuid', 'uuid');
         $publishedAt = config('drafts.column_names.published_at', 'published_at');
         $isPublished = config('drafts.column_names.is_published', 'is_published');
         $isCurrent = config('drafts.column_names.is_current', 'is_current');

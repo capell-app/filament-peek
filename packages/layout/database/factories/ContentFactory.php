@@ -29,7 +29,6 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => fake()->uuid,
             'name' => fake()->sentence,
             'parent_id' => null,
             'type_id' => (new ContentTypeFactory()),

@@ -52,41 +52,38 @@ class RelatedWidgetSchema extends AbstractWidgetSchema
                     ->columnSpanFull()
                     ->tabs([
                         WidgetDisplayTab::make([
-                            Group::make()
-                                ->statePath('meta')
-                                ->columns()
-                                ->schema([
-                                    Group::make([
-                                        Checkbox::make('exclude_parent')
-                                            ->label(__('capell-layout::form.exclude_parent')),
-                                        Select::make('exclude_types')
-                                            ->label(__('capell-layout::form.exclude_types'))
-                                            ->helperText(__('capell-layout::generic.exclude_types_info'))
-                                            ->multiple()
-                                            ->options(
-                                                fn (): array => CapellCore::getModel(ModelEnum::Type)::query()
-                                                    ->pageType()
-                                                    ->pluck('name', 'key')
-                                                    ->toArray()
-                                            ),
-                                    ]),
-                                    Grid::make(3)
-                                        ->schema([
-                                            TextInput::make('limit')
-                                                ->label(__('capell-admin::form.limit')),
-                                            Checkbox::make('pagination')
-                                                ->label(__('capell-admin::form.pagination'))
-                                                ->default(true),
-                                            CacheFrequencySelect::make('cache_frequency'),
-                                        ]),
-                                    Fieldset::make(__('capell-admin::generic.display_settings'))
-                                        ->columns(['default' => 1, 'md' => 2, 'lg' => 3, 'xl' => 4])
-                                        ->columnSpanFull()
-                                        ->schema(WidgetResultsSettingsSchema::make()),
-                                    WidgetDisplaySection::make(),
-                                    WidgetComponentFilesSection::make(),
+                            WidgetDisplaySection::make([
+                                Group::make([
+                                    Checkbox::make('exclude_parent')
+                                        ->label(__('capell-layout::form.exclude_parent')),
+                                    Select::make('exclude_types')
+                                        ->label(__('capell-layout::form.exclude_types'))
+                                        ->helperText(__('capell-layout::generic.exclude_types_info'))
+                                        ->multiple()
+                                        ->options(
+                                            fn (): array => CapellCore::getModel(ModelEnum::Type)::query()
+                                                ->pageType()
+                                                ->pluck('name', 'key')
+                                                ->toArray()
+                                        ),
                                 ]),
-                        ]),
+                                Grid::make(3)
+                                    ->schema([
+                                        TextInput::make('limit')
+                                            ->label(__('capell-admin::form.limit')),
+                                        Checkbox::make('pagination')
+                                            ->label(__('capell-admin::form.pagination'))
+                                            ->default(true),
+                                        CacheFrequencySelect::make('cache_frequency'),
+                                    ]),
+                                Fieldset::make(__('capell-admin::generic.display_settings'))
+                                    ->columns(['default' => 1, 'md' => 2, 'lg' => 3, 'xl' => 4])
+                                    ->columnSpanFull()
+                                    ->schema(WidgetResultsSettingsSchema::make()),
+                            ]),
+                            WidgetComponentFilesSection::make(),
+                        ])
+                            ->statePath('meta'),
                         WidgetAdminTab::make(),
                     ]),
             ],
