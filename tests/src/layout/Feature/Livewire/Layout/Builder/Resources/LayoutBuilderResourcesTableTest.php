@@ -15,6 +15,7 @@ use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Model;
 
 use function Pest\Livewire\livewire;
@@ -143,7 +144,8 @@ describe('layout', function () use ($types): void {
         ])
             ->assertSuccessful()
             ->assertCountTableRecords(4)
-            ->callTableBulkAction('selectRecords', $records)
+            ->selectTableRecords($records->pluck('id')->toArray())
+            ->callAction(TestAction::make('selectRecords')->table()->bulk())
             ->assertDispatchedTo(
                 LayoutBuilder::class,
                 'sync-selected-assets',
@@ -183,7 +185,8 @@ describe('layout', function () use ($types): void {
             ->assertSuccessful()
             ->assertCountTableRecords(4)
             ->assertCanSeeTableRecords($records)
-            ->callTableBulkAction('selectRecords', $records)
+            ->selectTableRecords($records->pluck('id')->toArray())
+            ->callAction(TestAction::make('selectRecords')->table()->bulk())
             ->assertDispatchedTo(
                 LayoutBuilder::class,
                 'sync-selected-assets',
@@ -289,7 +292,8 @@ describe('page layout', function () use ($types): void {
         ])
             ->assertSuccessful()
             ->assertCountTableRecords(4)
-            ->callTableBulkAction('selectRecords', $records)
+            ->selectTableRecords($records->pluck('id')->toArray())
+            ->callAction(TestAction::make('selectRecords')->table()->bulk())
             ->assertDispatchedTo(
                 LayoutBuilder::class,
                 'sync-selected-assets',

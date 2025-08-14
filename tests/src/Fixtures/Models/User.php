@@ -81,6 +81,7 @@ class User extends Model implements Auditable, AuthenticatableContract, Authoriz
     {
         return [
             'email_verified_at' => 'datetime',
+            'password' => 'hashed',
         ];
     }
 }

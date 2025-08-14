@@ -38,7 +38,7 @@ describe('from edit page', function (): void {
                 'name' => $newData->name,
                 'key' => $newData->key,
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas(Widget::class, [
             'name' => $newData->name,
@@ -55,7 +55,7 @@ describe('from edit page', function (): void {
                 'name' => '',
                 'key' => '',
             ])
-            ->assertHasActionErrors([
+            ->assertHasFormErrors([
                 'name' => 'required',
                 'key' => 'required',
             ]);
@@ -73,7 +73,7 @@ describe('from list page', function (): void {
                 'name' => $newData->name,
                 'key' => $newData->key,
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas(Widget::class, [
             'name' => $newData->name,
@@ -106,11 +106,11 @@ describe('from list page', function (): void {
                 'key' => $newData->key,
                 'type_id' => $type->id,
                 ...match ($typeEum) {
-                    WidgetTypeEnum::Navigation => ['meta' => ['navigation' => Navigation::factory()->create()->handle]],
+                    WidgetTypeEnum::Navigation => ['meta' => ['navigation' => Navigation::factory()->create()->id]],
                     default => [],
                 },
             ])
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas(Widget::class, [
             'name' => $newData->name,
@@ -129,7 +129,7 @@ describe('from list page', function (): void {
                 'name' => '',
                 'key' => '',
             ])
-            ->assertHasActionErrors([
+            ->assertHasFormErrors([
                 'name' => 'required',
                 'key' => 'required',
             ]);

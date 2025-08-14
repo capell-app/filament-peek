@@ -10,30 +10,33 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(app(config('curator.model'))->getTable(), function (Blueprint $table): void {
+        Schema::create('curator', function (Blueprint $table): void {
             $table->id();
-            $table->string('disk')->default('public');
-            $table->string('directory')->default('media');
+            $table->string('disk');
+            $table->string('directory')->nullable();
             $table->string('visibility')->default('public');
             $table->string('name');
-            $table->string('path');
+            $table->string('path')->index();
             $table->unsignedInteger('width')->nullable();
             $table->unsignedInteger('height')->nullable();
             $table->unsignedInteger('size')->nullable();
-            $table->string('type')->default('image');
+            $table->string('type');
             $table->string('ext');
             $table->string('alt')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->text('caption')->nullable();
+            $table->text('pretty_name')->nullable();
             $table->text('exif')->nullable();
             $table->longText('curations')->nullable();
+            $table->unsignedBigInteger('tenant_id')->nullable();
+
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists(app(config('curator.model'))->getTable());
+        Schema::dropIfExists('curator');
     }
 };

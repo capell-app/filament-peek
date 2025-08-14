@@ -138,7 +138,7 @@ class ArticlePageSchema extends DefaultPageSchema
     }
 
     #[Override]
-    protected static function getCreateExtraFor(): array
+    protected static function getCreateExtraFor(Schema $schema): array
     {
         return [
             Group::make([

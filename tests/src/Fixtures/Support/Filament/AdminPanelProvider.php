@@ -7,11 +7,16 @@ namespace Capell\Tests\Fixtures\Support\Filament;
 use Capell\Admin\CapellAdminPlugin;
 use Capell\Admin\Enums\FilamentColorEnum;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Widgets;
+use Capell\Admin\Filament\Widgets\AlertsWidget;
+use Capell\Admin\Filament\Widgets\AuthenticationLogsWidget;
+use Capell\Admin\Filament\Widgets\LatestPagesWidget;
+use Capell\Admin\Filament\Widgets\PopularPagesWidget;
+use Capell\Admin\Filament\Widgets\TotalPageViewsChartWidget;
+use Capell\Admin\Filament\Widgets\TotalVisitorsChartWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
@@ -43,18 +48,17 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->plugins([
                 CapellAdminPlugin::make(),
-                // ->discoverSchemas(in: app_path('Filament/Schemas'), for: 'App\\Filament\\Schemas'),
             ])
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->widgets([
-                Widgets\AlertsWidget::class,
-                Widgets\AuthenticationLogsWidget::class,
-                Widgets\PopularPagesWidget::class,
-                Widgets\LatestPagesWidget::class,
-                Widgets\TotalPageViewsChartWidget::class,
-                Widgets\TotalVisitorsChartWidget::class,
+                AlertsWidget::class,
+                AuthenticationLogsWidget::class,
+                PopularPagesWidget::class,
+                LatestPagesWidget::class,
+                TotalPageViewsChartWidget::class,
+                TotalVisitorsChartWidget::class,
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])

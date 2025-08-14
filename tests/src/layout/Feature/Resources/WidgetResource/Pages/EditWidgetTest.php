@@ -129,7 +129,7 @@ test('can edit widget', function (WidgetTypeEnum $typeEum): void {
             'name' => $newData->name,
             'key' => $newData->key,
             ...match ($typeEum) {
-                WidgetTypeEnum::Navigation => ['meta' => ['navigation' => Navigation::factory()->create()->handle]],
+                WidgetTypeEnum::Navigation => ['meta' => ['navigation' => Navigation::factory()->create()->id]],
                 default => [],
             },
         ])
@@ -140,7 +140,7 @@ test('can edit widget', function (WidgetTypeEnum $typeEum): void {
         ->assertFormFieldExists('name')
         ->assertFormFieldExists('key')
         ->call('save')
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     expect($widget->refresh())
         ->name->toBe($newData->name)

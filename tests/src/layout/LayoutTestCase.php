@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Capell\Tests\Layout;
 
 use Capell\Admin\AdminServiceProvider;
-use Capell\Frontend\FrontendServiceProvider;
-use Capell\Layout\CapellLayoutManager;
+use Capell\Blog\BlogServiceProvider;
 use Capell\Layout\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
@@ -15,10 +14,7 @@ class LayoutTestCase extends AbstractTestCase
 {
     protected function setUp(): void
     {
-        $this->packageMigrations = $this->getPackageMigrations(
-            __DIR__.'/../../../packages/layout/database/migrations',
-            CapellLayoutManager::getMigrations()
-        );
+        $this->packageMigrations = glob(__DIR__.'/../../../packages/layout/database/migrations/*.php');
 
         parent::setUp();
     }
@@ -28,7 +24,7 @@ class LayoutTestCase extends AbstractTestCase
         return [
             ...parent::getPackageProviders($app),
             AdminServiceProvider::class,
-            FrontendServiceProvider::class,
+            BlogServiceProvider::class,
             LayoutServiceProvider::class,
             AdminPanelProvider::class,
         ];

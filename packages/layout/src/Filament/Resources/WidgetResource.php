@@ -124,9 +124,9 @@ class WidgetResource extends Resource
                     function (Get $get, TypeSchema $component, ?Widget $record) use ($schema): array {
                         if ($record?->admin['schema'] ?? null) {
                             /** @var class-string<AbstractWidgetSchema> $schema */
-                            $schema = CapellAdmin::getSchema(SchemaEnum::Widget->value, $record->admin['schema']);
+                            $adminSchema = CapellAdmin::getSchema(SchemaEnum::Widget->value, $record->admin['schema']);
 
-                            return app($schema)::make($schema);
+                            return app($adminSchema)::make($schema);
                         }
 
                         $typeId = $get('type_id');
@@ -158,10 +158,6 @@ class WidgetResource extends Resource
                 ])
                     ->select('widgets.*')
                     ->withLayoutsCount()
-                    ->leftJoin('types', 'widgets.type_id', '=', 'types.id')
-                    ->withoutGlobalScopes([
-                        SoftDeletingScope::class,
-                    ])
             )
             ->columns(self::getTableColumns())
             ->filters(self::getTableFilters())
@@ -212,14 +208,11 @@ class WidgetResource extends Resource
                         ->color('gray'),
                 ])
                 ->searchable([
-                    'widgets.name',
-                    'widgets.admin->notes',
-                    'widgets.meta->component',
-                    'widgets.meta->component_item',
-                    'widgets.meta->view_file',
-                    'types.name',
-                    'types.admin->notes',
-                    'types.meta->component',
+                    'name',
+                    'admin->notes',
+                    'meta->component',
+                    'meta->component_item',
+                    'meta->view_file',
                 ]),
             ImageColumn::make('meta.image')
                 ->visibility('public')
@@ -269,7 +262,7 @@ class WidgetResource extends Resource
                 ->searchable()
                 ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true)
-                ->searchable('widgets.key'),
+                ->searchable('key'),
             TextColumn::make('meta.component')
                 ->label(__('capell-admin::table.component'))
                 ->searchable(query: function (Builder $query, $search): Builder {
@@ -283,9 +276,9 @@ class WidgetResource extends Resource
 
                     return $query->where(
                         fn (Builder $query): Builder => $query
-                            ->where('widgets.meta->component', $searchOperator, sprintf('%%%s%%', $search))
-                            ->orWhere('widgets.meta->file', $searchOperator, sprintf('%%%s%%', $search))
-                            ->orWhere('widgets.meta->component_item', $searchOperator, sprintf('%%%s%%', $search))
+                            ->where('meta->component', $searchOperator, sprintf('%%%s%%', $search))
+                            ->orWhere('meta->file', $searchOperator, sprintf('%%%s%%', $search))
+                            ->orWhere('meta->component_item', $searchOperator, sprintf('%%%s%%', $search))
                     );
                 })
                 ->size('xs')

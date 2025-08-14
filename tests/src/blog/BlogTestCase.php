@@ -6,19 +6,19 @@ namespace Capell\Tests\Blog;
 
 use Capell\Admin\AdminServiceProvider;
 use Capell\Blog\BlogServiceProvider;
-use Capell\Frontend\FrontendServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Override;
 
 class BlogTestCase extends AbstractTestCase
 {
+    #[Override]
     protected function getPackageProviders($app): array
     {
         return [
             ...parent::getPackageProviders($app),
-            AdminServiceProvider::class,
-            FrontendServiceProvider::class,
             BlogServiceProvider::class,
+            AdminServiceProvider::class,
             AdminPanelProvider::class,
         ];
     }

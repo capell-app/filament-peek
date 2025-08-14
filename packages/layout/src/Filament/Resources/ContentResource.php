@@ -509,7 +509,7 @@ class ContentResource extends Resource
                     fn (HasTable $livewire): bool => $livewire->activeTab
                         || ! empty($livewire->getTableFilterState('filter')['site_id'])
                 ),
-            CuratorColumn::make('asset.image_id')
+            CuratorColumn::make('meta.image_id')
                 ->label(__('capell-admin::table.image'))
                 ->relationship('image')
                 ->toggleable(),

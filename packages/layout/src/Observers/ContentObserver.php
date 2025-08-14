@@ -7,7 +7,6 @@ namespace Capell\Layout\Observers;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Models\Content;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class ContentObserver
@@ -21,10 +20,5 @@ class ContentObserver
                 throw new InvalidArgumentException('Unable to create content without a type.');
             }
         }
-    }
-
-    public function replicating(Content $content): void
-    {
-        $content->id = Str::uuid();
     }
 }

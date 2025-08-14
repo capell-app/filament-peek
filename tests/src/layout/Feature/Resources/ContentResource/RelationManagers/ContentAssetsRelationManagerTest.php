@@ -7,6 +7,7 @@ use Capell\Layout\Filament\Resources\ContentResource;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\ContentAsset;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
@@ -53,35 +54,37 @@ it('can search content assets', function (): void {
 test('can create a asset for a widget', function (string $assetType): void {
     $content = Content::factory()->create();
 
+    $action = TestAction::make(CreateAction::class)->table();
+
     livewire(ContentResource\RelationManagers\ContentAssetsRelationManager::class, [
         'ownerRecord' => $content,
         'pageClass' => ContentResource\Pages\EditContent::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(0)
-        ->mountAction(CreateAction::class)
+        ->assertActionExists($action)
+        ->mountAction($action)
         ->fillForm(
             match ($assetType) {
                 'content' => [
                     'asset_type' => app(Content::class)->getMorphClass(),
-                    'assets' => [
+                    'asset_id' => [
                         (string) Content::factory()->create()->id,
                     ],
                 ],
                 'media' => [
                     'asset_type' => app(Models\Media::class)->getMorphClass(),
-                    'assets' => [
+                    'asset_id' => [
                         (string) Models\Media::factory()->create()->id,
                     ],
                 ],
                 'page' => [
                     'asset_type' => app(Models\Page::class)->getMorphClass(),
-                    'assets' => [
+                    'asset_id' => [
                         (string) Models\Page::factory()->create()->id,
                     ],
                 ],
             },
-            form: 'mountedTableActionForm'
         )
         ->callMountedAction()
         ->assertHasNoFormErrors()

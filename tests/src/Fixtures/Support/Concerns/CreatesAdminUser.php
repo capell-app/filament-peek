@@ -7,12 +7,13 @@ namespace Capell\Tests\Fixtures\Support\Concerns;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Contracts\Permission;
 use Spatie\Permission\Contracts\Role;
 
 /**
- * @property-read \Illuminate\Foundation\Application $app
+ * @property-read Application $app
  * @property-read AbstractTestCase $this
  *
  * @mixin AbstractTestCase

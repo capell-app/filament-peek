@@ -7,6 +7,7 @@ namespace Capell\Layout\Filament\Resources\ContentResource\RelationManagers;
 use Capell\Admin\Filament\Concerns\HideEmptyRelationManager;
 use Capell\Admin\Filament\RelationManagers\AbstractPagesRelationManager;
 use Capell\Layout\Models\Content;
+use Filament\Tables\Table;
 
 /**
  * @property Content $ownerRecord
@@ -15,8 +16,8 @@ class PagesRelationManager extends AbstractPagesRelationManager
 {
     use HideEmptyRelationManager;
 
-    protected function getTableDescription(): ?string
+    protected function getDescription(Table $table): ?string
     {
-        return __('capell-admin::generic.content_pages_info', ['total' => $this->getTable()->getQuery()->count()]);
+        return __('capell-admin::generic.content_pages_info', ['total' => $table->getQuery()->count()]);
     }
 }

@@ -197,15 +197,16 @@ class Content extends Model implements Auditable, PageCacheable
      * @var array<string>
      */
     protected $fillable = [
-        'name',
+        'is_published',
         'meta',
+        'name',
+        'order',
         'parent_id',
         'publish_from',
         'publish_to',
-        'is_published',
-        'order',
         'site_id',
         'type_id',
+        'uuid',
     ];
 
     /**
@@ -356,9 +357,10 @@ class Content extends Model implements Auditable, PageCacheable
     protected function casts(): array
     {
         return [
+            'is_published' => 'boolean',
+            'meta' => 'json',
             'publish_from' => 'datetime',
             'publish_to' => 'datetime',
-            'meta' => 'json',
         ];
     }
 }

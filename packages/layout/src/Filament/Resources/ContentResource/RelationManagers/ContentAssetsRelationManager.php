@@ -10,8 +10,10 @@ use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
 use Capell\Core\Actions\EditPageUrlAction;
 use Capell\Core\Data\AssetData;
+use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Media;
 use Capell\Layout\Filament\Concerns\HasAssetsRelationManager;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\ContentAsset;
@@ -56,10 +58,14 @@ class ContentAssetsRelationManager extends RelationManager
                         query: fn (Builder $query, string $search): Builder => $query->where('asset_id', $search),
                     ),
                 NameColumn::make('asset.name'),
-                CuratorColumn::make('asset.image')
+                CuratorColumn::make('asset_image')
                     ->label(__('capell-admin::table.image'))
-                    ->relationship('asset.image')
-                    ->extraHeaderAttributes(['style' => 'width:1%']),
+                    ->getStateUsing(
+                        fn (ContentAsset $record): ?Media => $record->asset_type === AssetEnum::Media->value
+                            ? $record->asset
+                            : $record->asset?->image
+                    )
+                    ->width(0),
                 TextColumn::make('asset_type')
                     ->badge(),
             ])

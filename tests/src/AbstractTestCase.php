@@ -28,6 +28,7 @@ use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -41,8 +42,11 @@ use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
+use Orchestra\Workbench\WorkbenchServiceProvider;
+use Override;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
-use Silber\PageCache;
+use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
+use Silber\PageCache\LaravelServiceProvider;
 use Spatie\LaravelData\LaravelDataServiceProvider;
 use Spatie\LaravelRay\RayServiceProvider;
 use Spatie\Permission\Models\Role;
@@ -60,6 +64,7 @@ abstract class AbstractTestCase extends TestCase
 
     protected array $packageMigrations = [];
 
+    #[Override]
     protected function setUp(): void
     {
         if (getenv('TEST_TOKEN')) {
@@ -70,10 +75,11 @@ abstract class AbstractTestCase extends TestCase
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        $this->loadPackageMigrations(
-            __DIR__.'/../../vendor/capell-app/core/database/migrations',
-            CapellCoreManager::getMigrations()
-        );
+        $migrations = CapellCoreManager::getMigrations();
+        $path = realpath(__DIR__.'/../../vendor/capell-app/core/database/migrations');
+        array_walk($migrations, fn (&$migration): string => $migration = sprintf('%s/%s.php', $path, $migration));
+
+        $this->loadMigrationsFrom($migrations);
 
         if ($this->packageMigrations) {
             $this->loadMigrationsFrom($this->packageMigrations);
@@ -104,7 +110,7 @@ abstract class AbstractTestCase extends TestCase
     /**
      * Set up the database.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      */
     protected function setUpDatabase()
     {
@@ -114,6 +120,7 @@ abstract class AbstractTestCase extends TestCase
     protected function getPackageProviders($app): array
     {
         return [
+            WorkbenchServiceProvider::class,
             ActionsServiceProvider::class,
             BadgeableColumnServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
@@ -125,22 +132,23 @@ abstract class AbstractTestCase extends TestCase
             SpatieTranslatableServiceProvider::class,
             FilamentAuthenticationLogServiceProvider::class,
             FilamentServiceProvider::class,
+            FilamentAdjacencyListServiceProvider::class,
             FilamentShieldServiceProvider::class,
             FilamentTitleWithSlugServiceProvider::class,
             FormsServiceProvider::class,
-            SchemasServiceProvider::class,
             LaravelDataServiceProvider::class,
-            LivewireServiceProvider::class,
             NestedSetServiceProvider::class,
-            NotificationsServiceProvider::class,
-            PageCache\LaravelServiceProvider::class,
+            LaravelServiceProvider::class,
             PermissionServiceProvider::class,
             RayServiceProvider::class,
             SupportServiceProvider::class,
+            SchemasServiceProvider::class,
             CapellServiceProvider::class,
             TablesServiceProvider::class,
             TagsServiceProvider::class,
             WidgetsServiceProvider::class,
+            LivewireServiceProvider::class,
+            NotificationsServiceProvider::class,
         ];
     }
 
@@ -149,6 +157,9 @@ abstract class AbstractTestCase extends TestCase
         if ($packages === null || $packages === []) {
             $packages = $this->getDefaultPackages();
         }
+
+        $this->registerPublishConfig('core', vendorPackage: true);
+        $this->registerPublishConfig('admin', vendorPackage: true);
 
         foreach ($packages as $package_key => $package) {
             $config = require __DIR__.'/..'.$this->getPackageFile($package);
@@ -187,6 +198,33 @@ abstract class AbstractTestCase extends TestCase
         ];
     }
 
+    protected function registerPublishConfig(string $package, bool $vendorPackage = false): void
+    {
+        $configs = $this->getPublishConfigs($package, $vendorPackage);
+
+        foreach ($configs as $configFile) {
+            $config = require $configFile;
+            $configName = basename((string) $configFile, '.php');
+
+            $this->registerPackageConfig($configName, $config);
+        }
+    }
+
+    protected function getPublishConfigs(string $package, bool $vendorPackage): array
+    {
+        if ($vendorPackage) {
+            $path = realpath(__DIR__.'/../../vendor/capell-app/'.$package.'/publishes/config');
+        } else {
+            $path = realpath(__DIR__.'/../../packages/'.$package.'/publishes/config');
+        }
+
+        if (! $path) {
+            return [];
+        }
+
+        return glob($path.'/*.php');
+    }
+
     protected function setupPage(Page $page, Collection $languages): void
     {
         $languages->each(function (int $languageId) use ($page): void {
@@ -198,20 +236,6 @@ abstract class AbstractTestCase extends TestCase
         });
 
         $page->refresh();
-    }
-
-    protected function getPackageMigrations(string $path, array $migrations): array
-    {
-        $path = realpath($path);
-
-        array_walk($migrations, fn (&$migration): string => $migration = sprintf('%s/%s.php', $path, $migration));
-
-        return $migrations;
-    }
-
-    protected function loadPackageMigrations(string $path, array $migrations): void
-    {
-        $this->loadMigrationsFrom($this->getPackageMigrations($path, $migrations));
     }
 
     private function getPackageFile(array $package): string

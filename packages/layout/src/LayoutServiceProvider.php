@@ -78,12 +78,9 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     public function bootingPackage(): void
     {
-        $this->registerModels()
+        $this
             ->registerEvents()
             ->registerListeners()
-            ->registerRelationships()
-            ->registerSchemas()
-            ->registerSchemaHooks()
             ->registerPublishCommands();
 
         CapellCore::addCloneableRelations('page', 'widgetAssets');
@@ -156,6 +153,11 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     public function registeringPackage(): void
     {
         parent::registeringPackage();
+
+        $this->registerModels()
+            ->registerRelationships()
+            ->registerSchemas()
+            ->registerSchemaHooks();
 
         App::singleton(CapellLayoutManager::class, fn (): CapellLayoutManager => new CapellLayoutManager());
 

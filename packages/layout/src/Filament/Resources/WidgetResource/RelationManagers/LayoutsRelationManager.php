@@ -6,8 +6,8 @@ namespace Capell\Layout\Filament\Resources\WidgetResource\RelationManagers;
 
 use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Components\Tables\Columns\CuratorColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\ImageColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\StatusColumn;
@@ -44,6 +44,7 @@ class LayoutsRelationManager extends RelationManager
                 fn (Builder $query): Builder => $query->with([
                     'creator',
                     'editor',
+                    'image',
                 ])
                     ->withCount('pages')
             )
@@ -51,8 +52,8 @@ class LayoutsRelationManager extends RelationManager
             ->columns([
                 NameColumn::make('name')
                     ->weight(fn (Layout $record): FontWeight => $record->default ? FontWeight::SemiBold : FontWeight::Medium),
-                CuratorColumn::make('image')
-                    ->relationship('image')
+                ImageColumn::make('admin.image')
+                    ->visibility('public')
                     ->toggleable(),
                 SiteColumn::make('site.name'),
                 TextColumn::make('theme.name')

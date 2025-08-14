@@ -23,7 +23,9 @@ arch()
     ->laravel()
     ->ignoring('exit');
 
-arch()->preset()->security();
+arch()
+    ->preset()
+    ->security();
 
 it('does not allow debug functions')
     ->expect(['dd', 'dump', 'print_r', 'die', 'ray', 'rd', 'var_dump'])

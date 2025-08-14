@@ -27,12 +27,13 @@ class DefaultWidgetAssetSchema extends AbstractWidgetAssetSchema
         return ContentResource::getFormSchema($schema);
     }
 
-    protected static function getFormSchema(WidgetAsset $record, Schema $schema): array
+    protected static function getFormSchema(?WidgetAsset $record, Schema $schema): array
     {
-        return match ($record->asset_type) {
+        return match ($record?->asset_type) {
             'content' => static::getContentFormSchema($schema),
             'page' => static::getPageFormSchema($schema),
             'media' => static::getMediaFormSchema(),
+            default => [],
         };
     }
 
@@ -57,8 +58,8 @@ class DefaultWidgetAssetSchema extends AbstractWidgetAssetSchema
                     ->saveRelationshipsUsing(fn (): false => false),
             )
             ->mutateRelationshipDataBeforeCreateUsing(
-                function (WidgetAsset $record, array $data, Get $get): array {
-                    switch ($record->asset_type) {
+                function (?WidgetAsset $record, array $data, Get $get): array {
+                    switch ($record?->asset_type) {
                         case 'media':
                             if (blank($data['title'])) {
                                 $data['title'] = pathinfo((string) $data['originalFilename'], PATHINFO_FILENAME);
@@ -76,6 +77,6 @@ class DefaultWidgetAssetSchema extends AbstractWidgetAssetSchema
                     return $data;
                 }
             )
-            ->schema(fn (WidgetAsset $record): array => static::getFormSchema($record, $schema));
+            ->schema(fn (?WidgetAsset $record): array => static::getFormSchema($record, $schema));
     }
 }

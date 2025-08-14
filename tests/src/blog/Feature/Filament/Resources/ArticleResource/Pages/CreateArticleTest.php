@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Actions\Page\CreatePageAction;
+use Capell\Admin\Filament\Actions\Page\CreatePageModalAction;
 use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\EditArticle;
 use Capell\Blog\Filament\Resources\ArticleResource\Pages\ListArticles;
@@ -23,9 +23,6 @@ uses(CreatesAdminUser::class)
 
 beforeEach(function (): void {
     test()->actingAsAdmin();
-
-    // Register BlogServiceProvider
-    $this->app->register(Capell\Blog\BlogServiceProvider::class);
 });
 
 describe('from edit article', function (): void {
@@ -38,7 +35,7 @@ describe('from edit article', function (): void {
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
-            ->mountAction(CreatePageAction::class)
+            ->mountAction(CreatePageModalAction::class)
             ->fillForm([
                 'type_id' => $newData->type_id,
                 'site_id' => $newData->site_id,
@@ -51,7 +48,7 @@ describe('from edit article', function (): void {
                 ],
             ])
             ->callMountedAction()
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas(Page::class, [
             'name' => $newData->name,
@@ -73,15 +70,18 @@ describe('from edit article', function (): void {
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
-            ->callAction(CreatePageAction::class, [
+            ->callAction(CreatePageModalAction::class, [
                 'translations' => [
-                    0 => [
+                    'abc' => [
+                        'language_id' => $page->site->language_id,
                         'title' => '',
+                        'slug' => '',
                     ],
                 ],
             ])
-            ->assertHasActionErrors([
-                'translations.0.title' => 'required',
+            ->assertHasFormErrors([
+                'translations.abc.title' => 'required',
+                'translations.abc.slug' => 'required',
             ]);
     });
 });
@@ -94,9 +94,7 @@ describe('from list article', function (): void {
 
         $site = Site::factory()
             ->recycle($language)
-            ->forLanguage($language)
             ->hasSiteDomains()
-            ->hasTranslations()
             ->create();
 
         $newData = Page::factory()->recycle($site)->type($type)->make();
@@ -128,7 +126,7 @@ describe('from list article', function (): void {
                 'site_id' => $site->id,
             ])
             ->callMountedAction()
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas(Page::class, [
             'name' => $newData->name,
@@ -170,7 +168,7 @@ describe('from list article', function (): void {
                 'site_id' => $site->id,
             ])
             ->callMountedAction()
-            ->assertHasNoActionErrors();
+            ->assertHasNoFormErrors();
 
         assertDatabaseHas(Page::class, [
             'name' => $newData->name,
@@ -193,10 +191,10 @@ describe('from list article', function (): void {
 
         livewire(ListArticles::class)
             ->assertSuccessful()
-            ->callAction(CreatePageAction::class, [
+            ->callAction(CreatePageModalAction::class, [
                 'name' => '',
             ])
-            ->assertHasActionErrors([
+            ->assertHasFormErrors([
                 'name' => 'required',
             ]);
     });

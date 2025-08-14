@@ -20,8 +20,6 @@ use Capell\Layout\Services\Creator\TypeCreator;
 use Capell\Layout\Services\Creator\WidgetCreator;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
 
-dd(get_class(LayoutFactory::create()));
-
 use function Pest\Livewire\livewire;
 
 uses(CreatesAdminUser::class)->group('pages');
@@ -203,7 +201,7 @@ test('Can add container', function (): void {
                 ],
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     $layout->refresh();
@@ -224,7 +222,7 @@ test('Can clone layout', function (): void {
     ])
         ->assertSuccessful()
         ->callAction('duplicateLayoutAction')
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     $clonedLayout = Layout::where('name', $layout->name.' 1')
@@ -286,7 +284,7 @@ test('Can edit container', function (): void {
                 'containerKey' => $containerKey,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     expect($layout->refresh())
@@ -323,7 +321,7 @@ test('Can add new widget', function (): void {
                 'containerKey' => $containerKey,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     $layout->refresh();
@@ -361,7 +359,7 @@ test('Can add existing widget', function (): void {
                 'containerKey' => $containerKey,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     $layout->refresh();
@@ -401,13 +399,13 @@ test('Can edit container widget', function (): void {
             data: ['widgets' => [$widget->id]],
             arguments: ['containerKey' => $containerKey]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->callAction(
             'editContainerWidget',
             data: ['html_class' => 'foo'],
             arguments: ['containerKey' => $containerKey, 'widgetIndex' => $widgetIndex],
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     $layout->refresh();
@@ -439,7 +437,7 @@ test('Can duplicate widget', function (): void {
                 'widgetIndex' => $widgetIndex,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     $layout->refresh();

@@ -24,7 +24,6 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
 use Capell\Layout\Enums\ComponentTypeEnum;
 use Composer\InstalledVersions;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -45,14 +44,6 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         foreach (config('capell-blog.livewire_components', []) as $name => $class) {
             Livewire::component($name, $class);
         }
-
-        CapellCore::registerModel(BlogModelEnum::Article, Article::class);
-
-        Relation::morphMap([
-            'article' => Article::class,
-        ]);
-
-        CapellCore::addSitemapPages('archives', ArchivePageSitemap::class);
 
         if ($this->app->runningInConsole() && (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class))) {
             AboutCommand::add('Capell', [
@@ -121,6 +112,10 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         CapellCore::registerComponents(ComponentTypeEnum::Widget->value, WidgetComponentEnum::cases());
 
         CapellAdmin::registerSchema(SchemaEnum::Page, ArticlePageSchema::class);
+
+        CapellCore::registerModel(BlogModelEnum::Article, Article::class);
+
+        CapellCore::addSitemapPages('archives', ArchivePageSitemap::class);
     }
 
     private function getPackagePermissions(): array

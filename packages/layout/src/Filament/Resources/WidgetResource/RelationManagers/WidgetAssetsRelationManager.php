@@ -11,7 +11,9 @@ use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
 use Capell\Core\Actions\EditPageUrlAction;
+use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutTypeEnum;
@@ -60,10 +62,14 @@ class WidgetAssetsRelationManager extends RelationManager
                 TextColumn::make('asset_type')
                     ->badge()
                     ->sortable(),
-                CuratorColumn::make('asset.image')
+                CuratorColumn::make('asset_image')
                     ->label(__('capell-admin::table.image'))
-                    ->relationship('image')
-                    ->extraHeaderAttributes(['style' => 'width:1%']),
+                    ->getStateUsing(
+                        fn (WidgetAsset $record): ?Media => $record->asset_type === AssetEnum::Media->value
+                            ? $record->asset
+                            : $record->asset?->image
+                    )
+                    ->width(0),
                 PageNameColumn::make('page.name')
                     ->label(__('capell-admin::table.page'))
                     ->withParents()
@@ -81,79 +87,7 @@ class WidgetAssetsRelationManager extends RelationManager
                     ),
                 }
             )
-            ->filters([
-                Filter::make('filter')
-                    ->columnSpanFull()
-                    ->schema([
-                        AssetTypeToggleButtons::make('type')
-                            ->reactive(),
-
-                        Select::make('type_id')
-                            ->label(__('capell-admin::form.type'))
-                            ->visible(fn (Get $get): bool => ! empty($get('type')))
-                            ->options(fn (Get $get): array => match ($get('type')) {
-                                LayoutTypeEnum::Content->value => Content::getTypes(),
-                                TypeEnum::Page->value => Page::getTypes(),
-                                default => []
-                            }),
-
-                        Select::make('page_id')
-                            ->label(__('capell-admin::form.page'))
-                            ->options(
-                                fn (self $livewire): array => $livewire->getTable()->getQuery()
-                                    ->select('page_id')
-                                    ->withOnly('page')
-                                    ->whereNotNull('page_id')
-                                    ->groupBy('page_id')
-                                    ->get()
-                                    ->mapWithKeys(
-                                        fn (WidgetAsset $widgetAsset) => [$widgetAsset->page_id => $widgetAsset->page->name]
-                                    )
-                                    ->toArray()
-                            ),
-                    ])
-                    ->query(
-                        fn (Builder $query, array $data) => $query
-                            ->when(
-                                ! empty($data['asset_type']),
-                                fn (Builder $query) => $query->where('asset_type', $data['asset_type'])
-                            )
-                            ->when(
-                                ! empty($data['type_id']),
-                                fn (Builder $query) => $query->where('type_id', $data['type_id'])
-                            )
-                            ->when(
-                                ! empty($data['page_id']),
-                                fn (Builder $query) => $query->where('page_id', $data['page_id'])
-                            ),
-                    )
-                    ->indicateUsing(function (array $data): array {
-                        $indicators = [];
-
-                        if (! empty($data['asset_type'])) {
-                            $indicators['asset_type'] = __(
-                                'capell-admin::filter.type',
-                                ['type' => $data['asset_type']]
-                            );
-                        }
-
-                        if (! empty($data['type_id'])) {
-                            $indicators['type_id'] = __(
-                                'capell-admin::filter.type',
-                                ['search' => Type::find($data['type_id'])->name]
-                            );
-                        }
-
-                        if (! empty($data['page_id'])) {
-                            $indicators['page_id'] = __(
-                                'capell-admin::filter.page',
-                                ['search' => Page::query()->withDrafts()->find($data['page_id'])->name]
-                            );
-                        }
-
-                        return $indicators;
-                    }),
-            ])
+            ->filters($this->getFilters())
             ->headerActions([
                 self::createResourcesAction(),
             ])
@@ -162,5 +96,82 @@ class WidgetAssetsRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private function getFilters(): array
+    {
+        return [
+            Filter::make('filter')
+                ->columnSpanFull()
+                ->schema([
+                    AssetTypeToggleButtons::make('type')
+                        ->reactive(),
+
+                    Select::make('type_id')
+                        ->label(__('capell-admin::form.type'))
+                        ->visible(fn (Get $get): bool => ! empty($get('type')))
+                        ->options(fn (Get $get): array => match ($get('type')) {
+                            LayoutTypeEnum::Content->value => Content::getTypes(),
+                            TypeEnum::Page->value => Page::getTypes(),
+                            default => []
+                        }),
+
+                    Select::make('page_id')
+                        ->label(__('capell-admin::form.page'))
+                        ->options(
+                            fn (self $livewire): array => $livewire->getTable()->getQuery()
+                                ->select('page_id')
+                                ->withOnly('page')
+                                ->whereNotNull('page_id')
+                                ->groupBy('page_id')
+                                ->get()
+                                ->mapWithKeys(
+                                    fn (WidgetAsset $widgetAsset) => [$widgetAsset->page_id => $widgetAsset->page->name]
+                                )
+                                ->toArray()
+                        ),
+                ])
+                ->query(
+                    fn (Builder $query, array $data) => $query
+                        ->when(
+                            ! empty($data['asset_type']),
+                            fn (Builder $query) => $query->where('asset_type', $data['asset_type'])
+                        )
+                        ->when(
+                            ! empty($data['type_id']),
+                            fn (Builder $query) => $query->where('type_id', $data['type_id'])
+                        )
+                        ->when(
+                            ! empty($data['page_id']),
+                            fn (Builder $query) => $query->where('page_id', $data['page_id'])
+                        ),
+                )
+                ->indicateUsing(function (array $data): array {
+                    $indicators = [];
+
+                    if (! empty($data['asset_type'])) {
+                        $indicators['asset_type'] = __(
+                            'capell-admin::filter.type',
+                            ['type' => $data['asset_type']]
+                        );
+                    }
+
+                    if (! empty($data['type_id'])) {
+                        $indicators['type_id'] = __(
+                            'capell-admin::filter.type',
+                            ['search' => Type::find($data['type_id'])->name]
+                        );
+                    }
+
+                    if (! empty($data['page_id'])) {
+                        $indicators['page_id'] = __(
+                            'capell-admin::filter.page',
+                            ['search' => Page::query()->withDrafts()->find($data['page_id'])->name]
+                        );
+                    }
+
+                    return $indicators;
+                }),
+        ];
     }
 }

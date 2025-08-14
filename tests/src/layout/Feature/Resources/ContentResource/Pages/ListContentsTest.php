@@ -8,8 +8,9 @@ use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\ContentResource\Pages\ListContents;
 use Capell\Layout\Models\Content;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -65,9 +66,8 @@ test('can replicate contents', function (): void {
     livewire(ListContents::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
-        ->callTableAction(
-            ReplicateAction::class,
-            record: $content,
+        ->callAction(
+            TestAction::make(ReplicateAction::class)->table($content),
             data: [
                 'name' => $content->name.' (copy)',
             ]
@@ -86,7 +86,7 @@ test('can delete content', function (): void {
     livewire(ListContents::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
-        ->callTableAction(DeleteAction::class, $content)
+        ->callAction(TestAction::make(DeleteAction::class)->table($content))
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(0);
 
@@ -98,7 +98,8 @@ test('can group delete contents', function (): void {
 
     livewire(ListContents::class)
         ->assertSuccessful()
-        ->callTableBulkAction(DeleteBulkAction::class, $contents)
+        ->selectTableRecords($contents->pluck('id')->toArray())
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
         ->assertHasNoFormErrors();
 
     foreach ($contents as $content) {
@@ -123,7 +124,7 @@ test('can create content', function (): void {
         ->callAction('create', [
             'name' => $newData->name,
         ])
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     assertDatabaseHas(Content::class, [
         'name' => $newData->name,

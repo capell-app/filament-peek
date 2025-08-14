@@ -7,6 +7,7 @@ use Capell\Layout\Filament\Resources\WidgetResource;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
@@ -32,13 +33,16 @@ it('can list assets for a widget', function (): void {
 test('can create a asset for a widget', function (string $assetType): void {
     $widget = Widget::factory()->create();
 
+    $action = TestAction::make(Filament\Actions\CreateAction::class)->table();
+
     livewire(WidgetResource\RelationManagers\WidgetAssetsRelationManager::class, [
         'ownerRecord' => $widget,
         'pageClass' => WidgetResource\Pages\EditWidget::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(0)
-        ->mountAction(Filament\Actions\CreateAction::class)
+        ->assertActionExists($action)
+        ->mountAction($action)
         ->fillForm(
             match ($assetType) {
                 'content' => [
@@ -55,12 +59,11 @@ test('can create a asset for a widget', function (string $assetType): void {
                 ],
                 'page' => [
                     'asset_type' => app(Models\Page::class)->getMorphClass(),
-                    'assets' => [
+                    'asset_id' => [
                         (string) Models\Page::factory()->create()->id,
                     ],
                 ],
             },
-            form: 'mountedTableActionForm'
         )
         ->callMountedAction()
         ->assertHasNoFormErrors()

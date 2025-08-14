@@ -6,8 +6,9 @@ use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Layout\Filament\Resources\WidgetResource\Pages\ListWidgets;
 use Capell\Layout\Models\Widget;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\assertSoftDeleted;
@@ -64,14 +65,13 @@ test('can replicate widget', function (): void {
     livewire(ListWidgets::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
-        ->callTableAction(
-            ReplicateAction::class,
-            record: $widget,
+        ->callAction(
+            TestAction::make(ReplicateAction::class)->table($widget),
             data: [
                 'name' => $name,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertCountTableRecords(2);
 
     expect(Widget::count())->toBe(2);
@@ -87,7 +87,7 @@ test('can delete widget', function (): void {
     livewire(ListWidgets::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
-        ->callTableAction(DeleteAction::class, $widget)
+        ->callAction(TestAction::make(DeleteAction::class)->table($widget))
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(0);
 
@@ -99,7 +99,8 @@ test('can group delete widgets', function (): void {
 
     livewire(ListWidgets::class)
         ->assertSuccessful()
-        ->callTableBulkAction(DeleteBulkAction::class, $widgets)
+        ->selectTableRecords($widgets->pluck('id')->toArray())
+        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
         ->assertHasNoFormErrors();
 
     foreach ($widgets as $widget) {

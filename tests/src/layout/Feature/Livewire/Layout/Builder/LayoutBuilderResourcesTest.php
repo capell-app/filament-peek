@@ -11,6 +11,7 @@ use Capell\Layout\Livewire\LayoutBuilder;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
@@ -361,7 +362,7 @@ test('can add media asset', function (): void {
             ],
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseHas('media', [
@@ -394,12 +395,12 @@ test('can add page asset', function (): void {
         ->assertSuccessful()
         ->assertActionExists('addAsset')
         ->mountAction(
-            'addAsset',
-            arguments: [
-                'containerKey' => $containerKey,
-                'widgetIndex' => $widgetIndex,
-                'type' => 'page',
-            ]
+            TestAction::make('addAsset')
+                ->arguments([
+                    'containerKey' => $containerKey,
+                    'widgetIndex' => $widgetIndex,
+                    'type' => 'page',
+                ])
         )
         ->fillForm([
             'asset' => [
@@ -409,14 +410,14 @@ test('can add page asset', function (): void {
             ],
         ])
         ->set('mountedActions.0.data.asset.translations', [
-            0 => [
+            (string) Str::uuid() => [
                 'title' => $newData->name,
                 'slug' => Str::slug($newData->name),
                 'language_id' => $newData->site->language_id,
             ],
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseHas('pages', [
@@ -471,7 +472,7 @@ test('can add media asset to existing widget with page layout', function (): voi
                 'type' => 'media',
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseHas('media', [
@@ -523,7 +524,7 @@ test('can add media asset to widget with page layout', function (): void {
                 'type' => 'media',
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseHas('media', [
@@ -584,14 +585,14 @@ test('can add page asset to existing widget with page layout', function (): void
             ],
         ])
         ->set('mountedActions.0.data.asset.translations', [
-            0 => [
+            (string) Str::uuid() => [
                 'title' => $newData->name,
                 'slug' => Str::slug($newData->name),
                 'language_id' => $newData->site->language_id,
             ],
         ])
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseHas('pages', [
@@ -654,7 +655,7 @@ test('can add page asset to widget with page layout', function (): void {
             ]
         )
         ->callMountedAction()
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseHas('pages', [
@@ -685,7 +686,7 @@ test('can select assets', function (string $assetType): void {
                 'type' => $assetType,
             ]
         )
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 })->with(['page', 'media', 'content']);
 
 test('can edit asset', function (): void {
@@ -758,7 +759,7 @@ test('can remove widget assets', function (): void {
                 'widgetIndex' => $widgetIndex,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     expect(
@@ -806,7 +807,7 @@ test('can remove page assets', function (): void {
                 'widgetIndex' => $widgetIndex,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->call('saveLayout');
 
     assertDatabaseMissing('widget_assets', [
@@ -849,7 +850,7 @@ test('can not remove assets if no records selected', function (): void {
                 'widgetIndex' => $widgetIndex,
             ]
         )
-        ->assertHasNoActionErrors()
+        ->assertHasNoFormErrors()
         ->assertActionHalted('removeAssets')
         ->call('saveLayout');
 
@@ -885,13 +886,13 @@ test('Can revert page assets', function (): void {
         'page_id' => $page->id,
     ])
         ->assertSuccessful()
-        ->callAction(
-            'convertPageAssets',
-            arguments: [
+        ->mountAction(
+            TestAction::make('convertPageAssets')->arguments([
                 'containerKey' => $containerKey,
                 'widgetIndex' => $widgetIndex,
-            ]
-        );
+            ]),
+        )
+        ->callMountedAction();
 });
 
 todo('add tests for editWidgetAsset');
