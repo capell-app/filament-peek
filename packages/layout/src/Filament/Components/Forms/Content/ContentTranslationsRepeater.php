@@ -8,6 +8,7 @@ use Capell\Admin\Filament\Components\Forms\ContentEditor;
 use Capell\Admin\Filament\Components\Forms\RepeaterTabs;
 use Capell\Admin\Filament\Components\Forms\TranslationLanguageSelect;
 use Capell\Admin\Filament\Components\Forms\TranslationsRepeater;
+use Capell\Admin\Filament\Components\Forms\TranslationTitle;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
@@ -49,10 +50,10 @@ final class ContentTranslationsRepeater
             Grid::make(3)
                 ->columnSpanFull()
                 ->schema([
-                    TextInput::make('title')
-                        ->label(__('capell-admin::form.title'))
-                        ->required($titleRequired)
-                        ->columnSpan(fn (Get $get): int => $get('language_id') ? 3 : 2),
+                    ...TranslationTitle::make(
+                        modifyTitle: fn (TextInput $component): TextInput => $component->required($titleRequired)
+                            ->columnSpan(fn (Get $get): int => $get('language_id') ? 3 : 2)
+                    ),
 
                     TranslationLanguageSelect::make()
                         ->dehydratedWhenHidden()

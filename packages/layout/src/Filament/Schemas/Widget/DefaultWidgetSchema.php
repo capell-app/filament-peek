@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Media\ImageMediaPicker;
 use Capell\Layout\Filament\Components\Forms\ActionsRepeater;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
+use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
@@ -31,41 +32,58 @@ class DefaultWidgetSchema extends AbstractWidgetSchema
         $operation = $schema->getOperation();
 
         return match ($operation) {
-            'create', 'createOption', 'replicate' => [
-                WidgetTranslationsRepeater::make($schema)
-                    ->section(fn (string $operation): bool => $operation === 'create'),
-                ...self::getExtraSchema($schema),
-            ],
-            'editOption' => [
-                WidgetTranslationsRepeater::make($schema),
-                ...self::getExtraSchema($schema, withSettingsTab: true),
-            ],
-            default => [
-                FixedWidthSidebar::make()
-                    ->mainSchema([
-                        WidgetTranslationsRepeater::make($schema)
-                            ->section(),
-                        ...self::getExtraSchema($schema),
-                    ])
-                    ->sidebarSchema([
-                        Section::make()
-                            ->columns(1)
-                            ->schema(WidgetSettingsSchema::make($schema)),
-                    ]),
-            ],
+            'createOption', 'replicate' => static::getCreateOptionSchema($schema),
+            'editOption' => static::getEditOptionSchema($schema),
+            default => static::getFormSchema($schema),
         };
+    }
+
+    protected static function getFormSchema(Schema $schema): array
+    {
+        return [
+            CreateWidgetDetailsSchema::make($schema),
+            FixedWidthSidebar::make()
+                ->mainSchema([
+                    WidgetTranslationsRepeater::make($schema)
+                        ->section(),
+                    ...static::getExtraSchema($schema),
+                ])
+                ->sidebarSchema([
+                    Section::make()
+                        ->columns(1)
+                        ->schema(WidgetSettingsSchema::make($schema)),
+                ]),
+        ];
+    }
+
+    protected static function getEditOptionSchema(Schema $schema): array
+    {
+        return [
+            WidgetTranslationsRepeater::make($schema),
+            ...static::getExtraSchema($schema, withSettingsTab: true),
+        ];
+    }
+
+    protected static function getCreateOptionSchema(Schema $schema): array
+    {
+        return [
+            CreateWidgetDetailsSchema::make($schema),
+            WidgetTranslationsRepeater::make($schema)
+                ->section(fn (string $operation): bool => $operation === 'create'),
+            ...static::getExtraSchema($schema),
+        ];
     }
 
     protected static function getExtraSchema(Schema $schema, bool $withSettingsTab = false): array
     {
         return [
-            self::getTabs($schema, $withSettingsTab),
+            static::getTabs($schema, $withSettingsTab),
         ];
     }
 
     protected static function getTabs(Schema $schema, bool $withSettingsTab = false): Tabs
     {
-        return Tabs::make('tabs')
+        return Tabs::make()
             ->columnSpanFull()
             ->tabs([
                 static::getDetailsTab(),
@@ -95,7 +113,7 @@ class DefaultWidgetSchema extends AbstractWidgetSchema
         ]);
     }
 
-    private static function getDetailsTab(): Tab
+    protected static function getDetailsTab(): Tab
     {
         return Tab::make('details')
             ->label(__('capell-admin::tab.details'))
@@ -127,7 +145,7 @@ class DefaultWidgetSchema extends AbstractWidgetSchema
             ]);
     }
 
-    private static function getSettingsTab(Schema $schema): Tab
+    protected static function getSettingsTab(Schema $schema): Tab
     {
         return Tab::make('settings')
             ->label(__('capell-admin::tab.settings'))

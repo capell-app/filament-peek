@@ -11,6 +11,13 @@ use Override;
 
 class CreateWidgetModalAction extends CreateModalAction
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->slideOver();
+    }
+
     #[Override]
     protected function mutateFormData(array $data): array
     {

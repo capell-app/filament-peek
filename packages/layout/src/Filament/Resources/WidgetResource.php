@@ -6,7 +6,6 @@ namespace Capell\Layout\Filament\Resources;
 
 use Awcodes\BadgeableColumn\Components\Badge;
 use BackedEnum;
-use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Forms\Type\TypeSchema;
 use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
 use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
@@ -25,13 +24,11 @@ use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutResourceEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\SchemaEnum;
-use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Resources\WidgetResource\Pages\CreateWidget;
 use Capell\Layout\Filament\Resources\WidgetResource\Pages\EditWidget;
 use Capell\Layout\Filament\Resources\WidgetResource\Pages\ListWidgets;
 use Capell\Layout\Filament\Resources\WidgetResource\RelationManagers\LayoutsRelationManager;
 use Capell\Layout\Filament\Resources\WidgetResource\RelationManagers\WidgetAssetsRelationManager;
-use Capell\Layout\Filament\Schemas\AbstractWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\DefaultWidgetSchema;
 use Capell\Layout\Models\Widget;
 use Filament\Actions\ActionGroup;
@@ -118,24 +115,16 @@ class WidgetResource extends Resource
     public static function getFormSchema(Schema $schema): array
     {
         return [
-            ...CreateWidgetDetailsSchema::make($schema),
             TypeSchema::make()
                 ->schema(
-                    function (Get $get, TypeSchema $component, ?Widget $record) use ($schema): array {
-                        if ($record?->admin['schema'] ?? null) {
-                            /** @var class-string<AbstractWidgetSchema> $schema */
-                            $adminSchema = CapellAdmin::getSchema(SchemaEnum::Widget->value, $record->admin['schema']);
-
-                            return app($adminSchema)::make($schema);
-                        }
-
+                    function (Get $get, TypeSchema $component) use ($schema): array {
                         $typeId = $get('type_id');
 
                         $type = $typeId ? CapellCore::getModel(ModelEnum::Type)::find($typeId, ['admin']) : null;
 
-                        $adminSchema = $type->admin['schema'] ?? DefaultWidgetSchema::getKey();
+                        $adminSchema = $type?->admin['schema'] ?? DefaultWidgetSchema::getKey();
 
-                        return $component->getSchema($schema, SchemaEnum::Widget->name, $adminSchema);
+                        return $component->getTypeSchema($schema, SchemaEnum::Widget->name, $adminSchema);
                     }
                 ),
         ];

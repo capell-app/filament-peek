@@ -95,7 +95,7 @@ class ContentResource extends Resource
 
                         $name = $type->admin['schema'] ?? DefaultContentSchema::getKey();
 
-                        return $component->getSchema($schema, SchemaEnum::Content->value, $name);
+                        return $component->getTypeSchema($schema, SchemaEnum::Content->value, $name);
                     }
                 ),
         ];

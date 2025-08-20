@@ -20,7 +20,6 @@ use Capell\Layout\Filament\Schemas\LayoutWidget\DefaultLayoutWidgetSchema;
 use Capell\Layout\Filament\Schemas\LayoutWidget\PageLayoutWidgetSchema;
 use Capell\Layout\Filament\Schemas\Type\WidgetTypeSchema;
 use Capell\Layout\Filament\Schemas\Widget\AssetsWidgetSchema;
-use Capell\Layout\Filament\Schemas\Widget\MediaWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\NavigationWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\PageContentWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\ResultsWidgetSchema;
@@ -101,7 +100,7 @@ class TypeCreator
             'name' => __('capell-admin::generic.media'),
             'group' => WidgetTypeGroupEnum::Asset->value,
             'admin' => [
-                'schema' => MediaWidgetSchema::getKey(),
+                'schema' => AssetsWidgetSchema::getKey(),
                 'icon' => CapellCore::getAsset(AssetEnum::Media->name)->getIcon(),
                 'asset_types' => [AssetEnum::Media->value],
             ],

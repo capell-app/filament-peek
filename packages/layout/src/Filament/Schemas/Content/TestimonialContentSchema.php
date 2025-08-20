@@ -94,7 +94,7 @@ class TestimonialContentSchema extends DefaultContentSchema
                     Section::make()
                         ->columns(1)
                         ->schema([
-                            ...ContentDetailsSchema::make(),
+                            ...ContentDetailsSchema::make($schema),
                             ...ContentSettingsSchema::make($schema),
                         ]),
                     ContentPublishSection::make(),
@@ -123,7 +123,7 @@ class TestimonialContentSchema extends DefaultContentSchema
                 ->icon('heroicon-o-cog-6-tooth')
                 ->columns()
                 ->schema([
-                    ...ContentDetailsSchema::make(),
+                    ...ContentDetailsSchema::make($schema),
                     ...ContentSettingsSchema::make($schema),
                     ContentPublishSection::make(),
                 ]),

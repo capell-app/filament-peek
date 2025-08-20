@@ -8,6 +8,7 @@ use Capell\Admin\Actions\FixCuratorMetaDataAction;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Media\ImageMediaPicker;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
+use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
@@ -30,26 +31,41 @@ class AssetsWidgetSchema extends AbstractWidgetSchema
 
         return [
             ...match ($operation) {
-                'create', 'createOption', 'replicate' => self::getCreateOptionSchema($schema),
-                default => self::getEditFormSchema($schema),
+                'createOption', 'editOption', 'replicate' => static::getOptionSchema($schema),
+                default => static::getEditFormSchema($schema),
             },
         ];
     }
 
-    protected static function getCreateOptionSchema(Schema $schema): array
+    protected static function getOptionSchema(Schema $schema): array
     {
         return [
-            WidgetAssetsRepeater::make($schema),
+            CreateWidgetDetailsSchema::make($schema),
+            Tabs::make()
+                ->columnSpanFull()
+                ->tabs([
+                    static::getAssetsTab($schema),
+                    static::getContentTab($schema),
+                    static::getSettingsTab($schema),
+                    static::getAdminTab($schema),
+                ]),
         ];
     }
 
     protected static function getEditFormSchema(Schema $schema): array
     {
         return [
+            CreateWidgetDetailsSchema::make($schema),
             FixedWidthSidebar::make()
-                ->mainSchema(self::getMainSchema($schema))
-                ->sidebarSchema(self::getSidebarSchema($schema)),
-            self::getTabs($schema),
+                ->mainSchema(static::getMainSchema($schema))
+                ->sidebarSchema(static::getSidebarSchema($schema)),
+            Tabs::make()
+                ->columnSpanFull()
+                ->tabs([
+                    static::getContentTab($schema),
+                    static::getSettingsTab($schema),
+                    static::getAdminTab($schema),
+                ]),
         ];
     }
 
@@ -75,14 +91,12 @@ class AssetsWidgetSchema extends AbstractWidgetSchema
         ];
     }
 
-    protected static function getTabs(Schema $schema): Tabs
+    protected static function getAssetsTab(Schema $schema): Tab
     {
-        return Tabs::make('tabs')
-            ->columnSpanFull()
-            ->tabs([
-                static::getContentTab($schema),
-                static::getSettingsTab($schema),
-                static::getAdminTab($schema),
+        return Tab::make(__('capell-admin::tab.assets'))
+            ->schema([
+                WidgetAssetsRepeater::make($schema)
+                    ->hiddenLabel(),
             ]);
     }
 

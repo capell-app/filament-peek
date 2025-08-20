@@ -16,7 +16,6 @@ use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
 use Filament\Actions\Testing\TestAction;
-use Illuminate\Database\Eloquent\Model;
 
 use function Pest\Livewire\livewire;
 
@@ -146,6 +145,7 @@ describe('layout', function () use ($types): void {
             ->assertCountTableRecords(4)
             ->selectTableRecords($records->pluck('id')->toArray())
             ->callAction(TestAction::make('selectRecords')->table()->bulk())
+            ->assertDispatched('sync-selected-assets')
             ->assertDispatchedTo(
                 LayoutBuilder::class,
                 'sync-selected-assets',
@@ -153,7 +153,7 @@ describe('layout', function () use ($types): void {
                 widgetIndex: $widgetIndex,
                 type: $assetType,
                 hasPageAssets: false,
-                assets: $records->map(fn (Model $record): string => (string) $record->id)->toArray(),
+                assets: $records->pluck('id')->toArray(),
             )
             ->assertDispatched('close-modal', id: 'select-assets');
     })->with($types);
@@ -194,7 +194,7 @@ describe('layout', function () use ($types): void {
                 widgetIndex: $widgetIndex,
                 type: $assetType,
                 hasPageAssets: false,
-                assets: $records->map(fn (Model $record): string => (string) $record->id)->toArray(),
+                assets: $records->pluck('id')->toArray(),
             )
             ->assertDispatched('close-modal', id: 'select-assets');
     })->with($types);
@@ -301,7 +301,7 @@ describe('page layout', function () use ($types): void {
                 widgetIndex: $widgetIndex,
                 type: $assetType,
                 hasPageAssets: true,
-                assets: $records->map(fn (Model $record): string => (string) $record->id)->toArray(),
+                assets: $records->pluck('id')->toArray(),
             )
             ->assertDispatched('close-modal', id: 'select-assets');
     })->with($types);

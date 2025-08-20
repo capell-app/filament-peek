@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Actions\Page;
 
 use Capell\Admin\Filament\Actions\CreateModalAction;
-use Capell\Layout\Actions\MutateContentDataBeforeCreateAction;
+use Capell\Layout\Actions\MutateContentDataBeforeFillAction;
 use Illuminate\Database\Eloquent\Model;
 use Override;
 
 class CreateContentModalAction extends CreateModalAction
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->slideOver();
+    }
+
     #[Override]
     protected function mutateRecordBeforeSave(Model $record, array $data): array
     {
@@ -27,6 +34,6 @@ class CreateContentModalAction extends CreateModalAction
     #[Override]
     protected function mutateFormData(array $data): array
     {
-        return MutateContentDataBeforeCreateAction::run($data);
+        return MutateContentDataBeforeFillAction::run($data);
     }
 }

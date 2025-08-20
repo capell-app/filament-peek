@@ -63,7 +63,7 @@ test('can update type', function (TypeEnum $typeEnum): void {
         ->type($typeEnum)
         ->when(
             CapellAdmin::hasSchema(SchemaEnum::Type, $typeEnum->name),
-            fn (TypeFactory $factory) => $factory->adminTypeSchema($typeEnum->name)
+            fn (TypeFactory $factory): \Capell\Core\Database\Factories\TypeFactory => $factory->adminTypeSchema($typeEnum->name)
         )
         ->create();
 

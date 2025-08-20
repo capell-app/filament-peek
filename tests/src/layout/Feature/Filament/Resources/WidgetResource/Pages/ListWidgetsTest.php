@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Support\Str;
 
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
@@ -69,6 +70,7 @@ test('can replicate widget', function (): void {
             TestAction::make(ReplicateAction::class)->table($widget),
             data: [
                 'name' => $name,
+                'key' => Str::slug($name),
             ]
         )
         ->assertHasNoFormErrors()

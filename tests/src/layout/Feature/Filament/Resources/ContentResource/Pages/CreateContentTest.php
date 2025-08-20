@@ -63,7 +63,8 @@ it('can create', function (string $type): void {
     ->with(['default', 'with deleted site']);
 
 it('can create with translations', function (string $mode): void {
-    Site::factory()->create();
+    $languages = Language::factory()->count(3)->create();
+    $site = Site::factory()->state(['language_id' => $languages->first()->id])->withTranslations($languages)->create();
 
     $type = (new ContentTypeFactory)->default()->create();
 
@@ -76,8 +77,6 @@ it('can create with translations', function (string $mode): void {
         Site::factory()->deleted()->create();
     }
 
-    $languages = Language::factory()->count(3)->create();
-
     livewire(CreateContent::class)
         ->assertSuccessful()
         ->fillForm([
@@ -87,12 +86,12 @@ it('can create with translations', function (string $mode): void {
         ])
         ->set(
             'data.translations',
-            $languages->mapWithKeys(
+            $site->languages->mapWithKeys(
                 fn (Language $language): array => [
                     (string) Str::uuid() => [
                         'language_id' => $language->getKey(),
                         'title' => $newData->name . ' - ' . $language->name,
-                        'content' => 'Test content',
+                        'contents' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $newData->name . ' - ' . $language->name]]]]],
                     ],
                 ]
             )->toArray()
@@ -111,11 +110,11 @@ it('can create with translations', function (string $mode): void {
         'type_id' => $type->getKey(),
     ]);
 
-    $languages->each(
+    $site->languages->each(
         fn (Language $language) => assertDatabaseHas(Translation::class, [
             'language_id' => $language->getKey(),
             'title' => $newData->name . ' - ' . $language->name,
-            'content' => 'Test content',
+            'contents' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $newData->name . ' - ' . $language->name]]]]]),
             'translatable_type' => 'content',
         ])
     );

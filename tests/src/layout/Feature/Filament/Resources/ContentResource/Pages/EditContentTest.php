@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use Capell\Admin\Filament\Actions\DeleteAction;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
-use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\ContentResource\Pages\EditContent;
 use Capell\Layout\Models\Content;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
@@ -21,7 +19,6 @@ beforeEach(function (): void {
 });
 
 it('can save', function (): void {
-    $contentType = Type::factory()->type(LayoutTypeEnum::Content)->create();
     $content = Content::factory()->create();
     $newData = Content::factory()
         ->site(Site::factory()->create())
@@ -40,14 +37,12 @@ it('can save', function (): void {
         ])
         ->assertFormFieldExists('meta.image_id')
         ->fillForm([
-            'type_id' => $contentType->getKey(),
             'name' => $newData->name,
             'parent_id' => $newData->parent->id,
             'site_id' => $newData->site->getKey(),
         ])
         ->assertSchemaStateSet([
             'name' => $newData->name,
-            'type_id' => $contentType->getKey(),
             'parent_id' => $newData->parent->id,
             'site_id' => $newData->site->getKey(),
         ])

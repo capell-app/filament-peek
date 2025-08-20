@@ -28,7 +28,6 @@ beforeEach(function (): void {
 describe('from edit article', function (): void {
     test('can create new article', function (): void {
         $page = (new ArticlePageFactory)->create();
-
         $newData = (new ArticlePageFactory)->recycle($page->site)->make();
 
         $slug = str($newData->name)->slug()->toString();
@@ -40,6 +39,7 @@ describe('from edit article', function (): void {
                 'type_id' => $newData->type_id,
                 'site_id' => $newData->site_id,
             ])
+            ->callMountedAction()
             ->set('mountedActions.0.data.translations', [
                 (string) Str::uuid() => [
                     'title' => $newData->name,

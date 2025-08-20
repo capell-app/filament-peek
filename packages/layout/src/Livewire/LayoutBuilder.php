@@ -546,7 +546,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->modalHeading(function (self $livewire, array $arguments): string {
                 $totalAssets = $livewire->countWidgetAssets($arguments['containerKey'], $arguments['widgetIndex']);
 
-                if ($totalAssets) {
+                if ($totalAssets !== 0) {
                     $hasPageAssets = $livewire->hasPageAssets($arguments['containerKey'], $arguments['widgetIndex']);
                 } else {
                     $hasPageAssets = (bool) $livewire->page_id;

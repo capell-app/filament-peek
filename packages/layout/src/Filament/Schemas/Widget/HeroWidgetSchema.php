@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
 use Capell\Layout\Filament\Components\Forms\CarouselSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
+use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetAssetsRepeater;
@@ -32,23 +33,25 @@ class HeroWidgetSchema extends AbstractWidgetSchema
 
         return [
             ...match ($operation) {
-                'create', 'createOption', 'replicate' => self::getCreateOptionSchema($schema),
-                default => self::getEditFormSchema($schema),
+                'editOption', 'createOption', 'replicate' => static::getOptionSchema($schema),
+                default => static::getFormSchema($schema),
             },
         ];
     }
 
-    protected static function getCreateOptionSchema(Schema $schema): array
+    protected static function getOptionSchema(Schema $schema): array
     {
         return [
+            CreateWidgetDetailsSchema::make($schema),
             WidgetAssetsRepeater::make($schema),
             ...static::getMetaSchema(),
         ];
     }
 
-    protected static function getEditFormSchema(Schema $schema): array
+    protected static function getFormSchema(Schema $schema): array
     {
         return [
+            CreateWidgetDetailsSchema::make($schema),
             FixedWidthSidebar::make()
                 ->mainSchema([
                     Section::make(__('capell-admin::generic.widget_assets'))
@@ -64,13 +67,13 @@ class HeroWidgetSchema extends AbstractWidgetSchema
                         ->columns(1)
                         ->schema(WidgetSettingsSchema::make($schema)),
                 ]),
-            self::getTabs($schema),
+            static::getTabs($schema),
         ];
     }
 
     protected static function getTabs(Schema $schema): Tabs
     {
-        return Tabs::make('tabs')
+        return Tabs::make()
             ->columnSpanFull()
             ->tabs([
                 Tab::make(__('capell-admin::tab.content'))
@@ -88,7 +91,7 @@ class HeroWidgetSchema extends AbstractWidgetSchema
                             return $state;
                         })
                         ->schema([
-                            ...self::getMetaSchema(),
+                            ...static::getMetaSchema(),
                             WidgetComponentFilesSection::make(),
                         ]),
                 ]),

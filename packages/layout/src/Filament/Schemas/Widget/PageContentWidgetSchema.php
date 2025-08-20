@@ -6,6 +6,7 @@ namespace Capell\Layout\Filament\Schemas\Widget;
 
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Layout\Filament\Components\Forms\HeadingSizeSelect;
+use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
@@ -25,19 +26,8 @@ class PageContentWidgetSchema extends AbstractWidgetSchema
     public static function make(Schema $schema): array
     {
         return match ($schema->getOperation()) {
-            'create', 'editOption', 'createOption', 'replicate' => [
-                self::getTabs(),
-            ],
-            default => [
-                FixedWidthSidebar::make()
-                    ->mainSchema([
-                        self::getTabs(),
-                    ])
-                    ->sidebarSchema([
-                        Section::make()
-                            ->schema(WidgetSettingsSchema::make($schema)),
-                    ]),
-            ],
+            'createOption', 'editOption', 'replicate' => static::getOptionSchema($schema),
+            default => static::getFormSchema($schema),
         };
     }
 
@@ -78,5 +68,28 @@ class PageContentWidgetSchema extends AbstractWidgetSchema
                 ]),
                 WidgetAdminTab::make(),
             ]);
+    }
+
+    protected static function getFormSchema(Schema $schema): array
+    {
+        return [
+            CreateWidgetDetailsSchema::make($schema),
+            FixedWidthSidebar::make()
+                ->mainSchema([
+                    static::getTabs(),
+                ])
+                ->sidebarSchema([
+                    Section::make()
+                        ->schema(WidgetSettingsSchema::make($schema)),
+                ]),
+        ];
+    }
+
+    protected static function getOptionSchema(Schema $schema): array
+    {
+        return [
+            CreateWidgetDetailsSchema::make($schema),
+            static::getTabs(),
+        ];
     }
 }

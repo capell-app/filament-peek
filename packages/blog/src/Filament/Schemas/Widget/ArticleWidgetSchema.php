@@ -36,7 +36,7 @@ class ArticleWidgetSchema extends AbstractWidgetSchema
                     ]),
             ],
             default => [
-                Tabs::make('tabs')
+                Tabs::make()
                     ->visibleOn(['edit', 'editOption'])
                     ->columnSpanFull()
                     ->tabs([

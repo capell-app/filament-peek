@@ -10,8 +10,6 @@ use Capell\Admin\Filament\Components\Forms\CallToActionText;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\Page\PageSelect;
-use Capell\Admin\Filament\Components\Forms\PublishDates;
-use Capell\Admin\Filament\Components\Forms\PublishToggle;
 use Capell\Layout\Filament\Components\Forms\Content\ContentDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Content\ContentPublishSection;
 use Capell\Layout\Filament\Components\Forms\Content\ContentSettingsSchema;
@@ -21,6 +19,8 @@ use Capell\Layout\Filament\Schemas\AbstractContentSchema;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -51,35 +51,36 @@ class DefaultContentSchema extends AbstractContentSchema
     public static function make(Schema $schema): array
     {
         return match ($schema->getOperation()) {
-            'createOption', 'replicate' => self::getCreateOptionFormSchema($schema),
-            'editOption' => self::getEditOptionFormSchema($schema),
+            'createOption', 'editOption', 'replicate' => self::getOptionFormSchema($schema),
             default => self::getFormSchema($schema),
         };
     }
 
-    protected static function getCreateOptionFormSchema(Schema $schema): array
+    protected static function getOptionFormSchema(Schema $schema): array
     {
         return [
             Grid::make()
                 ->hiddenOn(['edit', 'editOption'])
-                ->schema(ContentDetailsSchema::make()),
-            ...ContentSettingsSchema::make($schema),
-            ContentTranslationsRepeater::make($schema),
-            PublishToggle::make('is_published')
-                ->reactive(),
-            PublishDates::make()
                 ->columnSpanFull()
-                ->columns()
-                ->whenFalsy('is_published'),
+                ->schema(ContentDetailsSchema::make($schema)),
+            Tabs::make()
+                ->columnSpanFull()
+                ->schema([
+                    self::translationsTab($schema),
+                    self::settingsTab($schema),
+                ]),
         ];
     }
 
     protected static function getFormSchema(Schema $schema): array
     {
         return [
-            Grid::make()
-                ->hiddenOn(['edit', 'editOption'])
-                ->schema(ContentDetailsSchema::make()),
+            Section::make()
+                ->contained(fn (string $operation): bool => $operation === 'created')
+                ->hiddenOn('edit')
+                ->columnSpanFull()
+                ->columns()
+                ->schema(ContentDetailsSchema::make($schema)),
             FixedWidthSidebar::make()
                 ->mainSchema([
                     ContentTranslationsRepeater::make($schema),
@@ -100,7 +101,7 @@ class DefaultContentSchema extends AbstractContentSchema
                         ->gridContainer()
                         ->columns(['default' => 1, '@lg' => 2])
                         ->schema([
-                            ...ContentDetailsSchema::make(),
+                            ...($schema->getOperation() !== 'create' ? ContentDetailsSchema::make($schema) : []),
                             ...ContentSettingsSchema::make($schema),
                         ]),
                     ContentPublishSection::make(),
@@ -109,30 +110,23 @@ class DefaultContentSchema extends AbstractContentSchema
 
     }
 
-    protected static function getEditOptionFormSchema(Schema $schema): array
+    protected static function settingsTab(Schema $schema): Tab
     {
-        return [
-            ContentTranslationsRepeater::make($schema),
-            Grid::make()
-                ->statePath('meta')
-                ->mutateDehydratedStateUsing(function (array $state): array {
-                    if (isset($state['image_id'])) {
-                        $state['image_id'] = FixCuratorMetaDataAction::run($state['image_id']);
-                    }
+        return Tab::make(__('capell-admin::tab.settings'))
+            ->icon('heroicon-m-cog-6-tooth')
+            ->schema([
+                ...ContentDetailsSchema::make($schema),
+                ...ContentSettingsSchema::make($schema),
+                ContentPublishSection::make(),
+            ]);
+    }
 
-                    return $state;
-                })
-                ->schema(self::getMetaSchema()),
-            Section::make(__('capell-admin::generic.settings'))
-                ->collapsed()
-                ->compact()
-                ->icon('heroicon-o-cog-6-tooth')
-                ->columns()
-                ->schema([
-                    ...ContentDetailsSchema::make(),
-                    ...ContentSettingsSchema::make($schema),
-                    ContentPublishSection::make(),
-                ]),
-        ];
+    private static function translationsTab(Schema $schema): Tab
+    {
+        return Tab::make(__('capell-admin::tab.content'))
+            ->schema([
+                ContentTranslationsRepeater::make($schema)
+                    ->hiddenLabel(),
+            ]);
     }
 }

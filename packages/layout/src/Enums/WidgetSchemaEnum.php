@@ -7,7 +7,6 @@ namespace Capell\Layout\Enums;
 use Capell\Layout\Filament\Schemas\Widget\AssetsWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\CarouselWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\DefaultWidgetSchema;
-use Capell\Layout\Filament\Schemas\Widget\MediaWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\NavigationWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\PageContentWidgetSchema;
 use Capell\Layout\Filament\Schemas\Widget\RelatedWidgetSchema;
@@ -17,7 +16,6 @@ use Capell\Layout\Filament\Schemas\Widget\SystemWidgetSchema;
 enum WidgetSchemaEnum: string
 {
     case Default = DefaultWidgetSchema::class;
-    case Media = MediaWidgetSchema::class;
     case Navigation = NavigationWidgetSchema::class;
     case PageContent = PageContentWidgetSchema::class;
     case Carousel = CarouselWidgetSchema::class;

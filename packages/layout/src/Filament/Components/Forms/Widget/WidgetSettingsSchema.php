@@ -6,15 +6,12 @@ namespace Capell\Layout\Filament\Components\Forms\Widget;
 
 use Capell\Admin\Filament\Components\Forms\NameInput;
 use Capell\Admin\Filament\Components\Forms\StatusToggle;
+use Capell\Admin\Services\SlugGenerator;
 use Capell\Core\Facades\CapellCore;
 use Capell\Layout\Enums\LayoutModelEnum;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 
 class WidgetSettingsSchema
@@ -22,25 +19,17 @@ class WidgetSettingsSchema
     public static function make(Schema $schema, array $components = []): array
     {
         return [
-            Hidden::make('is_key_changed_manually')
-                ->default(false)
-                ->dehydrated(false),
-
             NameInput::make('name')
-                ->afterStateUpdated(function ($record, Get $get, Set $set, ?string $state): void {
-                    if (! $record && ! $get('is_key_changed_manually') && filled($state)) {
-                        $set('key', Str::slug($state));
-                    }
-                })
-                ->lazy()
-                ->required(),
+                ->required()
+                ->afterStateUpdatedJs(
+                    fn (NameInput $component, string $operation): string => in_array($operation, ['create', 'createOption'], true)
+                        ? SlugGenerator::slugifyState("\$state ?? ''", 'key')
+                        : ''
+                ),
 
             TextInput::make('key')
                 ->label(__('capell-admin::form.key'))
                 ->placeholder(__('capell-admin::generic.key_placeholder'))
-                ->afterStateUpdated(function (Set $set, $state): void {
-                    $set('is_key_changed_manually', (bool) $state);
-                })
                 ->alphaDash()
                 ->required()
                 ->maxLength(128)
@@ -51,10 +40,13 @@ class WidgetSettingsSchema
                 ),
 
             WidgetTypeSelect::make('type_id')
-                ->changeConfirmation()
                 ->withRelation()
                 ->withCreateForm()
-                ->withEditForm(),
+                ->withEditForm()
+                ->when(
+                    ! in_array($schema->getOperation(), ['create', 'createOption']),
+                    fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->changeConfirmation()
+                ),
 
             ...$components,
 
