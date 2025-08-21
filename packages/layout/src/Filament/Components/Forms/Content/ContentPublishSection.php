@@ -15,7 +15,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Support\HtmlString;
@@ -138,7 +137,6 @@ class ContentPublishSection extends Section
                                 TextEntry::make('name')
                                     ->label(__('capell-admin::form.name'))
                                     ->hiddenLabel()
-                                    ->weight(FontWeight::SemiBold)
                                     ->suffix(
                                         fn (Content $record): ?string => match (true) {
                                             $record->isCurrent() => ' (' . __('capell-admin::generic.latest') . ')',

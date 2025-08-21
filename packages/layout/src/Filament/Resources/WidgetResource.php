@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources;
 
-use Awcodes\BadgeableColumn\Components\Badge;
 use BackedEnum;
 use Capell\Admin\Filament\Components\Forms\Type\TypeSchema;
 use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
@@ -40,7 +39,6 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -191,11 +189,6 @@ class WidgetResource extends Resource
         return [
             IdentifierColumn::make('id'),
             NameColumn::make('name')
-                ->suffixBadges([
-                    Badge::make('type.name')
-                        ->label(fn (Widget $record): ?string => $record->type?->name)
-                        ->color('gray'),
-                ])
                 ->searchable([
                     'name',
                     'admin->notes',
@@ -203,6 +196,12 @@ class WidgetResource extends Resource
                     'meta->component_item',
                     'meta->view_file',
                 ]),
+            TextColumn::make('type.name')
+                ->label(__('capell-admin::table.type'))
+                ->badge()
+                ->searchable()
+                ->sortable()
+                ->alignCenter(),
             ImageColumn::make('meta.image')
                 ->visibility('public')
                 ->toggleable(isToggledHiddenByDefault: true),
@@ -293,16 +292,14 @@ class WidgetResource extends Resource
                 ->label(__('capell-admin::table.total_resources'))
                 ->counts('widgetAssets')
                 ->sortable()
+                ->alignRight()
                 ->numeric()
-                ->weight(FontWeight::SemiBold)
-                ->alignCenter()
                 ->toggleable(),
             TextColumn::make('layouts_count')
                 ->label(__('capell-admin::table.total_layouts'))
                 ->sortable()
+                ->alignRight()
                 ->numeric()
-                ->weight(FontWeight::SemiBold)
-                ->alignCenter()
                 ->toggleable()
                 ->disabledClick()
                 ->formatStateUsing(fn (Widget $record, $state): HtmlString => new HtmlString(Blade::render('capell-admin::components.tables.url', [

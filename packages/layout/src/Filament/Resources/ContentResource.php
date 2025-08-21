@@ -481,7 +481,7 @@ class ContentResource extends Resource
                 ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('children_count')
                 ->label(__('capell-admin::table.children'))
-                ->alignCenter()
+                ->alignRight()
                 ->numeric()
                 ->sortable()
                 ->toggleable()
@@ -493,7 +493,7 @@ class ContentResource extends Resource
                 ),
             BadgeableColumn::make('assets_count')
                 ->label(__('capell-admin::table.assets'))
-                ->alignCenter()
+                ->alignRight()
                 ->numeric()
                 ->sortable()
                 ->toggleable()

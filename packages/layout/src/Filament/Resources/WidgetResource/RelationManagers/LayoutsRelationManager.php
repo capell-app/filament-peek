@@ -15,7 +15,6 @@ use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
 use Capell\Admin\Filament\Resources\PageResource;
 use Capell\Core\Models\Layout;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -51,7 +50,7 @@ class LayoutsRelationManager extends RelationManager
             ->description(__('capell-admin::generic.widget_layouts_info'))
             ->columns([
                 NameColumn::make('name')
-                    ->weight(fn (Layout $record): FontWeight => $record->default ? FontWeight::SemiBold : FontWeight::Medium),
+                    ->defaultBadge(),
                 ImageColumn::make('admin.image')
                     ->visibility('public')
                     ->toggleable(),
