@@ -49,6 +49,7 @@ use Oddvalue\LaravelDrafts\Concerns\HasDrafts;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Models\Audit;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Wildside\Userstamps\Userstamps;
@@ -229,7 +230,15 @@ class Content extends Model implements Auditable, Draftable, HasMedia, PageCache
 
     public static function getMorphRelations(): array
     {
-        return ['image', 'type', 'translation'];
+        return [
+            'ancestors',
+            'image',
+            'media',
+            'related',
+            'site',
+            'translation',
+            'type',
+        ];
     }
 
     public function registerMediaCollections(): void

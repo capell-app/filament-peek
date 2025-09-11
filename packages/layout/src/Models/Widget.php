@@ -224,6 +224,12 @@ class Widget extends Model implements HasMedia, PageCacheable, Statusable
             ->whereNull('page_id');
     }
 
+    public function widgetPageAssets(): HasMany
+    {
+        return $this->assets()
+            ->whereNotNull('page_id');
+    }
+
     public function pageAssets(Page $page, string $container, int $occurrence): HasMany
     {
         return $this->assets()

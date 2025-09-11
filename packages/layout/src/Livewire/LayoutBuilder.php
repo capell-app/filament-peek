@@ -49,6 +49,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Computed;
@@ -1112,7 +1113,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 ->required()
                 ->searchable()
                 ->options(
-                    Layout::query()
+                    fn (): array => Layout::query()
                         ->withCount('pages')
                         ->when(
                             $this->site_id,
@@ -1582,7 +1583,10 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         $model = CapellCore::getModel(LayoutModelEnum::Widget->name);
 
         return $model::query()
-            ->withCount(['layouts'])
+            ->withCount([
+                'layouts',
+                'widgetPageAssets as page_assets_count' => fn (Builder $query): Builder => $query->distinct('page_id'),
+            ])
             ->with([
                 'type',
                 'backgroundImage',
@@ -1677,47 +1681,23 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
     private function getAssetRelations(?string $type = null): array
     {
-        $relations = [
-            'content' => ['image', 'media', 'related', 'translation', 'site'],
-            'page' => ['image', 'translation', 'site', 'type', 'descendants'],
-        ];
+        $assets = CapellCore::getAssets();
+
+        $relations = [];
+
+        foreach ($assets as $asset) {
+            // TODO check if bug where not using morphWith requires the class name
+            // In getResultsByType() it uses the class instead of the morph name
+            $relations[$asset->model] = method_exists($asset->model, 'getMorphRelations')
+                ? $asset->model::getMorphRelations()
+                : [];
+        }
 
         if ($type === null) {
             return $relations;
         }
 
-        return $relations[$type] ?? [];
-    }
-
-    private function loadMorphAssetRelations(Collection $widgets): Collection
-    {
-        $widgetAssets = $widgets->pluck('assets')
-            ->flatten()
-            ->filter()
-            ->groupBy('asset_type')
-            ->each(
-                fn ($models, string $morphType): Collection => Collection::make($models)
-                    ->load([
-                        'asset' => fn (BuilderContract $query) => $query->with(
-                            $this->getAssetRelations($morphType)
-                        ),
-                    ])
-            );
-
-        return $widgets->each(
-            fn (Widget $widget) => $widget->setRelation(
-                'assets',
-                $widget->assets->map(
-                    function (WidgetAsset $resource) use ($widgetAssets) {
-                        $asset = $widgetAssets[$resource->asset_type]
-                            ->firstWhere('asset_id', $resource->asset_id)
-                            ->asset;
-
-                        return $resource->setRelation('asset', $asset);
-                    }
-                )
-            )
-        );
+        return $relations[Relation::getMorphedModel($type)] ?? [];
     }
 
     private function loadWidgetAssetsFromStore(): void

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 ?>
 
-@props(['containerKey', 'hasPageAssets', 'occurrence', 'assets', 'assetsCount', 'assetTypes', 'widget', 'widgetIndex'])
+@props(['containerKey', 'hasPageAssets', 'occurrence', 'assetTypes', 'widget', 'widgetIndex'])
 @php
     use Capell\Core\Facades\CapellCore;
     use Capell\Layout\Models\WidgetAsset;
@@ -12,6 +12,8 @@ declare(strict_types=1);
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\Size;
+
+    $assetsCount = $widget->assets?->count() ?? 0;
 
     $removeAssetsAction = ($this->removeAssetsAction)([
         'containerKey' => $containerKey,
@@ -110,7 +112,7 @@ declare(strict_types=1);
         @endif
     </div>
 
-    @if ($assets?->isNotEmpty())
+    @if ($widget->assets?->isNotEmpty())
         <div
             class="divide-y divide-black/5 dark:divide-white/10"
             x-sort="
@@ -122,28 +124,12 @@ declare(strict_types=1);
                 )
             "
         >
-            @foreach ($assets as $asset)
-                @php
-                    /** @var Capell\Layout\Models\Widget $widget */
-                    $widgetAsset = $widget->assets
-                        ->where('asset_type', $asset['asset_type'])
-                        ->where('asset_id', $asset['asset_id'])
-                        ->first();
-
-                    if (! $widgetAsset) {
-                        throw new Exception(
-                            "Resource not found for {$asset['asset_type']} {$asset['asset_id']} for widget {$widget->key} ({$occurrence}).",
-                        );
-                    }
-                @endphp
-
+            @foreach ($widget->assets as $widgetAsset)
                 <x-capell-layout::layout-builder.asset
                     :$containerKey
                     :index="$loop->index"
                     :$occurrence
-                    :asset="$widgetAsset->asset"
-                    :asset-key="$widgetAsset->asset_type . '.' . $widgetAsset->asset_id"
-                    :asset-type="$widgetAsset->asset_type"
+                    :$widgetAsset
                     :$widget
                     :$widgetIndex
                 />
@@ -153,8 +139,7 @@ declare(strict_types=1);
         <div
             class="py-3 text-center font-light tracking-tight text-gray-600 dark:text-gray-100"
         >
-            @php($pagesWithAssets = WidgetAsset::totalWidgetPages($widget))
-            {{ $pagesWithAssets ? __('capell-layout::message.widget_has_page_assets', ['total' => $pagesWithAssets]) : __('capell-admin::message.widget_assets_empty') }}
+            {{ $widget->page_assets_count ? __('capell-layout::message.widget_has_page_assets', ['total' => $widget->page_assets_count]) : __('capell-admin::message.widget_assets_empty') }}
         </div>
     @endif
 </div>

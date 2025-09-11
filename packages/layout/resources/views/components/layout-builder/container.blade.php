@@ -104,8 +104,6 @@ declare(strict_types=1);
                     :$containerKey
                     :$containerWidget
                     :$loop
-                    :assets-count="$containerWidgets[$widgetIndex]->assets?->count()"
-                    :assets="$containerWidgets[$widgetIndex]->assets ?? []"
                     :widget="$containerWidgets[$widgetIndex]"
                     :$widgetIndex
                 />

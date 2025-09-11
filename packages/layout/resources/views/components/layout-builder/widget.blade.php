@@ -9,8 +9,6 @@ declare(strict_types=1);
     'containerWidget',
     'loop',
     'occurrence',
-    'assets',
-    'assetsCount',
     'widget',
     'widgetIndex',
 ])
@@ -122,7 +120,7 @@ declare(strict_types=1);
                                 :size="Size::ExtraSmall"
                                 class="absolute -right-2 -top-2 inline-flex"
                             >
-                                {{ $assetsCount }}
+                                {{ $widget->assets?->count() ?? 0 }}
                             </x-filament::badge>
                         @endif
                     </span>
@@ -232,8 +230,6 @@ declare(strict_types=1);
             :$containerKey
             :$hasPageAssets
             :$occurrence
-            :$assets
-            :$assetsCount
             :$assetTypes
             :$widget
             :$widgetIndex

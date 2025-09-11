@@ -5,9 +5,11 @@ declare(strict_types=1);
 ?>
 
 @php
+    /** @var LayoutBuilder $this */
     use Capell\Admin\Enums\AlertTypeEnum;
     use Capell\Admin\Enums\ResourceEnum;
     use Capell\Admin\Facades\CapellAdmin;
+    use Capell\Layout\Livewire\LayoutBuilder;
     use Filament\Support\Enums\Size;
 
     $changeLayoutAction = $this->changeLayoutAction;

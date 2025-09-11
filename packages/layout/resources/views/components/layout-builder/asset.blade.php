@@ -13,10 +13,8 @@ declare(strict_types=1);
     'name' => null,
     'occurrence',
     'pageId' => $this->page_id,
-    'asset',
-    'assetKey',
-    'assetType',
     'widget',
+    'widgetAsset',
     'widgetIndex',
 ])
 @php
@@ -26,6 +24,7 @@ declare(strict_types=1);
     use Capell\Layout\Models\Content;
     use Filament\Actions\Action;
     use Filament\Support\Enums\Size;
+    use Illuminate\Support\Str;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
     /** @var Action $editWidgetAssetAction */
@@ -33,14 +32,12 @@ declare(strict_types=1);
         'containerKey' => $containerKey,
         'widgetIndex' => $widgetIndex,
         'index' => $index,
-        'type' => $assetType,
+        'type' => $widgetAsset->asset_type,
     ]);
 
-    if (! $asset) {
-        throw new Exception(
-            "Widget '{$widget->key}({$occurrence})' asset not found: {$assetType} {$assetKey}",
-        );
-    }
+    $asset = $widgetAsset->asset;
+
+    $assetKey = "{$widgetAsset->asset_type} . '.' . {$widgetAsset->asset_id}";
 
     if (! $image) {
         $image = match (get_class($asset)) {
@@ -67,10 +64,8 @@ declare(strict_types=1);
 
     $label = '';
 
-    $ancestors = $asset->ancestors()->get();
-
-    if ($ancestors->isNotEmpty()) {
-        $label .= $ancestors->pluck('name')
+    if ($asset->ancestors?->isNotEmpty()) {
+        $label .= $asset->ancestors->pluck('name')
             ->map(fn ($item) => Str::limit($item, 30))
             ->implode(' » ')
             . ' » ';
@@ -249,9 +244,9 @@ declare(strict_types=1);
                     icon="heroicon-o-arrow-top-right-on-square"
                     target="_blank"
                     tag="a"
-                    :href="GetResourceFromTypeAction::run(ucfirst($assetType), $asset->type)::getUrl('edit', ['record' => $asset->getKey()])"
+                    :href="GetResourceFromTypeAction::run(ucfirst($widgetAsset->asset_type), $asset->type)::getUrl('edit', ['record' => $asset->getKey()])"
                 >
-                    {{ __('capell-admin::button.edit_resource', ['type' => $assetType]) }}
+                    {{ __('capell-admin::button.edit_resource', ['type' => $widgetAsset->asset_type]) }}
                 </x-filament::dropdown.list.item>
             </x-filament::dropdown.list>
         </x-filament::dropdown>

@@ -84,15 +84,6 @@ class WidgetAsset extends Model implements HasMedia, PageCacheable
 
     protected static string $factory = WidgetAssetFactory::class;
 
-    public static function totalWidgetPages(Widget $widget): int
-    {
-        return static::query()
-            ->where('widget_id', $widget->id)
-            ->whereNotNull('page_id')
-            ->distinct('page_id')
-            ->count('page_id');
-    }
-
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(static::MEDIA_IMAGE)->singleFile();
