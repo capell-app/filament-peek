@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Services\Creator;
 
-use Capell\Admin\Enums\ContentEditorEnum;
 use Capell\Core\Enums\AssetComponentEnum as CapellAssetComponentEnum;
 use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Enums\ModelEnum;
@@ -82,7 +81,6 @@ class TypeCreator
             'admin' => [
                 'type_schema' => WidgetTypeSchema::getKey(),
                 'icon' => 'heroicon-o-puzzle-piece',
-                'content_editor' => ContentEditorEnum::ContentBuilder->value,
             ],
             'meta' => [
                 'component' => WidgetComponentEnum::Default,

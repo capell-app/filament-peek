@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Observers;
 
+use Capell\Admin\Actions\GenerateUniqueKeyAction;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Models\Widget;
@@ -17,8 +18,8 @@ class WidgetObserver
             $widget->name = str($widget->key)->title();
         }
 
-        if (! $widget->key && $widget->name) {
-            $widget->key = str($widget->name)->slug();
+        if (! $widget->key) {
+            $widget->key = GenerateUniqueKeyAction::run($widget);
         }
 
         if (! $widget->type_id) {

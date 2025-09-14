@@ -25,6 +25,7 @@ class WidgetAssetForm implements FormConfigurator
     {
         return [
             TypeSchema::make()
+                ->columns($schema->getColumns())
                 ->schema(function (TypeSchema $component, Get $get, ?WidgetAsset $record) use ($schema): array {
                     $assetType = $get('asset_type') ?? $record?->asset_type;
 

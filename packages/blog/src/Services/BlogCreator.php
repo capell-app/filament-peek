@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Blog\Services;
 
 use Capell\Admin\Actions\AddPageToNavigationAction;
-use Capell\Admin\Enums\ContentEditorEnum;
 use Capell\Admin\Filament\Resources\Types\Schemas\Types\PageTypeSchema;
 use Capell\Admin\Services\Creator\LayoutCreator;
 use Capell\Admin\Services\Creator\TypeCreator;
@@ -33,10 +32,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BlogCreator
 {
-    public static function addPagesToNavigations(array $handles, Site $site, Collection|array $pages, Collection $languages): void
+    public static function addPagesToNavigations(array $keys, Site $site, Collection|array $pages, Collection $languages): void
     {
         Navigation::query()
-            ->whereIn('handle', $handles)
+            ->whereIn('key', $keys)
             ->where(
                 fn (Builder $query) => $query->whereNull('site_id')
                     ->orWhere('site_id', $site->id)
@@ -302,7 +301,6 @@ class BlogCreator
             'name' => __('capell-blog::generic.article'),
             'group' => BlogTypeGroupEnum::Article->value,
             'admin' => [
-                'content_editor' => ContentEditorEnum::RichEditor->value,
                 'icon' => 'heroicon-o-newspaper',
                 'type_schema' => PageTypeSchema::getKey(),
                 'schema' => ArticlePageSchema::getKey(),

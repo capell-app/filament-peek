@@ -34,9 +34,7 @@ class DefaultWidgetSchema implements TypeSchemaInterface
 
     public static function make(Schema $schema): array
     {
-        $operation = $schema->getOperation();
-
-        return match ($operation) {
+        return match ($schema->getOperation()) {
             'createOption', 'replicate' => static::getCreateOptionSchema($schema),
             'editOption' => static::getEditOptionSchema($schema),
             default => static::getFormSchema($schema),
@@ -73,8 +71,7 @@ class DefaultWidgetSchema implements TypeSchemaInterface
     {
         return [
             CreateWidgetDetailsSchema::make($schema),
-            WidgetTranslationsRepeater::make($schema)
-                ->section(fn (string $operation): bool => $operation === 'create'),
+            WidgetTranslationsRepeater::make($schema),
             ...static::getExtraSchema($schema),
         ];
     }

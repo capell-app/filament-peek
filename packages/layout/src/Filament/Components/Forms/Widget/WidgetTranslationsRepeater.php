@@ -9,11 +9,9 @@ use Capell\Admin\Filament\Components\Forms\ContentEditor;
 use Capell\Admin\Filament\Components\Forms\RepeaterTabs;
 use Capell\Admin\Filament\Components\Forms\TranslationLanguageSelect;
 use Capell\Admin\Filament\Components\Forms\TranslationsRepeater;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class WidgetTranslationsRepeater
@@ -28,18 +26,11 @@ class WidgetTranslationsRepeater
                 fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship()
             )
             ->schema([
-                Hidden::make('is_title_changed_manually')
-                    ->default(false)
-                    ->dehydrated(false),
-
                 Grid::make(3)
                     ->columnSpanFull()
                     ->schema([
                         TextInput::make('title')
                             ->label(__('capell-admin::form.title'))
-                            ->afterStateUpdated(
-                                fn (Set $set, $state): mixed => $set('is_title_changed_manually', (bool) $state)
-                            )
                             ->columnSpan(fn (Get $get): int => $get('language_id') ? 3 : 2),
 
                         TranslationLanguageSelect::make()

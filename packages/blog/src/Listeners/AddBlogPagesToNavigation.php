@@ -12,14 +12,14 @@ use Capell\Core\Models\Page;
 
 class AddBlogPagesToNavigation
 {
-    private array $handles = [
+    private array $keys = [
         DefaultNavigationEnum::Main->value,
         DefaultNavigationEnum::Footer->value,
     ];
 
     public function handle(NavigationCreating $event): void
     {
-        if (! in_array($event->navigation->handle, $this->handles, true)) {
+        if (! in_array($event->navigation->key, $this->keys, true)) {
             return;
         }
 

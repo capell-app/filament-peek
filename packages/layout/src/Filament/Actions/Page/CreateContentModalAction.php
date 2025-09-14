@@ -17,7 +17,7 @@ class CreateContentModalAction extends CreateModalAction
         parent::setUp();
 
         $this->slideOver()
-            ->modalWidth(Width::ExtraLarge);
+            ->modalWidth(Width::SixExtraLarge);
     }
 
     #[Override]

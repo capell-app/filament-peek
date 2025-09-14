@@ -25,6 +25,7 @@ class WidgetForm implements FormConfigurator
     {
         return [
             TypeSchema::make()
+                ->columns($schema->getColumns())
                 ->schema(
                     function (Get $get, TypeSchema $component) use ($schema): array {
                         $typeId = $get('type_id');

@@ -2068,7 +2068,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     private function getWidgetAssetsByType(string $containerKey, int $widgetIndex, string $type): ?array
     {
         if (! isset($this->assets[$containerKey][$widgetIndex])) {
-            return null;
+            return [];
         }
 
         return array_column(

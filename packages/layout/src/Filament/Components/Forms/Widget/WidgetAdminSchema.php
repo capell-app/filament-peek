@@ -33,6 +33,8 @@ class WidgetAdminSchema
                 ->imageDefaults(),
 
             Fieldset::make(__('capell-admin::generic.assets'))
+                ->gridContainer()
+                ->columns(['lg' => null, '@lg' => 2])
                 ->visible(fn (?Widget $record): bool => ! empty($record->type?->admin['asset_types']))
                 ->schema([
                     SchemaSelect::make('widget_asset_schema')

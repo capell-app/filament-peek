@@ -14,9 +14,8 @@ use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
-use Capell\Layout\Livewire\Filament\WidgetAssetsTable;
+use Capell\Layout\Filament\Concerns\HasWidgetAssets;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -25,17 +24,15 @@ use Override;
 
 class AssetsWidgetSchema extends DefaultWidgetSchema
 {
+    use HasWidgetAssets;
+
     #[Override]
     public static function make(Schema $schema): array
     {
-        $operation = $schema->getOperation();
-
-        return [
-            ...match ($operation) {
-                'createOption', 'editOption', 'replicate' => static::getOptionSchema($schema),
-                default => static::getEditFormSchema($schema),
-            },
-        ];
+        return match ($schema->getOperation()) {
+            'createOption', 'editOption', 'replicate' => static::getOptionSchema($schema),
+            default => static::getFormSchema($schema),
+        };
     }
 
     protected static function getOptionSchema(Schema $schema): array
@@ -45,36 +42,30 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
             Tabs::make()
                 ->columnSpanFull()
                 ->tabs([
-                    static::getAssetsTab($schema),
                     static::getContentTab($schema),
+                    static::getAssetsTab($schema),
                     static::getSettingsTab($schema),
                     static::getAdminTab($schema),
                 ]),
         ];
     }
 
-    protected static function getEditFormSchema(Schema $schema): array
+    protected static function getFormSchema(Schema $schema): array
     {
         return [
             CreateWidgetDetailsSchema::make($schema),
             FixedWidthSidebar::make()
-                ->mainSchema(static::getMainSchema($schema))
+                ->mainSchema([
+                    Tabs::make()
+                        ->columnSpanFull()
+                        ->tabs([
+                            static::getAssetsTab($schema),
+                            static::getContentTab($schema),
+                            static::getSettingsTab($schema),
+                            static::getAdminTab($schema),
+                        ]),
+                ])
                 ->sidebarSchema(static::getSidebarSchema($schema)),
-            Tabs::make()
-                ->columnSpanFull()
-                ->tabs([
-                    static::getContentTab($schema),
-                    static::getSettingsTab($schema),
-                    static::getAdminTab($schema),
-                ]),
-        ];
-    }
-
-    protected static function getMainSchema(Schema $schema): array
-    {
-        return [
-            Livewire::make(WidgetAssetsTable::class, ['schema' => $schema])
-                ->key('widget-assets-table'),
         ];
     }
 
@@ -91,8 +82,7 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
     {
         return Tab::make(__('capell-admin::tab.assets'))
             ->schema([
-                Livewire::make(WidgetAssetsTable::class, ['schema' => $schema])
-                    ->key('widget-assets-table'),
+                self::getAssetsComponent($schema),
             ]);
     }
 
@@ -101,7 +91,8 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
         return Tab::make(__('capell-admin::tab.content'))
             ->icon('heroicon-o-language')
             ->schema([
-                WidgetTranslationsRepeater::make($schema),
+                WidgetTranslationsRepeater::make($schema)
+                    ->contained(false),
             ]);
     }
 

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Actions;
 
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Admin\Actions\BuilderDefaultTranslationsAction;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -19,14 +18,8 @@ class MutateContentDataBeforeFillAction
     {
         $data = MutateContentDataBeforeCreateAction::run($data);
 
-        if (empty($data['translations']) && ! empty($data['site_id'])) {
-            $data['translations'] = CapellCore::getModel(ModelEnum::SiteDomain)::query()
-                ->where('site_id', $data['site_id'])
-                ->pluck('language_id')
-                ->map(fn ($language): array => [
-                    'language_id' => $language->id,
-                ])
-                ->toArray();
+        if (empty($data['translations'])) {
+            $data['translations'] = BuilderDefaultTranslationsAction::run($data['site_id'] ?? null);
         }
 
         return $data;

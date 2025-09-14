@@ -19,6 +19,8 @@ class BackgroundSettingsFieldset
     public static function make(): Fieldset
     {
         return Fieldset::make(__('capell-admin::form.background_settings'))
+            ->gridContainer()
+            ->columns(['lg' => null, '@lg' => 2])
             ->schema([
                 Group::make()
                     ->columnSpan(1)

@@ -17,14 +17,14 @@ class ContentForm implements FormConfigurator
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components(static::getFormSchema($schema))
-            ->columns();
+        return $schema->components(static::getFormSchema($schema->columns()));
     }
 
     protected static function getFormSchema(Schema $schema): array
     {
         return [
             TypeSchema::make()
+                ->columns($schema->getColumns())
                 ->schema(
                     function (Get $get, TypeSchema $component) use ($schema): array {
                         $typeId = $get('type_id');

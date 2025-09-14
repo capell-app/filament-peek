@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Capell\Layout\Filament\Resources\Pages\RelationManagers\ContentsRelationManager;
+use Capell\Layout\Filament\Resources\Widgets\RelationManagers\WidgetAssetsRelationManager;
 use Capell\Layout\Livewire\Assets\Table\ContentsTable;
 use Capell\Layout\Livewire\Assets\Table\PagesTable;
-use Capell\Layout\Livewire\Filament\WidgetAssetsTable;
 use Capell\Layout\Livewire\LayoutBuilder;
 use Capell\Layout\Livewire\Widget\PagesWidget;
 use Capell\Layout\Models\Content;
@@ -24,9 +24,9 @@ return [
     'livewire_components' => [
         'capell.layout.livewire.layout-builder' => LayoutBuilder::class,
         'capell.layout.filament.resources.page-resource.relation-managers.contents-relation-manager' => ContentsRelationManager::class,
+        'capell.layout.filament.resources.widget-resource.relation-managers.widget-assets-relation-manager' => WidgetAssetsRelationManager::class,
         'capell-layout::livewire.assets.table.page' => PagesTable::class,
         'capell-layout::livewire.assets.table.content' => ContentsTable::class,
-        'capell-layout::filament.widget-assets-table' => WidgetAssetsTable::class,
         'capell-layout::livewire.widget.pages' => PagesWidget::class,
     ],
     'blade_components' => [

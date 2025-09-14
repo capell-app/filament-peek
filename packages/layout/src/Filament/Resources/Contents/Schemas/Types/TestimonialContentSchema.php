@@ -6,8 +6,8 @@ namespace Capell\Layout\Filament\Resources\Contents\Schemas\Types;
 
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Media\MediaLibraryFileUpload;
+use Capell\Admin\Filament\Components\Forms\PublishSection;
 use Capell\Layout\Filament\Components\Forms\Content\ContentDetailsSchema;
-use Capell\Layout\Filament\Components\Forms\Content\ContentPublishSection;
 use Capell\Layout\Filament\Components\Forms\Content\ContentSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Filament\Forms\Components\TextInput;
@@ -82,7 +82,7 @@ class TestimonialContentSchema extends DefaultContentSchema
                             ...ContentDetailsSchema::make($schema),
                             ...ContentSettingsSchema::make($schema),
                         ]),
-                    ContentPublishSection::make(),
+                    PublishSection::make(),
                 ]),
         ];
 
@@ -103,7 +103,7 @@ class TestimonialContentSchema extends DefaultContentSchema
                 ->schema([
                     ...ContentDetailsSchema::make($schema),
                     ...ContentSettingsSchema::make($schema),
-                    ContentPublishSection::make(),
+                    PublishSection::make(),
                 ]),
         ];
     }

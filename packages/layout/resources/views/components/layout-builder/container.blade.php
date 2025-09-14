@@ -60,7 +60,7 @@ declare(strict_types=1);
         class="rounded-lg bg-white ring-1 ring-gray-950/10 dark:bg-gray-900 dark:ring-white/10"
     >
         <div
-            class="layout-container-header group/container flex min-h-11 cursor-pointer items-center gap-x-4 gap-y-2 rounded-lg border-b border-gray-100 px-4 hover:bg-gray-50 dark:border-white/5 dark:hover:bg-white/5"
+            class="layout-container-header group/container flex min-h-11 cursor-pointer items-center gap-x-4 gap-y-2 rounded-lg border-b border-gray-100 bg-gray-50 px-4 hover:bg-gray-50 dark:border-white/5 dark:bg-gray-800 dark:hover:bg-white/5"
             :class="{ '!rounded-b-none': !isCollapsed }"
             x-on:click.self="toggleCollapse"
         >
@@ -104,7 +104,7 @@ declare(strict_types=1);
                         weight="normal"
                         x-on:click="collapseAllContainerWidgets(id, false)"
                         x-show="isAllWidgetsCollapsed(id) !== false"
-                        x-tooltip.raw="{{ __('capell-admin::button.expend_all') }}"
+                        x-tooltip.raw="{{ __('capell-admin::button.expand_all') }}"
                     >
                         {{ __('capell-admin::button.expand') }}
                     </x-filament::link>

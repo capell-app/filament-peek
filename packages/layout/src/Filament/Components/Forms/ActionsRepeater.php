@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Components\Forms;
 
+use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\Page\PageSelect;
 use Capell\Admin\Filament\Components\Forms\Site\SiteSelect;
 use Capell\Core\Models\Page;
@@ -93,9 +94,8 @@ class ActionsRepeater extends Repeater
                                     ? __('capell-admin::generic.action_page_label_hint')
                                     : null
                             ),
-                        TextInput::make('icon')
-                            ->label(__('capell-admin::form.icon'))
-                            ->placeholder('heroicon-o-clock'),
+                        IconPicker::make('icon')
+                            ->label(__('capell-admin::form.icon')),
                         Select::make('color')
                             ->label(__('capell-admin::form.color'))
                             ->options([

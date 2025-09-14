@@ -10,10 +10,10 @@ use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\Media\MediaLibraryFileUpload;
 use Capell\Admin\Filament\Components\Forms\Page\PageSelect;
+use Capell\Admin\Filament\Components\Forms\PublishSection;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
 use Capell\Layout\Enums\SchemaTypeEnum;
 use Capell\Layout\Filament\Components\Forms\Content\ContentDetailsSchema;
-use Capell\Layout\Filament\Components\Forms\Content\ContentPublishSection;
 use Capell\Layout\Filament\Components\Forms\Content\ContentSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Capell\Layout\Filament\Components\Forms\CustomColorInput;
@@ -67,7 +67,7 @@ class DefaultContentSchema implements TypeSchemaInterface
             ...ContentSettingsSchema::make($schema),
             MediaLibraryFileUpload::make('image')
                 ->imageDefaults(),
-            ContentPublishSection::make(),
+            PublishSection::make(),
         ];
     }
 
@@ -96,7 +96,7 @@ class DefaultContentSchema implements TypeSchemaInterface
                             ...($schema->getOperation() !== 'create' ? ContentDetailsSchema::make($schema) : []),
                             ...ContentSettingsSchema::make($schema),
                         ]),
-                    ContentPublishSection::make(),
+                    PublishSection::make(),
                 ]),
         ];
     }

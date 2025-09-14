@@ -7,7 +7,7 @@ namespace Capell\Layout\Filament\Resources\Contents\RelationManagers;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
-use Capell\Core\Actions\EditPageUrlAction;
+use Capell\Core\Actions\GetEditPageResourceUrlAction;
 use Capell\Core\Data\AssetData;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Facades\CapellCore;
@@ -65,7 +65,7 @@ class ContentAssetsRelationManager extends RelationManager
             ])
             ->recordUrl(
                 fn (ContentAsset $record): ?string => match ($record->asset_type) {
-                    TypeEnum::Page->value => EditPageUrlAction::run($record->asset),
+                    TypeEnum::Page->value => GetEditPageResourceUrlAction::run($record->asset),
                     default => CapellAdmin::getResource(ucfirst($record->asset_type))::getUrl(
                         'edit',
                         ['record' => $record->asset]

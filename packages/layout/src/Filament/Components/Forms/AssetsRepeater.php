@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Capell\Layout\Filament\Concerns;
+namespace Capell\Layout\Filament\Components\Forms;
 
 use Capell\Core\Data\AssetData;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
-use Capell\Layout\Filament\Components\Forms\AssetTypeToggleButtons;
-use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -21,60 +20,46 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NestedSet;
 
-/**
- * @mixin RelationManager
- */
-trait HasAssetsRelationManager
+class AssetsRepeater extends Repeater
 {
-    protected static function createResourcesAction(): Action
+    protected function setUp(): void
     {
-        return CreateAction::make()
-            ->label(__('capell-admin::button.add_asset'))
-            ->color('primary')
-            ->successNotificationTitle(__('capell-admin::message.asset_added'))
-            ->using(function (array $data, self $livewire): Model {
-                foreach ($data['asset_id'] as $uuid) {
-                    $livewire->ownerRecord->assets()->create([
-                        'asset_id' => $uuid,
-                        'asset_type' => $data['asset_type'],
-                    ]);
-                }
+        parent::setUp();
 
-                return $livewire->ownerRecord;
-            });
+        $this->relationship()
+            ->defaultItems(1)
+            ->table([
+                TableColumn::make(__('capell-admin::form.type'))
+                    ->width('10rem'),
+                TableColumn::make(__('capell-admin::form.asset')),
+            ])
+            ->schema(self::getFormSchema());
     }
 
-    protected static function getAssetForm(): array
+    protected static function getFormSchema(): array
     {
         return [
             AssetTypeToggleButtons::make('asset_type')
                 ->required()
-                ->reactive(),
+                ->maxWidth(Width::Full)
+                ->afterStateUpdatedJs(fn ($state): string => <<<'JS'
+                    if ($state !== $old) { $set('asset_id', null); }
+                JS),
             Select::make('asset_id')
-                ->label(
-                    fn (Get $get, string $operation): string => in_array($operation, ['create', 'createOption'])
-                        ? __('capell-layout::form.edit_type_record', ['type' => $get('asset_type')])
-                        : ($get('asset_type')
-                            ? __('capell-layout::form.select_add_type', ['type' => $get('asset_type')])
-                            : __('capell-layout::form.select_add_asset_type'))
-                )
+                ->label(__('capell-layout::form.select_add_asset_type'))
                 ->required()
                 ->searchable()
-                ->multiple(fn (string $operation): bool => in_array($operation, ['create', 'createOption'], true))
-                ->disabled(fn (Get $get): bool => ! $get('asset_type'))
                 ->getSearchResultsUsing(
-                    static fn (Select $component, Get $get, self $livewire, string $search): array => self::getAssetOptions(
+                    static fn (Select $component, Get $get, string $search): array => self::getAssetOptions(
                         $component,
-                        $livewire->ownerRecord,
                         $get('asset_type'),
                         limit: $component->getOptionsLimit(),
                         search: $search
                     )
                 )
                 ->options(
-                    fn (Select $component, Get $get, self $livewire): array => self::getAssetOptions(
+                    fn (Select $component, Get $get): array => self::getAssetOptions(
                         $component,
-                        $livewire->ownerRecord,
                         $get('asset_type'),
                         limit: $component->getOptionsLimit()
                     )
@@ -115,7 +100,7 @@ trait HasAssetsRelationManager
         return $options;
     }
 
-    private static function getAssetOptions(Select $component, Model $record, ?string $type, int $limit = 10, ?string $search = null): array
+    private static function getAssetOptions(Select $component, ?string $type, int $limit = 10, ?string $search = null): array
     {
         if ($type === null || $type === '' || $type === '0') {
             return [];
@@ -132,17 +117,6 @@ trait HasAssetsRelationManager
                 'id',
                 'name',
             ])
-            ->when(
-                $record instanceof $model,
-                fn (Builder $query) => $query->whereKeyNot($record->id)
-            )
-            ->whereNotExists(
-                fn (BuilderContract $query) => $query
-                    ->from('content_assets')
-                    ->where('content_assets.content_id', $record->id)
-                    ->whereColumn('content_assets.asset_id', app($model)->qualifyColumn('id'))
-                    ->where('asset_type', $type)
-            )
             ->when(
                 $asset->name === 'Page',
                 fn (BuilderContract $query) => $query->with([

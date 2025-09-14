@@ -29,7 +29,7 @@ declare(strict_types=1);
     <div
         class="flex items-center justify-between rounded-t border-b border-black/5 bg-gray-50 px-4 py-2.5 dark:border-white/10 dark:bg-gray-800"
     >
-        <span class="text-sm font-semibold text-gray-500 dark:text-gray-400">
+        <span class="text-sm text-gray-500 dark:text-gray-400">
             {{ $hasPageAssets ? __('capell-admin::generic.page_widget_assets') : __('capell-admin::generic.widget_assets') }}
         </span>
         <div class="flex items-center gap-x-3">

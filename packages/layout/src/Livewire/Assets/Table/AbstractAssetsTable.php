@@ -30,7 +30,7 @@ abstract class AbstractAssetsTable extends Component implements HasActions, HasF
 
     public array $arguments = [];
 
-    public ?array $existingRecords = [];
+    public array $existingRecords = [];
 
     public string $type;
 

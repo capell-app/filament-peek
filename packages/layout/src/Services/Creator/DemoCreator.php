@@ -444,7 +444,7 @@ class DemoCreator
 
         // Create menu + items
         $name = 'Example Menu';
-        $handle = Str::slug($name);
+        $key = Str::slug($name);
 
         $pages = Page::where([
             'site_id' => $site->id,
@@ -464,7 +464,7 @@ class DemoCreator
             ->get();
 
         $model::updateOrCreate([
-            'handle' => $handle,
+            'key' => $key,
             'site_id' => $site->id,
         ], [
             'name' => $name,
@@ -476,7 +476,7 @@ class DemoCreator
             'name' => __('Example Navigation'),
             'type_id' => $this->typeModel::firstWhere(['key' => 'navigation', 'type' => LayoutTypeEnum::Widget])->id,
             'meta' => [
-                'navigation' => $handle,
+                'navigation' => $key,
                 'margin' => ['lg'],
             ],
         ]);

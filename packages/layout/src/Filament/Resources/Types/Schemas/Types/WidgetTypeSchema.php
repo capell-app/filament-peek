@@ -14,7 +14,6 @@ use Capell\Layout\Enums\SchemaTypeEnum;
 use Capell\Layout\Enums\WidgetTypeGroupEnum;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
-use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -67,9 +66,6 @@ class WidgetTypeSchema extends DefaultTypeSchema
                     ->multiple(),
 
                 ContentEditorSelect::make('content_editor'),
-
-                Checkbox::make('exclude_from_selection')
-                    ->label(__('capell-admin::form.exclude_from_selection')),
             ]);
     }
 

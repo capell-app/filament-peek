@@ -17,11 +17,10 @@ use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
-use Capell\Layout\Livewire\Filament\WidgetAssetsTable;
+use Capell\Layout\Filament\Concerns\HasWidgetAssets;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -30,6 +29,9 @@ use Filament\Schemas\Schema;
 class HeroWidgetSchema implements TypeSchemaInterface
 {
     use HasTypeSchema;
+    use HasWidgetAssets {
+        HasWidgetAssets::relationManagers insteadof HasTypeSchema;
+    }
 
     protected static string $schemaType = SchemaTypeEnum::Widget->value;
 
@@ -49,8 +51,7 @@ class HeroWidgetSchema implements TypeSchemaInterface
     {
         return [
             CreateWidgetDetailsSchema::make($schema),
-            Livewire::make(WidgetAssetsTable::class, ['schema' => $schema])
-                ->key('widget-assets-table'),
+            self::getAssetsComponent($schema),
             ...static::getMetaSchema(),
         ];
     }
@@ -61,8 +62,7 @@ class HeroWidgetSchema implements TypeSchemaInterface
             CreateWidgetDetailsSchema::make($schema),
             FixedWidthSidebar::make()
                 ->mainSchema([
-                    Livewire::make(WidgetAssetsTable::class, ['schema' => $schema])
-                        ->key('widget-assets-table'),
+                    self::getAssetsComponent($schema),
                 ])
                 ->sidebarSchema([
                     Section::make()
@@ -81,7 +81,8 @@ class HeroWidgetSchema implements TypeSchemaInterface
                 Tab::make(__('capell-admin::tab.content'))
                     ->icon('heroicon-o-language')
                     ->schema([
-                        WidgetTranslationsRepeater::make($schema),
+                        WidgetTranslationsRepeater::make($schema)
+                            ->contained(false),
                     ]),
                 WidgetDisplayTab::make([
                     Grid::make()

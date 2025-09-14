@@ -9,9 +9,8 @@ use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Capell\Layout\Filament\Components\Forms\Content\RelatedRepeater;
-use Capell\Layout\Livewire\Filament\WidgetAssetsTable;
+use Capell\Layout\Filament\Concerns\HasWidgetAssets;
 use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -20,6 +19,8 @@ use Override;
 
 class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
 {
+    use HasWidgetAssets;
+
     #[Override]
     protected static function getAssetSchema(Schema $schema): array
     {
@@ -56,13 +57,13 @@ class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
 
     protected static function getMediaTab(Schema $schema): Tab
     {
+
         return Tab::make('media')
             ->label(__('capell-admin::generic.media'))
             ->badge(fn (Get $get): ?int => count($get('media') ?: []) ?: null)
             ->icon('heroicon-o-photo')
             ->schema([
-                Livewire::make(WidgetAssetsTable::class, ['schema' => $schema, 'withHeading' => false])
-                    ->key('widget-assets-table'),
+                self::getAssetsComponent($schema),
             ]);
     }
 
