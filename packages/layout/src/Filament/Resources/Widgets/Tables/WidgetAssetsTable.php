@@ -40,6 +40,7 @@ class WidgetAssetsTable implements TableConfigurator
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->withAssets())
+            ->reorderable('order')
             ->heading(__('capell-admin::heading.widget_page_assets'))
             ->description(__('capell-admin::generic.widget_page_assets_description'))
             ->recordUrl(

@@ -8,6 +8,7 @@ use Capell\Admin\Contracts\TypeSchemaInterface;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
 use Capell\Layout\Enums\SchemaTypeEnum;
+use Capell\Layout\Filament\Components\Forms\AssetsRepeater;
 use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
 use Capell\Layout\Filament\Components\Forms\CarouselSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
@@ -17,8 +18,8 @@ use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
-use Capell\Layout\Filament\Concerns\HasWidgetAssets;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
@@ -28,9 +29,6 @@ use Filament\Schemas\Schema;
 class HeroWidgetSchema implements TypeSchemaInterface
 {
     use HasTypeSchema;
-    use HasWidgetAssets {
-        HasWidgetAssets::relationManagers insteadof HasTypeSchema;
-    }
 
     protected static string $schemaType = SchemaTypeEnum::Widget->value;
 
@@ -117,5 +115,11 @@ class HeroWidgetSchema implements TypeSchemaInterface
                 ->columns(['default' => 2, 'xl' => 3])
                 ->schema(CarouselSettingsSchema::make()),
         ];
+    }
+
+    protected static function getAssetsComponent(Schema $schema): Component
+    {
+        return AssetsRepeater::make('assets')
+            ->hiddenLabel();
     }
 }

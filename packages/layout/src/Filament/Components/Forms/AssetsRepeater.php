@@ -31,6 +31,7 @@ class AssetsRepeater extends Repeater
         parent::setUp();
 
         $this->relationship()
+            ->orderColumn('order')
             ->defaultItems(1)
             ->table([
                 TableColumn::make(__('capell-admin::form.asset')),

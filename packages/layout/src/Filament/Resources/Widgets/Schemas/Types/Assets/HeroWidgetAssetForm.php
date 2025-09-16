@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Resources\Widgets\Schemas\Types\Assets;
 
 use Capell\Layout\Filament\Components\Forms\ActionsRepeater;
+use Capell\Layout\Filament\Components\Forms\AssetsRepeater;
 use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Capell\Layout\Filament\Components\Forms\Content\RelatedRepeater;
-use Capell\Layout\Filament\Concerns\HasWidgetAssets;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -19,8 +20,6 @@ use Override;
 
 class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
 {
-    use HasWidgetAssets;
-
     #[Override]
     protected static function getAssetSchema(Schema $schema): array
     {
@@ -87,5 +86,11 @@ class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
                 BackgroundSettingsFieldset::make()
                     ->columnSpanFull(),
             ]);
+    }
+
+    protected static function getAssetsComponent(Schema $schema): Component
+    {
+        return AssetsRepeater::make('assets')
+            ->hiddenLabel();
     }
 }

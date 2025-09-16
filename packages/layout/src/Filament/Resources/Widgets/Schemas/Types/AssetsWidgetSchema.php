@@ -6,6 +6,7 @@ namespace Capell\Layout\Filament\Resources\Widgets\Schemas\Types;
 
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Media\MediaLibraryFileUpload;
+use Capell\Layout\Filament\Components\Forms\AssetsRepeater;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
@@ -14,7 +15,7 @@ use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
-use Capell\Layout\Filament\Concerns\HasWidgetAssets;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -23,8 +24,6 @@ use Override;
 
 class AssetsWidgetSchema extends DefaultWidgetSchema
 {
-    use HasWidgetAssets;
-
     #[Override]
     public static function make(Schema $schema): array
     {
@@ -108,5 +107,11 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
                     WidgetComponentFilesSection::make(),
                 ]),
         ]);
+    }
+
+    protected static function getAssetsComponent(Schema $schema): Component
+    {
+        return AssetsRepeater::make('assets')
+            ->hiddenLabel();
     }
 }
