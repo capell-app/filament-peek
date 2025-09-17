@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Commands\DemoCommand;
+use Capell\Admin\Commands\InstallCommand;
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
+use Capell\Admin\Services\Creator\DemoCreator;
+use Capell\Core\Database\Factories\TypeFactory;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Http\Middleware\HtmlCacheMiddleware;
 use Capell\Frontend\Livewire\Page\SitemapPage;
@@ -11,10 +15,10 @@ arch()
     ->expect('Capell\Blog')
     ->toOnlyBeUsedIn('Capell\Blog')
     ->ignoring([
-        Capell\Admin\Commands\InstallCommand::class,
-        Capell\Admin\Commands\DemoCommand::class,
-        Capell\Admin\Services\Creator\DemoCreator::class,
-        Capell\Core\Database\Factories\TypeFactory::class,
+        InstallCommand::class,
+        DemoCommand::class,
+        DemoCreator::class,
+        TypeFactory::class,
     ]);
 
 arch()

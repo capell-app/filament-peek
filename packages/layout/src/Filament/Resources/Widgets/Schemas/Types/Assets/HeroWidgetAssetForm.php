@@ -46,7 +46,7 @@ class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
     {
         return Tab::make('actions')
             ->label(__('capell-admin::generic.links'))
-            ->badge(fn (Get $get): ?int => count($get('actions') ?: []) ?: null)
+            ->badge(fn (Get $get): ?int => count($get('actions') ?: []) !== 0 ? count($get('actions') ?: []) : null)
             ->icon('heroicon-o-link')
             ->schema([
                 ActionsRepeater::make('actions')
@@ -59,7 +59,7 @@ class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
 
         return Tab::make('media')
             ->label(__('capell-admin::generic.media'))
-            ->badge(fn (Get $get): ?int => count($get('media') ?: []) ?: null)
+            ->badge(fn (Get $get): ?int => count($get('media') ?: []) !== 0 ? count($get('media') ?: []) : null)
             ->icon('heroicon-o-photo')
             ->schema([
                 self::getAssetsComponent($schema),
@@ -70,7 +70,7 @@ class HeroWidgetAssetForm extends AbstractWidgetAssetSchema
     {
         return Tab::make('related')
             ->label(__('capell-admin::generic.related'))
-            ->badge(fn (Get $get): ?int => count($get('related') ?: []) ?: null)
+            ->badge(fn (Get $get): ?int => count($get('related') ?: []) !== 0 ? count($get('related') ?: []) : null)
             ->icon('heroicon-o-arrow-path-rounded-square')
             ->schema([
                 RelatedRepeater::make(),

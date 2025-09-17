@@ -20,6 +20,7 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -86,7 +87,7 @@ class ArticlePageSchema extends DefaultPageSchema
                 ),
             Tabs::make()
                 ->tabs([
-                    Tabs\Tab::make(__('capell-admin::generic.settings'))
+                    Tab::make(__('capell-admin::generic.settings'))
                         ->icon(Heroicon::Cog)
                         ->schema([
                             PageTagsInput::make('tags'),

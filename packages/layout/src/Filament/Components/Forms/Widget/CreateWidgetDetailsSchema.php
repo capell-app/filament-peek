@@ -14,11 +14,11 @@ class CreateWidgetDetailsSchema
     {
         return Grid::make()
             ->visibleOn(['create', 'createOption', 'replicate'])
-            ->schema(self::getSchema($schema))
+            ->schema(self::getSchema())
             ->columnSpanFull();
     }
 
-    private static function getSchema(Schema $schema): array
+    private static function getSchema(): array
     {
         return [
             Grid::make()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Layout\Models;
 
 use Capell\Core\Contracts\PageCacheable;
+use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasMetaData;
 use Capell\Core\Models\Concerns\HasPageCache;
@@ -21,7 +22,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
@@ -39,9 +42,9 @@ use Wildside\Userstamps\Userstamps;
  * @property int|null $asset_id
  * @property string|null $asset_type
  * @property int|null $widget_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $deleted_by
@@ -56,7 +59,7 @@ use Wildside\Userstamps\Userstamps;
  * @property-read Widget|null $widget
  * @property-read Collection|Content[] $related
  * @property-read int|null $related_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  *
  * @method static WidgetAssetFactory factory($count = null, $state = [])
@@ -65,6 +68,11 @@ use Wildside\Userstamps\Userstamps;
  * @method static Builder<static>|WidgetAsset ordered(string $dir = 'asc')
  * @method static Builder<static>|WidgetAsset query()
  * @method static Builder<static>|WidgetAsset withAssets(bool $withDrafts = true)
+ *
+ * @property-read Collection<int, AssetRelation> $assetRelations
+ * @property-read int|null $asset_relations_count
+ * @property-read Collection<int, AssetRelation> $assets
+ * @property-read int|null $assets_count
  *
  * @mixin Eloquent
  */
@@ -118,7 +126,7 @@ class WidgetAsset extends Model implements HasMedia, PageCacheable
 
     public function asset(): MorphTo
     {
-        return $this->morphTo('asset', 'asset_type', 'asset_id', 'id');
+        return $this->morphTo('asset');
     }
 
     public function related(): BelongsToJson

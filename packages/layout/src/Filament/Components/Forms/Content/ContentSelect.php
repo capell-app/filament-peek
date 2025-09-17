@@ -6,20 +6,15 @@ namespace Capell\Layout\Filament\Components\Forms\Content;
 
 use Capell\Admin\Filament\Actions\HintEditAction;
 use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
-use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
-use Capell\Core\Models;
-use Capell\Core\Models\Site;
-use Capell\Layout\Actions\CreateContentAction;
+use Capell\Layout\Actions\ModifyContentSelectCreateAction;
 use Capell\Layout\Enums\LayoutModelEnum;
-use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\Contents\ContentResource;
 use Capell\Layout\Filament\Resources\Contents\Schemas\ContentForm;
 use Capell\Layout\Models\Content;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
@@ -87,74 +82,16 @@ class ContentSelect extends Select
         return $this;
     }
 
-    public function withCreateForm(): self
+    public function withCreateForm(): Select
     {
-        return $this->getOptionLabelFromRecordUsing(fn (Content $record): string => static::getSelectOption($record))
-            ->createOptionForm(
-                fn (mixed $state, Schema $schema): Schema => ContentForm::configure(
-                    $schema->operation('createOption')->model(Content::class)
-                )
-            )
-            ->createOptionUsing(function (ContentSelect $component, array $data): string {
-                $content = CreateContentAction::run($data);
-
-                Notification::make()
-                    ->title(__('capell-admin::message.content_created_successfully'))
-                    ->body($content->name)
-                    ->send();
-
-                return $content->getKey();
-            })
-            ->createOptionAction(
-                fn (Action $action): Action => $action
-                    ->modal()
-                    ->modalHeading(__('capell-admin::generic.type'))
-                    ->modalDescription(function (string $context, self $component, mixed $state): ?string {
-                        if ($context !== 'create') {
-                            return null;
-                        }
-
-                        if (! $state) {
-                            return null;
-                        }
-
-                        return Str::title($component->getContentType());
-                    })
-                    ->fillForm(function (): array {
-                        $site = Site::default()->first();
-
-                        /** @var class-string<Models\Type> $model */
-                        $model = CapellCore::getModel(ModelEnum::Type);
-
-                        return [
-                            'type_id' => $model::query()
-                                ->where('type', LayoutTypeEnum::Content)
-                                ->default()
-                                ->value('id'),
-                            'translations' => $site->translations->mapWithKeys(fn ($translation): array => [
-                                (string) Str::uuid() => [
-                                    'language_id' => $translation->language_id,
-                                ],
-                            ])->toArray(),
-                        ];
-                    })
-                    ->modalWidth(Width::ScreenLarge)
-                    ->visible(fn (mixed $state, $record): bool => ! $state)
-                    ->successNotificationTitle(
-                        fn (Action $action): string => __(
-                            'capell-admin::notification.created_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
-                    )
-                    ->after(function (Action $action): void {
-                        $action->success();
-                    })
-            );
+        return ModifyContentSelectCreateAction::run(
+            $this->getOptionLabelFromRecordUsing(fn (Content $record): string => static::getSelectOption($record))
+        );
     }
 
     public function withEditForm(): self
     {
-        return $this->editOptionForm(function (mixed $state, Schema $schema): \Filament\Schemas\Schema {
+        return $this->editOptionForm(function (mixed $state, Schema $schema): Schema {
             if (! $state) {
                 return $schema;
             }

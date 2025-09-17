@@ -7,6 +7,7 @@ namespace Capell\Blog\Models;
 use ArrayAccess;
 use Capell\Core\Database\Factories\PageFactory;
 use Capell\Core\Enums\PublishStatusEnum;
+use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 use Kalnoy\Nestedset\QueryBuilder;
 use OwenIt\Auditing\Models\Audit;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
@@ -141,8 +143,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static QueryBuilder<static>|Article withoutTags((ArrayAccess|\Spatie\Tags\Tag|array|string) $tags, ?string $type = null)
  * @method static Builder<static>|Article withoutTrashed()
  *
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read MediaCollection<int, Media> $media
  * @property-read int|null $media_count
+ * @property-read Collection<int, AssetRelation> $assetRelations
+ * @property-read int|null $asset_relations_count
+ * @property-read Collection<int, AssetRelation> $assets
+ * @property-read int|null $assets_count
  *
  * @mixin Eloquent
  */

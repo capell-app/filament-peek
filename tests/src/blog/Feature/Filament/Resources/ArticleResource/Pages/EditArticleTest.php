@@ -6,6 +6,7 @@ use Capell\Admin\Exceptions\InvalidPageTypeException;
 use Capell\Admin\Filament\Resources\Pages\PageResource;
 use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\Articles\ArticleResource;
+use Capell\Blog\Filament\Resources\Articles\Pages\EditArticle;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
@@ -54,7 +55,7 @@ it('can save', function (): void {
 
     $newData = (new ArticlePageFactory)->site($site)->make();
 
-    livewire(\Capell\Blog\Filament\Resources\Articles\Pages\EditArticle::class, [
+    livewire(EditArticle::class, [
         'record' => $page->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -78,7 +79,7 @@ it('can save', function (): void {
 it('can delete', function (): void {
     $content = (new ArticlePageFactory)->create();
 
-    livewire(\Capell\Blog\Filament\Resources\Articles\Pages\EditArticle::class, [
+    livewire(EditArticle::class, [
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()

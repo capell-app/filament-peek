@@ -6,24 +6,24 @@ namespace Capell\Layout\Filament\Resources\Contents\RelationManagers;
 
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
+use Capell\Admin\Filament\Components\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Capell\Admin\Filament\Concerns\HasRelationManagerBadge;
 use Capell\Core\Actions\GetEditPageResourceUrlAction;
 use Capell\Core\Data\AssetData;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\AssetRelation;
 use Capell\Layout\Filament\Concerns\HasAssetsRelationManager;
 use Capell\Layout\Models\Content;
-use Capell\Layout\Models\ContentAsset;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ContentAssetsRelationManager extends RelationManager
 {
@@ -47,7 +47,18 @@ class ContentAssetsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query): Builder => $query->withAssets())
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
+                'asset' => fn (MorphTo $morphTo) => $morphTo->withDrafts()
+                    ->morphWith(
+                        CapellCore::getAssets()
+                            ->mapWithKeys(fn (AssetData $asset): array => [
+                                $asset->model => method_exists($asset->model, 'getMorphRelations')
+                                    ? $asset->model::getMorphRelations()
+                                    : [],
+                            ])
+                            ->toArray()
+                    ),
+            ]))
             ->description(__('capell-admin::generic.content_assets_description'))
             ->columns([
                 TextColumn::make('asset_id')
@@ -59,12 +70,13 @@ class ContentAssetsRelationManager extends RelationManager
                 SpatieMediaLibraryImageColumn::make('asset.image')
                     ->label(__('capell-admin::table.image'))
                     ->collection('image')
-                    ->width(0),
+                    ->width(0)
+                    ->autoEagerLoadRelation(false),
                 TextColumn::make('asset_type')
                     ->badge(),
             ])
             ->recordUrl(
-                fn (ContentAsset $record): ?string => match ($record->asset_type) {
+                fn (AssetRelation $record): ?string => match ($record->asset_type) {
                     TypeEnum::Page->value => GetEditPageResourceUrlAction::run($record->asset),
                     default => CapellAdmin::getResource(ucfirst($record->asset_type))::getUrl(
                         'edit',
@@ -90,9 +102,7 @@ class ContentAssetsRelationManager extends RelationManager
                 self::createResourcesAction(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 }

@@ -40,7 +40,7 @@ class WidgetSelect extends Select
                     ->toArray()
             )
             ->createOptionForm(
-                fn (Select $component, Schema $schema): \Filament\Schemas\Schema => WidgetForm::configure(
+                fn (Select $component, Schema $schema): Schema => WidgetForm::configure(
                     $schema->model(
                         $component->getRelationship()
                             ? $component->getRelationship()->getModel()::class

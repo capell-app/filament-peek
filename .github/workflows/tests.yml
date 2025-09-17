@@ -72,7 +72,7 @@ jobs:
 
       - name: Install PHP dependencies
         if: steps.php-cache.outputs.cache-hit != 'true'
-        run: composer install --no-interaction --no-progress --ansi
+        run: composer install --no-interaction --no-progress --ansi --optimize-autoloader
 
       - name: Configure environment
         run: |
@@ -85,6 +85,22 @@ jobs:
             echo "DB_CONNECTION=sqlite" >> .env
             echo "DB_DATABASE=:memory:" >> .env
           fi
+
+      - name: Rector Cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/rector
+          key: ${{ runner.os }}-rector-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-rector-
+      - run: mkdir -p /tmp/rector
+
+      - name: PHPStan Cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/phpstan
+          key: ${{ runner.os }}-phpstan-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-phpstan-
+      - run: mkdir -p /tmp/phpstan
 
       - name: Execute tests
         run: composer test

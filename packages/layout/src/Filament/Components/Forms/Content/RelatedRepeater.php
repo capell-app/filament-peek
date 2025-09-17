@@ -41,7 +41,7 @@ class RelatedRepeater
 
                         $newData['content_id'] = $newContent->id;
 
-                        if ($newUuid) {
+                        if ($newUuid !== null && $newUuid !== '' && $newUuid !== '0') {
                             $items[$newUuid] = $newData;
                         } else {
                             $items[] = $newData;

@@ -41,7 +41,6 @@ use Capell\Layout\Listeners\LayoutLoaded;
 use Capell\Layout\Listeners\SiteTreeRebuilt;
 use Capell\Layout\Listeners\TypeValidated;
 use Capell\Layout\Models\Content;
-use Capell\Layout\Models\ContentAsset;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Exception;
@@ -82,9 +81,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
         Relation::morphMap([
             'content' => Content::class,
-            'content_asset' => ContentAsset::class,
             'widget' => Widget::class,
-            'widget_asset' => WidgetAsset::class,
         ]);
 
         foreach (config('capell-layout.livewire_components', []) as $name => $class) {
@@ -227,7 +224,6 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     private function registerModels(): self
     {
         CapellCore::registerModel(LayoutModelEnum::Content, Content::class);
-        CapellCore::registerModel(LayoutModelEnum::ContentAsset, ContentAsset::class);
         CapellCore::registerModel(LayoutModelEnum::Widget, Widget::class);
         CapellCore::registerModel(LayoutModelEnum::WidgetAsset, WidgetAsset::class);
 

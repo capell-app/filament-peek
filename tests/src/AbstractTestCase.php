@@ -82,7 +82,7 @@ abstract class AbstractTestCase extends TestCase
 
         $this->loadMigrationsFrom($migrations);
 
-        if ($this->packageMigrations) {
+        if ($this->packageMigrations !== []) {
             $this->loadMigrationsFrom($this->packageMigrations);
         }
 
@@ -222,7 +222,7 @@ abstract class AbstractTestCase extends TestCase
             $path = realpath(__DIR__ . '/../../packages/' . $package . '/publishes/config');
         }
 
-        if (! $path) {
+        if ($path === '' || $path === '0' || $path === false) {
             return [];
         }
 

@@ -7,12 +7,13 @@ use Capell\Core\Models\Type;
 use Capell\Layout\Database\Factories\ContentTypeFactory;
 use Capell\Layout\Database\Factories\WidgetTypeFactory;
 use Capell\Layout\Enums\LayoutTypeEnum;
-use Capell\Layout\Models;
+use Capell\Layout\Models\Content;
+use Capell\Layout\Models\Widget;
 
 it('has many contents', function (): void {
     $type = (new ContentTypeFactory)->create();
 
-    Models\Content::factory()->create(['type_id' => $type->id]);
+    Content::factory()->create(['type_id' => $type->id]);
 
     expect($type->refresh())
         ->contents->toHaveCount(1);
@@ -21,7 +22,7 @@ it('has many contents', function (): void {
 it('has many widgets', function (): void {
     $type = (new WidgetTypeFactory)->create();
 
-    Models\Widget::factory()->create(['type_id' => $type->id]);
+    Widget::factory()->create(['type_id' => $type->id]);
 
     expect($type->refresh())
         ->widgets->toHaveCount(1);

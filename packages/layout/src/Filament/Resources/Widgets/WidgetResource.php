@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources\Widgets;
 
+use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasFormConfigurator;
 use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
@@ -20,6 +21,7 @@ use Capell\Layout\Filament\Resources\Widgets\Tables\WidgetsTable;
 use Capell\Layout\Models\Widget;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,7 +33,7 @@ class WidgetResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     /** @var class-string<FormConfigurator> */
     protected static string $formConfigurator = WidgetForm::class;
@@ -69,7 +71,7 @@ class WidgetResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return (string) (__('capell-admin::navigation.group_resources'));
+        return (string) (__('capell-admin::navigation.group_layouts'));
     }
 
     public static function getNavigationBadge(): ?string
@@ -86,9 +88,9 @@ class WidgetResource extends Resource
         return __('capell-admin::generic.widgets');
     }
 
-    public static function getNavigationIcon(): string
+    public static function getNavigationIcon(): string|BackedEnum|null
     {
-        return config('capell-admin.resources.widgets.navigation_icon', 'heroicon-o-gift');
+        return config('capell-admin.resources.widgets.navigation_icon', Heroicon::OutlinedGift);
     }
 
     public static function getGloballySearchableAttributes(): array

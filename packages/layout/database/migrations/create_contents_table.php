@@ -10,14 +10,6 @@ use Kalnoy\Nestedset\NestedSet;
 return new class extends Migration
 {
     /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('contents');
-    }
-
-    /**
      * Run the migrations.
      */
     public function up(): void
@@ -50,6 +42,14 @@ return new class extends Migration
 
             $table->index(NestedSet::getDefaultColumns());
         });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('contents');
     }
 
     private function draftsCreateSchema(Blueprint $table): void

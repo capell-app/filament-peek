@@ -85,6 +85,8 @@ use Wildside\Userstamps\Userstamps;
  * @method static Builder<static>|Widget withoutTrashed()
  *
  * @property-read Media|null $backgroundImage
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, WidgetAsset> $widgetPageAssets
+ * @property-read int|null $widget_page_assets_count
  *
  * @mixin \Eloquent
  */

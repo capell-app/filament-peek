@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Enums\SchemaEnum;
+use Capell\Admin\Enums\SchemaTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Resources\TypeResource\Pages\ManageTypes;
+use Capell\Admin\Filament\Resources\Types\Pages\ManageTypes;
 use Capell\Core\Database\Factories\TypeFactory;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\TypeEnum;
@@ -26,7 +26,7 @@ beforeEach(function (): void {
 test('can create type', function (TypeEnum $type): void {
     $record = Type::factory()->make();
 
-    $hasTypeSchema = CapellAdmin::hasSchema(SchemaEnum::Type, $type->name);
+    $hasTypeSchema = CapellAdmin::hasSchema(SchemaTypeEnum::Type, $type->name);
 
     $admin = $record->admin;
 
@@ -62,8 +62,8 @@ test('can update type', function (TypeEnum $typeEnum): void {
     $type = Type::factory()
         ->type($typeEnum)
         ->when(
-            CapellAdmin::hasSchema(SchemaEnum::Type, $typeEnum->name),
-            fn (TypeFactory $factory): \Capell\Core\Database\Factories\TypeFactory => $factory->adminTypeSchema($typeEnum->name)
+            CapellAdmin::hasSchema(SchemaTypeEnum::Type, $typeEnum->name),
+            fn (TypeFactory $factory): TypeFactory => $factory->adminTypeSchema($typeEnum->name)
         )
         ->create();
 

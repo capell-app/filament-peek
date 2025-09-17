@@ -21,7 +21,6 @@ use Capell\Layout\Filament\Concerns\HasAssetsRelationManager;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\WidgetAsset;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Select;
@@ -46,7 +45,7 @@ class WidgetAssetsTable implements TableConfigurator
             ->recordUrl(
                 fn (WidgetAsset $record): ?string => match ($record->asset_type) {
                     TypeEnum::Page->value => GetEditPageResourceUrlAction::run($record->asset),
-                    default => CapellAdmin::getResource(ucfirst($record->asset_type))::getUrl(
+                    default => CapellAdmin::getResource(ucfirst((string) $record->asset_type))::getUrl(
                         'edit',
                         ['record' => $record->asset]
                     ),
@@ -66,9 +65,7 @@ class WidgetAssetsTable implements TableConfigurator
                 self::createResourcesAction(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 
@@ -103,7 +100,7 @@ class WidgetAssetsTable implements TableConfigurator
                                 ->groupBy('page_id')
                                 ->get()
                                 ->mapWithKeys(
-                                    fn (WidgetAsset $widgetAsset) => [$widgetAsset->page_id => $widgetAsset->page->name]
+                                    fn (WidgetAsset $widgetAsset): array => [$widgetAsset->page_id => $widgetAsset->page->name]
                                 )
                                 ->toArray()
                         ),

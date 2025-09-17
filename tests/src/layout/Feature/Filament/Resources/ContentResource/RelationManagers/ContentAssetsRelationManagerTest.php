@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-use Capell\Core\Models;
-use Capell\Layout\Filament\Resources\Contents\ContentResource;
+use Capell\Core\Models\AssetRelation;
+use Capell\Core\Models\Page;
+use Capell\Layout\Filament\Resources\Contents\Pages\EditContent;
+use Capell\Layout\Filament\Resources\Contents\RelationManagers\ContentAssetsRelationManager;
 use Capell\Layout\Models\Content;
-use Capell\Layout\Models\ContentAsset;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 
@@ -14,14 +15,14 @@ use function Pest\Livewire\livewire;
 
 it('can list content assets', function (): void {
     $content = Content::factory()
-        ->has(ContentAsset::factory()->count(5), 'assets')
+        ->has(AssetRelation::factory()->count(5), 'assets')
         ->create();
 
     $resource = $content->assets->first()->load('asset');
 
-    livewire(ContentResource\RelationManagers\ContentAssetsRelationManager::class, [
+    livewire(ContentAssetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => ContentResource\Pages\EditContent::class,
+        'pageClass' => EditContent::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(5)
@@ -31,17 +32,17 @@ it('can list content assets', function (): void {
 
 it('can search content assets', function (): void {
     $content = Content::factory()
-        ->has(ContentAsset::factory()->page(['name' => 'First']), 'assets')
-        ->has(ContentAsset::factory()->content(['name' => 'Second']), 'assets')
-        ->has(ContentAsset::factory()->page(['name' => 'Third']), 'assets')
-        ->has(ContentAsset::factory()->content(['name' => 'Fourth']), 'assets')
+        ->has(AssetRelation::factory()->page(['name' => 'First']), 'assets')
+        ->has(AssetRelation::factory()->content(['name' => 'Second']), 'assets')
+        ->has(AssetRelation::factory()->page(['name' => 'Third']), 'assets')
+        ->has(AssetRelation::factory()->content(['name' => 'Fourth']), 'assets')
         ->create();
 
     $resource = $content->assets->first()->load('asset');
 
-    livewire(ContentResource\RelationManagers\ContentAssetsRelationManager::class, [
+    livewire(ContentAssetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => ContentResource\Pages\EditContent::class,
+        'pageClass' => EditContent::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(5)
@@ -55,36 +56,31 @@ test('can create a asset for a widget', function (string $assetType): void {
 
     $action = TestAction::make(CreateAction::class)->table();
 
-    livewire(ContentResource\RelationManagers\ContentAssetsRelationManager::class, [
+    $asset = match ($assetType) {
+        'content' => Content::factory()->create(),
+        'page' => Page::factory()->create(),
+    };
+
+    livewire(ContentAssetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => ContentResource\Pages\EditContent::class,
+        'pageClass' => EditContent::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(0)
         ->assertActionExists($action)
         ->mountAction($action)
-        ->fillForm(
-            match ($assetType) {
-                'content' => [
-                    'asset_type' => app(Content::class)->getMorphClass(),
-                    'asset_id' => [
-                        (string) Content::factory()->create()->id,
-                    ],
-                ],
-                'page' => [
-                    'asset_type' => app(Models\Page::class)->getMorphClass(),
-                    'asset_id' => [
-                        (string) Models\Page::factory()->create()->id,
-                    ],
-                ],
-            },
-        )
+        ->fillForm([
+            'asset_type' => $asset->getMorphClass(),
+            'asset_id' => [$asset->getKey()],
+        ])
         ->callMountedAction()
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(1);
 
-    assertDatabaseHas(ContentAsset::class, [
-        'content_id' => $content->id,
+    assertDatabaseHas(AssetRelation::class, [
+        'related_type' => $content->getMorphClass(),
+        'related_id' => $content->id,
         'asset_type' => $assetType,
     ]);
-})->with(['page', 'content']);
+})
+    ->with(['page', 'content']);

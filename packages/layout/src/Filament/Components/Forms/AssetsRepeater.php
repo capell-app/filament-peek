@@ -6,6 +6,7 @@ namespace Capell\Layout\Filament\Components\Forms;
 
 use BackedEnum;
 use Capell\Core\Data\AssetData;
+use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Filament\Actions\Action;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -52,7 +54,7 @@ class AssetsRepeater extends Repeater
 
                 $items = $component->getRawState();
 
-                if ($newUuid) {
+                if ($newUuid !== null && $newUuid !== '' && $newUuid !== '0') {
                     $items[$newUuid] = $arguments;
                 } else {
                     $items[] = $arguments;
@@ -82,7 +84,7 @@ class AssetsRepeater extends Repeater
                     fn (Get $get): string|BackedEnum => CapellCore::getAsset($get('asset_type'))->getIcon()
                 )
                 ->placeholder(
-                    fn (Get $get): string|BackedEnum => __(
+                    fn (Get $get): string => __(
                         'capell-admin::generic.select_asset_placeholder',
                         ['type' => CapellCore::getAsset($get('asset_type'))->getLabel()]
                     )
@@ -154,7 +156,7 @@ class AssetsRepeater extends Repeater
         )
             ->extraDropdownAttributes(['class' => 'contain-layout'])
             ->dropdownPlacement('bottom')
-            ->label(fn () => $action->getLabel())
+            ->label(fn (): string|Htmlable|null => $action->getLabel())
             ->icon(Heroicon::Plus);
 
         return $action->group($actions)
@@ -196,7 +198,7 @@ class AssetsRepeater extends Repeater
                     ->whereHas(
                         'type',
                         fn (Builder $query) => $query->where(
-                            fn (Builder $query) => $query->where('group', '!=', 'system')
+                            fn (Builder $query) => $query->where('group', '!=', TypeGroupEnum::System->value)
                                 ->orWhereNull('group')
                         )
                     )
@@ -219,7 +221,7 @@ class AssetsRepeater extends Repeater
         if ($total > $limit) {
             $options->pop();
             $options->put(null, __('capell-admin::form.more_results', ['count' => $total - $limit]));
-            $component->disableOptionWhen(fn (string $value): bool => ! $value);
+            $component->disableOptionWhen(fn (string $value): bool => $value === '' || $value === '0');
         }
 
         return $options->toArray();

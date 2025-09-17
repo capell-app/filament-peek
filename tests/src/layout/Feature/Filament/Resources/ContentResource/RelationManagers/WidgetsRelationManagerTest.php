@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use Capell\Layout\Filament\Resources\Contents\ContentResource;
+use Capell\Layout\Filament\Resources\Contents\Pages\EditContent;
+use Capell\Layout\Filament\Resources\Contents\RelationManagers\WidgetsRelationManager;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
@@ -19,9 +20,9 @@ it('can list widgets for a content model', function (): void {
 
     $widget = $content->widgets->first();
 
-    livewire(ContentResource\RelationManagers\WidgetsRelationManager::class, [
+    livewire(WidgetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => ContentResource\Pages\EditContent::class,
+        'pageClass' => EditContent::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(5)
@@ -39,9 +40,9 @@ it('can search widgets for a content model', function (): void {
 
     $widget = $content->widgets->random();
 
-    livewire(ContentResource\RelationManagers\WidgetsRelationManager::class, [
+    livewire(WidgetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => ContentResource\Pages\EditContent::class,
+        'pageClass' => EditContent::class,
     ])
         ->assertSuccessful()
         ->searchTable($widget->key)

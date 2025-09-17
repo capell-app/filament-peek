@@ -13,6 +13,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Concerns\HasPageCacheNotification;
 use Capell\Core\Actions\GetResourceFromTypeAction;
 use Capell\Core\Enums\ModelEnum;
+use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
@@ -46,6 +47,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -433,7 +435,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
                 return [
                     'container' => $arguments['containerKey'] ?? session('layout-builder.container'),
-                    'filter_groups' => collect($model::getTypeGroups()->reject(fn (string $group): bool => $group === 'system'))
+                    'filter_groups' => collect($model::getTypeGroups()->reject(fn (string $group): bool => $group === TypeGroupEnum::System->value))
                         ->toArray(),
                 ];
             })
@@ -856,7 +858,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     #[Computed]
     public function page(): ?Page
     {
-        if ($this->page_id) {
+        if ($this->page_id !== null && $this->page_id !== 0) {
             return Page::find($this->page_id);
         }
 
@@ -876,7 +878,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
      */
     public function getResource(): string
     {
-        if ($this->page_id) {
+        if ($this->page_id !== null && $this->page_id !== 0) {
             return $this->getPageResource();
         }
 
@@ -888,7 +890,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         return view('capell-admin::components.placeholder', $params);
     }
 
-    public function render(): string|\Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+    public function render(): string|View|Factory
     {
         if (! isset($this->layout)) {
             $this->skipRender();
@@ -1063,7 +1065,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         $asset = $this->getWidgetAsset($arguments['containerKey'], $arguments['widgetIndex'], $arguments['index']);
 
-        if (! $asset) {
+        if ($asset === null || $asset === []) {
             return null;
         }
 
@@ -1234,7 +1236,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         $this->containers = null;
         $this->containerWidgets = null;
         $this->assets = [];
-        $this->cachedAssets = [];
 
         $this->loadNew();
     }
@@ -1833,7 +1834,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     /**
      * @throws Exception
      */
-    private function getWidget(int $id): \Capell\Layout\Models\Widget
+    private function getWidget(int $id): Widget
     {
         $widget = $this->getWidgetQuery()->find($id);
 
@@ -2066,7 +2067,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         return $this->assets[$containerKey][$widgetIndex][$index] ?? null;
     }
 
-    private function getWidgetAssetsByType(string $containerKey, int $widgetIndex, string $type): ?array
+    private function getWidgetAssetsByType(string $containerKey, int $widgetIndex, string $type): array
     {
         if (! isset($this->assets[$containerKey][$widgetIndex])) {
             return [];

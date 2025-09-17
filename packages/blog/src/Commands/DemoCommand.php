@@ -113,7 +113,7 @@ class DemoCommand extends Command
             $name .= ' ' . Str::title($type);
         }
 
-        $full_name = $parent_name ? sprintf('%s » %s', $parent_name, $name) : $name;
+        $full_name = $parent_name !== null && $parent_name !== '' && $parent_name !== '0' ? sprintf('%s » %s', $parent_name, $name) : $name;
 
         $page = $this->demoCreator->createPage($data, $site, $languages, $parent, $type);
 

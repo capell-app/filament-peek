@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
 use RectorLaravel\Rector\PropertyFetch\ReplaceFakerPropertyFetchWithMethodCallRector;
-use RectorLaravel\Set\LaravelLevelSetList;
 
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/packages',
         __DIR__ . '/tests',
     ])
+    ->withCache(
+        cacheDirectory: '/tmp/rector',
+        cacheClass: FileCacheStorage::class,
+    )
     ->withSkip([
         __DIR__ . '/packages/layout/src/LayoutServiceProvider.php', // Renaming blade component to aliasComponent https://github.com/driftingly/rector-laravel/issues/356
     ])
@@ -20,19 +24,18 @@ return RectorConfig::configure()
         codingStyle: true,
         typeDeclarations: true,
         privatization: true,
-        earlyReturn: true,
-        rectorPreset: true,
         instanceOf: true,
+        earlyReturn: true,
+        strictBooleans: true,
         carbon: true,
+        rectorPreset: true,
         phpunitCodeQuality: true,
         doctrineCodeQuality: true,
         symfonyCodeQuality: true,
         symfonyConfigs: true,
     )
-    ->withPhpSets(php84: true)
+    ->withImportNames()
     ->withRules([
         ReplaceFakerPropertyFetchWithMethodCallRector::class,
     ])
-    ->withSets([
-        LaravelLevelSetList::UP_TO_LARAVEL_120,
-    ]);
+    ->withPhpSets();

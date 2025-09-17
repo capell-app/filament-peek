@@ -8,6 +8,7 @@ use ArrayAccess;
 use Bkwld\Cloner\Cloneable;
 use Capell\Core\Contracts\PageCacheable;
 use Capell\Core\Enums\PublishStatusEnum;
+use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Concerns\CloneableExcept;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasDraftsAndNestedSet;
@@ -37,7 +38,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -55,7 +55,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Wildside\Userstamps\Userstamps;
 
 /**
- * @property-read Collection<int, ContentAsset> $assets
+ * @property-read Collection<int, AssetRelation> $assets
  * @property-read int|null $assets_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
@@ -160,6 +160,8 @@ use Wildside\Userstamps\Userstamps;
  * @method static Builder<static>|Content withoutTrashed()
  *
  * @property-read Page|null $linkedPage
+ * @property-read Collection<int, AssetRelation> $assetRelations
+ * @property-read int|null $asset_relations_count
  *
  * @mixin Eloquent
  */
@@ -272,7 +274,7 @@ class Content extends Model implements Auditable, Draftable, HasMedia, PageCache
 
     public function getQualifiedIsPublishedColumn(?string $table = null): string
     {
-        return $table ? $table . '.' . $this->getIsPublishedColumn() : $this->getIsPublishedColumn();
+        return $table !== null && $table !== '' && $table !== '0' ? $table . '.' . $this->getIsPublishedColumn() : $this->getIsPublishedColumn();
     }
 
     public function loadParent(Language $language): void
@@ -311,11 +313,6 @@ class Content extends Model implements Auditable, Draftable, HasMedia, PageCache
     public function related(): BelongsToJson
     {
         return $this->belongsToJson(self::class, 'meta->related');
-    }
-
-    public function assets(): HasMany
-    {
-        return $this->hasMany(ContentAsset::class);
     }
 
     public function widgets(): HasManyThrough

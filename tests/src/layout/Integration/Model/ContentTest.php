@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Tag;
@@ -9,7 +10,6 @@ use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Capell\Layout\Database\Factories\ContentTypeFactory;
 use Capell\Layout\Models\Content;
-use Capell\Layout\Models\ContentAsset;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -50,7 +50,7 @@ it('has many translations', function (): void {
 
 it('has many assets', function (): void {
     $content = Content::factory()->create();
-    $resource = ContentAsset::factory()->create(['content_id' => $content->id]);
+    $resource = AssetRelation::factory()->related($content);
 
     expect($content->assets->pluck('id'))->toContain($resource->id);
 });
