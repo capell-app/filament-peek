@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Actions\Page;
 
-use Capell\Admin\Actions\BuilderDefaultTranslationsAction;
+use Capell\Admin\Actions\BuildDefaultTranslationsAction;
 use Capell\Admin\Filament\Actions\CreateModalAction;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutTypeEnum;
@@ -29,7 +29,7 @@ class CreateWidgetModalAction extends CreateModalAction
         $data['status'] = true;
 
         if (empty($data['translations'])) {
-            $data['translations'] = BuilderDefaultTranslationsAction::run($data['site_id'] ?? null);
+            $data['translations'] = BuildDefaultTranslationsAction::run($data['site_id'] ?? null);
         }
 
         return $data;

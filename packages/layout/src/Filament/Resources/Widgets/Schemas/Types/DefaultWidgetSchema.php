@@ -8,6 +8,7 @@ use Capell\Admin\Contracts\TypeSchemaInterface;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Media\MediaLibraryFileUpload;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
+use Capell\Layout\Enums\SchemaExtenderEnum;
 use Capell\Layout\Enums\SchemaTypeEnum;
 use Capell\Layout\Filament\Components\Forms\ActionsRepeater;
 use Capell\Layout\Filament\Components\Forms\ColorSchemeComponent;
@@ -38,6 +39,11 @@ class DefaultWidgetSchema implements TypeSchemaInterface
             'editOption' => static::getEditOptionSchema($schema),
             default => static::getFormSchema($schema),
         };
+    }
+
+    public static function getExtenders(): iterable
+    {
+        return app()->tagged(SchemaExtenderEnum::Widget->value);
     }
 
     protected static function getFormSchema(Schema $schema): array

@@ -10,17 +10,15 @@ use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\Media\MediaLibraryFileUpload;
 use Capell\Admin\Filament\Components\Forms\Page\PageSelect;
-use Capell\Admin\Filament\Components\Forms\PublishDates;
 use Capell\Admin\Filament\Components\Forms\PublishSchema;
 use Capell\Admin\Filament\Components\Forms\PublishSection;
-use Capell\Admin\Filament\Components\Forms\PublishToggle;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
+use Capell\Layout\Enums\SchemaExtenderEnum;
 use Capell\Layout\Enums\SchemaTypeEnum;
 use Capell\Layout\Filament\Components\Forms\Content\ContentDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Content\ContentSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Content\ContentTranslationsRepeater;
 use Capell\Layout\Filament\Components\Forms\CustomColorInput;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -34,6 +32,11 @@ class DefaultContentSchema implements TypeSchemaInterface
     use HasTypeSchema;
 
     protected static string $schemaType = SchemaTypeEnum::Content->value;
+
+    public static function getExtenders(): iterable
+    {
+        return app()->tagged(SchemaExtenderEnum::Content->value);
+    }
 
     public static function make(Schema $schema): array
     {
@@ -93,7 +96,7 @@ class DefaultContentSchema implements TypeSchemaInterface
                         ->tabs([
                             self::getContentTab($schema),
                             self::getSettingsTab($schema),
-                        ])
+                        ]),
                 ])
                 ->sidebarSchema([
                     Section::make()

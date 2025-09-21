@@ -7,6 +7,7 @@ namespace Capell\Layout;
 use Capell\Admin\Actions\CreatedModelAction;
 use Capell\Admin\Actions\DeletedModelAction;
 use Capell\Admin\Enums\ResourceEnum;
+use Capell\Admin\Enums\SchemaExtenderEnum;
 use Capell\Admin\Enums\SchemaTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Data\AssetData;
@@ -31,10 +32,8 @@ use Capell\Layout\Enums\LayoutWidgetSchemaEnum;
 use Capell\Layout\Enums\WidgetAssetSchemaEnum;
 use Capell\Layout\Enums\WidgetSchemaEnum;
 use Capell\Layout\Filament\Resources\Layouts\LayoutResource;
-use Capell\Layout\Filament\Resources\Layouts\Schemas\Types\DefaultLayoutSchema;
-use Capell\Layout\Filament\Resources\Pages\Schemas\Types\DefaultPageSchema;
-use Capell\Layout\Filament\Resources\Pages\Schemas\Types\LandingPageSchema;
-use Capell\Layout\Filament\Resources\Pages\Schemas\Types\ResultsPageSchema;
+use Capell\Layout\Filament\Resources\Layouts\Schemas\Extenders\LayoutSchemaExtender;
+use Capell\Layout\Filament\Resources\Pages\Schemas\Extenders\PageSchemaExtender;
 use Capell\Layout\Filament\Resources\Types\Schemas\Types\WidgetTypeSchema;
 use Capell\Layout\Listeners\AfterRecordSaved;
 use Capell\Layout\Listeners\LayoutLoaded;
@@ -194,6 +193,10 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 hasTranslation: true,
             )
         );
+
+        $this->registerSchemaExtender(SchemaExtenderEnum::Page->value, PageSchemaExtender::class);
+
+        $this->registerSchemaExtender(SchemaExtenderEnum::Layout->value, LayoutSchemaExtender::class);
     }
 
     protected function getPublishedDirectory(): string
@@ -354,11 +357,14 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         CapellAdmin::registerSchemas(Enums\SchemaTypeEnum::LayoutContainer->value, LayoutContainerSchemaEnum::cases());
         CapellAdmin::registerSchemas(Enums\SchemaTypeEnum::LayoutWidget->value, LayoutWidgetSchemaEnum::cases());
         CapellAdmin::registerSchema(SchemaTypeEnum::Type, WidgetTypeSchema::class);
-        CapellAdmin::registerSchema(SchemaTypeEnum::Layout, DefaultLayoutSchema::class);
-        CapellAdmin::registerSchema(SchemaTypeEnum::Page, DefaultPageSchema::class);
-        CapellAdmin::registerSchema(SchemaTypeEnum::Page, LandingPageSchema::class);
-        CapellAdmin::registerSchema(SchemaTypeEnum::Page, ResultsPageSchema::class);
 
         return $this;
+    }
+
+    private function registerSchemaExtender(string $tag, string $class): void
+    {
+        $this->app->singleton($class, fn () => new $class);
+
+        $this->app->tag($class, $tag);
     }
 }

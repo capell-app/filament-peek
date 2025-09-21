@@ -6,52 +6,41 @@ namespace Capell\Blog\Filament\Resources\Articles\Schemas\Types;
 
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Components\Forms\Media\MediaLibraryFileUpload;
+use Capell\Admin\Filament\Components\Forms\Page\CreatePageSchema;
 use Capell\Admin\Filament\Components\Forms\Page\LayoutSelect;
 use Capell\Admin\Filament\Components\Forms\Page\PagePublishSection;
 use Capell\Admin\Filament\Components\Forms\Page\PageSettingsSchema;
-use Capell\Admin\Filament\Components\Forms\Page\PageTagsInput;
-use Capell\Admin\Filament\Components\Forms\PublishDates;
+use Capell\Admin\Filament\Components\Forms\Page\PageSiteSelect;
+use Capell\Admin\Filament\Components\Forms\Page\ParentPageSelect;
 use Capell\Admin\Filament\Components\Forms\PublishSchema;
-use Capell\Admin\Filament\Components\Forms\PublishToggle;
-use Capell\Admin\Filament\Resources\Pages\RelationManagers\AuditsRelationManager;
 use Capell\Admin\Filament\Resources\Pages\Schemas\Types\DefaultPageSchema;
-use Capell\Core\Enums\LayoutGroupEnum;
-use Filament\Forms\Components\Hidden;
+use Capell\Blog\Filament\Components\Forms\Page\PageTagsInput;
+use Capell\Blog\Services\Loader\BlogLoader;
+use Closure;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Override;
 
 class ArticlePageSchema extends DefaultPageSchema
 {
-    public static function relationManagers(Model $record): array
-    {
-        return [
-            AuditsRelationManager::class,
-        ];
-    }
-
-    protected static function getCreateFormSchema(Schema $schema): array
+    #[Override]
+    protected static function getFormSchema(Schema $schema): array
     {
         return [
             static::getTranslationFormSchema($schema),
-            PublishSchema::make($schema)
+            Section::make()
+                ->contained(in_array($schema->getOperation(), ['create', 'edit']))
+                ->columns()
+                ->columnSpanFull()
+                ->schema(static::getCreateExtraFor($schema)),
         ];
     }
 
-    protected static function getCreateOptionFormSchema(Schema $schema): array
-    {
-        return static::getCreateFormSchema($schema);
-    }
-
+    #[Override]
     protected static function getEditFormSchema(Schema $schema): array
     {
         return [
@@ -62,61 +51,39 @@ class ArticlePageSchema extends DefaultPageSchema
                 ->sidebarSchema(
                     PageSettingsSchema::make(
                         $schema,
-                        [
-                            Group::make()
-                                ->statePath('meta')
-                                ->schema([
-                                    Select::make('author_id')
-                                        ->label(__('capell-admin::form.author'))
-                                        ->relationship(name: 'author', titleAttribute: 'name')
-                                        ->dehydrated()
-                                        ->saveRelationshipsUsing(fn (): false => false),
-                                ]),
+                        components: [
+                            PageTagsInput::make('tags'),
                         ],
-                        resourceName: 'article',
+                        pageGroup: $schema->getLivewire()->getResource()::getResourceName(),
+                        modifyParentQueryUsing: static::modifyParentQueryUsing($schema),
+                        withType: false,
                     ),
                     contained: true
                 ),
             Tabs::make()
-                ->tabs([
-                    Tab::make(__('capell-admin::generic.settings'))
-                        ->icon(Heroicon::Cog)
-                        ->schema([
-                            PageTagsInput::make('tags'),
-                            MediaLibraryFileUpload::make('image')
-                                ->imageDefaults(),
-                        ]),
-                ]),
+                ->columnSpanFull()
+                ->tabs(static::getTabs($schema)),
         ];
     }
 
+    #[Override]
     protected static function getEditOptionFormSchema(Schema $schema): array
     {
         return [
             static::getTranslationFormSchema($schema),
             Section::make(__('capell-admin::generic.settings'))
-                ->columns()
                 ->compact()
-                ->collapsed()
                 ->schema([
                     ...PageSettingsSchema::make(
                         $schema,
-                        [
+                        components: [
                             PageTagsInput::make('tags'),
-
-                            Group::make()
-                                ->statePath('meta')
-                                ->schema([
-                                    MediaLibraryFileUpload::make('image')
-                                        ->imageDefaults(),
-                                    Select::make('author_id')
-                                        ->label(__('capell-admin::form.author'))
-                                        ->relationship(name: 'author', titleAttribute: 'name')
-                                        ->dehydrated()
-                                        ->saveRelationshipsUsing(fn (): false => false),
-                                ]),
+                            MediaLibraryFileUpload::make('image')
+                                ->imageDefaults(),
                         ],
-                        resourceName: 'article',
+                        pageGroup: $schema->getLivewire()->getResource()::getResourceName(),
+                        modifyParentQueryUsing: static::modifyParentQueryUsing($schema),
+                        withType: false,
                     ),
                     PagePublishSection::make(),
                 ]),
@@ -127,23 +94,39 @@ class ArticlePageSchema extends DefaultPageSchema
     protected static function getCreateExtraFor(Schema $schema): array
     {
         return [
-            Group::make([
-                Hidden::make('is_layout_changed_manually')
-                    ->default(false)
-                    ->dehydrated(false),
-
-                LayoutSelect::make('layout_id')
-                    ->afterStateUpdated(function (Get $get, Set $set, ?int $state): void {
-                        $set('is_layout_changed_manually', (bool) $state);
-                    })
-                    ->modifyQueryUsing(
-                        fn (Builder $query, Get $get): Builder => $query->where(
-                            fn (Builder $query) => $query->where('group', '!=', LayoutGroupEnum::System)
-                                ->orWhereNull('group')
-                        )
-                    ),
-            ]),
+            PageSiteSelect::make(),
+            static::getParentPageSelect($schema),
+            LayoutSelect::make('layout_id')
+                ->reactive()
+                ->withEditLink(),
             PublishSchema::make($schema),
         ];
+    }
+
+    #[Override]
+    protected static function getParentPageSelect(Schema $schema): Select
+    {
+        return ParentPageSelect::make('parent_id')
+            ->label(__('capell-admin::form.parent_page'))
+            ->setupRelation('parent', $schema)
+            ->pageGroup(static::modifyParentQueryUsing($schema))
+            ->reactive();
+    }
+
+    protected static function modifyParentQueryUsing(Schema $schema): Closure
+    {
+        return function (Builder $query) use ($schema) {
+            $site = $schema->getLivewire()->getSite();
+
+            $blogPage = $site ? BlogLoader::getBlogPage($site) : null;
+
+            return $query->adminResource(
+                $schema->getLivewire()->getResource()::getResourceName()
+            )
+                ->when(
+                    $blogPage,
+                    fn (Builder $query) => $query->orWhere('id', 'blog')
+                );
+        };
     }
 }

@@ -6,8 +6,6 @@ namespace Capell\Layout\Actions;
 
 use Capell\Admin\Services\Creator\LayoutCreator;
 use Capell\Core\Models\Language;
-use Capell\Layout\Enums\LayoutEnum;
-use Capell\Layout\Services\Creator\LayoutCreator as LayoutCreatorService;
 use Capell\Layout\Services\Creator\LayoutUpdater;
 use Capell\Layout\Services\Creator\TypeCreator;
 use Capell\Layout\Services\Creator\WidgetCreator;
@@ -32,9 +30,6 @@ class InstallPackageAction
 
         $layoutCreator = app(LayoutCreator::class);
         $layoutCreator->setup();
-
-        $layoutCreator = app(LayoutCreatorService::class);
-        $layoutCreator->create(LayoutEnum::Home->value);
 
         $layoutUpdater = app(LayoutUpdater::class);
         $layoutUpdater->setup();

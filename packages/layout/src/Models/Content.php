@@ -215,7 +215,7 @@ class Content extends Model implements Auditable, Draftable, HasMedia, PageCache
         'publish_to',
         'site_id',
         'type_id',
-        'uuid',
+        'draft_id',
     ];
 
     /**

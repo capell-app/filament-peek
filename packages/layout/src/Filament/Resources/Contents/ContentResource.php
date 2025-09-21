@@ -23,7 +23,6 @@ use Capell\Layout\Filament\Resources\Contents\Schemas\ContentForm;
 use Capell\Layout\Filament\Resources\Contents\Tables\ContentsTable;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -123,13 +122,5 @@ class ContentResource extends Resource
             WidgetsRelationManager::class,
             PagesRelationManager::class,
         ];
-    }
-
-    public static function getSiteId(HasTable $livewire)
-    {
-        return match (true) {
-            $livewire instanceof ListContents => $livewire->activeTab,
-            default => $livewire->getTableFilterState('filter')['site_id'] ?? null,
-        };
     }
 }

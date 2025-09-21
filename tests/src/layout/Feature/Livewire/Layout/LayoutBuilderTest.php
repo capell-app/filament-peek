@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Enums\LayoutEnum as AdminLayoutEnum;
+use Capell\Admin\Enums\LayoutEnum;
 use Capell\Admin\Services\Creator\LayoutCreator;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
@@ -10,7 +10,6 @@ use Capell\Core\Models\Page;
 use Capell\Layout\Database\Factories\LayoutFactory;
 use Capell\Layout\Database\Factories\WidgetTypeFactory;
 use Capell\Layout\Enums\AssetEnum;
-use Capell\Layout\Enums\LayoutEnum;
 use Capell\Layout\Filament\Resources\Layouts\Schemas\Types\Widgets\DefaultLayoutWidgetSchema;
 use Capell\Layout\Livewire\LayoutBuilder;
 use Capell\Layout\Models\Widget;
@@ -39,14 +38,10 @@ test('Render layout builder', function (): void {
         ->assertSeeText($layout->name . ' Layout');
 });
 
-test('can edit layouts', function (AdminLayoutEnum|LayoutEnum $layoutEnum): void {
+test('can edit layouts', function (LayoutEnum $layoutEnum): void {
     $language = Language::factory()->create();
 
-    if ($layoutEnum instanceof LayoutEnum) {
-        $layout = app(Capell\Layout\Services\Creator\LayoutCreator::class)->create($layoutEnum->value);
-    } else {
-        $layout = app(LayoutCreator::class)->create($layoutEnum->value);
-    }
+    $layout = app(LayoutCreator::class)->create($layoutEnum->value);
 
     $widgetTypeCreator = app(TypeCreator::class);
     $widgetTypeCreator->createWidgetTypes();
@@ -62,7 +57,7 @@ test('can edit layouts', function (AdminLayoutEnum|LayoutEnum $layoutEnum): void
     ])
         ->assertSuccessful()
         ->assertSeeText($layout->name . ' Layout');
-})->with([...AdminLayoutEnum::cases(), ...LayoutEnum::cases()]);
+})->with(LayoutEnum::cases());
 
 test('Render layout builder with page', function (): void {
     $layout = (new LayoutFactory)->containers()->create();

@@ -13,6 +13,7 @@ use Capell\Blog\Enums\BlogModelEnum;
 use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\WidgetComponentEnum;
 use Capell\Blog\Filament\Resources\Articles\ArticleResource;
+use Capell\Blog\Filament\Resources\Articles\Schemas\Extenders\BlogPageSchemaExtender;
 use Capell\Blog\Filament\Resources\Articles\Schemas\Types\ArticlePageSchema;
 use Capell\Blog\Filament\Resources\Widgets\Schemas\Types\ArticleWidgetSchema;
 use Capell\Blog\Listeners\AddBlogPagesToNavigation;
@@ -124,6 +125,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         CapellCore::registerModel(BlogModelEnum::Article, Article::class);
 
         CapellCore::addSitemapPages('archives', ArchivePageSitemap::class);
+
+        $this->registerSchemaExtender(BlogPageSchemaExtender::TAG, BlogPageSchemaExtender::class);
     }
 
     private function getPackagePermissions(): array
@@ -138,5 +141,12 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             'view_any_article',
             'view_article',
         ];
+    }
+
+    private function registerSchemaExtender(string $tag, string $class): void
+    {
+        $this->app->singleton($class, fn (): object => new $class);
+
+        $this->app->tag($class, $tag);
     }
 }

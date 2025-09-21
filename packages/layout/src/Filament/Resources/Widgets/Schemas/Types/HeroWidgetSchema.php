@@ -7,6 +7,7 @@ namespace Capell\Layout\Filament\Resources\Widgets\Schemas\Types;
 use Capell\Admin\Contracts\TypeSchemaInterface;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
+use Capell\Layout\Enums\SchemaExtenderEnum;
 use Capell\Layout\Enums\SchemaTypeEnum;
 use Capell\Layout\Filament\Components\Forms\AssetsRepeater;
 use Capell\Layout\Filament\Components\Forms\BackgroundSettingsFieldset;
@@ -31,6 +32,11 @@ class HeroWidgetSchema implements TypeSchemaInterface
     use HasTypeSchema;
 
     protected static string $schemaType = SchemaTypeEnum::Widget->value;
+
+    public static function getExtenders(): iterable
+    {
+        return app()->tagged(SchemaExtenderEnum::Widget->value);
+    }
 
     public static function make(Schema $schema): array
     {

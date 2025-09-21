@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Actions;
 
+use Capell\Admin\Enums\LayoutEnum;
 use Capell\Blog\Services\BlogCreator;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Site;
@@ -28,7 +29,13 @@ class InstallBlogPackageAction
         BlogCreator::createArticleLayout();
         BlogCreator::createArchivesLayout();
 
-        foreach (['results', 'tags', 'default'] as $layoutKey) {
+        $layouts = [
+            LayoutEnum::Results,
+            LayoutEnum::Tags,
+            LayoutEnum::Default,
+        ];
+
+        foreach ($layouts as $layoutKey) {
             $layout = Layout::firstWhere('key', $layoutKey);
 
             if (! $layout) {

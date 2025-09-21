@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Blog\Services;
 
 use Capell\Admin\Actions\AddPageToNavigationAction;
+use Capell\Admin\Filament\Resources\Pages\Schemas\Types\ResultsPageSchema;
 use Capell\Admin\Filament\Resources\Types\Schemas\Types\PageTypeSchema;
 use Capell\Admin\Services\Creator\LayoutCreator;
 use Capell\Admin\Services\Creator\TypeCreator;
@@ -16,6 +17,7 @@ use Capell\Blog\Filament\Resources\Widgets\Schemas\Types\ArticleWidgetSchema;
 use Capell\Core\Enums\LayoutGroupEnum;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Enums\TypeGroupEnum;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Navigation;
@@ -25,7 +27,6 @@ use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
-use Capell\Layout\Filament\Resources\Pages\Schemas\Types\ResultsPageSchema;
 use Capell\Layout\Models\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -260,10 +261,10 @@ class BlogCreator
     public static function createArticleLayout(): Layout
     {
         return Layout::firstOrCreate(['key' => 'article'], [
-            'key' => 'article',
             'name' => __('capell-blog::generic.article'),
             'group' => LayoutGroupEnum::Default->value,
             'containers' => [
+                ...self::heroContainer(),
                 'main' => [
                     'meta' => [
                         'colspan' => 9,
@@ -463,5 +464,24 @@ class BlogCreator
         });
 
         return $widget;
+    }
+
+    private static function heroContainer(): array
+    {
+        if (! CapellCore::hasPackage('capell-layout')) {
+            return [];
+        }
+
+        return [
+            'hero' => [
+                'meta' => [
+                    'colspan' => 12,
+                    'container' => 'full',
+                ],
+                'widgets' => [
+                    ['widget_key' => 'hero'],
+                ],
+            ],
+        ];
     }
 }

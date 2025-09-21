@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources\Contents\Tables;
 
+use Capell\Admin\Enums\ResourceEnum;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
 use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Admin\Filament\Components\Tables\Columns\BadgeableColumn;
@@ -27,6 +29,7 @@ use Capell\Layout\Actions\ReplicateContentAction;
 use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Components\Tables\Columns\Content\ContentNameColumn;
+use Capell\Layout\Filament\Resources\Contents\Pages\ListContents;
 use Capell\Layout\Models\Content;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -34,6 +37,9 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Forms\Components\Select;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\SpatieTagsColumn;
@@ -104,6 +110,14 @@ class ContentsTable implements TableConfigurator
             });
     }
 
+    public static function getSiteId(ListRecords|RelationManager $livewire)
+    {
+        return match (true) {
+            $livewire instanceof ListRecords => $livewire->activeTab,
+            $livewire instanceof RelationManager => $livewire->getTableFilterState('filter')['site_id'] ?? null,
+        };
+    }
+
     protected static function getTableColumns(): array
     {
         return [
@@ -138,11 +152,19 @@ class ContentsTable implements TableConfigurator
                 ->sortable()
                 ->toggleable()
                 ->color('primary')
-                ->url(
-                    fn (Content $record, int $state, HasTable $livewire): ?string => $state !== 0
-                        ? $livewire::getResource()::getUrl('index', ['tableFilters' => ['filter' => ['parent_id' => $record->id]]])
-                        : null
-                ),
+                ->url(function (Content $record, int $state): ?string {
+                    if ($state === 0) {
+                        return null;
+                    }
+
+                    /** @var resource $resource */
+                    $resource = CapellAdmin::getResource(ResourceEnum::Page);
+
+                    return $resource::getUrl(
+                        'index',
+                        ['tableFilters' => ['filter' => ['parent_id' => $record->id]]]
+                    );
+                }),
             BadgeableColumn::make('assets_count')
                 ->label(__('capell-admin::table.assets'))
                 ->alignRight()
@@ -218,8 +240,8 @@ class ContentsTable implements TableConfigurator
                 ->schema([
                     Select::make('language_id')
                         ->label(__('capell-admin::table.language'))
-                        ->options(function (HasTable $livewire): array {
-                            $siteId = $livewire::getResource()::getSiteId($livewire);
+                        ->options(function (ListContents|RelationManager $livewire): array {
+                            $siteId = static::getSiteId($livewire);
 
                             /* @var class-string<\Capell\Core\Models\Language> $model */
                             $model = CapellCore::getModel(ModelEnum::Language);
@@ -238,8 +260,8 @@ class ContentsTable implements TableConfigurator
 
                     Select::make('parent_id')
                         ->label(__('capell-admin::form.parent'))
-                        ->options(function (HasTable $livewire, Get $get) {
-                            $siteId = $livewire::getResource()::getSiteId($livewire);
+                        ->options(function (ListContents|RelationManager $livewire, Get $get) {
+                            $siteId = static::getSiteId($livewire);
 
                             /** @var class-string<Content> $model */
                             $model = CapellCore::getModel(LayoutModelEnum::Content->name);
@@ -286,28 +308,32 @@ class ContentsTable implements TableConfigurator
 
                     Select::make('tags')
                         ->label(__('capell-admin::form.tags'))
-                        ->relationship(name: 'tags', titleAttribute: 'name', modifyQueryUsing: function (Builder $query, HasTable $livewire, Get $get): void {
-                            $siteId = $livewire::getResource()::getSiteId($livewire);
+                        ->relationship(
+                            name: 'tags',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: function (Builder $query, ListContents|RelationManager $livewire, Get $get): void {
+                                $siteId = static::getSiteId($livewire);
 
-                            if (! $siteId) {
-                                $query->with('site')
-                                    ->orderBy('site_id');
-                            } else {
-                                $query->where(
-                                    fn (Builder $query) => $query->where('site_id', $siteId)->orWhereNull('site_id')
-                                );
-                                $query->whereHas('contents', fn (BuilderContract $query) => $query->where('site_id', $siteId));
-                            }
+                                if (! $siteId) {
+                                    $query->with('site')
+                                        ->orderBy('site_id');
+                                } else {
+                                    $query->where(
+                                        fn (Builder $query) => $query->where('site_id', $siteId)->orWhereNull('site_id')
+                                    );
+                                    $query->whereHas('contents', fn (BuilderContract $query) => $query->where('site_id', $siteId));
+                                }
 
-                            if ($language_id = $get('language_id')) {
-                                $code = CapellCore::getModel(ModelEnum::Language)::find($language_id, 'code')->code;
-                                $query->whereRaw('JSON_EXTRACT(`tags`.`name`, ' . DB::getPdo()->quote('$.' . $code) . ') IS NOT NULL');
+                                if ($language_id = $get('language_id')) {
+                                    $code = CapellCore::getModel(ModelEnum::Language)::find($language_id, 'code')->code;
+                                    $query->whereRaw('JSON_EXTRACT(`tags`.`name`, ' . DB::getPdo()->quote('$.' . $code) . ') IS NOT NULL');
+                                }
                             }
-                        })
-                        ->getOptionLabelFromRecordUsing(function (Tag $record, HasTable $livewire, Get $get): string {
+                        )
+                        ->getOptionLabelFromRecordUsing(function (Tag $record, ListContents|RelationManager $livewire, Get $get): string {
                             $label = '';
 
-                            $siteId = $livewire::getResource()::getSiteId($livewire);
+                            $siteId = static::getSiteId($livewire);
 
                             if (! $siteId && $record->site) {
                                 $label .= $record->site->name . ' » ';

@@ -13,14 +13,11 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\AssetEnum;
-use Capell\Layout\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Filament\Resources\Contents\Schemas\Types\TestimonialContentSchema;
-use Capell\Layout\Filament\Resources\Widgets\Schemas\Types\Assets\HeroWidgetAssetForm;
-use Capell\Layout\Filament\Resources\Widgets\Schemas\Types\HeroWidgetSchema;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
@@ -255,7 +252,7 @@ class DemoCreator
             ->whereHas('type', fn (BuilderContract $query) => $query->default())
             ->where('site_id', $page->site_id)
             ->hasImage()
-            ->isNotHomePage()
+            ->notHomePage()
             ->inRandomOrder()
             ->limit(3)
             ->pluck('id')
@@ -496,33 +493,6 @@ class DemoCreator
         }
 
         return $widget;
-    }
-
-    public function createHeroWidget(): Widget
-    {
-        return $this->widgetModel::firstOrCreate([
-            'key' => 'hero',
-        ], [
-            'name' => __('capell-layout::generic.hero'),
-            'type_id' => $this->typeModel::firstWhere(['key' => WidgetTypeEnum::Contents, 'type' => LayoutTypeEnum::Widget])->id,
-            'meta' => [
-                'component' => 'capell-layout::widget.hero',
-                'heading_size' => 'h1',
-                'carousel_fade' => true,
-                'carousel_arrows' => false,
-                'carousel_pagination' => true,
-                'carousel_loop' => true,
-                'carousel_auto' => true,
-                'carousel_auto_delay' => 50000,
-                'color_scheme' => 'dark',
-            ],
-            'admin' => [
-                'icon' => 'heroicon-o-gift',
-                'schema' => HeroWidgetSchema::getKey(),
-                'asset_types' => [LayoutAssetEnum::Content->value],
-                'widget_asset_schema' => HeroWidgetAssetForm::getKey(),
-            ],
-        ]);
     }
 
     public function createWidgetAssets(Widget $widget, Page $page, string $container, int $occurrence = 1): void

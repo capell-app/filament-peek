@@ -8,7 +8,6 @@ use Awcodes\BadgeableColumn\Components\Badge;
 use Capell\Admin\Filament\Components\Tables\Columns\BadgeableColumn;
 use Capell\Layout\Models\Content;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
 
 class ContentNameColumn extends BadgeableColumn
 {

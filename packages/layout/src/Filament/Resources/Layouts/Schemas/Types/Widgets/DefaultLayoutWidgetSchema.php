@@ -6,6 +6,7 @@ namespace Capell\Layout\Filament\Resources\Layouts\Schemas\Types\Widgets;
 
 use Capell\Admin\Contracts\TypeSchemaInterface;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
+use Capell\Layout\Enums\SchemaExtenderEnum;
 use Capell\Layout\Enums\SchemaTypeEnum;
 use Capell\Layout\Filament\Components\Forms\HtmlClassInput;
 use Filament\Forms\Components\Checkbox;
@@ -16,6 +17,11 @@ class DefaultLayoutWidgetSchema implements TypeSchemaInterface
     use HasTypeSchema;
 
     protected static string $schemaType = SchemaTypeEnum::LayoutWidget->value;
+
+    public static function getExtenders(): iterable
+    {
+        return app()->tagged(SchemaExtenderEnum::LayoutWidget->value);
+    }
 
     public static function make(Schema $schema): array
     {

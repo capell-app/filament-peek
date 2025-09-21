@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Commands;
 
+use Capell\Admin\Enums\LayoutEnum;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Layout\Actions\CreateThemeAction;
-use Capell\Layout\Enums\LayoutEnum;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Services\Creator\ContentCreator;
 use Capell\Layout\Services\Creator\DemoCreator;
@@ -125,7 +125,7 @@ class DemoCommand extends Command
 
         $languages = $site->languages;
 
-        $homePage = $site->pages()->isHomePage()->first();
+        $homePage = $site->pages()->homePage()->first();
 
         $this->setupHomepage($homePage, $languages);
 
@@ -146,19 +146,6 @@ class DemoCommand extends Command
         $heroWidget = $this->demoCreator->createHeroWidget();
 
         $this->demoCreator->createWidgetAssets($heroWidget, $page, container: 'hero');
-
-        $containers = ['hero' => [
-            'meta' => [
-                'colspan' => 12,
-                'container' => 'full',
-            ],
-            'widgets' => [
-                [
-                    'widget_key' => $heroWidget->key,
-                    'occurrence' => 1,
-                ],
-            ],
-        ]] + $containers;
 
         $containers['main']['widgets'] = [
             [
