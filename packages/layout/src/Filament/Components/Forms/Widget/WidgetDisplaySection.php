@@ -50,11 +50,12 @@ class WidgetDisplaySection
                         '3xl' => __('capell-admin::generic.3xl'),
                     ]),
 
-                ContainerWidthSelect::make('container'),
+                ContainerWidthSelect::make(),
 
                 AlignSelect::make('align'),
 
-                BackgroundSettingsFieldset::make(),
+                BackgroundSettingsFieldset::make()
+                    ->columnSpanFull(),
             ]);
     }
 }

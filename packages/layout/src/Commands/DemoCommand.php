@@ -267,7 +267,9 @@ class DemoCommand extends Command
         ];
 
         $this->line('Adding background media to split container');
-        app(\Capell\Admin\Services\Creator\DemoCreator::class)->createMedia($layout, collection: 'split-two-background');
+        if ($layout->getMedia('split-two-background')->isEmpty()) {
+            app(\Capell\Admin\Services\Creator\DemoCreator::class)->createMedia($layout, collection: 'split-two-background');
+        }
 
         $layout->containers = $containers;
 

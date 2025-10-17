@@ -34,6 +34,12 @@ class DefaultLayoutContainerSchema implements TypeSchemaInterface
 
     public function make(Schema $schema): array
     {
+        $backgroundName = 'background_image';
+
+        if (($extraAttributes = $schema->getExtraAttributes()) && ! empty($extraAttributes['containerKey'])) {
+            $backgroundName = $extraAttributes['containerKey'] . '-background';
+        }
+
         return [
             Group::make()
                 ->statePath('meta')
@@ -51,7 +57,7 @@ class DefaultLayoutContainerSchema implements TypeSchemaInterface
                         ->collapsed()
                         ->columnSpanFull()
                         ->schema([
-                            ContainerWidthSelect::make('container'),
+                            ContainerWidthSelect::make(),
                             HtmlClassInput::make('html_class'),
                             PaddingSelect::make('padding'),
                             MarginSelect::make('margin'),
@@ -60,7 +66,8 @@ class DefaultLayoutContainerSchema implements TypeSchemaInterface
                             TextInput::make('override_columns')
                                 ->label(__('capell-admin::form.override_columns'))
                                 ->helperText(__('capell-admin::generic.override_columns_info')),
-                            BackgroundSettingsFieldset::make()
+                            BackgroundSettingsFieldset::make($backgroundName)
+                                ->visibleOn(['edit', 'editOption'])
                                 ->columnSpanFull(),
                         ]),
                 ]),

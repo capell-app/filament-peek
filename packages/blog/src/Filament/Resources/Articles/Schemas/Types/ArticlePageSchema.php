@@ -81,8 +81,7 @@ class ArticlePageSchema extends DefaultPageSchema
                         $schema,
                         components: [
                             PageTagsInput::make('tags'),
-                            MediaLibraryFileUpload::make('image')
-                                ->imageDefaults(),
+                            MediaLibraryFileUpload::make('image'),
                         ],
                         pageGroup: $schema->getLivewire()->getResource()::getResourceName(),
                         modifyParentQueryUsing: static::modifyParentQueryUsing($schema),

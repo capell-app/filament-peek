@@ -7,6 +7,7 @@ declare(strict_types=1);
 @php
     use Capell\Core\Enums\DefaultColorEnum;
     use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Layout\Enums\ContainerWidthEnum;
 
     $theme = FrontendLoader::getTheme();
 @endphp
@@ -111,10 +112,11 @@ declare(strict_types=1);
         <div
             @class([
                 match ($pageContainer) {
-                    'sm' => 'sm:container',
-                    'md' => 'md:container',
-                    'lg' => 'lg:container',
-                    'full' => '',
+                    ContainerWidthEnum::Full->value => 'w-full',
+                    ContainerWidthEnum::Small->value => 'sm:container',
+                    ContainerWidthEnum::Medium->value => 'md:container',
+                    ContainerWidthEnum::Large->value => 'lg:container',
+                    ContainerWidthEnum::ExtraLarge->value => 'xl:container',
                     default => 'container',
                 },
                 $containerClass ?: '' => $containerClass,

@@ -58,14 +58,14 @@ declare(strict_types=1);
         <div
             @class([
                 'grid',
-                ...$containerKey === 'sidebar' && ! $columns
+                ...$containerKey === 'sidebar' && (! $columns && $columns !== 0)
                 ? [
                     'divide-y divide-gray-100 [&>*:not(:first-child)]:pt-4 [&>*:not(:last-child)]:pb-4',
                 ]
                 : [
-                    '[&>*:not(:first-child)]:pt-2 [&>*:not(:last-child)]:pb-2' => $spacing === 'sm' && ! $columns,
-                    '[&>*:not(:first-child)]:pt-4 [&>*:not(:last-child)]:pb-4' => $spacing === 'lg' && ! $columns,
-                    '[&>*:not(:first-child)]:pt-6 [&>*:not(:last-child)]:pb-6' => $spacing === 'md' && ! $columns,
+                    '[&>*:not(:first-child)]:pt-2 [&>*:not(:last-child)]:pb-2' => $spacing === 'sm' && (! $columns && $columns !== 0),
+                    '[&>*:not(:first-child)]:pt-4 [&>*:not(:last-child)]:pb-4' => $spacing === 'lg' && (! $columns && $columns !== 0),
+                    '[&>*:not(:first-child)]:pt-6 [&>*:not(:last-child)]:pb-6' => $spacing === 'md' && (! $columns && $columns !== 0),
                     'gap-2 lg:gap-x-4 lg:gap-y-4' => $spacing === 'sm' && $columns,
                     'gap-4 lg:gap-x-6 lg:gap-y-6' => $spacing === 'md' && $columns,
                     'gap-6 lg:gap-x-8 lg:gap-y-8' => $spacing === 'lg' && $columns,

@@ -14,7 +14,7 @@ use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
-use Capell\Layout\Filament\Components\Forms\Widget\WidgetResultsSettingsSchema;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetResultsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
 use Filament\Schemas\Components\Component;
@@ -105,8 +105,7 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
     protected function getDisplayTab(Schema $schema): Tab
     {
         return WidgetDisplayTab::make([
-            MediaLibraryFileUpload::make('image')
-                ->imageDefaults(),
+            MediaLibraryFileUpload::make('image'),
             WidgetDisplaySection::make([
                 ColorSchemeComponent::make('color_scheme'),
             ]),
@@ -115,7 +114,7 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
                 ->collapsible()
                 ->columnSpanFull()
                 ->columns(['md' => 2, 'lg' => 3, 'xl' => 4])
-                ->schema(WidgetResultsSettingsSchema::make()),
+                ->schema(WidgetResultsSchema::make()),
         ])
             ->statePath('meta');
     }

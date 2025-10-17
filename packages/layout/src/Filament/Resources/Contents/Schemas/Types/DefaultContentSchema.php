@@ -51,8 +51,7 @@ class DefaultContentSchema implements TypeSchemaInterface
         return [
             IconPicker::make('icon')
                 ->label(__('capell-admin::form.icon')),
-            MediaLibraryFileUpload::make('image')
-                ->imageDefaults(),
+            MediaLibraryFileUpload::make('image'),
             CustomColorInput::make(
                 name: 'color',
                 label: __('capell-admin::form.color'),
@@ -76,8 +75,7 @@ class DefaultContentSchema implements TypeSchemaInterface
                 ->contained()
                 ->hiddenLabel(),
             ...ContentSettingsSchema::make($schema),
-            MediaLibraryFileUpload::make('image')
-                ->imageDefaults(),
+            MediaLibraryFileUpload::make('image'),
             PublishSchema::make($schema),
         ];
     }

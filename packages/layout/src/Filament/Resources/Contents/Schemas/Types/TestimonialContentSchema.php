@@ -31,8 +31,7 @@ class TestimonialContentSchema extends DefaultContentSchema
     protected function getMetaSchema(): array
     {
         return [
-            MediaLibraryFileUpload::make('image')
-                ->imageDefaults(),
+            MediaLibraryFileUpload::make('image'),
             Group::make()
                 ->schema([
                     TextInput::make('company')

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Components\Forms\Widget;
 
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\TextInput;
 
-class WidgetResultsSettingsSchema
+class WidgetResultsSchema
 {
     public static function make(): array
     {
@@ -27,6 +28,11 @@ class WidgetResultsSettingsSchema
                 ->label(__('capell-admin::form.parent_page')),
             Checkbox::make('with_tags')
                 ->label(__('capell-admin::form.tags')),
+            TextInput::make('columns')
+                ->label(__('capell-admin::form.columns'))
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(12),
         ];
     }
 }

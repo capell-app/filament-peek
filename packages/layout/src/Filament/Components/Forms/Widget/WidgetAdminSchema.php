@@ -29,8 +29,7 @@ class WidgetAdminSchema
             IconPicker::make('icon')
                 ->label(__('capell-admin::form.admin_icon')),
 
-            MediaLibraryFileUpload::make('image')
-                ->imageDefaults(),
+            MediaLibraryFileUpload::make('image'),
 
             Fieldset::make(__('capell-admin::generic.assets'))
                 ->gridContainer()

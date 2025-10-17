@@ -123,7 +123,6 @@ class DefaultWidgetSchema implements TypeSchemaInterface
                 Grid::make()
                     ->schema([
                         MediaLibraryFileUpload::make('image')
-                            ->imageDefaults()
                             ->reactive(),
                         Checkbox::make('reverse_order')
                             ->label(__('capell-admin::form.reverse_order'))

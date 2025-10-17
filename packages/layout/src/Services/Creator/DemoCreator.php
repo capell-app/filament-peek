@@ -17,6 +17,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Layout\Enums\AssetEnum;
+use Capell\Layout\Enums\ContainerWidthEnum;
 use Capell\Layout\Enums\ContentTypeEnum;
 use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
@@ -727,8 +728,9 @@ class DemoCreator
                 'component_item' => 'capell-layout::content.block',
                 'view_file' => 'capell-layout::components.widget.assets.blocks',
                 'spacing' => 'none',
-                'columns' => 'auto',
+                'columns' => 0,
                 'margin' => '',
+                'container' => ContainerWidthEnum::Small->value,
             ],
             'admin' => [
                 'icon' => 'heroicon-o-chart-bar',

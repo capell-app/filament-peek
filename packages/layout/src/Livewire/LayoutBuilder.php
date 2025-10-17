@@ -300,6 +300,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->modalSubmitActionLabel(fn (Action $action): string => $action->getLabel())
             ->schema(
                 static fn (self $livewire, Schema $schema, array $arguments): Schema => $schema->operation('editOption')
+                    ->extraAttributes($arguments, merge: true)
                     ->schema($livewire->getContainerSchema($schema, $arguments))
             )
             ->fillForm(fn (self $livewire, $arguments): array => [

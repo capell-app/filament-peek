@@ -13,7 +13,7 @@ use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetComponentFilesSection;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetDisplaySection;
-use Capell\Layout\Filament\Components\Forms\Widget\WidgetResultsSettingsSchema;
+use Capell\Layout\Filament\Components\Forms\Widget\WidgetResultsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetSettingsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\WidgetTranslationsRepeater;
 use Filament\Forms\Components\Checkbox;
@@ -93,7 +93,7 @@ class RelatedWidgetSchema extends DefaultWidgetSchema
                             Fieldset::make(__('capell-admin::generic.display_settings'))
                                 ->columns(['default' => 1, 'md' => 2, 'lg' => 3, 'xl' => 4])
                                 ->columnSpanFull()
-                                ->schema(WidgetResultsSettingsSchema::make()),
+                                ->schema(WidgetResultsSchema::make()),
                         ]),
                         WidgetComponentFilesSection::make(),
                     ])
