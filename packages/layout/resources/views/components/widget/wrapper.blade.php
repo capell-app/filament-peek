@@ -43,7 +43,7 @@ declare(strict_types=1);
     id="{{ $containerKey . '-' . $widget->key . "-{$index}" }}"
     {{
         $attributes->class([
-            '@container/wrap widget widget-' . $widget->key,
+            '@container widget widget-' . $widget->key,
             $class => $class !== 'widget-' . $widget->key,
             $containerClass => $containerWidth === 'full',
             'w-full' => $containerColspan === 12,

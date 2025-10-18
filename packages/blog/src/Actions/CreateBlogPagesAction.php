@@ -32,11 +32,11 @@ class CreateBlogPagesAction
         $blogPageType = Type::query()->where('key', 'blog')->pageType()->first();
         $systemPageType = Type::query()->where('key', 'system')->pageType()->first();
 
-        $blogPage = BlogCreator::createBlogPage($site, $blogPageType, $resultsLayout, $site->languages);
+        $blogPage = BlogCreator::createBlogPage($site, type: $blogPageType, languages: $site->languages);
 
-        $archivesPage = BlogCreator::createArchivesPage($site, $blogPage, $systemPageType, $archivesLayout);
+        $archivesPage = BlogCreator::createArchivesPage($site, $blogPage, type: $systemPageType, layout: $archivesLayout);
 
-        BlogCreator::createArchivePage($site, $archivesPage, $archivePageType, $resultsLayout, $site->languages);
+        BlogCreator::createArchivePage($site, $archivesPage, type: $archivePageType, layout: $resultsLayout, languages: $site->languages);
 
         BlogCreator::addPagesToNavigations(
             [DefaultNavigationEnum::Main->value, DefaultNavigationEnum::Footer->value],

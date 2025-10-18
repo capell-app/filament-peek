@@ -12,11 +12,9 @@ use Capell\Blog\Commands\DemoCommand;
 use Capell\Blog\Enums\BlogModelEnum;
 use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\WidgetComponentEnum;
-use Capell\Blog\Filament\Resources\Articles\Schemas\Extenders\BlogPageSchemaExtender;
 use Capell\Blog\Filament\Resources\Articles\Schemas\Types\ArticlePageSchema;
 use Capell\Blog\Filament\Resources\Widgets\Schemas\Types\ArticleWidgetSchema;
 use Capell\Blog\Listeners\AddBlogPagesToNavigation;
-use Capell\Blog\Models\Article;
 use Capell\Blog\Services\BlogCreator;
 use Capell\Blog\Services\Loader\BlogLoader;
 use Capell\Blog\Services\Sitemap\ArchivePageSitemap;
@@ -102,6 +100,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             path: __DIR__,
             sort: 9,
             permissions: $this->getPackagePermissions(),
+            installCommand: true,
             demoCommand: true,
             demoParams: ['author', 'sites'],
         );
@@ -124,11 +123,9 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
         CapellAdmin::registerSchema(\Capell\Layout\Enums\SchemaTypeEnum::Widget->value, ArticleWidgetSchema::class);
 
-        CapellCore::registerModel(BlogModelEnum::Article, Article::class);
+        CapellCore::registerModels(BlogModelEnum::cases());
 
         CapellCore::addSitemapPages('archives', ArchivePageSitemap::class);
-
-        $this->registerSchemaExtender(BlogPageSchemaExtender::TAG, BlogPageSchemaExtender::class);
     }
 
     private function getPackagePermissions(): array
@@ -143,12 +140,5 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             'view_any_article',
             'view_article',
         ];
-    }
-
-    private function registerSchemaExtender(string $tag, string $class): void
-    {
-        $this->app->singleton($class, fn (): object => new $class);
-
-        $this->app->tag($class, $tag);
     }
 }

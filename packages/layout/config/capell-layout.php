@@ -36,4 +36,7 @@ return [
         'capell-layout::widget.pages.siblings' => SiblingsWidget::class,
         'capell-layout::widget.pages.latest' => LatestWidget::class,
     ],
+    'widget' => [
+        'hide_empty' => false,
+    ],
 ];

@@ -66,31 +66,31 @@ declare(strict_types=1);
                     '[&>*:not(:first-child)]:pt-2 [&>*:not(:last-child)]:pb-2' => $spacing === 'sm' && (! $columns && $columns !== 0),
                     '[&>*:not(:first-child)]:pt-4 [&>*:not(:last-child)]:pb-4' => $spacing === 'lg' && (! $columns && $columns !== 0),
                     '[&>*:not(:first-child)]:pt-6 [&>*:not(:last-child)]:pb-6' => $spacing === 'md' && (! $columns && $columns !== 0),
-                    'gap-2 lg:gap-x-4 lg:gap-y-4' => $spacing === 'sm' && $columns,
-                    'gap-4 lg:gap-x-6 lg:gap-y-6' => $spacing === 'md' && $columns,
-                    'gap-6 lg:gap-x-8 lg:gap-y-8' => $spacing === 'lg' && $columns,
+                    '@lg:gap-x-4 @lg:gap-y-4 gap-2' => $spacing === 'sm' && $columns,
+                    '@lg:gap-x-6 @lg:gap-y-6 gap-4' => $spacing === 'md' && $columns,
+                    '@lg:gap-x-8 @lg:gap-y-8 gap-6' => $spacing === 'lg' && $columns,
                     '@3xl:grid-cols-2' => $columns > 1 && count($pages) >= 2,
-                    '@8xl/wrap:grid-cols-3' => $columns > 2 && count($pages) >= 3,
+                    '@8xl:grid-cols-3' => $columns > 2 && count($pages) >= 3,
                 ],
             ])
         >
             @foreach ($pages as $item)
                 <x-dynamic-component
                     :component="$componentItem"
-                    :icon="$widget->meta['icon'] ?? false"
-                    :$loop
                     :$container
                     :$containerKey
-                    :image="$withImage ? $item->image : null"
-                    :title="$item->translation->title"
-                    :summary="$withSummary ? $item->translation->summary : null"
-                    :tags="$withTags ? $item->tags : null"
+                    :$loop
                     :count="$withChildCount ? $item->children_count : null"
+                    :icon="$widget->meta['icon'] ?? false"
+                    :image="$withImage ? $item->image : null"
                     :parent="$withParent ? $item->loadParent($language) : null"
                     :publish-date="$withDate ? $item->getPublishDate() : null"
+                    :size="$size"
+                    :summary="$withSummary ? $item->translation->summary : null"
+                    :tags="$withTags ? $item->tags : null"
+                    :title="$item->translation->title"
                     :url="$item->pageUrl->full_url"
                     :with-summary="$withSummary"
-                    :size="$size"
                 />
             @endforeach
         </div>

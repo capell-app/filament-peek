@@ -16,13 +16,17 @@ class ContentSettingsSchema
         return [
             ContentSelect::make('parent_id')
                 ->label(__('capell-admin::form.parent'))
-                ->withEditForm()
                 ->lazy()
                 ->modifySelectOptionsQueryUsing(function (Builder $query, ?Content $record): void {
                     if ($record instanceof Content) {
                         $query->where('contents.id', '!=', $record->id);
                     }
-                }),
+                })
+                ->when(
+                    $schema->isCreating(),
+                    fn (ContentSelect $component): ContentSelect => $component->withCreateForm(),
+                    fn (ContentSelect $component): ContentSelect => $component->withEditForm()
+                ),
 
             SiteSelect::make('site_id')
                 ->default(null)

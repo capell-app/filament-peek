@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 @props([
     'columns' => $container['meta']['override_columns'] ?? ($widget->meta['columns'] ?? 3),
-    'componentItem' => ($widget->meta['component_item'] ?? AssetComponentEnum::Card->value),
     'container',
     'containerKey',
     'containerWidth' => null,

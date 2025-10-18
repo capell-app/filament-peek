@@ -95,6 +95,9 @@ use Wildside\Userstamps\Userstamps;
  * @property-read int|null $activities_count
  *
  * @mixin Model
+ * @mixin Model
+ * @mixin Model
+ * @mixin Model
  * @mixin \Eloquent
  */
 #[ObservedBy(WidgetObserver::class)]

@@ -8,16 +8,13 @@ use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Type;
-use Capell\Layout\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Layout\Enums\LayoutModelEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\WidgetSchemaEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Filament\Resources\Types\Schemas\Types\WidgetTypeSchema;
-use Capell\Layout\Filament\Resources\Widgets\Schemas\Types\Assets\HeroWidgetAssetForm;
 use Capell\Layout\Filament\Resources\Widgets\Schemas\Types\CarouselWidgetSchema;
-use Capell\Layout\Filament\Resources\Widgets\Schemas\Types\HeroWidgetSchema;
 use Capell\Layout\Models\Widget;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -54,7 +51,6 @@ class WidgetCreator
         $this->childrenWidget($pageResultsWidgetType, $languages);
         $this->contentsWidgets($contentsWidgetType);
         $this->galleryWidget($mediaWidgetType, $languages);
-        $this->heroWidget($contentsWidgetType);
         $this->latestPagesWidget($pageResultsWidgetType, $languages);
         $this->mediaCarouselWidget($mediaWidgetType);
         $this->pageContentWidget($pageContentWidgetType);
@@ -123,33 +119,6 @@ class WidgetCreator
             ],
             'admin' => [
                 'icon' => 'heroicon-o-rectangle-stack',
-            ],
-        ]);
-    }
-
-    private function heroWidget(Type $mediaWidgetType): Widget
-    {
-        return $this->widgetModel::firstOrCreate([
-            'key' => 'hero',
-        ], [
-            'name' => __('capell-layout::generic.hero'),
-            'type_id' => $mediaWidgetType->id,
-            'meta' => [
-                'component' => 'capell-layout::widget.hero',
-                'heading_size' => 'h1',
-                'carousel_fade' => true,
-                'carousel_arrows' => false,
-                'carousel_pagination' => true,
-                'carousel_loop' => true,
-                'carousel_auto' => true,
-                'carousel_auto_delay' => 50000,
-                'color_scheme' => 'dark',
-            ],
-            'admin' => [
-                'icon' => 'heroicon-o-gift',
-                'schema' => HeroWidgetSchema::getKey(),
-                'asset_types' => [LayoutAssetEnum::Content->value],
-                'widget_asset_schema' => HeroWidgetAssetForm::getKey(),
             ],
         ]);
     }
@@ -348,7 +317,6 @@ class WidgetCreator
             'meta' => [
                 'component' => WidgetComponentEnum::Tags,
                 'size' => 'sm',
-                'margin' => ['md'],
             ],
             'admin' => [
                 'icon' => 'heroicon-' . Heroicon::OutlinedTag->value,
@@ -359,7 +327,7 @@ class WidgetCreator
             $widget->translations()->firstOrCreate([
                 'language_id' => $language->id,
             ], [
-                'content' => 'Pages are organized by tags. Click any tag to see all related pages grouped by topic, so you can quickly find what you’re looking for.',
+                'content' => 'Browse by tag to explore related topics and content.',
             ]);
         });
     }

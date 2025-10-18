@@ -101,7 +101,6 @@ class WidgetSelect extends Select
                     })
                     ->modalWidth(Width::SixExtraLarge)
                     ->slideOver()
-                    ->visible(fn ($state): bool => (bool) $state)
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.updated_successfully',

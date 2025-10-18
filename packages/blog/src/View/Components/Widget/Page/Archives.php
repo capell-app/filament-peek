@@ -42,7 +42,7 @@ class Archives extends AbstractWidget
             limit: $limit
         );
 
-        if ($this->archives->isEmpty() && $this->containerKey !== 'main') {
+        if ($this->archives->isEmpty() && config('capell-layout.widget.hide_empty')) {
             $this->skipRender = true;
 
             return;

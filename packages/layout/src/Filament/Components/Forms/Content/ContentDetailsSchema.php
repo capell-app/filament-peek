@@ -17,11 +17,11 @@ class ContentDetailsSchema
             ContentTypeSelect::make('type_id')
                 ->live()
                 ->withRelation()
-                ->withCreateForm()
-                ->withEditForm()
-                ->unless(
-                    in_array($schema->getOperation(), ['create', 'createOption']),
-                    fn (ContentTypeSelect $component): ContentTypeSelect => $component->changeConfirmation()
+                ->when(
+                    $schema->isCreating(),
+                    fn (ContentTypeSelect $component): ContentTypeSelect => $component->withCreateForm(),
+                    fn (ContentTypeSelect $component): ContentTypeSelect => $component->withEditForm()
+                        ->changeConfirmation()
                 ),
         ];
     }

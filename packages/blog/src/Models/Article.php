@@ -153,6 +153,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read int|null $related_count
  *
  * @mixin Model
+ * @mixin Model
+ * @mixin Model
+ * @mixin Model
  * @mixin \Eloquent
  */
 class Article extends Page

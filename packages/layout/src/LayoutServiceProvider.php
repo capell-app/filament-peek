@@ -158,6 +158,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             class: self::class,
             path: __DIR__,
             permissions: $this->getPackagePermissions(),
+            installCommand: true,
             demoCommand: true,
             upgradeCommand: true,
             demoParams: ['author', 'sites'],
@@ -170,9 +171,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         );
 
         CapellAdmin::registerResource(LayoutResourceEnum::Content->name, class: LayoutResourceEnum::Content->value);
-
         CapellAdmin::registerResource(LayoutResourceEnum::Widget->name, class: LayoutResourceEnum::Widget->value);
-
         CapellAdmin::registerResource(ResourceEnum::Layout, class: LayoutResource::class);
 
         foreach (LayoutTypeEnum::cases() as $layoutType) {
@@ -243,9 +242,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     private function registerModels(): self
     {
-        CapellCore::registerModel(LayoutModelEnum::Content, Content::class);
-        CapellCore::registerModel(LayoutModelEnum::Widget, Widget::class);
-        CapellCore::registerModel(LayoutModelEnum::WidgetAsset, WidgetAsset::class);
+        CapellCore::registerModels(LayoutModelEnum::cases());
 
         return $this;
     }

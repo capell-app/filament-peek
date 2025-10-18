@@ -35,7 +35,7 @@ declare(strict_types=1);
          || ($showPageContent && $page->translation->title)
          || ($showPageTitle && $page->translation->content))
         <x-capell::content
-            class="mb-4"
+            class="mb-2"
             :compact="true"
             :content="$widget->translation->content ?? ($showPageContent ? $page->translation->content : null)"
             :presenter="$widget->type->meta['content_presenter'] ?? null"

@@ -54,7 +54,6 @@ declare(strict_types=1);
                 <x-capell::badge
                     :$url
                     :count="$tag->pages_count"
-                    size="sm"
                 >
                     {{ $tag->getTranslation('name', $language->code) }}
                 </x-capell::badge>

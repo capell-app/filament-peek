@@ -154,7 +154,7 @@ class ContentSelect extends Select
             })
             ->getSelectedRecordUsing(static fn (self $component, $state): ?Model => Content::query()->find($state))
             ->updateOptionUsing(static function (array $data, Schema $schema): void {
-                $schema->getRecord()?->update($data);
+                $schema->getRecord()->update($data);
             });
     }
 

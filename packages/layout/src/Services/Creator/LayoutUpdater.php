@@ -18,8 +18,6 @@ class LayoutUpdater
             $this->resultsLayout(Layout::query()->firstWhere('key', LayoutEnum::Results));
             $this->tagsLayout(Layout::query()->firstWhere('key', LayoutEnum::Tags));
 
-            $this->addHeroContainerToOtherLayouts();
-
             return;
         }
 
@@ -52,7 +50,6 @@ class LayoutUpdater
     {
         $layout->update([
             'containers' => [
-                'hero' => $this->heroContainer(),
                 'main' => [
                     'widgets' => [
                         ['widget_key' => 'page-content'],
@@ -66,7 +63,6 @@ class LayoutUpdater
     {
         $layout->update([
             'containers' => [
-                'hero' => $this->heroContainer(),
                 'main' => $this->mainContainer([
                     ['widget_key' => 'breadcrumbs'],
                     ['widget_key' => 'page-content'],
@@ -83,7 +79,6 @@ class LayoutUpdater
     {
         $layout->update([
             'containers' => [
-                'hero' => $this->heroContainer(),
                 'main' => $this->mainContainer([
                     ['widget_key' => 'tags', 'meta' => ['show_page_title' => true]],
                 ]),
@@ -92,38 +87,6 @@ class LayoutUpdater
                 ]),
             ],
         ]);
-    }
-
-    private function addHeroContainerToOtherLayouts(): void
-    {
-        Layout::query()->whereNotIn('key', [
-            LayoutEnum::Default->value,
-            LayoutEnum::Home->value,
-            LayoutEnum::Results->value,
-            LayoutEnum::Tags->value,
-        ])
-            ->each(function (Layout $layout): void {
-                $containers = $layout->containers ?? [];
-
-                if (! array_key_exists('hero', $containers)) {
-                    $containers = array_merge(['hero' => $this->heroContainer()], $containers);
-
-                    $layout->update(['containers' => $containers]);
-                }
-            });
-    }
-
-    private function heroContainer(): array
-    {
-        return [
-            'meta' => [
-                'colspan' => 12,
-                'container' => 'full',
-            ],
-            'widgets' => [
-                ['widget_key' => 'hero'],
-            ],
-        ];
     }
 
     private function sidebarContainer(array $widgets): array

@@ -21,13 +21,14 @@ declare(strict_types=1);
     'containerWidth' => null,
     'large' => false,
     'loop',
+    'pageContainer' => $widget->meta['container'] ?? $theme->meta['container'] ?? null,
     'size' => $widget->meta['size'] ?? '',
     'spacing' => $widget->meta['spacing'] ?? null,
     'widget',
     'widget_theme' => $widget->meta['widget_theme'] ?? '',
 ])
 <x-capell-layout::widget.wrapper
-    :class="'widget-media-gallery' . ($widget->meta['container'] === 'full' ? ' px-4' : '')"
+    :class="'widget-media-gallery' . ($pageContainer === 'full' ? ' px-4' : '')"
     :$container
     :$containerKey
     :$containerWidth
@@ -36,7 +37,7 @@ declare(strict_types=1);
 >
     @if ($widget->translation)
         <x-capell::content
-            :class="'mb-5' . ($widget->meta['container'] === 'full' ? ' container' : '')"
+            :class="'mb-5' . ($pageContainer === 'full' ? ' container' : '')"
             :compact="true"
             align="center"
             :content="$widget->translation->content"

@@ -9,10 +9,11 @@ use Capell\Layout\Models\Content;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Schema;
 
 class RelatedRepeater
 {
-    public static function make(): Repeater
+    public static function make(Schema $schema): Repeater
     {
         return Repeater::make('related')
             ->label(__('capell-admin::form.related_contents'))
@@ -57,8 +58,11 @@ class RelatedRepeater
                     ->hiddenLabel()
                     ->required()
                     ->preload(fn (string $operation): bool => in_array($operation, ['create', 'createOption'], true))
-                    ->withEditForm()
-                    ->withCreateForm(),
+                    ->when(
+                        $schema->isCreating(),
+                        fn (ContentSelect $component): ContentSelect => $component->withCreateForm(),
+                        fn (ContentSelect $component): ContentSelect => $component->withEditForm()
+                    ),
             );
     }
 }

@@ -61,7 +61,7 @@ declare(strict_types=1);
                 $slotRendered = false;
             @endphp
 
-            @foreach ($layout->containers as $containerKey => $container)
+            @foreach ((array) $layout->containers as $containerKey => $container)
                 @php
                     $widgets = collect($container['widgets'])
                         ->map(

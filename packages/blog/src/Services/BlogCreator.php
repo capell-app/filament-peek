@@ -17,7 +17,6 @@ use Capell\Blog\Filament\Resources\Widgets\Schemas\Types\ArticleWidgetSchema;
 use Capell\Core\Enums\LayoutGroupEnum;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Enums\TypeGroupEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Navigation;
@@ -145,7 +144,6 @@ class BlogCreator
                 'main' => [
                     'meta' => [
                         'colspan' => 9,
-                        'container' => 'full',
                     ],
                     'widgets' => [
                         ['widget_key' => 'breadcrumbs'],
@@ -171,15 +169,13 @@ class BlogCreator
 
     public static function createBlogPageLayout(): Layout
     {
-        return Layout::query()->firstOrCreate(['key' => 'blogs'], [
+        return Layout::query()->firstOrCreate(['key' => 'blog-results'], [
             'name' => __('capell-blog::generic.blog_page'),
             'group' => LayoutGroupEnum::System->value,
             'containers' => [
-                ...self::heroContainer(),
                 'main' => [
                     'meta' => [
                         'colspan' => 9,
-                        'container' => 'full',
                     ],
                     'widgets' => [
                         ['widget_key' => 'page-slot'],
@@ -297,11 +293,9 @@ class BlogCreator
             'name' => __('capell-blog::generic.article'),
             'group' => LayoutGroupEnum::Default->value,
             'containers' => [
-                ...self::heroContainer(),
                 'main' => [
                     'meta' => [
                         'colspan' => 9,
-                        'container' => 'full',
                     ],
                     'widgets' => [
                         ['widget_key' => 'breadcrumbs'],
@@ -420,7 +414,6 @@ class BlogCreator
                 'slug' => 'blog',
                 'meta' => [
                     'label' => __('capell-blog::generic.blog'),
-                    'hero' => '<h1>' . __('capell-blog::generic.latest_articles') . '</h1><p>' . __('capell-blog::generic.blog_intro') . '</p>',
                 ],
             ]);
 
@@ -497,24 +490,5 @@ class BlogCreator
         });
 
         return $widget;
-    }
-
-    private static function heroContainer(): array
-    {
-        if (! CapellCore::hasPackage('capell-layout')) {
-            return [];
-        }
-
-        return [
-            'hero' => [
-                'meta' => [
-                    'colspan' => 12,
-                    'container' => 'full',
-                ],
-                'widgets' => [
-                    ['widget_key' => 'hero'],
-                ],
-            ],
-        ];
     }
 }

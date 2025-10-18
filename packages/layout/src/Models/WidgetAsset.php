@@ -73,6 +73,9 @@ use Wildside\Userstamps\Userstamps;
  * @property-read int|null $assets_count
  *
  * @mixin Model
+ * @mixin Model
+ * @mixin Model
+ * @mixin Model
  * @mixin \Eloquent
  */
 class WidgetAsset extends Model implements HasMedia, PageCacheable

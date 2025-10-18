@@ -41,11 +41,11 @@ class WidgetSettingsSchema
 
             WidgetTypeSelect::make('type_id')
                 ->withRelation()
-                ->withCreateForm()
-                ->withEditForm()
-                ->unless(
-                    in_array($schema->getOperation(), ['create', 'createOption']),
-                    fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->changeConfirmation()
+                ->when(
+                    $schema->isCreating(),
+                    fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withCreateForm(),
+                    fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withEditForm()
+                        ->changeConfirmation()
                 ),
 
             ...$components,

@@ -12,7 +12,6 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Layout\Actions\CreateThemeAction;
 use Capell\Layout\Models\Content;
-use Capell\Layout\Models\Widget;
 use Capell\Layout\Services\Creator\ContentCreator;
 use Capell\Layout\Services\Creator\DemoCreator;
 use Capell\Layout\Services\Creator\TypeCreator;
@@ -154,11 +153,6 @@ class DemoCommand extends Command
         $page->update(['layout_id' => $layout->id]);
 
         $containers = $layout->containers;
-
-        $heroWidget = Widget::query()->firstWhere('key', 'hero');
-
-        $this->demoCreator->createContentsWidget($heroWidget, $page, container: 'hero');
-        $this->line('Created assets for hero widget');
 
         $pageCardsWidget = $this->demoCreator->createPageCardsWidget($page);
         $this->line('Created page cards widgets');

@@ -18,7 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         package:
+          - address
           - blog
+          - hero
           - layout
     steps:
       - uses: actions/checkout@v4

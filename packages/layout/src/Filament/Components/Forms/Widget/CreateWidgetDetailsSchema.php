@@ -14,11 +14,11 @@ class CreateWidgetDetailsSchema
     {
         return Grid::make()
             ->visibleOn(['create', 'createOption', 'replicate'])
-            ->schema(self::getSchema())
+            ->schema(self::getSchema($schema))
             ->columnSpanFull();
     }
 
-    private static function getSchema(): array
+    private static function getSchema(Schema $schema): array
     {
         return [
             Grid::make()
@@ -26,11 +26,14 @@ class CreateWidgetDetailsSchema
                 ->schema([
                     NameInput::make('name')
                         ->withTitleUpdater(),
-
                     WidgetTypeSelect::make('type_id')
                         ->live()
                         ->withRelation()
-                        ->withCreateForm(),
+                        ->when(
+                            $schema->isCreating(),
+                            fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withCreateForm(),
+                            fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withEditForm(),
+                        ),
                 ]),
         ];
     }

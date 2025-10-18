@@ -32,8 +32,9 @@ class BackgroundSchema
             MediaLibraryFileUpload::make($backgroundName)
                 ->label(__('capell-admin::form.background_image'))
                 ->reactive()
+                ->columnSpan(['md' => 2])
                 ->when(
-                    $backgroundCollectionUsing !== null,
+                    $backgroundCollectionUsing instanceof Closure,
                     fn (SpatieMediaLibraryFileUpload $component): SpatieMediaLibraryFileUpload => $component->collection(
                         fn (SpatieMediaLibraryFileUpload $component): string => $component->evaluate($backgroundCollectionUsing)
                     ),

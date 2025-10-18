@@ -99,14 +99,14 @@ declare(strict_types=1);
                         :component-item="$widget->meta['component_item'] ?? AssetComponentEnum::Card->value"
                         :$container
                         :$containerKey
+                        :$loop
                         :asset="$asset->asset"
                         :with-child-count="$withChildCount"
+                        :with-date="$withDate"
                         :with-image="$withImage"
                         :with-parent="$withParent"
-                        :with-date="$withDate"
                         :with-summary="$withSummary"
                         :with-tags="$withTags"
-                        :$loop
                     />
                 @endforeach
             </div>
