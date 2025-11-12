@@ -2040,8 +2040,16 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 )
                 ->when(
                     DB::getDriverName() === 'sqlite',
-                    fn (BuilderContract $query) => $query->orderByRaw('CASE id ' . implode(' ', array_map(fn (string $id): string => sprintf('WHEN %s THEN ', $id) . array_search($id, $existingIds, true), $existingIds)) . ' END'),
-                    fn (BuilderContract $query) => $query->orderByRaw('FIELD(id, ' . implode(',', $existingIds) . ')'),
+                    fn (BuilderContract $query) => $query->orderByRaw(
+                        'CASE id '
+                        . implode(' ', array_map(
+                            fn ($id, $pos): string => sprintf('WHEN %d THEN %d', (int) $id, (int) $pos),
+                            $existingIds,
+                            array_keys($existingIds),
+                        ))
+                          . ' END',
+                    ),
+                    fn (BuilderContract $query) => $query->orderByRaw('FIELD(id, ' . implode(',', array_map('intval', $existingIds)) . ')'),
                 )
                 ->get();
 

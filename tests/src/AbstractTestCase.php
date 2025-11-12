@@ -50,6 +50,7 @@ use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
 use Orchestra\Workbench\WorkbenchServiceProvider;
 use Rmsramos\Activitylog\ActivitylogServiceProvider;
+use RuntimeException;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
 use Silber\PageCache\LaravelServiceProvider;
@@ -84,6 +85,14 @@ abstract class AbstractTestCase extends TestCase
 
         $migrations = CapellCoreManager::getMigrations();
         $path = realpath(__DIR__ . '/../../vendor/capell-app/core/database/migrations');
+
+        if (! $path) {
+            $path = realpath(__DIR__ . '/../../vendor/capell-app/core/packages/core/database/migrations');
+        }
+
+        if (! $path) {
+            throw new RuntimeException('Could not find core migrations path.');
+        }
 
         array_walk($migrations, fn (&$migration): string => $migration = sprintf('%s/%s.php', $path, $migration));
 
