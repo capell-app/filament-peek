@@ -23,13 +23,18 @@
 >
     <testsuites>
         <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/src/*/Feature</directory>
+            <directory suffix="Test.php">./tests/src/Blog/Feature</directory>
+            <directory suffix="Test.php">./tests/src/Layout/Feature</directory>
         </testsuite>
         <testsuite name="Arch">
-            <directory suffix="Test.php">./tests/src/*/Arch</directory>
+            <directory suffix="Test.php">./tests/src/Blog/Arch</directory>
+            <directory suffix="Test.php">./tests/src/Layout/Arch</directory>
         </testsuite>
         <testsuite name="Integration">
-            <directory suffix="Test.php">./tests/src/*/Integration</directory>
+            <directory suffix="Test.php">./tests/src/Address/Integration</directory>
+            <directory suffix="Test.php">./tests/src/Blog/Integration</directory>
+            <directory suffix="Test.php">./tests/src/Layout/Integration</directory>
+            <directory suffix="Test.php">./tests/src/Packages/Integration</directory>
         </testsuite>
     </testsuites>
     <source>
@@ -51,6 +56,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="RAY_ENABLED" value="false"/>
     </php>
     <logging>
         <junit outputFile="build/report.junit.xml"/>

@@ -36,16 +36,81 @@
             }
         },
         {
-            "type": "vcs",
-            "url": "https://github.com/capell-app/core"
+            "type": "package",
+            "package": {
+                "name": "capell-app/admin",
+                "version": "4.x-dev",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/capell-app/capell.git",
+                    "reference": "4.x"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "Capell\\Admin\\": "packages/admin/src"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "Capell\\Admin\\AdminServiceProvider"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "capell-app/core",
+                "version": "4.x-dev",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/capell-app/capell.git",
+                    "reference": "4.x"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "Capell\\Core\\": "packages/core/src",
+                        "Capell\\Core\\Database\\Factories\\": "packages/core/database/factories"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "Capell\\Core\\CapellServiceProvider"
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "capell-app/frontend",
+                "version": "4.x-dev",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/capell-app/capell.git",
+                    "reference": "4.x"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "Capell\\Frontend\\": "packages/frontend/src/"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "Capell\\Frontend\\FrontendServiceProvider"
+                        ]
+                    }
+                }
+            }
         },
         {
             "type": "vcs",
-            "url": "https://github.com/capell-app/admin"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/capell-app/frontend"
+            "url": "https://github.com/capell-app/capell"
         },
         {
             "type": "vcs",
@@ -65,24 +130,27 @@
         "ext-fileinfo": "*",
         "ext-intl": "*",
         "ext-simplexml": "*",
+        "amidesfahani/filament-tinyeditor": "^4.0",
         "awcodes/filament-badgeable-column": "^3.0",
         "awobaz/compoships": "^2.3",
         "bezhansalleh/filament-shield": "^4.0",
         "bkwld/cloner": "^3.11",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "blendbyte/filament-title-with-slug": "dev-fila4",
-        "capell-app/admin": "^4.0|4.x-dev",
-        "capell-app/core": "^4.0|4.x-dev",
-        "capell-app/frontend": "^4.0|4.x-dev",
+        "capell-app/admin": "4.x-dev",
+        "capell-app/core": "4.x-dev",
+        "capell-app/frontend": "4.x-dev",
         "codewithdennis/filament-select-tree": "^4.0",
         "filament/filament": "^4.0",
         "filament/spatie-laravel-media-library-plugin": "^4.0",
         "filament/spatie-laravel-settings-plugin": "^4.0",
         "filament/spatie-laravel-tags-plugin": "^4.0",
+        "guava/filament-icon-picker": "^3.0",
         "guzzlehttp/guzzle": "^7.5",
         "howdu/filament-record-switcher": "^2.0",
         "icamys/php-sitemap-generator": "^4.4.1",
         "kalnoy/nestedset": "^6.0.2",
+        "lara-zeus/spatie-translatable": "^1.0",
         "laravel/framework": "^11.0|^12.0",
         "laravel/prompts": "^0.3",
         "lorisleiva/laravel-actions": "^2.8",
