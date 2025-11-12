@@ -14,17 +14,12 @@ jobs:
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }} - DB${{ matrix.db }}
     runs-on: ${{ matrix.os }}
     env:
-      COMPOSER_AUTH: |
-        {
-          "github-oauth": {
-            "github.com": "${{ secrets.ACCESS_TOKEN }}"
-          }
-        }
+      COMPOSER_AUTH: '{"github-oauth":{"github.com":"'"${{ secrets.ACCESS_TOKEN }}"'"}}'
     strategy:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.3, 8.4]
+        php: [8.2, 8.3, 8.4]
         laravel: [11.*, 12.*]
         stability: [prefer-stable]
         db: [sqlite, mysql]
@@ -38,6 +33,8 @@ jobs:
             php: 8.4
           - laravel: 12.*
             php: 8.3
+          - laravel: 12.*
+            php: 8.2
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -72,7 +69,7 @@ jobs:
 
       - name: Install PHP dependencies (use dev v4 branches)
         if: steps.php-cache.outputs.cache-hit != 'true'
-        run: composer update capell-app/core capell-app/admin capell-app/frontend --no-interaction --no-progress --ansi --optimize-autoloader --with capell-app/core:dev-feature/4.x --with capell-app/admin:dev-feature/4.x --with capell-app/frontend:dev-feature/4.x
+        run: composer update capell-app/core capell-app/admin capell-app/frontend --no-interaction --no-progress --ansi --optimize-autoloader --with capell-app/core:4.x-dev --with capell-app/admin:4.x-dev --with capell-app/frontend:4.x-dev
 
       - name: Configure environment
         run: |

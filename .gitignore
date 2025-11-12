@@ -8,9 +8,7 @@
 .phpunit.result.cache
 /build
 Thumbs.db
-composer.lock
-composer.local.json
-composer.local.lock
+composer.local.*
 coverage
 docs
 node_modules
