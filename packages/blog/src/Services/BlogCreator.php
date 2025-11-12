@@ -17,6 +17,7 @@ use Capell\Blog\Enums\BlogResourceEnum;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
 use Capell\Blog\Enums\PageComponentEnum;
 use Capell\Blog\Enums\WidgetComponentEnum as BlogWidgetComponentEnum;
+use Capell\Blog\Enums\WidgetSchemaEnum;
 use Capell\Blog\Filament\Resources\Articles\Schemas\Types\ArticlePageSchema;
 use Capell\Blog\Filament\Resources\Widgets\Schemas\Types\ArticleWidgetSchema;
 use Capell\Core\Enums\LayoutGroupEnum;
@@ -150,11 +151,11 @@ class BlogCreator
             ->whereIn('key', $keys)
             ->where(
                 fn (Builder $query) => $query->whereNull('site_id')
-                    ->orWhere('site_id', $site->id)
+                    ->orWhere('site_id', $site->id),
             )
             ->where(
                 fn (Builder $query) => $query->whereNull('language_id')
-                    ->orWhereIn('language_id', $languages->pluck('id'))
+                    ->orWhereIn('language_id', $languages->pluck('id')),
             )
             ->get()
             ->each(function (Navigation $navigation) use ($pages): void {
@@ -169,7 +170,7 @@ class BlogCreator
         Page $parent,
         ?Type $type = null,
         ?Layout $layout = null,
-        ?Collection $languages = null
+        ?Collection $languages = null,
     ): Page {
         if (! $type instanceof Type) {
             $type = Type::query()->where('key', 'archive')->pageType()->first()
@@ -408,7 +409,7 @@ class BlogCreator
         Page $parent,
         ?Type $type = null,
         ?Layout $layout = null,
-        ?Collection $languages = null
+        ?Collection $languages = null,
     ): Page {
         if (! $layout instanceof Layout) {
             $layout = Layout::query()->firstWhere('key', 'archives') ?? self::createArchivesLayout();
@@ -543,7 +544,7 @@ class BlogCreator
             'admin' => [
                 'icon' => 'heroicon-c-link',
                 'type_schema' => WidgetTypeSchema::getKey(),
-                'schema' => \Capell\Blog\Enums\WidgetSchemaEnum::Related->value,
+                'schema' => WidgetSchemaEnum::Related->value,
             ],
         ]);
 
@@ -580,7 +581,7 @@ class BlogCreator
         Site $site,
         ?Type $type = null,
         ?Layout $layout = null,
-        ?\Illuminate\Support\Collection $languages = null
+        ?\Illuminate\Support\Collection $languages = null,
     ): Page {
         if (! $type instanceof Type) {
             $type = self::createBlogPageType();

@@ -328,7 +328,7 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
 
     public function getQualifiedIsPublishedColumn(?string $table = null): string
     {
-        return $table !== null && $table !== '' && $table !== '0' ? $table . '.' . $this->getIsPublishedColumn() : $this->getIsPublishedColumn();
+        return in_array($table, [null, '', '0'], true) ? $this->getIsPublishedColumn() : $table . '.' . $this->getIsPublishedColumn();
     }
 
     public function loadParent(Language $language): void

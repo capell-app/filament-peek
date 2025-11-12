@@ -58,7 +58,7 @@ class EditWidget extends EditRecord implements PageCacheNotifiable
         return new HtmlString(
             __('capell-admin::heading.edit_widget_record', [
                 'name' => Str::limit($this->getRecordTitle(), 40),
-            ])
+            ]),
         );
     }
 
@@ -97,7 +97,7 @@ class EditWidget extends EditRecord implements PageCacheNotifiable
             $this->dispatch(
                 'model-updated',
                 date: $this->record->updated_at->translatedFormat($this->getTable()->getDefaultDateTimeDisplayFormat()),
-                diffSeconds: now()->diffInSeconds($this->record->updated_at)
+                diffSeconds: now()->diffInSeconds($this->record->updated_at),
             );
         }
 

@@ -24,6 +24,7 @@ use Capell\Core\Events\NavigationCreating;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\Type;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
 use Capell\Layout\Enums\ComponentTypeEnum;
 use Capell\Layout\Enums\LayoutModelEnum;
@@ -74,11 +75,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         $this->registerPublishCommands();
 
         CapellAdmin::serving(function (): void {
-            CapellCore::addDefaultPage('blog', 'Blog', function ($site, $languages): void {
+            CapellCore::addDefaultPage('blog', 'Blog', function (Site $site, ?Type $languages): void {
                 (new BlogCreator)->createBlogPage($site, languages: $languages);
             });
 
-            CapellCore::addDefaultPage('archives', 'Blog Archives', function ($site, $languages): void {
+            CapellCore::addDefaultPage('archives', 'Blog Archives', function (Site $site, ?Type $languages): void {
                 $blogPage = BlogLoader::getBlogPage($site);
 
                 $archivesPage = (new BlogCreator)->createArchivesPage($site, $blogPage, languages: $languages);
@@ -108,7 +109,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
                                 'alter_tags_table',
                             ],
                             '--path' => __DIR__ . '/../database/migrations',
-                        ]
+                        ],
                     );
 
                     $command->info('Publishing Capell Blog...');
@@ -137,13 +138,13 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         Relation::morphMap(
             collect(BlogModelEnum::cases())
                 ->mapWithKeys(fn (BlogModelEnum $model): array => [Str::snake($model->name) => $model->value])
-                ->all()
+                ->all(),
         );
 
         CapellAdmin::registerResource(
             ResourceEnum::Page,
             class: BlogResourceEnum::Article->getResource(),
-            name: BlogResourceEnum::Article->value
+            name: BlogResourceEnum::Article->value,
         );
 
         CapellAdmin::registerResource(BlogResourceEnum::Tag->name, class: BlogResourceEnum::Tag->getResource());
@@ -190,23 +191,23 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     {
         Page::resolveRelationUsing(
             'tags',
-            fn (Page $model): MorphToMany => $model->morphToMany(Tag::class, 'taggable', 'taggables')
+            fn (Page $model): MorphToMany => $model->morphToMany(Tag::class, 'taggable', 'taggables'),
         );
 
         Site::resolveRelationUsing(
             'tags',
-            fn (Site $model): HasMany => $model->hasMany(Tag::class, 'site_id')
+            fn (Site $model): HasMany => $model->hasMany(Tag::class, 'site_id'),
         );
 
         if (class_exists(Content::class)) {
             Content::resolveRelationUsing(
                 'tags',
-                fn (Content $model): MorphToMany => $model->morphToMany(Tag::class, 'taggable', 'taggables')
+                fn (Content $model): MorphToMany => $model->morphToMany(Tag::class, 'taggable', 'taggables'),
             );
 
             Tag::resolveRelationUsing(
                 'contents',
-                fn (Tag $model): MorphToMany => $model->morphedByMany(Content::class, 'taggable', 'taggables')
+                fn (Tag $model): MorphToMany => $model->morphedByMany(Content::class, 'taggable', 'taggables'),
             );
         }
 

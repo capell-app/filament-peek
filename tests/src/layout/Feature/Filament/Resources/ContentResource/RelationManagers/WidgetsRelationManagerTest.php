@@ -19,7 +19,7 @@ it('can list widgets for a content model', function (): void {
                 'asset_type' => 'content',
                 'asset_id' => $content->getKey(),
             ]),
-            'assets'
+            'assets',
         )
         ->create();
 
@@ -29,7 +29,7 @@ it('can list widgets for a content model', function (): void {
                 'asset_type' => 'content',
                 'asset_id' => $content->getKey(),
             ]),
-            'assets'
+            'assets',
         )
         ->create();
 

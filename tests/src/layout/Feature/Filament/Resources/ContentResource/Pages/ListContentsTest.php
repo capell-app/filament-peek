@@ -70,7 +70,7 @@ test('can replicate contents', function (): void {
             TestAction::make(ReplicateAction::class)->table($content),
             data: [
                 'name' => $content->name . ' (copy)',
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(2);

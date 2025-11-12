@@ -23,7 +23,7 @@ class WidgetTranslationsRepeater
         return TranslationsRepeater::make('translations')
             ->when(
                 $schema->getOperation() === 'replicate',
-                fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship()
+                fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship(),
             )
             ->schema([
                 Grid::make(3)
@@ -39,7 +39,7 @@ class WidgetTranslationsRepeater
                     ]),
 
                 ContentEditor::make(
-                    editor: $contentEditor ? ContentEditorEnum::tryFrom($contentEditor) : null
+                    editor: $contentEditor ? ContentEditorEnum::tryFrom($contentEditor) : null,
                 ),
 
                 ...$components,

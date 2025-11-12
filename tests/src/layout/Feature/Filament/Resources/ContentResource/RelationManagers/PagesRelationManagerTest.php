@@ -27,7 +27,7 @@ it('can list pages for a content model', function (): void {
                     ['occurrence' => 1],
                     ['occurrence' => 2],
                 ),
-            'assets'
+            'assets',
         )
         ->create();
 
@@ -62,7 +62,7 @@ it('can search pages for a content model', function (): void {
                     ['occurrence' => 5],
                 )
                 ->count(5),
-            'assets'
+            'assets',
         )
         ->create();
 

@@ -169,13 +169,13 @@ class Widget extends Model implements HasMedia, PageCacheable, Statusable
                 'CASE `group`
                     WHEN "default" THEN 1
                     ELSE 0
-                END DESC'
+                END DESC',
             )
             ->orderByRaw(
                 'CASE `group`
                     WHEN "system" THEN 1
                     ELSE 0
-                END ASC'
+                END ASC',
             )
             ->where('type', LayoutTypeEnum::Widget)
             ->whereNotNull('group')
@@ -306,7 +306,7 @@ class Widget extends Model implements HasMedia, PageCacheable, Statusable
                 default => <<<'SQL'
                     (SELECT COUNT(*) FROM layouts WHERE JSON_CONTAINS(layouts.widgets, JSON_QUOTE(widgets.key)))
                 SQL,
-            } . ' AS layouts_count'
+            } . ' AS layouts_count',
         ));
     }
 }

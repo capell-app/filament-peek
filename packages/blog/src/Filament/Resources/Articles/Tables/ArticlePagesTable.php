@@ -59,14 +59,14 @@ class ArticlePagesTable implements TableConfigurator
                             $query->whereRaw('JSON_EXTRACT(`tags`.`name`, ' . DB::getPdo()->quote('$.' . $code) . ') IS NOT NULL');
                         }
                     }
-                }
+                },
             )
             ->query(function (Builder $query, array $data): Builder {
                 $value = $data['value'] ?? null;
 
                 return $query->when(
                     $value,
-                    fn (Builder $query) => $query->whereHas('tags', fn (BuilderContract $q) => $q->where('tags.id', (int) $value))
+                    fn (Builder $query) => $query->whereHas('tags', fn (BuilderContract $q) => $q->where('tags.id', (int) $value)),
                 );
             })
             ->indicateUsing(function (array $state): array {
@@ -75,7 +75,7 @@ class ArticlePagesTable implements TableConfigurator
                 if ($value) {
                     $indicators['tags'] = __(
                         'capell-admin::filter.tag',
-                        ['search' => Tag::query()->find($value)?->name]
+                        ['search' => Tag::query()->find($value)?->name],
                     );
                 }
 

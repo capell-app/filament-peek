@@ -41,7 +41,7 @@ class RelatedWidget extends AbstractPagesWidget
                 ->where('pages.id', '!=', $page->id)
                 ->when(
                     $this->widget->meta['exclude_parent'] ?? false && $page->parent_id,
-                    fn (BuilderContract $query) => $query->where('pages.id', '!=', $page->parent_id)
+                    fn (BuilderContract $query) => $query->where('pages.id', '!=', $page->parent_id),
                 )
                 ->whereHas(
                     'type',
@@ -52,17 +52,17 @@ class RelatedWidget extends AbstractPagesWidget
                             $this->widget->meta['exclude_types'] ?? false,
                             fn (BuilderContract $query) => $query->whereNotIn(
                                 'types.key',
-                                $this->widget->meta['exclude_types'] ?? []
-                            )
-                        )
+                                $this->widget->meta['exclude_types'] ?? [],
+                            ),
+                        ),
                 )
                 ->when(
                     $tags instanceof Collection && $tags->isNotEmpty(),
                     fn (Builder $query) => $query->whereHas(
                         'tags',
-                        fn (BuilderContract $query) => $query->whereIn('taggables.tag_id', $tagIds)
-                    )
-                )
+                        fn (BuilderContract $query) => $query->whereIn('taggables.tag_id', $tagIds),
+                    ),
+                ),
         );
 
         $this->skipRender = $this->pages->isEmpty();

@@ -54,12 +54,12 @@ class ModifyContentSelectCreateAction
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             );
     }
 }

@@ -45,7 +45,7 @@ class WidgetTypeSchema extends DefaultTypeSchema
             'group',
             options: fn (): array => collect(WidgetTypeGroupEnum::cases())
                 ->mapWithKeys(fn ($case): array => [$case->value => $case->name])
-                ->all()
+                ->all(),
         );
     }
 

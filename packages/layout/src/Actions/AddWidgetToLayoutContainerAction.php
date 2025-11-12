@@ -18,13 +18,13 @@ class AddWidgetToLayoutContainerAction
 
     public function handle(Widget $widget, Layout $layout, string $container): int
     {
-        throw_if(empty($layout->containers[$container]['widgets']), new RuntimeException(sprintf("Container '%s' not found in layout.", $container)));
+        throw_if(empty($layout->containers[$container]['widgets']), RuntimeException::class, sprintf("Container '%s' not found in layout.", $container));
 
         $containers = $layout->containers;
 
         $occurrence = count(array_filter(
             $containers[$container]['widgets'],
-            fn (array $existingWidget): bool => $existingWidget['widget_key'] === $widget->key
+            fn (array $existingWidget): bool => $existingWidget['widget_key'] === $widget->key,
         )) + 1;
 
         $containers[$container]['widgets'][] = [

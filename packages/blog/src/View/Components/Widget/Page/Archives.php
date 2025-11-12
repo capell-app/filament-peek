@@ -39,7 +39,7 @@ class Archives extends AbstractWidget
             site: FrontendLoader::getSite(),
             language: FrontendLoader::getLanguage(),
             type: $type,
-            limit: $limit
+            limit: $limit,
         );
 
         if ($this->archives->isEmpty() && config('capell-layout.widget.hide_empty')) {

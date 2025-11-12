@@ -34,11 +34,11 @@ class ArticlePageSchema extends DefaultPageSchema
             $blogPage = $site ? BlogLoader::getBlogPage($site) : null;
 
             return $query->adminResource(
-                $schema->getLivewire()->getResource()::getResourceName()
+                $schema->getLivewire()->getResource()::getResourceName(),
             )
                 ->when(
                     $blogPage,
-                    fn (Builder $query) => $query->orWhere('id', $blogPage->id)
+                    fn (Builder $query) => $query->orWhere('id', $blogPage->id),
                 );
         };
     }
@@ -61,7 +61,7 @@ class ArticlePageSchema extends DefaultPageSchema
                         modifyParentQueryUsing: static::modifyParentQueryUsing($schema),
                         withType: false,
                     ),
-                    contained: true
+                    contained: true,
                 ),
             Tabs::make()
                 ->columnSpanFull()

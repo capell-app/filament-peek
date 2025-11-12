@@ -124,7 +124,7 @@ test('Can sync new widget assets to page layout', function (): void {
                 'hasPageAssets' => true,
             ],
             type: \Capell\Layout\Enums\AssetEnum::Content->value,
-            assets: $contents->map(fn (Content $record): string => (string) $record->id)->toArray()
+            assets: $contents->map(fn (Content $record): string => (string) $record->id)->all(),
         )
         ->call(
             'syncSelectedAssets',
@@ -134,7 +134,7 @@ test('Can sync new widget assets to page layout', function (): void {
                 'hasPageAssets' => true,
             ],
             type: AssetEnum::Page->value,
-            assets: $pages->map(fn (Page $record): string => (string) $record->id)->toArray()
+            assets: $pages->map(fn (Page $record): string => (string) $record->id)->all(),
         )
         ->call('saveLayout');
 
@@ -174,7 +174,7 @@ test('Can sync new widget assets to layout', function (): void {
         ->each(
             fn (Expectation $expectation): HigherOrderExpectation => $expectation
                 ->container->toBeNull()
-                ->occurrence->toBe($occurrence)
+                ->occurrence->toBe($occurrence),
         );
 
     livewire(LayoutBuilder::class, [
@@ -189,7 +189,7 @@ test('Can sync new widget assets to layout', function (): void {
                 'hasPageAssets' => false,
             ],
             type: \Capell\Layout\Enums\AssetEnum::Content->value,
-            assets: $contents->map(fn (Content $record): string => (string) $record->id)->toArray()
+            assets: $contents->map(fn (Content $record): string => (string) $record->id)->all(),
         )
         ->call(
             'syncSelectedAssets',
@@ -199,7 +199,7 @@ test('Can sync new widget assets to layout', function (): void {
                 'hasPageAssets' => false,
             ],
             type: AssetEnum::Page->value,
-            assets: $pages->map(fn (Page $record): string => (string) $record->id)->toArray()
+            assets: $pages->map(fn (Page $record): string => (string) $record->id)->all(),
         )
         ->call('saveLayout');
 
@@ -243,7 +243,7 @@ test('Can sync new page assets', function (): void {
                 'hasPageAssets' => true,
             ],
             type: \Capell\Layout\Enums\AssetEnum::Content->value,
-            assets: $contents->map(fn (Content $record): string => (string) $record->id)->toArray()
+            assets: $contents->map(fn (Content $record): string => (string) $record->id)->all(),
         )
         ->call(
             'syncSelectedAssets',
@@ -253,7 +253,7 @@ test('Can sync new page assets', function (): void {
                 'hasPageAssets' => true,
             ],
             type: AssetEnum::Page->value,
-            assets: $pages->map(fn (Page $record): string => (string) $record->id)->toArray()
+            assets: $pages->map(fn (Page $record): string => (string) $record->id)->all(),
         )
         ->call('saveLayout');
 
@@ -305,7 +305,7 @@ test('Can reorder assets', function (): void {
             containerKey: 'test',
             widgetIndex: 1,
             index: 1,
-            newIndex: 0
+            newIndex: 0,
         )
         ->call('saveLayout');
 
@@ -349,7 +349,7 @@ test('Can select all widget assets', function (): void {
         }
 
         $selectedRecords[$containerKey][$i] = $assets->map(
-            fn (WidgetAsset $layoutAsset): string => $layoutAsset->asset_key
+            fn (WidgetAsset $layoutAsset): string => $layoutAsset->asset_key,
         )->toArray();
     }
 
@@ -384,7 +384,7 @@ test('can add page asset', function (): void {
                     'containerKey' => $containerKey,
                     'widgetIndex' => $widgetIndex,
                     'type' => 'page',
-                ])
+                ]),
         )
         ->fillForm([
             'asset' => [
@@ -449,8 +449,8 @@ test('can add page asset to existing widget with page layout', function (): void
                     'containerKey' => $containerKey,
                     'widgetIndex' => $widgetIndex,
                     'type' => 'page',
-                ]
-            )
+                ],
+            ),
         )
         ->fillForm([
             'asset' => [
@@ -512,7 +512,7 @@ test('can add page asset to widget with page layout', function (): void {
                 'containerKey' => $containerKey,
                 'widgetIndex' => $widgetIndex,
                 'type' => 'page',
-            ]
+            ],
         )
         ->fillForm([
             'asset' => [
@@ -558,7 +558,7 @@ test('can select assets', function (string $assetType): void {
                     'containerKey' => $containerKey,
                     'widgetIndex' => $widgetIndex,
                     'type' => $assetType,
-                ])
+                ]),
         )
         ->callMountedAction()
         ->assertHasNoFormErrors();
@@ -590,7 +590,7 @@ test('can edit asset', function (): void {
                 'widgetIndex' => $widgetIndex,
                 'index' => 0,
                 'type' => $layoutAsset['asset_type'],
-            ]
+            ],
         )
         ->fillForm([
             'asset.translations.record-' . $page->translation->id . '.title' => 'testing',
@@ -626,7 +626,7 @@ test('can remove widget assets', function (): void {
             arguments: [
                 'containerKey' => $containerKey,
                 'widgetIndex' => $widgetIndex,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -636,7 +636,7 @@ test('can remove widget assets', function (): void {
             ->whereNull('page_id')
             ->where('container', $containerKey)
             ->where('occurrence', $containerWidget['occurrence'])
-            ->exists()
+            ->exists(),
     )
         ->toBeFalse();
 });
@@ -673,7 +673,7 @@ test('can remove page assets', function (): void {
             arguments: [
                 'containerKey' => $containerKey,
                 'widgetIndex' => $widgetIndex,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -716,7 +716,7 @@ test('can not remove assets if no records selected', function (): void {
             arguments: [
                 'containerKey' => $containerKey,
                 'widgetIndex' => $widgetIndex,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->assertActionHalted('removeAssets')
@@ -727,7 +727,7 @@ test('can not remove assets if no records selected', function (): void {
             ->whereNull('page_id')
             ->where('container', $containerKey)
             ->where('occurrence', $containerWidget['occurrence'])
-            ->count()
+            ->count(),
     )
         ->toBe(3);
 })->todo();

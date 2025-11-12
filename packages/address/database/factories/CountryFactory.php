@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Capell\Address\Database\Factories;
 
 use Capell\Address\Models\Country;
+use Faker\Provider\en_US\Address;
+use Faker\Provider\Miscellaneous;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,8 @@ class CountryFactory extends Factory
 
     public function definition(): array
     {
-        $this->faker->addProvider(new \Faker\Provider\en_US\Address($this->faker));
-        $this->faker->addProvider(new \Faker\Provider\Miscellaneous($this->faker));
+        $this->faker->addProvider(new Address($this->faker));
+        $this->faker->addProvider(new Miscellaneous($this->faker));
 
         return [
             'name' => $this->faker->country(),

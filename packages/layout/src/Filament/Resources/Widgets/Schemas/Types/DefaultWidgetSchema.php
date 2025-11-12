@@ -58,7 +58,7 @@ class DefaultWidgetSchema implements TypeSchemaInterface
                 ])
                 ->sidebarSchema(
                     WidgetSettingsSchema::make($schema),
-                    contained: true
+                    contained: true,
                 ),
         ];
     }

@@ -33,7 +33,7 @@ class WidgetFactory extends Factory
                 ->state(
                     fn (): array => [
                         'default' => ! Type::query()->where('type', LayoutTypeEnum::Widget)->default()->exists(),
-                    ]
+                    ],
                 ),
             'created_at' => fake()->dateTimeBetween('-1 year', '-6 month'),
             'updated_at' => fake()->dateTimeBetween('-5 month'),

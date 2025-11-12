@@ -24,14 +24,14 @@ class ContentTranslationsRepeater
         array $components = [],
         bool $hasTitle = true,
         bool $hasContent = true,
-        bool $titleRequired = true
+        bool $titleRequired = true,
     ): RepeaterTabs {
         $operation = $schema->getOperation();
 
         return TranslationsRepeater::make('translations')
             ->when(
                 $operation === 'replicate',
-                fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship()
+                fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship(),
             )
             ->schema([
                 ...($hasTitle ? self::getTitleSchema($titleRequired) : []),
@@ -64,7 +64,7 @@ class ContentTranslationsRepeater
                 ->schema([
                     ...TranslationTitle::make(
                         modifyTitle: fn (TextInput $component): TextInput => $component->required($titleRequired)
-                            ->columnSpan(fn (Get $get): int => $get('language_id') ? 3 : 2)
+                            ->columnSpan(fn (Get $get): int => $get('language_id') ? 3 : 2),
                     ),
 
                     TranslationLanguageSelect::make()

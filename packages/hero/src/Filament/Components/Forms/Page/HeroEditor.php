@@ -32,7 +32,7 @@ class HeroEditor extends Group
                     $page = $record instanceof Page ? $record : $record->page;
 
                     return ! $this->hasPageWidgetHeroAssets($page);
-                }
+                },
             )
             ->schema([
                 ContentEditor::make('hero')
@@ -41,7 +41,7 @@ class HeroEditor extends Group
                     ->tap(
                         fn (ContentBuilder|RichEditor|TinyEditor $component): ContentBuilder|RichEditor|TinyEditor => $component instanceof TinyEditor
                             ? $component->profile(TinyEditorProfile::Simple->value)
-                            : $component
+                            : $component,
                     ),
             ]);
     }
@@ -52,7 +52,7 @@ class HeroEditor extends Group
             sprintf('page-%d-has-hero-widget-assets', $page->id),
             fn (): bool => CapellCore::getModel(LayoutModelEnum::WidgetAsset)::where('page_id', $page->id)
                 ->whereHas('widget', fn (Builder $query): Builder => $query->where('key', 'hero'))
-                ->exists()
+                ->exists(),
         );
     }
 }

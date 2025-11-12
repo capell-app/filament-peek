@@ -82,8 +82,8 @@ class TagPage extends AbstractPage
             modifyQuery: fn (Builder $query) => $query->whereHas(
                 'tags',
                 fn (BuilderContract $query) => $query->where('taggable_type', 'page')
-                    ->where('taggables.tag_id', $this->tag->id)
-            )
+                    ->where('taggables.tag_id', $this->tag->id),
+            ),
         );
 
         $this->pageParams = $this->getViewData();

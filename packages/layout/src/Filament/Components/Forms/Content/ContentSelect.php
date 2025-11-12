@@ -51,7 +51,7 @@ class ContentSelect extends Select
 
                 return $component->getContentOptions(
                     site_id: $site_id,
-                    search: $search
+                    search: $search,
                 );
             })
             ->getOptionLabelUsing(fn (self $component, $value): ?string => Content::query()->find($value, ['name'])?->name)
@@ -94,17 +94,17 @@ class ContentSelect extends Select
 
         return $this->createOptionAction(
             fn (Action $action): Action => ModifyCreateAction::run($action)
-                ->fillForm(fn (): array => $adminAsset->defaultDataAction !== null && $adminAsset->defaultDataAction !== '' && $adminAsset->defaultDataAction !== '0' ? $adminAsset->defaultDataAction::run() : [])
+                ->fillForm(fn (): array => in_array($adminAsset->defaultDataAction, [null, '', '0'], true) ? [] : $adminAsset->defaultDataAction::run()),
         )
             ->createOptionForm(
                 fn (Schema $schema): Schema => $adminAsset->formClass::configure(
-                    $schema->operation('createOption')->model($asset->model)
-                )
+                    $schema->operation('createOption')->model($asset->model),
+                ),
             )
             ->createOptionUsing(function (Select $component, array $data) use ($asset, $adminAsset, $createOptionUsing): int|string {
-                $record = $adminAsset->createAction !== null && $adminAsset->createAction !== '' && $adminAsset->createAction !== '0'
-                    ? $adminAsset->createAction::run($data)
-                    : $component->evaluate($createOptionUsing);
+                $record = in_array($adminAsset->createAction, [null, '', '0'], true)
+                    ? $component->evaluate($createOptionUsing)
+                    : $adminAsset->createAction::run($data);
 
                 Notification::make()
                     ->title(__('capell-admin::message.asset_created_successfully', ['name' => $asset->name]))
@@ -132,20 +132,20 @@ class ContentSelect extends Select
                     ->modalHeading(
                         fn (self $component): string => __(
                             'capell-admin::heading.edit_content_record',
-                            ['name' => $component->getSelectedRecord()->name]
-                        )
+                            ['name' => $component->getSelectedRecord()->name],
+                        ),
                     )
                     ->modalWidth(Width::ScreenExtraLarge)
                     ->visible(fn (mixed $state): bool => (bool) $state)
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.updated_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             )
             ->fillEditOptionActionFormUsing(static function (self $component): array {
                 /** @var Content $record */
@@ -170,7 +170,7 @@ class ContentSelect extends Select
                     }
 
                     return ContentResource::getUrl('edit', ['record' => $state]);
-                })
+                }),
         );
     }
 
@@ -218,35 +218,35 @@ class ContentSelect extends Select
                 fn (Builder $query): mixed => $this->evaluate($this->modifySelectOptionsQueryUsing, [
                     'query' => $query,
                     'record' => $this->getRecord(),
-                ])
+                ]),
             )
             ->when(
                 $contentType,
-                fn (Builder $query) => $query->whereHas('type', fn (BuilderContract $query) => $query->where('key', $contentType))
+                fn (Builder $query) => $query->whereHas('type', fn (BuilderContract $query) => $query->where('key', $contentType)),
             )
             ->when(
                 $site_id,
-                fn (Builder $query) => $query->where('site_id', $site_id)
+                fn (Builder $query) => $query->where('site_id', $site_id),
             )
             ->when(
                 $parentContentType,
                 fn (Builder $query) => $query->whereHas(
                     'parent.type',
-                    fn (BuilderContract $query) => $query->where('key', $parentContentType)
-                )
+                    fn (BuilderContract $query) => $query->where('key', $parentContentType),
+                ),
             )
             ->when(
                 $search,
-                fn (Builder $query, $search) => $query->where('contents.name', 'like', sprintf('%%%s%%', $search))
+                fn (Builder $query, string $search) => $query->where('contents.name', 'like', sprintf('%%%s%%', $search))
                     ->orderByRaw('CASE WHEN contents.name = ? THEN 1 ELSE 0 END DESC, INSTR(contents.name, ?), contents.name', [$search, $search]),
-                fn (Builder $query) => $query->limit(10)
+                fn (Builder $query) => $query->limit(10),
             )
             ->orderBy('site_id')
             ->orderBy(NestedSet::LFT, 'ASC')
             ->get();
 
         return $contents->mapWithKeys(
-            fn (Content $content): array => [$content->getKey() => $this->getContentOptionLabel($content, $site_id)]
+            fn (Content $content): array => [$content->getKey() => $this->getContentOptionLabel($content, $site_id)],
         )
             ->toArray();
     }

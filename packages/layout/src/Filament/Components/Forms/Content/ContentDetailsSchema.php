@@ -19,7 +19,7 @@ class ContentDetailsSchema
                 ->when(
                     $schema->isCreating(),
                     fn (ContentTypeSelect $component): ContentTypeSelect => $component->withCreateForm(),
-                    fn (ContentTypeSelect $component): ContentTypeSelect => $component->withEditForm()
+                    fn (ContentTypeSelect $component): ContentTypeSelect => $component->withEditForm(),
                 ),
         ];
     }

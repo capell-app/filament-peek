@@ -40,7 +40,7 @@ class CustomColorInput
                     ->preload()
                     ->mutateDehydratedStateUsing(fn ($state, Get $get) => $state === 'custom' ? $get($name . '_custom') : $state)
                     ->afterStateUpdated(function (Set $set, $state) use ($name): void {
-                        if (! filled($state)) {
+                        if (blank($state)) {
                             $set($name . '_custom', '');
                         }
                     })

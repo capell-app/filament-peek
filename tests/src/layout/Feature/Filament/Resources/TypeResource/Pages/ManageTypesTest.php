@@ -47,7 +47,7 @@ test('can create type', function (TypeEnum $type): void {
                     'component' => 'example-content',
                 ],
                 $admin,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(1);
@@ -63,7 +63,7 @@ test('can update type', function (TypeEnum $typeEnum): void {
         ->type($typeEnum)
         ->when(
             CapellAdmin::hasSchema(SchemaTypeEnum::Type, $typeEnum->name),
-            fn (TypeFactory $factory): TypeFactory => $factory->adminTypeSchema($typeEnum->name)
+            fn (TypeFactory $factory): TypeFactory => $factory->adminTypeSchema($typeEnum->name),
         )
         ->create();
 
@@ -76,7 +76,7 @@ test('can update type', function (TypeEnum $typeEnum): void {
             data: [
                 'name' => $newType->name,
                 'key' => $newType->key,
-            ]
+            ],
         )
         ->assertHasNoFormErrors();
 

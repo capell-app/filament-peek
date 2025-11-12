@@ -29,25 +29,25 @@ class CountrySelect extends Select
                     ->ordered()
                     ->get()
                     ->mapWithKeys(fn (Country $country): array => [$country->getKey() => $country->name])
-                    ->all()
+                    ->all(),
             )
             ->getOptionLabelUsing(
                 fn (?string $value): ?string => CapellCore::getModel(ModelEnum::Country)::query()
                     ->find($value)
-                    ?->name
+                    ?->name,
             )
             ->getSearchResultsUsing(
                 fn (self $component, string $search): array => CapellCore::getModel(ModelEnum::Country)::query()
                     ->where(
                         fn (Builder $query): Builder => $query->where('name', 'like', sprintf('%%%s%%', $search))
                             ->orWhere('iso2', 'like', $search)
-                            ->orWhere('iso3', 'like', $search)
+                            ->orWhere('iso3', 'like', $search),
                     )
                     ->limit($component->getOptionsLimit())
                     ->ordered()
                     ->get()
                     ->mapWithKeys(fn (Country $country): array => [$country->getKey() => $country->name])
-                    ->all()
+                    ->all(),
             );
     }
 
@@ -62,12 +62,12 @@ class CountrySelect extends Select
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             );
     }
 
@@ -86,12 +86,12 @@ class CountrySelect extends Select
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.updated_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             );
     }
 }

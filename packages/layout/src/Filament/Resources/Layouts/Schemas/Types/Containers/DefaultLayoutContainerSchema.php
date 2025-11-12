@@ -63,7 +63,7 @@ class DefaultLayoutContainerSchema implements TypeSchemaInterface
                 ->columns(['sm' => 2, 'md' => 3])
                 ->schema(
                     BackgroundSchema::make(
-                        backgroundCollectionUsing: fn (Get $get): string => $get('key') . '-background'
+                        backgroundCollectionUsing: fn (Get $get): string => $get('key') . '-background',
                     ),
                 ),
         ];

@@ -121,7 +121,7 @@ describe('from list article', function (): void {
                         'slug' => str($newData->name)->slug()->toString(),
                     ],
                 ])
-                    ->toArray()
+                    ->toArray(),
             )
             ->assertSchemaStateSet([
                 'name' => $newData->name,
@@ -164,7 +164,7 @@ describe('from list article', function (): void {
                         'slug' => str($newData->name)->slug()->toString(),
                     ],
                 ])
-                    ->toArray()
+                    ->toArray(),
             )
             ->assertSchemaStateSet([
                 'name' => $newData->name,

@@ -32,7 +32,7 @@ class TagForm implements FormConfigurator
                 ->schema([
                     NameInput::make('name')
                         ->afterStateUpdatedJs(
-                            fn (NameInput $component): string => SlugGenerator::slugifyState("\$state ?? ''", 'slug')
+                            fn (NameInput $component): string => SlugGenerator::slugifyState("\$state ?? ''", 'slug'),
                         ),
 
                     TextInput::make('slug')

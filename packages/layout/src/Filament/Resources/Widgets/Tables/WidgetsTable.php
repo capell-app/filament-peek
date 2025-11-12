@@ -54,7 +54,7 @@ class WidgetsTable implements TableConfigurator
                     'translations.language',
                 ])
                     ->select('widgets.*')
-                    ->withLayoutsCount()
+                    ->withLayoutsCount(),
             )
             ->columns(self::getTableColumns())
             ->filters(self::getTableFilters())
@@ -111,8 +111,8 @@ class WidgetsTable implements TableConfigurator
                     fn (ListWidgets $livewire, TextColumn $column, Widget $record): string => Str::limit(
                         $record->translation->title ?? '',
                         $column->getCharacterLimit(),
-                        $column->getCharacterLimitEnd()
-                    )
+                        $column->getCharacterLimitEnd(),
+                    ),
                 )
                 ->description(function (ListWidgets $livewire, TextColumn $column, Widget $record): ?HtmlString {
                     if (! $record->translation?->content) {
@@ -123,8 +123,8 @@ class WidgetsTable implements TableConfigurator
                         Str::limit(
                             $record->translation->content,
                             $column->getCharacterLimit(),
-                            $column->getCharacterLimitEnd()
-                        )
+                            $column->getCharacterLimitEnd(),
+                        ),
                     );
                 }),
             TextColumn::make('key')
@@ -148,7 +148,7 @@ class WidgetsTable implements TableConfigurator
                         fn (Builder $query): Builder => $query
                             ->where('meta->component', $searchOperator, sprintf('%%%s%%', $search))
                             ->orWhere('meta->file', $searchOperator, sprintf('%%%s%%', $search))
-                            ->orWhere('meta->component_item', $searchOperator, sprintf('%%%s%%', $search))
+                            ->orWhere('meta->component_item', $searchOperator, sprintf('%%%s%%', $search)),
                     );
                 })
                 ->size('xs')
@@ -166,7 +166,7 @@ class WidgetsTable implements TableConfigurator
                         return null;
                     }
 
-                    array_walk($components, fn ($value, $key): string => sprintf('%s: %s', $key, $value));
+                    array_walk($components, fn ($value, string $key): string => sprintf('%s: %s', $key, $value));
 
                     return new HtmlString(implode('<br />', $components));
                 })
@@ -192,9 +192,9 @@ class WidgetsTable implements TableConfigurator
                             [
                                 'state' => $state,
                                 'url' => CapellAdmin::getResource(ResourceEnum::Layout)::getUrl('index', ['tableFilters[widget_id][value]' => $record->key]),
-                            ]
-                        )
-                    )
+                            ],
+                        ),
+                    ),
                 ),
             StatusIconColumn::make('status'),
             DateColumn::make('created_at'),
@@ -213,15 +213,15 @@ class WidgetsTable implements TableConfigurator
                     titleAttribute: 'name',
                     modifyQueryUsing: fn (Builder $query): Builder => $query->where(
                         'type',
-                        LayoutTypeEnum::Widget
-                    )
+                        LayoutTypeEnum::Widget,
+                    ),
                 ),
 
             SelectFilter::make('layout_id')
                 ->label(__('capell-admin::form.layout'))
                 ->relationship(
                     name: 'layouts',
-                    titleAttribute: 'name'
+                    titleAttribute: 'name',
                 ),
 
             TextFilter::make('file')
@@ -251,7 +251,7 @@ class WidgetsTable implements TableConfigurator
                     if (! empty($data['language_id'])) {
                         $indicators['language_id'] = __(
                             'capell-admin::filter.language',
-                            ['search' => CapellCore::getModel(ModelEnum::Language)::find($data['language_id'], 'name')?->name]
+                            ['search' => CapellCore::getModel(ModelEnum::Language)::find($data['language_id'], 'name')?->name],
                         );
                     }
 
@@ -264,10 +264,10 @@ class WidgetsTable implements TableConfigurator
                             'translations',
                             fn (BuilderContract $query): BuilderContract => $query->where(
                                 'language_id',
-                                (int) $data['language_id']
-                            )
-                        )
-                    )
+                                (int) $data['language_id'],
+                            ),
+                        ),
+                    ),
                 ),
 
             StatusFilter::make('status'),

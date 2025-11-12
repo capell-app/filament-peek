@@ -91,7 +91,7 @@ class ContentFactory extends Factory
                     ]);
 
                 $content->translations()->create(
-                    $translation->only($translation->getFillable())
+                    $translation->only($translation->getFillable()),
                 );
             });
         });

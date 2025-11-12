@@ -76,7 +76,7 @@ class LayoutLoaded implements EventSubscriber
                             'widgetKey' => $widgetKey,
                             'occurrence' => $occurrence,
                         ],
-                        type: 'error'
+                        type: 'error',
                     );
                 }
 

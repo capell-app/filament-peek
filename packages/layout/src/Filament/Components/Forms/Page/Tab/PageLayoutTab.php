@@ -25,7 +25,7 @@ class PageLayoutTab
                         'site_id' => $record->site_id,
                         'layout_id' => $get('layout_id') ?: $record->layout_id,
                         'page_id' => $record->id,
-                    ]
+                    ],
                 )
                     ->lazy(config('capell-layout.layout_builder.lazy', true))
                     ->columnSpanFull(),

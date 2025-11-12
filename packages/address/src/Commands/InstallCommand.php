@@ -37,7 +37,7 @@ class InstallCommand extends Command
                     'create_addresses_table',
                 ],
                 '--path' => __DIR__ . '/../../database/migrations',
-            ]
+            ],
         );
 
         $this->call('migrate');

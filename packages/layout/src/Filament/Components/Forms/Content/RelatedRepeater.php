@@ -23,7 +23,7 @@ class RelatedRepeater
             ->cloneAction(
                 fn (Action $action): Action => $action
                     ->visible(
-                        fn (array $state, array $arguments): bool => $state[$arguments['item']]['content_id'] ?? false
+                        fn (array $state, array $arguments): bool => $state[$arguments['item']]['content_id'] ?? false,
                     )
                     ->action(function (Repeater $component, array $arguments): void {
                         $newUuid = $component->generateUuid();
@@ -34,13 +34,13 @@ class RelatedRepeater
 
                         $existingContent = Content::query()->withDrafts()->find($newData['content_id']);
 
-                        throw_unless($existingContent, new Exception('Content not found with ID: ' . $newData['content_id']));
+                        throw_unless($existingContent, Exception::class, 'Content not found with ID: ' . $newData['content_id']);
 
                         $newContent = ReplicateContentAction::run($existingContent);
 
                         $newData['content_id'] = $newContent->id;
 
-                        if ($newUuid !== null && $newUuid !== '' && $newUuid !== '0') {
+                        if (! in_array($newUuid, [null, '', '0'], true)) {
                             $items[$newUuid] = $newData;
                         } else {
                             $items[] = $newData;
@@ -51,7 +51,7 @@ class RelatedRepeater
                         $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                         $component->callAfterStateUpdated();
-                    })
+                    }),
             )
             ->simple(
                 ContentSelect::make('content_id')
@@ -61,7 +61,7 @@ class RelatedRepeater
                     ->when(
                         $schema->isCreating(),
                         fn (ContentSelect $component): ContentSelect => $component->withCreateForm(),
-                        fn (ContentSelect $component): ContentSelect => $component->withEditForm()
+                        fn (ContentSelect $component): ContentSelect => $component->withEditForm(),
                     ),
             );
     }

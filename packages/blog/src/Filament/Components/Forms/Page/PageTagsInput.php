@@ -16,7 +16,7 @@ class PageTagsInput extends TagsInput
 
         $this->type(TypeEnum::Page->value)
             ->visible(
-                fn (string $operation, ?Page $record): bool => in_array($operation, ['edit', 'editOption'], true)
+                fn (string $operation, ?Page $record): bool => in_array($operation, ['edit', 'editOption'], true),
             );
     }
 }

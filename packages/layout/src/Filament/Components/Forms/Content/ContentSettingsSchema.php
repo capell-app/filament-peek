@@ -25,7 +25,7 @@ class ContentSettingsSchema
                 ->when(
                     $schema->isCreating(),
                     fn (ContentSelect $component): ContentSelect => $component->withCreateForm(),
-                    fn (ContentSelect $component): ContentSelect => $component->withEditForm()
+                    fn (ContentSelect $component): ContentSelect => $component->withEditForm(),
                 ),
 
             SiteSelect::make('site_id')

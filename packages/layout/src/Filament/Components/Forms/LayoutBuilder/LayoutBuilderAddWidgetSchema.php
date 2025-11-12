@@ -48,7 +48,7 @@ class LayoutBuilderAddWidgetSchema
 
                             return [$widget->getKey() => $component::getSelectOption($widget, $data)];
                         })
-                        ->all()
+                        ->all(),
                 ),
             ...$containers instanceof Collection ? [
                 Select::make('container')
@@ -75,12 +75,12 @@ class LayoutBuilderAddWidgetSchema
             fn (): Collection => self::getWidgetOptionsQuery($typeId, $group)
                 ->when(
                     $search,
-                    fn (Builder $query, $search) => $query
-                        ->where('name', 'like', sprintf('%%%s%%', $search))
+                    fn (Builder $query, string $search) => $query
+                        ->where('name', 'like', sprintf('%%%s%%', $search)),
                 )
                 ->enabled()
                 ->ordered()
-                ->get()
+                ->get(),
         );
     }
 
@@ -97,7 +97,7 @@ class LayoutBuilderAddWidgetSchema
                         fn ($query) => $query
                             ->when(
                                 in_array('default', $groups),
-                                fn (Builder $query): Builder => $query->whereNull('group')
+                                fn (Builder $query): Builder => $query->whereNull('group'),
                             )
                             ->when(
                                 count($groups) > 1 || ! in_array('default', $groups, true),
@@ -109,10 +109,10 @@ class LayoutBuilderAddWidgetSchema
                                     }
 
                                     return $query->whereIn('group', $groups);
-                                }
-                            )
-                    )
-                )
+                                },
+                            ),
+                    ),
+                ),
             );
     }
 }

@@ -93,7 +93,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
         $viewPath = realpath(__DIR__ . '/../resources/views/capell');
 
-        throw_if(in_array($viewPath, ['', '0', false], true) || ! is_dir($viewPath), new Exception('Theme view path not found: ' . $viewPath));
+        throw_if(in_array($viewPath, ['', '0', false], true) || ! is_dir($viewPath), Exception::class, 'Theme view path not found: ' . $viewPath);
 
         app(Factory::class)->prependNamespace('capell', $viewPath);
 
@@ -108,7 +108,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 AlpineComponent::make('layout-builder', $publishDir . '/build/admin/layout-builder.js')
                     ->loadedOnRequest(),
             ],
-            package: 'capell-layout'
+            package: 'capell-layout',
         );
     }
 
@@ -149,7 +149,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         Relation::morphMap(
             collect(LayoutModelEnum::cases())
                 ->mapWithKeys(fn (LayoutModelEnum $model): array => [Str::snake($model->name) => $model->value])
-                ->all()
+                ->all(),
         );
 
         CapellAdmin::registerResource(LayoutResourceEnum::Content->name, class: LayoutResourceEnum::Content->value);
@@ -162,7 +162,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                     name: $layoutType->value,
                     model: $layoutType->getModel(),
                     creatorClass: $layoutType->getCreatorClass(),
-                )
+                ),
             );
         }
 
@@ -178,7 +178,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 model: $contentAsset->getModel(),
                 icon: $contentAsset->getIcon(),
                 hasTranslations: $contentAsset->hasTranslations(),
-            )
+            ),
         );
 
         CapellAdmin::registerAsset(
@@ -186,8 +186,8 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             new AdminAssetData(
                 formClass: $contentAsset->getFormClass(),
                 createAction: $contentAsset->getCreateActionClass(),
-                defaultDataAction: $contentAsset->getDefaultDataActionClass()
-            )
+                defaultDataAction: $contentAsset->getDefaultDataActionClass(),
+            ),
         );
 
         CapellFrontend::registerAsset($contentAsset, new FrontendAssetData(
@@ -203,7 +203,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     {
         $dir = realpath(__DIR__ . '/../publishes');
 
-        throw_if(in_array($dir, ['', '0', false], true), new RuntimeException('Publish directory not found.'));
+        throw_if(in_array($dir, ['', '0', false], true), RuntimeException::class, 'Publish directory not found.');
 
         return $dir;
     }
@@ -270,14 +270,14 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 'page_id',
                 'id',
                 'id',
-                'asset_id'
+                'asset_id',
             )
-                ->where('widget_assets.asset_type', app(Page::class)->getMorphClass())
+                ->where('widget_assets.asset_type', app(Page::class)->getMorphClass()),
         );
 
         Page::resolveRelationUsing(
             'widgetAssets',
-            fn (Page $model): HasMany => $model->hasMany(WidgetAsset::class)
+            fn (Page $model): HasMany => $model->hasMany(WidgetAsset::class),
         );
 
         Layout::resolveRelationUsing(
@@ -285,8 +285,8 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             fn (Layout $model): BelongsToJson => $model->belongsToJson(
                 Widget::class,
                 'widgets',
-                'key'
-            )
+                'key',
+            ),
         );
 
         Page::resolveRelationUsing(
@@ -294,8 +294,8 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             fn (Page $model): MorphToMany => $model->morphToMany(
                 Widget::class,
                 'asset',
-                'widget_assets'
-            )
+                'widget_assets',
+            ),
         );
 
         Page::resolveRelationUsing(
@@ -304,27 +304,27 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 Content::class,
                 'meta->page_id',
                 'id',
-            )
+            ),
         );
 
         Site::resolveRelationUsing(
             'contents',
-            fn (Site $model): HasMany => $model->hasMany(Content::class, 'site_id')
+            fn (Site $model): HasMany => $model->hasMany(Content::class, 'site_id'),
         );
 
         Type::resolveRelationUsing(
             'contents',
-            fn (Type $model): HasMany => $model->hasMany(Content::class, 'type_id')
+            fn (Type $model): HasMany => $model->hasMany(Content::class, 'type_id'),
         );
 
         Type::resolveRelationUsing(
             'widgets',
-            fn (Type $model): HasMany => $model->hasMany(Widget::class, 'type_id')
+            fn (Type $model): HasMany => $model->hasMany(Widget::class, 'type_id'),
         );
 
         Type::resolveRelationUsing(
             'widgetType',
-            fn (Type $model): Builder => $model->where('type', LayoutTypeEnum::Widget)
+            fn (Type $model): Builder => $model->where('type', LayoutTypeEnum::Widget),
         );
 
         return $this;

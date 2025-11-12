@@ -33,7 +33,7 @@ class Tags extends AbstractWidget
         $this->tags = TagLoader::getTags(
             site: FrontendLoader::getSite(),
             language: FrontendLoader::getLanguage(),
-            limit: $limit
+            limit: $limit,
         );
 
         if ($this->tags->isEmpty() && config('capell-layout.widget.hide_empty')) {

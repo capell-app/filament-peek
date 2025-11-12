@@ -45,14 +45,14 @@ class InstallBlogPackageAction
         foreach ($layouts as $layoutKey) {
             $layout = Layout::query()->firstWhere('key', $layoutKey);
 
-            throw_unless($layout, new Exception(sprintf('Layout with key %s not found.', $layoutKey->value)));
+            throw_unless($layout, Exception::class, sprintf('Layout with key %s not found.', $layoutKey->value));
 
             $containers = $layout->containers;
 
             if (! in_array($latestArticlesWidget->key, array_column($containers['sidebar']['widgets'], 'widget_key'), true)) {
                 $containers['sidebar']['widgets'] = array_filter(
                     $containers['sidebar']['widgets'],
-                    fn (array $widget): bool => $widget['widget_key'] !== 'latest-pages'
+                    fn (array $widget): bool => $widget['widget_key'] !== 'latest-pages',
                 );
 
                 $containers['sidebar']['widgets'][] = [

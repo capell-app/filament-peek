@@ -43,7 +43,7 @@ class LayoutsTable extends \Capell\Admin\Filament\Resources\Layouts\Tables\Layou
                         'capell-layout::components.infolists.entries.layout-widgets',
                         [
                             'widgets' => $record->layoutWidgets,
-                        ]
+                        ],
                     ),
             ]);
     }
@@ -81,7 +81,7 @@ class LayoutsTable extends \Capell\Admin\Filament\Resources\Layouts\Tables\Layou
                     if (! empty($state['value'])) {
                         $indicators['widget_key'] = __(
                             'capell-admin::filter.widget',
-                            ['search' => CapellCore::getModel(LayoutModelEnum::Widget->name)::firstWhere('key', $state['value'], 'name')?->name]
+                            ['search' => CapellCore::getModel(LayoutModelEnum::Widget->name)::firstWhere('key', $state['value'], 'name')?->name],
                         );
                     }
 
@@ -90,8 +90,8 @@ class LayoutsTable extends \Capell\Admin\Filament\Resources\Layouts\Tables\Layou
                 ->modifyQueryUsing(
                     fn (Builder $query, $state) => $query->unless(
                         empty($state['value']),
-                        fn (Builder $query) => $query->whereJsonContains('widgets', $state['value'])
-                    )
+                        fn (Builder $query) => $query->whereJsonContains('widgets', $state['value']),
+                    ),
                 ),
             ...parent::getTableFilters(),
         ];

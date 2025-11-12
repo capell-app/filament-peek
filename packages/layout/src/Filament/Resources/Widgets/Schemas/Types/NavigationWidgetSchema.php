@@ -73,7 +73,7 @@ class NavigationWidgetSchema extends DefaultWidgetSchema
                 ])
                 ->sidebarSchema(
                     WidgetSettingsSchema::make($schema, [$this->navigationSelect()]),
-                    contained: true
+                    contained: true,
                 ),
             Tabs::make()
                 ->visibleOn(['edit', 'editOption'])

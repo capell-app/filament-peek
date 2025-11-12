@@ -30,16 +30,16 @@ class AddressSelect extends Select
                     ->ordered()
                     ->get()
                     ->mapWithKeys(fn (Address $address): array => [$address->getKey() => $address->name])
-                    ->all()
+                    ->all(),
             )
             ->getSelectedRecordUsing(
                 fn (int $state): Address => CapellCore::getModel(ModelEnum::Address)::query()
-                    ->find($state)
+                    ->find($state),
             )
             ->getOptionLabelUsing(
                 fn (?string $value): ?string => CapellCore::getModel(ModelEnum::Address)::query()
                     ->whereKey($value)
-                    ->value('name')
+                    ->value('name'),
             )
             ->getSearchResultsUsing(
                 fn (self $component, string $search): array => CapellCore::getModel(ModelEnum::Address)::query()
@@ -52,7 +52,7 @@ class AddressSelect extends Select
                     ->limit($component->getOptionsLimit())
                     ->ordered()
                     ->pluck('name', 'id')
-                    ->all()
+                    ->all(),
             );
     }
 
@@ -66,9 +66,9 @@ class AddressSelect extends Select
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
-                    )
+                            ['name' => $action->getModalHeading()],
+                        ),
+                    ),
             );
     }
 
@@ -91,12 +91,12 @@ class AddressSelect extends Select
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.updated_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             );
     }
 }

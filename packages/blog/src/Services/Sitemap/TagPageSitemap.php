@@ -77,8 +77,8 @@ class TagPageSitemap extends AbstractSitemapPages
                     fn (BuilderContract $query) => $query->with([
                         'pageUrl' => fn ($query) => $query->with('siteDomain')->where('language_id', $language->id),
                         'translation' => fn ($query) => $query->where('language_id', $language->id),
-                    ])
-                )
+                    ]),
+                ),
             );
         });
     }

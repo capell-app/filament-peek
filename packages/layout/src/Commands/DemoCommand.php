@@ -113,7 +113,7 @@ class DemoCommand extends Command
     public function setupHomepage(Page $page, Collection $languages): void
     {
         $layout = $this->getHomeLayout();
-        throw_unless($layout instanceof Layout, new Exception('Unable to find homepage layout'));
+        throw_unless($layout instanceof Layout, Exception::class, 'Unable to find homepage layout');
 
         $page->update(['layout_id' => $layout->id]);
 

@@ -166,8 +166,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 collect([$this->getLayoutRecord()])
                     ->when(
                         $this->getLayoutPage(),
-                        fn (SupportCollection $collection, $page): SupportCollection => $collection->push($page)
-                    )
+                        fn (SupportCollection $collection, $page): SupportCollection => $collection->push($page),
+                    ),
             );
         }
     }
@@ -222,7 +222,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         $widgetAsset = $this->getWidgetAsset($containerKey, $widgetIndex, $index);
 
-        throw_if($widgetAsset === null || $widgetAsset === [], new Exception(sprintf('Asset %d not found for container: %s widget: %d', $index, $containerKey, $widgetIndex)));
+        throw_if($widgetAsset === null || $widgetAsset === [], Exception::class, sprintf('Asset %d not found for container: %s widget: %d', $index, $containerKey, $widgetIndex));
 
         unset($assets[$index]);
 
@@ -238,7 +238,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
                 return $asset;
             },
-            $assets
+            $assets,
         );
 
         $this->assets[$containerKey][$widgetIndex] = $assets;
@@ -292,7 +292,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->modalSubmitActionLabel(fn (Action $action): string => $action->getTooltip())
             ->schema(
                 static fn (self $livewire, Schema $schema, array $arguments): Schema => $schema->operation('createOption')
-                    ->schema($livewire->getContainerSchema($schema, $arguments))
+                    ->schema($livewire->getContainerSchema($schema, $arguments)),
             )
             ->action(function (Action $action, self $livewire, array $data): void {
                 $livewire->saveContainer($data);
@@ -314,13 +314,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->modalHeading(
                 fn (array $arguments): string|array|null => __(
                     'capell-admin::heading.edit_container',
-                    ['key' => str($arguments['containerKey'])->title()]
-                )
+                    ['key' => str($arguments['containerKey'])->title()],
+                ),
             )
             ->modalSubmitActionLabel(fn (Action $action): string => $action->getLabel())
             ->schema(
                 static fn (self $livewire, Schema $schema, array $arguments): Schema => $schema->operation('editOption')
-                    ->schema($livewire->getContainerSchema($schema, $arguments))
+                    ->schema($livewire->getContainerSchema($schema, $arguments)),
             )
             ->fillForm(fn (self $livewire, $arguments): array => [
                 'key' => $arguments['containerKey'],
@@ -359,8 +359,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->visible(
                 fn (array $arguments, self $livewire): bool => (bool) $livewire->getContainerWidgetSchema(
                     $arguments['containerKey'],
-                    $arguments['widgetIndex']
-                )
+                    $arguments['widgetIndex'],
+                ),
             )
             ->modalHeading(__('capell-admin::heading.container_widget_settings'))
             ->modalSubmitActionLabel(fn (Action $action): string => $action->getLabel())
@@ -370,14 +370,14 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     [
                         'container' => $arguments['containerKey'],
                         'widget' => $livewire->getContainerWidget($arguments['containerKey'], $arguments['widgetIndex'])?->name,
-                    ]
-                )
+                    ],
+                ),
             )
             ->modalWidth(Width::ScreenSmall)
             ->schema(function (array $arguments, self $livewire, Schema $schema): Schema {
                 $adminSchema = CapellAdmin::getSchema(
                     SchemaTypeEnum::LayoutWidget->value,
-                    $livewire->getContainerWidgetSchema($arguments['containerKey'], $arguments['widgetIndex'])
+                    $livewire->getContainerWidgetSchema($arguments['containerKey'], $arguments['widgetIndex']),
                 );
 
                 $typeSchema = app($adminSchema)->make($schema);
@@ -385,7 +385,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 return $schema->operation('editOption')->components($typeSchema);
             })
             ->fillForm(
-                fn (self $livewire, array $arguments): array => $livewire->containers[$arguments['containerKey']]['widgets'][$arguments['widgetIndex']]['meta'] ?? []
+                fn (self $livewire, array $arguments): array => $livewire->containers[$arguments['containerKey']]['widgets'][$arguments['widgetIndex']]['meta'] ?? [],
             )
             ->action(function (Action $action, self $livewire, array $arguments, array $data): void {
                 $livewire->editContainerWidget($arguments['containerKey'], $arguments['widgetIndex'], $data);
@@ -411,9 +411,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 fn (array $arguments, Schema $schema): Schema => $schema->operation('createOption')
                     ->schema(
                         LayoutBuilderAddWidgetSchema::schema(
-                            empty($arguments['containerKey']) ? self::getContainerOptions() : null
-                        )
-                    )
+                            empty($arguments['containerKey']) ? self::getContainerOptions() : null,
+                        ),
+                    ),
             )
             ->fillForm(function (self $livewire, array $arguments): array {
                 $model = CapellCore::getModel(LayoutModelEnum::Widget->name);
@@ -465,15 +465,15 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->record(
                 fn (array $arguments): Widget => $this->getContainerWidget(
                     $arguments['containerKey'],
-                    $arguments['widgetIndex']
-                )
+                    $arguments['widgetIndex'],
+                ),
             )
             ->modalHeading(fn (Widget $record): string => $record->name)
             ->modalDescription(
                 fn (Widget $record): string => __(
                     'capell-admin::heading.widget_type',
-                    ['type' => $record->type?->name]
-                )
+                    ['type' => $record->type?->name],
+                ),
             )
             ->modalSubmitActionLabel(__('capell-admin::button.save_changes'))
             ->successNotificationTitle(__('capell-admin::message.widget_updated'))
@@ -482,8 +482,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 fn (Action $action, Schema $schema): Schema => WidgetForm::configure(
                     $schema->operation('editOption')
                         // Fetch fresh record to avoid using layout data and relationships
-                        ->record(fn (): Widget => $action->getRecord()->fresh())
-                )
+                        ->record(fn (): Widget => $action->getRecord()->fresh()),
+                ),
             )
             ->action(
                 function (Action $action, Schema $schema, Widget $record, array $data): void {
@@ -492,7 +492,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     $record->update($data);
 
                     $action->success();
-                }
+                },
             );
     }
 
@@ -532,8 +532,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->label(
                 fn (array $arguments): string => __(
                     'capell-admin::button.select_asset',
-                    ['asset' => CapellCore::getAsset($arguments['type'])->getLabel()]
-                )
+                    ['asset' => CapellCore::getAsset($arguments['type'])->getLabel()],
+                ),
             )
             ->grouped()
             ->modal()
@@ -574,7 +574,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 $existingRecords = $livewire->getWidgetAssetsByType(
                     $arguments['containerKey'],
                     $arguments['widgetIndex'],
-                    $arguments['type']
+                    $arguments['type'],
                 );
 
                 return new HtmlString(Blade::render(<<<'blade'
@@ -608,8 +608,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->label(
                 fn (array $arguments): string => __(
                     'capell-admin::button.add_new_asset',
-                    ['asset' => CapellCore::getAsset($arguments['type'])->getLabel()]
-                )
+                    ['asset' => CapellCore::getAsset($arguments['type'])->getLabel()],
+                ),
             )
             ->icon('heroicon-o-plus-circle')
             ->iconSize(IconSize::Small)
@@ -626,21 +626,21 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     [
                         'widget' => $livewire->getContainerWidget($arguments['containerKey'], $arguments['widgetIndex'])?->name,
                         'asset' => $arguments['type'],
-                    ]
-                )
+                    ],
+                ),
             )
             ->modalSubmitActionLabel(
                 fn (array $arguments, Action $action): string => __(
                     'capell-admin::button.create_widget_asset',
-                    ['type' => $arguments['type']]
-                )
+                    ['type' => $arguments['type']],
+                ),
             )
             ->successNotificationTitle(__('capell-admin::message.asset_added'))
             ->schema(
                 fn (array $arguments, Schema $schema): Schema => self::getWidgetAssetSchema(
                     $schema->operation('createOption')
                         ->record(fn (): WidgetAsset => $this->makeWidgetAssetRecordForCreate($arguments)),
-                )
+                ),
             )
             ->model(fn (): string => CapellCore::getModel(LayoutModelEnum::WidgetAsset->name))
             ->fillForm(function (array $arguments): array {
@@ -656,9 +656,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     'widget_id' => $widget->id,
                     'asset_type' => $assetType,
                     'meta' => [],
-                    'asset' => $asset->defaultDataAction !== null && $asset->defaultDataAction !== '' && $asset->defaultDataAction !== '0'
-                        ? $asset->defaultDataAction::run()
-                        : [],
+                    'asset' => in_array($asset->defaultDataAction, [null, '', '0'], true)
+                        ? []
+                        : $asset->defaultDataAction::run(),
                 ];
             })
             ->action(self::addAssetFromAction(...));
@@ -679,22 +679,22 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->tooltip(
                 fn (array $arguments): string => __(
                     'capell-admin::button.edit_asset_type',
-                    ['type' => $arguments['type']]
-                )
+                    ['type' => $arguments['type']],
+                ),
             )
             ->modalWidth(Width::SixExtraLarge)
             ->modalHeading(
-                fn (self $livewire, array $arguments): string => $this->getEditWidgetAssetModalHeading($livewire, $arguments)
+                fn (self $livewire, array $arguments): string => $this->getEditWidgetAssetModalHeading($livewire, $arguments),
             )
             ->modalDescription(
-                fn (self $livewire, array $arguments): ?string => $this->getEditWidgetAssetModalDescription($livewire, $arguments)
+                fn (self $livewire, array $arguments): ?string => $this->getEditWidgetAssetModalDescription($livewire, $arguments),
             )
             ->modalSubmitActionLabel(__('capell-admin::button.save_changes'))
             ->successNotificationTitle(__('capell-admin::message.asset_updated'))
             ->schema(
                 fn (self $livewire, Schema $schema, array $arguments): Schema => self::getWidgetAssetSchema(
-                    $schema->operation('editOption')
-                )
+                    $schema->operation('editOption'),
+                ),
             )
             ->fillForm(fn (WidgetAsset $record, array $arguments): array => [
                 'meta' => $record->meta,
@@ -708,8 +708,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     livewire: $livewire,
                     arguments: $arguments,
                     action: $action,
-                    schema: $schema
-                )
+                    schema: $schema,
+                ),
             );
     }
 
@@ -724,7 +724,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 'class' => 'whitespace-nowrap',
                 'x-cloak' => '',
                 'x-show' => new HtmlString(
-                    sprintf("selectedRecords['%s'][%s].length", $arguments['containerKey'], $arguments['widgetIndex'])
+                    sprintf("selectedRecords['%s'][%s].length", $arguments['containerKey'], $arguments['widgetIndex']),
                 ),
             ])
             ->successNotificationTitle(__('Assets removed successfully. Save the layout to apply changes.'))
@@ -760,7 +760,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->visible(fn (): bool => $this->inPageContext())
             ->schema(
                 fn (Schema $schema, self $livewire): Schema => $schema->operation('editOption')
-                    ->schema($livewire->getChangeLayoutSchema())
+                    ->schema($livewire->getChangeLayoutSchema()),
             )
             ->fillForm(fn (self $livewire): array => ['layout_id' => $livewire->layout_id])
             ->modalSubmitActionLabel(__('capell-admin::button.change_layout'))
@@ -780,13 +780,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 function (self $livewire, array $arguments): string {
                     $hasPageAssets = $livewire->hasPageAssets(
                         containerKey: $arguments['containerKey'],
-                        widgetIndex: $arguments['widgetIndex']
+                        widgetIndex: $arguments['widgetIndex'],
                     );
 
                     return $hasPageAssets
                         ? __('capell-admin::button.convert_widget_assets')
                         : __('capell-admin::button.convert_page_assets');
-                }
+                },
             )
             ->grouped()
             ->icon('heroicon-o-arrows-right-left')
@@ -827,24 +827,24 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 function (self $livewire, array $arguments): string {
                     $hasPageAssets = $livewire->hasPageAssets(
                         containerKey: $arguments['containerKey'],
-                        widgetIndex: $arguments['widgetIndex']
+                        widgetIndex: $arguments['widgetIndex'],
                     );
 
                     return $hasPageAssets
                         ? __('capell-admin::generic.convert_widget_assets')
                         : __('capell-admin::generic.convert_page_assets');
-                }
+                },
             )
             ->action(function (self $livewire, array $arguments, Action $action): void {
                 $hasPageAssets = $livewire->hasPageAssets(
                     containerKey: $arguments['containerKey'],
-                    widgetIndex: $arguments['widgetIndex']
+                    widgetIndex: $arguments['widgetIndex'],
                 );
 
                 $livewire->togglePageAssets(
                     $arguments['containerKey'],
                     $arguments['widgetIndex'],
-                    pageId: $hasPageAssets ? null : $livewire->page_id
+                    pageId: $hasPageAssets ? null : $livewire->page_id,
                 );
 
                 $action->success();
@@ -855,7 +855,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     {
         $this->selectedRecords[$containerKey][$widgetIndex] = $this->getAllSelectableAssetsKeys(
             $containerKey,
-            $widgetIndex
+            $widgetIndex,
         );
     }
 
@@ -1032,7 +1032,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         $this->dispatch(
             'refresh-assets',
             containerKey: $containerKey,
-            widgetIndex: $widgetIndex
+            widgetIndex: $widgetIndex,
         );
     }
 
@@ -1046,7 +1046,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             $containerWidget['occurrence'] = $this->getLastContainerWidgetOccurrence(
                 containerKey: $containerKey,
                 widgetKey: $containerWidget['widget_key'],
-                widgets: $this->containers[$containerKey]['widgets']
+                widgets: $this->containers[$containerKey]['widgets'],
             ) + 1;
         }
 
@@ -1159,9 +1159,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         $widget = $this->getContainerWidget($containerKey, $widgetIndex);
         $asset = $this->getWidgetAsset($containerKey, $widgetIndex, $index);
 
-        if (! $asset) {
-            throw new MissingWidgetAssetException($widget, $type, $index, $arguments);
-        }
+        throw_unless($asset, MissingWidgetAssetException::class, $widget, $type, $index, $arguments);
 
         $assetId = $asset['asset_id'];
 
@@ -1170,7 +1168,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->where('asset_id', $assetId)
             ->first();
 
-        throw_unless($widgetAsset, new Exception(sprintf('Asset of type [%s] with ID [%s] not found.', $type, $assetId)));
+        throw_unless($widgetAsset, Exception::class, sprintf('Asset of type [%s] with ID [%s] not found.', $type, $assetId));
 
         return $widgetAsset;
     }
@@ -1243,15 +1241,15 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                             $this->site_id,
                             fn (Builder $query, int $siteId): Builder => $query->where(
                                 fn (Builder $query) => $query->where('site_id', $siteId)
-                                    ->orWhereNull('site_id')
-                            )
+                                    ->orWhereNull('site_id'),
+                            ),
                         )
                         ->orderBy('name')
                         ->get()
                         ->mapWithKeys(
-                            fn (Layout $layout): array => [$layout->id => $layout->name . ' (' . $layout->pages_count . ')']
+                            fn (Layout $layout): array => [$layout->id => $layout->name . ' (' . $layout->pages_count . ')'],
                         )
-                        ->all()
+                        ->all(),
                 )
                 ->default(fn () => CapellCore::getModel(ModelEnum::Layout)::default()->first(['id'])?->id)
                 ->reactive()
@@ -1271,12 +1269,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                                     'count' => $total,
                                     'url' => CapellAdmin::getResource(ResourceEnum::Page)::getUrl(
                                         'index',
-                                        ['tableFilters' => ['layout_id' => ['value' => $state]]]
+                                        ['tableFilters' => ['layout_id' => ['value' => $state]]],
                                     ),
-                                ]
-                            )
+                                ],
+                            ),
                         );
-                    }
+                    },
                 ),
         ];
     }
@@ -1296,9 +1294,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
     private function loadNew(): void
     {
-        // reset any queued deletions when starting fresh
-        $this->pendingAssetDeletes = [];
-
         $this->loadLayoutRecord();
 
         $this->setupContainers();
@@ -1328,7 +1323,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     $containerKey,
                     $widgetIndex,
                     $widgetAssets,
-                    $allWidgetAssets
+                    $allWidgetAssets,
                 );
             }
         }
@@ -1345,8 +1340,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     private function reload(): void
     {
         $this->reset('containerWidgets', 'selectedRecords', 'assets', 'containers', 'layoutRecord');
-        // also clear pending deletions
-        $this->pendingAssetDeletes = [];
 
         $this->loadNew();
     }
@@ -1375,7 +1368,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         $layout = $model::withCount('pages')->find($this->layout_id);
 
-        throw_unless($layout, new Exception('Layout not found'));
+        throw_unless($layout, Exception::class, 'Layout not found');
 
         $this->layoutRecord = $layout;
 
@@ -1511,7 +1504,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     {
         $this->containers[$containerKey]['widgets'][$widgetIndex]['meta'] = array_merge(
             $this->containers[$containerKey]['widgets'][$widgetIndex]['meta'] ?? [],
-            $data
+            $data,
         );
 
         $this->layoutUpdated();
@@ -1624,7 +1617,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             $widgetKey = $containerWidget['widget_key'];
             $oldContainerKey = $containerWidget['old_container'] ?? null;
 
-            throw_unless(isset($allWidgets[$widgetKey]), new Exception('Widget not found for key: ' . $widgetKey));
+            throw_unless(isset($allWidgets[$widgetKey]), Exception::class, 'Widget not found for key: ' . $widgetKey);
 
             /** @var Widget $widget */
             $widget = clone $allWidgets[$widgetKey];
@@ -1649,7 +1642,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
             $widget->setRelation(
                 'assets',
-                $this->filterContainerWidgetAssets($assets, $oldContainerKey ?? $containerKey, $widgetOccurrence)
+                $this->filterContainerWidgetAssets($assets, $oldContainerKey ?? $containerKey, $widgetOccurrence),
             );
 
             $this->containerWidgets[$containerKey][$widgetIndex] = $widget;
@@ -1686,7 +1679,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 }
 
                 return $asset;
-            }
+            },
         )->all();
     }
 
@@ -1694,7 +1687,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     {
         $assets = new Collection;
 
-        if (! $allWidgetAssets || $allWidgetAssets->isEmpty()) {
+        if (! $allWidgetAssets instanceof Collection || $allWidgetAssets->isEmpty()) {
             return $assets;
         }
 
@@ -1751,7 +1744,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         $adminSchema = CapellAdmin::getSchema(
             SchemaTypeEnum::LayoutContainer->value,
-            $this->layoutRecord->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerSchema::getKey()
+            $this->layoutRecord->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerSchema::getKey(),
         );
 
         $typeSchema = app($adminSchema)->make($schema);
@@ -1766,8 +1759,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 ->maxLength(128)
                 ->afterStateHydrated(
                     fn (TextInput $component, $state): TextInput => $component->state(
-                        str($state)->slug()->lower()->toString()
-                    )
+                        str($state)->slug()->lower()->toString(),
+                    ),
                 )
                 ->dehydrateStateUsing(fn ($state): string => str($state)->slug()->lower()->toString())
                 ->rules([
@@ -1857,7 +1850,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     'widgetPageAssets as page_assets_count' => fn (Builder $query): Builder => $query->distinct('page_id')
                         ->when(
                             $this->inPageContext(),
-                            fn (Builder $query) => $query->where('page_id', $this->page_id)
+                            fn (Builder $query) => $query->where('page_id', $this->page_id),
                         ),
                 ])
                     ->with([
@@ -1865,7 +1858,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                         'backgroundImage',
                         'image',
                         'translation' => fn (BuilderContract $query) => $query->orderBy('language_id'),
-                    ])
+                    ]),
             );
     }
 
@@ -1873,7 +1866,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     {
         $container = $this->containers[$containerKey] ?? null;
 
-        throw_if($container === null || ! isset($container['widgets'][$widgetIndex]), new Exception('Container widget not found for container: ' . $containerKey . ' index: ' . $widgetIndex));
+        throw_if($container === null || ! isset($container['widgets'][$widgetIndex]), Exception::class, 'Container widget not found for container: ' . $containerKey . ' index: ' . $widgetIndex);
 
         $containerWidget = $container['widgets'][$widgetIndex];
         $widgetKey = $containerWidget['widget_key'];
@@ -1903,15 +1896,15 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->where('occurrence', $widgetOccurrence)
             ->where(
                 fn (Builder $query) => $query->where('container', $containerKey)
-                    ->orWhereNull('container')
+                    ->orWhereNull('container'),
             )
             ->when(
                 $this->page_id,
                 fn (Builder $query) => $query->where(
                     fn (Builder $query) => $query->where('page_id', $this->page_id)
-                        ->orWhereNull('page_id')
+                        ->orWhereNull('page_id'),
                 ),
-                fn (Builder $query) => $query->whereNull('page_id')
+                fn (Builder $query) => $query->whereNull('page_id'),
             )
             ->ordered()
             ->get()
@@ -1937,16 +1930,16 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                         $this->page_id,
                         fn (Builder $query) => $query->where(
                             fn (Builder $query) => $query->where('page_id', $this->page_id)
-                                ->orWhereNull('page_id')
+                                ->orWhereNull('page_id'),
                         ),
-                        fn (Builder $query) => $query->whereNull('page_id')
+                        fn (Builder $query) => $query->whereNull('page_id'),
                     )
                         ->ordered()
                         ->with(
                             'asset',
-                            fn (BuilderContract $query) => $query->morphWith($this->getAssetRelations())
+                            fn (BuilderContract $query) => $query->morphWith($this->getAssetRelations()),
                         ),
-                ])
+                ]),
             )
             ->get()
             ->keyBy('key')
@@ -1958,7 +1951,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
                 if ($hasPageAssets) {
                     $widgetAssets->setRelation('assets', $widgetAssets->assets->filter(
-                        fn (WidgetAsset $asset): bool => $asset->page_id !== null
+                        fn (WidgetAsset $asset): bool => $asset->page_id !== null,
                     ));
                 }
             }
@@ -2041,13 +2034,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 ->when(
                     $this->page_id,
                     fn (Builder $query) => $query->where(
-                        fn (Builder $query) => $query->where('page_id', $this->page_id)->orWhereNull('page_id')
+                        fn (Builder $query) => $query->where('page_id', $this->page_id)->orWhereNull('page_id'),
                     ),
-                    fn (Builder $query) => $query->whereNull('page_id')
+                    fn (Builder $query) => $query->whereNull('page_id'),
                 )
                 ->when(
                     DB::getDriverName() === 'sqlite',
-                    fn (BuilderContract $query) => $query->orderByRaw('CASE id ' . implode(' ', array_map(fn ($id) => "WHEN {$id} THEN " . array_search($id, $existingIds), $existingIds)) . ' END'),
+                    fn (BuilderContract $query) => $query->orderByRaw('CASE id ' . implode(' ', array_map(fn (string $id): string => sprintf('WHEN %s THEN ', $id) . array_search($id, $existingIds, true), $existingIds)) . ' END'),
                     fn (BuilderContract $query) => $query->orderByRaw('FIELD(id, ' . implode(',', $existingIds) . ')'),
                 )
                 ->get();
@@ -2137,7 +2130,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         /** @var Widget|null $widget */
         $widget = $query->first();
 
-        throw_unless($widget, new Exception(sprintf("Unable to find '%s' widget", (string) $id)));
+        throw_unless($widget, Exception::class, sprintf("Unable to find '%s' widget", (string) $id));
 
         return $widget;
     }
@@ -2228,7 +2221,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 fn (Builder $query) => $query
                     ->where('container', $oldContainerKey)
                     ->where('page_id', $this->page_id),
-                fn (Builder $query) => $query->whereNull('page_id')
+                fn (Builder $query) => $query->whereNull('page_id'),
             )
             ->get()
             ->mapWithKeys(fn (WidgetAsset $widgetAsset): array => [$widgetAsset->asset_key => $widgetAsset]);
@@ -2289,9 +2282,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     occurrence: $occurrence,
                     hasPageAssets: $hasPageAssets,
                     order: $order,
-                    asset: $widgetAsset
+                    asset: $widgetAsset,
                 );
-            }
+            },
         );
     }
 
@@ -2314,7 +2307,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->when(
                 $pageId,
                 fn (SupportCollection $collection) => $collection->where('container', $containerKey)
-                    ->where('page_id', $pageId)
+                    ->where('page_id', $pageId),
             )
             ->first();
 
@@ -2424,7 +2417,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         return array_column(
             array_filter($this->assets[$containerKey][$widgetIndex], fn (array $widgetAsset): bool => $widgetAsset['asset_type'] === $type),
-            'asset_id'
+            'asset_id',
         );
     }
 
@@ -2497,7 +2490,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     ->when(
                         $hasPageAssets,
                         fn (Builder $query) => $query->where('page_id', $this->page_id)
-                            ->where('container', $containerKey)
+                            ->where('container', $containerKey),
                     )
                     ->delete();
             }

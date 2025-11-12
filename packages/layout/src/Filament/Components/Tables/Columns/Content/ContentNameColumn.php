@@ -34,8 +34,8 @@ class ContentNameColumn extends BadgeableColumn
                     ->label(
                         fn (Content $record): string|array|null => __(
                             'capell-admin::generic.total_children',
-                            ['total' => $this->getChildCount($record)]
-                        )
+                            ['total' => $this->getChildCount($record)],
+                        ),
                     )
                     ->color('gray')
                     ->visible(fn (Content $record): bool => (bool) $this->getChildCount($record)),

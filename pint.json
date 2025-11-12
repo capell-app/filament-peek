@@ -54,6 +54,17 @@
     },
     "strict_comparison": true,
     "ternary_to_null_coalescing": true,
-    "use_arrow_functions": true
+    "use_arrow_functions": true,
+    "declare_parentheses": true,
+    "no_null_property_initialization": true,
+    "simplified_null_return": true,
+    "single_space_around_construct": true,
+    "trailing_comma_in_multiline": {
+      "elements": ["arrays", "arguments", "parameters"]
+    },
+    "types_spaces": {
+      "space": "none"
+    },
+    "void_return": true
   }
 }

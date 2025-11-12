@@ -24,7 +24,7 @@ class LatestWidget extends AbstractPagesWidget
             withParent: $this->widget->meta['with_parent'] ?? false,
             withDate: $this->widget->meta['with_date'] ?? false,
             cacheKeyPrepend: 'latest-widget-' . $this->widget->id,
-            modifyQuery: fn (Builder $query) => $query->whereKeyNot(FrontendLoader::getPage()->id)
+            modifyQuery: fn (Builder $query) => $query->whereKeyNot(FrontendLoader::getPage()->id),
         );
 
         $this->skipRender = $this->pages->isEmpty();

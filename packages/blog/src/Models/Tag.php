@@ -169,7 +169,7 @@ class Tag extends \Spatie\Tags\Tag implements PageCacheable, Statusable
         if (! $value) {
             $locale = $this->getFirstTranslationLocale($key);
 
-            if ($locale !== null && $locale !== '' && $locale !== '0') {
+            if (! in_array($locale, [null, '', '0'], true)) {
                 $value = $this->getTranslation($key, $locale, false);
             }
         }
@@ -183,8 +183,8 @@ class Tag extends \Spatie\Tags\Tag implements PageCacheable, Statusable
             DB::raw(
                 $this->getConnection()->getDriverName() === 'sqlite'
                     ? 'NULL as translated_locales'
-                    : 'JSON_KEYS(' . $this->getQuery()->getGrammar()->wrap($key) . ') as translated_locales'
-            )
+                    : 'JSON_KEYS(' . $this->getQuery()->getGrammar()->wrap($key) . ') as translated_locales',
+            ),
         );
     }
 }

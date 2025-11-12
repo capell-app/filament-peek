@@ -103,7 +103,7 @@ class DemoAction
         null|bool|Page $parent = null,
         ?string $parentName = '',
         string $type = '',
-        ?Model $author = null
+        ?Model $author = null,
     ): void {
         $name = Str::title($data['name']['en']);
 
@@ -111,7 +111,7 @@ class DemoAction
             $name .= ' ' . Str::title($type);
         }
 
-        $full_name = $parentName !== null && $parentName !== '' && $parentName !== '0' ? sprintf('%s &raquo; %s', $parentName, $name) : $name;
+        $full_name = in_array($parentName, [null, '', '0'], true) ? $name : sprintf('%s &raquo; %s', $parentName, $name);
 
         $page = $this->demoCreator->createPage($data, $site, $languages, $parent, $type);
 
@@ -128,7 +128,7 @@ class DemoAction
                 parent: $parent === false ? false : $page,
                 parentName: $full_name,
                 type: $type,
-                author: $author
+                author: $author,
             );
         }
     }
@@ -166,7 +166,7 @@ class DemoAction
                 $site->language,
                 parent: $blogPage,
                 type: BlogResourceEnum::Article->value,
-                author: $user
+                author: $user,
             );
         }
 
@@ -212,7 +212,7 @@ class DemoAction
 
         $pages = $pageModel::whereHas(
             'type',
-            fn (BuilderContract $query) => $query->whereIn('key', ['default', 'article'])
+            fn (BuilderContract $query) => $query->whereIn('key', ['default', 'article']),
         )
             ->with([
                 'translations.language',

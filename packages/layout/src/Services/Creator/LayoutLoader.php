@@ -47,7 +47,7 @@ class LayoutLoader
         Language $language,
         ?Page $page,
         string $containerKey,
-        int $occurrence
+        int $occurrence,
     ): ?Widget {
         $key = sprintf(
             'layout-%d-widget-%s-lang-%d-container-%s-occurrence-%d',
@@ -55,7 +55,7 @@ class LayoutLoader
             $widgetKey,
             $language->id,
             $containerKey,
-            $occurrence
+            $occurrence,
         )
             . ($page instanceof Page ? '-page-' . $page->id : '');
 
@@ -109,7 +109,7 @@ class LayoutLoader
                 $layoutWidget->setRelation('assets', $widgetAssets);
 
                 return $layoutWidget;
-            }
+            },
         ) ?: null;
 
         if ($fromCache && $widget) {

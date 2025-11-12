@@ -31,22 +31,22 @@ class WidgetSelect extends Select
     {
         return $this->model(CapellCore::getModel(LayoutModelEnum::Widget->name))
             ->getOptionLabelFromRecordUsing(
-                fn (Widget $record): string => static::getSelectOption($record)
+                fn (Widget $record): string => static::getSelectOption($record),
             )
             ->getOptionLabelUsing(fn (Select $component, $value): ?string => $component->getModel()::find($value)?->name)
             ->getOptionLabelsUsing(
                 fn (Select $component, array $values): array => $component->getModel()::whereIn('id', $values)
                     ->pluck('name', 'id')
-                    ->toArray()
+                    ->toArray(),
             )
             ->createOptionForm(
                 fn (Select $component, Schema $schema): Schema => WidgetForm::configure(
                     $schema->model(
                         $component->getRelationship()
                             ? $component->getRelationship()->getModel()::class
-                            : $component->getModel()
-                    )
-                )
+                            : $component->getModel(),
+                    ),
+                ),
             )
             ->createOptionUsing(static function ($livewire, Select $component, array $data, Schema $schema) {
                 $record = $component->getRelationship()?->getRelated() ?? new ($component->getModel());
@@ -74,19 +74,19 @@ class WidgetSelect extends Select
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             );
     }
 
     public function withEditForm(): self
     {
         return $this->editOptionForm(
-            fn ($state, Schema $schema): ?Schema => $state ? WidgetForm::configure($schema) : null
+            fn ($state, Schema $schema): ?Schema => $state ? WidgetForm::configure($schema) : null,
         )
             ->editOptionAction(
                 fn (Action $action): Action => $action
@@ -104,12 +104,12 @@ class WidgetSelect extends Select
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.updated_successfully',
-                            ['name' => $action->getModalHeading()]
-                        )
+                            ['name' => $action->getModalHeading()],
+                        ),
                     )
                     ->after(function (Action $action): void {
                         $action->success();
-                    })
+                    }),
             )
             ->fillEditOptionActionFormUsing(static function (self $component): array {
                 $record = $component->getSelectedRecord();

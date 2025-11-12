@@ -35,7 +35,7 @@ class TagsTable implements TableConfigurator
             ->modifyQueryUsing(
                 fn (Builder $query): Builder => $query->with(['site'])
                     ->select('*')
-                    ->withTranslatedLocales('name')
+                    ->withTranslatedLocales('name'),
             )
             ->columns(static::getTableColumns())
             ->filters([
@@ -100,7 +100,7 @@ class TagsTable implements TableConfigurator
                     $url = PageResource::getUrl('index', ['tableFilters[tags][value]' => $record->id]);
 
                     return new HtmlString(
-                        Blade::render('capell-admin::components.tables.url', ['state' => $state, 'url' => $url])
+                        Blade::render('capell-admin::components.tables.url', ['state' => $state, 'url' => $url]),
                     );
                 }),
             IconColumn::make('featured')

@@ -60,7 +60,7 @@ class RelatedWidgetSchema extends DefaultWidgetSchema
                 ])
                 ->sidebarSchema(
                     WidgetSettingsSchema::make($schema),
-                    contained: true
+                    contained: true,
                 ),
             Tabs::make()
                 ->visibleOn('edit')
@@ -79,7 +79,7 @@ class RelatedWidgetSchema extends DefaultWidgetSchema
                                         fn (): array => CapellCore::getModel(ModelEnum::Type)::query()
                                             ->pageType()
                                             ->pluck('name', 'key')
-                                            ->toArray()
+                                            ->toArray(),
                                     ),
                             ]),
                             Grid::make(3)

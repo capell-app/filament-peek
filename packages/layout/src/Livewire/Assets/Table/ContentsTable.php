@@ -25,7 +25,7 @@ class ContentsTable extends AbstractAssetsTable
     public function table(Table $table): Table
     {
         return parent::table(
-            \Capell\Layout\Filament\Resources\Contents\Tables\ContentsTable::configure($table)
+            \Capell\Layout\Filament\Resources\Contents\Tables\ContentsTable::configure($table),
         );
     }
 

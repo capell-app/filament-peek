@@ -76,7 +76,7 @@ test('can replicate tag', function (): void {
             data: [
                 'name' => $name,
                 'slug' => $slug,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(2);

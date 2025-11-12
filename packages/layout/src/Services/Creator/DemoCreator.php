@@ -86,7 +86,7 @@ class DemoCreator
                             ->whereHas(
                                 'type',
                                 /** @param Type $query */
-                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible()
+                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
                             )
                             ->inRandomOrder()
                             ->value('id'),
@@ -134,7 +134,7 @@ class DemoCreator
                             ->whereHas(
                                 'type',
                                 /** @param Type $query */
-                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible()
+                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
                             )
                             ->inRandomOrder()
                             ->value('id'),
@@ -179,7 +179,7 @@ class DemoCreator
                             ->whereHas(
                                 'type',
                                 /** @param Type $query */
-                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible()
+                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
                             )
                             ->inRandomOrder()
                             ->value('id'),
@@ -264,7 +264,7 @@ class DemoCreator
             ->limit(3)
             ->pluck('id');
 
-        throw_if($pages->isEmpty(), new RuntimeException('No pages found to associate with the widget.'));
+        throw_if($pages->isEmpty(), RuntimeException::class, 'No pages found to associate with the widget.');
 
         $pages->each(fn ($related_page_id): WidgetAsset => $widget->assets()->create([
             'page_id' => $page->id,
@@ -428,7 +428,7 @@ class DemoCreator
                     ->enabled()
                     ->listable()
                     ->accessible()
-                    ->hiddenSystemGroup()
+                    ->hiddenSystemGroup(),
             )
             ->withWhereHas(
                 'children',
@@ -517,7 +517,7 @@ class DemoCreator
                                 ->whereHas(
                                     'type',
                                     /** @param Type $query */
-                                    fn (BuilderContract $query) => $query->listable()->enabled()->accessible()
+                                    fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
                                 )
                                 ->inRandomOrder()
                                 ->value('id'),
@@ -529,7 +529,7 @@ class DemoCreator
                                 ->whereHas(
                                     'type',
                                     /** @param Type $query */
-                                    fn (BuilderContract $query) => $query->listable()->enabled()->accessible()
+                                    fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
                                 )
                                 ->inRandomOrder()
                                 ->value('id'),
@@ -1030,7 +1030,7 @@ class DemoCreator
                         'title' => $testimonial['name'],
                         'content' => sprintf('<p>%s</p>', $testimonial['content']),
                     ])
-                    ->all()
+                    ->all(),
             );
 
             $testimonialsCollection->push($content);
@@ -1156,7 +1156,7 @@ class DemoCreator
                         'title' => $member['name'],
                         'content' => $member['bio'],
                     ])
-                    ->all()
+                    ->all(),
             );
 
             $teamMembersCollection->push($content);
@@ -1180,7 +1180,7 @@ class DemoCreator
         } else {
             $ext = 'jpg';
             $demo_path = AdminDemoCreator::getDemoResourcePath('img');
-            $filename = $name !== null && $name !== '' && $name !== '0' ? Str::slug($name) : null;
+            $filename = in_array($name, [null, '', '0'], true) ? null : Str::slug($name);
         }
 
         if ($filename !== null) {

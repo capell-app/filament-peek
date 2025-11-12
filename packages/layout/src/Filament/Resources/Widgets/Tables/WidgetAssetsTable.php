@@ -47,9 +47,9 @@ class WidgetAssetsTable implements TableConfigurator
                     TypeEnum::Page->value => GetEditPageResourceUrlAction::run($record->asset),
                     default => CapellAdmin::getResource(ucfirst((string) $record->asset_type))::getUrl(
                         'edit',
-                        ['record' => $record->asset]
+                        ['record' => $record->asset],
                     ),
-                }
+                },
             )
             ->columns(self::getTableColumns())
             ->filters(self::getTableFilters())
@@ -100,9 +100,9 @@ class WidgetAssetsTable implements TableConfigurator
                                 ->groupBy('page_id')
                                 ->get()
                                 ->mapWithKeys(
-                                    fn (WidgetAsset $widgetAsset): array => [$widgetAsset->page_id => $widgetAsset->page->name]
+                                    fn (WidgetAsset $widgetAsset): array => [$widgetAsset->page_id => $widgetAsset->page->name],
                                 )
-                                ->all()
+                                ->all(),
                         ),
                     AssetTypeSelect::make('type'),
                     Select::make('type_id')
@@ -120,15 +120,15 @@ class WidgetAssetsTable implements TableConfigurator
                     fn (Builder $query, array $data) => $query
                         ->unless(
                             empty($data['asset_type']),
-                            fn (Builder $query) => $query->where('asset_type', $data['asset_type'])
+                            fn (Builder $query) => $query->where('asset_type', $data['asset_type']),
                         )
                         ->unless(
                             empty($data['type_id']),
-                            fn (Builder $query) => $query->where('type_id', $data['type_id'])
+                            fn (Builder $query) => $query->where('type_id', $data['type_id']),
                         )
                         ->unless(
                             empty($data['page_id']),
-                            fn (Builder $query) => $query->where('page_id', $data['page_id'])
+                            fn (Builder $query) => $query->where('page_id', $data['page_id']),
                         ),
                 )
                 ->indicateUsing(function (array $data): array {
@@ -137,21 +137,21 @@ class WidgetAssetsTable implements TableConfigurator
                     if (! empty($data['asset_type'])) {
                         $indicators['asset_type'] = __(
                             'capell-admin::filter.type',
-                            ['type' => $data['asset_type']]
+                            ['type' => $data['asset_type']],
                         );
                     }
 
                     if (! empty($data['type_id'])) {
                         $indicators['type_id'] = __(
                             'capell-admin::filter.type',
-                            ['search' => Type::query()->find($data['type_id'])->name]
+                            ['search' => Type::query()->find($data['type_id'])->name],
                         );
                     }
 
                     if (! empty($data['page_id'])) {
                         $indicators['page_id'] = __(
                             'capell-admin::filter.page',
-                            ['search' => Page::query()->withDrafts()->find($data['page_id'])->name]
+                            ['search' => Page::query()->withDrafts()->find($data['page_id'])->name],
                         );
                     }
 

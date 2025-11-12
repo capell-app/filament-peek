@@ -62,7 +62,7 @@ class PagesRelationManager extends AbstractPagesRelationManager
                         'type',
                         'pageUrl.siteDomain',
                     ],
-                ])
+                ]),
             )
             ->description(fn (self $livewire, Table $table): ?string => $livewire->getDescription($table))
             ->columns([

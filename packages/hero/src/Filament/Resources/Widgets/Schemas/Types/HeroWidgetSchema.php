@@ -23,7 +23,7 @@ class HeroWidgetSchema extends AssetsWidgetSchema
     {
         return WidgetDisplayTab::make([
             Fieldset::make(
-                __('capell-admin::generic.carousel_options')
+                __('capell-admin::generic.carousel_options'),
             )
                 ->statePath('meta')
                 ->columnSpanFull()

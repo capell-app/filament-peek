@@ -63,13 +63,13 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
             sort: 10,
             installCommand: true,
             demoCommand: true,
-            demoParams: ['sites']
+            demoParams: ['sites'],
         );
 
         Relation::morphMap(
             collect(ModelEnum::cases())
                 ->mapWithKeys(fn (ModelEnum $model): array => [Str::snake($model->name) => $model->value])
-                ->all()
+                ->all(),
         );
 
         CapellAdmin::registerResource(ResourceEnum::Address->name, class: ResourceEnum::Address->value);
@@ -89,7 +89,7 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
     {
         Site::resolveRelationUsing(
             'address',
-            fn (Site $model): BelongsTo => $model->belongsTo(Address::class, 'meta->address_id')
+            fn (Site $model): BelongsTo => $model->belongsTo(Address::class, 'meta->address_id'),
         );
 
         Site::resolveRelationUsing(
@@ -100,8 +100,8 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
                 'id',
                 'id',
                 'meta->address_id',
-                'country_id'
-            )
+                'country_id',
+            ),
         );
 
         return $this;

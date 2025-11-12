@@ -45,7 +45,7 @@ class LayoutsRelationManager extends RelationManager
                     'editor',
                     'image',
                 ])
-                    ->withCount('pages')
+                    ->withCount('pages'),
             )
             ->description(__('capell-admin::generic.widget_layouts_info'))
             ->columns([
@@ -70,7 +70,7 @@ class LayoutsRelationManager extends RelationManager
                         fn (Layout $record, $state): HtmlString => new HtmlString(Blade::render('capell-admin::components.tables.url', [
                             'state' => $state,
                             'url' => PageResource::getUrl('index', ['tableFilters[layout_id][value]' => $record->id]),
-                        ]))
+                        ])),
                     ),
                 StatusIconColumn::make('status'),
                 DateColumn::make('created_at'),
@@ -82,7 +82,7 @@ class LayoutsRelationManager extends RelationManager
                     ->relationship(
                         name: 'site',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->ordered()
+                        modifyQueryUsing: fn (Builder $query) => $query->ordered(),
                     ),
             ])
             ->recordUrl(

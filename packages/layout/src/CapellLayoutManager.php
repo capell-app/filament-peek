@@ -46,9 +46,9 @@ class CapellLayoutManager
 
     public static function getContainerWidgets(?string $containerKey = null): Collection
     {
-        $widgets = $containerKey !== null && $containerKey !== '' && $containerKey !== '0'
-            ? (static::$containerWidgets[$containerKey] ?? [])
-            : static::$containerWidgets;
+        $widgets = in_array($containerKey, [null, '', '0'], true)
+            ? (static::$containerWidgets)
+            : static::$containerWidgets[$containerKey] ?? [];
 
         return collect($widgets);
     }

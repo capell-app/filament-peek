@@ -24,7 +24,7 @@ class WidgetSettingsSchema
                 ->afterStateUpdatedJs(
                     fn (NameInput $component, string $operation): string => in_array($operation, ['create', 'createOption'], true)
                         ? SlugGenerator::slugifyState("\$state ?? ''", 'key')
-                        : ''
+                        : '',
                 ),
 
             TextInput::make('key')
@@ -36,7 +36,7 @@ class WidgetSettingsSchema
                 ->unique(
                     table: CapellCore::getModel(LayoutModelEnum::Widget->name),
                     ignoreRecord: $schema->getOperation() !== 'replicate',
-                    modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed()
+                    modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),
 
             WidgetTypeSelect::make('type_id')
@@ -44,7 +44,7 @@ class WidgetSettingsSchema
                 ->when(
                     $schema->isCreating(),
                     fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withCreateForm(),
-                    fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withEditForm()
+                    fn (WidgetTypeSelect $component): WidgetTypeSelect => $component->withEditForm(),
                 ),
 
             ...$components,

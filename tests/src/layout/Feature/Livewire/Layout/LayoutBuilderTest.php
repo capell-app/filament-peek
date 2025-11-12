@@ -19,6 +19,7 @@ use Capell\Layout\Services\Creator\TypeCreator;
 use Capell\Layout\Services\Creator\WidgetCreator;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
 use Filament\Actions\Testing\TestAction;
+use Pest\Expectation;
 
 use function Pest\Livewire\livewire;
 
@@ -115,7 +116,7 @@ test('Can reorder containers', function (): void {
         ->call(
             'reorderContainers',
             containerKey: 'second',
-            position: 0
+            position: 0,
         )
         ->call('saveLayout');
 
@@ -148,7 +149,7 @@ test('Can reorder widgets', function (): void {
             'reorderWidgets',
             containerKey: 'test',
             containerWidgetIndex: 'test.1',
-            widgetIndex: 0
+            widgetIndex: 0,
         )
         ->call('saveLayout');
 
@@ -180,7 +181,7 @@ test('Can add container', function (): void {
                 'meta' => [
                     'html_class' => $htmlClass,
                 ],
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -301,7 +302,7 @@ test('Can edit container', function (): void {
             ],
             arguments: [
                 'containerKey' => $containerKey,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -318,10 +319,10 @@ test('Can edit container', function (): void {
     expect($assets)
         ->toHaveCount(2)
         ->each(
-            fn (Pest\Expectation $expect) => $expect
+            fn (Expectation $expect) => $expect
                 ->widget_id->toEqual($widget->id)
                 ->container->toBeNull()
-                ->page_id->toBeNull()
+                ->page_id->toBeNull(),
         );
 });
 
@@ -332,8 +333,8 @@ test('Can edit container for page layout', function (string $widgetKey): void {
     $containerKey = array_key_first($layout->containers);
     $newContainerKey = $containerKey . '-new';
 
-    foreach ($layout->containers as $key => $container) {
-        foreach ($container['widgets'] as $index => $widget) {
+    foreach ($layout->containers as $container) {
+        foreach ($container['widgets'] as $widget) {
             if ($widget['widget_key'] === $widgetKey) {
                 $containerWidget = $widget;
                 break 2;
@@ -341,9 +342,7 @@ test('Can edit container for page layout', function (string $widgetKey): void {
         }
     }
 
-    if (! isset($containerWidget)) {
-        throw new \Exception("Widget with key {$widgetKey} not found in layout containers.");
-    }
+    throw_unless(isset($containerWidget), Exception::class, sprintf('Widget with key %s not found in layout containers.', $widgetKey));
 
     $widget = Widget::query()->firstWhere('key', $containerWidget['widget_key']);
 
@@ -365,7 +364,7 @@ test('Can edit container for page layout', function (string $widgetKey): void {
             ],
             arguments: [
                 'containerKey' => $containerKey,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -382,10 +381,10 @@ test('Can edit container for page layout', function (string $widgetKey): void {
     expect($assets)
         ->toHaveCount(2)
         ->each(
-            fn (Pest\Expectation $expect) => $expect
+            fn (Expectation $expect) => $expect
                 ->container->toEqual($newContainerKey)
                 ->widget_id->toEqual($widget->id)
-                ->page_id->toEqual($page->id)
+                ->page_id->toEqual($page->id),
         );
 })->with(['first', 'second']);
 
@@ -408,7 +407,7 @@ test('Can add new widget', function (): void {
             ],
             arguments: [
                 'containerKey' => $containerKey,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -446,7 +445,7 @@ test('Can add existing widget', function (): void {
             ],
             arguments: [
                 'containerKey' => $containerKey,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');
@@ -486,7 +485,7 @@ test('Can edit container widget', function (): void {
         ->callAction(
             'addWidget',
             data: ['widgets' => [$widget->id]],
-            arguments: ['containerKey' => $containerKey]
+            arguments: ['containerKey' => $containerKey],
         )
         ->assertHasNoFormErrors()
         ->mountAction(
@@ -494,7 +493,7 @@ test('Can edit container widget', function (): void {
                 ->arguments([
                     'containerKey' => $containerKey,
                     'widgetIndex' => $widgetIndex,
-                ])
+                ]),
         )
         ->fillForm(['html_class' => 'foo'])
         ->callMountedAction()
@@ -528,7 +527,7 @@ test('Can duplicate widget', function (): void {
             arguments: [
                 'containerKey' => $containerKey,
                 'widgetIndex' => $widgetIndex,
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->call('saveLayout');

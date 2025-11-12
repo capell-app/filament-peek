@@ -44,7 +44,7 @@ class WidgetsRelationManager extends RelationManager
                         'editor',
                         'type',
                     ],
-                ])
+                ]),
             )
             ->columns([
                 IdentifierColumn::make('widget.id'),

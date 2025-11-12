@@ -52,7 +52,7 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
             sort: 10,
             installCommand: true,
             demoCommand: true,
-            demoParams: ['sites']
+            demoParams: ['sites'],
         );
 
         CapellCore::registerComponents(ComponentTypeEnum::Widget->value, WidgetComponentEnum::cases());

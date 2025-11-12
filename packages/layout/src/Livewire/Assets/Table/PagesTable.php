@@ -24,7 +24,7 @@ class PagesTable extends AbstractAssetsTable
     public function table(Table $table): Table
     {
         return parent::table(
-            \Capell\Admin\Filament\Resources\Pages\Tables\PagesTable::configure($table)
+            \Capell\Admin\Filament\Resources\Pages\Tables\PagesTable::configure($table),
         );
     }
 
@@ -62,7 +62,7 @@ class PagesTable extends AbstractAssetsTable
         ])
             ->when(
                 $this->arguments['pageId'] ?? null,
-                fn (BuilderContract $query) => $query->whereKeyNot($this->arguments['pageId'])
+                fn (BuilderContract $query) => $query->whereKeyNot($this->arguments['pageId']),
             );
     }
 }

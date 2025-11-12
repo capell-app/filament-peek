@@ -55,7 +55,7 @@ class ResultsWidgetSchema extends DefaultWidgetSchema
                 ])
                 ->sidebarSchema(
                     WidgetSettingsSchema::make($schema),
-                    contained: true
+                    contained: true,
                 ),
             Tabs::make()
                 ->visibleOn('edit')

@@ -85,7 +85,7 @@ class ContentAlertsWidget extends Widget implements HasActions, HasForms
                 $alerts['draft'] = new MessageData(
                     message: __(
                         'capell-admin::message.draft_resource',
-                        ['name' => __('capell-layout::generic.content')]
+                        ['name' => __('capell-layout::generic.content')],
                     ),
                     type: AlertTypeEnum::Info,
                     icon: 'heroicon-o-shield-exclamation',
@@ -98,7 +98,7 @@ class ContentAlertsWidget extends Widget implements HasActions, HasForms
                 $alerts['draft'] = new MessageData(
                     message: __(
                         'capell-admin::message.draft_stale_resource',
-                        ['name' => __('capell-layout::generic.content')]
+                        ['name' => __('capell-layout::generic.content')],
                     ),
                     type: AlertTypeEnum::Warning,
                     icon: 'heroicon-o-shield-exclamation',
@@ -111,7 +111,7 @@ class ContentAlertsWidget extends Widget implements HasActions, HasForms
             $alerts['deleted'] = new MessageData(
                 message: __(
                     'capell-admin::message.resource_deleted',
-                    ['name' => __('capell-layout::generic.content')]
+                    ['name' => __('capell-layout::generic.content')],
                 ),
                 type: AlertTypeEnum::Warning,
                 icon: 'heroicon-m-exclamation-triangle',

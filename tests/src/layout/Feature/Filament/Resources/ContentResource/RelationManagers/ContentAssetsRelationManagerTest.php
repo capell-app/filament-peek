@@ -39,7 +39,7 @@ it('can search content assets', function (): void {
                     \Capell\Core\Enums\AssetEnum::Page,
                     ['name' => 'First'],
                 ),
-            'assets'
+            'assets',
         )
         ->has(
             AssetRelation::factory([
@@ -47,7 +47,7 @@ it('can search content assets', function (): void {
                 'asset_type' => AssetEnum::Content->value,
                 'asset_id' => Content::factory(['name' => 'Second']),
             ]),
-            'assets'
+            'assets',
         )
         ->has(
             AssetRelation::factory(['related_type' => AssetEnum::Content->value])
@@ -55,7 +55,7 @@ it('can search content assets', function (): void {
                     \Capell\Core\Enums\AssetEnum::Page,
                     ['name' => 'First'],
                 ),
-            'assets'
+            'assets',
         )
         ->has(
             AssetRelation::factory([
@@ -63,7 +63,7 @@ it('can search content assets', function (): void {
                 'asset_type' => AssetEnum::Content->value,
                 'asset_id' => Content::factory(['name' => 'Fourth']),
             ]),
-            'assets'
+            'assets',
         )
         ->create();
 

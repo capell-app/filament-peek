@@ -69,8 +69,8 @@ class PageContentWidgetSchema implements TypeSchemaInterface
                                             fn (Get $get): bool => in_array(
                                                 'title',
                                                 $get('page_content') ?: [],
-                                                true
-                                            )
+                                                true,
+                                            ),
                                         ),
                                 ]),
                             WidgetDisplaySection::make(),
@@ -92,7 +92,7 @@ class PageContentWidgetSchema implements TypeSchemaInterface
                 ])
                 ->sidebarSchema(
                     WidgetSettingsSchema::make($schema),
-                    contained: true
+                    contained: true,
                 ),
         ];
     }

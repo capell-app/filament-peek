@@ -37,7 +37,7 @@ trait HasAssetsRelationManager
             ->color('primary')
             ->successNotificationTitle(__('capell-admin::message.asset_added'))
             ->using(function (array $data, self $livewire): Model {
-                throw_if(empty($data['asset_id']), new RuntimeException('No asset selected'));
+                throw_if(empty($data['asset_id']), RuntimeException::class, 'No asset selected');
 
                 $asset = null;
 
@@ -61,7 +61,7 @@ trait HasAssetsRelationManager
                 ->types(
                     fn (self $livewire) => CapellCore::getAssets()
                         ->map(fn (AssetData $asset): Type => self::getMorphToSelectType($asset, $livewire->ownerRecord))
-                        ->toArray()
+                        ->toArray(),
                 )
                 ->modifyKeySelectUsing(fn (Select $select): Select => $select->multiple()),
         ];
@@ -74,7 +74,7 @@ trait HasAssetsRelationManager
             ->modifyOptionsQueryUsing(
                 fn (Builder $query) => $query->when(
                     $record instanceof $asset->model,
-                    fn (Builder $query) => $query->whereKeyNot($record->id)
+                    fn (Builder $query) => $query->whereKeyNot($record->id),
                 )
                     ->whereDoesntHave(
                         'assetRelations',
@@ -82,11 +82,11 @@ trait HasAssetsRelationManager
                             'related_type',
                             $record->getMorphClass(),
                         )
-                            ->where('related_id', $record->getKey())
+                            ->where('related_id', $record->getKey()),
                     )
                     ->when(
                         in_array(Draftable::class, class_implements($asset->model), true),
-                        fn (Builder $query) => $query->withDrafts()
+                        fn (Builder $query) => $query->withDrafts(),
                     )
                     ->when(
                         $asset->model === Page::class,
@@ -100,17 +100,17 @@ trait HasAssetsRelationManager
                                     fn (Builder $query) => $query->where(
                                         'group',
                                         '!=',
-                                        TypeGroupEnum::System->value
+                                        TypeGroupEnum::System->value,
                                     )
-                                        ->orWhereNull('group')
-                                )
+                                        ->orWhereNull('group'),
+                                ),
                             )
-                            ->orderBy('site_id')
+                            ->orderBy('site_id'),
                     )
                     ->when(
                         in_array(NestedSet::class, class_uses_recursive($asset->model), true),
-                        fn (Builder $query) => $query->defaultOrder()
-                    )
+                        fn (Builder $query) => $query->defaultOrder(),
+                    ),
             )
             ->getOptionLabelFromRecordUsing(
                 fn (Model $record): string|HtmlString => match ($record::class) {
@@ -126,8 +126,8 @@ trait HasAssetsRelationManager
 
                     return $select->createOptionForm(
                         fn (Schema $schema): Schema => $adminAsset->formClass::configure(
-                            $schema->operation('createOption')->model($asset->model)
-                        )
+                            $schema->operation('createOption')->model($asset->model),
+                        ),
                     )
                         ->createOptionUsing(function (Select $component, array $data) use ($asset, $adminAsset, $createOptionUsing): int|string {
                             $page = $adminAsset->createAction
@@ -143,7 +143,7 @@ trait HasAssetsRelationManager
                         })
                         ->preload()
                         ->searchable();
-                }
+                },
             );
     }
 

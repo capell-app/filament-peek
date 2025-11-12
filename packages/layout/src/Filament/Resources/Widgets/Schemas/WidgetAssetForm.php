@@ -29,7 +29,7 @@ class WidgetAssetForm implements FormConfigurator
                 ->schema(function (TypeSchema $component, Get $get, ?WidgetAsset $record) use ($schema): array {
                     $assetType = $get('asset_type') ?? $record?->asset_type;
 
-                    throw_unless($assetType, new RuntimeException('Asset type is required to load the asset schema'));
+                    throw_unless($assetType, RuntimeException::class, 'Asset type is required to load the asset schema');
 
                     $adminSchema = null;
 

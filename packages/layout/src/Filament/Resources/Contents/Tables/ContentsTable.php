@@ -73,7 +73,7 @@ class ContentsTable implements TableConfigurator
                     ])
                     ->withoutGlobalScopes([
                         SoftDeletingScope::class,
-                    ])
+                    ]),
             )
             ->columns(static::getTableColumns())
             ->filters(static::getTableFilters())
@@ -151,7 +151,7 @@ class ContentsTable implements TableConfigurator
 
                     return $resource::getUrl(
                         'index',
-                        ['tableFilters' => ['filter' => ['parent_id' => $record->id]]]
+                        ['tableFilters' => ['filter' => ['parent_id' => $record->id]]],
                     );
                 }),
             MediaLibraryImageColumn::make('image')
@@ -169,7 +169,7 @@ class ContentsTable implements TableConfigurator
             SiteColumn::make('site.name')
                 ->hidden(
                     fn (HasTable $livewire): bool => $livewire->activeTab
-                        || ! empty($livewire->getTableFilterState('filter')['site_id'])
+                        || ! empty($livewire->getTableFilterState('filter')['site_id']),
                 ),
             PublishIconColumn::make('status'),
             DateColumn::make('publish_from')
@@ -207,7 +207,7 @@ class ContentsTable implements TableConfigurator
                         ->when(
                             $state['value'] === 0,
                             fn (Builder $query): Builder => $query->whereNull('site_id'),
-                        )
+                        ),
                 ),
 
             SelectFilter::make('type_id')
@@ -218,9 +218,9 @@ class ContentsTable implements TableConfigurator
                     /** @param Builder<Type> $query */
                     modifyQueryUsing: fn (Builder $query): Builder => $query->where(
                         'type',
-                        LayoutTypeEnum::Content->value
+                        LayoutTypeEnum::Content->value,
                     )
-                        ->enabled()
+                        ->enabled(),
                 ),
 
             Filter::make('filter')
@@ -239,8 +239,8 @@ class ContentsTable implements TableConfigurator
                                 $siteId,
                                 fn (Builder $query, int $siteId): Builder => $query->whereHas(
                                     'sites',
-                                    fn (BuilderContract $query) => $query->where('sites.id', $siteId)
-                                )
+                                    fn (BuilderContract $query) => $query->where('sites.id', $siteId),
+                                ),
                             )
                                 ->ordered()
                                 ->pluck('name', 'id')
@@ -267,8 +267,8 @@ class ContentsTable implements TableConfigurator
                                     $get('language_id'),
                                     fn (Builder $query, $languageId) => $query->whereHas(
                                         'translations',
-                                        fn (BuilderContract $query) => $query->where('translations.language_id', $languageId)
-                                    )
+                                        fn (BuilderContract $query) => $query->where('translations.language_id', $languageId),
+                                    ),
                                 )
                                 ->orderBy('site_id')
                                 ->orderBy('_lft')
@@ -304,13 +304,13 @@ class ContentsTable implements TableConfigurator
                                 'translations',
                                 fn (BuilderContract $query) => $query->where(
                                     'language_id',
-                                    (int) $data['language_id']
-                                )
-                            )
+                                    (int) $data['language_id'],
+                                ),
+                            ),
                         )
                         ->when(
                             $data['parent_id'] ?? null,
-                            fn (Builder $query) => $query->where('parent_id', $data['parent_id'])
+                            fn (Builder $query) => $query->where('parent_id', $data['parent_id']),
                         );
                 })
                 ->indicateUsing(function (array $data): array {
@@ -322,7 +322,7 @@ class ContentsTable implements TableConfigurator
 
                         $indicators['language_id'] = __(
                             'capell-admin::filter.language',
-                            ['search' => $model::find($data['language_id'], 'name')?->name]
+                            ['search' => $model::find($data['language_id'], 'name')?->name],
                         );
                     }
 
@@ -335,10 +335,10 @@ class ContentsTable implements TableConfigurator
                             [
                                 'search' => $model::select('name')->firstWhere(
                                     'id',
-                                    $data['parent_id']
+                                    $data['parent_id'],
                                 )
                                     ?->name,
-                            ]
+                            ],
                         );
                     }
 

@@ -68,7 +68,7 @@ class TagLoader
         ?int $limit,
         ?int $paginationPage = null,
         bool $withPagination = false,
-        string $paginationKey = 'page'
+        string $paginationKey = 'page',
     ): Collection|LengthAwarePaginator {
         if ($withPagination && ($limit === null || $limit === 0)) {
             $limit = config('capell-frontend.pagination_limit', 10);
@@ -99,11 +99,11 @@ class TagLoader
                 ->whereHas(
                     'pages',
                     fn (BuilderContract $query) => $query->where('site_id', $site->id)
-                        ->whereRelation('translation', 'language_id', $language->id)
+                        ->whereRelation('translation', 'language_id', $language->id),
                 )
                 ->where('type', 'page')
                 ->where(
-                    fn (Builder $query) => $query->where('site_id', $site->id)->orWhereNull('site_id')
+                    fn (Builder $query) => $query->where('site_id', $site->id)->orWhereNull('site_id'),
                 )
                 ->tap(fn (Builder $query) => $query->whereNotNull($query->qualifyColumn('name->' . $language->code)))
                 ->ordered()

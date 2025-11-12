@@ -49,7 +49,7 @@ class DefaultCountrySchema implements TypeSchemaInterface
                 ->unique(
                     table: CapellCore::getModel(ModelEnum::Country),
                     ignoreRecord: $schema->getOperation() !== 'replicate',
-                    modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed()
+                    modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),
             TextInput::make('iso3')
                 ->label(__('capell-address::form.iso3'))
@@ -59,7 +59,7 @@ class DefaultCountrySchema implements TypeSchemaInterface
                 ->unique(
                     table: CapellCore::getModel(ModelEnum::Country),
                     ignoreRecord: $schema->getOperation() !== 'replicate',
-                    modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed()
+                    modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),
             Grid::make()
                 ->columnSpan(1)

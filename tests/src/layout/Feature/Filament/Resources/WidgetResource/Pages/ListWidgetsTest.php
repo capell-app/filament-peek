@@ -71,7 +71,7 @@ test('can replicate widget', function (): void {
             data: [
                 'name' => $name,
                 'key' => Str::slug($name),
-            ]
+            ],
         )
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(2);

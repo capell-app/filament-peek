@@ -54,7 +54,7 @@ abstract class AbstractAssetsTable extends Component implements HasActions, HasF
     {
         throw_if(
             ! Filament::auth()->check(),
-            AuthenticationException::class
+            AuthenticationException::class,
         );
     }
 
@@ -74,8 +74,8 @@ abstract class AbstractAssetsTable extends Component implements HasActions, HasF
                 $this->getTableQuery()
                     ->when(
                         $this->existingRecords,
-                        fn (Builder $query) => $query->whereNotIn('id', $this->existingRecords)
-                    )
+                        fn (Builder $query) => $query->whereNotIn('id', $this->existingRecords),
+                    ),
             )
             ->filtersFormWidth('4xl')
             ->filtersFormColumns([

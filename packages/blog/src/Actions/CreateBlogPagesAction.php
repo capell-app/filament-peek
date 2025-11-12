@@ -44,7 +44,7 @@ class CreateBlogPagesAction
             [NavigationHandle::Main->value, NavigationHandle::Footer->value],
             site: $site,
             pages: [$blogPage],
-            languages: $site->languages
+            languages: $site->languages,
         );
 
         $tagsPage = $blogCreator->createTagsPage($site, $site->languages);

@@ -50,14 +50,14 @@ class AssetsRepeater extends Repeater
                     ->visible(
                         fn (array $arguments, Repeater $component): bool => ! empty(
                             $component->getRawItemState($arguments['item'])['asset_id']
-                        )
+                        ),
                     )
                     ->tooltip(function (array $arguments, Repeater $component): ?string {
                         $itemData = $component->getRawItemState($arguments['item']);
 
                         return __(
                             'capell-admin::button.edit_asset_type',
-                            ['type' => $itemData['asset_type']]
+                            ['type' => $itemData['asset_type']],
                         );
                     })
                     ->icon(Heroicon::PencilSquare)
@@ -67,7 +67,7 @@ class AssetsRepeater extends Repeater
 
                             return GetAssetResourceUrlAction::run($itemData['asset_type'], $itemData['asset_id']);
                         },
-                        shouldOpenInNewTab: true
+                        shouldOpenInNewTab: true,
                     ),
             ])
             ->registerActions([
@@ -83,7 +83,7 @@ class AssetsRepeater extends Repeater
 
                 $items = $component->getRawState();
 
-                if ($newUuid !== null && $newUuid !== '' && $newUuid !== '0') {
+                if (! in_array($newUuid, [null, '', '0'], true)) {
                     $items[$newUuid] = $arguments;
                 } else {
                     $items[] = $arguments;
@@ -129,10 +129,10 @@ class AssetsRepeater extends Repeater
                                 'type',
                                 fn (Builder $query) => $query->where(
                                     fn (Builder $query) => $query->where('group', '!=', TypeGroupEnum::System->value)
-                                        ->orWhereNull('group')
-                                )
-                            )
-                    )
+                                        ->orWhereNull('group'),
+                                ),
+                            ),
+                    ),
                 )
                 ->savesBelongsToRelation()
                 ->getSelectedRecordUsing(
@@ -144,16 +144,16 @@ class AssetsRepeater extends Repeater
                         $asset = CapellCore::getAsset($get('asset_type'));
 
                         return $asset->model::withTrashed()->find($state);
-                    }
+                    },
                 )
                 ->placeholder(
                     fn (Get $get): string => __(
                         'capell-admin::generic.select_asset_placeholder',
-                        ['asset' => CapellCore::getAsset($get('asset_type'))->getLabel()]
-                    )
+                        ['asset' => CapellCore::getAsset($get('asset_type'))->getLabel()],
+                    ),
                 )
                 ->prefixIcon(
-                    fn (Get $get): null|string|Heroicon => CapellCore::getAsset($get('asset_type'))->getIcon()
+                    fn (Get $get): null|string|Heroicon => CapellCore::getAsset($get('asset_type'))->getIcon(),
                 )
                 ->selectablePlaceholder(false)
                 ->getOptionLabelFromRecordUsing(function (Select $component, Model $record): HtmlString {
@@ -180,15 +180,15 @@ class AssetsRepeater extends Repeater
                     $assetAdmin = CapellAdmin::getAsset($get('asset_type'));
 
                     return $assetAdmin->formClass::configure(
-                        $schema->operation('createOption')->model($asset->model)
+                        $schema->operation('createOption')->model($asset->model),
                     );
                 })
                 ->createOptionUsing(function (Select $component, Schema $schema, Get $get, array $data) use ($createOptionUsing): int|string {
                     $asset = CapellAdmin::getAsset($get('asset_type'));
 
-                    $record = $asset->createAction !== null && $asset->createAction !== '' && $asset->createAction !== '0'
-                        ? $asset->createAction::run($data)
-                        : $component->evaluate($createOptionUsing);
+                    $record = in_array($asset->createAction, [null, '', '0'], true)
+                        ? $component->evaluate($createOptionUsing)
+                        : $asset->createAction::run($data);
 
                     $schema->model($record)->saveRelationships();
 
@@ -204,7 +204,7 @@ class AssetsRepeater extends Repeater
 
                     return ModifyCreateAction::run($action)
                         ->visible(fn (?int $state): bool => $state === null)
-                        ->fillForm(fn (): array => $asset->defaultDataAction !== null && $asset->defaultDataAction !== '' && $asset->defaultDataAction !== '0' ? $asset->defaultDataAction::run() : []);
+                        ->fillForm(fn (): array => in_array($asset->defaultDataAction, [null, '', '0'], true) ? [] : $asset->defaultDataAction::run());
                 }),
         ];
     }
@@ -219,9 +219,9 @@ class AssetsRepeater extends Repeater
                         ->schemaComponent($component)
                         ->label($asset->getLabel())
                         ->icon($asset->getIcon())
-                        ->arguments(['asset_type' => $asset->getKey()])
+                        ->arguments(['asset_type' => $asset->getKey()]),
                 )
-                ->all()
+                ->all(),
         )
             ->dropdownPlacement('bottom')
             ->label(fn (): string|Htmlable|null => $action->getLabel())

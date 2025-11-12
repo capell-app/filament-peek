@@ -9,8 +9,8 @@ use Capell\Frontend\CapellFrontendManager;
 use Capell\Frontend\Facades\FrontendLoader;
 use Capell\Frontend\Livewire\Page\AbstractPage;
 use Capell\Frontend\Services\Loader\PageLoader;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class ArchivePage extends AbstractPage
@@ -62,7 +62,7 @@ class ArchivePage extends AbstractPage
 
     protected function getViewData(): array
     {
-        $date = Carbon::create()->day(1)->month($this->month)->year($this->year);
+        $date = Date::create()->day(1)->month($this->month)->year($this->year);
 
         return [
             'archive_date' => $date,
@@ -99,23 +99,23 @@ class ArchivePage extends AbstractPage
                 if (DB::getDriverName() === 'sqlite') {
                     return $query->when(
                         $this->year,
-                        fn (Builder $query) => $query->whereRaw("strftime('%Y', COALESCE(`publish_from`, `created_at`)) = " . (int) $this->year)
+                        fn (Builder $query) => $query->whereRaw("strftime('%Y', COALESCE(`publish_from`, `created_at`)) = " . (int) $this->year),
                     )
                         ->when(
                             $this->month,
-                            fn (Builder $query) => $query->whereRaw("strftime('%m', COALESCE(`publish_from`, `created_at`)) = " . (int) $this->month)
+                            fn (Builder $query) => $query->whereRaw("strftime('%m', COALESCE(`publish_from`, `created_at`)) = " . (int) $this->month),
                         );
                 }
 
                 return $query->when(
                     $this->year,
-                    fn (Builder $query) => $query->whereRaw('YEAR(COALESCE(`publish_from`, `created_at`)) = ' . (int) $this->year)
+                    fn (Builder $query) => $query->whereRaw('YEAR(COALESCE(`publish_from`, `created_at`)) = ' . (int) $this->year),
                 )
                     ->when(
                         $this->month,
-                        fn (Builder $query) => $query->whereRaw('MONTH(COALESCE(`publish_from`, `created_at`)) = ' . (int) $this->month)
+                        fn (Builder $query) => $query->whereRaw('MONTH(COALESCE(`publish_from`, `created_at`)) = ' . (int) $this->month),
                     );
-            }
+            },
         );
 
         $this->pageParams = $this->getViewData();

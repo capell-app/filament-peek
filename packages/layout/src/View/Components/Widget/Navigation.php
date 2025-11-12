@@ -35,7 +35,7 @@ class Navigation extends AbstractWidget
             navigation: $this->menu,
             site: FrontendLoader::getSite(),
             language: FrontendLoader::getLanguage(),
-            siteDomain: FrontendLoader::getSite()->siteDomain
+            siteDomain: FrontendLoader::getSite()->siteDomain,
         );
 
         $this->items = $navigationLoader->fetchMenuItems();
@@ -56,7 +56,7 @@ class Navigation extends AbstractWidget
         $menu = NavigationLoader::getNavigation(
             $this->widget->meta['navigation'],
             FrontendLoader::getSite(),
-            FrontendLoader::getLanguage()
+            FrontendLoader::getLanguage(),
         );
 
         if ($menu instanceof Models\Navigation) {
@@ -65,7 +65,7 @@ class Navigation extends AbstractWidget
 
         return NavigationLoader::getNavigation(
             $this->widget->meta['navigation'],
-            FrontendLoader::getSite()
+            FrontendLoader::getSite(),
         );
     }
 }

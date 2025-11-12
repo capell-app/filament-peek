@@ -7,18 +7,22 @@ $testsRoot = __DIR__ . DIRECTORY_SEPARATOR . 'src';
 // Safety: ensure root exists before iterating
 if (is_dir($testsRoot)) {
     foreach (new DirectoryIterator($testsRoot) as $info) {
-        if (! $info->isDir() || $info->isDot()) {
+        if (! $info->isDir()) {
+            continue;
+        }
+
+        if ($info->isDot()) {
             continue;
         }
 
         $name = $info->getBasename();
 
         // Skip non test suite directories
-        if (in_array($name, ['Fixtures'], true)) {
+        if ($name === 'Fixtures') {
             continue;
         }
 
-        $testCaseClass = "Capell\\Tests\\{$name}\\{$name}TestCase"; // Convention: Capell\Tests\{Dir}\{Dir}TestCase
+        $testCaseClass = sprintf('Capell\Tests\%s\%sTestCase', $name, $name); // Convention: Capell\Tests\{Dir}\{Dir}TestCase
 
         if (class_exists($testCaseClass)) {
             pest()->extends($testCaseClass)

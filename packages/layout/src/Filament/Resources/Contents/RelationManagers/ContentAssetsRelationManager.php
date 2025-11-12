@@ -54,7 +54,7 @@ class ContentAssetsRelationManager extends RelationManager
                                     ? $asset->model::getMorphRelations()
                                     : [],
                             ])
-                            ->toArray()
+                            ->toArray(),
                     ),
             ]))
             ->description(__('capell-admin::generic.content_assets_description'))
@@ -75,7 +75,7 @@ class ContentAssetsRelationManager extends RelationManager
                     ->badge(),
             ])
             ->recordUrl(
-                fn (AssetRelation $record): string => GetAssetResourceUrlAction::run($record->asset_type, $record->asset)
+                fn (AssetRelation $record): string => GetAssetResourceUrlAction::run($record->asset_type, $record->asset),
             )
             ->filters([
                 SelectFilter::make('asset_type')
@@ -83,9 +83,9 @@ class ContentAssetsRelationManager extends RelationManager
                     ->options(
                         fn (): array => CapellCore::getAssets()
                             ->mapWithKeys(
-                                static fn (AssetData $asset): array => [$asset->getKey() => $asset->getLabel()]
+                                static fn (AssetData $asset): array => [$asset->getKey() => $asset->getLabel()],
                             )
-                            ->all()
+                            ->all(),
                     ),
                 SelectFilter::make('type_id')
                     ->label(__('capell-admin::form.type'))

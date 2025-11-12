@@ -36,7 +36,7 @@ class BackgroundSchema
                 ->when(
                     $backgroundCollectionUsing instanceof Closure,
                     fn (SpatieMediaLibraryFileUpload $component): SpatieMediaLibraryFileUpload => $component->collection(
-                        fn (SpatieMediaLibraryFileUpload $component): string => $component->evaluate($backgroundCollectionUsing)
+                        fn (SpatieMediaLibraryFileUpload $component): string => $component->evaluate($backgroundCollectionUsing),
                     ),
                 ),
 

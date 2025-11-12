@@ -91,9 +91,9 @@ test('create with translations', function (string $mode): void {
                             'title' => $newData->name . ' - ' . $language->name,
                             'content' => $newData->name . ' - ' . $language->name,
                         ],
-                    ]
+                    ],
                 )
-                ->toArray(),
+                ->all(),
         ])
         ->assertSchemaStateSet([
             'name' => $newData->name,
@@ -115,7 +115,7 @@ test('create with translations', function (string $mode): void {
             'title' => $newData->name . ' - ' . $language->name,
             'content' => $newData->name . ' - ' . htmlentities($language->name, ENT_QUOTES, 'UTF-8'),
             'translatable_type' => 'content',
-        ])
+        ]),
     );
 })
     ->with(['default', 'with deleted site']);

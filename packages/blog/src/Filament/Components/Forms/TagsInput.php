@@ -29,7 +29,7 @@ abstract class TagsInput extends SpatieTagsInput
                 return $model::where('type', $component->type)
                     ->where(
                         fn (Builder $query) => $query->whereNull('site_id')
-                            ->orWhere('site_id', $get('site_id'))
+                            ->orWhere('site_id', $get('site_id')),
                     )
                     ->pluck('name')
                     ->all();
@@ -50,7 +50,7 @@ abstract class TagsInput extends SpatieTagsInput
                 $locale = $language instanceof Language ? $language->code : app()->getLocale();
 
                 $component->state(
-                    $tags->map(fn (Tag $tag): ?string => $tag->getTranslation('name', $locale))->all()
+                    $tags->map(fn (Tag $tag): ?string => $tag->getTranslation('name', $locale))->all(),
                 );
             });
     }

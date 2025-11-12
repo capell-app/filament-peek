@@ -32,7 +32,7 @@ class InstallCommand extends Command
             [
                 '--items' => CapellLayoutManager::getMigrations(),
                 '--path' => __DIR__ . '/../../database/migrations',
-            ]
+            ],
         );
 
         $this->call('migrate');

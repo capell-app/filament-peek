@@ -26,7 +26,7 @@ class LayoutTab extends Tab
                     fn (Get $get, Layout $record): array => [
                         'site_id' => $record->site_id,
                         'layout_id' => $record->id,
-                    ]
+                    ],
                 ),
             ]);
     }

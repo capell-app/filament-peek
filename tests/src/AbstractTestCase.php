@@ -132,7 +132,7 @@ abstract class AbstractTestCase extends TestCase
      *
      * @param  Application  $app
      */
-    protected function setUpDatabase()
+    protected function setUpDatabase(): void
     {
         Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
     }
@@ -180,7 +180,7 @@ abstract class AbstractTestCase extends TestCase
         ];
     }
 
-    protected function registerPackageConfigs(Application $app, ?array $packages = null)
+    protected function registerPackageConfigs(Application $app, ?array $packages = null): void
     {
         if ($packages === null || $packages === []) {
             $packages = $this->getDefaultPackages();
@@ -297,9 +297,7 @@ abstract class AbstractTestCase extends TestCase
 
     private function discoverPackagesMigrations(): array
     {
-        return CapellCore::getPackages()->map(function (PackageData $package) use (&$files): array {
-            return $this->discoverPackageMigrations($package->key);
-        })
+        return CapellCore::getPackages()->map(fn (PackageData $package): array => $this->discoverPackageMigrations($package->key))
             ->flatten()
             ->all();
     }

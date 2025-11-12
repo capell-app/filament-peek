@@ -50,14 +50,14 @@ trait CreatesAdminUser
 
     public function createUserWithRole(
         array|string|int|Role|Collection $roles,
-        array $attributes = []
+        array $attributes = [],
     ): User {
         return $this->createUser($attributes)->assignRole($roles);
     }
 
     public function createUserWithPermission(
         string|int|array|Permission|Collection $permissions,
-        array $attributes = []
+        array $attributes = [],
     ): User {
         return $this->createUser($attributes)->givePermissionTo($permissions);
     }
