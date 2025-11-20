@@ -17,4 +17,5 @@ return [
     'tag_footer' => 'Footer',
     'tag_nav' => 'Navigation',
     'tag_main' => 'Main',
+    'color_scheme' => 'Color Scheme',
 ];

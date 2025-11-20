@@ -158,7 +158,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         if ($withNotifications) {
             Notification::make('layout-saved')
-                ->body(__('capell-admin::message.layout_saved'))
+                ->body(__('capell-layout::message.layout_saved'))
                 ->success()
                 ->send();
 
@@ -267,7 +267,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             ->groupedIcon('heroicon-o-square-2-stack')
             ->modalWidth(Width::ScreenSmall)
             ->requiresConfirmation()
-            ->modalDescription(__('capell-admin::message.copy_layout_confirmation'))
+            ->modalDescription(__('capell-layout::message.copy_layout_confirmation'))
             ->visible(fn (): bool => $this->inPageContext())
             ->action(function (Action $action, self $livewire): void {
                 $livewire->duplicateLayout();
@@ -733,7 +733,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
                 if ($selectedAssets === []) {
                     Notification::make('no-assets-selected')
-                        ->body(__('capell-admin::message.no_assets_selected'))
+                        ->body(__('capell-layout::message.no_assets_selected'))
                         ->warning()
                         ->send();
 
@@ -1769,7 +1769,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                             return;
                         }
 
-                        $fail(__('capell-admin::message.layout_container_key_not_unique', ['key' => $value]));
+                        $fail(__('capell-layout::message.layout_container_key_not_unique', ['key' => $value]));
                     },
                 ]),
             ...$typeSchema,

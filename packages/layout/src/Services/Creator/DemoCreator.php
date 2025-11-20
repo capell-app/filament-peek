@@ -230,7 +230,7 @@ class DemoCreator
         if (! $widget) {
             $widget = $this->widgetModel::create([
                 'key' => 'pages-card',
-                'name' => __('capell-admin::generic.pages_tile'),
+                'name' => __('capell-layout::generic.pages_tile'),
                 'type_id' => $this->typeModel::firstWhere('key', WidgetTypeEnum::Pages)->id,
                 'meta' => [
                     'component' => WidgetComponentEnum::LivewirePages,
@@ -301,7 +301,7 @@ class DemoCreator
 
         foreach ($languages as $language) {
             $widget->translations()->firstOrCreate(['language_id' => $language->id], [
-                'title' => __('capell-admin::heading.faq'),
+                'title' => __('capell-layout::heading.faq'),
                 'content' => '<p>You can find answers for commonly asked questions</p>',
             ]);
         }

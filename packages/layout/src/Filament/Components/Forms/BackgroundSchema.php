@@ -112,6 +112,6 @@ class BackgroundSchema
             return null;
         }
 
-        return __('capell-admin::generic.default_value', ['value' => $backgroundColor]);
+        return __('capell-layout::generic.default_value', ['value' => $backgroundColor]);
     }
 }

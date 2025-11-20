@@ -103,7 +103,7 @@ class ContentResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return __('capell-admin::generic.contents');
+        return __('capell-layout::generic.contents');
     }
 
     public static function getRelations(): array

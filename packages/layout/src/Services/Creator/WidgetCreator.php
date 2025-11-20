@@ -92,7 +92,7 @@ class WidgetCreator
             $widget->translations()->firstOrCreate([
                 'language_id' => $language->id,
             ], [
-                'title' => __('capell-admin::heading.page_children'),
+                'title' => __('capell-layout::heading.page_children'),
             ]);
         });
     }
@@ -137,7 +137,7 @@ class WidgetCreator
             $widget->translations()->firstOrCreate([
                 'language_id' => $language->id,
             ], [
-                'title' => __('capell-admin::heading.gallery'),
+                'title' => __('capell-layout::heading.gallery'),
             ]);
         });
     }
@@ -263,7 +263,7 @@ class WidgetCreator
             $widget->translations()->firstOrCreate([
                 'language_id' => $language->id,
             ], [
-                'title' => __('capell-admin::heading.page_siblings'),
+                'title' => __('capell-layout::heading.page_siblings'),
             ]);
         });
     }
