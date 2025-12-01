@@ -41,7 +41,7 @@ abstract class AbstractAssetsTable extends ModalTableSelect
             'sync-selected-assets',
             arguments: $this->tableArguments,
             type: $this->type,
-            assets: $this->selectedRecords,
+            assets: $this->selectedTableRecords,
         );
 
         $this->resetPage();

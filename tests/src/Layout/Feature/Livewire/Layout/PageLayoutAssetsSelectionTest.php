@@ -11,8 +11,6 @@ use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\Testing\TestAction;
 
 use function Pest\Livewire\livewire;
 
@@ -53,10 +51,11 @@ it('excludes existing page assets when selecting new ones', function (): void {
 
     livewire(PageAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
         'existingRecords' => $existingAssets->pluck('asset_id')->toArray(),
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(3) // only new pages should be listed
         ->assertCanSeeTableRecords($newPages)
         ->assertCanNotSeeTableRecords($existingAssets->map(fn ($asset) => $asset->asset)->all());
@@ -92,9 +91,11 @@ it('dispatches sync-selected-assets for page layout context', function (string $
         'tableArguments' => $arguments,
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(3)
         ->selectTableRecords($records->pluck('id')->toArray())
-        ->callAction(TestAction::make('selectRecords'))
+        // ->callAction('selectRecords')
+        ->call('selectRecords')
         ->assertDispatched(
             'sync-selected-assets',
             arguments: $arguments,

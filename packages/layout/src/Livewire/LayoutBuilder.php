@@ -404,7 +404,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                     $livewire->getContainerWidgetSchema($arguments['containerKey'], $arguments['widgetIndex']),
                 );
 
-                $typeSchema = app($adminSchema)->make($schema);
+                $typeSchema = resolve($adminSchema)->make($schema);
 
                 return $schema->operation('editOption')->components($typeSchema);
             })
@@ -1147,7 +1147,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         /** @var class-string<WidgetAsset> $model */
         $model = CapellCore::getModel(ModelEnum::WidgetAsset->name);
 
-        $record = $model::make([
+        $record = $model::query()->make([
             'widget_id' => $widget->id,
             'asset_type' => $assetType,
             'meta' => [],
@@ -1376,7 +1376,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         /** @var class-string<Layout> $model */
         $model = CapellCore::getModel(CoreModelEnum::Layout);
 
-        $layout = $model::withCount('pages')->find($this->layout_id);
+        $layout = $model::query()->withCount('pages')->find($this->layout_id);
 
         throw_unless($layout, Exception::class, 'Layout not found');
 
@@ -1387,6 +1387,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
     private function saveContainer(array $data, ?string $key = null): void
     {
+        $this->loadFromStore();
+
         if (in_array($key, [null, '', '0'], true)) {
             $key = $data['key'];
         }
@@ -1581,7 +1583,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         /** @var class-string<Site> $model */
         $model = CapellCore::getModel(CoreModelEnum::Site);
 
-        return $model::find($this->site_id);
+        return $model::query()->find($this->site_id);
     }
 
     private function setupContainers(): void
@@ -1757,7 +1759,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
             $this->layoutRecord->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerSchema::getKey(),
         );
 
-        $typeSchema = app($adminSchema)->make($schema);
+        $typeSchema = resolve($adminSchema)->make($schema);
 
         return [
             TextInput::make('key')
@@ -2065,7 +2067,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         $newAssetsCollection = collect($newAssets)
             ->values()
-            ->map(fn (array $data) => $model::newModelInstance()->forceFill($data));
+            ->map(fn (array $data) => $model::query()->newModelInstance()->forceFill($data));
 
         $allAssets = (new $model)->newCollection(array_merge($existingAssets->all(), $newAssetsCollection->all()));
 

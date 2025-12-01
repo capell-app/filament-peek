@@ -13,7 +13,11 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Locked;
+use Override;
 
+/**
+ * @property Schema $form
+ */
 class WidgetTableSelect extends ModalTableSelect
 {
     #[Locked]
@@ -31,7 +35,7 @@ class WidgetTableSelect extends ModalTableSelect
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getSelectRecordsLabel(): string
     {
         return __('capell-layout::button.add_widgets_container');
@@ -39,10 +43,17 @@ class WidgetTableSelect extends ModalTableSelect
 
     public function selectRecords(): void
     {
+        if ($this->containerKey) {
+            $containerKey = $this->containerKey;
+        } else {
+            $formData = $this->form->getState();
+            $containerKey = $formData['container'];
+        }
+
         $this->dispatch(
             'add-widgets-to-container',
-            containerKey: $this->data['container'] ?? null,
-            widgets: $this->selectedRecords,
+            containerKey: $containerKey,
+            widgets: $this->selectedTableRecords,
         );
 
         $this->resetPage();
@@ -56,6 +67,8 @@ class WidgetTableSelect extends ModalTableSelect
         $model = CapellCore::getModel(ModelEnum::Widget->name);
 
         return $model::with([
+            'creator',
+            'editor',
             'translations.language',
             'type',
         ]);

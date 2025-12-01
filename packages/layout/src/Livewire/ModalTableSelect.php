@@ -31,7 +31,7 @@ class ModalTableSelect extends Component implements HasActions, HasForms, HasTab
     use WithoutUrlPagination;
 
     #[Locked]
-    public string $actionModalId;
+    public ?string $actionModalId = null;
 
     #[Locked]
     public bool $isDisabled = false;
@@ -122,9 +122,7 @@ class ModalTableSelect extends Component implements HasActions, HasForms, HasTab
     /**
      * Default action handler. Subclasses may override.
      */
-    public function selectRecords(): void
-    {
-    }
+    public function selectRecords(): void {}
 
     public function getSelectRecordsLabel(): string
     {
@@ -137,17 +135,12 @@ class ModalTableSelect extends Component implements HasActions, HasForms, HasTab
             ->label($this->getSelectRecordsLabel())
             ->button()
             ->color('primary')
-            ->submit('selectRecords');
+            ->action('selectRecords');
     }
 
     public function render(): View
     {
         return view('capell-layout::livewire.widgets-table-select');
-    }
-
-    public function getFilteredTableQuery(): Builder
-    {
-        return $this->getTableQuery();
     }
 
     /**

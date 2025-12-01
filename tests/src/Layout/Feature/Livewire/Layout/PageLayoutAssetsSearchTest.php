@@ -35,9 +35,10 @@ it('searches within page assets table in page layout context', function (): void
 
     livewire(PageAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->searchTable((string) $first->id)
         ->assertCanSeeTableRecords([$first]);
 });

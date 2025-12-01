@@ -293,7 +293,7 @@ abstract class AbstractTestCase extends TestCase
 
     protected function registerAndMigrateSettings(array $migrations, string $basePath): void
     {
-        $migrator = app(SettingsMigrator::class);
+        $migrator = resolve(SettingsMigrator::class);
         foreach ($migrations as $migrationFile) {
             $path = sprintf('%s/%s.php', $basePath, $migrationFile);
             /** @var SettingsMigration $migration */

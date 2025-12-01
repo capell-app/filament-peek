@@ -40,8 +40,9 @@ it('renders assets tables for each asset type', function (string $assetType): vo
 
     livewire($component, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
         'type' => $assetType,
     ])
-        ->assertSuccessful();
+        ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments);
 })->with($types);

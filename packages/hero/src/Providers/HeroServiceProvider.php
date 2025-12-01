@@ -54,7 +54,9 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
     {
         parent::registeringPackage();
 
-        $this->registerPackageMetadata();
+        $this
+            ->registerSchemas()
+            ->registerPackageMetadata();
     }
 
     private function isPackageInstalled(): bool
@@ -66,7 +68,6 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
     {
         return $this
             ->registerComponents()
-            ->registerSchemas()
             ->registerSchemaExtenders()
             ->registerBladeComponents();
     }

@@ -19,97 +19,97 @@ declare(strict_types=1);
 ])
 @php
     use Capell\Admin\Facades\CapellAdmin;
-        use Capell\Core\Actions\GetResourceFromTypeAction;
-        use Capell\Core\Enums\ModelEnum;
-        use Capell\Core\Facades\CapellCore;
-        use Capell\Core\Models\Page;
-        use Capell\Layout\Models\Content;
-        use Filament\Actions\Action;
-        use Filament\Support\Contracts\ScalableIcon;
-        use Filament\Support\Enums\IconSize;
-        use Filament\Support\Enums\Size;
-        use Illuminate\Database\Eloquent\Model;
-        use Illuminate\Support\Str;
-        use Spatie\MediaLibrary\MediaCollections\Models\Media;
+            use Capell\Core\Actions\GetResourceFromTypeAction;
+            use Capell\Core\Enums\ModelEnum;
+            use Capell\Core\Facades\CapellCore;
+            use Capell\Core\Models\Page;
+            use Capell\Layout\Models\Content;
+            use Filament\Actions\Action;
+            use Filament\Support\Contracts\ScalableIcon;
+            use Filament\Support\Enums\IconSize;
+            use Filament\Support\Enums\Size;
+            use Illuminate\Database\Eloquent\Model;
+            use Illuminate\Support\Str;
+            use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-        /** @var Action $editWidgetAssetAction */
-        $editWidgetAssetAction = ($this->editWidgetAssetAction)([
-            'containerKey' => $containerKey,
-            'widgetIndex' => $widgetIndex,
-            'index' => $index,
-            'type' => $widgetAsset->asset_type,
-        ]);
+            /** @var Action $editWidgetAssetAction */
+            $editWidgetAssetAction = ($this->editWidgetAssetAction)([
+                'containerKey' => $containerKey,
+                'widgetIndex' => $widgetIndex,
+                'index' => $index,
+                'type' => $widgetAsset->asset_type,
+            ]);
 
-        /** @var Model $asset */
-        $asset = $widgetAsset->asset;
+            /** @var Model $asset */
+            $asset = $widgetAsset->asset;
 
-        if (! $asset?->getKey()) {
-            throw new \RuntimeException("Asset of type [{$widgetAsset->asset_type}] with ID [{$widgetAsset->asset_id}] not found.");
-        }
-
-        $assetKey = "{$widgetAsset->asset_type}.{$widgetAsset->asset_id}";
-
-        if (! $image) {
-            $image = match (get_class($asset)) {
-                Page::class, Content::class => $asset->image,
-                Media::class => $asset,
-                default => null,
-            };
-        }
-
-        $mediaCount = match (get_class($asset)) {
-            Content::class => $asset->media->count(),
-            default => null,
-        };
-
-        $relatedCount = match (get_class($asset)) {
-            Content::class => $asset->related->count(),
-            default => null,
-        };
-
-        $actionsCount = match (get_class($asset)) {
-            Content::class => count($asset->actions),
-            default => null,
-        };
-
-        $label = '';
-
-        if (! $name) {
-            $name = $asset->name;
-        }
-
-        $label .= $name;
-
-        if (! $description) {
-            $description = '';
-
-            if ($asset->ancestors?->isNotEmpty()) {
-                $description .= $asset->ancestors->pluck('name')
-                    ->map(fn ($item) => Str::limit($item, 30))
-                    ->implode(' &raquo; ');
+            if (! $asset?->getKey()) {
+                throw new \RuntimeException("Asset of type [{$widgetAsset->asset_type}] with ID [{$widgetAsset->asset_id}] not found.");
             }
 
-            $description .= match (get_class($asset)) {
-                Page::class, Content::class => $asset->translation?->title &&
-                $asset->translation->title !== $asset->name
-                    ? $asset->translation->title
-                    : null,
+            $assetKey = "{$widgetAsset->asset_type}.{$widgetAsset->asset_id}";
+
+            if (! $image) {
+                $image = match (get_class($asset)) {
+                    Page::class, Content::class => $asset->image,
+                    Media::class => $asset,
+                    default => null,
+                };
+            }
+
+            $mediaCount = match (get_class($asset)) {
+                Content::class => $asset->media->count(),
                 default => null,
             };
-        }
 
-        if (CapellCore::getModel(ModelEnum::Site)::totalSites() > 1) {
-            if ($asset->hasAttribute('site_id') && $asset->site_id) {
-                $description = $asset->site?->name . ($description ? ' - ' . $description : '');
+            $relatedCount = match (get_class($asset)) {
+                Content::class => $asset->related->count(),
+                default => null,
+            };
+
+            $actionsCount = match (get_class($asset)) {
+                Content::class => count($asset->actions),
+                default => null,
+            };
+
+            $label = '';
+
+            if (! $name) {
+                $name = $asset->name;
             }
-        }
 
-        $icon = $editWidgetAssetAction->getIcon();
-        if ($icon instanceof ScalableIcon) {
-            $icon = $icon->getIconForSize(IconSize::Small);
-        } elseif ($icon instanceof BackedEnum) {
-            $icon = $icon->value;
-        }
+            $label .= $name;
+
+            if (! $description) {
+                $description = '';
+
+                if ($asset->ancestors?->isNotEmpty()) {
+                    $description .= $asset->ancestors->pluck('name')
+                        ->map(fn ($item) => Str::limit($item, 30))
+                        ->implode(' &raquo; ');
+                }
+
+                $description .= match (get_class($asset)) {
+                    Page::class, Content::class => $asset->translation?->title &&
+                    $asset->translation->title !== $asset->name
+                        ? $asset->translation->title
+                        : null,
+                    default => null,
+                };
+            }
+
+            if (CapellCore::getModel(ModelEnum::Site)::totalSites() > 1) {
+                if ($asset->hasAttribute('site_id') && $asset->site_id) {
+                    $description = $asset->site?->name . ($description ? ' - ' . $description : '');
+                }
+            }
+
+            $icon = $editWidgetAssetAction->getIcon();
+            if ($icon instanceof ScalableIcon) {
+                $icon = $icon->getIconForSize(IconSize::Small);
+            } elseif ($icon instanceof BackedEnum) {
+                $icon = $icon->value;
+            }
 @endphp
 
 <div
@@ -128,11 +128,10 @@ declare(strict_types=1);
             <input
                 type="checkbox"
                 class="group-hover/asset:border-primary-500 group/asset-focus:border-primary-500 text-primary-600 focus:border-primary-500 focus:ring-primary-500 dark:checked:bg-primary-500 ml-1 h-4 w-4 cursor-pointer rounded border-gray-600 shadow-sm transition duration-75 focus:ring-2 disabled:opacity-70 dark:border-gray-400 dark:bg-gray-700"
-                :label="__('tables::table.fields.bulk_select_asset.label', ['key' => $name])"
-                :value="$assetKey"
-                :wire:key="'selectedRecords' . $containerKey . '-' . $widgetIndex . '-' . $assetKey"
+                value="{{ $assetKey }}"
+                wire:key="{{ 'selectedRecords' . $containerKey . '-' . $widgetIndex . '-' . $assetKey }}"
                 x-model="selectedRecords['{{ $containerKey }}'][{{ $widgetIndex }}]"
-                :x-show="'! isWidgetReorderingResources(\'' . $containerKey . '\', ' . $widgetIndex . ')'"
+                x-show="! isWidgetReorderingResources('{{ $containerKey }}', {{ $widgetIndex }})"
                 wire:loading.remove
                 wire:target="{{ $editWidgetAssetAction->getLivewireClickHandler() }}"
             />

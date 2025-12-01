@@ -309,7 +309,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
         throw_if(in_array($dir, ['', '0', false], true) || ! is_dir($dir), Exception::class, 'Theme view path not found: ' . $dir);
 
-        app(Factory::class)->prependNamespace('capell', $dir);
+        resolve(Factory::class)->prependNamespace('capell', $dir);
 
         return $this;
     }

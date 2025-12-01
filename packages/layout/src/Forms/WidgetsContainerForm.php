@@ -12,17 +12,13 @@ final class WidgetsContainerForm
 {
     public static function configure(Schema $schema, WidgetTableSelect $component): Schema
     {
-        return $schema
-            ->fill([
-                'container' => $component->containerKey ?? session('layout-builder.container'),
-            ])
-            ->components([
-                Select::make('container')
-                    ->label(__('capell-admin::form.container'))
-                    ->hiddenLabel()
-                    ->prefix(fn (Select $c): string => $c->getLabel() . ': ')
-                    ->required()
-                    ->options($component->containers),
-            ]);
+        return $schema->components([
+            Select::make('container')
+                ->label(__('capell-admin::form.container'))
+                ->hiddenLabel()
+                ->prefix(fn (Select $c): string => $c->getLabel() . ': ')
+                ->required()
+                ->options($component->containers),
+        ]);
     }
 }

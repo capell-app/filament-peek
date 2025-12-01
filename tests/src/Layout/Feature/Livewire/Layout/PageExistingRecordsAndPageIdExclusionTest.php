@@ -36,10 +36,11 @@ it('excludes existing page records and current pageId from selection list', func
 
     livewire(PageAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
         'existingRecords' => $existingRecords->pluck('id')->toArray(),
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords($visibleExpected->count())
         ->assertCanSeeTableRecords($visibleExpected)
         ->assertCanNotSeeTableRecords($existingRecords)

@@ -61,7 +61,7 @@ class ArticlePagesTable implements TableConfigurator
 
                     $languageId = $livewire->getTableFilterState('filter')['language_id'] ?? null;
                     if ($languageId) {
-                        $code = CapellCore::getModel(ModelEnum::Language)::find($languageId, 'code')?->code;
+                        $code = CapellCore::getModel(ModelEnum::Language)::query()->find($languageId, 'code')?->code;
                         if ($code) {
                             $query->whereRaw('JSON_EXTRACT(`tags`.`name`, ' . DB::getPdo()->quote('$.' . $code) . ') IS NOT NULL');
                         }

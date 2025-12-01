@@ -9,7 +9,6 @@ use Capell\Layout\Livewire\Assets\Table\ContentAssetsTable;
 use Capell\Layout\Livewire\Assets\Table\PageAssetsTable;
 use Capell\Layout\Models\Content;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\Testing\TestAction;
 
 use function Pest\Livewire\livewire;
 
@@ -38,9 +37,10 @@ it('filters by site for contents assets', function (): void {
 
     livewire(ContentAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(5)
         ->assertCanSeeTableRecords($siteContents)
         ->filterTable('site_id', $site->id)
@@ -65,9 +65,10 @@ it('filters by site for page assets', function (): void {
 
     livewire(PageAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(5)
         ->assertCanSeeTableRecords($sitePages)
         ->filterTable('site_id', $site->id)
@@ -98,13 +99,14 @@ it('dispatches sync-selected-assets event with selected records for each asset t
 
     livewire($component, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(3)
         ->selectTableRecords($records->pluck('id')->toArray())
-        ->callAction('selectRecords')
-        ->assertDispatched('sync-selected-assets')
+        // ->callAction('selectRecords')
+        ->call('selectRecords')
         ->assertDispatched(
             'sync-selected-assets',
             arguments: $arguments,
@@ -131,9 +133,10 @@ it('searches within contents assets table', function (): void {
 
     livewire(ContentAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->searchTable((string) $first->id)
         ->assertCanSeeTableRecords([$first]);
 });

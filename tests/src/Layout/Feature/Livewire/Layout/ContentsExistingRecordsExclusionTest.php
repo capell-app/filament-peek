@@ -32,10 +32,11 @@ it('excludes existing content records from selection list', function (): void {
 
     livewire(ContentAssetsTable::class, [
         'actionModalId' => 'select-assets',
-        'arguments' => $arguments,
+        'tableArguments' => $arguments,
         'existingRecords' => $excluded->pluck('id')->toArray(),
     ])
         ->assertSuccessful()
+        ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(3)
         ->assertCanSeeTableRecords($expectedVisible)
         ->assertCanNotSeeTableRecords($excluded);
