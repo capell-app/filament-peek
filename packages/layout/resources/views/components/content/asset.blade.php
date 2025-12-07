@@ -5,9 +5,9 @@ declare(strict_types=1);
 ?>
 
 @php
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
 
-    $language = FrontendLoader::getLanguage();
+    $language = Frontend::language();
 @endphp
 
 @props([

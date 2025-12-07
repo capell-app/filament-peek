@@ -6,11 +6,11 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Facades\CapellCore;
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-    $page = FrontendLoader::getPage();
-    $theme = FrontendLoader::getTheme();
+    $page = Frontend::page();
+    $theme = Frontend::theme();
 @endphp
 
 @props([

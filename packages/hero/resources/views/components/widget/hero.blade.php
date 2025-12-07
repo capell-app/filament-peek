@@ -7,13 +7,13 @@ declare(strict_types=1);
 @php
     use Capell\Frontend\Actions\ReplacePageDataAction;
     use Capell\Frontend\Facades\CapellFrontend;
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Services\Loader\PageLoader;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-    $page = FrontendLoader::getPage();
-    $pageParams = FrontendLoader::getPageParams();
-    $theme = FrontendLoader::getTheme();
+    $page = Frontend::page();
+    $pageParams = Frontend::params();
+    $theme = Frontend::theme();
 @endphp
 
 @props([

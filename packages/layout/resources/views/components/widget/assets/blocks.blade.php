@@ -7,8 +7,6 @@ declare(strict_types=1);
 @php
     use Capell\Core\Enums\AssetComponentEnum;
     use Capell\Core\Facades\CapellCore;
-    use Capell\Frontend\CapellFrontendManager;
-    use Capell\Frontend\Facades\CapellFrontend;
 @endphp
 
 @props([
@@ -94,7 +92,7 @@ declare(strict_types=1);
             >
                 @foreach ($widget->assets as $asset)
                     <x-dynamic-component
-                        :component="CapellFrontend::getAsset($asset['asset_type'])->component"
+                        :component="app(\Capell\Frontend\Contracts\AssetsRegistryInterface::class)->getAsset($asset['asset_type'])->component"
                         :component-item="$widget->meta['component_item'] ?? AssetComponentEnum::Card->value"
                         :$container
                         :$containerKey

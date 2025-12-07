@@ -62,7 +62,7 @@ it('can create', function (string $type): void {
     ->with(['default', 'with deleted site']);
 
 test('create with translations', function (string $mode): void {
-    $languages = Language::factory()->count(3)->create(['name' => 'Cote d\'Ivoire']);
+    $languages = Language::factory()->count(3)->create(['name' => "Cote d'Ivoire"]);
     $site = Site::factory()->state(['language_id' => $languages->first()->id])->withTranslations($languages)->create();
 
     $type = (new ContentTypeFactory)->default()->create();

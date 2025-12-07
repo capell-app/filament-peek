@@ -5,10 +5,10 @@ declare(strict_types=1);
 ?>
 
 @php
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
 
-    $site = FrontendLoader::getSite();
-    $pageParams = FrontendLoader::getPageParams();
+    $site = Frontend::site();
+    $pageParams = Frontend::params();
 @endphp
 
 @props([

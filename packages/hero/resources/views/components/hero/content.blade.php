@@ -16,7 +16,8 @@ declare(strict_types=1);
     'url' => '',
 ])
 <div
-    {{ $attributes->merge([
+    {{
+        $attributes->merge([
             'class' => implode(
                 ' ',
                 array_merge(
@@ -29,7 +30,8 @@ declare(strict_types=1);
                     ),
                 ),
             ),
-        ]) }}
+        ])
+    }}
     @if ($colorScheme === 'dark') style="--tw-prose-invert-body: #fff;" @endif
 >
     @if ($title)

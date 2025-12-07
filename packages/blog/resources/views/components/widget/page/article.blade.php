@@ -5,7 +5,7 @@ declare(strict_types=1);
 ?>
 
 @php
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
 @endphp
 
 @props([
@@ -14,7 +14,7 @@ declare(strict_types=1);
     'containerWidth' => null,
     'loop',
     'widget',
-    'page' => FrontendLoader::getPage(),
+    'page' => Frontend::page(),
     'headingSize' => $widget->meta['heading_size'] ?? 'h1',
     'withAuthor' => $widget->meta['with_author'] ?? false,
     'withDate' => $widget->meta['with_date'] ?? false,

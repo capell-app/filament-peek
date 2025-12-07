@@ -6,13 +6,13 @@ declare(strict_types=1);
 
 @php
     use Capell\Frontend\Actions\ReplacePageDataAction;
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Services\Loader\PageLoader;
 
-    $page = FrontendLoader::getPage();
-    $pageParams = FrontendLoader::getPageParams();
-    $site = FrontendLoader::getSite();
-    $language = FrontendLoader::getLanguage();
+    $page = Frontend::page();
+    $pageParams = Frontend::params();
+    $site = Frontend::site();
+    $language = Frontend::language();
 @endphp
 
 @props([

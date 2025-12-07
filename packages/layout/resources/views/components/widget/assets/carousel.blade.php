@@ -5,11 +5,11 @@ declare(strict_types=1);
 ?>
 
 @php
-    use Capell\Frontend\Facades\FrontendLoader;
+    use Capell\Frontend\Facades\Frontend;
     use Spatie\Image\Image;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-    $theme = FrontendLoader::getTheme();
+    $theme = Frontend::theme();
 @endphp
 
 @props([

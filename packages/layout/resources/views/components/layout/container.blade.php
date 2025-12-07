@@ -7,7 +7,7 @@ declare(strict_types=1);
 @php
     use Capell\Core\Facades\CapellCore;
         use Capell\Core\Models\Layout;
-        use Capell\Frontend\Facades\FrontendLoader;
+        use Capell\Frontend\Facades\Frontend;
         use Capell\Layout\Facades\CapellLayout;
         use Spatie\MediaLibrary\MediaCollections\Models\Media;
 @endphp
