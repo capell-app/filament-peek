@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\Frontend\Facades\ActiveContext;
+use Capell\Frontend\Facades\Frontend;
 
-$theme = ActiveContext::theme();
+$theme = Frontend::theme();
 
 ?>
 
@@ -26,15 +26,15 @@ $theme = ActiveContext::theme();
 @php
     $backgroundImage = $widget->backgroundImage ?? $widget->image ?? $widget->assets->first()?->asset?->image;
 
-        $hasContent = $content || $title || ! empty($widget->meta['actions']);
+            $hasContent = $content || $title || ! empty($widget->meta['actions']);
 
-        if ($rounded) {
-            $imgRounded = $hasContent
-                  ? ($reverseOrder ? ' rounded-r-lg' : ' rounded-l-lg')
-                  : ' rounded-lg';
-        } else {
-            $imgRounded = '';
-        }
+            if ($rounded) {
+                $imgRounded = $hasContent
+                      ? ($reverseOrder ? ' rounded-r-lg' : ' rounded-l-lg')
+                      : ' rounded-lg';
+            } else {
+                $imgRounded = '';
+            }
 @endphp
 
 <x-capell-layout::widget.wrapper

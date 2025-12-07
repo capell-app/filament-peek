@@ -10,50 +10,50 @@ declare(strict_types=1);
 'headingClass' => 'font-heading tracking-right font-medium uppercase leading-tight text-gray-400',
 ])
 @php
-    $language = \Capell\Frontend\Facades\ActiveContext::language();
-            $site = \Capell\Frontend\Facades\ActiveContext::site();
-            $page = \Capell\Frontend\Facades\ActiveContext::page();
+    $language = \Capell\Frontend\Facades\Frontend::language();
+                $site = \Capell\Frontend\Facades\Frontend::site();
+                $page = \Capell\Frontend\Facades\Frontend::page();
 
-                $getMenu = function (string $key) use ($site, $language) {
-                        $menu = \Capell\Frontend\Services\Loader\NavigationLoader::getNavigation($key, $site, $language);
-                        if (! $menu) {
-                            $menu = \Capell\Frontend\Services\Loader\NavigationLoader::getNavigation($key, $site);
-                        }
-
-                        $items = [];
-
-                        if ($menu) {
-                            $navigationLoader = new \Capell\Frontend\Services\Loader\NavigationItemsLoader(
-                                navigation: $menu,
-                                site: $site,
-                                language: $language,
-                                siteDomain: $site->siteDomain,
-                            );
-
-                            $items = $navigationLoader->fetchMenuItems();
-
-                            if ($items) {
-                                $navigationLoader->activeMenuItems($items);
+                    $getMenu = function (string $key) use ($site, $language) {
+                            $menu = \Capell\Frontend\Services\Loader\NavigationLoader::getNavigation($key, $site, $language);
+                            if (! $menu) {
+                                $menu = \Capell\Frontend\Services\Loader\NavigationLoader::getNavigation($key, $site);
                             }
-                        }
 
-                        return [$menu, $items];
-                    };
+                            $items = [];
 
-                    [$footerMenu, $footerMenuItems] = $getMenu(\Capell\Core\Enums\NavigationHandle::Footer->value);
-                    [$subFooterMenu, $subFooterMenuItems] = $getMenu(\Capell\Core\Enums\NavigationHandle::SubFooter->value);
+                            if ($menu) {
+                                $navigationLoader = new \Capell\Frontend\Services\Loader\NavigationItemsLoader(
+                                    navigation: $menu,
+                                    site: $site,
+                                    language: $language,
+                                    siteDomain: $site->siteDomain,
+                                );
 
-                    $contactPage = \Capell\Core\Models\Page::getFirstPageByTypeForSite('contact', $site, $language);
+                                $items = $navigationLoader->fetchMenuItems();
 
-                    $siteLanguages = \Capell\Frontend\Services\Loader\SiteLoader::pageLanguages($site, $language, $page);
+                                if ($items) {
+                                    $navigationLoader->activeMenuItems($items);
+                                }
+                            }
 
-                    $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
-                        $site,
-                        $language,
-                        limit: 3,
-                        withImage: true,
-                        pageGroup: \Capell\Core\Facades\CapellCore::hasPackage(\Capell\Blog\Providers\BlogServiceProvider::$packageName) ? 'blog' : '',
-                    );
+                            return [$menu, $items];
+                        };
+
+                        [$footerMenu, $footerMenuItems] = $getMenu(\Capell\Core\Enums\NavigationHandle::Footer->value);
+                        [$subFooterMenu, $subFooterMenuItems] = $getMenu(\Capell\Core\Enums\NavigationHandle::SubFooter->value);
+
+                        $contactPage = \Capell\Core\Models\Page::getFirstPageByTypeForSite('contact', $site, $language);
+
+                        $siteLanguages = \Capell\Frontend\Services\Loader\SiteLoader::pageLanguages($site, $language, $page);
+
+                        $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
+                            $site,
+                            $language,
+                            limit: 3,
+                            withImage: true,
+                            pageGroup: \Capell\Core\Facades\CapellCore::hasPackage(\Capell\Blog\Providers\BlogServiceProvider::$packageName) ? 'blog' : '',
+                        );
 @endphp
 
 <style>

@@ -6,7 +6,7 @@ namespace Capell\Blog\View\Components\Widget\Page;
 
 use Capell\Blog\Services\Loader\TagLoader;
 use Capell\Core\Models\Page;
-use Capell\Frontend\Facades\ActiveContext;
+use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Services\Loader\PageLoader;
 use Capell\Layout\View\Components\Widget\Pages\AbstractPagesWidget;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
@@ -19,15 +19,15 @@ class RelatedWidget extends AbstractPagesWidget
     {
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
 
-        $page = ActiveContext::page();
+        $page = Frontend::page();
 
         $tags = TagLoader::getPageTags($page);
 
         $tagIds = $tags->pluck('id')->toArray();
 
         $this->pages = PageLoader::getPages(
-            site: ActiveContext::site(),
-            language: ActiveContext::language(),
+            site: Frontend::site(),
+            language: Frontend::language(),
             limit: $limit,
             withChildrenCount: $page->type->meta['with_children_count'] ?? true,
             withImage: $this->widget->meta['with_image'] ?? false,

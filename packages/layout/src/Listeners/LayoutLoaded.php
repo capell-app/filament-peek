@@ -10,7 +10,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Enums\ListenerEnum;
-use Capell\Frontend\Facades\ActiveContext;
+use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\CapellLayoutManager;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Services\Creator\LayoutLoader;
@@ -23,9 +23,9 @@ class LayoutLoaded implements EventSubscriber
             return;
         }
 
-        $layout = ActiveContext::layout();
-        $language = ActiveContext::language();
-        $page = ActiveContext::page();
+        $layout = Frontend::layout();
+        $language = Frontend::language();
+        $page = Frontend::page();
 
         if (! $layout instanceof Layout || ! $language instanceof Language || ! $page instanceof Page) {
             return;

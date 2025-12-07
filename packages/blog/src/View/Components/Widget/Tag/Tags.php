@@ -6,7 +6,7 @@ namespace Capell\Blog\View\Components\Widget\Tag;
 
 use Capell\Blog\Services\Loader\TagLoader;
 use Capell\Core\Models\Page;
-use Capell\Frontend\Facades\ActiveContext;
+use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\View\Components\Widget\AbstractWidget;
 
 class Tags extends AbstractWidget
@@ -31,8 +31,8 @@ class Tags extends AbstractWidget
         $limit = $this->widget->meta['limit'] ?? null;
 
         $this->tags = TagLoader::getTags(
-            site: ActiveContext::site(),
-            language: ActiveContext::language(),
+            site: Frontend::site(),
+            language: Frontend::language(),
             limit: $limit,
         );
 
@@ -42,6 +42,6 @@ class Tags extends AbstractWidget
             return;
         }
 
-        $this->tagPage = TagLoader::getTagResultsPage(ActiveContext::site(), ActiveContext::language());
+        $this->tagPage = TagLoader::getTagResultsPage(Frontend::site(), Frontend::language());
     }
 }

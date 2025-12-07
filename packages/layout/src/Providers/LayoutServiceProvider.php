@@ -20,8 +20,8 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
+use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
-use Capell\Frontend\Facades\CapellFrontend;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Layout\CapellLayoutManager;
 use Capell\Layout\Commands\DemoCommand;
@@ -259,9 +259,15 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ),
         );
 
-        CapellFrontend::registerAsset($contentAsset, new FrontendAssetData(
-            component: $contentAsset->getComponent(),
-        ));
+        // Defer frontend asset registration until the registry is resolved by FrontendServiceProvider
+        $this->callAfterResolving(AssetsRegistryInterface::class, function (AssetsRegistryInterface $assets) use ($contentAsset): void {
+            $assets->registerAsset(
+                $contentAsset,
+                new FrontendAssetData(
+                    component: $contentAsset->getComponent(),
+                ),
+            );
+        });
 
         return $this;
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\View\Components\Widget\Pages;
 
-use Capell\Frontend\Facades\ActiveContext;
+use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Services\Loader\PageLoader;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 
@@ -12,7 +12,7 @@ class SiblingsWidget extends AbstractPagesWidget
 {
     protected function mountWidget(): void
     {
-        $page = ActiveContext::page();
+        $page = Frontend::page();
 
         if (! empty($page->type->meta['hidden'])) {
             $this->skipRender = true;
@@ -27,8 +27,8 @@ class SiblingsWidget extends AbstractPagesWidget
         }
 
         $this->pages = PageLoader::getPages(
-            site: ActiveContext::site(),
-            language: ActiveContext::language(),
+            site: Frontend::site(),
+            language: Frontend::language(),
             page: $page,
             type: 'siblings',
             ordering: 'alphabetical',
