@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.0.3 - 2025-12-07
+
+### What's Changed
+
+* Modernise Plugin Architecture, Unify Code Quality Workflows, and Refactor Address/Blog Resources and Frontend Integration by @howdu in https://github.com/capell-app/packages/pull/21
+
+**Full Changelog**: https://github.com/capell-app/packages/compare/v2.0.2...v2.0.3
+
 ## v2.0.2 - 2025-12-02
 
 ### What's Changed
