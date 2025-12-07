@@ -11,6 +11,8 @@ jobs:
   code-quality:
     name: Code Quality Checks
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.ACCESS_TOKEN }}"} }'
     strategy:
       fail-fast: true
       matrix:
@@ -42,6 +44,8 @@ jobs:
   prettier:
     name: Prettier Code Styling
     runs-on: ubuntu-latest
+    env:
+      COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.ACCESS_TOKEN }}"} }'
     strategy:
       fail-fast: true
     steps:
