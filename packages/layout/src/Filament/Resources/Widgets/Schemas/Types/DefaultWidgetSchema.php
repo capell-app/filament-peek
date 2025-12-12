@@ -102,14 +102,11 @@ class DefaultWidgetSchema implements TypeSchemaInterface
     protected function getDisplayTab(Schema $schema): Tab
     {
         return WidgetDisplayTab::make([
-            Grid::make()
-                ->schema([
-                    WidgetDisplaySection::make([
-                        ColorSchemeComponent::make('color_scheme'),
-                    ]),
-                    WidgetComponentFilesSection::make()
-                        ->statePath('meta'),
-                ]),
+            WidgetDisplaySection::make([
+                ColorSchemeComponent::make('color_scheme'),
+            ]),
+            WidgetComponentFilesSection::make()
+                ->statePath('meta'),
         ]);
     }
 

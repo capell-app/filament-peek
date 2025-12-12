@@ -375,10 +375,9 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     private function registerPublishCommands(): self
     {
-        $vendorAssets = $this->package->basePath('/../publishes/build');
-        $appAssets = public_path('vendor/' . $this->package->shortName());
-
-        $this->publishes([$vendorAssets => $appAssets], $this->package->shortName() . '-assets');
+        $this->publishes([
+            $this->package->basePath('/../publishes/build') => public_path('vendor/capell-layout'),
+        ], 'capell-layout-assets');
 
         return $this;
     }

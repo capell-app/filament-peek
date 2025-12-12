@@ -36,7 +36,7 @@ class InstallCommand extends Command
         $this->updateThemes();
 
         $this->call('vendor:publish', ['--tag' => 'capell-layout-publish']);
-        $this->call('vendor:publish', ['--tag' => 'capell-layout-assets']);
+        $this->call('vendor:publish', ['--tag' => 'capell-layout-assets', '--force' => true]);
 
         $this->call(
             'capell:publish-migrations',

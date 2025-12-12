@@ -10,8 +10,6 @@ enum WidgetComponentEnum: string
 
     case BannerImage = 'capell-layout::widget.banner-image';
 
-    case LivewirePages = 'capell.layout.livewire.widget.pages';
-
     case Navigation = 'capell-layout::widget.navigation';
 
     case NavigationTabs = 'capell-layout::widget.navigation.tabs';
@@ -45,6 +43,4 @@ enum WidgetComponentEnum: string
     case AssetMedia = 'capell-layout::widget.assets.media';
 
     case AssetTestimonials = 'capell-layout::widget.assets.testimonials';
-
-    case Tags = 'capell-layout::widget.tag.tags';
 }

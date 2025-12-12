@@ -233,7 +233,7 @@ class DemoCreator
                 'name' => __('capell-layout::generic.pages_tile'),
                 'type_id' => $this->typeModel::query()->firstWhere('key', WidgetTypeEnum::Pages)->id,
                 'meta' => [
-                    'component' => WidgetComponentEnum::LivewirePages,
+                    'component' => 'capell.layout.livewire.widget.pages',
                     'columns' => 4,
                     'with_image' => true,
                     'with_summary' => true,

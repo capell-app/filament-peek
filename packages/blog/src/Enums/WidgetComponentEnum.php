@@ -9,4 +9,6 @@ enum WidgetComponentEnum: string
     case BlogPage = 'capell-blog::livewire.page.blog';
 
     case PageRelated = 'capell-blog::widget.pages.related';
+
+    case Tags = 'capell-blog::widget.tag.tags';
 }

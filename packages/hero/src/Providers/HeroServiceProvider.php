@@ -110,7 +110,7 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
 
     private function registerComponents(): self
     {
-        CapellCore::registerComponents(ComponentTypeEnum::Widget->value, WidgetComponentEnum::cases());
+        CapellCore::registerComponents(ComponentTypeEnum::Widget->name, WidgetComponentEnum::cases());
 
         return $this;
     }

@@ -279,7 +279,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerWidgetComponents(): self
     {
-        CapellCore::registerComponents(ComponentTypeEnum::Widget->value, WidgetComponentEnum::cases());
+        CapellCore::registerComponents(ComponentTypeEnum::Widget->name, WidgetComponentEnum::cases());
 
         return $this;
     }
