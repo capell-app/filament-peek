@@ -8,7 +8,7 @@ $page = \Capell\Frontend\Facades\Frontend::page();
 
 $getMenu = function (string $key) use ($site, $language): array {
     $menu = \Capell\Frontend\Services\Loader\NavigationLoader::getNavigation($key, $site, $language);
-    if (!$menu instanceof \Capell\Core\Models\Navigation) {
+    if (! $menu instanceof \Capell\Core\Models\Navigation) {
         $menu = \Capell\Frontend\Services\Loader\NavigationLoader::getNavigation($key, $site);
     }
 
@@ -40,11 +40,11 @@ $contactPage = \Capell\Core\Models\Page::getFirstPageByTypeForSite('contact', $s
 $siteLanguages = \Capell\Frontend\Services\Loader\SiteLoader::pageLanguages($site, $language, $page);
 
 $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
-$site,
-$language,
-limit: 3,
-pageGroup: \Capell\Core\Facades\CapellCore::hasPackage(\Capell\Blog\Providers\BlogServiceProvider::$packageName) ? 'blog' : '',
-withImage: true,
+    language: $language,
+    site: $site,
+    limit: 3,
+    pageGroup: \Capell\Core\Facades\CapellCore::hasPackage(\Capell\Blog\Providers\BlogServiceProvider::$packageName) ? 'blog' : '',
+    withImage: true,
 );
 
 ?>

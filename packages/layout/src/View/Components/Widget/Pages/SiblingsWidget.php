@@ -27,8 +27,8 @@ class SiblingsWidget extends AbstractPagesWidget
         }
 
         $this->pages = PageLoader::getPages(
-            site: Frontend::site(),
             language: Frontend::language(),
+            site: Frontend::site(),
             page: $page,
             type: 'siblings',
             ordering: 'alphabetical',
