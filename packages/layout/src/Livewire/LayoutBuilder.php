@@ -58,6 +58,10 @@ use Livewire\Component;
 
 /**
  * @property-read ?Page $page
+ * @property-read $changeLayoutAction
+ * @property-read $duplicateLayoutAction
+ * @property-read $addWidgetAction
+ * @property-read $editWidgetAssetAction
  */
 class LayoutBuilder extends Component implements HasActions, HasForms
 {
@@ -173,8 +177,17 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     }
 
     #[On('add-widgets-to-container')]
-    public function addWidgetsToContainer(string $containerKey, array $widgets): void
+    public function addWidgetsToContainer(string $containerKey, array $widgets, ?string $actionModalId = null): void
     {
+        if ($widgets === []) {
+            Notification::make('no-widgets-selected')
+                ->body(__('capell-layout::message.no_widgets_selected'))
+                ->warning()
+                ->send();
+
+            return;
+        }
+
         if (! isset($this->layoutRecord)) {
             $this->loadFromStore();
         }
@@ -196,6 +209,10 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         $this->setupSelectedAssets();
 
         $this->layoutUpdated();
+
+        if ($actionModalId) {
+            $this->dispatch('close-modal', id: $actionModalId);
+        }
     }
 
     #[On('sync-selected-assets')]
@@ -1089,9 +1106,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms
         }
     }
 
-    // --- PROTECTED METHODS ---
-    // (Order: load/setup, then helpers, then internal logic)
-
     protected function loadNew(): void
     {
         $this->loadLayoutRecord();
@@ -1112,6 +1126,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms
     protected function loadFromStore(): void
     {
         $this->loadLayoutRecord();
+
+        $this->setupContainers();
 
         $widgets = $this->preloadAllWidgets(withAssets: false);
 

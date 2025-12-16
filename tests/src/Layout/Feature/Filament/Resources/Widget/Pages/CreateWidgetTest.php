@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Capell\Core\Models\Navigation;
 use Capell\Layout\Database\Factories\WidgetTypeFactory;
 use Capell\Layout\Enums\WidgetTypeEnum;
-use Capell\Layout\Filament\Actions\CreateWidgetModalAction;
+use Capell\Layout\Filament\Actions\CreateWidgetAction;
 use Capell\Layout\Filament\Resources\Widgets\Pages\EditWidget;
 use Capell\Layout\Filament\Resources\Widgets\Pages\ListWidgets;
 use Capell\Layout\Models\Widget;
@@ -35,7 +35,7 @@ describe('from edit widget', function (): void {
                 'type_id' => $widget->type_id,
                 'key' => $widget->key,
             ])
-            ->mountAction(TestAction::make(CreateWidgetModalAction::class))
+            ->mountAction(TestAction::make(CreateWidgetAction::class))
             ->assertFormFieldDoesNotExist('key')
             ->fillForm([
                 'name' => $newData->name,
@@ -55,7 +55,7 @@ describe('from edit widget', function (): void {
 
         livewire(EditWidget::class, ['record' => $widget->getRouteKey()])
             ->assertSuccessful()
-            ->callAction(CreateWidgetModalAction::class, [
+            ->callAction(CreateWidgetAction::class, [
                 'name' => '',
                 'type_id' => '',
             ])
@@ -72,7 +72,7 @@ describe('from list widgets', function (): void {
 
         livewire(ListWidgets::class)
             ->assertSuccessful()
-            ->mountAction(TestAction::make(CreateWidgetModalAction::class))
+            ->mountAction(TestAction::make(CreateWidgetAction::class))
             ->assertSchemaStateSet([
                 'type_id' => $newData->type_id,
             ])
@@ -112,7 +112,7 @@ describe('from list widgets', function (): void {
 
         livewire(ListWidgets::class)
             ->assertSuccessful()
-            ->mountAction(CreateWidgetModalAction::class)
+            ->mountAction(CreateWidgetAction::class)
             ->fillForm([
                 'name' => $newData->name,
                 'key' => str($newData->name)->slug()->toString(),
@@ -140,7 +140,7 @@ describe('from list widgets', function (): void {
 
         livewire(ListWidgets::class)
             ->assertSuccessful()
-            ->callAction(CreateWidgetModalAction::class, [
+            ->callAction(CreateWidgetAction::class, [
                 'name' => '',
                 'type_id' => '',
             ])

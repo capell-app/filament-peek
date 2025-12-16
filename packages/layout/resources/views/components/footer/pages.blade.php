@@ -17,7 +17,7 @@ declare(strict_types=1);
         @forelse ($pages as $page)
             @php
                 $publishDate = $page->getPublishDate();
-                                $url = $page->pageUrl->full_url;
+                                                $url = $page->pageUrl->full_url;
             @endphp
 
             <div @class(['group grid', 'grid-cols-4 gap-x-4' => $page->image])>

@@ -9,6 +9,7 @@ use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Livewire\LivewireServiceProvider;
 use Override;
 
 class AddressTestCase extends AbstractTestCase
@@ -20,6 +21,7 @@ class AddressTestCase extends AbstractTestCase
             AddressServiceProvider::class,
             AdminPanelProvider::class,
             AdminServiceProvider::class,
+            LivewireServiceProvider::class,
         ];
     }
 

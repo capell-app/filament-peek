@@ -189,6 +189,10 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             Livewire::component($name, $class);
         }
 
+        foreach (config('capell-blog.blade_components') as $name => $component) {
+            Blade::component($name, $component);
+        }
+
         return $this;
     }
 
@@ -312,8 +316,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
             CapellCore::addDefaultPage('archives', 'Blog Archives', function (Site $site, ?Type $languages): void {
                 $blogPage = BlogLoader::getBlogPage($site);
-                $archivesPage = (new BlogCreator)->createArchivesPage($site, $blogPage, languages: $languages);
-                (new BlogCreator)->createArchivePage($site, $archivesPage, languages: $languages);
+                $archivesPage = (new BlogCreator)->createArchivesPage($blogPage, languages: $languages);
+                (new BlogCreator)->createArchivePage($archivesPage, languages: $languages);
             });
         });
 

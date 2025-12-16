@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Enums\AssetComponentEnum;
-        use Capell\Core\Facades\CapellCore;
+            use Capell\Core\Facades\CapellCore;
 @endphp
 
 @props([

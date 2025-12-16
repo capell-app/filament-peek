@@ -36,7 +36,7 @@ class Tags extends AbstractWidget
             limit: $limit,
         );
 
-        if ($this->tags->isEmpty() && config('capell-layout.widget.hide_empty')) {
+        if ($this->tags->isEmpty() && config('capell-layout.widget.skip_render_empty', true)) {
             $this->skipRender = true;
 
             return;

@@ -31,9 +31,9 @@ class CreateBlogPagesAction
 
         $blogPage = $blogCreator->createBlogPage($site, type: $blogPageType, languages: $site->languages);
 
-        $archivesPage = $blogCreator->createArchivesPage($site, $blogPage, type: $systemPageType, layout: $archivesLayout);
+        $archivesPage = $blogCreator->createArchivesPage($blogPage, type: $systemPageType, layout: $archivesLayout);
 
-        $blogCreator->createArchivePage($site, $archivesPage, type: $archivePageType, layout: $resultsLayout, languages: $site->languages);
+        $blogCreator->createArchivePage($archivesPage, type: $archivePageType, layout: $resultsLayout, languages: $site->languages);
 
         $blogCreator->addPagesToNavigations(
             [NavigationHandle::Main->value, NavigationHandle::Footer->value],

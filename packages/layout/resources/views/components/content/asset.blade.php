@@ -7,7 +7,7 @@ declare(strict_types=1);
 @php
     use Capell\Frontend\Facades\Frontend;
 
-        $language = Frontend::language();
+            $language = Frontend::language();
 @endphp
 
 @props([

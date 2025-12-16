@@ -84,7 +84,10 @@ class InstallCommand extends Command
 
                     $theme->setAttribute('meta', array_replace(
                         $theme->meta,
-                        ['vendor_assets' => array_values($filteredAssets)],
+                        [
+                            'vendor_assets' => array_values($filteredAssets),
+                            'footer_file' => 'capell-layout::footer',
+                        ],
                     ));
 
                     AddVendorAssetToThemeAction::run(

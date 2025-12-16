@@ -9,8 +9,8 @@ use Capell\Blog\View\Components\Widget\Page\RelatedWidget;
 
 return [
     'livewire_components' => [
-        'capell-blog::livewire.page.blog' => BlogPage::class,
         'capell-blog::livewire.page.archive' => ArchivePage::class,
+        'capell-blog::livewire.page.blog' => BlogPage::class,
         'capell-blog::livewire.page.tag' => TagPage::class,
     ],
     'blade_components' => [

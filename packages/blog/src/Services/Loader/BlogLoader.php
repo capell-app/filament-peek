@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Services\Loader;
 
-use Capell\Core\Data\ArchiveMonthData;
+use Capell\Blog\Data\ArchiveMonthData;
+use Capell\Blog\Services\PageArchiveService;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Frontend\Contracts\ModelServingInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -50,29 +50,20 @@ class BlogLoader
         bool $pagination = true,
         ?int $paginationPage = null,
         string $paginationKey = 'page',
-    ): Collection {
+    ): Collection|LengthAwarePaginator {
         $cacheKey = sprintf('site-%d-%d-%s-%s-page-%s', $site->id, $language->id, $type, $limit, $paginationPage);
 
-        return CapellCore::rememberCache($cacheKey, function () use (
-            $language,
-            $limit,
-            $paginationKey,
-            $site,
-            $type,
-            $pagination,
-        ): Collection {
-            /* @var class-string<Models\Page> $model */
-            $model = CapellCore::getModel(ModelEnum::Page);
-
-            return $model::withoutEvents(fn () => $model::getPageArchivedDates(site: $site, language: $language, typeKey: $type)
-                ->when(! $pagination, fn (Builder $query): Collection => $query->limit($limit)->get())
-                ->when($pagination, fn (Builder $query): LengthAwarePaginator => $query->paginate($limit, ['*'], $paginationKey))
-                ->map(fn ($record): ArchiveMonthData => new ArchiveMonthData(
-                    year: $record->year,
-                    month: $record->month,
-                    total: $record->total,
-                )));
-        });
+        return CapellCore::rememberCache(
+            $cacheKey,
+            fn (): Collection|LengthAwarePaginator => app(PageArchiveService::class)->getArchivedCountsByMonth(
+                site: $site,
+                language: $language,
+                typeKey: $type,
+                paginate: $pagination,
+                perPage: $limit,
+                paginationKey: $paginationKey,
+            ),
+        );
     }
 
     public static function getBlogPage(Site $site, string $type = 'blog'): ?Page

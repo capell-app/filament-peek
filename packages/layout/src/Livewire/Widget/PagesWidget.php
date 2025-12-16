@@ -58,7 +58,7 @@ class PagesWidget extends AbstractWidget
             ),
         );
 
-        if ($this->pages->isEmpty() && config('capell-layout.widget.hide_empty')) {
+        if ($this->pages->isEmpty() && config('capell-layout.widget.skip_render_empty', true)) {
             $this->skipRender = true;
         }
     }

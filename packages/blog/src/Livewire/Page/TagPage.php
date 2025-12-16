@@ -37,12 +37,10 @@ class TagPage extends AbstractPage
     protected function loadPage(): void
     {
         $params = Frontend::params();
-        $this->tagSlug = is_array($params) ? ($params['slug'] ?? null) : null;
+        $this->tagSlug = is_array($params) ? ($params['tag'] ?? null) : null;
 
         if (in_array($this->tagSlug, ['', '0', null], true)) {
             abort(404);
-
-            return;
         }
 
         $language = Frontend::language();

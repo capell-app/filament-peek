@@ -100,7 +100,7 @@ jobs:
       - run: mkdir -p /tmp/phpstan
 
       - name: Execute tests
-        run: composer test
+        run: php -d memory_limit=-1 vendor/bin/pest --colors=always --parallel --configuration=phpunit-pipelines.xml
 
       - name: Upload coverage
         uses: gaelgirodon/ci-badges-action@v1

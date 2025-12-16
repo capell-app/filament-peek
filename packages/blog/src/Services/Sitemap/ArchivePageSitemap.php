@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Services\Sitemap;
 
+use Capell\Blog\Data\ArchiveMonthData;
 use Capell\Blog\Services\Loader\BlogLoader;
 use Capell\Core\Actions\GetEditPageResourceUrlAction;
-use Capell\Core\Data\ArchiveMonthData;
 use Capell\Core\Data\SitemapPageData;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;

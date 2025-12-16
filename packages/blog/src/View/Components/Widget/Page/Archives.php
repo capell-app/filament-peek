@@ -6,6 +6,7 @@ namespace Capell\Blog\View\Components\Widget\Page;
 
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Services\Loader\BlogLoader;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\View\Components\Widget\AbstractWidget;
@@ -18,7 +19,7 @@ class Archives extends AbstractWidget
 
     protected Collection|LengthAwarePaginator $archives;
 
-    protected static string $defaultView = 'capell-layout::components.widget.page.archives';
+    protected static string $defaultView = 'capell-blog::components.widget.page.archives';
 
     public function render(array $data = [])
     {
@@ -31,6 +32,16 @@ class Archives extends AbstractWidget
 
     protected function mountWidget(): void
     {
+        $this->archivePage = BlogLoader::getArchivePage(Frontend::site(), Frontend::language());
+
+        if (! $this->archivePage) {
+            CapellCore::log(
+                'Blog Archives Widget: No archive page not found',
+                ['site_id' => Frontend::site()->id, 'language' => Frontend::language()->code],
+            );
+            $this->skipRender = true;
+        }
+
         $type = $this->widget->meta['page_group'] ?? strtolower(ResourceEnum::Article->name);
 
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
@@ -42,12 +53,10 @@ class Archives extends AbstractWidget
             limit: $limit,
         );
 
-        if ($this->archives->isEmpty() && config('capell-layout.widget.hide_empty')) {
+        if ($this->archives->isEmpty() && config('capell-layout.widget.skip_render_empty', true)) {
             $this->skipRender = true;
 
             return;
         }
-
-        $this->archivePage = BlogLoader::getArchivePage(Frontend::site(), Frontend::language());
     }
 }

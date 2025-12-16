@@ -5,18 +5,18 @@ declare(strict_types=1);
 ?>
 
 @props([
-    'align' => $widget->meta['align'] ?? $widget->type->meta['align'] ?? null,
-    'headingSize' => $widget->meta['heading_size'] ?? 'h2',
-    'size' => $widget->meta['size'] ?? null,
-    'style' => $widget->meta['style'] ?? 'row',
-    'reverseOrder' => $widget->meta['reverse_order'] ?? null,
-    'title' => $widget->translation?->title,
-    'content' => $widget->translation?->content,
-    'container',
-    'loop',
-    'containerKey',
-    'containerWidth' => null,
-    'widget',
+'align' => $widget->meta['align'] ?? $widget->type->meta['align'] ?? null,
+'headingSize' => $widget->meta['heading_size'] ?? 'h2',
+'size' => $widget->meta['size'] ?? null,
+'style' => $widget->meta['style'] ?? 'row',
+'reverseOrder' => $widget->meta['reverse_order'] ?? null,
+'title' => $widget->translation?->title,
+'content' => $widget->translation?->content,
+'container',
+'loop',
+'containerKey',
+'containerWidth' => null,
+'widget',
 ])
 
 @php
@@ -40,8 +40,8 @@ declare(strict_types=1);
 >
     <div
         @class([
-            '@container flex-1',
-            'my-auto py-4' => $hasImage,
+        '@container flex-1',
+        'my-auto py-4' => $hasImage,
         ])
     >
         @if ($content || $title)
@@ -69,10 +69,10 @@ declare(strict_types=1);
     @if ($hasImage)
         <div
             @class([
-                match ($style) {
-                    'row' => 'flex-1 lg:max-w-[40%]',
-                    default => null,
-                },
+            match ($style) {
+            'row' => 'flex-1 lg:max-w-[40%]',
+            default => null,
+            },
             ])
         >
             <x-capell::media

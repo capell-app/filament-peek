@@ -7,8 +7,9 @@ declare(strict_types=1);
 @php
     use Capell\Frontend\Facades\Frontend;
 
-        $site = Frontend::site();
-        $pageParams = Frontend::params();
+            $site = Frontend::site();
+            $page = Frontend::page();
+            $pageParams = Frontend::params();
 @endphp
 
 @props([
@@ -53,7 +54,7 @@ declare(strict_types=1);
             @foreach ($archives as $archive)
                 @php
                     $url = $archivePage->pageUrl->full_url . '/' . $archive->year . '-' . $archive->month;
-                                        $active = $archiveDate && $archiveDate->month === $archive->month && $archiveDate->year === $archive->year;
+                                                            $active = $archiveDate && $archiveDate->month === $archive->month && $archiveDate->year === $archive->year;
                 @endphp
 
                 <x-capell::list.list-item

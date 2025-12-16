@@ -20,8 +20,6 @@ enum WidgetComponentEnum: string
 
     case PageSiblings = 'capell-layout::widget.pages.siblings';
 
-    case Archives = 'capell-layout::widget.page.archives';
-
     case Breadcrumbs = 'capell-layout::widget.page.breadcrumbs';
 
     case PageContent = 'capell-layout::widget.page.content';

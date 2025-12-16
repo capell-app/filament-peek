@@ -32,11 +32,10 @@ class ArchivePage extends AbstractPage
     protected function getArchiveDateFromUrl(): array
     {
         $params = Frontend::params();
-        $current = is_array($params) ? ($params['slug'] ?? '') : '';
+        $current = is_array($params) ? ($params['date'] ?? '') : '';
 
         $month = null;
         $year = null;
-
         abort_if($current === '' || $current === '0', 404);
 
         $parts = explode('/', (string) $current);
@@ -94,23 +93,41 @@ class ArchivePage extends AbstractPage
             cacheKeyPrepend: sprintf('year-%s-month-%s', $this->year, $this->month),
             modifyQuery: function (Builder $query) {
                 if (DB::getDriverName() === 'sqlite') {
-                    return $query->when(
-                        $this->year,
-                        fn (Builder $query) => $query->whereRaw("strftime('%Y', COALESCE(`publish_from`, `created_at`)) = " . (int) $this->year),
-                    )
+                    return $query
+                        ->when(
+                            $this->year,
+                            fn (Builder $query): Builder => $query->whereRaw(
+                                "strftime('%Y', COALESCE(`publish_from`, `created_at`)) = ?",
+                                [(string) $this->year],
+                            ),
+                        )
                         ->when(
                             $this->month,
-                            fn (Builder $query) => $query->whereRaw("strftime('%m', COALESCE(`publish_from`, `created_at`)) = " . (int) $this->month),
+                            function (Builder $query): Builder {
+                                $month = str_pad((string) $this->month, 2, '0', STR_PAD_LEFT);
+
+                                return $query->whereRaw(
+                                    "strftime('%m', COALESCE(`publish_from`, `created_at`)) = ?",
+                                    [$month],
+                                );
+                            },
                         );
                 }
 
-                return $query->when(
-                    $this->year,
-                    fn (Builder $query) => $query->whereRaw('YEAR(COALESCE(`publish_from`, `created_at`)) = ' . (int) $this->year),
-                )
+                return $query
+                    ->when(
+                        $this->year,
+                        fn (Builder $query): Builder => $query->whereRaw(
+                            'YEAR(COALESCE(`publish_from`, `created_at`)) = ?',
+                            [$this->year],
+                        ),
+                    )
                     ->when(
                         $this->month,
-                        fn (Builder $query) => $query->whereRaw('MONTH(COALESCE(`publish_from`, `created_at`)) = ' . (int) $this->month),
+                        fn (Builder $query): Builder => $query->whereRaw(
+                            'MONTH(COALESCE(`publish_from`, `created_at`)) = ?',
+                            [$this->month],
+                        ),
                     );
             },
         );

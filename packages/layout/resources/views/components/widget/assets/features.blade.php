@@ -6,31 +6,31 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Enums\AssetComponentEnum;
-    use Capell\Core\Facades\CapellCore;
+        use Capell\Core\Facades\CapellCore;
 @endphp
 
 @props([
-    'colorScheme' => $widget->meta['color_scheme'] ?? 'dark',
-    'container',
-    'containerKey',
-    'containerWidth' => null,
-    'loop',
-    'total' => $widget->assets->isNotEmpty() ? $widget->assets->count() : 1,
-    'widget',
-    'widgetIndex',
-    'withChildCount' => $widget->meta['with_child_count'] ?? ($widget->type->meta['with_child_count'] ?? false),
-    'withImage' => $widget->meta['with_image'] ?? ($widget->type->meta['with_image'] ?? true),
-    'withParent' => $widget->meta['with_parent'] ?? ($widget->type->meta['with_parent'] ?? false),
-    'withDate' => $widget->meta['with_date'] ?? ($widget->type->meta['with_date'] ?? true),
-    'withSummary' => $widget->meta['with_summary'] ?? ($widget->type->meta['with_summary'] ?? true),
+'colorScheme' => $widget->meta['color_scheme'] ?? 'dark',
+'container',
+'containerKey',
+'containerWidth' => null,
+'loop',
+'total' => $widget->assets->isNotEmpty() ? $widget->assets->count() : 1,
+'widget',
+'widgetIndex',
+'withChildCount' => $widget->meta['with_child_count'] ?? ($widget->type->meta['with_child_count'] ?? false),
+'withImage' => $widget->meta['with_image'] ?? ($widget->type->meta['with_image'] ?? true),
+'withParent' => $widget->meta['with_parent'] ?? ($widget->type->meta['with_parent'] ?? false),
+'withDate' => $widget->meta['with_date'] ?? ($widget->type->meta['with_date'] ?? true),
+'withSummary' => $widget->meta['with_summary'] ?? ($widget->type->meta['with_summary'] ?? true),
 ])
 
 @capture($assetBlock, $asset, $column)
     @php($linkedPageUrl = $asset->linkedPage ? $asset->linkedPage->pageUrl?->full_url : '')
     <div
         @class([
-            'flex items-start gap-x-4 pt-1',
-            'lg:flex-row-reverse lg:text-right' => $column === 1 && $widget->image,
+        'flex items-start gap-x-4 pt-1',
+        'lg:flex-row-reverse lg:text-right' => $column === 1 && $widget->image,
         ])
     >
         @if ($asset->meta['icon'] ?? false)
@@ -114,8 +114,8 @@ declare(strict_types=1);
     @if ($widget->assets->isNotEmpty())
         <div
             @class([
-                'grid grid-cols-1 items-start gap-x-10 gap-y-6 md:grid-cols-2',
-                'lg:grid-cols-3' => $widget->image,
+            'grid grid-cols-1 items-start gap-x-10 gap-y-6 md:grid-cols-2',
+            'lg:grid-cols-3' => $widget->image,
             ])
         >
             @if ($widget->image)

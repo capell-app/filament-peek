@@ -23,6 +23,8 @@ class CreateArticle extends CreatePage
 
     protected function afterFill(): void
     {
+        parent::afterFill();
+
         $this->data['layout_id'] = GetArticleLayoutAction::run()?->id;
 
         $this->data['type_id'] = CapellCore::getModel(ModelEnum::Type)::pageType()->where('key', 'article')->value('id');

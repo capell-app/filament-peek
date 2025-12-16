@@ -6,9 +6,9 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Enums\AssetComponentEnum;
-        use Capell\Frontend\Facades\Frontend;
+            use Capell\Frontend\Facades\Frontend;
 
-        $site = Frontend::site();
+            $site = Frontend::site();
 @endphp
 
 @props([

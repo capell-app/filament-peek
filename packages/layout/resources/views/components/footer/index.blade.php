@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Capell\Blog\Enums\BlogTypeGroupEnum;
+
 $language = \Capell\Frontend\Facades\Frontend::language();
 $site = \Capell\Frontend\Facades\Frontend::site();
 $page = \Capell\Frontend\Facades\Frontend::page();
@@ -43,8 +45,9 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
     language: $language,
     site: $site,
     limit: 3,
-    pageGroup: \Capell\Core\Facades\CapellCore::hasPackage(\Capell\Blog\Providers\BlogServiceProvider::$packageName) ? 'blog' : '',
+    pageGroup: BlogTypeGroupEnum::Article,
     withImage: true,
+    ordering: 'latest',
 );
 
 ?>
@@ -166,10 +169,12 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
             :items="$subFooterMenuItems"
             class="sub-footer border-t border-white/10"
         >
-            {!! \Illuminate\Support\Facades\Lang::get($site->translation->meta['footer_copy'] ?? '', [
+            {!!
+                \Illuminate\Support\Facades\Lang::get($site->translation->meta['footer_copy'] ?? '', [
                 'name' => $site->name,
                 'year' => date('Y'),
-                ]) !!}
+                ])
+            !!}
         </x-capell::footer.sub-footer>
     @endif
 </footer>

@@ -36,6 +36,23 @@ it('renders empty state when no widgets exist', function (): void {
         ->assertCountTableRecords(0);
 });
 
+it('searches widgets', function (): void {
+    $widgets = Widget::factory()
+        ->count(4)
+        ->create();
+
+    $widget = $widgets->random();
+
+    livewire(WidgetTableSelect::class)
+        ->toggleAllTableColumns()
+        ->assertSuccessful()
+        ->assertCountTableRecords(4)
+        ->assertCanSeeTableRecords($widgets)
+        ->searchTable($widget->name)
+        ->assertCountTableRecords(1)
+        ->assertCanSeeTableRecords([$widget]);
+});
+
 it('calls selectRecords and dispatches event with containerKey', function (): void {
     $widgets = Widget::factory()
         ->count(4)
@@ -49,7 +66,7 @@ it('calls selectRecords and dispatches event with containerKey', function (): vo
         ->assertSuccessful()
         ->assertCountTableRecords(4)
         ->assertCanSeeTableRecords($widgets)
-        ->set('selectedTableRecords', [$widget->getKey()])
+        ->set('selectedRecords', [$widget->getKey()])
         ->call('selectRecords')
         ->assertHasNoErrors()
         ->assertDispatched(
@@ -77,7 +94,7 @@ it('calls selectRecords and dispatches event with containers form', function ():
         ->assertSuccessful()
         ->assertCountTableRecords(4)
         ->assertCanSeeTableRecords($widgets)
-        ->set('selectedTableRecords', [$widget->getKey()])
+        ->set('selectedRecords', [$widget->getKey()])
         ->fillForm([
             'container' => $containerKey,
         ])

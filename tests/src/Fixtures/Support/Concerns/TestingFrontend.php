@@ -13,7 +13,5 @@ trait TestingFrontend
         if (! App::environment('testing')) {
             return;
         }
-
-        // \Capell\Frontend\Helpers\Routes::routes();
     }
 }

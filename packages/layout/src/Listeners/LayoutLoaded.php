@@ -76,6 +76,8 @@ class LayoutLoaded implements EventSubscriber
                         ],
                         type: 'error',
                     );
+
+                    continue;
                 }
 
                 CapellLayoutManager::storeContainerWidget($containerKey, $widgetKey, $widget, $occurrence);

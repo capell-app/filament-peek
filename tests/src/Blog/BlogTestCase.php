@@ -9,9 +9,12 @@ use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Core\CapellCoreManager;
 use Capell\Core\Facades\CapellCore;
+use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
+use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Livewire\LivewireServiceProvider;
 use Override;
 
 class BlogTestCase extends AbstractTestCase
@@ -28,6 +31,10 @@ class BlogTestCase extends AbstractTestCase
         $this->registerAndMigrateSettings([
             ...CapellAdminManager::getSettingMigrations(),
         ], __DIR__ . '/../../../vendor/capell-app/admin/database/settings');
+
+        $this->registerAndMigrateSettings([
+            ...resolve(SettingsMigrationProviderInterface::class)->getSettingMigrations(),
+        ], __DIR__ . '/../../../vendor/capell-app/frontend/database/settings');
     }
 
     protected function getPackageProviders($app): array
@@ -35,9 +42,11 @@ class BlogTestCase extends AbstractTestCase
         return [
             ...parent::getPackageProviders($app),
             LayoutServiceProvider::class,
-            BlogServiceProvider::class,
             AdminServiceProvider::class,
+            FrontendServiceProvider::class,
+            BlogServiceProvider::class,
             AdminPanelProvider::class,
+            LivewireServiceProvider::class,
         ];
     }
 
@@ -48,11 +57,12 @@ class BlogTestCase extends AbstractTestCase
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
     }
 
     protected function requiredPackages(): array
     {
-        return ['layout', 'blog'];
+        return ['layout', 'blog', 'frontend', 'admin'];
     }
 }

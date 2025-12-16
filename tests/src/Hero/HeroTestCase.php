@@ -8,10 +8,12 @@ use Capell\Admin\CapellAdminManager;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Core\CapellCoreManager;
 use Capell\Core\Facades\CapellCore;
+use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Hero\Providers\HeroServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Livewire\LivewireServiceProvider;
 use Override;
 
 class HeroTestCase extends AbstractTestCase
@@ -38,6 +40,8 @@ class HeroTestCase extends AbstractTestCase
             HeroServiceProvider::class,
             AdminPanelProvider::class,
             AdminServiceProvider::class,
+            FrontendServiceProvider::class,
+            LivewireServiceProvider::class,
         ];
     }
 
@@ -47,11 +51,12 @@ class HeroTestCase extends AbstractTestCase
         parent::getEnvironmentSetUp($app);
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
     }
 
     protected function requiredPackages(): array
     {
-        return ['layout'];
+        return ['frontend', 'layout'];
     }
 }

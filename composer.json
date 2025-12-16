@@ -66,10 +66,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/TappNetwork/activitylog"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/howdu/filament-title-with-slug"
         }
     ],
     "require": {
@@ -83,7 +79,6 @@
         "bezhansalleh/filament-shield": "^4.0",
         "bkwld/cloner": "^3.11",
         "blade-ui-kit/blade-heroicons": "^2.5",
-        "blendbyte/filament-title-with-slug": "dev-fila4",
         "capell-app/admin": "^2.0",
         "capell-app/core": "^2.0",
         "capell-app/frontend": "^2.0",

@@ -10,7 +10,7 @@ use Capell\Admin\Filament\Concerns\ApplySearchRelationsTable;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Layout\Enums\ResourceEnum as LayoutResourceEnum;
-use Capell\Layout\Filament\Actions\CreateWidgetModalAction;
+use Capell\Layout\Filament\Actions\CreateWidgetAction;
 use Capell\Layout\Filament\Resources\Widgets\WidgetResource;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -56,7 +56,7 @@ class ListWidgets extends ListRecords
         $layoutResource = CapellAdmin::getResource(ResourceEnum::Layout);
 
         return [
-            CreateWidgetModalAction::make()
+            CreateWidgetAction::make()
                 ->redirectAfterCreate(),
             ActionGroup::make([
                 Action::make('layouts')

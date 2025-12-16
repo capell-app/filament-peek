@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Actions\Page\CreatePageModalAction;
+use Capell\Admin\Filament\Actions\Page\CreatePageAction;
 use Capell\Blog\Database\Factories\ArticlePageFactory;
 use Capell\Blog\Filament\Resources\Articles\Pages\EditArticle;
 use Capell\Blog\Filament\Resources\Articles\Pages\ListArticles;
@@ -36,7 +36,7 @@ describe('from edit article', function (): void {
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
-            ->mountAction(CreatePageModalAction::class)
+            ->mountAction(CreatePageAction::class)
             ->fillForm([
                 'type_id' => $newData->type_id,
                 'site_id' => $newData->site_id,
@@ -72,7 +72,7 @@ describe('from edit article', function (): void {
 
         livewire(EditArticle::class, ['record' => $page->getRouteKey()])
             ->assertSuccessful()
-            ->callAction(CreatePageModalAction::class, [
+            ->callAction(CreatePageAction::class, [
                 'translations' => [
                     'abc' => [
                         'language_id' => $page->site->language_id,
@@ -198,7 +198,7 @@ describe('from list article', function (): void {
 
         livewire(ListArticles::class)
             ->assertSuccessful()
-            ->callAction(CreatePageModalAction::class, [
+            ->callAction(CreatePageAction::class, [
                 'name' => '',
             ])
             ->assertHasFormErrors([

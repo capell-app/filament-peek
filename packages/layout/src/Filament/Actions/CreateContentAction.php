@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Actions;
 
-use Capell\Admin\Filament\Actions\CreateModalAction;
+use Capell\Admin\Filament\Actions\CreateAction;
 use Capell\Layout\Actions\MutateContentDataBeforeFillAction;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 use Override;
 
-class CreateContentModalAction extends CreateModalAction
+class CreateContentAction extends CreateAction
 {
     protected function setUp(): void
     {

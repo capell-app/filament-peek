@@ -11,7 +11,13 @@ return [
     'blog' => 'Blog',
     'blog_archive_page' => 'Archive',
     'blog_archive_title' => 'Articles from :archive_month :archive_year.',
+    'blog_archives_title' => 'Article Archives',
     'blog_page' => 'Blog Posts',
     'latest_articles' => 'Latest Articles',
     'blog_intro' => 'Discover our latest articles on a variety of topics and stay updated with new insights.',
+    'tags' => 'Tags',
+    'tag' => 'Tag',
+    'tags_page' => 'Tags Page',
+    'tag_page_title' => 'Articles tagged :tag',
+    'blog_archives_page' => 'Archives',
 ];

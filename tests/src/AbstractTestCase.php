@@ -11,7 +11,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Bkwld\Cloner\ServiceProvider as ClonerServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
-use Camya\Filament\FilamentTitleWithSlugServiceProvider;
 use Capell\Core\CapellCoreManager;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageTranslation;
@@ -43,7 +42,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NestedSetServiceProvider;
 use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
-use Livewire\LivewireServiceProvider;
 use Oddvalue\LaravelDrafts\LaravelDraftsServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
@@ -175,7 +173,6 @@ abstract class AbstractTestCase extends TestCase
             FilamentServiceProvider::class,
             FilamentAdjacencyListServiceProvider::class,
             FilamentShieldServiceProvider::class,
-            FilamentTitleWithSlugServiceProvider::class,
             FilamentSelectTreeServiceProvider::class,
             ActivitylogServiceProvider::class,
             FormsServiceProvider::class,
@@ -195,7 +192,6 @@ abstract class AbstractTestCase extends TestCase
             TagsServiceProvider::class,
             MediaLibraryServiceProvider::class,
             WidgetsServiceProvider::class,
-            LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
         ];
     }

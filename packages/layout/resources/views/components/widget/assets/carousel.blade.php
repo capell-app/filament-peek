@@ -6,10 +6,10 @@ declare(strict_types=1);
 
 @php
     use Capell\Frontend\Facades\Frontend;
-        use Spatie\Image\Image;
-        use Spatie\MediaLibrary\MediaCollections\Models\Media;
+            use Spatie\Image\Image;
+            use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-        $theme = Frontend::theme();
+            $theme = Frontend::theme();
 @endphp
 
 @props([
@@ -86,28 +86,28 @@ declare(strict_types=1);
                 @php
                     $asset = $widgetAsset->asset;
 
-                                        /** @var Media|null $media */
-                                        $media = $asset->image;
+                                                            /** @var Media|null $media */
+                                                            $media = $asset->image;
 
-                                        if (! $media) {
-                                            continue;
-                                        }
+                                                            if (! $media) {
+                                                                continue;
+                                                            }
 
-                                        $mediaWidth = $media->getCustomProperty('width');
-                                        $mediaHeight = $media->getCustomProperty('height');
+                                                            $mediaWidth = $media->getCustomProperty('width');
+                                                            $mediaHeight = $media->getCustomProperty('height');
 
-                                        if (Str::startsWith($media->mime_type, 'image/') && (! $mediaWidth || ! $mediaHeight)) {
-                                            $image = Image::load($media->getPath());
+                                                            if (Str::startsWith($media->mime_type, 'image/') && (! $mediaWidth || ! $mediaHeight)) {
+                                                                $image = Image::load($media->getPath());
 
-                                            $mediaWidth = $image->getWidth();
-                                            $mediaHeight = $image->getHeight();
-                                        } else {
-                                            $mediaHeight = 400;
-                                            $mediaWidth = 400;
-                                        }
+                                                                $mediaWidth = $image->getWidth();
+                                                                $mediaHeight = $image->getHeight();
+                                                            } else {
+                                                                $mediaHeight = 400;
+                                                                $mediaWidth = 400;
+                                                            }
 
-                                        $width = 400;
-                                        $height = floor($width * ($mediaHeight / $mediaWidth));
+                                                            $width = 400;
+                                                            $height = floor($width * ($mediaHeight / $mediaWidth));
                 @endphp
 
                 <div

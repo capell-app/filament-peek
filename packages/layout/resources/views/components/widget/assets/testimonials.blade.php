@@ -6,11 +6,11 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Facades\CapellCore;
-        use Capell\Frontend\Facades\Frontend;
-        use Spatie\MediaLibrary\MediaCollections\Models\Media;
+            use Capell\Frontend\Facades\Frontend;
+            use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-        $page = Frontend::page();
-        $theme = Frontend::theme();
+            $page = Frontend::page();
+            $theme = Frontend::theme();
 @endphp
 
 @props([
@@ -64,13 +64,13 @@ declare(strict_types=1);
                     @foreach ($widget->assets as $widgetAsset)
                         @php
                             $title = '';
-                                                        $content = '';
-                                                        $image = $widgetAsset->asset instanceof Media ? $widgetAsset->asset : $widgetAsset->asset->image;
+                                                                                    $content = '';
+                                                                                    $image = $widgetAsset->asset instanceof Media ? $widgetAsset->asset : $widgetAsset->asset->image;
 
-                                                        if (CapellCore::getAsset($widgetAsset->asset_type)->hasTranslations) {
-                                                            $title = $widgetAsset->asset->translation?->title;
-                                                            $content = $widgetAsset->asset->translation?->content;
-                                                        }
+                                                                                    if (CapellCore::getAsset($widgetAsset->asset_type)->hasTranslations) {
+                                                                                        $title = $widgetAsset->asset->translation?->title;
+                                                                                        $content = $widgetAsset->asset->translation?->content;
+                                                                                    }
                         @endphp
 
                         <div
