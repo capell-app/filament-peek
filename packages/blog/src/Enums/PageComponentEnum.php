@@ -14,12 +14,22 @@ enum PageComponentEnum: string
     case BlogPage = 'capell-blog::livewire.page.blog';
     case TagPage = 'capell-blog::livewire.page.tag';
 
-    public function getClassName(): string
+    public static function getComponents(): array
+    {
+        $components = [];
+        foreach (self::cases() as $pageComponent) {
+            $components[$pageComponent->value] = $pageComponent->getComponent();
+        }
+
+        return $components;
+    }
+
+    public function getComponent(): ?string
     {
         return match ($this) {
-            self::ArchivePage => config('capell-blog.livewire_components.archive_page', ArchivePage::class),
-            self::BlogPage => config('capell-blog.livewire_components.archive_page', BlogPage::class),
-            self::TagPage => config('capell-blog.livewire_components.archive_page', TagPage::class),
+            self::ArchivePage => ArchivePage::class,
+            self::BlogPage => BlogPage::class,
+            self::TagPage => TagPage::class,
         };
     }
 }

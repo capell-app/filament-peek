@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Enums;
 
+use Capell\Layout\View\Components\Widget\Pages\ChildrenWidget;
+use Capell\Layout\View\Components\Widget\Pages\LatestWidget;
+use Capell\Layout\View\Components\Widget\Pages\SiblingsWidget;
+
 enum WidgetComponentEnum: string
 {
     case Default = 'capell-layout::widget.default';
@@ -41,4 +45,24 @@ enum WidgetComponentEnum: string
     case AssetMedia = 'capell-layout::widget.assets.media';
 
     case AssetTestimonials = 'capell-layout::widget.assets.testimonials';
+
+    public static function getComponents(): array
+    {
+        $components = [];
+        foreach (self::cases() as $widgetComponent) {
+            $components[$widgetComponent->value] = $widgetComponent->getComponent();
+        }
+
+        return $components;
+    }
+
+    public function getComponent(): ?string
+    {
+        return match ($this) {
+            self::PageChildren => ChildrenWidget::class,
+            self::PageSiblings => SiblingsWidget::class,
+            self::PageLatest => LatestWidget::class,
+            default => null
+        };
+    }
 }

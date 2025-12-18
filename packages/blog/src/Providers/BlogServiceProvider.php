@@ -12,6 +12,7 @@ use Capell\Blog\BlogModelRegistrar;
 use Capell\Blog\Commands\CreateBlogPagesCommand;
 use Capell\Blog\Commands\DemoCommand;
 use Capell\Blog\Commands\InstallCommand;
+use Capell\Blog\Enums\PageComponentEnum;
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Enums\WidgetComponentEnum;
 use Capell\Blog\Enums\WidgetSchemaEnum;
@@ -68,7 +69,6 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     {
         $package
             ->name(self::$name)
-            ->hasConfigFile()
             ->hasViews(self::$name)
             ->hasTranslations()
             ->hasCommands([
@@ -99,15 +99,15 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         return $this
             ->registerModelRelations()
             ->registerPublishCommands()
-            ->registerBladeComponents()
-            ->registerLivewireComponents()
             ->registerViewComposers()
             ->registerAboutCommand()
             ->registerNavigationListener()
             ->registerWidgetComponents()
             ->registerSchemas()
             ->registerSitemapPages()
-            ->registerDefaultPages();
+            ->registerDefaultPages()
+            ->registerBladeComponents()
+            ->registerLivewireComponents();
     }
 
     private function registerPackageMetadata(): self
@@ -177,6 +177,13 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerBladeComponents(): self
     {
+        foreach (WidgetComponentEnum::getComponents() as $name => $component) {
+            if (! $component) {
+                continue;
+            }
+            Blade::component($name, $component);
+        }
+
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
         Blade::anonymousComponentNamespace('Capell\\Blog\\View\\Components');
 
@@ -185,12 +192,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerLivewireComponents(): self
     {
-        foreach (config('capell-blog.livewire_components', []) as $name => $class) {
-            Livewire::component($name, $class);
-        }
-
-        foreach (config('capell-blog.blade_components') as $name => $component) {
-            Blade::component($name, $component);
+        foreach (PageComponentEnum::getComponents() as $name => $component) {
+            if (! $component) {
+                continue;
+            }
+            Livewire::component($name, $component);
         }
 
         return $this;

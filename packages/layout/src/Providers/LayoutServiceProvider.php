@@ -291,8 +291,11 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     private function registerLivewireComponents(): self
     {
-        foreach (config('capell-layout.livewire_components', []) as $name => $class) {
-            Livewire::component($name, $class);
+        foreach (Enums\LivewireComponentsEnum::getComponents() as $name => $component) {
+            if (! $component) {
+                continue;
+            }
+            Livewire::component($name, $component);
         }
 
         return $this;
@@ -300,7 +303,10 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     private function registerBladeComponents(): self
     {
-        foreach (config('capell-layout.blade_components') as $name => $component) {
+        foreach (Enums\WidgetComponentEnum::getComponents() as $name => $component) {
+            if (! $component) {
+                continue;
+            }
             Blade::component($name, $component);
         }
 
