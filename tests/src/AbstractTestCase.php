@@ -214,6 +214,7 @@ abstract class AbstractTestCase extends TestCase
         }
 
         // config('filament-shield.register_role_policy.enabled', false);
+        Config::set('filament-shield.authenticable-resources', [User::class]);
         Config::set('filament-shield.auth_provider_model', User::class);
 
         // Prevent role being assigned to created user

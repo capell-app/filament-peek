@@ -14,7 +14,7 @@ use Capell\Frontend\Facades\Frontend;
 
 $language = Frontend::language();
 $site = Frontend::site();
-$tags = TagLoader::getTags($site, $language, hasArticles: true, limit: 5);
+$tags = TagLoader::getTags($site, $language, limit: 5, hasArticles: true);
 $tagPage = TagLoader::getTagResultsPage($site, $language);
 ?>
 

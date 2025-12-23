@@ -46,20 +46,20 @@ class BlogLoader
     public static function getArchives(
         Site $site,
         Language $language,
-        string $type,
+        string $group,
         ?int $limit = null,
         bool $pagination = true,
         ?int $paginationPage = null,
         string $paginationKey = 'page',
     ): Collection|LengthAwarePaginator {
-        $cacheKey = sprintf('site-%d-%d-%s-%s-page-%s', $site->id, $language->id, $type, $limit, $paginationPage);
+        $cacheKey = sprintf('site-%d-%d-%s-%s-page-%s', $site->id, $language->id, $group, $limit, $paginationPage);
 
         return CapellCore::rememberCache(
             $cacheKey,
-            fn (): Collection|LengthAwarePaginator => app(PageArchiveService::class)->getArchivedCountsByMonth(
+            fn (): Collection|LengthAwarePaginator => resolve(PageArchiveService::class)->getArchivedCountsByMonth(
                 site: $site,
                 language: $language,
-                typeKey: $type,
+                group: $group,
                 paginate: $pagination,
                 perPage: $limit,
                 paginationKey: $paginationKey,

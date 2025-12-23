@@ -21,8 +21,10 @@ use Capell\Blog\Listeners\AddBlogPagesToNavigation;
 use Capell\Blog\Models\Tag;
 use Capell\Blog\Services\Creator\BlogCreator;
 use Capell\Blog\Services\Loader\BlogLoader;
+use Capell\Blog\Services\Loader\TagLoader;
 use Capell\Blog\Services\Sitemap\ArchivePageSitemap;
 use Capell\Blog\Services\Sitemap\TagPageSitemap;
+use Capell\Blog\Services\StaticSite\BlogStaticSiteExtension;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Events\NavigationCreating;
 use Capell\Core\Facades\CapellCore;
@@ -30,7 +32,9 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Packages\AbstractPackageServiceProvider;
+use Capell\Core\Services\StaticSiteExtensionRegistry;
 use Capell\Frontend\Enums\RenderHookLocation;
+use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Frontend\Services\RenderHookRegistry;
 use Capell\Layout\Enums\ComponentTypeEnum;
@@ -43,7 +47,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 
@@ -62,6 +65,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         }
 
         $this->registerAll();
+
+        $this->registerStaticSiteExtensions();
     }
 
     public function configurePackage(Package $package): void
@@ -98,7 +103,6 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         return $this
             ->registerModelRelations()
             ->registerPublishCommands()
-            ->registerViewComposers()
             ->registerAboutCommand()
             ->registerNavigationListener()
             ->registerWidgetComponents()
@@ -181,6 +185,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             if (! $component) {
                 continue;
             }
+
             Blade::component($name, $component);
         }
 
@@ -196,38 +201,39 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             if (! $component) {
                 continue;
             }
+
             Livewire::component($name, $component);
         }
 
         return $this;
     }
 
-    private function registerViewComposers(): self
-    {
-        View::composer('capell::components.footer.index', function (\Illuminate\View\View $view): void {
-            $view->getFactory()->startPush(
-                'footer.components',
-                // @phpstan-ignore-next-line
-                view('capell-blog::components.footer.tags')->render(),
-            );
-        });
-
-        return $this;
-    }
-
     private function registerRenderHooks(): self
     {
-        app(RenderHookRegistry::class)->register(
-            RenderHookLocation::ArticleMeta,
-            fn ($context) => view('capell-blog::hooks.article-meta', [
-                'withAuthor' => $context->withAuthor ?? false,
-                'author' => $context->author ?? null,
-                'tags' => $context->tags ?? null,
-                'tagPage' => $context->tagPage ?? null,
-            ])->render(),
+        resolve(RenderHookRegistry::class)->register(
+            RenderHookLocation::Footer,
+            fn ($context) => view('capell-blog::components.footer.tags')->render(),
+            target: 'footer.index',
         );
 
-        app(RenderHookRegistry::class)->register(
+        resolve(RenderHookRegistry::class)->register(
+            RenderHookLocation::ArticleMeta,
+            function ($context) {
+                $page = Frontend::page();
+                $tags = TagLoader::getPageTags($page);
+                $tagPage = $tags->isNotEmpty() ? TagLoader::getTagResultsPage(Frontend::site(), Frontend::language()) : null;
+
+                return view('capell-blog::hooks.article-meta', [
+                    'withAuthor' => $context->withAuthor ?? false,
+                    'author' => $context->author ?? null,
+                    'page' => $page,
+                    'tags' => $tags,
+                    'tagPage' => $tagPage,
+                ])->render();
+            },
+        );
+
+        resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::BeforeContent,
             function ($context): ?string {
                 $tags = $context->item->tags ?? null;
@@ -242,7 +248,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             },
         );
 
-        app(RenderHookRegistry::class)->register(
+        resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::AfterTitle,
             function ($context): ?string {
                 if (
@@ -377,5 +383,14 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         });
 
         return $this;
+    }
+
+    private function registerStaticSiteExtensions(): void
+    {
+        // Register the blog static site extension using the new class.
+        StaticSiteExtensionRegistry::register(
+            'blog-tags-archives',
+            resolve(BlogStaticSiteExtension::class),
+        );
     }
 }

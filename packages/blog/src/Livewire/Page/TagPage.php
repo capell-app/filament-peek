@@ -39,9 +39,7 @@ class TagPage extends AbstractPage
         $params = Frontend::params();
         $this->tagSlug = is_array($params) ? ($params['tag'] ?? null) : null;
 
-        if (in_array($this->tagSlug, ['', '0', null], true)) {
-            abort(404);
-        }
+        abort_if(in_array($this->tagSlug, ['', '0', null], true), 404);
 
         $language = Frontend::language();
         $page = Frontend::page();

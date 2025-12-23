@@ -35,8 +35,8 @@ it('caches views successfully and writes compiled files', function (): void {
     foreach ($afterFiles as $file) {
         $path = $file->getPathname();
         expect($path)->toStartWith($compiledPath)
-            ->toEndWith('.php')
-            ->and(basename($path))->toMatch('/^[A-Za-z0-9_\-]+\.php$/');
+            ->toMatch('/\.blade\.php$|\.php$/')
+            ->and(basename($path))->toMatch('/^[A-Za-z0-9_\-]+(\.blade)?\.php$/');
     }
 
     $containsValidHtml = collect($afterFiles)

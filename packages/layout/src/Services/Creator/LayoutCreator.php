@@ -34,7 +34,7 @@ class LayoutCreator
      */
     public function createWithContainers(string $key, bool $createWidgets = false): Layout
     {
-        $layout = app(BaseLayoutCreator::class)->create($key);
+        $layout = resolve(BaseLayoutCreator::class)->create($key);
         match ($key) {
             LayoutEnum::Home->value => $this->homeLayout($layout, $createWidgets),
             LayoutEnum::Results->value => $this->resultsLayout($layout, $createWidgets),

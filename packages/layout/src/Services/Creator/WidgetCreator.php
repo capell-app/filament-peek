@@ -38,7 +38,7 @@ class WidgetCreator
     {
         $contentsWidgetType = $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::Contents, 'type' => LayoutTypeEnum::Widget]);
         $mediaWidgetType = $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::Media, 'type' => LayoutTypeEnum::Widget]);
-        $navigationType = $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::Navigation, 'type' => LayoutTypeEnum::Widget]);
+        $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::Navigation, 'type' => LayoutTypeEnum::Widget]);
         $pageContentWidgetType = $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::PageContents, 'type' => LayoutTypeEnum::Widget]);
         $pageResultsWidgetType = $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::PageResults, 'type' => LayoutTypeEnum::Widget]);
         $pagesWidgetType = $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::Pages, 'type' => LayoutTypeEnum::Widget]);

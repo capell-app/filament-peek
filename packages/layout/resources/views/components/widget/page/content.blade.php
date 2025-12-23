@@ -22,12 +22,12 @@ $page = Frontend::page();
 @php
     $hasPrimaryHeading = Frontend::getFrontendData('has_primary_heading');
 
-            $hasContent = collect(['content', 'title'])
-                ->contains(fn ($item): bool => in_array($item, $pageContents, true) && ! empty($page->translation->{$item}));
+                    $hasContent = collect(['content', 'title'])
+                        ->contains(fn ($item): bool => in_array($item, $pageContents, true) && ! empty($page->translation->{$item}));
 
-            if (! $headingTag) {
-                $headingTag = ($hasPrimaryHeading ? 'h2' : 'h1');
-            }
+                    if (! $headingTag) {
+                        $headingTag = ($hasPrimaryHeading ? 'h2' : 'h1');
+                    }
 @endphp
 
 @if ($hasContent)
@@ -41,7 +41,7 @@ $page = Frontend::page();
         tag="article"
     >
         @if (in_array('content', $pageContents, true))
-            @if ($page->type->content_structure === ContentStructureEnum::Blocks)
+            @if ($page->type->content_structure === \Capell\Core\Enums\ContentStructure::Blocks)
                 <x-capell::blocks
                     :blocks="$page->translation->content"
                     :layout="$layout"

@@ -15,7 +15,7 @@ uses(TestingFrontend::class);
 test('child pages are listed on a page', function (): void {
     $site = Site::factory()->withTranslations()->create();
 
-    $layoutCreator = app(LayoutCreator::class);
+    $layoutCreator = resolve(LayoutCreator::class);
     $layout = $layoutCreator->createWithContainers(LayoutEnum::Default->value, createWidgets: true);
 
     $parent = Page::factory()->site($site)->withTranslations()->create();

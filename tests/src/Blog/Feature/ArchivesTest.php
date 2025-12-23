@@ -16,7 +16,7 @@ use function Pest\Laravel\get;
 uses(TestingFrontend::class);
 
 test('archives page list articles archives by month/year', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;
@@ -58,7 +58,7 @@ test('archives page list articles archives by month/year', function (): void {
 });
 
 test('archive page list articles by month/year', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;
@@ -100,7 +100,7 @@ test('archive page list articles by month/year', function (): void {
 });
 
 test('error page when no articles found for given month/year', function (string $slug): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;

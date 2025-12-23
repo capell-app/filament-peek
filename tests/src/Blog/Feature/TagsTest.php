@@ -14,16 +14,24 @@ use Capell\Tests\Fixtures\Support\Concerns\TestingFrontend;
 use function Pest\Laravel\get;
 
 use Sinnbeck\DomAssertions\Asserts\AssertElement;
+use Sinnbeck\DomAssertions\Asserts\BaseAssert;
 
 uses(TestingFrontend::class);
 
 test('tags page list tags', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
-    $langauge = Language::factory()->create();
-    $site = Site::factory()->recycle($langauge)->withTranslations()->create();
-    $tags = Tag::factory()->count(3)->translate($langauge)->type(TagTypeEnum::Page)->create();
-    Article::factory()->recycle($site)->withTranslations()->count(5)->hasAttached($tags->slice(0, 2))->create();
+    $language = Language::factory()->create();
+    $site = Site::factory()->recycle($language)->withTranslations()->create();
+    $tags = Tag::factory()->count(3)->translate($language)->type(TagTypeEnum::Page)->create();
+    $articleType = $blogCreator->createArticlePageType();
+    Article::factory()
+        ->count(5)
+        ->recycle($site)
+        ->type($articleType)
+        ->withTranslations()
+        ->hasAttached($tags->slice(0, 2))
+        ->create();
 
     $tagsPage = $blogCreator->createTagsPage($site, $site->languages, createWidgets: true);
     $tagPage = $blogCreator->createTagPage($site, $tagsPage, $site->languages);
@@ -33,43 +41,43 @@ test('tags page list tags', function (): void {
         ->name->toBe('Tags Page')
         ->type->name->toBe('System')
         ->layout->name->toBe('Tags')
-        ->translation->language->id->toBe($langauge->id)
-        ->pageUrl->language->id->toBe($langauge->id)
+        ->translation->language->id->toBe($language->id)
+        ->pageUrl->language->id->toBe($language->id)
         ->and($tagPage)
         ->toBeInstanceOf(Page::class)
         ->name->toBe('Tag Results')
         ->type->name->toBe('Tag Results')
         ->layout->name->toBe('Results')
-        ->translation->language->id->toBe($langauge->id)
-        ->pageUrl->language->id->toBe($langauge->id);
+        ->translation->language->id->toBe($language->id)
+        ->pageUrl->language->id->toBe($language->id);
 
     get($tagsPage->pageUrl->full_url)
         ->assertOk()
         ->assertSeeText($tagsPage->translation->title)
         ->assertElementExists(
             'main',
-            fn (AssertElement $main) => $main->containsText($tags[0]->translate('name', $langauge->code)),
+            fn (AssertElement $main): BaseAssert => $main->containsText($tags[0]->translate('name', $language->code)),
         )
-        ->assertSeeHtml('href="' . $tags[0]->getPageUrl($tagPage, $langauge) . '"')
-        ->assertSee($tags[1]->translate('name', $langauge->code))
-        ->assertSeeHtml('href="' . $tags[1]->getPageUrl($tagPage, $langauge) . '"')
-        ->assertDontSeeText($tags[2]->translate('name', $langauge->code));
+        ->assertSeeHtml('href="' . $tags[0]->getPageUrl($tagPage, $language) . '"')
+        ->assertSee($tags[1]->translate('name', $language->code))
+        ->assertSeeHtml('href="' . $tags[1]->getPageUrl($tagPage, $language) . '"')
+        ->assertDontSeeText($tags[2]->translate('name', $language->code));
 });
 
 test('tag page list articles by tag', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
-    $langauge = Language::factory()->create();
-    $site = Site::factory()->recycle($langauge)->withTranslations()->create();
-    $tag = Tag::factory()->translate($langauge)->type(TagTypeEnum::Page)->create();
+    $language = Language::factory()->create();
+    $site = Site::factory()->recycle($language)->withTranslations()->create();
+    $tag = Tag::factory()->translate($language)->type(TagTypeEnum::Page)->create();
     $articles = Article::factory()->count(5)->recycle($site)->withTranslations()->hasAttached($tag)->create();
 
     $tagsPage = $blogCreator->createTagsPage($site, $site->languages, createWidgets: true);
     $tagPage = $blogCreator->createTagPage($site, $tagsPage, $site->languages);
 
-    get($tag->getPageUrl($tagPage, $langauge))
+    get($tag->getPageUrl($tagPage, $language))
         ->assertOk()
         ->assertSeeText($tagPage->translation->title)
-        ->assertSeeText($tag->translate('name', $langauge->code))
-        ->assertSeeInOrder($articles->map(fn (Page $page) => $page->translation->title)->toArray());
+        ->assertSeeText($tag->translate('name', $language->code))
+        ->assertSeeInOrder($articles->map(fn (Page $page) => $page->translation->title)->all());
 });

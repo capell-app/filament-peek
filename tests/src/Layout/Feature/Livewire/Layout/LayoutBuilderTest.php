@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Admin\Enums\LayoutEnum;
-use Capell\Admin\Services\Creator\LayoutCreator;
+use Capell\Admin\Services\Creator\LayoutCreator as AdminLayoutCreator;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
@@ -43,7 +43,7 @@ test('Render layout builder', function (): void {
 test('can edit layouts', function (LayoutEnum $layoutEnum): void {
     $language = Language::factory()->create();
 
-    $layout = resolve(LayoutCreator::class)->create($layoutEnum->value);
+    $layout = resolve(AdminLayoutCreator::class)->create($layoutEnum->value);
 
     $widgetTypeCreator = resolve(TypeCreator::class);
     $widgetTypeCreator->createWidgetTypes();

@@ -9,6 +9,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class PageArchiveService
@@ -18,12 +19,12 @@ class PageArchiveService
      *
      * @param  bool  $paginate  Whether to paginate the results
      * @param  int|null  $perPage  Number of items per page if paginating
-     * @return array<ArchiveMonthData>|\Illuminate\Pagination\LengthAwarePaginator<ArchiveMonthData>
+     * @return LengthAwarePaginator<ArchiveMonthData>
      */
     public function getArchivedCountsByMonth(
         Site $site,
         Language $language,
-        string $typeKey,
+        string $group,
         bool $paginate = false,
         ?int $perPage = null,
         ?string $paginationKey = null,
@@ -43,8 +44,8 @@ class PageArchiveService
             )
             ->whereHas(
                 'type',
-                function (Builder $query) use ($typeKey): void {
-                    $query->where('key', $typeKey)->enabled()->visible();
+                function (Builder $query) use ($group): void {
+                    $query->where('group', $group)->enabled()->visible();
                 },
             )
             ->whereHas(
@@ -77,6 +78,6 @@ class PageArchiveService
             (int) $row->year,
             (int) $row->month,
             (int) $row->total,
-        ))->all();
+        ));
     }
 }

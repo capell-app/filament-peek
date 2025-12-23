@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<Article>
  */
-class ArticlePageFactory extends PageFactory
+class ArticleFactory extends PageFactory
 {
     protected $model = Article::class;
 

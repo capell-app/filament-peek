@@ -32,11 +32,11 @@ class Tags extends AbstractWidget
         $limit = $this->widget->meta['limit'] ?? null;
 
         $site = Frontend::site();
-        $langauge = Frontend::language();
+        $language = Frontend::language();
 
         $this->tags = TagLoader::getTags(
             site: $site,
-            language: $langauge,
+            language: $language,
             limit: $limit,
             hasArticles: true,
         );
@@ -47,10 +47,10 @@ class Tags extends AbstractWidget
             return;
         }
 
-        $this->tagPage = TagLoader::getTagResultsPage($site, $langauge);
+        $this->tagPage = TagLoader::getTagResultsPage($site, $language);
 
-        if (! $this->tagPage) {
-            throw new RuntimeException('Tag results page not found for site ID ' . $site->id . ' and language ID ' . $langauge->id);
+        if (! $this->tagPage instanceof Page) {
+            throw new RuntimeException('Tag results page not found for site ID ' . $site->id . ' and language ID ' . $language->id);
         }
     }
 }

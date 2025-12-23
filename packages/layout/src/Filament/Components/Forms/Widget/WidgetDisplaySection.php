@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Components\Forms\Widget;
 
-use Capell\Admin\Filament\Components\Forms\ContentPresenterSelect;
 use Capell\Layout\Filament\Components\Forms\AlignSelect;
 use Capell\Layout\Filament\Components\Forms\BackgroundSchema;
 use Capell\Layout\Filament\Components\Forms\ContainerWidthSelect;
@@ -32,7 +31,6 @@ class WidgetDisplaySection
                     ->statePath('meta')
                     ->schema([
                         ...$schema,
-                        ContentPresenterSelect::make(),
                         PaddingSelect::make('padding'),
                         MarginSelect::make('margin'),
                         SpacingSelect::make('spacing'),

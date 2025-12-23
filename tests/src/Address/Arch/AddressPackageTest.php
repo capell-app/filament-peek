@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Capell\Frontend\Http\Middleware\ResolveFrontend;
-use Capell\Frontend\Livewire\Page\SitemapPage;
 
 arch()
     ->expect('Capell\\Address')
@@ -19,11 +18,7 @@ arch()
 
 arch()
     ->preset()
-    ->laravel()
-    ->ignoring([
-        'exit',
-        SitemapPage::class,
-    ]);
+    ->laravel();
 
 arch()->preset()->security()
     ->ignoring([

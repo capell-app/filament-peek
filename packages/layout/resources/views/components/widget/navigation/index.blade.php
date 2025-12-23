@@ -37,7 +37,11 @@ declare(strict_types=1);
 
     @if (count($items) > 5)
         <div class="grid md:grid-cols-2">
-            @foreach (llect($items)->chunk(round(count($items) / 2)) as $chunked)
+            @php
+                $chunkedItems = collect($items)->chunk(ceil(count($items) / $columns));
+            @endphp
+
+            @foreach ($chunkedItems as $chunked)
                 <x-dynamic-component
                     :component="! empty($menu->meta['component']) ? $menu->meta['component'] : 'capell::list'"
                 >

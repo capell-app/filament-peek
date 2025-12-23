@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Capell\Blog\View\Components\Widget\Page;
 
-use Capell\Blog\Enums\ResourceEnum;
+use Capell\Blog\Enums\BlogTypeGroupEnum;
 use Capell\Blog\Services\Loader\BlogLoader;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\View\Components\Widget\AbstractWidget;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -37,22 +37,16 @@ class Archives extends AbstractWidget
 
         $this->archivePage = BlogLoader::getArchivePage($site, $language);
 
-        if (! $this->archivePage) {
-            CapellCore::log(
-                'Blog Archives Widget: No archive page not found',
-                ['site_id' => $site->id, 'language' => $language->code],
-            );
-            $this->skipRender = true;
-        }
+        throw_unless($this->archivePage, Exception::class, 'Blog Archives Widget: No archive page not found');
 
-        $type = $this->widget->meta['page_group'] ?? strtolower(ResourceEnum::Article->name);
+        $group = $this->widget->meta['page_group'] ?? BlogTypeGroupEnum::Article->value;
 
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
 
         $this->archives = BlogLoader::getArchives(
             site: $site,
             language: $language,
-            type: $type,
+            group: $group,
             limit: $limit,
         );
 

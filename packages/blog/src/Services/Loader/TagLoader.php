@@ -65,10 +65,45 @@ class TagLoader
         return $page;
     }
 
+    /**
+     * Returns a query builder for tags for use in chunked/large operations.
+     */
+    public static function getTagsQuery(
+        Site $site,
+        Language $language,
+        bool $hasArticles = false,
+    ): Builder {
+        /* @var class-string<Tag> $model */
+        $model = CapellCore::getModel(ModelEnum::Tag);
+
+        return $model::query()
+            ->withCount([
+                'pages' => fn (Builder $query) => $query->where('site_id', $site->id)
+                    ->whereRelation('translation', 'language_id', $language->id),
+            ])
+            ->where('type', TagTypeEnum::Page)
+            ->where(
+                fn (Builder $query) => $query->where('site_id', $site->id)->orWhereNull('site_id'),
+            )
+            ->when(
+                $hasArticles,
+                fn (Builder $query) => $query->whereHas(
+                    'pages',
+                    fn (BuilderContract $query) => $query->where('site_id', $site->id)
+                        ->whereRelation('translation', 'language_id', $language->id),
+                ),
+            )
+            ->tap(fn (Builder $query) => $query->whereNotNull($query->qualifyColumn('name->' . $language->code)))
+            ->ordered();
+    }
+
+    /**
+     * Returns a collection or paginator of tags (cached, for UI use).
+     */
     public static function getTags(
         Site $site,
         Language $language,
-        ?int $limit,
+        ?int $limit = null,
         bool $hasArticles = false,
         ?int $paginationPage = null,
         bool $withPagination = false,
@@ -92,34 +127,19 @@ class TagLoader
             &$fromCache
         ) {
             $fromCache = false;
+            $query = self::getTagsQuery($site, $language, $hasArticles);
+            if ($withPagination) {
+                return $query->paginate($limit, ['*'], $paginationKey);
+            }
 
-            /* @var class-string<Tag> $model */
-            $model = CapellCore::getModel(ModelEnum::Tag);
+            if ($limit) {
+                $query->limit($limit);
+            }
 
-            return $model::query()
-                ->withCount([
-                    'pages' => fn (Builder $query) => $query->where('site_id', $site->id)
-                        ->whereRelation('translation', 'language_id', $language->id),
-                ])
-                ->where('type', TagTypeEnum::Page)
-                ->where(
-                    fn (Builder $query) => $query->where('site_id', $site->id)->orWhereNull('site_id'),
-                )
-                ->when(
-                    $hasArticles,
-                    fn (Builder $query) => $query->whereHas(
-                        'pages',
-                        fn (BuilderContract $query) => $query->where('site_id', $site->id)
-                            ->whereRelation('translation', 'language_id', $language->id),
-                    ),
-                )
-                ->tap(fn (Builder $query) => $query->whereNotNull($query->qualifyColumn('name->' . $language->code)))
-                ->ordered()
-                ->when(! $withPagination, fn (Builder $query) => $query->limit($limit)->get())
-                ->when($withPagination, fn (Builder $query) => $query->paginate($limit, ['*'], $paginationKey));
+            return $query->get();
         });
 
-        if ($fromCache) {
+        if ($fromCache && $tags instanceof Collection) {
             $tags->each(function (Tag $tag): void {
                 resolve(ModelServingInterface::class)->track($tag);
             });

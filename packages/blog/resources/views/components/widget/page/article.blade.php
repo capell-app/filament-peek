@@ -7,7 +7,7 @@ declare(strict_types=1);
 @php
     use Capell\Frontend\Facades\Frontend;
 
-        $page = Frontend::page();
+            $page = Frontend::page();
 @endphp
 
 @props([
@@ -55,20 +55,15 @@ declare(strict_types=1);
         </x-capell::content>
     </div>
 
-    @if (($withAuthor && $author) || $tags->isNotEmpty())
-        {!!
-            app(\Capell\Frontend\Services\RenderHookRegistry::class)->renderAll(
-            \Capell\Frontend\Enums\RenderHookLocation::ArticleMeta,
-            [
-            'withAuthor' => $withAuthor,
-            'author' => $author,
-            'tags' => $tags,
-            'tagPage' => $tagPage,
-            'item' => $item ?? null,
-            ]
-            )
-        !!}
-    @endif
+    {!!
+        app(\Capell\Frontend\Services\RenderHookRegistry::class)->renderAll(
+        \Capell\Frontend\Enums\RenderHookLocation::ArticleMeta,
+        [
+        'withAuthor' => $withAuthor,
+        'author' => $author,
+        ]
+        )
+    !!}
 
     @if ($withNextPrev && ($previousPage || $nextPage))
         <div

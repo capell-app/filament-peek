@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Widgets\LatestPagesWidget;
-use Capell\Blog\Database\Factories\ArticlePageFactory;
+use Capell\Blog\Database\Factories\ArticleFactory;
 use Capell\Core\Models\Page;
 use Capell\Tests\Fixtures\Support\Concerns\CreatesAdminUser;
 
@@ -17,7 +17,7 @@ it('renders the pages widget', function (): void {
 
     Page::factory(5)->withTranslations()->create();
 
-    (new ArticlePageFactory)->withTranslations()->count(5)->create();
+    (new ArticleFactory)->withTranslations()->count(5)->create();
 
     livewire(LatestPagesWidget::class)
         ->assertOk()

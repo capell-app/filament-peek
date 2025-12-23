@@ -132,9 +132,7 @@ class ArchivePage extends AbstractPage
             },
         );
 
-        if ($this->results->isEmpty()) {
-            abort(404);
-        }
+        abort_if($this->results->isEmpty(), 404);
 
         $this->params = $this->getViewData();
 

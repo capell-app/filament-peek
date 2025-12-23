@@ -11,7 +11,6 @@ trait TestingFrontend
     public function setUpTestingFrontend(): void
     {
         if (! App::environment('testing')) {
-            return;
         }
     }
 }

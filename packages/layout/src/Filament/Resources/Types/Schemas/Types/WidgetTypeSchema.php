@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Resources\Types\Schemas\Types;
 
 use Capell\Admin\Filament\Components\Forms\AssetTypeSelect;
-use Capell\Admin\Filament\Components\Forms\ContentEditorSelect;
 use Capell\Admin\Filament\Components\Forms\CustomSelectGroup;
 use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\RequiredFields;
@@ -65,7 +64,6 @@ class WidgetTypeSchema extends DefaultTypeSchema
                     ->label(__('capell-admin::form.admin_icon')),
                 AssetTypeSelect::make('asset_types')
                     ->multiple(),
-                ContentEditorSelect::make('content_structure'),
                 RequiredFields::make(),
             ]);
     }

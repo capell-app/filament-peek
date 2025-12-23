@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Layout\Listeners;
 
 use Capell\Core\Contracts\EventSubscriber;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
@@ -67,16 +66,6 @@ class LayoutLoaded implements EventSubscriber
                 );
 
                 if (! $widget instanceof Widget) {
-                    CapellCore::log(
-                        'Widget not found for layout',
-                        context: [
-                            'containerKey' => $containerKey,
-                            'widgetKey' => $widgetKey,
-                            'occurrence' => $occurrence,
-                        ],
-                        type: 'error',
-                    );
-
                     continue;
                 }
 

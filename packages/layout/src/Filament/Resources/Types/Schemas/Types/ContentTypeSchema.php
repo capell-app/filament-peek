@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Resources\Types\Schemas\Types;
 
-use Capell\Admin\Filament\Components\Forms\ContentPresenterSelect;
 use Capell\Admin\Filament\Components\Forms\ContentStructureSelect;
 use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\RequiredFields;
@@ -17,7 +16,6 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Override;
 
 class ContentTypeSchema extends DefaultTypeSchema
@@ -30,7 +28,6 @@ class ContentTypeSchema extends DefaultTypeSchema
             Tabs::make()
                 ->columnSpanFull()
                 ->tabs([
-                    $this->frontendTab(),
                     $this->adminTab(),
                 ]),
             ...$this->statusSchema(),
@@ -59,17 +56,6 @@ class ContentTypeSchema extends DefaultTypeSchema
                              $get('required_translation')
                         JS),
                 ]),
-            ]);
-    }
-
-    protected function frontendTab(): Tab
-    {
-        return Tab::make(__('capell-admin::generic.frontend'))
-            ->statePath('meta')
-            ->icon(Heroicon::OutlinedBuildingStorefront)
-            ->columns()
-            ->schema([
-                ContentPresenterSelect::make(),
             ]);
     }
 }

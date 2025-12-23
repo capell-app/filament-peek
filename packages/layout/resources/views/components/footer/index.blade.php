@@ -45,9 +45,9 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
     language: $language,
     site: $site,
     limit: 3,
+    ordering: 'latest',
     pageGroup: BlogTypeGroupEnum::Article,
     withImage: true,
-    ordering: 'latest',
 );
 
 ?>
@@ -160,7 +160,7 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
                 class="@4xl:col-span-2 shrink-0 xl:w-[20%]"
             />
 
-            @stack('footer.components')
+            {!! app(\Capell\Frontend\Services\RenderHookRegistry::class)->renderAll(\Capell\Frontend\Enums\RenderHookLocation::Footer) !!}
         </div>
     </div>
 

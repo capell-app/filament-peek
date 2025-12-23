@@ -11,7 +11,7 @@ return [
     'blog' => 'Blog',
     'blog_archive_page' => 'Archive',
     'blog_archive_title' => 'Articles from :archive_month :archive_year.',
-    'blog_archives_page' => 'Articles Archive',
+    'blog_archives_page' => 'Archives',
     'blog_archives_title' => 'Article Archives',
     'blog_intro' => 'Discover our latest articles on a variety of topics and stay updated with new insights.',
     'blog_page' => 'Blog Posts',

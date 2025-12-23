@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Hero\Commands;
 
-use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Core\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
@@ -79,7 +78,7 @@ class DemoCommand extends Command
                 $blogPage = CapellCore::getModel(ModelEnum::Page)::query()
                     ->with('translations')
                     ->where('site_id', $site->id)
-                    ->whereRelation('type', 'key', BlogPageTypeEnum::Blog->value)
+                    ->whereRelation('type', 'key', 'blog')
                     ->first();
 
                 if ($blogPage instanceof Page) {

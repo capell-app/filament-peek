@@ -19,7 +19,7 @@ use function Pest\Laravel\get;
 uses(TestingFrontend::class);
 
 test('blog page lists articles', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;
@@ -29,6 +29,8 @@ test('blog page lists articles', function (): void {
 
     $articleType = $blogCreator->createArticlePageType();
     $articleLayout = $blogCreator->createArticleLayout(createWidgets: true);
+
+    $blogCreator->createArchivePage($blogPage);
 
     $articles = Article::factory()
         ->count(3)
@@ -53,7 +55,7 @@ test('blog page lists articles', function (): void {
 });
 
 test('visit blogs page with no articles and see appropriate message', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;
@@ -72,7 +74,7 @@ test('visit blogs page with no articles and see appropriate message', function (
 });
 
 test('article page', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;
@@ -80,6 +82,8 @@ test('article page', function (): void {
     $blogPage = $blogCreator->createBlogPage($site);
     $articleType = $blogCreator->createArticlePageType();
     $articleLayout = $blogCreator->createArticleLayout(createWidgets: true);
+
+    $blogCreator->createArchivePage($blogPage);
 
     $article = Article::factory()
         ->site($siteDomain->site)
@@ -102,11 +106,11 @@ test('article page', function (): void {
 });
 
 test('article page list tags', function (): void {
-    $blogCreator = app(BlogCreator::class);
+    $blogCreator = resolve(BlogCreator::class);
 
-    $langauge = Language::factory()->create();
-    $site = Site::factory()->recycle($langauge)->withTranslations()->create();
-    $tags = Tag::factory()->count(3)->translate($langauge)->type(TagTypeEnum::Page)->create();
+    $language = Language::factory()->create();
+    $site = Site::factory()->recycle($language)->withTranslations()->create();
+    $tags = Tag::factory()->count(3)->translate($language)->type(TagTypeEnum::Page)->create();
 
     $blogPage = $blogCreator->createBlogPage($site);
 
@@ -137,7 +141,7 @@ test('article page list tags', function (): void {
         ->assertOk()
         ->assertSeeHtml(e($article->title))
         ->assertSeeHtml(e($blogPage->label))
-        ->assertSee($tags[0]->translate('name', $langauge->code))
-        ->assertSeeHtml('href="' . $tags[0]->getPageUrl($tagPage, $langauge) . '"')
+        ->assertSee($tags[0]->translate('name', $language->code))
+        ->assertSeeHtml('href="' . $tags[0]->getPageUrl($tagPage, $language) . '"')
         ->assertSeeHtml('href="' . $archiveUrl . '"');
 });

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Actions;
 
-use Capell\Admin\Services\Creator\LayoutCreator;
+use Capell\Admin\Services\Creator\LayoutCreator as AdminLayoutCreator;
 use Capell\Core\Models\Language;
 use Capell\Layout\LayoutModelRegistrar;
 use Capell\Layout\Services\Creator\LayoutCreator;
@@ -32,7 +32,7 @@ class InstallPackageAction
         $widgetCreator = resolve(WidgetCreator::class);
         $widgetCreator->createWidgets(Language::all());
 
-        $layoutCreator = resolve(LayoutCreator::class);
+        $layoutCreator = resolve(AdminLayoutCreator::class);
         $layoutCreator->setup();
 
         $layoutUpdater = resolve(LayoutCreator::class);
