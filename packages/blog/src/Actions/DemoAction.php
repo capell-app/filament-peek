@@ -8,7 +8,7 @@ use Capell\Admin\Services\Creator\DemoCreator;
 use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Services\Loader\BlogLoader;
-use Capell\Core\Commands\Concerns\HasSitesOption;
+use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;

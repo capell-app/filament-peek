@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Layout\Commands;
+namespace Capell\Layout\Console\Commands;
 
 use Capell\Admin\Actions\AssignPermissionsToRole;
 use Capell\Core\Actions\AddVendorAssetToThemeAction;

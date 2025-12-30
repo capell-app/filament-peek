@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Capell\Blog\Commands;
+namespace Capell\Blog\Console\Commands;
 
 use Capell\Blog\Actions\DemoAction;
-use Capell\Core\Commands\Concerns\HasSitesOption;
+use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
@@ -36,7 +36,7 @@ class DemoCommand extends Command
                 ? explode(',', $sitesOption)
                 : (is_array($sitesOption) ? $sitesOption : null);
         } else {
-            $siteOptions = $this->getSelectedSites();
+            $siteOptions = $this->getDemoSites();
         }
 
         if ($siteOptions === null || $siteOptions === []) {

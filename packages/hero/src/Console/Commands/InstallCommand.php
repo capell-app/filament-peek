@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Capell\Hero\Commands;
+namespace Capell\Hero\Console\Commands;
 
 use Capell\Admin\Enums\LayoutEnum;
-use Capell\Core\Commands\Concerns\HasSitesOption;
+use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;

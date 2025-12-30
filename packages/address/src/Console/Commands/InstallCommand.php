@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Capell\Blog\Commands;
+namespace Capell\Address\Console\Commands;
 
+use Capell\Address\AddressModelRegistrar;
+use Capell\Address\Enums\ResourceEnum;
 use Capell\Admin\Actions\AssignPermissionsToRole;
-use Capell\Blog\Actions\InstallBlogPackageAction;
-use Capell\Blog\BlogModelRegistrar;
-use Capell\Blog\Enums\ResourceEnum;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Spatie\Tags\TagsServiceProvider;
 
 class InstallCommand extends Command
 {
@@ -19,48 +17,45 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Install blog package';
+    protected $description = 'Inserts address tables';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'capell-blog:install';
+    protected $signature = 'capell-address:install';
 
     /**
      * Execute the console command.
      */
     public function handle(): int
     {
-        $this->info('Installing Capell Blog Package...');
+        $this->info('Installing Capell Address...');
 
-        BlogModelRegistrar::register();
+        AddressModelRegistrar::register();
 
         Filament::getDefaultPanel()
             ->resources(array_map(fn (ResourceEnum $resourceEnum) => $resourceEnum->value, ResourceEnum::cases()));
 
         AssignPermissionsToRole::run(resources: ResourceEnum::cases());
 
-        InstallBlogPackageAction::run();
-
         $this->call(
             'capell:publish-migrations',
             [
                 '--items' => [
-                    'alter_tags_table',
+                    'create_countries_table',
+                    'create_addresses_table',
                 ],
-                '--path' => realpath(__DIR__ . '/../../database/migrations'),
+                '--path' => __DIR__ . '/../../database/migrations',
             ],
         );
-
-        $this->call('vendor:publish', ['--provider' => TagsServiceProvider::class, '--tag' => 'tags-migrations']);
 
         $this->call('migrate');
 
         $this->call('filament:assets');
 
-        $this->info('Capell Blog installation complete.');
+        $this->info('Capell Address installation complete.');
 
         return self::SUCCESS;
     }

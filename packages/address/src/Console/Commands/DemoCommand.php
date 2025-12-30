@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Capell\Address\Commands;
+namespace Capell\Address\Console\Commands;
 
 use Capell\Address\Enums\ModelEnum as AddressModelEnum;
 use Capell\Address\Models\Address;
-use Capell\Core\Commands\Concerns\HasSitesOption;
+use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Illuminate\Console\Command;
@@ -39,7 +39,7 @@ class DemoCommand extends Command
                 ? explode(',', $this->option('sites'))
                 : (is_array($this->option('sites')) ? $this->option('sites') : null);
         } else {
-            $siteOptions = $this->getSelectedSites();
+            $siteOptions = $this->getDemoSites();
         }
 
         $sites = CapellCore::getModel(ModelEnum::Site)::query()->with(['language', 'languages'])->whereIn('name', $siteOptions)->get();

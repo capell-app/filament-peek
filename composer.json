@@ -20,8 +20,10 @@
         "lint": "pint --parallel",
         "analyze": "phpstan analyse --memory-limit=-1 --configuration=phpstan.neon",
         "prettier": "npx prettier --write \"packages/**/*.{css,js,yml,json,md,blade.php}\"",
+        "eslint": "npx eslint 'packages/*/resources/js/**/*.js' --max-warnings=0",
         "preflight": [
             "@prettier",
+            "@eslint",
             "@rector",
             "@lint",
             "@analyze"
@@ -98,7 +100,7 @@
         "lorisleiva/laravel-actions": "^2.8",
         "michaloravec/laravel-paginateroute": "^1.0",
         "oddvalue/laravel-drafts": "^1.0|^2.0",
-        "openai-php/laravel": "*",
+        "openai-php/laravel": "^0.10",
         "owenvoke/blade-fontawesome": "^2.8",
         "rmsramos/activitylog": "dev-filament4",
         "saade/filament-adjacency-list": "4.x-dev",

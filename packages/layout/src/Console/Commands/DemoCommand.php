@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Capell\Layout\Commands;
+namespace Capell\Layout\Console\Commands;
 
 use Capell\Admin\Enums\LayoutEnum;
-use Capell\Core\Commands\Concerns\HasSitesOption;
+use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
@@ -49,7 +49,7 @@ class DemoCommand extends Command
                 ? explode(',', $this->option('sites'))
                 : (is_array($this->option('sites')) ? $this->option('sites') : null);
         } else {
-            $siteOptions = $this->getSelectedSites();
+            $siteOptions = $this->getDemoSites();
         }
 
         $sites = CapellCore::getModel(ModelEnum::Site)::query()->with(['languages'])->whereIn('name', $siteOptions)->get();

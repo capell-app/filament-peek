@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Blog\Commands;
+namespace Capell\Blog\Console\Commands;
 
 use Capell\Blog\Actions\CreateBlogPagesAction;
 use Capell\Core\Models\Site;

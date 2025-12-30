@@ -11,7 +11,6 @@ use Capell\Core\Models\Concerns\HasStatus;
 use Capell\Core\Models\Contracts\Defaultable;
 use Capell\Core\Models\Language;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -88,8 +87,7 @@ class Country extends Model implements Defaultable
         return $this->belongsToJson(Language::class, 'meta->languages');
     }
 
-    #[Scope]
-    protected function ordered(Builder $query): Builder
+    protected function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('name');
     }

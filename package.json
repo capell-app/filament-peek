@@ -1,11 +1,14 @@
 {
-    "name": "capell-app",
+    "name": "capell-packages-app",
     "scripts": {
-        "prettier": "npx prettier --write 'packages/**/*.{css,js,yml,json,md,blade.php}'"
+        "prettier": "./scripts/prettier-js.sh",
+        "eslint": "npx eslint 'packages/*/resources/js/**/*.js' --max-warnings=0"
     },
     "devDependencies": {
         "prettier": "^3.5.2",
         "prettier-plugin-blade": "^2.1.21",
-        "prettier-plugin-tailwindcss": "^0.6.11"
+        "prettier-plugin-tailwindcss": "^0.6.11",
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^9.1.0"
     }
 }

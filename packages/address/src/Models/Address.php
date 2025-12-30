@@ -11,7 +11,6 @@ use Capell\Core\Models\Concerns\HasStatus;
 use Capell\Core\Models\Contracts\Defaultable;
 use Capell\Core\Models\Site;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -107,8 +106,7 @@ class Address extends Model implements Defaultable
         return $this->hasMany(Site::class, 'meta->address_id');
     }
 
-    #[Scope]
-    protected function ordered(Builder $query): Builder
+    protected function scopeOrdered(Builder $query): Builder
     {
         return $query
             ->orderBy('line1')

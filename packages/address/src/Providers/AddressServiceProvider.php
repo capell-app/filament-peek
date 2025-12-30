@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\Address\Providers;
 
 use Capell\Address\AddressModelRegistrar;
-use Capell\Address\Commands\DemoCommand;
-use Capell\Address\Commands\InstallCommand;
+use Capell\Address\Console\Commands\DemoCommand;
+use Capell\Address\Console\Commands\InstallCommand;
 use Capell\Address\Enums\ResourceEnum;
 use Capell\Address\Enums\SchemaTypeEnum;
 use Capell\Address\Filament\Resources\Sites\Schemas\Extenders\SiteSchemaExtender;
