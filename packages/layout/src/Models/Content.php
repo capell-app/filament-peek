@@ -235,17 +235,6 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
             ]),
             'translation' => fn (BuilderContract $query) => $query->with('language')
                 ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-            'related' => fn (BuilderContract $query) => $query->with([
-                'image',
-                'page' => fn (BuilderContract $query) => $query->with([
-                    'translation' => fn (BuilderContract $query) => $query->with('language')
-                        ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-                    'pageUrl' => fn (BuilderContract $query) => $query->with('siteDomain')
-                        ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-                    'site',
-                ]),
-            ])
-                ->withWhereHas('translation', fn (BuilderContract $query) => $query->with('language')),
             'type',
         ];
 

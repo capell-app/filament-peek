@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Services\Loader;
 
+use Capell\Core\Actions\GetComponentClassAction;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
@@ -85,11 +86,21 @@ class LayoutLoader
 
                 $layoutWidget = clone $widget;
 
-                $resourceRelationsCallback = function (MorphTo $morphTo) use ($language): void {
-                    $morphTo->morphWith([
+                $component = $widget->getComponent();
+
+                $componentClass = GetComponentClassAction::run($component);
+
+                $resourceRelationsCallback = function (MorphTo $morphTo) use ($language, $componentClass): void {
+                    $with = [
                         Content::class => Content::getMorphRelations($language),
                         Page::class => Page::getMorphRelations($language),
-                    ]);
+                    ];
+
+                    if (method_exists($componentClass, 'loadWidgetAssets')) {
+                        $componentClass::loadWidgetAssets($with, $language);
+                    }
+
+                    $morphTo->morphWith($with);
                 };
 
                 $widgetAssets = $layoutWidget->pageAssets($page, $containerKey, $occurrence)

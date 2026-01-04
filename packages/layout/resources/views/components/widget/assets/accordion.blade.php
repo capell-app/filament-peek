@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 ?>
 
+{{-- format-ignore-start --}}
 @php
     use Capell\Core\Enums\AssetComponentEnum;
-                    use Capell\Core\Models\Page;use Capell\Frontend\Facades\Frontend;
+    use Capell\Core\Models\Page;
+    use Capell\Frontend\Facades\Frontend;
 
-                    $site = Frontend::site();
+    $site = Frontend::site();
 @endphp
+{{-- format-ignore-end --}}
 
 @props([
 'columns' => $container['meta']['override_columns'] ?? ($widget->meta['columns'] ?? 3),
@@ -57,11 +60,7 @@ declare(strict_types=1);
                 @php
                     $image = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
 
-                    if ($widgetAsset->asset instanceof Page) {
-                        $linkedPageUrl = $widgetAsset->asset->pageUrl->full_url;
-                    } else {
-                        $linkedPageUrl = $widgetAsset->asset->linkedPage ? $widgetAsset->asset->linkedPage->pageUrl?->full_url : '';
-                    }
+                    $linkedPage = $widgetAsset->asset instanceof Page ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
                 @endphp
                 {{-- format-ignore-end --}}
                 <section
@@ -105,27 +104,40 @@ declare(strict_types=1);
                                 @endif
 
                                 @if ($image)
-                                    <a href="{{ $linkedPageUrl }}">
+                                    @capture($mediaContent)
                                         <x-capell::media
                                             :media="$image"
                                             :width="120"
                                             :height="120"
+                                            :alt="$widgetAsset->asset->translation->title"
                                             fit="crop"
                                             class="h-10 w-10 rounded-full object-cover object-center"
                                             loading="lazy"
                                         />
-                                    </a>
+                                    @endcapture
+
+                                    @if ($linkedPage)
+                                        <a
+                                            href="{{ $linkedPage->pageUrl->full_url }}"
+                                            wire:navigate
+                                            class="shrink-0"
+                                        >
+                                            {{ $mediaContent() }}
+                                        </a>
+                                    @else
+                                        {{ $mediaContent() }}
+                                    @endif
                                 @endif
                             </div>
 
-                            @if (! empty($widgetAsset->asset->meta['actions']) || $linkedPageUrl)
+                            @if (! empty($widgetAsset->asset->meta['actions']) || $linkedPage)
                                 <x-capell::actions
                                     :actions="$widgetAsset->asset->meta['actions'] ?? []"
                                     class="mt-4"
                                 >
-                                    @if ($linkedPageUrl)
+                                    @if ($linkedPage)
                                         <x-capell::button
-                                            :url="$linkedPageUrl"
+                                            :url="$linkedPage->pageUrl->full_url"
                                             color="default"
                                             icon="heroicon-o-chevron-right"
                                         >

@@ -52,6 +52,7 @@ class HeroTestCase extends AbstractTestCase
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(HeroServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
     }
 

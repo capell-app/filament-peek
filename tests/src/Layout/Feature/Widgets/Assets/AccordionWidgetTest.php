@@ -69,7 +69,15 @@ it('renders asset accordion widget on page', function (callable $factory, string
                 ->each(
                     '.widget-accordion-item',
                     fn (AssertElement $asset, int $index): BaseAssert => $asset->containsText($widgetAssets[$index]->asset->translation->title)
-                        ->containsText(strip_tags((string) $widgetAssets[$index]->asset->translation->content)),
+                        ->containsText(strip_tags((string) $widgetAssets[$index]->asset->translation->content))
+                        ->find(
+                            'img',
+                            fn (AssertElement $imgElm): BaseAssert => $imgElm->has(
+                                'alt',
+                                $widgetAssets[$index]->asset->translation->title,
+                            )
+                                ->has('src', $srcResolver($widgetAssets[$index])),
+                        ),
                 ),
         );
 })->with(

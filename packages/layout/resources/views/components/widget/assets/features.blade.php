@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Enums\AssetComponentEnum;
-                use Capell\Core\Facades\CapellCore;use Capell\Core\Models\Page;
+                    use Capell\Core\Facades\CapellCore;use Capell\Core\Models\Page;
 @endphp
 
 @props([
@@ -26,15 +26,10 @@ declare(strict_types=1);
 ])
 
 @capture($assetBlock, $widgetAsset, $column)
-    {{-- format-ignore-start --}}
     @php
-        if ($widgetAsset->asset instanceof Page) {
-            $linkedPageUrl = $widgetAsset->asset->pageUrl->full_url;
-        } else {
-            $linkedPageUrl = $widgetAsset->asset->linkedPage ? $widgetAsset->asset->linkedPage->pageUrl?->full_url : '';
-        }
+        $linkedPage = $widgetAsset->asset instanceof Page ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
     @endphp
-    {{-- format-ignore-end --}}
+
     <div
         @class([
         'widget-features-item flex items-start gap-x-4 pt-1',
@@ -45,20 +40,20 @@ declare(strict_types=1);
             <div
                 class="bg-gray flex h-14 w-14 shrink-0 items-center justify-center rounded-full p-3 dark:bg-gray-600"
             >
-                @if ($linkedPageUrl)
-                    <a href="{{ $linkedPageUrl }}">
-                        <x-capell::icon
-                            :icon="$widgetAsset->asset->meta['icon']"
-                            class="h-10 w-10 text-white"
-                            loading="lazy"
-                        />
-                    </a>
-                @else
+                @capture($iconContent)
                     <x-capell::icon
                         :icon="$widgetAsset->asset->meta['icon']"
                         class="h-10 w-10 text-white"
                         loading="lazy"
                     />
+                @endcapture
+
+                @if ($linkedPage)
+                    <a href="{{ $linkedPage->pageUrl->full_url }}">
+                        {{ $iconContent() }}
+                    </a>
+                @else
+                    {{ $iconContent() }}
                 @endif
             </div>
         @elseif ($image = $widgetAsset->media->first() ?: $widgetAsset->asset->image)
@@ -74,8 +69,8 @@ declare(strict_types=1);
                 />
             @endcapture
 
-            @if ($linkedPageUrl)
-                <a href="{{ $linkedPageUrl }}">
+            @if ($linkedPage)
+                <a href="{{ $linkedPage->pageUrl->full_url }}">
                     {{ $imageBlock() }}
                 </a>
             @else

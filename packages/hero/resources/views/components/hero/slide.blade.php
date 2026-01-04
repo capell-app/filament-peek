@@ -13,24 +13,25 @@ declare(strict_types=1);
 ])
 
 @props([
+'backgroundAttachment' => '',
 'backgroundColor' => '',
 'backgroundImage' => null,
-'backgroundPosition' => 'center',
-'backgroundSize' => 'cover',
-'backgroundAttachment' => '',
-'backgroundRepeat' => 'no-repeat',
 'backgroundOverlay' => null,
+'backgroundPosition' => 'center',
+'backgroundRepeat' => 'no-repeat',
+'backgroundSize' => 'cover',
 'carouselType' => 'slide',
 'colorScheme' => 'dark',
 'container_class' => 'container',
-'slideBgImgClass' => '',
 'first' => false,
 'height' => '',
+'slideBgImgClass' => '',
+'title' => null,
 ])
 <div
     {{
         $attributes->class([
-        'swiper-slide',
+        'swiper-slide hero-item',
         'swiper-slide-selected' => $first,
         ])
     }}
@@ -58,6 +59,7 @@ declare(strict_types=1);
             <x-capell::media
                 format="webp"
                 :media="$backgroundImage"
+                :alt="$title"
                 height="auto"
                 :loading="$first ? 'eager' : 'lazy'"
                 {{-- format-ignore-start --}}

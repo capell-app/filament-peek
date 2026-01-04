@@ -7,9 +7,11 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Layout\Database\Factories\LayoutFactory;
+use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Services\Creator\WidgetCreator;
 use Capell\Tests\Fixtures\Support\Concerns\TestingFrontend;
+use Pest\Expectation;
 
 use function Pest\Laravel\get;
 
@@ -24,7 +26,10 @@ it('creates banner image widget with expected meta', function (): void {
 
     expect($widget)
         ->toBeInstanceOf(Widget::class)
-        ->key->toBe('banner-image');
+        ->key->toBe('banner-image')
+        ->meta->scoped(
+            fn (Expectation $expectation) => $expectation->component->toBe(WidgetComponentEnum::BannerImage->value),
+        );
 });
 
 it('renders banner image widget on page', function (): void {

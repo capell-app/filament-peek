@@ -11,7 +11,6 @@ $theme = Frontend::theme();
 
 @props([
 'backgroundColor' => $widget->meta['background_color'] ?? null,
-'backgroundImage' => ! empty($widget->meta['background_image']) ? \Capell\Core\Models\Media::find($widget->meta['background_image']) : null,
 'containerKey',
 'containerIndex',
 'colorScheme' => $widget->meta['color_scheme'] ?? $theme->meta['color_scheme'] ?? null,
@@ -22,15 +21,15 @@ $theme = Frontend::theme();
 'widget',
 'widgetIndex',
 ])
-
+{{-- format-ignore-start --}}
 @php
     if ($containerIndex === 0 && ($theme->meta['header_position'] ?? null) === 'fixed') {
-                            $slideClass .= ' pt-20 lg:pt-32';
-                        }
+        $slideClass .= ' pt-20 lg:pt-32';
+    }
 
-                        $height = $widget->meta['height'] ?? null;
+    $height = $widget->meta['height'] ?? null;
 @endphp
-
+{{-- format-ignore-end --}}
 <section
     @class([
     'widget-hero relative z-10 grid w-full',
@@ -92,24 +91,18 @@ $theme = Frontend::theme();
                 @php
                     $slideColorScheme = $widgetAsset->asset->meta['color_scheme'] ?? $colorScheme;
 
-                    $url = null;
-                    if ($widgetAsset->asset->linkedPage) {
-                        $pageUrl = \Capell\Frontend\Services\Loader\PageLoader::getPageUrlById(
-                            pageId: $widgetAsset->asset->linkedPage->id,
-                            site: $widgetAsset->asset->linkedPage->site,
-                            language: $language,
-                        );
+                    $linkedPage = $widgetAsset->asset instanceof \Capell\Core\Models\Page ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
 
-                        $url = $pageUrl?->full_url;
+                    $url = null;
+                    if ($linkedPage) {
+                        $url = $linkedPage->pageUrl->full_url;
                     }
 
-                    if ($asset instanceof \Capell\Core\Models\Media) {
-                        $bgImage = $asset;
+                    if ($widgetAsset->asset instanceof \Capell\Core\Models\Media) {
+                        $bgImage = $widgetAsset->asset;
                         $images = null;
                     } else {
-                        $bgImage = ! empty($widgetAsset->asset->meta['background_image_id'])
-                            ? \Capell\Core\Models\Media::find($widgetAsset->asset->meta['background_image_id'])
-                            : ($widgetAsset->asset->image ?: $backgroundImage);
+                        $bgImage = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
 
                         $images = $widgetAsset->asset->media;
                     }
@@ -141,6 +134,7 @@ $theme = Frontend::theme();
                     :background-overlay="$bgImage && $widgetAsset->asset->translation ? $colorScheme : ''"
                     :first="$loop->first"
                     :total="$total"
+                    :title="$widgetAsset->asset?->translation->title"
                     :color-scheme="$slideColorScheme"
                     :class="$slideClass"
                     container-class="container"
@@ -159,7 +153,7 @@ $theme = Frontend::theme();
                             'py-[4vh]' => ! $widgetAsset->asset->image && ! $bgImage,
                             ])
                         >
-                            @if ($widgetAsset->asset->translation)
+                            @if ($widgetAsset->asset)
                                 <x-capell-hero::hero.content
                                     :title="$widgetAsset->asset->translation->title"
                                     :heading-size="$loop->first ? 'h1' : 'h2'"
