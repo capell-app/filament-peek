@@ -106,10 +106,10 @@ class DemoCommand extends Command
 
         $languages = $site->languages;
 
-        /** @var Page $homePage */
-        $homePage = $site->pages()->homePage()->first();
+        /** @var Page $home */
+        $home = $site->pages()->homePage()->first();
 
-        $this->setupHomepage($homePage, $languages);
+        $this->setupHomepage($home, $languages);
 
         return true;
     }
