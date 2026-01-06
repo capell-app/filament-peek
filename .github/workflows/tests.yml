@@ -71,6 +71,9 @@ jobs:
         if: steps.php-cache.outputs.cache-hit != 'true'
         run: composer update --no-interaction --no-progress --ansi --optimize-autoloader
 
+      - name: List Installed Dependencies
+        run: composer show -D
+
       - name: Configure environment
         run: |
           if [ "${{ matrix.db }}" == "mysql" ]; then
@@ -82,22 +85,6 @@ jobs:
             echo "DB_CONNECTION=sqlite" >> .env
             echo "DB_DATABASE=:memory:" >> .env
           fi
-
-      - name: Rector Cache
-        uses: actions/cache@v4
-        with:
-          path: /tmp/rector
-          key: ${{ runner.os }}-rector-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-rector-
-      - run: mkdir -p /tmp/rector
-
-      - name: PHPStan Cache
-        uses: actions/cache@v4
-        with:
-          path: /tmp/phpstan
-          key: ${{ runner.os }}-phpstan-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-phpstan-
-      - run: mkdir -p /tmp/phpstan
 
       - name: Execute tests
         run: php -d memory_limit=-1 vendor/bin/pest --colors=always --parallel --configuration=phpunit-pipelines.xml

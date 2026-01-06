@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Capell\Admin\Enums\LayoutEnum;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Layout\Database\Factories\ThemeFactory;
 use Capell\Layout\Services\Creator\LayoutCreator;
 use Capell\Tests\Fixtures\Support\Concerns\TestingFrontend;
 
@@ -16,7 +17,8 @@ use Sinnbeck\DomAssertions\Asserts\BaseAssert;
 uses(TestingFrontend::class);
 
 test('home page with layout', function (): void {
-    $site = Site::factory()->withTranslations()->create();
+    $theme = (new ThemeFactory)->create();
+    $site = Site::factory()->theme($theme)->withTranslations()->create();
 
     $layoutCreator = resolve(LayoutCreator::class);
     $layout = $layoutCreator->createWithContainers(LayoutEnum::Default->value, createWidgets: true);
@@ -33,7 +35,6 @@ test('home page with layout', function (): void {
         ->assertElementExists(
             '.widget-page-content',
             fn (AssertElement $elm): BaseAssert => $elm->containsText(strip_tags((string) $page->translation->content)),
-        );
+        )
+        ->assertElementExists('.capell-layout-footer');
 });
-
-todo('test children and other widgets on default page');

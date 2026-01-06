@@ -10,6 +10,8 @@ use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 
 class SiblingsWidget extends AbstractPagesWidget
 {
+    protected static string $defaultView = 'capell-layout::components.widget.page.pages';
+
     protected function mountWidget(): void
     {
         $page = Frontend::page();

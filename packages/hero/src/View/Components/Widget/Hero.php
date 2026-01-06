@@ -18,20 +18,11 @@ class Hero extends AbstractWidget
 
     public static function loadWidgetAssets(array &$morphRelations, ?Language $language = null): void
     {
-        $related = fn (BuilderContract $query) => $query->with([
-            'image',
-            'page' => fn (BuilderContract $query) => $query->with([
-                'translation' => fn (BuilderContract $query) => $query->with('language')
-                    ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-                'pageUrl' => fn (BuilderContract $query) => $query->with('siteDomain')
-                    ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-                'site',
-            ]),
-        ])
+        $morphRelations[Content::class]['related'] = fn (BuilderContract $query) => $query->with(Content::getMorphRelations($language))
             ->withWhereHas('translation', fn (BuilderContract $query) => $query->with('language'));
 
-        $morphRelations[Content::class]['related'] = $related;
-        $morphRelations[Page::class]['related'] = $related;
+        $morphRelations[Page::class]['related'] = fn (BuilderContract $query) => $query->with(Page::getMorphRelations($language))
+            ->withWhereHas('translation', fn (BuilderContract $query) => $query->with('language'));
     }
 
     protected function mountWidget(): void

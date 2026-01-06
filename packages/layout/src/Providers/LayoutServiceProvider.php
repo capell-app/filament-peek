@@ -143,7 +143,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         CapellCore::registerPackage(
             static::$packageName,
             type: static::getType(),
-            path: __DIR__,
+            path: realpath(__DIR__ . '/../..'),
             description: static::getDescription(),
             permissions: $this->getPackagePermissions(),
             installCommand: 'capell-layout:install',

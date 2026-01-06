@@ -54,9 +54,9 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
 ?>
 
 @props([
-'menuItemClass' => 'hover:text-primary focus:text-primary flex gap-x-0.5 break-all font-semibold leading-tight text-white dark:text-gray-200',
-'menuSubItemClass' => 'hover:text-primary focus:text-primary flex gap-x-0.5 break-all py-1 text-sm leading-tight text-white dark:text-gray-200',
-'headingClass' => 'font-heading tracking-right font-medium uppercase leading-tight text-gray-400',
+    'menuItemClass' => 'hover:text-primary focus:text-primary flex gap-x-0.5 break-all font-semibold leading-tight text-white dark:text-gray-200',
+    'menuSubItemClass' => 'hover:text-primary focus:text-primary flex gap-x-0.5 break-all py-1 text-sm leading-tight text-white dark:text-gray-200',
+    'headingClass' => 'font-heading tracking-right font-medium uppercase leading-tight text-gray-400',
 ])
 <style>
     :root {
@@ -79,17 +79,17 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
 </a>
 <footer
     id="footer"
-    class="z-0 bg-[var(--bg-color-footer)] text-[var(--color-footer)]"
+    class="capell-layout-footer z-0 bg-[var(--bg-color-footer)] text-[var(--color-footer)]"
 >
     <div
         @class([
-        '@container flex-wrap px-8 py-14 lg:pt-16',
-        match ($theme->meta['container'] ?? null) {
-        'sm' => 'sm:container',
-        'md' => 'md:container',
-        'lg' => 'lg:container',
-        default => 'container',
-        },
+            '@container flex-wrap px-8 py-14 lg:pt-16',
+            match ($theme->meta['container'] ?? null) {
+                'sm' => 'sm:container',
+                'md' => 'md:container',
+                'lg' => 'lg:container',
+                default => 'container',
+            },
         ])
     >
         <div
@@ -161,7 +161,7 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
                 class="@4xl:col-span-2 shrink-0 xl:w-[20%]"
             />
 
-            {!! app(\Capell\Frontend\Services\RenderHookRegistry::class)->renderAll(\Capell\Frontend\Enums\RenderHookLocation::Footer) !!}
+            {!! app(\Capell\Frontend\Services\RenderHookRegistry::class)->renderAll(\Capell\Frontend\Enums\RenderHookLocation::Footer, item: ['headingClass' => $headingClass], target: 'footer.index') !!}
         </div>
     </div>
 
@@ -172,8 +172,8 @@ $pages = \Capell\Frontend\Services\Loader\PageLoader::getPages(
         >
             {!!
                 \Illuminate\Support\Facades\Lang::get($site->translation->meta['footer_copy'] ?? '', [
-                'name' => $site->name,
-                'year' => date('Y'),
+                    'name' => $site->name,
+                    'year' => date('Y'),
                 ])
             !!}
         </x-capell::footer.sub-footer>

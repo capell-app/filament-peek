@@ -5,11 +5,12 @@ declare(strict_types=1);
 ?>
 
 @props([
-'linkClass' => 'hover:text-primary focus:bg-primary inline-flex items-center rounded-full bg-gray-600/75 px-3 py-2 text-sm font-medium leading-none tracking-wide text-[var(--color-footer)] no-underline focus:text-white',
+    'headingClass' => null,
+    'linkClass' => 'hover:text-primary focus:bg-primary inline-flex items-center rounded-full bg-gray-600/75 px-3 py-2 text-sm font-medium leading-none tracking-wide text-[var(--color-footer)] no-underline focus:text-white',
 ])
 
 <?php
-    use Capell\Blog\Services\Loader\TagLoader;
+use Capell\Blog\Services\Loader\TagLoader;
 use Capell\Frontend\Facades\Frontend;
 
 $language = Frontend::language();
@@ -19,7 +20,9 @@ $tagPage = TagLoader::getTagResultsPage($site, $language);
 ?>
 
 <div {{ $attributes }}>
-    {{ $heading ?? '' }}
+    <h3 class="{{ $headingClass }} mb-4 dark:text-gray-100">
+        {{ __('Tags') }}
+    </h3>
 
     @if ($tags->isNotEmpty())
         <div class="flex flex-wrap gap-2">

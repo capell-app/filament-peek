@@ -46,7 +46,7 @@ use Wildside\Userstamps\Userstamps;
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $deleted_by
- * @property-read Model $asset
+ * @property-read Model|Page|Content $asset
  * @property-read User|null $creator
  * @property-read User|null $destroyer
  * @property-read User|null $editor

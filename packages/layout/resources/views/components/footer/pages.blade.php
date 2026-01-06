@@ -46,7 +46,7 @@ declare(strict_types=1);
                     wire:navigate
                 >
                     <span
-                        class="group-hover:text-link group-focus:text-link font-medium leading-tight"
+                        class="group-hover:text-link group-focus:text-link text-sm font-medium leading-tight"
                     >
                         {!! $page->getTranslation('label') !!}
                     </span>

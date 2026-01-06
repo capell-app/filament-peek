@@ -44,13 +44,20 @@ class InstallCommand extends Command
 
         InstallBlogPackageAction::run();
 
+        $migrations = __DIR__ . '/../../../database/migrations';
+        if (! is_dir($migrations)) {
+            $this->error('Migrations directory does not exist.');
+
+            return Command::FAILURE;
+        }
+
         $this->call(
             'capell:publish-migrations',
             [
                 '--items' => [
                     'alter_tags_table',
                 ],
-                '--path' => realpath(__DIR__ . '/../../database/migrations'),
+                '--path' => $migrations,
             ],
         );
 

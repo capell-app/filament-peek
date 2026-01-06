@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class LatestWidget extends AbstractPagesWidget
 {
+    protected static string $defaultView = 'capell-layout::components.widget.page.pages';
+
     protected function mountWidget(): void
     {
         $this->pages = PageLoader::getPages(

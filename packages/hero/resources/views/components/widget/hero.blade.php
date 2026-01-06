@@ -10,16 +10,16 @@ $theme = Frontend::theme();
 ?>
 
 @props([
-'backgroundColor' => $widget->meta['background_color'] ?? null,
-'containerKey',
-'containerIndex',
-'colorScheme' => $widget->meta['color_scheme'] ?? $theme->meta['color_scheme'] ?? null,
-'heroContent' => null,
-'loop',
-'total' => $widget->assets->isNotEmpty() ? $widget->assets->count() : 1,
-'slideClass' => '',
-'widget',
-'widgetIndex',
+    'backgroundColor' => $widget->meta['background_color'] ?? null,
+    'containerKey',
+    'containerIndex',
+    'colorScheme' => $widget->meta['color_scheme'] ?? $theme->meta['color_scheme'] ?? null,
+    'heroContent' => null,
+    'loop',
+    'total' => $widget->assets->isNotEmpty() ? $widget->assets->count() : 1,
+    'slideClass' => '',
+    'widget',
+    'widgetIndex',
 ])
 {{-- format-ignore-start --}}
 @php
@@ -32,15 +32,15 @@ $theme = Frontend::theme();
 {{-- format-ignore-end --}}
 <section
     @class([
-    'widget-hero relative z-10 grid w-full',
-    'mb-10' => ! $loop->last,
-    'mt-10' => ! $loop->first,
-    'bg-gray-50 dark:bg-gray-900' => $colorScheme === 'light',
-    'bg-gray-800 dark:bg-gray-900' => $colorScheme === 'dark',
-    'h-[calc(100vh-var(--header-height))]' => $height === 'full',
-    'h-[calc(100vh-var(--header-height))] lg:max-h-[60vh]' => $height === 'large',
-    'h-[calc(100vh-var(--header-height))] md:max-h-[40vh]' => $height === 'medium',
-    'h-[calc(100vh-var(--header-height))] sm:max-h-[24rem]' => $height === 'small',
+        'widget-hero relative z-10 grid w-full',
+        'mb-10' => ! $loop->last,
+        'mt-10' => ! $loop->first,
+        'bg-gray-50 dark:bg-gray-900' => $colorScheme === 'light',
+        'bg-gray-800 dark:bg-gray-900' => $colorScheme === 'dark',
+        'h-[calc(100vh-var(--header-height))]' => $height === 'full',
+        'h-[calc(100vh-var(--header-height))] lg:max-h-[60vh]' => $height === 'large',
+        'h-[calc(100vh-var(--header-height))] md:max-h-[40vh]' => $height === 'medium',
+        'h-[calc(100vh-var(--header-height))] sm:max-h-[24rem]' => $height === 'small',
     ])
 >
     <x-capell-hero::hero.wrapper
@@ -59,7 +59,7 @@ $theme = Frontend::theme();
             @endphp
 
             <x-capell-hero::hero.slide
-                :background-image="$widget->image ?: $backgroundImage"
+                :background-image="$widget->image"
                 :background-color="$widget->meta['background_color'] ?? ($theme['meta']['background_color'] ?? '')"
                 :background-size="$widget->meta['background_size'] ?? 'cover'"
                 :background-position="$widget->meta['background_position'] ?? 'center'"
@@ -89,6 +89,7 @@ $theme = Frontend::theme();
             @foreach ($widget->assets as $widgetAsset)
                 {{-- format-ignore-start --}}
                 @php
+                    /** @var WidgetAsset $widgetAsset */
                     $slideColorScheme = $widgetAsset->asset->meta['color_scheme'] ?? $colorScheme;
 
                     $linkedPage = $widgetAsset->asset instanceof \Capell\Core\Models\Page ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
@@ -102,13 +103,15 @@ $theme = Frontend::theme();
                         $bgImage = $widgetAsset->asset;
                         $images = null;
                     } else {
-                        $bgImage = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
+                        $bgCollectionName = \Capell\Core\Enums\MediaCollectionEnum::BackgroundImage->value;
+                        $bgImage = $widgetAsset->media?->firstWhere('collection_name', $bgCollectionName)
+                            ?? $widgetAsset->asset->media?->firstWhere('collection_name', $bgCollectionName);
 
-                        $images = $widgetAsset->asset->media;
-                    }
-
-                    if (! $bgImage && ! $images?->isNotEmpty() && ! $widgetAsset->asset->translation) {
-                        continue;
+                        $imageCollectionName = \Capell\Core\Enums\MediaCollectionEnum::Image->value;
+                        $images = $widgetAsset->media?->where('collection_name', $imageCollectionName);
+                        if (! $images?->isNotEmpty()) {
+                            $images = $widgetAsset->asset->media?->where('collection_name', $imageCollectionName);
+                        }
                     }
                 @endphp
                 {{-- format-ignore-end --}}
@@ -134,23 +137,23 @@ $theme = Frontend::theme();
                     :background-overlay="$bgImage && $widgetAsset->asset->translation ? $colorScheme : ''"
                     :first="$loop->first"
                     :total="$total"
-                    :title="$widgetAsset->asset?->translation->title"
+                    :title="$widgetAsset->asset->translation->title"
                     :color-scheme="$slideColorScheme"
                     :class="$slideClass"
                     container-class="container"
                 >
                     <div
                         @class([
-                        '@container grid select-text gap-4 gap-x-10 gap-y-8 py-14 lg:gap-x-16 lg:py-24',
-                        'lg:grid-cols-12' => $images?->isNotEmpty(),
+                            '@container grid select-text gap-4 gap-x-10 gap-y-8 py-14 lg:gap-x-16 lg:py-24',
+                            'lg:grid-cols-12' => $images?->isNotEmpty(),
                         ])
                     >
                         <div
                             @class([
-                            'flex flex-col justify-center',
-                            'items-center text-center' => ! $images?->isNotEmpty(),
-                            'lg:col-span-5 xl:col-span-7' => $images?->isNotEmpty(),
-                            'py-[4vh]' => ! $widgetAsset->asset->image && ! $bgImage,
+                                'flex flex-col justify-center',
+                                'items-center text-center' => ! $images?->isNotEmpty(),
+                                'lg:col-span-5 xl:col-span-7' => $images?->isNotEmpty(),
+                                'py-[4vh]' => ! $widgetAsset->asset->image && ! $bgImage,
                             ])
                         >
                             @if ($widgetAsset->asset)
@@ -183,16 +186,17 @@ $theme = Frontend::theme();
                             @if ($widgetAsset->asset->related?->isNotEmpty())
                                 <x-capell-hero::hero.related
                                     class="w-full"
-                                    :features="$widgetAsset->asset->related"
-                                    :key="$containerKey . '-widget-' . $widgetIndex . '-features'"
+                                    :related="$widgetAsset->asset->related"
+                                    :key="$containerKey . '-widget-' . $widgetIndex . '-related'"
                                 />
                             @endif
 
                             @if ($widgetAsset->asset->meta['actions'] ?? null)
                                 <x-capell::actions
-                                    class="mt-8 w-full"
+                                    class="hero-actions mt-8 w-full"
                                     :actions="$widgetAsset->asset->meta['actions']"
                                     :color-scheme="$slideColorScheme"
+                                    action-item-class="hero-action-item"
                                 />
                             @endif
                         </div>
@@ -206,7 +210,8 @@ $theme = Frontend::theme();
                                         <x-capell::media
                                             format="webp"
                                             :media="$media"
-                                            class="h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
+                                            :alt="$widgetAsset->asset->translation->title"
+                                            class="hero-slide-img h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
                                             loading="lazy"
                                         />
                                     @endcapture

@@ -4,32 +4,35 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Enums;
 
+use Capell\Blog\Enums\Attribute\Component;
 use Capell\Blog\Livewire\Page\ArchivePage;
 use Capell\Blog\Livewire\Page\BlogPage;
 use Capell\Blog\Livewire\Page\TagPage;
+use Capell\Core\Enums\Attribute\EnumAttributeHelper;
+use Capell\Core\Enums\Attribute\EnumAttributeInterface;
 
-enum PageComponentEnum: string
+enum PageComponentEnum: string implements EnumAttributeInterface
 {
+    use EnumAttributeHelper;
+
+    #[Component(ArchivePage::class)]
     case ArchivePage = 'capell-blog::livewire.page.archive';
+
+    #[Component(BlogPage::class)]
     case BlogPage = 'capell-blog::livewire.page.blog';
+
+    #[Component(TagPage::class)]
     case TagPage = 'capell-blog::livewire.page.tag';
 
     public static function getComponents(): array
     {
-        $components = [];
-        foreach (self::cases() as $pageComponent) {
-            $components[$pageComponent->value] = $pageComponent->getComponent();
-        }
+        $attributes = self::getAllCaseAttributes(Component::class);
 
-        return $components;
+        return array_map(fn (?Component $attribute): ?string => $attribute?->class ?? null, $attributes);
     }
 
     public function getComponent(): ?string
     {
-        return match ($this) {
-            self::ArchivePage => ArchivePage::class,
-            self::BlogPage => BlogPage::class,
-            self::TagPage => TagPage::class,
-        };
+        return $this->getCaseAttribute(Component::class)->class;
     }
 }

@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Console\Commands;
 
-use Capell\Blog\Actions\DemoAction;
+use Capell\Admin\Services\Creator\DemoCreator;
+use Capell\Blog\Actions\CreateBlogPagesAction;
+use Capell\Blog\Enums\ModelEnum as BlogModelEnum;
+use Capell\Blog\Enums\ResourceEnum;
+use Capell\Blog\Services\Loader\BlogLoader;
 use Capell\Core\Console\Commands\Concerns\HasSitesOption;
-use Capell\Core\Enums\ModelEnum;
+use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Language;
+use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class DemoCommand extends Command
 {
@@ -27,6 +36,8 @@ class DemoCommand extends Command
      * The console command description.
      */
     protected $description = 'Setup demo blog pages, tags and sample articles for selected sites.';
+
+    private DemoCreator $demoCreator;
 
     public function handle(): int
     {
@@ -45,7 +56,7 @@ class DemoCommand extends Command
             return self::FAILURE;
         }
 
-        $sites = CapellCore::getModel(ModelEnum::Site)::query()
+        $sites = CapellCore::getModel(CoreModelEnum::Site)::query()
             ->with(['languages'])
             ->whereIn('name', $siteOptions)
             ->get();
@@ -66,10 +77,182 @@ class DemoCommand extends Command
 
         $limit = $this->option('limit') ? (int) $this->option('limit') : null;
 
-        $sites->each(fn (Site $site) => DemoAction::run($site, $user, $limit));
+        foreach ($sites as $index => $site) {
+            if ($index > 0) {
+                $this->newLine();
+            }
+            $this->info("Setting up demo blog for site: {$site->name}");
+            $this->newLine();
+            $this->demoCreator = new DemoCreator(author: $user);
+
+            $this->line('Ensuring required blog and ancillary pages exist...');
+            CreateBlogPagesAction::run($site);
+            $this->newLine();
+
+            $this->line('Creating demo pages...');
+            $created = $this->createDemoPages($site, $user, $limit);
+            if ($created) {
+                $this->info('Demo pages created.');
+            } else {
+                $this->warn('Demo pages not created.');
+            }
+            $this->newLine();
+
+            $site->loadMissing('languages', 'language');
+            $this->line('Creating tags for site pages...');
+            $this->createTags($site, $site->languages);
+            $this->info('Tags created/updated.');
+            $this->newLine();
+
+            $this->line('Associating tags with pages...');
+            $this->associatePageTags($site);
+            $this->info('Tags associated with pages.');
+            $this->newLine();
+        }
 
         $this->info('Blog demo setup completed for selected sites.');
 
         return self::SUCCESS;
+    }
+
+    private function createArticlePage(
+        array $data,
+        Site $site,
+        Collection $languages,
+        Language $defaultLanguage,
+        null|bool|Page $parent = null,
+        ?string $parentName = '',
+        string $type = '',
+        ?Model $author = null,
+    ): void {
+        $name = Str::title($data['name']['en']);
+        if ($type !== '' && $type !== '0') {
+            $name .= ' ' . Str::title($type);
+        }
+        $full_name = in_array($parentName, [null, '', '0'], true) ? $name : sprintf('%s » %s', $parentName, $name);
+
+        $this->line("Creating page: {$full_name}");
+        $page = $this->demoCreator->createPage($data, $site, $languages, $parent, $type);
+        $this->line("Created page: {$full_name} (ID: " . ($page?->id ?? 'n/a') . ')');
+
+        if (! isset($data['children'])) {
+            return;
+        }
+        $this->line("Recursing into children of: {$full_name}");
+        foreach ($data['children'] as $child) {
+            $this->createArticlePage(
+                data: $child,
+                site: $site,
+                languages: $languages,
+                defaultLanguage: $defaultLanguage,
+                parent: $parent === false ? false : $page,
+                parentName: $full_name,
+                type: $type,
+                author: $author,
+            );
+        }
+    }
+
+    private function createDemoPages(Site $site, ?Model $user, ?int $limit = null): bool
+    {
+        $site->loadMissing('languages', 'language');
+        $blogPage = BlogLoader::getBlogPage($site);
+        if (! $blogPage instanceof Page) {
+            $this->warn('Blog page not found for site: ' . $site->name);
+
+            return false;
+        }
+
+        $demo = config('capell-demo.pages');
+        $demo = array_slice($demo, 0, $limit);
+        $createdCount = 0;
+        foreach ($demo as $pageData) {
+            $this->line('Creating demo article: ' . ($pageData['name']['en'] ?? '[unnamed]'));
+            $this->createArticlePage(
+                $pageData,
+                $site,
+                $site->languages,
+                $site->language,
+                parent: $blogPage,
+                type: strtolower(ResourceEnum::Article->name),
+                author: $user,
+            );
+            $createdCount++;
+        }
+        $this->info("{$createdCount} demo articles created for site: {$site->name}");
+
+        return true;
+    }
+
+    private function createTags(Site $site, $languages): void
+    {
+        $pages = CapellCore::getModel(CoreModelEnum::Page)::query()
+            ->where('site_id', $site->id)
+            ->whereHas('children')
+            ->whereRelation('type', 'key', 'article')
+            ->with(['translations'])
+            ->get();
+        $tagModel = CapellCore::getModel(BlogModelEnum::Tag);
+        $pages->each(function (Page $page) use ($tagModel, $languages): void {
+            $tag_names = [];
+            $tag_slugs = [];
+            $existingTag = null;
+            $languages->each(function (Language $language) use (&$tag_names, &$tag_slugs, $page, $tagModel, &$existingTag): void {
+                $translation = $page->translations->firstWhere('language_id', $language->id);
+                if (! $translation) {
+                    return;
+                }
+                $tag_names[$language->code] = Str::title($translation->title);
+                $tag_slugs[$language->code] = Str::slug($translation->title);
+                if ($existingTag === null) {
+                    $existingTag = $tagModel::findFromString($translation->title, 'page', $language->code);
+                }
+            });
+            if ($existingTag === null) {
+                $tagModel::query()->create([
+                    'type' => 'page',
+                    'name' => $tag_names,
+                    'slug' => $tag_slugs,
+                ]);
+            } else {
+                $existingTag->update([
+                    'name' => $tag_names,
+                    'slug' => $tag_slugs,
+                ]);
+            }
+        });
+    }
+
+    private function associatePageTags(Site $site): void
+    {
+        $tagModel = CapellCore::getModel(BlogModelEnum::Tag);
+        $pageModel = CapellCore::getModel(CoreModelEnum::Page);
+        $pages = $pageModel::query()
+            ->with([
+                'translations.language',
+                'children',
+            ])
+            ->whereHas(
+                'type',
+                fn (BuilderContract $query) => $query->whereIn('key', ['default', 'article']),
+            )
+            ->notHomePage()
+            ->where('site_id', $site->id)
+            ->inRandomOrder()
+            ->limit(50)
+            ->get();
+        foreach ($pages as $page) {
+            $tag = false;
+            foreach ($page->translations as $translation) {
+                $tag = $tagModel::findFromString($translation->title, 'page', $translation->language->code);
+                if ($tag) {
+                    break;
+                }
+            }
+            if ($tag) {
+                $page->tags()->syncWithoutDetaching($tag);
+                $page->children->each(fn (Page $childPage) => $childPage->tags()->syncWithoutDetaching($tag));
+            }
+        }
     }
 }

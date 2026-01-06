@@ -35,7 +35,6 @@ declare(strict_types=1);
     }}
     @if ($colorScheme === 'dark') style="--tw-prose-invert-body: #fff;" @endif
 >
-{{-- format-ignore-end --}}
     @if ($title)
         <{{ $headingSize }}
             @class([
@@ -61,5 +60,7 @@ declare(strict_types=1);
 
     {{ $slot }}
 </div>
+
+{{-- format-ignore-end --}}
 
 <?php

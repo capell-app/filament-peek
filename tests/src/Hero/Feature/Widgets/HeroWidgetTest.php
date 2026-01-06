@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Hero\Actions\CreateHeroWidgetAction;
 use Capell\Hero\Enums\WidgetComponentEnum;
 use Capell\Layout\Database\Factories\LayoutFactory;
+use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Capell\Tests\Fixtures\Support\Concerns\TestingFrontend;
@@ -76,14 +78,21 @@ it('renders hero widget with assets', function (callable $factory, string $media
     $widgetAssets = $widget->widgetAssets()
         ->ordered()
         ->with([
-            'asset.type',
-            'asset.translation',
+            'asset' => fn ($query) => $query->with([
+                'type',
+                'translation',
+                'related.translation',
+            ])
+                ->morphWith([
+                    Content::class => ['linkedPage.pageUrl.siteDomain'],
+                    Page::class => ['pageUrl.siteDomain'],
+                ]),
             $mediaRelation,
         ])
         ->get();
 
     // Ensure all referenced media files exist on the fake disk
-    $exampleImagePath = __DIR__ . '/../../../../Fixtures/Support/Files/Images/img.png';
+    $exampleImagePath = __DIR__ . '/../../../Fixtures/Support/Files/Images/img.png';
     $exampleImage = file_get_contents($exampleImagePath);
     foreach ($widgetAssets as $widgetAsset) {
         $mediaCollection = data_get($widgetAsset, $mediaRelation);
@@ -101,31 +110,78 @@ it('renders hero widget with assets', function (callable $factory, string $media
                 ->contains('h1.hero-heading', 1)
                 ->contains('h2.hero-heading', 2)
                 ->each(
-                    '.hero-item .hero-content',
-                    fn (AssertElement $content, int $index): BaseAssert => $content->containsText(
-                        $widgetAssets[$index]->asset->translation->title,
-                    )
-                        ->find(
-                            'img',
-                            fn (AssertElement $imgElm): BaseAssert => $imgElm->has('alt', $widgetAssets[$index]->asset->translation->title),
-                        ),
+                    '.hero-item',
+                    function (AssertElement $content, int $index) use ($widgetAssets, $srcResolver): BaseAssert {
+                        $url = match ($widgetAssets[$index]->asset::class) {
+                            Content::class => $widgetAssets[$index]->asset->linkedPage->pageUrl->full_url,
+                            Page::class => $widgetAssets[$index]->asset->pageUrl->full_url,
+                        };
+
+                        return $content->find(
+                            '.hero-content',
+                            fn (AssertElement $contentElm): BaseAssert => $contentElm->containsText(
+                                $widgetAssets[$index]->asset->translation->title,
+                            )
+                                ->find(
+                                    'a',
+                                    fn (AssertElement $imgElm): BaseAssert => $imgElm->has('href', $url),
+                                ),
+                        )
+                            ->find(
+                                'img.hero-slide-img',
+                                fn (AssertElement $imgElm): BaseAssert => $imgElm->has('alt', $widgetAssets[$index]->asset->translation->title)
+                                    ->has('src', $srcResolver($widgetAssets[$index], MediaCollectionEnum::Image)),
+                            )
+                            ->find(
+                                'img.hero-bg-img',
+                                fn (AssertElement $imgElm): BaseAssert => $imgElm->has('alt', $widgetAssets[$index]->asset->translation->title)
+                                    ->has('src', $srcResolver($widgetAssets[$index], MediaCollectionEnum::BackgroundImage)),
+                            )
+                            ->find(
+                                '.hero-related',
+                                fn (AssertElement $relatedElm): BaseAssert => $relatedElm->contains('.hero-related-item', 3)
+                                    ->each(
+                                        '.hero-related-item',
+                                        fn (AssertElement $itemElm, int $relatedIndex): BaseAssert => $itemElm->containsText(
+                                            $widgetAssets[$index]->asset->related[$relatedIndex]->translation->title,
+                                        ),
+                                    ),
+                            )
+                            ->find(
+                                '.hero-actions',
+                                fn (AssertElement $relatedElm): BaseAssert => $relatedElm->contains('.hero-action-item', 3)
+                                    ->each(
+                                        '.hero-action-item',
+                                        fn (AssertElement $itemElm, int $relatedIndex): BaseAssert => $itemElm->has(
+                                            'href',
+                                            $widgetAssets[$index]->asset->meta['actions'][$relatedIndex]['url'],
+                                        ),
+                                    ),
+                            );
+                    },
                 ),
-            // title, content, url
-            // image src+alt
         );
 })->with(
     [
         'widgetAssetHasMedia' => [
             fn (Widget $widget) => WidgetAsset::factory()->count(3)
                 ->widget($widget)
-                ->has(Media::factory()->image(), 'media'),
+                ->assetHavingRelated(3)
+                ->assetHavingActions(3)
+                ->has(Media::factory()->image(), 'media')
+                ->has(Media::factory()->backgroundImage(), 'media'),
             'media',
+            fn (WidgetAsset $widgetAsset, MediaCollectionEnum $collectionEnum) => $widgetAsset->media->firstWhere('collection_name', $collectionEnum->value)->getFullUrl(),
         ],
         'assetHavingMedia' => [
             fn (Widget $widget) => WidgetAsset::factory()->count(3)
                 ->widget($widget)
-                ->assetHavingMedia(),
+                ->assetHavingRelated(3)
+                ->assetHavingActions(3)
+                ->assetHavingMedia()
+                ->assetHavingMedia(collection: MediaCollectionEnum::BackgroundImage),
             'asset.media',
+            fn (WidgetAsset $widgetAsset, MediaCollectionEnum $collectionEnum) => $widgetAsset->asset->media->firstWhere('collection_name', $collectionEnum->value)->getFullUrl(),
         ],
     ],
 );

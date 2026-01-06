@@ -60,6 +60,7 @@
         <env name="CAPELL_FRONTEND_DEBUG" value="true"/>
         <env name="CAPELL_FRONTEND_DEBUG_LOGGING" value="true"/>
         <env name="FRONTEND_MINIFY_HTML" value="false"/>
+        <env name="FRONTEND_HTML_CACHE" value="false"/>
     </php>
     <logging>
         <junit outputFile="build/report.junit.xml"/>

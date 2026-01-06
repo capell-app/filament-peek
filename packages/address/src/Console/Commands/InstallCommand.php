@@ -40,6 +40,13 @@ class InstallCommand extends Command
 
         AssignPermissionsToRole::run(resources: ResourceEnum::cases());
 
+        $migrations = __DIR__ . '/../../../database/migrations';
+        if (! is_dir($migrations)) {
+            $this->error('Migrations directory does not exist.');
+
+            return Command::FAILURE;
+        }
+
         $this->call(
             'capell:publish-migrations',
             [
@@ -47,7 +54,7 @@ class InstallCommand extends Command
                     'create_countries_table',
                     'create_addresses_table',
                 ],
-                '--path' => __DIR__ . '/../../database/migrations',
+                '--path' => $migrations,
             ],
         );
 

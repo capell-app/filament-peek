@@ -9,6 +9,8 @@ use Capell\Frontend\Services\Loader\PageLoader;
 
 class ChildrenWidget extends AbstractPagesWidget
 {
+    protected static string $defaultView = 'capell-layout::components.widget.page.pages';
+
     protected function mountWidget(): void
     {
         if (! empty(Frontend::page()->type->meta['hidden'])) {

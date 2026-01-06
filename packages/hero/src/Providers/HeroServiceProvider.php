@@ -77,7 +77,7 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
         CapellCore::registerPackage(
             static::$packageName,
             type: static::getType(),
-            path: __DIR__,
+            path: realpath(__DIR__ . '/../..'),
             sort: 10,
             description: static::getDescription(),
             installCommand: 'capell-hero:install',

@@ -537,7 +537,7 @@ class DemoCreator
                             'color' => 'secondary',
                         ],
                         [
-                            'type' => 'url',
+                            'type' => 'link',
                             'url' => 'https://example.com',
                             'label' => 'External',
                             'hidden_label' => true,

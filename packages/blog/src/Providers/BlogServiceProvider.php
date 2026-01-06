@@ -119,7 +119,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         CapellCore::registerPackage(
             static::$packageName,
             type: static::getType(),
-            path: __DIR__,
+            path: realpath(__DIR__ . '/../..'),
             sort: 9,
             description: static::getDescription(),
             permissions: $this->getPackagePermissions(),
@@ -387,10 +387,10 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerStaticSiteExtensions(): void
     {
-        // Register the blog static site extension using the new class.
-        StaticSiteExtensionRegistry::register(
-            'blog-tags-archives',
-            resolve(BlogStaticSiteExtension::class),
-        );
+        $registry = resolve(StaticSiteExtensionRegistry::class);
+
+        if (! $registry->has('blog-tags-archives')) {
+            $registry->register('blog-tags-archives', resolve(BlogStaticSiteExtension::class));
+        }
     }
 }

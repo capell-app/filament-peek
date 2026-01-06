@@ -12,11 +12,16 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\SiteDomain;
+use Capell\Frontend\Enums\CacheEnum;
 use Capell\Tests\Fixtures\Support\Concerns\TestingFrontend;
 
 use function Pest\Laravel\get;
 
 uses(TestingFrontend::class);
+
+beforeEach(function (): void {
+    config(['capell-core.disable_cache_save_keys' => [CacheEnum::Pages->value . '-*']]);
+});
 
 test('blog page lists articles', function (): void {
     $blogCreator = resolve(BlogCreator::class);
@@ -70,7 +75,7 @@ test('visit blogs page with no articles and see appropriate message', function (
 
     get($blogPageUrl->full_url)
         ->assertOk()
-        ->assertSeeText(__('blog::messages.no_articles_found'));
+        ->assertSeeText(__('capell-blog::messages.no_articles_found'));
 });
 
 test('article page', function (): void {

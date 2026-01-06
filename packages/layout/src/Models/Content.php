@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\DB;
 use Kalnoy\Nestedset\NodeTrait;
 use Kalnoy\Nestedset\QueryBuilder;
 use Oddvalue\LaravelDrafts\Concerns\HasDrafts;
@@ -227,14 +228,44 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
             'ancestors.type',
             'image',
             'media',
-            'linkedPage' => fn (BuilderContract $query) => $query->with([
-                'translation' => fn (BuilderContract $query) => $query->with('language')
-                    ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-                'pageUrl' => fn (BuilderContract $query) => $query->with('siteDomain')
-                    ->when($language, fn ($q) => $q->where('language_id', $language->id)),
-            ]),
+            'linkedPage' => function (BuilderContract $query) use ($language): void {
+                $query->with([
+                    'translation' => function (BuilderContract $query) use ($language): void {
+                        $query->with('language')
+                            ->when(
+                                $language,
+                                function (BuilderContract $query) use ($language): void {
+                                    if (DB::getDriverName() === 'sqlite') {
+                                        $query->orderByRaw(
+                                            'CASE language_id '
+                                            . sprintf('WHEN %d THEN 0 ELSE 1 END', (int) $language->id),
+                                        );
+                                    } else {
+                                        $query->orderByRaw('FIELD(language_id, ?)', [$language->id ?? 0]);
+                                    }
+                                },
+                            );
+                    },
+                    'pageUrl' => function (BuilderContract $query) use ($language): void {
+                        $query->with('siteDomain')
+                            ->when(
+                                $language,
+                                function (BuilderContract $query) use ($language): void {
+                                    if (DB::getDriverName() === 'sqlite') {
+                                        $query->orderByRaw(
+                                            'CASE language_id '
+                                            . sprintf('WHEN %d THEN 0 ELSE 1 END', (int) $language->id),
+                                        );
+                                    } else {
+                                        $query->orderByRaw('FIELD(language_id, ?)', [$language->id ?? 0]);
+                                    }
+                                },
+                            );
+                    },
+                ]);
+            },
             'translation' => fn (BuilderContract $query) => $query->with('language')
-                ->when($language, fn ($q) => $q->where('language_id', $language->id)),
+                ->when($language, fn ($query) => $query->where('language_id', $language->id)),
             'type',
         ];
 

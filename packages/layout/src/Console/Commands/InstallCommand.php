@@ -38,11 +38,18 @@ class InstallCommand extends Command
         $this->call('vendor:publish', ['--tag' => 'capell-layout-publish']);
         $this->call('vendor:publish', ['--tag' => 'capell-layout-assets', '--force' => true]);
 
+        $migrations = __DIR__ . '/../../../database/migrations';
+        if (! is_dir($migrations)) {
+            $this->error('Migrations directory does not exist.');
+
+            return Command::FAILURE;
+        }
+
         $this->call(
             'capell:publish-migrations',
             [
                 '--items' => CapellLayoutManager::getMigrations(),
-                '--path' => __DIR__ . '/../../database/migrations',
+                '--path' => $migrations,
             ],
         );
 

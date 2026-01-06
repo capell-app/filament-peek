@@ -10,7 +10,6 @@ use Capell\Core\Models\Type;
 use Capell\Hero\Enums\WidgetComponentEnum;
 use Capell\Hero\Enums\WidgetTypeEnum;
 use Capell\Hero\Filament\Resources\Widgets\Schemas\Types\HeroWidgetSchema;
-use Capell\Layout\Enums\AssetEnum;
 use Capell\Layout\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\ModelEnum;
@@ -55,7 +54,7 @@ class CreateHeroWidgetAction
             'admin' => [
                 'icon' => 'heroicon-o-gift',
                 'schema' => HeroWidgetSchema::getKey(),
-                'asset_types' => [AssetEnum::Content->value],
+                'asset_types' => [LayoutAssetEnum::Content->value],
             ],
         ]);
     }

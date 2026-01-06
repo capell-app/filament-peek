@@ -7,19 +7,19 @@ declare(strict_types=1);
 @php
     use Capell\Frontend\Facades\Frontend;
 
-                    $language = Frontend::language();
-                    $site = Frontend::site();
-                    $page = Frontend::page();
+    $language = Frontend::language();
+    $site = Frontend::site();
+    $page = Frontend::page();
 @endphp
 
 @props([
-'container',
-'containerKey',
-'containerWidth' => null,
-'showPageContent' => $widgetData['meta']['show_page_content'] ?? false,
-'showPageTitle' => $widgetData['meta']['show_page_title'] ?? false,
-'loop',
-'widget',
+    'container',
+    'containerKey',
+    'containerWidth' => null,
+    'showPageContent' => $widgetData['meta']['show_page_content'] ?? false,
+    'showPageTitle' => $widgetData['meta']['show_page_title'] ?? false,
+    'loop',
+    'widget',
 ])
 <x-capell-layout::widget.wrapper
     class="widget-tags"
@@ -44,7 +44,7 @@ declare(strict_types=1);
 
     @if ($tags->isEmpty())
         <x-capell::no-results>
-            {{ __('capell-blog::generic.no_tags_found') }}
+            {{ __('capell-blog::messages.no_tags_found') }}
         </x-capell::no-results>
     @else
         <ul class="@sm:grid-cols-2 @md:grid-cols-3 grid gap-x-6 gap-y-2">

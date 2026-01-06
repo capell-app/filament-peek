@@ -57,6 +57,7 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="SETTINGS_CACHE_ENABLED" value="true"/>
+        <env name="FRONTEND_HTML_CACHE" value="false"/>
     </php>
     <logging>
         <junit outputFile="build/report.junit.xml"/>

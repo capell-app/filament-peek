@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class RelatedWidget extends AbstractPagesWidget
 {
+    protected static string $defaultView = 'capell-layout::components.widget.page.pages';
+
     protected function mountWidget(): void
     {
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);

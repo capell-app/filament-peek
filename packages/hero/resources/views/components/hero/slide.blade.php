@@ -9,25 +9,26 @@ declare(strict_types=1);
 @endphp
 
 @aware([
-'carouselArrows' => '',
+    'carouselArrows' => '',
 ])
 
 @props([
-'backgroundAttachment' => '',
-'backgroundColor' => '',
-'backgroundImage' => null,
-'backgroundOverlay' => null,
-'backgroundPosition' => 'center',
-'backgroundRepeat' => 'no-repeat',
-'backgroundSize' => 'cover',
-'carouselType' => 'slide',
-'colorScheme' => 'dark',
-'container_class' => 'container',
-'first' => false,
-'height' => '',
-'slideBgImgClass' => '',
-'title' => null,
+    'backgroundAttachment' => '',
+    'backgroundColor' => '',
+    'backgroundImage' => null,
+    'backgroundOverlay' => null,
+    'backgroundPosition' => 'center',
+    'backgroundRepeat' => 'no-repeat',
+    'backgroundSize' => 'cover',
+    'carouselType' => 'slide',
+    'colorScheme' => 'dark',
+    'container_class' => 'container',
+    'first' => false,
+    'height' => '',
+    'slideBgImgClass' => '',
+    'title' => null,
 ])
+{{-- format-ignore-start --}}
 <div
     {{
         $attributes->class([
@@ -39,19 +40,19 @@ declare(strict_types=1);
     <div
         {{
             $attributes->class([
-            'swiper-slide-inner relative flex min-h-full',
-            ...(
-            ! $backgroundColor && $colorScheme
-            ? [
-            'bg-gradient-to-t',
-            'from-gray-600/60 to-gray-800/70 dark:from-gray-800/80 dark:to-gray-900/80' => $colorScheme === 'dark',
-            'from-black/10 to-gray-100/60 dark:from-gray-800/80 dark:to-gray-900/80' => $colorScheme === 'light',
-            ]
-            : []
-            ),
+                'swiper-slide-inner relative flex min-h-full',
+                ...(
+                    ! $backgroundColor && $colorScheme
+                    ? [
+                        'bg-gradient-to-t',
+                        'from-gray-600/60 to-gray-800/70 dark:from-gray-800/80 dark:to-gray-900/80' => $colorScheme === 'dark',
+                        'from-black/10 to-gray-100/60 dark:from-gray-800/80 dark:to-gray-900/80' => $colorScheme === 'light',
+                    ]
+                    : []
+                ),
             ])
             ->style([
-            "background-color: {$backgroundColor}" => $backgroundColor,
+              "background-color: {$backgroundColor}" => $backgroundColor,
             ])
         }}
     >
@@ -62,10 +63,9 @@ declare(strict_types=1);
                 :alt="$title"
                 height="auto"
                 :loading="$first ? 'eager' : 'lazy'"
-                {{-- format-ignore-start --}}
                 :class="
                     Illuminate\Support\Arr::toCssClasses([
-                        'inset-0 h-full w-full pointer-events-none mix-blend-exclusion',
+                        'hero-bg-img inset-0 h-full w-full pointer-events-none mix-blend-exclusion',
                         $slideBgImgClass ?? '',
                         $backgroundAttachment !== 'fixed' ? 'absolute' : '',
                         $backgroundAttachment === 'fixed' ? 'object-fixed' : '',
@@ -78,7 +78,6 @@ declare(strict_types=1);
                         $backgroundPosition === 'left' ? 'object-left' : '',
                     ])
                 "
-                {{-- format-ignore-end --}}
             />
         @endif
 
@@ -95,5 +94,6 @@ declare(strict_types=1);
         @endif
     </div>
 </div>
+{{-- format-ignore-end --}}
 
 <?php

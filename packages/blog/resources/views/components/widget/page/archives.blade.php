@@ -10,16 +10,16 @@ $pageParams = Frontend::params();
 ?>
 
 @props([
-'archives' => [],
-'container',
-'containerKey',
-'containerWidth' => null,
-'showPageContent' => $widgetData['meta']['show_page_content'] ?? false,
-'showPageTitle' => $widgetData['meta']['show_page_title'] ?? false,
-'loop',
-'results',
-'archiveDate' => $pageParams['archive_date'] ?? null,
-'widget',
+    'archives' => [],
+    'container',
+    'containerKey',
+    'containerWidth' => null,
+    'showPageContent' => $widgetData['meta']['show_page_content'] ?? false,
+    'showPageTitle' => $widgetData['meta']['show_page_title'] ?? false,
+    'loop',
+    'results',
+    'archiveDate' => $pageParams['archive_date'] ?? null,
+    'widget',
 ])
 <x-capell-layout::widget.wrapper
     class="widget-archive"
@@ -43,7 +43,7 @@ $pageParams = Frontend::params();
 
     @if ($archives?->isEmpty())
         <x-capell::no-results>
-            {{ __('capell-blog::generic.no_archives_found') }}
+            {{ __('capell-blog::messages.no_archives_found') }}
         </x-capell::no-results>
     @else
         <ul
@@ -52,7 +52,7 @@ $pageParams = Frontend::params();
             @foreach ($archives as $archive)
                 @php
                     $url = Capell\Blog\Actions\GenerateArchivePageUrl::run($archivePage->pageUrl, $archive);
-                                                            $active = $archiveDate && $archiveDate->month === $archive->month && $archiveDate->year === $archive->year;
+                    $active = $archiveDate && $archiveDate->month === $archive->month && $archiveDate->year === $archive->year;
                 @endphp
 
                 <x-capell::list.list-item

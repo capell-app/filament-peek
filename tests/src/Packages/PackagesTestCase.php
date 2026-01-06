@@ -7,6 +7,7 @@ namespace Capell\Tests\Packages;
 use Capell\Address\Providers\AddressServiceProvider;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Blog\Providers\BlogServiceProvider;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Providers\CapellServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
@@ -29,6 +30,18 @@ class PackagesTestCase extends AbstractTestCase
             AdminServiceProvider::class,
             LivewireServiceProvider::class,
         ];
+    }
+
+    #[Override]
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(AddressServiceProvider::$packageName);
     }
 
     protected function requiredPackages(): array
