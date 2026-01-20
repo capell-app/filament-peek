@@ -35,7 +35,6 @@ use Capell\Layout\Enums\LivewireComponentsEnum;
 use Capell\Layout\Enums\ModelEnum;
 use Capell\Layout\Enums\ResourceEnum as LayoutResourceEnum;
 use Capell\Layout\Enums\TypeSchemaEnum;
-use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Filament\Resources\Layouts\LayoutResource;
 use Capell\Layout\Filament\Resources\Layouts\Schemas\Extenders\LayoutSchemaExtender;
 use Capell\Layout\Filament\Resources\Pages\Schemas\Extenders\PageSchemaExtender;
@@ -92,8 +91,6 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        parent::registeringPackage();
-
         $this
             ->registerResources()
             ->registerModels()
@@ -107,6 +104,11 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
             $this->bootInstalledPackage();
         });
+    }
+
+    public function bootingPackage(): void
+    {
+        $this->registerBladeComponents();
     }
 
     protected function getPublishedDirectory(): string
@@ -325,14 +327,6 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     private function registerBladeComponents(): self
     {
-        foreach (WidgetComponentEnum::getComponents() as $name => $component) {
-            if (! $component) {
-                continue;
-            }
-
-            Blade::component($name, $component);
-        }
-
         Blade::componentNamespace('Capell\\Layout\\View\\Components', 'capell-layout');
         Blade::anonymousComponentNamespace('Capell\\Layout\\View\\Components');
 

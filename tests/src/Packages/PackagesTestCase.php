@@ -6,10 +6,12 @@ namespace Capell\Tests\Packages;
 
 use Capell\Address\Providers\AddressServiceProvider;
 use Capell\Admin\Providers\AdminServiceProvider;
+use Capell\Assistant\Providers\AssistantServiceProvider;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Providers\CapellServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
+use Capell\Hero\Providers\HeroServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
@@ -24,6 +26,8 @@ class PackagesTestCase extends AbstractTestCase
             AddressServiceProvider::class,
             LayoutServiceProvider::class,
             BlogServiceProvider::class,
+            HeroServiceProvider::class,
+            AssistantServiceProvider::class,
             FrontendServiceProvider::class,
             CapellServiceProvider::class,
             AdminPanelProvider::class,
@@ -38,6 +42,8 @@ class PackagesTestCase extends AbstractTestCase
         parent::getEnvironmentSetUp($app);
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(HeroServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(AssistantServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);

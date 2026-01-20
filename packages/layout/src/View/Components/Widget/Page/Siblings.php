@@ -6,14 +6,23 @@ namespace Capell\Layout\View\Components\Widget\Page;
 
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
+use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 
-class ChildrenWidget extends AbstractPagesWidget
+class Siblings extends AbstractPagesWidget
 {
     protected static string $defaultView = 'capell-layout::components.widget.asset.pages';
 
     protected function mountWidget(): void
     {
-        if (! empty(Frontend::page()->type->meta['hidden'])) {
+        $page = Frontend::page();
+
+        if (! empty($page->type->meta['hidden'])) {
+            $this->skipRender = true;
+
+            return;
+        }
+
+        if (! $page->parent_id) {
             $this->skipRender = true;
 
             return;
@@ -22,13 +31,15 @@ class ChildrenWidget extends AbstractPagesWidget
         $this->pages = PageLoader::getPages(
             language: Frontend::language(),
             site: Frontend::site(),
-            page: Frontend::page(),
-            type: 'children',
+            page: $page,
+            type: 'siblings',
             ordering: 'alphabetical',
             withChildrenCount: $this->widget->meta['with_children_count'] ?? false,
             withImage: $this->widget->meta['with_image'] ?? false,
             withParent: $this->widget->meta['with_parent'] ?? false,
             withDate: $this->widget->meta['with_date'] ?? false,
+            cacheKeyPrepend: 'page-not-' . $page->id,
+            modifyQuery: fn (BuilderContract $query): BuilderContract => $query->whereKeyNot($page->id),
         );
 
         if ($this->pages->isEmpty()) {

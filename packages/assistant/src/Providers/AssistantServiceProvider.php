@@ -57,8 +57,6 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        parent::registeringPackage();
-
         $this
             ->registerModels()
             ->registerPackageMetadata();

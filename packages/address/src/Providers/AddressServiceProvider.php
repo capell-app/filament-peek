@@ -42,10 +42,13 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
             ->hasTranslations();
     }
 
+    public function bootingPackage(): void
+    {
+        $this->registerBladeComponents();
+    }
+
     public function registeringPackage(): void
     {
-        parent::registeringPackage();
-
         $this
             ->registerModels()
             ->registerRelationships()
@@ -70,8 +73,7 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
     {
         return $this
             ->registerSchemas()
-            ->registerSchemaExtenders()
-            ->registerBladeComponents();
+            ->registerSchemaExtenders();
     }
 
     private function registerPackageMetadata(): self

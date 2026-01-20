@@ -12,10 +12,8 @@ use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Hero\Console\Commands\DemoCommand;
 use Capell\Hero\Console\Commands\InstallCommand;
 use Capell\Hero\Enums\ContentSchemaEnum;
-use Capell\Hero\Enums\WidgetComponentEnum;
 use Capell\Hero\Enums\WidgetSchemaEnum;
 use Capell\Hero\Filament\Extenders\Page\HeroPageSchemaExtender;
-use Capell\Layout\Enums\ComponentTypeEnum;
 use Capell\Layout\Enums\TypeSchemaEnum;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Composer\InstalledVersions;
@@ -43,8 +41,6 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        parent::registeringPackage();
-
         $this
             ->registerSchemas()
             ->registerPackageMetadata();
@@ -58,6 +54,11 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
         });
     }
 
+    public function bootingPackage(): void
+    {
+        $this->registerBladeComponents();
+    }
+
     private function isPackageInstalled(): bool
     {
         return CapellCore::getPackage(static::$packageName)->isInstalled();
@@ -66,7 +67,6 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
     private function bootInstalledPackage(): self
     {
         return $this
-            ->registerComponents()
             ->registerSchemaExtenders()
             ->registerBladeComponents();
     }
@@ -106,13 +106,6 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
         }
 
         return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
-    }
-
-    private function registerComponents(): self
-    {
-        CapellCore::registerComponents(ComponentTypeEnum::Widget->name, WidgetComponentEnum::cases());
-
-        return $this;
     }
 
     private function registerSchemas(): self

@@ -81,6 +81,13 @@ abstract class AbstractTestCase extends TestCase
 
         parent::setUp();
 
+        // Isolate compiled views per process
+        $processToken = getenv('TEST_TOKEN') ?: getmypid();
+        $compiledPath = storage_path("framework/views/test-{$processToken}");
+        config(['view.compiled' => $compiledPath]);
+        config(['view.cache' => false]);
+        $this->app['view.finder']->flush();
+
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         $migrations = CapellCoreManager::getMigrations();

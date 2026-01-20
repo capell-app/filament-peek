@@ -13,7 +13,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class RelatedWidget extends AbstractPagesWidget
+class Related extends AbstractPagesWidget
 {
     protected static string $defaultView = 'capell-layout::components.widget.asset.pages';
 

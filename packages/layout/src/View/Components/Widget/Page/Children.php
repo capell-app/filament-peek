@@ -6,30 +6,32 @@ namespace Capell\Layout\View\Components\Widget\Page;
 
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
-use Illuminate\Database\Eloquent\Builder;
 
-class LatestWidget extends AbstractPagesWidget
+class Children extends AbstractPagesWidget
 {
     protected static string $defaultView = 'capell-layout::components.widget.asset.pages';
 
     protected function mountWidget(): void
     {
+        if (! empty(Frontend::page()->type->meta['hidden'])) {
+            $this->skipRender = true;
+
+            return;
+        }
+
         $this->pages = PageLoader::getPages(
             language: Frontend::language(),
             site: Frontend::site(),
             page: Frontend::page(),
-            limit: $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12),
-            ordering: 'latest',
-            pageGroup: $this->widget->meta['page_group'] ?? null,
+            type: 'children',
+            ordering: 'alphabetical',
             withChildrenCount: $this->widget->meta['with_children_count'] ?? false,
             withImage: $this->widget->meta['with_image'] ?? false,
             withParent: $this->widget->meta['with_parent'] ?? false,
             withDate: $this->widget->meta['with_date'] ?? false,
-            cacheKeyPrepend: 'latest-widget-' . $this->widget->id,
-            modifyQuery: fn (Builder $query) => $query->whereKeyNot(Frontend::page()->id),
         );
 
-        if ($this->pages->isEmpty() && config('capell-layout.widget.skip_render_empty', true)) {
+        if ($this->pages->isEmpty()) {
             $this->skipRender = true;
         }
     }

@@ -78,8 +78,6 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        parent::registeringPackage();
-
         $this
             ->registerResources()
             ->registerModels()
@@ -93,6 +91,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
             $this->bootInstalledPackage();
         });
+    }
+
+    public function bootingPackage(): void
+    {
+        $this->registerBladeComponents();
     }
 
     private function isPackageInstalled(): bool
@@ -185,14 +188,6 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerBladeComponents(): self
     {
-        foreach (WidgetComponentEnum::getComponents() as $name => $component) {
-            if (! $component) {
-                continue;
-            }
-
-            Blade::component($name, $component);
-        }
-
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
         Blade::anonymousComponentNamespace('Capell\\Blog\\View\\Components');
 
