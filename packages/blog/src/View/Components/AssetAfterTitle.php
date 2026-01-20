@@ -8,21 +8,7 @@ use Illuminate\View\Component;
 
 class AssetAfterTitle extends Component
 {
-    public $publishDate;
-
-    public $publishDatePosition;
-
-    public $tags;
-
-    public $publishDateOutput;
-
-    public function __construct($publishDate = null, $publishDatePosition = null, $tags = null, $publishDateOutput = null)
-    {
-        $this->publishDate = $publishDate;
-        $this->publishDatePosition = $publishDatePosition;
-        $this->tags = $tags;
-        $this->publishDateOutput = $publishDateOutput;
-    }
+    public function __construct(public $publishDate = null, public $publishDatePosition = null, public $tags = null, public $publishDateOutput = null) {}
 
     public function render()
     {

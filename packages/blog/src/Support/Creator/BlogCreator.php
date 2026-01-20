@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Support\Creator;
 
-use Capell\Admin\Actions\AddPageToNavigationAction;
-use Capell\Admin\Enums\PageTypeEnum;
 use Capell\Admin\Filament\Resources\Pages\Schemas\Types\ResultsPageSchema;
 use Capell\Admin\Filament\Resources\Types\Schemas\Types\PageTypeSchema;
-use Capell\Admin\Support\Creator\TypeCreator;
 use Capell\Blog\Enums\BlogLayoutEnum;
 use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
@@ -18,9 +15,11 @@ use Capell\Blog\Enums\WidgetComponentEnum as BlogWidgetComponentEnum;
 use Capell\Blog\Enums\WidgetSchemaEnum;
 use Capell\Blog\Filament\Resources\Articles\Schemas\Types\ArticlePageSchema;
 use Capell\Blog\Filament\Resources\Widgets\Schemas\Types\ArticleWidgetSchema;
+use Capell\Core\Actions\AddPageToNavigationAction;
 use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Enums\LayoutGroupEnum;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
+use Capell\Core\Enums\PageTypeEnum;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Core\Facades\CapellCore;
@@ -31,6 +30,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Creator\LayoutCreator;
+use Capell\Core\Support\Creator\TypeCreator;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\LivewireComponentsEnum;
 use Capell\Layout\Enums\ModelEnum;
@@ -555,7 +555,7 @@ class BlogCreator
 
     public function relatedPagesWidget(?Type $type = null, ?\Illuminate\Support\Collection $languages = null): Widget
     {
-        if (! $type) {
+        if (! $type instanceof Type) {
             $typeCreator = resolve(\Capell\Layout\Support\Creator\TypeCreator::class);
             $type = $typeCreator->pageResultsWidgetType();
         }

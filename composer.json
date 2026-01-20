@@ -142,6 +142,7 @@
     "autoload": {
         "psr-4": {
             "Capell\\Address\\": "packages/address/src",
+            "Capell\\Assistant\\": "packages/assistant/src",
             "Capell\\Blog\\": "packages/blog/src",
             "Capell\\Hero\\": "packages/hero/src",
             "Capell\\Layout\\": "packages/layout/src"
@@ -150,6 +151,7 @@
     "autoload-dev": {
         "psr-4": {
             "Capell\\Address\\Database\\Factories\\": "packages/address/database/factories",
+            "Capell\\Assistant\\Database\\Factories\\": "packages/assistant/database/factories",
             "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories",
             "Capell\\Layout\\Database\\Factories\\": "packages/layout/database/factories",
             "Capell\\Tests\\": "tests/src"
@@ -170,6 +172,7 @@
         "laravel": {
             "providers": [
                 "Capell\\Address\\Providers\\AddressServiceProvider",
+                "Capell\\Assistant\\Providers\\AssistantServiceProvider",
                 "Capell\\Blog\\Providers\\BlogServiceProvider",
                 "Capell\\Hero\\Providers\\HeroServiceProvider",
                 "Capell\\Layout\\Providers\\LayoutServiceProvider"

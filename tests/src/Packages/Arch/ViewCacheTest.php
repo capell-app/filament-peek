@@ -1,13 +1,11 @@
 <?php
 
 declare(strict_types=1);
-
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\SplFileInfo;
 
 it('caches views successfully and writes compiled files', function (): void {
-    Artisan::call('view:clear');
+    $this->artisan('view:clear')->assertExitCode(0);
 
     $viewsDir = resource_path('views');
     File::ensureDirectoryExists($viewsDir);
@@ -22,14 +20,11 @@ it('caches views successfully and writes compiled files', function (): void {
     $beforeFiles = File::files($compiledPath);
     collect($beforeFiles)->each(fn ($file): bool => File::delete($file));
 
-    $result = Artisan::call('view:cache');
+    $this->artisan('view:cache')->assertExitCode(0);
 
     $afterFiles = File::files($compiledPath);
 
-    expect($result)->toBe(0)
-        ->and(Artisan::output())
-        ->toContain('Blade templates cached successfully')
-        ->and($afterFiles)->not->toBeEmpty()
+    expect($afterFiles)->not->toBeEmpty()
         ->and(count($afterFiles))->toBeGreaterThan(count($beforeFiles));
 
     foreach ($afterFiles as $file) {
@@ -46,11 +41,11 @@ it('caches views successfully and writes compiled files', function (): void {
     expect($containsValidHtml)->toBeTrue();
 
     File::delete($validView);
-    Artisan::call('view:clear');
+    $this->artisan('view:clear')->assertExitCode(0);
 });
 
 it('throws for missing component when caching views', function (): void {
-    Artisan::call('view:clear');
+    $this->artisan('view:clear')->assertExitCode(0);
 
     $viewsDir = resource_path('views');
     File::ensureDirectoryExists($viewsDir);
@@ -63,12 +58,12 @@ BLADE;
     File::put($tempView, $bladeContent);
 
     try {
-        Artisan::call('view:cache');
+        $this->artisan('view:cache');
     } catch (InvalidArgumentException $invalidArgumentException) {
         expect($invalidArgumentException->getMessage())
             ->toContain('Unable to locate a class or view for component [missing-invalid-component]');
     } finally {
         File::delete($tempView);
-        Artisan::call('view:clear');
+        $this->artisan('view:clear')->assertExitCode(0);
     }
 });

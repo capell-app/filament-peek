@@ -55,7 +55,7 @@ declare(strict_types=1);
     </div>
 
     {!!
-        app(\Capell\Frontend\Support\RenderHookRegistry::class)->renderAll(
+        app(\Capell\Frontend\Support\Render\RenderHookRegistry::class)->renderAll(
             \Capell\Frontend\Enums\RenderHookLocation::ArticleMeta,
             [
                 'withAuthor' => $withAuthor,

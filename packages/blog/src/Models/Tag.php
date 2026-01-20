@@ -6,7 +6,6 @@ namespace Capell\Blog\Models;
 
 use Capell\Blog\Database\Factories\TagFactory;
 use Capell\Core\Contracts\PageCacheable;
-use Capell\Core\Models\Concerns\HasPageCache;
 use Capell\Core\Models\Concerns\HasStatus;
 use Capell\Core\Models\Contracts\Statusable;
 use Capell\Core\Models\Language;
@@ -59,7 +58,6 @@ use Override;
  */
 class Tag extends \Spatie\Tags\Tag implements PageCacheable, Statusable
 {
-    use HasPageCache;
     use HasStatus;
 
     /**

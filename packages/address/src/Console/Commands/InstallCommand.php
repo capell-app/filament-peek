@@ -7,6 +7,7 @@ namespace Capell\Address\Console\Commands;
 use Capell\Address\Enums\ResourceEnum;
 use Capell\Address\Support\AddressModelRegistrar;
 use Capell\Admin\Actions\AssignPermissionsToRole;
+use Capell\Core\Support\Migration\MigrationFileManagerInterface;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
 
@@ -26,6 +27,11 @@ class InstallCommand extends Command
      */
     protected $signature = 'capell-address:install';
 
+    public function __construct(private readonly MigrationFileManagerInterface $fileManager)
+    {
+        parent::__construct();
+    }
+
     /**
      * Execute the console command.
      */
@@ -41,7 +47,7 @@ class InstallCommand extends Command
         AssignPermissionsToRole::run(resources: ResourceEnum::cases());
 
         $migrations = __DIR__ . '/../../../database/migrations';
-        if (! is_dir($migrations)) {
+        if (! $this->fileManager->isDir($migrations)) {
             $this->error('Migrations directory does not exist.');
 
             return Command::FAILURE;

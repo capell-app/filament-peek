@@ -9,7 +9,6 @@ use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasMetaData;
-use Capell\Core\Models\Concerns\HasPageCache;
 use Capell\Core\Models\Concerns\InteractsWithMedia;
 use Capell\Core\Models\Page;
 use Capell\Layout\Database\Factories\WidgetAssetFactory;
@@ -83,7 +82,6 @@ class WidgetAsset extends Model implements HasMedia, PageCacheable
 
     use HasJsonRelationships;
     use HasMetaData;
-    use HasPageCache;
     use InteractsWithMedia;
     use Userstamps;
 

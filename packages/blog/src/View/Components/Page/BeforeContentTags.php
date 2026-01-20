@@ -8,15 +8,7 @@ use Illuminate\View\Component;
 
 class BeforeContentTags extends Component
 {
-    public $item;
-
-    public $tags;
-
-    public function __construct($item, $tags)
-    {
-        $this->item = $item;
-        $this->tags = $tags;
-    }
+    public function __construct(public $item, public $tags) {}
 
     public function render()
     {

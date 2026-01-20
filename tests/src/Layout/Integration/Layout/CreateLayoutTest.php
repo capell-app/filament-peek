@@ -52,6 +52,7 @@ it('creates the home layout with correct containers and widgets', function (): v
     expect($layout->key)->toBe('home');
     expect($layout->containers)->toBeArray();
     expect($layout->containers)->toHaveKey('main');
+
     $mainWidgets = $layout->containers['main']['widgets'] ?? null;
     expect($mainWidgets)->toBeArray();
     expect(collect($mainWidgets)->pluck('widget_key')->all())

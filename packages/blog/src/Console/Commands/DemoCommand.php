@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Console\Commands;
 
-use Capell\Admin\Support\Creator\DemoCreator;
 use Capell\Blog\Actions\CreateBlogPagesAction;
 use Capell\Blog\Enums\ModelEnum as BlogModelEnum;
 use Capell\Blog\Enums\ResourceEnum;
@@ -15,6 +14,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Support\Creator\DemoCreator;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Collection;

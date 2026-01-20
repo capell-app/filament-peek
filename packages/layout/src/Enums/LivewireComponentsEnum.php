@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Enums;
 
+use Capell\Core\Enums\Attribute\Component;
+use Capell\Core\Enums\Attribute\EnumAttributeHelper;
+use Capell\Core\Enums\Attribute\EnumAttributeInterface;
 use Capell\Layout\Filament\Resources\Pages\RelationManagers\ContentsRelationManager;
 use Capell\Layout\Filament\Resources\Widgets\RelationManagers\WidgetAssetsRelationManager;
 use Capell\Layout\Livewire\Assets\Table\ContentAssetsTable;
@@ -12,36 +15,40 @@ use Capell\Layout\Livewire\Layout\WidgetTableSelect;
 use Capell\Layout\Livewire\LayoutBuilder;
 use Capell\Layout\Livewire\Widget\PagesWidget;
 
-enum LivewireComponentsEnum: string
+enum LivewireComponentsEnum: string implements EnumAttributeInterface
 {
+    use EnumAttributeHelper;
+
+    #[Component(LayoutBuilder::class)]
     case LayoutBuilder = 'capell.layout.livewire.layout-builder';
+
+    #[Component(ContentsRelationManager::class)]
     case ContentsRelationManager = 'capell.layout.filament.resources.page-resource.relation-managers.contents-relation-manager';
+
+    #[Component(WidgetAssetsRelationManager::class)]
     case WidgetAssetsRelationManager = 'capell.layout.filament.resources.widget-resource.relation-managers.widget-assets-relation-manager';
+
+    #[Component(WidgetTableSelect::class)]
     case WidgetTableSelect = 'capell.layout.livewire.layout.widget-table-select';
+
+    #[Component(PageAssetsTable::class)]
     case PageAssetsTable = 'capell.layout.livewire.assets.table.page';
+
+    #[Component(ContentAssetsTable::class)]
     case ContentAssetsTable = 'capell.layout.livewire.assets.table.content';
+
+    #[Component(PagesWidget::class)]
     case PagesWidget = 'capell.layout.livewire.widget.pages';
 
     public static function getComponents(): array
     {
-        $components = [];
-        foreach (self::cases() as $widgetComponent) {
-            $components[$widgetComponent->value] = $widgetComponent->getComponent();
-        }
+        $attributes = self::getAllCaseAttributes(Component::class);
 
-        return $components;
+        return array_map(fn (?Component $attribute): ?string => $attribute?->class ?? null, $attributes);
     }
 
     public function getComponent(): ?string
     {
-        return match ($this) {
-            self::LayoutBuilder => LayoutBuilder::class,
-            self::ContentsRelationManager => ContentsRelationManager::class,
-            self::WidgetAssetsRelationManager => WidgetAssetsRelationManager::class,
-            self::WidgetTableSelect => WidgetTableSelect::class,
-            self::PageAssetsTable => PageAssetsTable::class,
-            self::ContentAssetsTable => ContentAssetsTable::class,
-            self::PagesWidget => PagesWidget::class,
-        };
+        return $this->getCaseAttribute(Component::class)?->class;
     }
 }

@@ -9,6 +9,7 @@ use Capell\Core\Actions\AddVendorAssetToThemeAction;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Theme;
+use Capell\Core\Support\Migration\MigrationFileManagerInterface;
 use Capell\Layout\Actions\InstallPackageAction;
 use Capell\Layout\Enums\ResourceEnum;
 use Capell\Layout\Support\CapellLayoutManager;
@@ -21,6 +22,11 @@ class InstallCommand extends Command
     protected $signature = 'capell-layout:install';
 
     protected $description = 'Install the Capell Layout package';
+
+    public function __construct(private readonly MigrationFileManagerInterface $fileManager)
+    {
+        parent::__construct();
+    }
 
     public function handle(): int
     {
@@ -39,7 +45,7 @@ class InstallCommand extends Command
         $this->call('vendor:publish', ['--tag' => 'capell-layout-assets', '--force' => true]);
 
         $migrations = __DIR__ . '/../../../database/migrations';
-        if (! is_dir($migrations)) {
+        if (! $this->fileManager->isDir($migrations)) {
             $this->error('Migrations directory does not exist.');
 
             return Command::FAILURE;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Capell\Admin\Console\Commands\DemoCommand;
 use Capell\Admin\Console\Commands\InstallCommand;
-use Capell\Admin\Support\Creator\DemoCreator;
 use Capell\Core\Database\Factories\TypeFactory;
+use Capell\Core\Support\Creator\DemoCreator;
 use Capell\Frontend\Http\Middleware\ResolveFrontend;
 use Saade\FilamentAdjacencyList\Forms\Components\Concerns\HasRelationship;
 

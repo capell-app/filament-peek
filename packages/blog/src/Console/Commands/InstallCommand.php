@@ -10,6 +10,7 @@ use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Support\BlogModelRegistrar;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
+use Illuminate\Support\Sleep;
 
 class InstallCommand extends Command
 {
@@ -48,7 +49,7 @@ class InstallCommand extends Command
         }
 
         // Ensure the alter tags has a greater timestamp than the create tags migration
-        sleep(1);
+        Sleep::sleep(1);
 
         if (! $this->publishMigrations('alter_tags_table', __DIR__ . '/../../../database/migrations')) {
             $this->error('Failed to publish alter_tags_table migration.');

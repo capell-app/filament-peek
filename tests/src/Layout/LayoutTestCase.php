@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\Tests\Layout;
 
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
-use Capell\Admin\Support\CapellAdminManager;
 use Capell\Core\Facades\CapellCore;
-use Capell\Core\Support\CapellCoreManager;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
@@ -22,13 +21,15 @@ class LayoutTestCase extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->registerAndMigrateSettings([
-            ...CapellCoreManager::getSettingMigrations(),
-        ], __DIR__ . '/../../../vendor/capell-app/core/database/settings');
+        $this->registerAndMigrateSettings(
+            CapellCore::getSettingMigrations(),
+            __DIR__ . '/../../../vendor/capell-app/core/database/settings',
+        );
 
-        $this->registerAndMigrateSettings([
-            ...CapellAdminManager::getSettingMigrations(),
-        ], __DIR__ . '/../../../vendor/capell-app/admin/database/settings');
+        $this->registerAndMigrateSettings(
+            CapellAdmin::getSettingMigrations(),
+            __DIR__ . '/../../../vendor/capell-app/admin/database/settings',
+        );
     }
 
     protected function getPackageProviders($app): array
@@ -55,6 +56,6 @@ class LayoutTestCase extends AbstractTestCase
 
     protected function requiredPackages(): array
     {
-        return ['frontend', 'layout'];
+        return ['admin', 'frontend', 'layout'];
     }
 }

@@ -12,16 +12,12 @@ use Illuminate\View\Component;
 
 class Tags extends Component
 {
-    public array $item;
-
     public ?Page $tagPage = null;
 
     public Collection $tags;
 
-    public function __construct(array $item)
+    public function __construct(public array $item)
     {
-        $this->item = $item;
-
         $language = Frontend::language();
         $site = Frontend::site();
 
@@ -32,7 +28,7 @@ class Tags extends Component
         }
 
         $tagPage = TagLoader::getTagResultsPage($site, $language);
-        if (! $tagPage) {
+        if (! $tagPage instanceof Page) {
             return;
         }
 
@@ -41,7 +37,7 @@ class Tags extends Component
 
     public function render()
     {
-        if ($this->tagPage === null || $this->tags->isEmpty()) {
+        if (! $this->tagPage instanceof Page || $this->tags->isEmpty()) {
             return '';
         }
 

@@ -21,9 +21,9 @@ class CreateArticle extends CreatePage
         return CapellAdmin::getResource(AdminResourceEnum::Page, strtolower(ResourceEnum::Article->name));
     }
 
-    protected function afterFill(): void
+    protected function beforeFill(): void
     {
-        parent::afterFill();
+        parent::beforeFill();
 
         $this->data['layout_id'] = GetArticleLayoutAction::run()?->id;
 

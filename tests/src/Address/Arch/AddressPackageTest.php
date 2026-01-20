@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Blog\Console\Commands\InstallCommand;
 use Capell\Frontend\Http\Middleware\ResolveFrontend;
 
 arch()
@@ -30,7 +31,7 @@ it('does not allow debug functions')
     ->toBeUsedInNothing();
 
 arch()->expect(['env', 'sleep', 'usleep'])->toBeUsedInNothing()->ignoring([
-    \Capell\Blog\Console\Commands\InstallCommand::class,
+    InstallCommand::class,
 ]);
 
 arch()

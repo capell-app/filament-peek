@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Capell\Layout\Support\Creator;
 
 use BackedEnum;
-use Capell\Admin\Support\Creator\DemoCreator as AdminDemoCreator;
-use Capell\Admin\Support\Creator\NavigationCreator;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
@@ -15,6 +13,8 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
+use Capell\Core\Support\Creator\DemoCreator as AdminDemoCreator;
+use Capell\Core\Support\Creator\NavigationCreator;
 use Capell\Layout\Enums\AssetEnum;
 use Capell\Layout\Enums\ContainerWidthEnum;
 use Capell\Layout\Enums\ContentTypeEnum;

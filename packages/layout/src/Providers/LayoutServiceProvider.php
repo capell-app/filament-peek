@@ -24,16 +24,17 @@ use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
 use Capell\Frontend\Providers\FrontendServiceProvider;
+use Capell\Frontend\Support\Interceptors\Themes\DefaultThemeInterceptor;
 use Capell\Layout\Console\Commands\DemoCommand;
 use Capell\Layout\Console\Commands\InstallCommand;
 use Capell\Layout\Console\Commands\UpgradeCommand;
-use Capell\Layout\Enums;
 use Capell\Layout\Enums\AssetEnum;
 use Capell\Layout\Enums\ComponentTypeEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\LivewireComponentsEnum;
 use Capell\Layout\Enums\ModelEnum;
 use Capell\Layout\Enums\ResourceEnum as LayoutResourceEnum;
+use Capell\Layout\Enums\TypeSchemaEnum;
 use Capell\Layout\Enums\WidgetComponentEnum;
 use Capell\Layout\Filament\Resources\Layouts\LayoutResource;
 use Capell\Layout\Filament\Resources\Layouts\Schemas\Extenders\LayoutSchemaExtender;
@@ -46,9 +47,9 @@ use Capell\Layout\Listeners\SiteTreeRebuilt;
 use Capell\Layout\Listeners\TypeValidated;
 use Capell\Layout\Models\Content;
 use Capell\Layout\Support\CapellLayoutManager;
-use Capell\Layout\Support\Interceptors\Layouts\DefaultInterceptor;
-use Capell\Layout\Support\Interceptors\Layouts\HomeInterceptor;
-use Capell\Layout\Support\Interceptors\Layouts\ResultsInterceptor;
+use Capell\Layout\Support\Interceptors\Layouts\DefaultLayoutInterceptor;
+use Capell\Layout\Support\Interceptors\Layouts\HomeLayoutInterceptor;
+use Capell\Layout\Support\Interceptors\Layouts\ResultsLayoutInterceptor;
 use Capell\Layout\Support\LayoutModelRegistrar;
 use Composer\InstalledVersions;
 use Exception;
@@ -131,7 +132,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ->registerFilamentServing()
             ->registerTypes()
             ->registerComponents()
-            ->registerLayouts()
+            ->registerModelInterceptors()
             ->registerAssets()
             ->registerSchemaExtenders()
             ->registerCloneableAndDraftableRelations()
@@ -142,11 +143,15 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ->registerBladeComponents();
     }
 
-    private function registerLayouts(): self
+    private function registerModelInterceptors(): self
     {
-        CapellCore::registerLayoutInterceptor(LayoutEnum::Default, DefaultInterceptor::class);
-        CapellCore::registerLayoutInterceptor(LayoutEnum::Home, HomeInterceptor::class);
-        CapellCore::registerLayoutInterceptor(LayoutEnum::Results, ResultsInterceptor::class);
+        $layoutModel = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Layout);
+
+        CapellCore::registerModelInterceptor($layoutModel, LayoutEnum::Default, DefaultLayoutInterceptor::class);
+        CapellCore::registerModelInterceptor($layoutModel, LayoutEnum::Home, HomeLayoutInterceptor::class);
+        CapellCore::registerModelInterceptor($layoutModel, LayoutEnum::Results, ResultsLayoutInterceptor::class);
+
+        CapellCore::registerModelInterceptor(CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Theme), key: 'default', interceptorClass: DefaultThemeInterceptor::class);
 
         return $this;
     }
@@ -408,7 +413,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
 
     private function registerSchemas(): self
     {
-        foreach (Enums\TypeSchemaEnum::getAllSchemas() as $type => $schemas) {
+        foreach (TypeSchemaEnum::getAllSchemas() as $type => $schemas) {
             CapellAdmin::registerSchemas($type, $schemas, defaultSchemas: true);
         }
 

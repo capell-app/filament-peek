@@ -36,11 +36,11 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
-use Capell\Core\Support\StaticSiteExtensionRegistry;
+use Capell\Core\Support\StaticSite\StaticSiteExtensionRegistry;
 use Capell\Frontend\Data\RenderHookContext;
 use Capell\Frontend\Enums\RenderHookLocation;
 use Capell\Frontend\Providers\FrontendServiceProvider;
-use Capell\Frontend\Support\RenderHookRegistry;
+use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Layout\Enums\ComponentTypeEnum;
 use Capell\Layout\Enums\ModelEnum;
 use Capell\Layout\Enums\TypeSchemaEnum as LayoutSchemaEnum;
@@ -110,45 +110,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ->registerWidgetComponents()
             ->registerSchemas()
             ->registerSitemapPages()
-            ->registerLayouts()
             ->registerDefaultPages()
             ->registerBladeComponents()
             ->registerLivewireComponents()
             ->registerRenderHooks()
             ->registerStaticSiteExtensions();
-    }
-
-    private function registerLayouts(): self
-    {
-        /* CapellAdmin::registerLayout(new LayoutData(
-             key: BlogLayoutEnum::Archives->value,
-             name: __('capell-blog::generic.archives_page'),
-             group: LayoutGroupEnum::System->value,
-             setupCallback: fn (Layout $layout, bool $createWidgets = false) => resolve(BlogCreator::class)->setupArchivesLayout($layout, $createWidgets),
-         ));
-
-         CapellAdmin::registerLayout(new LayoutData(
-             key: BlogLayoutEnum::BlogPage->value,
-             name: __('capell-blog::generic.blog_page'),
-             group: LayoutGroupEnum::System->value,
-             setupCallback: fn (Layout $layout, bool $createWidgets = false) => resolve(BlogCreator::class)->setupBlogPageLayout($layout, $createWidgets),
-         ));
-
-         CapellAdmin::registerLayout(new LayoutData(
-             key: BlogLayoutEnum::Tags->value,
-             name: __('capell-blog::generic.tags'),
-             group: LayoutGroupEnum::System->value,
-             setupCallback: fn (Layout $layout, bool $createWidgets = false) => resolve(BlogCreator::class)->setupTagsLayout($layout, $createWidgets),
-         ));
-
-         CapellAdmin::registerLayout(new LayoutData(
-             key: BlogLayoutEnum::Article->value,
-             name: __('capell-blog::generic.article'),
-             group: LayoutGroupEnum::Default->value,
-             setupCallback: fn (Layout $layout, bool $createWidgets = false) => resolve(BlogCreator::class)->setupArticleLayout($layout, $createWidgets),
-         ));*/
-
-        return $this;
     }
 
     private function registerPackageMetadata(): self
@@ -250,7 +216,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     {
         resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::Footer,
-            fn (RenderHookContext $context): ?View => app(Tags::class, [
+            fn (RenderHookContext $context): ?View => resolve(Tags::class, [
                 'item' => $context->item,
             ])
                 ?->render() ?: null,
@@ -259,7 +225,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
         resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::Footer,
-            fn (RenderHookContext $context): ?View => app(Pages::class, [
+            fn (RenderHookContext $context): ?View => resolve(Pages::class, [
                 'item' => $context->item,
             ])
                 ?->render() ?: null,
@@ -268,7 +234,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
         resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::ArticleMeta,
-            fn (RenderHookContext $context): ?View => app(ArticleMeta::class, [
+            fn (RenderHookContext $context): ?View => resolve(ArticleMeta::class, [
                 'withAuthor' => $context->withAuthor ?? false,
                 'author' => $context->author ?? null,
             ])
@@ -277,7 +243,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
         resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::BeforeContent,
-            fn (RenderHookContext $context): ?View => app(BeforeContentTags::class, [
+            fn (RenderHookContext $context): ?View => resolve(BeforeContentTags::class, [
                 'item' => $context->item ?? null,
                 'tags' => $context->item->tags ?? null,
             ])
@@ -286,7 +252,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
         resolve(RenderHookRegistry::class)->register(
             RenderHookLocation::AfterTitle,
-            fn (RenderHookContext $context): ?View => app(AssetAfterTitle::class, [
+            fn (RenderHookContext $context): ?View => resolve(AssetAfterTitle::class, [
                 'publishDate' => $context->publishDate ?? null,
                 'publishDatePosition' => $context->publishDatePosition ?? null,
                 'tags' => $context->tags ?? null,

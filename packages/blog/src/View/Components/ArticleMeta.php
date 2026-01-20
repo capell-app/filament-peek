@@ -19,11 +19,7 @@ class ArticleMeta extends Component
 
     public Collection $tags;
 
-    public ?Model $author = null;
-
-    public bool $withAuthor = false;
-
-    public function __construct($withAuthor = false, $author = null)
+    public function __construct(public bool $withAuthor = false, public ?Model $author = null)
     {
         $this->tags = TagLoader::getPageTags(Frontend::page());
 
@@ -32,13 +28,7 @@ class ArticleMeta extends Component
         }
 
         $this->tagPage = TagLoader::getTagResultsPage(Frontend::site(), Frontend::language());
-
-        if (! $this->tagPage) {
-            throw new Exception('Tag results page not found for the current site and language.');
-        }
-
-        $this->author = $author;
-        $this->withAuthor = $withAuthor;
+        throw_unless($this->tagPage, Exception::class, 'Tag results page not found for the current site and language.');
     }
 
     public function render(): ?View

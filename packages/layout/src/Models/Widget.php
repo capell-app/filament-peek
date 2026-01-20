@@ -8,9 +8,7 @@ use Bkwld\Cloner\Cloneable;
 use Capell\Core\Contracts\PageCacheable;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\PublishStatusEnum;
-use Capell\Core\Models\Concerns\CloneableExcept;
 use Capell\Core\Models\Concerns\HasMetaData;
-use Capell\Core\Models\Concerns\HasPageCache;
 use Capell\Core\Models\Concerns\HasPublishDates;
 use Capell\Core\Models\Concerns\HasStatus;
 use Capell\Core\Models\Concerns\HasTranslations;
@@ -101,14 +99,12 @@ use Wildside\Userstamps\Userstamps;
 class Widget extends Model implements HasMedia, PageCacheable, Statusable
 {
     use Cloneable;
-    use CloneableExcept;
 
     /** @use HasFactory<WidgetFactory> */
     use HasFactory;
 
     use HasJsonRelationships;
     use HasMetaData;
-    use HasPageCache;
     use HasPublishDates;
     use HasRelationships;
     use HasStatus;

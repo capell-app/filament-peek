@@ -9,12 +9,10 @@ use Capell\Core\Contracts\PageCacheable;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\PublishStatusEnum;
 use Capell\Core\Models\AssetRelation;
-use Capell\Core\Models\Concerns\CloneableExcept;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasDraftsAndNestedSet;
 use Capell\Core\Models\Concerns\HasMetaData;
-use Capell\Core\Models\Concerns\HasModelRelations;
-use Capell\Core\Models\Concerns\HasPageCache;
+use Capell\Core\Models\Concerns\HasMorphModelRelations;
 use Capell\Core\Models\Concerns\HasPublishDates;
 use Capell\Core\Models\Concerns\HasTranslations;
 use Capell\Core\Models\Concerns\HasTypes;
@@ -164,7 +162,6 @@ use Wildside\Userstamps\Userstamps;
 class Content extends Model implements Draftable, HasMedia, PageCacheable
 {
     use Cloneable;
-    use CloneableExcept;
     use HasAssets;
     use HasDrafts {
         bootHasDrafts as protected;
@@ -178,8 +175,7 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
 
     use HasJsonRelationships;
     use HasMetaData;
-    use HasModelRelations;
-    use HasPageCache;
+    use HasMorphModelRelations;
     use HasPublishDates;
     use HasTranslations;
     use HasTypes;

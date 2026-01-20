@@ -12,14 +12,10 @@ use Illuminate\View\Component;
 
 class Pages extends Component
 {
-    public array $item;
-
     public Collection $pages;
 
-    public function __construct(array $item)
+    public function __construct(public array $item)
     {
-        $this->item = $item;
-
         $this->pages = PageLoader::getPages(
             language: Frontend::language(),
             site: Frontend::site(),
