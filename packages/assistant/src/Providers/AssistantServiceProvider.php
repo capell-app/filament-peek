@@ -8,6 +8,7 @@ use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Assistant\Console\Commands\ClearAiCacheCommand;
+use Capell\Assistant\Console\Commands\InstallCommand;
 use Capell\Assistant\Console\Commands\MonitorAiUsageCommand;
 use Capell\Assistant\Console\Commands\TestOpenAiConnectionCommand;
 use Capell\Assistant\Events\AiGenerationCompleted;
@@ -48,10 +49,10 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
             ->hasConfigFile(self::$name)
             ->hasCommands([
                 ClearAiCacheCommand::class,
+                InstallCommand::class,
                 MonitorAiUsageCommand::class,
                 TestOpenAiConnectionCommand::class,
-            ])
-            ->hasMigration('create_ai_generation_histories_table');
+            ]);
     }
 
     public function registeringPackage(): void

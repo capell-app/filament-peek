@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Support\Context\ContentActionContext;
 use Capell\Assistant\Actions\SuggestPageTitlesAction;
+use Capell\Assistant\Support\Context\ContentActionContext;
 use OpenAI\Laravel\Facades\OpenAI;
 
 uses()->group('admin-ai');

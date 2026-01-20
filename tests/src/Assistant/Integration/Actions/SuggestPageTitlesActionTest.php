@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Admin\Integration\Actions\Ai;
+namespace Capell\Tests\Assistant\Integration\Actions\Ai;
 
 use Capell\Assistant\Actions\SuggestPageTitlesAction;
 use Capell\Assistant\Support\AiResponse;
 use Capell\Assistant\Support\OpenAIProvider;
-use Capell\Tests\Assistant\Integration\Actions\FakeContext;
-use Capell\Tests\Assistant\Integration\Actions\FakeOpenAIProvider;
+use Capell\Tests\Assistant\Fixtures\FakeContext;
+use Capell\Tests\Assistant\Fixtures\FakeOpenAIProvider;
 use RuntimeException;
 
 it('suggests page titles using provider', function (): void {

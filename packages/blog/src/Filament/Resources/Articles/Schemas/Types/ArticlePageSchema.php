@@ -15,6 +15,9 @@ use Capell\Admin\Filament\Components\Forms\PublishSchema;
 use Capell\Admin\Filament\Resources\Pages\Schemas\Types\DefaultPageSchema;
 use Capell\Blog\Filament\Components\Forms\Page\PageTagsInput;
 use Capell\Blog\Support\Loader\BlogLoader;
+use Capell\Core\Enums\ModelEnum;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Site;
 use Closure;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -29,7 +32,10 @@ class ArticlePageSchema extends DefaultPageSchema
     protected static function modifyParentQueryUsing(Schema $schema): Closure
     {
         return function (Builder $query) use ($schema) {
-            $site = $schema->getLivewire()->getSite($schema);
+            /** @var class-string<Site> $model */
+            $model = CapellCore::getModel(ModelEnum::Site);
+
+            $site = $model::find($schema->getRawState()['site_id']);
 
             $blogPage = $site ? BlogLoader::getBlogPage($site) : null;
 

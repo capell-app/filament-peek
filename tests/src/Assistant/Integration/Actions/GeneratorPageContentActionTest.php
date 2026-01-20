@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Admin\Integration\Actions\Ai;
+namespace Capell\Tests\Assistant\Integration\Actions\Ai;
 
 use Capell\Assistant\Actions\GeneratorPageContentAction;
 use Capell\Assistant\Support\AiResponse;
+use Capell\Assistant\Support\Context\ContentActionContext;
 use Capell\Assistant\Support\OpenAIProvider;
-use Capell\Tests\Assistant\Integration\Actions\FakeContext;
-use Capell\Tests\Assistant\Integration\Actions\FakeOpenAIProviderForContent;
+use Capell\Tests\Assistant\Fixtures\FakeContext;
+use Capell\Tests\Assistant\Fixtures\FakeOpenAIProviderForContent;
+use OpenAI\Laravel\Facades\OpenAI;
 use RuntimeException;
+use stdClass;
 
 it('generates page content using provider', function (): void {
     app()->bind(OpenAIProvider::class, fn (): FakeOpenAIProviderForContent => new FakeOpenAIProviderForContent);
@@ -82,7 +85,7 @@ it('generates long-form page content through pipeline', function (): void {
 });
 
 it('throws when rate limited for content generation', function (): void {
-    config()->set('capell-admin-ai.rate_limiting', ['enabled' => true, 'requests_per_minute' => 0]);
+    config()->set('capell-assistant.rate_limiting', ['enabled' => true, 'requests_per_minute' => 0]);
 
     $context = new ContentActionContext('Laravel development tips', 'laravel, php', 1, 1);
 

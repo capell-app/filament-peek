@@ -28,6 +28,9 @@
             "@lint",
             "@analyze"
         ],
+        "coverage": "php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=packages vendor/bin/pest --coverage --coverage-clover=coverage/clover.xml --colors=always --configuration=phpunit.xml",
+        "coverage:check": "php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=packages vendor/bin/pest --coverage --min=80 --colors=always --configuration=phpunit.xml",
+        "coverage:html": "php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=packages vendor/bin/pest --coverage --coverage-html=coverage --colors=always --configuration=phpunit.xml",
         "test:unit": "php -d memory_limit=-1 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml",
         "test": [
             "@test:unit"

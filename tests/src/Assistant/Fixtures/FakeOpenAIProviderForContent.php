@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Assistant\Integration\Actions;
+namespace Capell\Tests\Assistant\Fixtures;
 
 use Capell\Assistant\Support\AiResponse;
 use Capell\Assistant\Support\OpenAIProvider;
 
-class FakeOpenAIProviderForDescriptions extends OpenAIProvider
+class FakeOpenAIProviderForContent extends OpenAIProvider
 {
     public function chat(array $params): AiResponse
     {
         return new AiResponse(
-            content: "- Description 1\n- Description 2",
-            tokensUsed: 8,
+            content: "Hello\nWorld",
+            tokensUsed: 10,
             model: (string) ($params['model'] ?? 'test-model'),
             duration: 0.001,
             metadata: [
-                'prompt_tokens' => 4,
-                'completion_tokens' => 4,
+                'prompt_tokens' => 5,
+                'completion_tokens' => 5,
                 'finish_reason' => 'stop',
             ],
         );

@@ -62,9 +62,4 @@ class BlogTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
     }
-
-    protected function requiredPackages(): array
-    {
-        return ['layout', 'blog', 'frontend', 'admin'];
-    }
 }

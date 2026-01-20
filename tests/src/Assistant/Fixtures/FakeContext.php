@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Assistant\Integration\Actions;
+namespace Capell\Tests\Assistant\Fixtures;
 
-use Capell\Admin\Contracts\AiActionContextInterface;
+use Capell\Assistant\Contracts\AiActionContextInterface;
 
 class FakeContext implements AiActionContextInterface
 {

@@ -43,9 +43,4 @@ class PackagesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(AddressServiceProvider::$packageName);
     }
-
-    protected function requiredPackages(): array
-    {
-        return ['address', 'layout', 'blog', 'hero', 'frontend', 'admin'];
-    }
 }

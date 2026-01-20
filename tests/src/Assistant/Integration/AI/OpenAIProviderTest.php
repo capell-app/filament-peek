@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Admin\Integration\AI;
+namespace Capell\Tests\Assistant\Integration\AI;
 
 use Capell\Assistant\Exceptions\OpenAICircuitBreakerOpenException;
 use Capell\Assistant\Support\AiResponse;
