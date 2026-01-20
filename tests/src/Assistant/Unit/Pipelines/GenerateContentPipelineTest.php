@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Support\Context\ContentActionContext;
-use Capell\Admin\Support\Pipelines\GenerateContentPipeline;
 use Capell\Assistant\Support\AiRateLimiter;
 use Capell\Assistant\Support\AiResponse;
+use Capell\Assistant\Support\Context\ContentActionContext;
 use Capell\Assistant\Support\OpenAIProvider;
+use Capell\Assistant\Support\Pipelines\GenerateContentPipeline;
 use Capell\Assistant\Support\PromptRepository;
 
 it('sanitizes unsafe html from AI output', function (): void {

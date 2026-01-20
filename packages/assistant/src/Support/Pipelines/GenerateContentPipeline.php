@@ -77,9 +77,9 @@ class GenerateContentPipeline
         ];
 
         $params = [
-            'model' => (string) ($prompt['model'] ?? config('capell-admin-ai.openai.default_model')),
+            'model' => (string) ($prompt['model'] ?? config('capell-assistant.openai.default_model')),
             'messages' => $messages,
-            'max_tokens' => (int) config('capell-admin-ai.openai.max_tokens', 512),
+            'max_tokens' => (int) config('capell-assistant.openai.max_tokens', 512),
             'temperature' => 0.7,
         ];
 

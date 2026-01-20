@@ -17,7 +17,7 @@ final class ClearCircuitBreakerHandler implements AdminEventHandlerInterface
         resolve(OpenAIProvider::class)->resetCircuitBreaker();
 
         Notification::make('circuit-breaker-cleared')
-            ->title(__('capell-admin-ai::message.circuit_breaker_cleared'))
+            ->title(__('capell-assistant::message.circuit_breaker_cleared'))
             ->success()
             ->send();
     }

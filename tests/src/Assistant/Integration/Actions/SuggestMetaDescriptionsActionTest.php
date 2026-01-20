@@ -2,14 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Admin\Integration\Actions\Ai;
+namespace Capell\Tests\Assistant\Integration\Actions\Ai;
 
 use Capell\Assistant\Actions\SuggestMetaDescriptionsAction;
+use Capell\Assistant\Events\AiGenerationCompleted;
 use Capell\Assistant\Support\AiResponse;
+use Capell\Assistant\Support\Context\ContentActionContext;
 use Capell\Assistant\Support\OpenAIProvider;
-use Capell\Tests\Assistant\Integration\Actions\FakeContext;
-use Capell\Tests\Assistant\Integration\Actions\FakeOpenAIProviderForDescriptions;
+use Capell\Tests\Assistant\Fixtures\FakeContext;
+use Capell\Tests\Assistant\Fixtures\FakeOpenAIProviderForDescriptions;
+use Illuminate\Support\Facades\Event;
+use OpenAI\Laravel\Facades\OpenAI;
 use RuntimeException;
+use stdClass;
 
 it('suggests meta descriptions using provider', function (): void {
     app()->bind(OpenAIProvider::class, fn (): FakeOpenAIProviderForDescriptions => new FakeOpenAIProviderForDescriptions);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Assistant\Integration\Actions;
+namespace Capell\Tests\Assistant\Fixtures;
 
 use Capell\Assistant\Support\AiResponse;
 use Capell\Assistant\Support\OpenAIProvider;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Admin\Integration\AI;
+namespace Capell\Tests\Assistant\Fixtures;
 
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\MessageInterface;

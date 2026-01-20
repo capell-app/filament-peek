@@ -50,9 +50,4 @@ class AssistantTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(AssistantServiceProvider::$packageName);
     }
-
-    protected function requiredPackages(): array
-    {
-        return ['admin'];
-    }
 }

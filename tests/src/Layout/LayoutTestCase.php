@@ -53,9 +53,4 @@ class LayoutTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutServiceProvider::$packageName);
     }
-
-    protected function requiredPackages(): array
-    {
-        return ['admin', 'frontend', 'layout'];
-    }
 }

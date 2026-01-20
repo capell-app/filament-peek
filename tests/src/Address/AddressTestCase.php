@@ -33,9 +33,4 @@ class AddressTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(AddressServiceProvider::$packageName);
     }
-
-    protected function requiredPackages(): array
-    {
-        return ['address'];
-    }
 }

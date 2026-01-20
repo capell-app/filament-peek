@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Assistant\Support\AI\AiRateLimiter;
+use Capell\Assistant\Support\AiRateLimiter;
 use Capell\Assistant\Support\Cache\RateLimitCache;
 use Illuminate\Support\Facades\Date;
 

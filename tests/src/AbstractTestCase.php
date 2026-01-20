@@ -11,6 +11,8 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Bkwld\Cloner\ServiceProvider as ClonerServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
+use Capell\Core\Data\PackageData;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageTranslation;
 use Capell\Core\Providers\CapellServiceProvider;
@@ -71,8 +73,6 @@ abstract class AbstractTestCase extends TestCase
     use WithFaker;
     use WithWorkbench;
 
-    protected array $packageMigrations = [];
-
     protected function setUp(): void
     {
         if (getenv('TEST_TOKEN')) {
@@ -94,19 +94,12 @@ abstract class AbstractTestCase extends TestCase
 
         array_walk($migrations, fn (&$migration): string => $migration = sprintf('%s/%s.php', $path, $migration));
 
-        $this->loadMigrationsFrom($migrations);
-
         // Load migrations for any explicitly required dependent packages.
-        foreach ($this->requiredPackages() as $requiredPackage) {
-            $this->packageMigrations = [
-                ...$this->packageMigrations,
-                ...$this->discoverPackageMigrations($requiredPackage),
-            ];
-        }
+        CapellCore::getInstalledPackages()->each(function (PackageData $package) use (&$migrations): void {
+            $migrations = array_merge($migrations, $this->discoverPackageMigrations($package->path));
+        });
 
-        if ($this->packageMigrations !== []) {
-            $this->loadMigrationsFrom(array_values(array_unique($this->packageMigrations)));
-        }
+        $this->loadMigrationsFrom($migrations);
 
         Http::preventStrayRequests();
 
@@ -121,17 +114,6 @@ abstract class AbstractTestCase extends TestCase
         $this->setUpDatabase();
 
         $this->withoutVite();
-    }
-
-    /**
-     * Packages whose migrations are required in addition to the primary package.
-     * Override in package test cases as needed (e.g. blog requires layout).
-     *
-     * @return string[]
-     */
-    protected function requiredPackages(): array
-    {
-        return [];
     }
 
     /**
@@ -329,9 +311,14 @@ abstract class AbstractTestCase extends TestCase
         }
     }
 
-    private function discoverPackageMigrations(string $package): array
+    private function discoverPackageMigrations(string $path): array
     {
-        $path = realpath(__DIR__ . '/../../packages/' . $package . '/database/migrations');
+        $path = realpath($path . '/database/migrations');
+
+        if (! $path) {
+            return [];
+        }
+
         $files = glob($path . '/*.php');
 
         return $files === false ? [] : $files;
