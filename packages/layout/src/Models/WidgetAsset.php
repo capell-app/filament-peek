@@ -9,7 +9,9 @@ use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasMetaData;
+use Capell\Core\Models\Concerns\HasUserstamps;
 use Capell\Core\Models\Concerns\InteractsWithMedia;
+use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Core\Models\Page;
 use Capell\Layout\Database\Factories\WidgetAssetFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +27,6 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
-use Wildside\Userstamps\Userstamps;
 
 /**
  * Capell\Layout\Models\WidgetAsset
@@ -73,7 +74,7 @@ use Wildside\Userstamps\Userstamps;
  *
  * @mixin Model
  */
-class WidgetAsset extends Model implements HasMedia, PageCacheable
+class WidgetAsset extends Model implements HasMedia, PageCacheable, Userstampable
 {
     use HasAssets;
 
@@ -82,8 +83,8 @@ class WidgetAsset extends Model implements HasMedia, PageCacheable
 
     use HasJsonRelationships;
     use HasMetaData;
+    use HasUserstamps;
     use InteractsWithMedia;
-    use Userstamps;
 
     /**
      * The attributes that are mass assignable.

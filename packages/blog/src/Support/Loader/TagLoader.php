@@ -89,7 +89,7 @@ class TagLoader
                 $hasArticles,
                 fn (Builder $query) => $query->whereHas(
                     'pages',
-                    fn (BuilderContract $query) => $query->where('site_id', $site->id)
+                    fn (BuilderContract $query): BuilderContract => $query->where('site_id', $site->id)
                         ->whereRelation('translation', 'language_id', $language->id),
                 ),
             )

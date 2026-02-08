@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Capell\Blog\Console\Commands;
 
 use Capell\Admin\Actions\AssignPermissionsToRole;
-use Capell\Blog\Actions\InstallPackageAction;
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Support\BlogModelRegistrar;
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
-use Illuminate\Support\Sleep;
 
 class InstallCommand extends Command
 {
@@ -33,8 +31,6 @@ class InstallCommand extends Command
      */
     public function handle(): int
     {
-        $this->info('Installing Capell Blog Package...');
-
         BlogModelRegistrar::register();
 
         Filament::getDefaultPanel()
@@ -48,9 +44,6 @@ class InstallCommand extends Command
             return Command::FAILURE;
         }
 
-        // Ensure the alter tags has a greater timestamp than the create tags migration
-        Sleep::sleep(1);
-
         if (! $this->publishMigrations('alter_tags_table', __DIR__ . '/../../../database/migrations')) {
             $this->error('Failed to publish alter_tags_table migration.');
 
@@ -59,11 +52,10 @@ class InstallCommand extends Command
 
         $this->call('migrate');
 
-        InstallPackageAction::run();
+        $this->callSilent('filament:assets');
 
-        $this->call('filament:assets');
-
-        $this->info('Capell Blog installation complete.');
+        $this->newLine();
+        $this->info('Capell Blog installed successfully.');
 
         return self::SUCCESS;
     }

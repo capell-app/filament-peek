@@ -10,6 +10,7 @@ use Capell\Core\Enums\NavigationHandle;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
+use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -17,18 +18,19 @@ use Lorisleiva\Actions\Concerns\AsObject;
  */
 class CreateBlogPagesAction
 {
+    use AsFake;
     use AsObject;
 
     public function handle(Site $site): void
     {
+        $blogCreator = resolve(BlogCreator::class);
+
         $archivesLayout = Layout::query()->firstWhere('key', 'archives');
         $resultsLayout = Layout::query()->firstWhere('key', 'results');
 
         $archivePageType = Type::query()->where('key', BlogPageTypeEnum::Archive)->pageType()->first();
         $blogPageType = Type::query()->where('key', 'blog')->pageType()->first();
         $systemPageType = Type::query()->where('key', 'system')->pageType()->first();
-
-        $blogCreator = resolve(BlogCreator::class);
 
         $blogPage = $blogCreator->createBlogPage($site, type: $blogPageType, languages: $site->languages);
 

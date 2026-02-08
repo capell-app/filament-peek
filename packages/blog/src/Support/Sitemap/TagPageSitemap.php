@@ -27,7 +27,7 @@ class TagPageSitemap extends AbstractSitemapPages
             $this->language,
             fn ($query) => $query->withWhereHas(
                 'parent',
-                fn (BuilderContract $query) => $query->with([
+                fn (BuilderContract $query): BuilderContract => $query->with([
                     'pageUrl' => fn ($query) => $query->with('siteDomain')->where('language_id', $this->language->id),
                     'translation' => fn ($query) => $query->where('language_id', $this->language->id),
                 ]),

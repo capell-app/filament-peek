@@ -140,6 +140,13 @@ Don't:
 
 ---
 
+## 1E. Readability & Spacing
+
+- Prefer vertical spacing (blank lines) between logical blocks, method arguments, and inside methods to improve clarity and maintainability.
+- Add blank lines before/after control structures, between unrelated statements, and between methods.
+- Avoid excessive or inconsistent blank lines; use spacing to group related logic and visually separate distinct steps.
+- This applies to all PHP, test, and config files.
+
 ## 1K. Package Plugin Independence (`address` / `blog` / `hero` / `layout`)
 
 - `address`, `blog`, `hero`, and `layout` plugins MAY depend on each other, but MUST remain decoupled from Core internals except via documented public interfaces.

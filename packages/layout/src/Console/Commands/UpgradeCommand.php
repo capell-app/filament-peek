@@ -29,6 +29,9 @@ class UpgradeCommand extends Command
     {
         $this->call('vendor:publish', ['--tag' => 'capell-layout-assets', '--force' => true]);
 
-        return 0;
+        $this->newLine();
+        $this->info('Capell Layout upgraded successfully.');
+
+        return Command::SUCCESS;
     }
 }

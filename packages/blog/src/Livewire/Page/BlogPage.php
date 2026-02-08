@@ -23,7 +23,7 @@ class BlogPage extends AbstractPage
             language: Frontend::language(),
             site: Frontend::site(),
             limit: $page->type->meta['limit'] ?? config('capell-frontend.pagination_limit', 12),
-            paginationPage: $this->getPage($paginationKey),
+            paginationPage: (int) $this->getPage($paginationKey),
             pageGroup: $page->type->meta['page_group'] ?? null,
             typeKey: $page->type->meta['page_type'] ?? null,
             withImage: $page->type->meta['with_image'] ?? false,

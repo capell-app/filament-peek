@@ -11,6 +11,7 @@ use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Blog\Console\Commands\CreateBlogPagesCommand;
 use Capell\Blog\Console\Commands\DemoCommand;
 use Capell\Blog\Console\Commands\InstallCommand;
+use Capell\Blog\Console\Commands\SetupCommand;
 use Capell\Blog\Enums\PageComponentEnum;
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Enums\WidgetComponentEnum;
@@ -73,6 +74,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
                 CreateBlogPagesCommand::class,
                 DemoCommand::class,
                 InstallCommand::class,
+                SetupCommand::class,
             ]);
     }
 
@@ -126,7 +128,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             description: static::getDescription(),
             permissions: $this->getPackagePermissions(),
             installCommand: 'capell-blog:install',
-            demoCommand: 'capell-blog:demo', // unchanged signature now handled by DemoCommand
+            setupCommand: 'capell-blog:setup',
+            demoCommand: 'capell-blog:demo',
             demoParams: ['user', 'sites'],
             requirements: [
                 AdminServiceProvider::$packageName,

@@ -12,6 +12,7 @@ use Capell\Core\Models\Type;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Exception;
+use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -19,6 +20,7 @@ use Lorisleiva\Actions\Concerns\AsObject;
  */
 class InstallPackageAction
 {
+    use AsFake;
     use AsObject;
 
     public function handle(): void
@@ -27,7 +29,6 @@ class InstallPackageAction
 
         // Widgets
         $blogCreator->createArticleWidget($blogCreator->createArticleWidgetType());
-
         $latestArticlesWidget = $blogCreator->createLatestArticlesWidget();
         $archivesWidget = $blogCreator->createArchivesListWidget();
 

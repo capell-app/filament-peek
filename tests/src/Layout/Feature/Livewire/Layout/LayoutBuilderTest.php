@@ -210,7 +210,7 @@ test('Can clone layout', function (): void {
 
     expect($clonedLayout)
         ->toBeInstanceOf(Layout::class)
-        ->not->toBe($layout)
+        ->not()->toBe($layout)
         ->containers->toEqual($layout->containers);
 });
 
@@ -231,7 +231,7 @@ test('removeContainer action', function (): void {
     $layout->refresh();
 
     expect($layout->containers)
-        ->not->toHaveKey($containerKey);
+        ->not()->toHaveKey($containerKey);
 });
 
 test('Can save layout without editing container', function (): void {

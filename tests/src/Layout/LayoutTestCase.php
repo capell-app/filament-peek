@@ -11,6 +11,7 @@ use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
 use Override;
 
@@ -34,6 +35,10 @@ class LayoutTestCase extends AbstractTestCase
         );
     }
 
+    /**
+     * @param  Application  $app
+     * @return class-string[]
+     */
     protected function getPackageProviders($app): array
     {
         return [

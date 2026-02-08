@@ -118,7 +118,7 @@ class AssetsRepeater extends Repeater
                     'name',
                     modifyQueryUsing: fn (Builder $query, Get $get): Builder => $query->when(
                         $get('asset_type') === 'page',
-                        fn (BuilderContract $query) => $query->with([
+                        fn (BuilderContract $query): BuilderContract => $query->with([
                             'ancestors' => fn (Relation $query) => $query->withDrafts(),
                             'site',
                         ])

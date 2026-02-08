@@ -14,7 +14,6 @@ use Spatie\Permission\Contracts\Role;
 
 /**
  * @property-read Application $app
- * @property-read AbstractTestCase $this
  *
  * @mixin AbstractTestCase
  */

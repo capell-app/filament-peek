@@ -87,7 +87,10 @@ class WidgetCreator
 
     public function childrenWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
-        $languages ??= CapellCore::getModel(CoreModelEnum::Language)::query()->get();
+        /** @var class-string<Language> $model */
+        $model = CapellCore::getModel(CoreModelEnum::Language);
+
+        $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->pageResultsWidgetType();
 
         $widget = $this->widgetModel::query()->firstOrCreate([
@@ -144,7 +147,10 @@ class WidgetCreator
 
     public function galleryWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
-        $languages ??= CapellCore::getModel(CoreModelEnum::Language)::query()->get();
+        /** @var class-string<Language> $model */
+        $model = CapellCore::getModel(CoreModelEnum::Language);
+
+        $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->mediaWidgetType();
 
         $widget = $this->widgetModel::query()->firstOrCreate([
@@ -173,7 +179,10 @@ class WidgetCreator
 
     public function latestPagesWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
-        $languages ??= CapellCore::getModel(CoreModelEnum::Language)::query()->get();
+        /** @var class-string<Language> $model */
+        $model = CapellCore::getModel(CoreModelEnum::Language);
+
+        $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->pageResultsWidgetType();
 
         $widget = $this->widgetModel::query()->firstOrCreate([
@@ -285,7 +294,10 @@ class WidgetCreator
 
     public function siblingsWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
-        $languages ??= CapellCore::getModel(CoreModelEnum::Language)::query()->get();
+        /** @var class-string<Language> $model */
+        $model = CapellCore::getModel(CoreModelEnum::Language);
+
+        $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->pageResultsWidgetType();
 
         $widget = $this->widgetModel::query()->firstOrCreate([

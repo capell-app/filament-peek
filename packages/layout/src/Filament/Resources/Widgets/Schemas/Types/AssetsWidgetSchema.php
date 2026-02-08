@@ -127,7 +127,7 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
     protected function getAssetsComponent(Schema $schema): Component
     {
         return AssetsRepeater::make('widgetAssets')
-            ->compact()
+            ->compactRepeater()
             ->hiddenLabel()
             ->hint(__('capell-admin::generic.widget_assets_repeater_hint'));
     }

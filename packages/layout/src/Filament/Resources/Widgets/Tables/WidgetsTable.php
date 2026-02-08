@@ -19,6 +19,7 @@ use Capell\Admin\Filament\Components\Tables\Filters\StatusFilter;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Language;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Filament\Resources\Widgets\Pages\ListWidgets;
 use Capell\Layout\Models\Widget;
@@ -247,9 +248,12 @@ class WidgetsTable implements TableConfigurator
                     $indicators = [];
 
                     if (! empty($data['language_id'])) {
+                        /** @var class-string<Language> $model */
+                        $model = CapellCore::getModel(ModelEnum::Language);
+
                         $indicators['language_id'] = __(
                             'capell-admin::filter.language',
-                            ['search' => CapellCore::getModel(ModelEnum::Language)::query()->find($data['language_id'], 'name')?->name],
+                            ['search' => $model::query()->find($data['language_id'], 'name')?->name],
                         );
                     }
 

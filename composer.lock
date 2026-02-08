@@ -808,7 +808,7 @@
                 "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
                 "kalnoy/nestedset": "^6.0.2",
                 "lorisleiva/laravel-actions": "^2.8",
-                "oddvalue/laravel-drafts": "^1.0|^2.0",
+                "oddvalue/laravel-drafts": "^3.0",
                 "openai-php/laravel": "*",
                 "php": "^8.2",
                 "silber/page-cache": "^1.0",

@@ -5,17 +5,17 @@ declare(strict_types=1);
 ?>
 
 @props([
-'containerKey',
-'description' => null,
-'index',
-'image' => null,
-'meta' => [],
-'name' => null,
-'occurrence',
-'pageId' => $this->page_id,
-'widget',
-'widgetAsset',
-'widgetIndex',
+    'containerKey',
+    'description' => null,
+    'index',
+    'image' => null,
+    'meta' => [],
+    'name' => null,
+    'occurrence',
+    'pageId' => $this->page_id,
+    'widget',
+    'widgetAsset',
+    'widgetIndex',
 ])
 {{-- format-ignore-start --}}
 @php
@@ -24,7 +24,7 @@ declare(strict_types=1);
     use Capell\Core\Enums\ModelEnum;
     use Capell\Core\Facades\CapellCore;
     use Capell\Core\Models\Page;
-    use Capell\Layout\Models\Content;
+    use Capell\Core\Models\Site;use Capell\Layout\Models\Content;
     use Filament\Actions\Action;
     use Filament\Support\Contracts\ScalableIcon;
     use Filament\Support\Enums\IconSize;
@@ -96,7 +96,10 @@ declare(strict_types=1);
         };
     }
 
-    if (CapellCore::getModel(ModelEnum::Site)::totalSites() > 1) {
+    /** @var class-string<Site> $model */
+    $model = CapellCore::getModel(ModelEnum::Site);
+
+    if ($model::totalSites() > 1) {
         if ($widgetAsset->asset->hasAttribute('site_id') && $widgetAsset->asset->site_id) {
             $description = $widgetAsset->asset->site?->name . ($description ? ' - ' . $description : '');
         }
@@ -156,8 +159,8 @@ declare(strict_types=1);
 
         <div
             @class([
-            'group/asset flex w-full cursor-pointer items-center gap-x-4',
-            'lg:!grid lg:grid-cols-4 lg:gap-4' => $image,
+                'group/asset flex w-full cursor-pointer items-center gap-x-4',
+                'lg:!grid lg:grid-cols-4 lg:gap-4' => $image,
             ])
         >
             <div @class(['py-2.5', 'lg:col-span-3' => $image])>
@@ -167,10 +170,10 @@ declare(strict_types=1);
                     {!! $label !!}
 
                     @svg($icon,
-                    [
-                    'class' => 'group-hover/asset:text-primary-500 dark:group-hover/asset:text-primary-400 inline h-4 w-4 align-text-bottom text-gray-400 dark:text-gray-500',
-                    'x-tooltip.raw' => $editWidgetAssetAction->getTooltip(),
-                    ])
+                        [
+                            'class' => 'group-hover/asset:text-primary-500 dark:group-hover/asset:text-primary-400 inline h-4 w-4 align-text-bottom text-gray-400 dark:text-gray-500',
+                            'x-tooltip.raw' => $editWidgetAssetAction->getTooltip(),
+                        ])
                 </div>
 
                 @if (! empty($description) && ! $description !== $name)

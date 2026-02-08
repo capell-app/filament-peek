@@ -15,12 +15,17 @@ use Capell\Hero\Providers\HeroServiceProvider;
 use Capell\Layout\Providers\LayoutServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
 
 class PackagesTestCase extends AbstractTestCase
 {
     protected string $packageServiceName = 'capell-packages';
 
+    /**
+     * @param  Application  $app
+     * @return class-string[]
+     */
     protected function getPackageProviders($app): array
     {
         return [

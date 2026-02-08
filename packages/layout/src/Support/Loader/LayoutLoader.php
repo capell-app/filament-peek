@@ -33,8 +33,7 @@ class LayoutLoader
         $layout = CapellCore::rememberCache($key, function () use ($id, &$fromCache): ?Layout {
             $fromCache = false;
 
-            // @phpstan-ignore-next-line
-            return Layout::with('layoutWidgets')->find($id); // TODO fix error larastan.relationExistence even though it's added manually
+            return Layout::with('layoutWidgets')->find($id);
         }) ?: null;
 
         if ($fromCache && $layout) {

@@ -14,6 +14,7 @@ use Capell\Hero\Actions\CreateHeroContentTypeAction;
 use Capell\Hero\Actions\CreateHeroWidgetAction;
 use Capell\Layout\Support\Creator\DemoCreator;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class DemoCommand extends Command
 {
@@ -40,15 +41,8 @@ class DemoCommand extends Command
      */
     public function handle(): int
     {
-        if ($this->option('sites')) {
-            $siteOptions = is_string($this->option('sites'))
-                ? explode(',', $this->option('sites'))
-                : (is_array($this->option('sites')) ? $this->option('sites') : null);
-        } else {
-            $siteOptions = $this->getDemoSites();
-        }
-
-        $sites = CapellCore::getModel(ModelEnum::Site)::query()->with(['language', 'languages'])->whereIn('name', $siteOptions)->get();
+        $siteOptions = $this->resolveSiteOptions();
+        $sites = $this->getSitesByNames($siteOptions);
 
         if ($sites->isEmpty()) {
             $this->error('Unable to find any sites for: ' . implode(', ', (array) $siteOptions));
@@ -60,12 +54,56 @@ class DemoCommand extends Command
 
         $heroWidget = CreateHeroWidgetAction::run();
 
-        foreach ($sites as $site) {
-            $this->newLine();
-            $this->line(sprintf('Selected site: %s', $site->name));
+        $sites->each(fn (Site $site): bool => $this->createDemoContentForSite($site, $heroWidget));
 
-            $homepage = CapellCore::getModel(ModelEnum::Page)::getSiteHomePage($site);
+        $this->newLine();
+        $this->info('Hero demo content inserted successfully.');
 
+        return Command::SUCCESS;
+    }
+
+    private function resolveSiteOptions(): array
+    {
+        $sitesOption = $this->option('sites');
+        if ($sitesOption) {
+            if (is_string($sitesOption)) {
+                return explode(',', $sitesOption);
+            }
+            if (is_array($sitesOption)) {
+                return $sitesOption;
+            }
+
+            return [];
+        }
+
+        return $this->getDemoSites();
+    }
+
+    /**
+     * @return Collection<int, Site>
+     */
+    private function getSitesByNames(array $siteNames): Collection
+    {
+        /** @var class-string<Site> $model */
+        $model = CapellCore::getModel(ModelEnum::Site);
+
+        return $model::query()
+            ->with(['language', 'languages'])
+            ->whereIn('name', $siteNames)
+            ->get();
+    }
+
+    private function createDemoContentForSite(Site $site, $heroWidget): bool
+    {
+        $this->newLine();
+        $this->line(sprintf('Selected site: %s', $site->name));
+
+        /** @var class-string<Page> $model */
+        $model = CapellCore::getModel(ModelEnum::Page);
+
+        $homepage = $model::getSiteHomePage($site);
+
+        if ($homepage) {
             $homepage->loadMissing('layout');
 
             AddHeroToLayoutAction::run($homepage->layout);
@@ -73,39 +111,45 @@ class DemoCommand extends Command
             $type = CreateHeroContentTypeAction::run();
 
             $this->demoCreator->createContentsWidget($heroWidget, $homepage, container: 'hero', type: $type);
-
-            if (CapellCore::hasPackage('capell-blog')) {
-                $blogPage = CapellCore::getModel(ModelEnum::Page)::query()
-                    ->with('translations')
-                    ->where('site_id', $site->id)
-                    ->whereRelation('type', 'key', 'blog')
-                    ->first();
-
-                if ($blogPage instanceof Page) {
-                    foreach ($blogPage->translations as $translation) {
-                        $meta = $translation->meta;
-                        $meta['hero'] = '<h1>' . __('capell-blog::generic.latest_articles') . '</h1><p>' . __('capell-blog::generic.blog_intro') . '</p>';
-
-                        $translation->update(['meta' => $meta]);
-                    }
-                }
-
-                if (CapellCore::hasPackage('capell-blog')) {
-                    $this->addHeroToArticlePages($site);
-                }
-            }
-
-            $this->line('Demo hero content has been successfully created for site: ' . $site->name);
         }
 
-        $this->line('Hero demo content inserted successfully.');
+        if (CapellCore::hasPackage('capell-blog')) {
+            $this->updateBlogHeroContent($site);
+            $this->addHeroToArticlePages($site);
+        }
 
-        return Command::SUCCESS;
+        $this->line('Demo hero content has been successfully created for site: ' . $site->name);
+
+        return true;
+    }
+
+    private function updateBlogHeroContent(Site $site): void
+    {
+        /** @var class-string<Page> $model */
+        $model = CapellCore::getModel(ModelEnum::Page);
+
+        $blogPage = $model::query()
+            ->with('translations')
+            ->where('site_id', $site->id)
+            ->whereRelation('type', 'key', 'blog')
+            ->first();
+
+        if ($blogPage instanceof Page) {
+            foreach ($blogPage->translations as $translation) {
+                $meta = $translation->meta;
+                $meta['hero'] = '<h1>' . __('capell-blog::generic.latest_articles') . '</h1><p>' . __('capell-blog::generic.blog_intro') . '</p>';
+
+                $translation->update(['meta' => $meta]);
+            }
+        }
     }
 
     private function addHeroToArticlePages(Site $site): void
     {
-        $articlePages = CapellCore::getModel(ModelEnum::Page)::query()
+        /** @var class-string<Page> $model */
+        $model = CapellCore::getModel(ModelEnum::Page);
+
+        $articlePages = $model::query()
             ->with('translations')
             ->where('site_id', $site->id)
             ->whereRelation('type', 'key', 'article')

@@ -35,3 +35,5 @@ parameters:
         - packages/hero/resources/views
         - packages/layout/resources/views
     tmpDir: /tmp/phpstan
+    stubFiles:
+        - packages/layout/phpstan/blueprint-macros.stub

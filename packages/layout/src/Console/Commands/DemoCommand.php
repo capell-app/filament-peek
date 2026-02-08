@@ -44,15 +44,12 @@ class DemoCommand extends Command
      */
     public function handle(): int
     {
-        if ($this->option('sites')) {
-            $siteOptions = is_string($this->option('sites'))
-                ? explode(',', $this->option('sites'))
-                : (is_array($this->option('sites')) ? $this->option('sites') : null);
-        } else {
-            $siteOptions = $this->getDemoSites();
-        }
+        $siteOptions = $this->getSiteOptions();
 
-        $sites = CapellCore::getModel(ModelEnum::Site)::query()->with(['languages'])->whereIn('name', $siteOptions)->get();
+        /** @var class-string<Site> $model */
+        $model = CapellCore::getModel(ModelEnum::Site);
+
+        $sites = $model::query()->with(['languages'])->whereIn('name', $siteOptions)->get();
 
         if ($sites->isEmpty()) {
             $this->error('Unable to find any sites for: ' . implode(', ', (array) $siteOptions));
@@ -60,16 +57,10 @@ class DemoCommand extends Command
             return Command::FAILURE;
         }
 
-        $user = $this->option('user') ? CapellCore::getModel('User')::query()->first() : null;
-
-        if (! $user && auth()->check()) {
-            $user = auth()->user();
-        }
-
+        $user = $this->resolveUser();
         $this->demoCreator = new DemoCreator(user: $user);
 
         $data = config('capell-demo.pages');
-
         $typeCreator = resolve(TypeCreator::class);
         $typeCreator->createDefaultContentType();
         $typeCreator->createBuilderContentType();
@@ -83,7 +74,6 @@ class DemoCommand extends Command
             /** @var ContentCreator $contentCreator */
             $contentCreator = resolve(ContentCreator::class);
 
-            // $this->createSiteContents($contentCreator, $data[0], $site);
             $this->createSiteContents($contentCreator, $data[0], $site);
 
             if (! $this->createDemoLayouts($site)) {
@@ -93,6 +83,7 @@ class DemoCommand extends Command
             }
         }
 
+        $this->newLine();
         $this->info('Demo layouts have been successfully created.');
 
         return Command::SUCCESS;
@@ -107,7 +98,13 @@ class DemoCommand extends Command
         $languages = $site->languages;
 
         /** @var Page $home */
-        $home = $site->pages()->homePage()->first();
+        $home = $site->getHomePage();
+
+        if (! $home instanceof Page) {
+            $this->error('Unable to find homepage for site: ' . $site->name);
+
+            return false;
+        }
 
         $this->setupHomepage($home, $languages);
 
@@ -121,8 +118,54 @@ class DemoCommand extends Command
 
         $page->update(['layout_id' => $layout->id]);
 
-        $containers = $layout->containers;
+        $containers = $layout->containers ?? [];
 
+        $this->populateMainContainer($containers, $page, $languages);
+        $this->populateFaqContainers($containers, $languages, $page);
+        $this->populateSecondaryContainer($containers, $languages, $page);
+        $this->populateSplitTwoContainer($containers, $languages);
+        $this->addSplitTwoBackgroundMedia($layout);
+
+        $layout->containers = $containers;
+
+        $layout->update(['containers' => $containers]);
+    }
+
+    private function getSiteOptions(): array
+    {
+        if ($this->option('sites')) {
+            $sitesOption = $this->option('sites');
+            if (is_string($sitesOption)) {
+                return array_values(array_filter(array_map('trim', explode(',', $sitesOption)), fn ($v) => $v !== ''));
+            }
+            if (is_array($sitesOption)) {
+                return array_values(array_filter(array_map('trim', $sitesOption), fn ($v) => $v !== ''));
+            }
+
+            return [];
+        }
+
+        return $this->getDemoSites();
+    }
+
+    private function resolveUser(): ?object
+    {
+        if ($this->option('user')) {
+            /** @var class-string<\Illuminate\Foundation\Auth\User> $model */
+            $model = CapellCore::getModel('User');
+
+            return $model::query()->first();
+        }
+
+        if (auth()->check()) {
+            return auth()->user();
+        }
+
+        return null;
+    }
+
+    private function populateMainContainer(array &$containers, Page $page, Collection $languages): void
+    {
         $pageCardsWidget = $this->demoCreator->createPageCardsWidget($page);
         $this->line('Created page cards widgets');
 
@@ -147,7 +190,10 @@ class DemoCommand extends Command
             ],
             ['widget_key' => $mediaCarouselWidget->key],
         ];
+    }
 
+    private function populateFaqContainers(array &$containers, Collection $languages, Page $page): void
+    {
         $faqWidget = $this->demoCreator->createFaqWidget($languages);
         $this->line('Created FAQ widget');
 
@@ -172,7 +218,10 @@ class DemoCommand extends Command
                 ['widget_key' => $faqColWidget->key],
             ],
         ];
+    }
 
+    private function populateSecondaryContainer(array &$containers, Collection $languages, Page $page): void
+    {
         $teamPortfolioWidget = $this->demoCreator->createTeamPortfolioWidget($languages);
         $this->line('Created team portfolio widget: ' . $teamPortfolioWidget->key);
 
@@ -212,7 +261,10 @@ class DemoCommand extends Command
                 ['widget_key' => $testimonialsWidget->key],
             ],
         ];
+    }
 
+    private function populateSplitTwoContainer(array &$containers, Collection $languages): void
+    {
         $splitContentWidget = $this->demoCreator->createSplitContentWidget($languages);
         $this->line('Created split content widget: ' . $splitContentWidget->key);
 
@@ -228,15 +280,14 @@ class DemoCommand extends Command
                 ['widget_key' => $splitContentWidget->key],
             ],
         ];
+    }
 
+    private function addSplitTwoBackgroundMedia(Layout $layout): void
+    {
         $this->line('Adding background media to split container');
         if ($layout->getMedia('split-two-background')->isEmpty()) {
             resolve(\Capell\Core\Support\Creator\DemoCreator::class)->createMedia($layout, collection: 'split-two-background');
         }
-
-        $layout->containers = $containers;
-
-        $layout->update(['containers' => $containers]);
     }
 
     private function createSiteContents(ContentCreator $contentCreator, array $data, Site $site, ?Collection $languages = null, ?Content $parent = null): void
@@ -280,7 +331,8 @@ class DemoCommand extends Command
     private function getHomeLayout(): ?Layout
     {
         $model = CapellCore::getModel(ModelEnum::Layout);
+        $layout = $model::query()->firstWhere('key', LayoutEnum::Home);
 
-        return $model::query()->firstWhere('key', LayoutEnum::Home);
+        return $layout instanceof Layout ? $layout : null;
     }
 }

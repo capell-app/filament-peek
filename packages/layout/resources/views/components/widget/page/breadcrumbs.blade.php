@@ -30,7 +30,7 @@ declare(strict_types=1);
         return;
     }
 
-    $home = $site->homePage($language);
+    $home = $site->getHomePage($language);
 @endphp
 {{-- format-ignore-end --}}
 <nav

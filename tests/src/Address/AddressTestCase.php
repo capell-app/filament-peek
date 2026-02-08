@@ -9,6 +9,7 @@ use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
 use Override;
 
@@ -16,6 +17,10 @@ class AddressTestCase extends AbstractTestCase
 {
     protected string $packageServiceName = 'capell-address';
 
+    /**
+     * @param  Application  $app
+     * @return class-string[]
+     */
     protected function getPackageProviders($app): array
     {
         return [

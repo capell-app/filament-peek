@@ -16,7 +16,6 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageTranslation;
 use Capell\Core\Providers\CapellServiceProvider;
-use Capell\Core\Support\CapellCoreManager;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
@@ -90,7 +89,7 @@ abstract class AbstractTestCase extends TestCase
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        $migrations = CapellCoreManager::getMigrations();
+        $migrations = CapellCore::getMigrations();
         $path = realpath(__DIR__ . '/../../vendor/capell-app/core/database/migrations');
 
         if (! $path) {
@@ -143,6 +142,10 @@ abstract class AbstractTestCase extends TestCase
         Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
     }
 
+    /**
+     * @param  Application  $app
+     * @return class-string[]
+     */
     protected function getPackageProviders($app): array
     {
         return [

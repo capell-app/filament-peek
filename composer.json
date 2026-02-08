@@ -102,7 +102,7 @@
         "laravel/prompts": "^0.2|^0.3",
         "lorisleiva/laravel-actions": "^2.8",
         "michaloravec/laravel-paginateroute": "^1.0",
-        "oddvalue/laravel-drafts": "^1.0|^2.0",
+        "oddvalue/laravel-drafts": "^3.0",
         "openai-php/laravel": "^0.10|^0.18",
         "owenvoke/blade-fontawesome": "^2.8",
         "rmsramos/activitylog": "dev-filament4",

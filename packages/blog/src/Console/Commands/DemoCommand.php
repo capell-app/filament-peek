@@ -6,7 +6,7 @@ namespace Capell\Blog\Console\Commands;
 
 use Capell\Blog\Actions\CreateBlogPagesAction;
 use Capell\Blog\Enums\ModelEnum as BlogModelEnum;
-use Capell\Blog\Enums\ResourceEnum;
+use Capell\Blog\Support\Creator\BlogCreator;
 use Capell\Blog\Support\Loader\BlogLoader;
 use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
@@ -14,6 +14,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\Type;
 use Capell\Core\Support\Creator\DemoCreator;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
@@ -38,79 +39,40 @@ class DemoCommand extends Command
      */
     protected $description = 'Setup demo blog pages, tags and sample articles for selected sites.';
 
+    private BlogCreator $blogCreator;
+
     private DemoCreator $demoCreator;
 
+    /**
+     * Execute the console command.
+     */
     public function handle(): int
     {
-        $sitesOption = $this->option('sites');
-        if ($sitesOption) {
-            $siteOptions = is_string($sitesOption)
-                ? explode(',', $sitesOption)
-                : (is_array($sitesOption) ? $sitesOption : null);
-        } else {
-            $siteOptions = $this->getDemoSites();
-        }
+        $siteNames = $this->parseSitesOption();
 
-        if ($siteOptions === null || $siteOptions === []) {
+        if (empty($siteNames)) {
             $this->error('No sites selected or provided.');
 
             return self::FAILURE;
         }
 
-        $sites = CapellCore::getModel(CoreModelEnum::Site)::query()
-            ->with(['languages'])
-            ->whereIn('name', $siteOptions)
-            ->get();
+        $sites = $this->resolveSites($siteNames);
 
         if ($sites->isEmpty()) {
-            $this->error('Unable to find any sites for: ' . implode(', ', $siteOptions));
+            $this->error('Unable to find any sites for: ' . implode(', ', $siteNames));
 
             return self::FAILURE;
         }
 
-        $userOption = $this->option('user');
-        /** @var Model|null $user */
-        $user = $userOption ? CapellCore::getModel('User')::query()->find($userOption) : null;
-
-        if (! $user && function_exists('auth') && auth()->check()) {
-            $user = auth()->user();
-        }
-
-        $limit = $this->option('limit') ? (int) $this->option('limit') : null;
+        $user = $this->resolveUser();
+        $limit = $this->parseLimitOption();
 
         foreach ($sites as $index => $site) {
             if ($index > 0) {
                 $this->newLine();
             }
 
-            $this->info('Setting up demo blog for site: ' . $site->name);
-            $this->newLine();
-            $this->demoCreator = new DemoCreator(author: $user);
-
-            $this->line('Ensuring required blog and ancillary pages exist...');
-            CreateBlogPagesAction::run($site);
-            $this->newLine();
-
-            $this->line('Creating demo pages...');
-            $created = $this->createDemoPages($site, $user, $limit);
-            if ($created) {
-                $this->info('Demo pages created.');
-            } else {
-                $this->warn('Demo pages not created.');
-            }
-
-            $this->newLine();
-
-            $site->loadMissing('languages', 'language');
-            $this->line('Creating tags for site pages...');
-            $this->createTags($site, $site->languages);
-            $this->info('Tags created/updated.');
-            $this->newLine();
-
-            $this->line('Associating tags with pages...');
-            $this->associatePageTags($site);
-            $this->info('Tags associated with pages.');
-            $this->newLine();
+            $this->runDemoForSite($site, $user, $limit);
         }
 
         $this->info('Blog demo setup completed for selected sites.');
@@ -118,22 +80,192 @@ class DemoCommand extends Command
         return self::SUCCESS;
     }
 
-    private function createArticlePage(
+    /**
+     * Parse the --sites option into an array of site names.
+     *
+     * @return array<int, string>
+     */
+    private function parseSitesOption(): array
+    {
+        $sitesOption = $this->option('sites');
+
+        if ($sitesOption) {
+            return is_string($sitesOption)
+                ? array_filter(array_map('trim', explode(',', $sitesOption)))
+                : (is_array($sitesOption) ? $sitesOption : []);
+        }
+
+        return $this->getDemoSites() ?? [];
+    }
+
+    /**
+     * Resolve Site models for the given names.
+     *
+     * @param  array<int, string>  $siteNames
+     * @return \Illuminate\Support\Collection<int, Site>
+     */
+    private function resolveSites(array $siteNames)
+    {
+        /** @var class-string<Site> $model */
+        $model = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Site);
+
+        return $model::query()
+            ->with(['languages'])
+            ->whereIn('name', $siteNames)
+            ->get();
+    }
+
+    /**
+     * Resolve the user for demo page authorship.
+     */
+    private function resolveUser(): ?Model
+    {
+        $userOption = $this->option('user');
+
+        if ($userOption) {
+            /** @var class-string<\Illuminate\Foundation\Auth\User> $model */
+            $model = CapellCore::getModel('User');
+
+            return $model::query()->find($userOption);
+        }
+
+        if (function_exists('auth') && auth()->check()) {
+            $user = auth()->user();
+
+            return $user instanceof Model ? $user : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Parse and validate the --limit option.
+     */
+    private function parseLimitOption(): ?int
+    {
+        $limit = $this->option('limit') ? (int) $this->option('limit') : null;
+
+        if ($limit !== null && (! is_int($limit) || $limit < 1)) {
+            $this->warn('The --limit option must be a positive integer. No demo pages will be created.');
+
+            return null;
+        }
+
+        return $limit;
+    }
+
+    /**
+     * Run the demo setup for a single site.
+     */
+    private function runDemoForSite(
+        Site $site,
+        ?Model $user,
+        ?int $limit,
+    ): void {
+        $this->info('Setting up demo blog for site: ' . $site->name);
+        $this->newLine();
+
+        $this->demoCreator = new DemoCreator(author: $user);
+
+        $this->blogCreator = resolve(BlogCreator::class);
+
+        $this->line('Ensuring required blog and ancillary pages exist...');
+        CreateBlogPagesAction::run($site);
+        $this->newLine();
+
+        $this->line('Creating demo pages...');
+        $created = $this->createDemoArticlesWithLimit($site, $user, $limit);
+
+        if ($created) {
+            $this->info('Demo pages created.');
+        } else {
+            $this->warn('Demo pages not created.');
+        }
+
+        $this->newLine();
+
+        $this->line('Creating tags for site pages...');
+        $this->createTags($site, $site->languages);
+        $this->info('Tags created/updated.');
+        $this->newLine();
+
+        $this->line('Associating tags with pages...');
+        $this->associatePageTags($site);
+        $this->info('Tags associated with pages.');
+        $this->newLine();
+    }
+
+    /**
+     * Create demo pages for a site, respecting the global limit.
+     */
+    private function createDemoArticlesWithLimit(
+        Site $site,
+        ?Model $user,
+        ?int $limit = null,
+    ): bool {
+        $site->loadMissing('languages', 'language');
+        $blogPage = BlogLoader::getBlogPage($site);
+
+        if (! $blogPage instanceof Page) {
+            $this->warn('Blog page not found for site: ' . $site->name);
+
+            return false;
+        }
+
+        $demo = config('capell-demo.pages');
+        $createdCount = 0;
+
+        $type = $this->blogCreator->createArticlePageType();
+
+        foreach ($demo as $pageData) {
+            if ($limit !== null && $createdCount >= $limit) {
+                break;
+            }
+
+            $createdCount += $this->createDemoArticleRecursive(
+                $pageData,
+                $site,
+                $site->languages,
+                $site->language,
+                $blogPage,
+                '',
+                $type,
+                $user,
+                $limit,
+                $createdCount,
+            );
+        }
+
+        $this->info(sprintf('%d demo articles created for site: %s', $createdCount, $site->name));
+
+        return true;
+    }
+
+    /**
+     * Recursively create demo pages, counting toward the global limit.
+     * Returns the number of pages created in this branch.
+     */
+    private function createDemoArticleRecursive(
         array $data,
         Site $site,
         Collection $languages,
         Language $defaultLanguage,
-        null|bool|Page $parent = null,
-        ?string $parentName = '',
-        string $type = '',
-        ?Model $author = null,
-    ): void {
-        $name = Str::title($data['name']['en']);
-        if ($type !== '' && $type !== '0') {
-            $name .= ' ' . Str::title($type);
+        $parent,
+        $parentName,
+        Type $type,
+        $author,
+        ?int $limit,
+        int $createdSoFar,
+    ): int {
+        if ($limit !== null && $createdSoFar >= $limit) {
+            return 0;
         }
 
-        $full_name = in_array($parentName, [null, '', '0'], true) ? $name : sprintf('%s » %s', $parentName, $name);
+        $name = Str::title($data['name']['en']) . ' ' . $type->name;
+
+        $full_name = in_array($parentName, [null, '', '0'], true)
+            ? $name
+            : sprintf('%s » %s', $parentName, $name);
 
         $this->line('Creating page: ' . $full_name);
 
@@ -152,68 +284,50 @@ class DemoCommand extends Command
         }
 
         $page = $this->demoCreator->createPage($data, $site, $languages, $parent, $type);
+
         $this->line(sprintf('Created page: %s (ID: ', $full_name) . ($page?->id ?? 'n/a') . ')');
 
-        if (! isset($data['children'])) {
-            return;
+        $created = 1;
+
+        if (! isset($data['children']) || ($limit !== null && $createdSoFar + $created >= $limit)) {
+            return $created;
         }
 
         $this->line('Recursing into children of: ' . $full_name);
 
         foreach ($data['children'] as $child) {
-            $this->createArticlePage(
-                data: $child,
-                site: $site,
-                languages: $languages,
-                defaultLanguage: $defaultLanguage,
-                parent: $parent === false ? false : $page,
-                parentName: $full_name,
-                type: $type,
-                author: $author,
-            );
-        }
-    }
+            if ($limit !== null && $createdSoFar + $created >= $limit) {
+                break;
+            }
 
-    private function createDemoPages(Site $site, ?Model $user, ?int $limit = null): bool
-    {
-        $site->loadMissing('languages', 'language');
-        $blogPage = BlogLoader::getBlogPage($site);
-        if (! $blogPage instanceof Page) {
-            $this->warn('Blog page not found for site: ' . $site->name);
-
-            return false;
-        }
-
-        $demo = config('capell-demo.pages');
-        $demo = array_slice($demo, 0, $limit);
-
-        $createdCount = 0;
-        foreach ($demo as $pageData) {
-            $this->line('Creating demo article: ' . ($pageData['name']['en'] ?? '[unnamed]'));
-            $this->createArticlePage(
-                $pageData,
+            $created += $this->createDemoArticleRecursive(
+                $child,
                 $site,
-                $site->languages,
-                $site->language,
-                parent: $blogPage,
-                type: strtolower(ResourceEnum::Article->name),
-                author: $user,
+                $languages,
+                $defaultLanguage,
+                $parent === false ? false : $page,
+                $full_name,
+                $type,
+                $author,
+                $limit,
+                $createdSoFar + $created,
             );
-            $createdCount++;
         }
 
-        $this->info(sprintf('%d demo articles created for site: %s', $createdCount, $site->name));
-
-        return true;
+        return $created;
     }
 
     private function createTags(Site $site, $languages): void
     {
-        $pages = CapellCore::getModel(CoreModelEnum::Page)::query()
+        /** @var class-string<Page> $model */
+        $model = CapellCore::getModel(CoreModelEnum::Page);
+
+        $pages = $model::query()
             ->where('site_id', $site->id)
             ->whereHas('children')
             ->whereRelation('type', 'key', 'article')
             ->with(['translations'])
+            ->limit(50)
             ->get();
         $tagModel = CapellCore::getModel(BlogModelEnum::Tag);
         $pages->each(function (Page $page) use ($tagModel, $languages): void {
@@ -258,7 +372,7 @@ class DemoCommand extends Command
             ])
             ->whereHas(
                 'type',
-                fn (BuilderContract $query) => $query->whereIn('key', ['default', 'article']),
+                fn (BuilderContract $query): BuilderContract => $query->whereIn('key', ['default', 'article']),
             )
             ->notHomePage()
             ->where('site_id', $site->id)
@@ -276,7 +390,9 @@ class DemoCommand extends Command
 
             if ($tag) {
                 $page->tags()->syncWithoutDetaching($tag);
-                $page->children->each(fn (Page $childPage) => $childPage->tags()->syncWithoutDetaching($tag));
+                $page->children->take(10)->each(function (Page $childPage) use ($tag): void {
+                    $childPage->tags()->syncWithoutDetaching($tag);
+                });
             }
         }
     }

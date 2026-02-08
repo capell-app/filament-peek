@@ -10,6 +10,7 @@ use Capell\Assistant\Providers\AssistantServiceProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Fixtures\Support\Filament\AdminPanelProvider;
+use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
 use Override;
 
@@ -33,6 +34,10 @@ class AssistantTestCase extends AbstractTestCase
         );
     }
 
+    /**
+     * @param  Application  $app
+     * @return class-string[]
+     */
     protected function getPackageProviders($app): array
     {
         return [

@@ -85,7 +85,7 @@ it('runs install command and does not publish files for capell:publish-migration
 
     // Assert no migration files are published
     expect($this->fakeFileManager->calls)
-        ->not->toContain(fn (array $call): bool => $call[0] === 'copy')
+        ->not()->toContain(fn (array $call): bool => $call[0] === 'copy')
         ->toBeArray();
 
     // Assert migrations directory was checked
@@ -105,7 +105,7 @@ it('runs install command and does not publish files for capell:publish-migration
 
     // Assert theme exists and has expected attributes
     $themeRow = DB::table('themes')->where('id', $theme->id)->first();
-    expect($themeRow)->not->toBeNull();
+    expect($themeRow)->not()->toBeNull();
     // Optionally, check for expected attributes if your factory sets them
     // expect($themeRow->name)->toBe('Expected Name');
 });

@@ -73,8 +73,8 @@ class DefaultContentSchema implements TypeSchemaInterface
         return [
             ...ContentDetailsSchema::make($schema),
             ContentTranslationsRepeater::make($schema)
-                ->contained()
-                ->hiddenLabel(),
+                ->hiddenLabel()
+                ->contained(),
             ...ContentSettingsSchema::make($schema),
             MediaLibraryFileUpload::make('image'),
             PublishSchema::make($schema),
@@ -85,11 +85,11 @@ class DefaultContentSchema implements TypeSchemaInterface
     {
         return [
             Section::make()
-                ->contained(fn (string $operation): bool => $operation === 'create')
                 ->hiddenOn('edit')
                 ->columnSpanFull()
                 ->columns()
-                ->schema(ContentDetailsSchema::make($schema)),
+                ->schema(ContentDetailsSchema::make($schema))
+                ->contained(fn (string $operation): bool => $operation === 'create'),
             FixedWidthSidebar::make()
                 ->mainSchema([
                     Tabs::make()

@@ -8,7 +8,9 @@ use Capell\Address\Database\Factories\CountryFactory;
 use Capell\Address\Observers\CountryObserver;
 use Capell\Core\Models\Concerns\HasDefault;
 use Capell\Core\Models\Concerns\HasStatus;
+use Capell\Core\Models\Concerns\HasUserstamps;
 use Capell\Core\Models\Contracts\Defaultable;
+use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Core\Models\Language;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,7 +22,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
-use Wildside\Userstamps\Userstamps;
 
 /**
  * @mixin Model
@@ -49,7 +50,7 @@ use Wildside\Userstamps\Userstamps;
  * @mixin Model
  */
 #[ObservedBy(CountryObserver::class)]
-class Country extends Model implements Defaultable
+class Country extends Model implements Defaultable, Userstampable
 {
     use HasDefault;
 
@@ -58,8 +59,8 @@ class Country extends Model implements Defaultable
 
     use HasJsonRelationships;
     use HasStatus;
+    use HasUserstamps;
     use SoftDeletes;
-    use Userstamps;
 
     protected $fillable = [
         'default',

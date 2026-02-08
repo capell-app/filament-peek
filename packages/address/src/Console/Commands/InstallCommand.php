@@ -37,8 +37,6 @@ class InstallCommand extends Command
      */
     public function handle(): int
     {
-        $this->info('Installing Capell Address...');
-
         AddressModelRegistrar::register();
 
         Filament::getDefaultPanel()
@@ -66,9 +64,10 @@ class InstallCommand extends Command
 
         $this->call('migrate');
 
-        $this->call('filament:assets');
+        $this->callSilent('filament:assets');
 
-        $this->info('Capell Address installation complete.');
+        $this->newLine();
+        $this->info('Capell Address installed successfully.');
 
         return self::SUCCESS;
     }

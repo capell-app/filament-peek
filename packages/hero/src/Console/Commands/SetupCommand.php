@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Hero\Console\Commands;
 
-use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
@@ -12,42 +11,42 @@ use Capell\Core\Models\Layout;
 use Capell\Hero\Actions\AddHeroToLayoutAction;
 use Illuminate\Console\Command;
 
-class InstallCommand extends Command
+class SetupCommand extends Command
 {
-    use HasSitesOption;
-
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Inserts hero';
+    protected $description = 'Setting up hero package';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'capell-hero:install';
+    protected $signature = 'capell-hero:setup';
 
     /**
      * Execute the console command.
      */
     public function handle(): int
     {
+        $this->info('Setting up hero package...');
+
         /** @var class-string<Layout> $layoutModel */
         $layoutModel = CapellCore::getModel(ModelEnum::Layout);
 
         $layoutModel::query()->whereNotIn('key', [
             LayoutEnum::Default->value,
-            LayoutEnum::Home->value,
             LayoutEnum::Results->value,
         ])
             ->each(function (Layout $layout): void {
                 AddHeroToLayoutAction::run($layout);
             });
 
-        $this->line('Hero package installed successfully.');
+        $this->newLine();
+        $this->info('Capell Hero setup successfully.');
 
         return Command::SUCCESS;
     }

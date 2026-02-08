@@ -15,16 +15,20 @@ use Capell\Core\Models\Concerns\HasMetaData;
 use Capell\Core\Models\Concerns\HasMorphModelRelations;
 use Capell\Core\Models\Concerns\HasPublishDates;
 use Capell\Core\Models\Concerns\HasTranslations;
+use Capell\Core\Models\Concerns\HasType;
 use Capell\Core\Models\Concerns\HasTypes;
+use Capell\Core\Models\Concerns\HasUserstamps;
 use Capell\Core\Models\Concerns\InteractsWithMedia;
 use Capell\Core\Models\Contracts\Draftable;
+use Capell\Core\Models\Contracts\Publishable;
+use Capell\Core\Models\Contracts\Typeable;
+use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Capell\Layout\Database\Factories\ContentFactory;
-use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Observers\ContentObserver;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -49,7 +53,6 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
-use Wildside\Userstamps\Userstamps;
 
 /**
  * @property-read Collection<int, AssetRelation> $assets
@@ -159,7 +162,7 @@ use Wildside\Userstamps\Userstamps;
  * @mixin Model
  */
 #[ObservedBy(ContentObserver::class)]
-class Content extends Model implements Draftable, HasMedia, PageCacheable
+class Content extends Model implements Draftable, HasMedia, PageCacheable, Publishable, Typeable, Userstampable
 {
     use Cloneable;
     use HasAssets;
@@ -169,16 +172,15 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
     use HasDraftsAndNestedSet {
         HasDraftsAndNestedSet::parent as hasDraftsAndNestedSetParent;
     }
-
-    /** @use HasFactory<ContentFactory> */
     use HasFactory;
-
     use HasJsonRelationships;
     use HasMetaData;
     use HasMorphModelRelations;
     use HasPublishDates;
     use HasTranslations;
+    use HasType;
     use HasTypes;
+    use HasUserstamps;
     use InteractsWithMedia;
     use LogsActivity;
     use NodeTrait {
@@ -187,7 +189,6 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
         NodeTrait::applyNestedSetScope as applyNestedSetScopeParent;
     }
     use SoftDeletes;
-    use Userstamps;
 
     /**
      * The attributes that are mass assignable.
@@ -218,7 +219,7 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
 
     protected static string $factory = ContentFactory::class;
 
-    public static function getMorphRelations(?Language $language = null): array
+    public static function getMorphRelations(?Language $language = null, bool $normalizeKey = false): array
     {
         $base = [
             'ancestors.type',
@@ -260,12 +261,12 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
                     },
                 ]);
             },
-            'translation' => fn (BuilderContract $query) => $query->with('language')
+            'translation' => fn (BuilderContract $query): BuilderContract => $query->with('language')
                 ->when($language, fn ($query) => $query->where('language_id', $language->id)),
             'type',
         ];
 
-        return static::mergeMorphRelationDefinitions($base, self::class, $language);
+        return static::mergeMorphRelationDefinitions($base, self::class, $language, $normalizeKey);
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -329,19 +330,13 @@ class Content extends Model implements Draftable, HasMedia, PageCacheable
     public function loadParent(Language $language): void
     {
         $this->load([
-            'parent' => fn (BuilderContract $query) => $query->withWhereHasLanguage($language->id),
+            'parent' => fn (BuilderContract $query): BuilderContract => $query->withWhereHasLanguage($language->id),
         ]);
     }
 
     public function parent(): BelongsTo
     {
         return $this->hasDraftsAndNestedSetParent();
-    }
-
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(Type::class)
-            ->where('type', LayoutTypeEnum::Content);
     }
 
     public function site(): BelongsTo

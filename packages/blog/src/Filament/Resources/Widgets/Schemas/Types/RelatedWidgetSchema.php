@@ -8,6 +8,7 @@ use Capell\Admin\Filament\Components\Forms\CacheFrequencySelect;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Type;
 use Capell\Layout\Filament\Components\Forms\Widget\CreateWidgetDetailsSchema;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\Layout\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
@@ -75,10 +76,15 @@ class RelatedWidgetSchema extends DefaultWidgetSchema
                                     ->helperText(__('capell-layout::generic.exclude_types_info'))
                                     ->multiple()
                                     ->options(
-                                        fn (): array => CapellCore::getModel(ModelEnum::Type)::query()
-                                            ->pageType()
-                                            ->pluck('name', 'key')
-                                            ->toArray(),
+                                        function (): array {
+                                            /** @var class-string<Type> $model */
+                                            $model = CapellCore::getModel(ModelEnum::Type);
+
+                                            return $model::query()
+                                                ->pageType()
+                                                ->pluck('name', 'key')
+                                                ->toArray();
+                                        },
                                     ),
                             ]),
                             Grid::make(3)

@@ -86,7 +86,7 @@ class DemoCreator
                             ->whereHas(
                                 'type',
                                 /** @param Type $query */
-                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
+                                fn (BuilderContract $query): BuilderContract => $query->listable()->enabled()->accessible(),
                             )
                             ->inRandomOrder()
                             ->value('id'),
@@ -134,7 +134,7 @@ class DemoCreator
                             ->whereHas(
                                 'type',
                                 /** @param Type $query */
-                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
+                                fn (BuilderContract $query): BuilderContract => $query->listable()->enabled()->accessible(),
                             )
                             ->inRandomOrder()
                             ->value('id'),
@@ -179,7 +179,7 @@ class DemoCreator
                             ->whereHas(
                                 'type',
                                 /** @param Type $query */
-                                fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
+                                fn (BuilderContract $query): BuilderContract => $query->listable()->enabled()->accessible(),
                             )
                             ->inRandomOrder()
                             ->value('id'),
@@ -210,7 +210,7 @@ class DemoCreator
 
     public function createGalleryWidget(): Widget
     {
-        $widget = $this->widgetModel::query()->where('key', 'gallery')->first();
+        $widget = resolve(WidgetCreator::class)->galleryWidget();
 
         if ($widget->assets()->exists()) {
             return $widget;
@@ -228,10 +228,11 @@ class DemoCreator
         $widget = $this->widgetModel::query()->firstWhere('key', 'pages-card');
 
         if (! $widget) {
+            $type = resolve(TypeCreator::class)->pagesWidgetType();
             $widget = $this->widgetModel::query()->create([
                 'key' => 'pages-card',
                 'name' => __('capell-layout::generic.pages_tile'),
-                'type_id' => $this->typeModel::query()->firstWhere('key', WidgetTypeEnum::Pages)->id,
+                'type_id' => $type->id,
                 'meta' => [
                     'component' => LivewireComponentsEnum::PagesWidget,
                     'columns' => 4,
@@ -256,7 +257,7 @@ class DemoCreator
         }
 
         $pages = $this->pageModel::query()
-            ->whereHas('type', fn (BuilderContract $query) => $query->default())
+            ->whereHas('type', fn (BuilderContract $query): BuilderContract => $query->default())
             ->whereHas('image')
             ->where('site_id', $page->site_id)
             ->notHomePage()
@@ -264,7 +265,7 @@ class DemoCreator
             ->limit(3)
             ->pluck('id');
 
-        throw_if($pages->isEmpty(), RuntimeException::class, 'No pages found to associate with the widget.');
+        throw_if($pages->isEmpty(), RuntimeException::class, 'No pages with images found to associate with the widget.');
 
         $pages->each(fn ($related_page_id): WidgetAsset => $widget->assets()->create([
             'page_id' => $page->id,
@@ -424,7 +425,7 @@ class DemoCreator
             ->whereHas(
                 'type',
                 /** @param  Type  $query */
-                fn (BuilderContract $query) => $query->where('type', 'page')
+                fn (BuilderContract $query): BuilderContract => $query->where('type', 'page')
                     ->enabled()
                     ->listable()
                     ->accessible()
@@ -432,7 +433,7 @@ class DemoCreator
             )
             ->withWhereHas(
                 'children',
-                fn (BuilderContract $query) => $query->whereHas('type')->limit(2),
+                fn (BuilderContract $query): BuilderContract => $query->whereHas('type')->limit(2),
             )
             ->limit(4)
             ->get();
@@ -517,7 +518,7 @@ class DemoCreator
                                 ->whereHas(
                                     'type',
                                     /** @param Type $query */
-                                    fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
+                                    fn (BuilderContract $query): BuilderContract => $query->listable()->enabled()->accessible(),
                                 )
                                 ->inRandomOrder()
                                 ->value('id'),
@@ -529,7 +530,7 @@ class DemoCreator
                                 ->whereHas(
                                     'type',
                                     /** @param Type $query */
-                                    fn (BuilderContract $query) => $query->listable()->enabled()->accessible(),
+                                    fn (BuilderContract $query): BuilderContract => $query->listable()->enabled()->accessible(),
                                 )
                                 ->inRandomOrder()
                                 ->value('id'),

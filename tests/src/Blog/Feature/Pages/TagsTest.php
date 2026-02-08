@@ -38,15 +38,15 @@ test('tags page list tags', function (): void {
 
     expect($tagsPage)
         ->toBeInstanceOf(Page::class)
-        ->name->toBe('Tags Page')
+        ->name->toBe('Tags Page (show all tags)')
         ->type->name->toBe('System')
         ->layout->name->toBe('Tags')
         ->translation->language->id->toBe($language->id)
         ->pageUrl->language->id->toBe($language->id)
         ->and($tagPage)
         ->toBeInstanceOf(Page::class)
-        ->name->toBe('Tag Results')
-        ->type->name->toBe('Tag Results')
+        ->name->toBe('Tag Page (show all articles with this tag)')
+        ->type->name->toBe('Tag Page (show all articles with this tag)')
         ->layout->name->toBe('Results')
         ->translation->language->id->toBe($language->id)
         ->pageUrl->language->id->toBe($language->id);

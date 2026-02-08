@@ -28,7 +28,6 @@ class TagForm implements FormConfigurator
             Section::make()
                 ->columns()
                 ->columnSpanFull()
-                ->contained(in_array($schema->getOperation(), ['create', 'edit']))
                 ->schema([
                     NameInput::make('name')
                         ->afterStateUpdatedJs(function (string $operation): string {
@@ -60,7 +59,8 @@ class TagForm implements FormConfigurator
 
                             StatusToggle::make('status'),
                         ]),
-                ]),
+                ])
+                ->contained(in_array($schema->getOperation(), ['create', 'edit'])),
         ];
     }
 }

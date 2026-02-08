@@ -53,7 +53,7 @@ class ContentSelect extends Select
                     search: $search,
                 );
             })
-            ->getOptionLabelUsing(fn (self $component, $value): ?string => Content::query()->find($value, ['name'])?->name)
+            ->getOptionLabelUsing(fn (self $component, ?int $value): ?string => Content::query()->find($value, ['name'])?->name)
             ->options(fn (self $component): array => $component->getContentOptions());
     }
 
@@ -221,7 +221,7 @@ class ContentSelect extends Select
             )
             ->when(
                 $contentType,
-                fn (Builder $query) => $query->whereHas('type', fn (BuilderContract $query) => $query->where('key', $contentType)),
+                fn (Builder $query) => $query->whereHas('type', fn (BuilderContract $query): BuilderContract => $query->where('key', $contentType)),
             )
             ->when(
                 $site_id,
@@ -231,7 +231,7 @@ class ContentSelect extends Select
                 $parentContentType,
                 fn (Builder $query) => $query->whereHas(
                     'parent.type',
-                    fn (BuilderContract $query) => $query->where('key', $parentContentType),
+                    fn (BuilderContract $query): BuilderContract => $query->where('key', $parentContentType),
                 ),
             )
             ->when(

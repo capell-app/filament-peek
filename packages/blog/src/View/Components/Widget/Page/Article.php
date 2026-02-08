@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Capell\Blog\View\Components\Widget\Page;
 
-use App\Models\User;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Capell\Layout\View\Components\Widget\AbstractWidget;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class Article extends AbstractWidget
 {
-    // @phpstan-ignore-next-line
-    public ?User $author = null;
+    public ?Authenticatable $author = null;
 
     public ?Page $nextPage = null;
 

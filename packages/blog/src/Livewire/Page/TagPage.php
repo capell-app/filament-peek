@@ -68,7 +68,7 @@ class TagPage extends AbstractPage
             language: $language,
             site: $site,
             limit: $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12),
-            paginationPage: $this->getPage($paginationKey),
+            paginationPage: (int) $this->getPage($paginationKey),
             withChildrenCount: $page->type->meta['with_children_count'] ?? true,
             withImage: $page->type->meta['with_image'] ?? true,
             withPagination: $page->type->meta['pagination'] ?? true,
@@ -78,7 +78,7 @@ class TagPage extends AbstractPage
             cacheKeyPrepend: 'tagged-' . $this->tag->id,
             modifyQuery: fn (Builder $query) => $query->whereHas(
                 'tags',
-                fn (BuilderContract $query) => $query->where('taggable_type', 'page')
+                fn (BuilderContract $query): BuilderContract => $query->where('taggable_type', 'page')
                     ->where('taggables.tag_id', $this->tag->id),
             ),
         );

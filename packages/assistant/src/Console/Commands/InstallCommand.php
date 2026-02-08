@@ -47,9 +47,13 @@ class InstallCommand extends Command
             '--path' => $settings,
         ]);
 
-        $this->info('Assistant package installed successfully.');
-        $this->newLine();
+        $this->info('Migrations published successfully.');
 
-        return 0;
+        $this->call('migrate');
+
+        $this->newLine();
+        $this->info('Capell Assistant installed successfully.');
+
+        return Command::SUCCESS;
     }
 }

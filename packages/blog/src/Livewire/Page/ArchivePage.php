@@ -83,7 +83,7 @@ class ArchivePage extends AbstractPage
             language: Frontend::language(),
             site: Frontend::site(),
             limit: $page->type->meta['limit'] ?? config('capell-frontend.pagination_limit', 12),
-            paginationPage: $this->getPage($paginationKey),
+            paginationPage: (int) $this->getPage($paginationKey),
             typeKey: $page->type->meta['page_group'] ?? strtolower(ResourceEnum::Article->name),
             withImage: $page->type->meta['with_image'] ?? false,
             withPagination: $page->type->meta['pagination'] ?? true,

@@ -10,6 +10,7 @@ use Capell\Assistant\Support\Context\ContentActionContext;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\PageTranslation;
+use Capell\Core\Models\Site;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -43,11 +44,14 @@ class PageContentEditorConfigurator
             ->icon(Heroicon::OutlinedSparkles)
             ->modalDescription(__('Provide keywords to generate SEO-friendly content using AI.'))
             ->fillForm(function (Get $get): array {
-                $site = CapellCore::getModel(ModelEnum::Site)::query()
+                /** @var class-string<Site> $model */
+                $model = CapellCore::getModel(ModelEnum::Site);
+
+                $site = $model::query()
                     ->whereKey($get('../../site_id'))
                     ->withWhereHas(
                         'translation',
-                        fn (BuilderContract $query) => $query->where('language_id', $get('language_id')),
+                        fn (BuilderContract $query): BuilderContract => $query->where('language_id', $get('language_id')),
                     )
                     ->first();
 

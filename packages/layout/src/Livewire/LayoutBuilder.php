@@ -1376,7 +1376,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                         )
                         ->all(),
                 )
-                ->default(fn () => CapellCore::getModel(CoreModelEnum::Layout)::default()->first(['id'])?->id)
+                ->default(function () {
+                    /** @var class-string<Layout> $model */
+                    $model = CapellCore::getModel(CoreModelEnum::Layout);
+
+                    return $model::default()->first(['id'])?->id;
+                })
                 ->reactive()
                 ->helperText(
                     function (?int $state): ?HtmlString {
@@ -1928,7 +1933,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                         'type',
                         'backgroundImage',
                         'image',
-                        'translation' => fn (BuilderContract $query) => $query->orderBy('language_id'),
+                        'translation' => fn (BuilderContract $query): BuilderContract => $query->orderBy('language_id'),
                     ]),
             );
     }
@@ -2009,7 +2014,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                         ->ordered()
                         ->with(
                             'asset',
-                            fn (BuilderContract $query) => $query->morphWith($this->getAssetRelations()),
+                            fn (BuilderContract $query): BuilderContract => $query->morphWith($this->getAssetRelations()),
                         ),
                 ]),
             )
@@ -2112,7 +2117,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                 )
                 ->when(
                     DB::getDriverName() === 'sqlite',
-                    fn (BuilderContract $query) => $query->orderByRaw(
+                    fn (BuilderContract $query): BuilderContract => $query->orderByRaw(
                         'CASE id '
                         . implode(' ', array_map(
                             fn ($id, $pos): string => sprintf('WHEN %d THEN %d', (int) $id, $pos),
@@ -2121,7 +2126,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
                         ))
                           . ' END',
                     ),
-                    fn (BuilderContract $query) => $query->orderByRaw('FIELD(id, ' . implode(',', array_map(intval(...), $existingIds)) . ')'),
+                    fn (BuilderContract $query): BuilderContract => $query->orderByRaw('FIELD(id, ' . implode(',', array_map(intval(...), $existingIds)) . ')'),
                 )
                 ->get();
 
@@ -2133,7 +2138,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms
 
         $eloquentCollection = new Collection($allAssets->all());
 
-        return $eloquentCollection->load(['asset' => fn (BuilderContract $query) => $query->morphWith($this->getAssetRelations())])
+        return $eloquentCollection->load(['asset' => fn (BuilderContract $query): BuilderContract => $query->morphWith($this->getAssetRelations())])
             ->map(function (WidgetAsset $widgetAsset): WidgetAsset {
                 if (is_numeric($widgetAsset->asset_id)) {
                     $widgetAsset->asset_id = (int) $widgetAsset->asset_id;

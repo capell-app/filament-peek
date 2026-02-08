@@ -8,7 +8,9 @@ use Capell\Address\Database\Factories\AddressFactory;
 use Capell\Address\Observers\AddressObserver;
 use Capell\Core\Models\Concerns\HasDefault;
 use Capell\Core\Models\Concerns\HasStatus;
+use Capell\Core\Models\Concerns\HasUserstamps;
 use Capell\Core\Models\Contracts\Defaultable;
+use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Core\Models\Site;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
-use Wildside\Userstamps\Userstamps;
 
 /**
  * @mixin Model
@@ -60,7 +61,7 @@ use Wildside\Userstamps\Userstamps;
  * @mixin Model
  */
 #[ObservedBy(AddressObserver::class)]
-class Address extends Model implements Defaultable
+class Address extends Model implements Defaultable, Userstampable
 {
     use HasDefault;
 
@@ -69,8 +70,8 @@ class Address extends Model implements Defaultable
 
     use HasJsonRelationships;
     use HasStatus;
+    use HasUserstamps;
     use SoftDeletes;
-    use Userstamps;
 
     protected $fillable = [
         'city',

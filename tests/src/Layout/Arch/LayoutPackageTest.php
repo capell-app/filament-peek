@@ -9,7 +9,7 @@ use Saade\FilamentAdjacencyList\Forms\Components\Concerns\HasRelationship;
 
 arch('Layout package to be standalone')
     ->expect('Capell\Layout')
-    ->not->toUse(['Capell\Blog']);
+    ->not()->toUse(['Capell\Blog']);
 
 arch()
     ->preset()

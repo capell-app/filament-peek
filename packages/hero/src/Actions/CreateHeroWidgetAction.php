@@ -17,6 +17,7 @@ use Capell\Layout\Enums\WidgetTypeGroupEnum;
 use Capell\Layout\Filament\Resources\Types\Schemas\Types\WidgetTypeSchema;
 use Capell\Layout\Filament\Resources\Widgets\Schemas\Types\AssetsWidgetSchema;
 use Capell\Layout\Models\Widget;
+use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -24,6 +25,7 @@ use Lorisleiva\Actions\Concerns\AsObject;
  */
 class CreateHeroWidgetAction
 {
+    use AsFake;
     use AsObject;
 
     public function handle(): Widget

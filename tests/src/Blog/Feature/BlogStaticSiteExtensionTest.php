@@ -68,8 +68,8 @@ it('generates tag and archive URLs for static site', function (): void {
         $expectedUrls[] = $archivePageUrl . $archiveMonth->year . '/' . str_pad((string) $archiveMonth->month, 2, '0', STR_PAD_LEFT);
     }
 
-    expect($visited)->not->toBeEmpty()
-        ->and($tagSlugs)->not->toBeEmpty();
+    expect($visited)->not()->toBeEmpty()
+        ->and($tagSlugs)->not()->toBeEmpty();
 
     foreach ($expectedUrls as $expectedUrl) {
         expect($visited)->toContain($expectedUrl);

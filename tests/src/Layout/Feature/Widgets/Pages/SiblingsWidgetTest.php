@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Frontend\Actions\GetPageVariablesAction;
@@ -21,7 +22,11 @@ uses(TestingFrontend::class);
 it('renders siblings widget on page', function (): void {
     $site = Site::factory()->withTranslations()->create();
     $creator = resolve(WidgetCreator::class);
-    $languages = CapellCore::getModel(CoreModelEnum::Language)::query()->get();
+
+    /** @var class-string<Language> $model */
+    $model = CapellCore::getModel(CoreModelEnum::Language);
+
+    $languages = $model::query()->get();
     $widget = $creator->siblingsWidget(null, $languages);
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $parent = Page::factory()->site($site)->withTranslations()->create();

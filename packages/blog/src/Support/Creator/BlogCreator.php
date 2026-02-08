@@ -41,12 +41,56 @@ use Capell\Layout\Support\Creator\TypeCreator as LayoutTypeCreator;
 use Capell\Layout\Support\Creator\WidgetCreator;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class BlogCreator
 {
+    public function setup(Site $site, $createWidgets = true): void
+    {
+        $typeCreator = resolve(TypeCreator::class);
+        $layoutCreator = resolve(LayoutCreator::class);
+        $layoutTypeCreator = resolve(LayoutTypeCreator::class);
+
+        $languages = $site->getAllLanguages();
+
+        // Types
+        $blogType = $this->createBlogPageType();
+        $tagType = $this->createTagPageType();
+        $archivePageType = $this->createArchivePageType();
+        $systemType = $typeCreator->systemPageType();
+        $this->createArticlePageType();
+
+        // Layouts
+        $blogLayout = $this->createBlogPageLayout();
+        $archivesLayout = $this->createArchivesLayout();
+        $tagsLayout = $this->createTagsLayout();
+        $resultsLayout = $layoutCreator->createResultsLayout();
+        $this->createArticleLayout(createWidgets: $createWidgets);
+
+        // Pages
+        $blogPage = $this->createBlogPage($site, $blogType, $blogLayout, $languages);
+        $archivesPage = $this->createArchivesPage($blogPage, $systemType, $archivesLayout, $languages);
+        $this->createArchivePage($archivesPage, $archivePageType, $resultsLayout, $languages);
+        $tagsPage = $this->createTagsPage($site, $languages, type: $systemType, layout: $tagsLayout, createWidgets: $createWidgets);
+        $this->createTagPage($site, $tagsPage, $languages, type: $tagType, layout: $resultsLayout);
+
+        // Widgets
+        if ($createWidgets) {
+            $articleType = $this->createArticleWidgetType();
+            $resultsType = $layoutTypeCreator->pageResultsWidgetType();
+            $this->createArticleWidgetType();
+
+            $this->createLatestArticlesWidget($languages);
+            $this->createArchivesListWidget($languages);
+            $this->createTagsWidget($languages);
+            $this->createArticleWidget($articleType);
+            $this->relatedPagesWidget($resultsType, $languages);
+        }
+    }
+
     public function createTagPageType(): Type
     {
+        /** @var class-string<Type> $typeMode */
         $typeMode = CapellCore::getModel(CoreModelEnum::Type);
 
         return $typeMode::query()->firstOrCreate([
@@ -75,10 +119,10 @@ class BlogCreator
         ]);
     }
 
-    public function createTagPage(Site $site, ?Page $parent, Collection $languages): Page
+    public function createTagPage(Site $site, ?Page $parent, Collection $languages, ?Type $type = null, ?Layout $layout = null): Page
     {
-        $type = $this->createTagPageType();
-        $layout = $this->getLayout(LayoutEnum::Results);
+        $type ??= $this->createTagPageType();
+        $layout ??= $this->getLayout(LayoutEnum::Results);
 
         $pageModel = CapellCore::getModel(CoreModelEnum::Page);
 
@@ -110,17 +154,16 @@ class BlogCreator
         return $page;
     }
 
-    public function createTagsPage(Site $site, Collection $languages, bool $createWidgets = false): Page
+    public function createTagsPage(Site $site, Collection $languages, ?Type $type = null, ?Layout $layout = null, bool $createWidgets = false): Page
     {
-        $type = $this->getPageType(PageTypeEnum::System);
+        $type ??= $this->getPageType(PageTypeEnum::System);
+        $layout ??= self::createTagsLayout();
 
         if ($createWidgets) {
             $this->createTagsWidget($languages);
             $pageResultsWidgetType = resolve(LayoutTypeCreator::class)->pageResultsWidgetType();
             resolve(WidgetCreator::class)->latestPagesWidget($pageResultsWidgetType, $languages);
         }
-
-        $layout = self::createTagsLayout();
 
         $pageModel = CapellCore::getModel(CoreModelEnum::Page);
 
@@ -377,6 +420,9 @@ class BlogCreator
                 'language_id' => $language->id,
             ], [
                 'title' => __('capell-blog::generic.archives'),
+                'meta' => [
+                    'no_results' => __('capell-blog::messages.no_archives_found'),
+                ],
             ]);
         });
 
@@ -387,7 +433,7 @@ class BlogCreator
     {
         $widgetModel = CapellCore::getModel(ModelEnum::Widget);
 
-        $typeCreator = resolve(\Capell\Layout\Support\Creator\TypeCreator::class);
+        $typeCreator = resolve(LayoutTypeCreator::class);
         $type = $typeCreator->systemWidgetType();
 
         $widget = $widgetModel::query()->firstOrCreate([
@@ -410,6 +456,9 @@ class BlogCreator
             ], [
                 'title' => __('capell-blog::generic.tags'),
                 'content' => '<p>Browse by tag to explore related topics and content.</p>',
+                'meta' => [
+                    'no_results' => __('capell-blog::messages.no_tags_found'),
+                ],
             ]);
         });
     }
@@ -449,17 +498,15 @@ class BlogCreator
 
         $page->save();
 
-        $archivesText = __('capell-blog::generic.blog_archives_title');
-
-        $languages->each(function (Language $language) use ($page, $archivesText): void {
+        $languages->each(function (Language $language) use ($page): void {
             $page->translations()->firstOrCreate([
                 'language_id' => $language->id,
             ], [
                 'slug' => str(__('capell-blog::generic.archives'))->slug(),
                 'title' => __('capell-blog::generic.archives'),
-                'content' => sprintf('<p>%s</p>', $archivesText),
+                'content' => sprintf('<p>%s</p>', __('capell-blog::generic.blog_archives_description')),
                 'meta' => [
-                    'title' => $archivesText,
+                    'title' => __('capell-blog::generic.blog_archives_title'),
                     'description' => __('capell-blog::generic.archives'),
                 ],
             ]);
@@ -473,9 +520,10 @@ class BlogCreator
         if ($createWidgets) {
             $languages = Language::all();
             $widgetCreator = resolve(WidgetCreator::class);
-            $typeCreator = resolve(\Capell\Layout\Support\Creator\TypeCreator::class);
+            $typeCreator = resolve(LayoutTypeCreator::class);
             $systemWidgetType = $typeCreator->systemWidgetType();
             $pageContentWidgetType = $typeCreator->pageContentWidgetType();
+            $resultsType = $typeCreator->pageResultsWidgetType();
 
             $widgetCreator->breadcrumbWidget($systemWidgetType);
             $widgetCreator->pageSlotWidget($systemWidgetType);
@@ -484,7 +532,7 @@ class BlogCreator
             $articleType = $this->createArticleWidgetType();
             $this->createArticleWidget($articleType);
 
-            $this->relatedPagesWidget($articleType, $languages);
+            $this->relatedPagesWidget($resultsType, $languages);
             $this->createTagsWidget($languages);
             $this->createArchivesListWidget($languages);
         }
@@ -553,14 +601,14 @@ class BlogCreator
         ]);
     }
 
-    public function relatedPagesWidget(?Type $type = null, ?\Illuminate\Support\Collection $languages = null): Widget
+    public function relatedPagesWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
         if (! $type instanceof Type) {
-            $typeCreator = resolve(\Capell\Layout\Support\Creator\TypeCreator::class);
+            $typeCreator = resolve(LayoutTypeCreator::class);
             $type = $typeCreator->pageResultsWidgetType();
         }
 
-        if (! $languages instanceof \Illuminate\Support\Collection) {
+        if (! $languages instanceof Collection) {
             $languages = Language::all();
         }
 
@@ -622,7 +670,7 @@ class BlogCreator
         Site $site,
         ?Type $type = null,
         ?Layout $layout = null,
-        ?\Illuminate\Support\Collection $languages = null,
+        ?Collection $languages = null,
     ): Page {
         if (! $type instanceof Type) {
             $type = self::createBlogPageType();
@@ -632,7 +680,7 @@ class BlogCreator
             $layout = self::createBlogPageLayout();
         }
 
-        if (! $languages instanceof \Illuminate\Support\Collection) {
+        if (! $languages instanceof Collection) {
             $languages = $site->languages;
         }
 
@@ -673,7 +721,7 @@ class BlogCreator
             'type' => TypeEnum::Page,
         ], [
             'name' => __('capell-blog::generic.blog'),
-            'group' => TypeGroupEnum::System->value,
+            'group' => TypeGroupEnum::Results->value,
             'admin' => [
                 'type_schema' => PageTypeSchema::getKey(),
                 'schema' => ResultsPageSchema::getKey(),

@@ -33,7 +33,7 @@ class PagesWidget extends AbstractWidget
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
 
         $paginationKey = $this->containerKey . ucfirst((string) $this->widget->key) . $this->occurrence;
-        $paginationPage = $this->getPage($paginationKey);
+        $paginationPage = (int) $this->getPage($paginationKey);
 
         $selection = $this->widget->assets->pluck('asset_id')->toArray();
 

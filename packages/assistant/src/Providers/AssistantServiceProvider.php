@@ -32,6 +32,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Composer\InstalledVersions;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use Spatie\LaravelPackageTools\Package;
 
 class AssistantServiceProvider extends AbstractPackageServiceProvider
@@ -72,27 +73,27 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
 
     protected function registerOpenAiCmsIntegrationServices(): self
     {
-        $this->app->singleton(OpenAIProvider::class, fn ($app): OpenAIProvider => new OpenAIProvider((array) config('capell-assistant.openai', [])));
+        $this->app->singleton(OpenAIProvider::class, fn (Application $app): OpenAIProvider => new OpenAIProvider((array) config('capell-assistant.openai', [])));
 
-        $this->app->singleton(PromptRepository::class, fn ($app): PromptRepository => new PromptRepository((array) config('capell-assistant.prompts', [])));
+        $this->app->singleton(PromptRepository::class, fn (Application $app): PromptRepository => new PromptRepository((array) config('capell-assistant.prompts', [])));
 
         $this->app->singleton(AiResponseParser::class, fn (): AiResponseParser => new AiResponseParser);
 
-        $this->app->singleton(AiRateLimiter::class, fn ($app): AiRateLimiter => new AiRateLimiter(
+        $this->app->singleton(AiRateLimiter::class, fn (Application $app): AiRateLimiter => new AiRateLimiter(
             $app->make(RateLimitCache::class),
             (array) config('capell-assistant.rate_limiting', ['enabled' => false, 'requests_per_minute' => 60]),
         ));
 
         $this->app->singleton(AiTokenCounter::class, fn (): AiTokenCounter => new AiTokenCounter);
 
-        $this->app->singleton(AiFeatureRegistry::class, fn ($app): AiFeatureRegistry => new AiFeatureRegistry((array) config('capell-assistant.features', [])));
+        $this->app->singleton(AiFeatureRegistry::class, fn (Application $app): AiFeatureRegistry => new AiFeatureRegistry((array) config('capell-assistant.features', [])));
 
-        $this->app->singleton(AIGenerationCache::class, fn ($app): AIGenerationCache => new AIGenerationCache(
+        $this->app->singleton(AIGenerationCache::class, fn (Application $app): AIGenerationCache => new AIGenerationCache(
             (string) config('cache.default'),
             (int) config('capell-assistant.cache.ttl', 86400),
         ));
 
-        $this->app->singleton(RateLimitCache::class, fn ($app): RateLimitCache => new RateLimitCache((string) config('cache.default')));
+        $this->app->singleton(RateLimitCache::class, fn (\Illuminate\Foundation\Application $app): RateLimitCache => new RateLimitCache((string) config('cache.default')));
 
         /** @var AiFeatureRegistry $registry */
         $registry = $this->app->make(AiFeatureRegistry::class);

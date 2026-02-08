@@ -9,6 +9,7 @@ use Capell\Address\Models\Address;
 use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Illuminate\Console\Command;
 
@@ -43,7 +44,10 @@ class DemoCommand extends Command
             $siteOptions = $this->getDemoSites();
         }
 
-        $sites = CapellCore::getModel(ModelEnum::Site)::query()
+        /** @var class-string<Site> $model */
+        $model = CapellCore::getModel(ModelEnum::Site);
+
+        $sites = $model::query()
             ->with(['language', 'languages'])
             ->whereIn('name', $siteOptions)
             ->get();
@@ -74,7 +78,8 @@ class DemoCommand extends Command
             $this->line('Demo address content has been successfully created for site: ' . $site->name);
         });
 
-        $this->line('Address demo content inserted successfully.');
+        $this->newLine();
+        $this->info('Address demo content inserted successfully.');
 
         return Command::SUCCESS;
     }
@@ -83,18 +88,24 @@ class DemoCommand extends Command
     {
         $countryModel = CapellCore::getModel(AddressModelEnum::Country);
 
+        /** @var class-string<Language> $model */
+        $model = CapellCore::getModel(ModelEnum::Language);
+
         return $countryModel::query()->firstOrCreate(['iso2' => 'US'], [
             'name' => 'United States',
             'iso2' => 'US',
             'iso3' => 'USA',
-            'language_id' => CapellCore::getModel(ModelEnum::Language)::query()->where('code', 'en')->first()->id,
+            'language_id' => $model::query()->where('code', 'en')->first()->id,
         ]);
     }
 
     private function setupAddress(): Address
     {
+        /** @var class-string<Address> $model */
+        $model = CapellCore::getModel(AddressModelEnum::Address);
+
         /** @var Address $address */
-        $address = CapellCore::getModel(AddressModelEnum::Address)::query()->firstOrCreate([
+        $address = $model::query()->firstOrCreate([
             'line1' => '123 Main St',
             'city' => 'Anytown',
             'postal_code' => '12345',

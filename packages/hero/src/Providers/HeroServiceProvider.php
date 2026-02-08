@@ -10,7 +10,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Hero\Console\Commands\DemoCommand;
-use Capell\Hero\Console\Commands\InstallCommand;
+use Capell\Hero\Console\Commands\SetupCommand;
 use Capell\Hero\Enums\ContentSchemaEnum;
 use Capell\Hero\Enums\WidgetSchemaEnum;
 use Capell\Hero\Filament\Extenders\Page\HeroPageSchemaExtender;
@@ -34,7 +34,7 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
             ->hasViews(self::$name)
             ->hasCommands([
                 DemoCommand::class,
-                InstallCommand::class,
+                SetupCommand::class,
             ])
             ->hasTranslations();
     }
@@ -75,7 +75,7 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
             path: realpath(__DIR__ . '/../..'),
             sort: 10,
             description: static::getDescription(),
-            installCommand: 'capell-hero:install',
+            setupCommand: 'capell-hero:setup',
             demoCommand: 'capell-hero:demo',
             demoParams: ['sites'],
             requirements: [
