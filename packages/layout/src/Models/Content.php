@@ -360,6 +360,46 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
             ->groupBy('widget_assets.widget_id');
     }
 
+    /**
+     * Public bridge to NodeTrait's protected callPendingAction.
+     */
+    public function nodeCallPendingAction(): void
+    {
+        $this->callPendingAction();
+    }
+
+    /**
+     * Public bridge to NodeTrait's protected refreshNode.
+     */
+    public function nodeRefreshNode(): void
+    {
+        $this->refreshNode();
+    }
+
+    /**
+     * Public bridge to NodeTrait's protected deleteDescendants.
+     */
+    public function nodeDeleteDescendants(): void
+    {
+        $this->deleteDescendants();
+    }
+
+    /**
+     * Public bridge to NodeTrait's protected restoreDescendants.
+     */
+    public function nodeRestoreDescendants(mixed $deletedAt): void
+    {
+        $this->restoreDescendants($deletedAt);
+    }
+
+    /**
+     * Helper to expose deleted_at value.
+     */
+    public function nodeGetDeletedAtValue(): mixed
+    {
+        return $this->getAttribute($this->getDeletedAtColumn());
+    }
+
     protected function scopeOrdered(Builder $query, string $dir = 'asc'): void
     {
         $query->orderBy($this->qualifyColumn('order'))

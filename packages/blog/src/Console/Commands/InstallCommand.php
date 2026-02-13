@@ -24,7 +24,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-blog:install';
+    protected $signature = 'capell:blog-install';
 
     /**
      * Execute the console command.

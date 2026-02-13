@@ -42,7 +42,7 @@ Steps:
 1. Run the installer:
 
     ```bash
-    php artisan capell-layout:install
+    php artisan capell:layout-install
     ```
 
     This will:

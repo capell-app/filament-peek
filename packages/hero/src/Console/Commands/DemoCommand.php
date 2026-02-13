@@ -32,7 +32,7 @@ class DemoCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-hero:demo {--sites=}';
+    protected $signature = 'capell:hero-demo {--sites=}';
 
     private DemoCreator $demoCreator;
 

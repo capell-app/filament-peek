@@ -81,14 +81,17 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
             path: realpath(__DIR__ . '/../..'),
             sort: 10,
             description: static::getDescription(),
-            installCommand: 'capell-address:install',
-            demoCommand: 'capell-address:demo',
+            installCommand: InstallCommand::class,
+            demoCommand: DemoCommand::class,
             demoParams: ['sites'],
             requirements: [
                 AdminServiceProvider::$packageName,
             ],
             version: $this->getVersion(),
             url: 'https://capell.app',
+            tailwindSources: [
+                'resources/views/**/*.blade.php',
+            ],
         );
 
         return $this;

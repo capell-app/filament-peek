@@ -20,7 +20,7 @@ class UpgradeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-layout:upgrade';
+    protected $signature = 'capell:layout-upgrade';
 
     /**
      * Execute the console command.

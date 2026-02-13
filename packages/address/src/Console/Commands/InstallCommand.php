@@ -25,7 +25,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-address:install';
+    protected $signature = 'capell:address-install';
 
     public function __construct(private readonly MigrationFileManagerInterface $fileManager)
     {

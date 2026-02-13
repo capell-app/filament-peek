@@ -164,10 +164,10 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             path: realpath(__DIR__ . '/../..'),
             description: static::getDescription(),
             permissions: $this->getPackagePermissions(),
-            installCommand: 'capell-layout:install',
-            setupCommand: 'capell-layout:setup',
-            demoCommand: 'capell-layout:demo',
-            upgradeCommand: 'capell-layout:upgrade',
+            installCommand: InstallCommand::class,
+            setupCommand: SetupCommand::class,
+            demoCommand: DemoCommand::class,
+            upgradeCommand: UpgradeCommand::class,
             demoParams: ['user', 'sites'],
             requirements: [
                 AdminServiceProvider::$packageName,
@@ -175,6 +175,15 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ],
             version: $this->getVersion(),
             url: 'https://capell.app',
+            tailwindPlugins: ['@tailwindcss/typography'],
+            tailwindImports: [
+                'tippy.js/dist/tippy.css',
+                './capell-layout-base.css',
+            ],
+            tailwindSources: [
+                'resources/views/**/*.blade.php',
+                '../../../laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+            ],
         );
 
         return $this;

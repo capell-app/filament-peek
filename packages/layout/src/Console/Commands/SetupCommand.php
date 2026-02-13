@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 class SetupCommand extends Command
 {
-    protected $signature = 'capell-layout:setup';
+    protected $signature = 'capell:layout-setup';
 
     protected $description = 'Setting up the Capell Layout package';
 

@@ -13,7 +13,7 @@ class CreateBlogPagesCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'capell-blog:create-pages {site : The ID of the site to create blog pages for}';
+    protected $signature = 'capell:blog-create-pages {site : The ID of the site to create blog pages for}';
 
     /**
      * The console command description.

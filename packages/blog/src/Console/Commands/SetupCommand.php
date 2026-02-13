@@ -21,7 +21,7 @@ class SetupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-blog:setup';
+    protected $signature = 'capell:blog-setup';
 
     /**
      * Execute the console command.

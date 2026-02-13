@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class MonitorAiUsageCommand extends Command
 {
-    protected $signature = 'capell-admin:monitor-ai-usage';
+    protected $signature = 'capell:admin-monitor-ai-usage';
 
     protected $description = 'Monitor AI usage metrics';
 

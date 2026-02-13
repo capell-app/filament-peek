@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ClearAiCacheCommand extends Command
 {
-    protected $signature = 'capell-admin:clear-ai-cache';
+    protected $signature = 'capell:admin-clear-ai-cache';
 
     protected $description = 'Clear AI generation caches';
 

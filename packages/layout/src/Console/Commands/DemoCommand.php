@@ -36,7 +36,7 @@ class DemoCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-layout:demo {--user} {--sites=}';
+    protected $signature = 'capell:layout-demo {--user} {--sites=}';
 
     protected DemoCreator $demoCreator;
 

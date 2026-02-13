@@ -32,7 +32,7 @@ class DemoCommand extends Command
      *
      * Sites can be provided as comma-separated list: --sites=site1,site2
      */
-    protected $signature = 'capell-blog:demo {--sites=} {--user=} {--limit=}';
+    protected $signature = 'capell:blog-demo {--sites=} {--user=} {--limit=}';
 
     /**
      * The console command description.

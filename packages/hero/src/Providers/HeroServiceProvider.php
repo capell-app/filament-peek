@@ -75,8 +75,8 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
             path: realpath(__DIR__ . '/../..'),
             sort: 10,
             description: static::getDescription(),
-            setupCommand: 'capell-hero:setup',
-            demoCommand: 'capell-hero:demo',
+            setupCommand: SetupCommand::class,
+            demoCommand: DemoCommand::class,
             demoParams: ['sites'],
             requirements: [
                 AdminServiceProvider::$packageName,
@@ -85,6 +85,9 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
             ],
             version: $this->getVersion(),
             url: 'https://capell.app',
+            tailwindSources: [
+                'resources/views/**/*.blade.php',
+            ],
         );
 
         return $this;

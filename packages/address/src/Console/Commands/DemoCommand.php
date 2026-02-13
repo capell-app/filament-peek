@@ -29,7 +29,7 @@ class DemoCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'capell-address:demo {--sites=}';
+    protected $signature = 'capell:address-demo {--sites=}';
 
     /**
      * Execute the console command.

@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 class TestOpenAiConnectionCommand extends Command
 {
-    protected $signature = 'capell-admin:test-openai';
+    protected $signature = 'capell:admin-test-openai';
 
     protected $description = 'Test connectivity to OpenAI';
 

@@ -14,7 +14,7 @@ use Illuminate\Console\Command;
 
 class InstallCommand extends Command
 {
-    protected $signature = 'capell-layout:install';
+    protected $signature = 'capell:layout-install';
 
     protected $description = 'Install the Capell Layout package';
 

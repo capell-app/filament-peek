@@ -128,9 +128,9 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             sort: 9,
             description: static::getDescription(),
             permissions: $this->getPackagePermissions(),
-            installCommand: 'capell-blog:install',
-            setupCommand: 'capell-blog:setup',
-            demoCommand: 'capell-blog:demo',
+            installCommand: InstallCommand::class,
+            setupCommand: SetupCommand::class,
+            demoCommand: DemoCommand::class,
             demoParams: ['user', 'sites'],
             requirements: [
                 AdminServiceProvider::$packageName,
@@ -138,6 +138,9 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ],
             version: $this->getVersion(),
             url: 'https://capell.app',
+            tailwindSources: [
+                'resources/views/**/*.blade.php',
+            ],
         );
 
         return $this;

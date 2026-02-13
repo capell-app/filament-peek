@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 class InstallCommand extends Command
 {
-    protected $signature = 'capell-assistant:install';
+    protected $signature = 'capell:assistant-install';
 
     public function __construct(private readonly MigrationFileManagerInterface $fileManager)
     {

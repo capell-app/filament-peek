@@ -66,7 +66,7 @@ declare(strict_types=1);
 
     @if ($withNextPrev && ($previousPage || $nextPage))
         <div
-            class="mt-10 flex divide-y divide-gray-100 border-t border-gray-100 pt-6 md:divide-x md:divide-y-0"
+            class="neighbor-link mt-10 flex divide-y divide-gray-100 border-t border-gray-100 pt-6 md:divide-x md:divide-y-0"
         >
             @if ($previousPage)
                 <x-capell::page.neighbor-link
