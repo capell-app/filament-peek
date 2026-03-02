@@ -83,7 +83,7 @@ declare(strict_types=1);
 
         if ($widgetAsset->asset->ancestors?->isNotEmpty()) {
             $description .= $widgetAsset->asset->ancestors->pluck('name')
-                ->map(fn ($item) => Str::limit($item, 30))
+                ->map(fn (string $name): string => Str::limit($name, 30))
                 ->implode(' &raquo; ');
         }
 

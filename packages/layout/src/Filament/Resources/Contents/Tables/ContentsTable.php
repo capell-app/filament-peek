@@ -46,6 +46,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
@@ -169,7 +170,7 @@ class ContentsTable implements TableConfigurator
             SiteColumn::make('site.name')
                 ->hidden(
                     fn (HasTable $livewire): bool => $livewire->activeTab
-                        || ! empty($livewire->getTableFilterState('filter')['site_id']),
+                        || ($livewire->getTableFilterState('filter')['site_id'] ?? null) !== null && $livewire->getTableFilterState('filter')['site_id'] !== '',
                 ),
             PublishIconColumn::make('status'),
             DateColumn::make('publish_from')
@@ -247,7 +248,7 @@ class ContentsTable implements TableConfigurator
                     Select::make('parent_id')
                         ->label(__('capell-admin::form.parent'))
                         ->allowHtml()
-                        ->options(function (HasTable $livewire, Get $get) {
+                        ->options(function (HasTable $livewire, Get $get): Collection {
                             $siteId = static::getSiteId($livewire);
 
                             /** @var class-string<Content> $model */
@@ -259,10 +260,10 @@ class ContentsTable implements TableConfigurator
                             ])
                                 ->whereHas('children')
                                 ->whereHas('type', fn (BuilderContract $query): BuilderContract => $query->enabled())
-                                ->when($siteId, fn (Builder $query) => $query->where('site_id', $siteId))
+                                ->when($siteId, fn (Builder $query): Builder => $query->where('site_id', $siteId))
                                 ->when(
                                     $get('language_id'),
-                                    fn (Builder $query, $languageId) => $query->whereHas(
+                                    fn (Builder $query, int $languageId): Builder => $query->whereHas(
                                         'translations',
                                         fn (BuilderContract $query): BuilderContract => $query->where('translations.language_id', $languageId),
                                     ),
@@ -282,7 +283,7 @@ class ContentsTable implements TableConfigurator
 
                                 if ($ancestors->isNotEmpty()) {
                                     $label .= $ancestors->pluck('name')
-                                        ->map(fn ($item) => Str::limit($item, 30))
+                                        ->map(fn (string $item): string => Str::limit($item, 30))
                                         ->implode(' &raquo; ')
                                         . ' &raquo; ';
                                 }
@@ -313,7 +314,7 @@ class ContentsTable implements TableConfigurator
                 ->indicateUsing(function (array $data): array {
                     $indicators = [];
 
-                    if (! empty($data['language_id'])) {
+                    if (isset($data['language_id']) && $data['language_id'] !== null && $data['language_id'] !== '') {
                         /** @var class-string<Language> $model */
                         $model = CapellCore::getModel(CoreModelEnum::Language);
 
@@ -323,7 +324,7 @@ class ContentsTable implements TableConfigurator
                         );
                     }
 
-                    if (! empty($data['parent_id'])) {
+                    if (isset($data['parent_id']) && $data['parent_id'] !== null && $data['parent_id'] !== '') {
                         /** @var class-string<Content> $model */
                         $model = CapellCore::getModel(ModelEnum::Content->name);
 

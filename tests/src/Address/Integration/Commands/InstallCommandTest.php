@@ -12,16 +12,20 @@ use Illuminate\Database\Console\Migrations\MigrateCommand;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function (): void {
-    $this->fakeFileManager = new FakeMigrationFileManager([
+afterEach(function (): void {
+    Mockery::close();
+});
+
+it('runs install command and does not publish files for capell:publish-migrations', function (): void {
+    $fakeFileManager = new FakeMigrationFileManager([
         'fileExists' => [],
         'isDir' => [],
     ]);
-    $this->fakeDatasetPublisher = Mockery::mock(DatasetPublisher::class);
+    $fakeDatasetPublisher = Mockery::mock(DatasetPublisher::class);
 
     $this->instance(
         PublishMigrationsCommand::class,
-        Mockery::mock(new PublishMigrationsCommand($this->fakeDatasetPublisher, $this->fakeFileManager))
+        Mockery::mock(new PublishMigrationsCommand($fakeDatasetPublisher, $fakeFileManager))
             ->makePartial()
             ->shouldReceive('run')->once()->andReturn(0)->getMock(),
     );
@@ -43,14 +47,8 @@ beforeEach(function (): void {
         );
     }
 
-    app()->instance(MigrationFileManagerInterface::class, $this->fakeFileManager);
-});
+    app()->instance(MigrationFileManagerInterface::class, $fakeFileManager);
 
-afterEach(function (): void {
-    Mockery::close();
-});
-
-it('runs install command and does not publish files for capell:publish-migrations', function (): void {
     $theme = Theme::factory()->create();
 
     $this->artisan('capell:address-install')
@@ -60,22 +58,22 @@ it('runs install command and does not publish files for capell:publish-migration
         ->assertExitCode(0);
 
     // Assert no migration files are published
-    expect($this->fakeFileManager->calls)
+    expect($fakeFileManager->calls)
         ->not()->toContain(fn (array $call): bool => $call[0] === 'copy')
         ->toBeArray();
 
     // Assert migrations directory was checked
-    expect(collect($this->fakeFileManager->calls)->contains(
+    expect(collect($fakeFileManager->calls)->contains(
         fn (array $call): bool => $call[0] === 'isDir' && str_contains((string) $call[1], 'database/migrations'),
     ))->toBeTrue();
 
     // Assert fileExists was not called (no migration file existence check)
-    expect(collect($this->fakeFileManager->calls)->contains(
+    expect(collect($fakeFileManager->calls)->contains(
         fn (array $call): bool => $call[0] === 'fileExists',
     ))->toBeFalse();
 
     // Assert makeDir was not called (no directory creation)
-    expect(collect($this->fakeFileManager->calls)->contains(
+    expect(collect($fakeFileManager->calls)->contains(
         fn (array $call): bool => $call[0] === 'makeDir',
     ))->toBeFalse();
 

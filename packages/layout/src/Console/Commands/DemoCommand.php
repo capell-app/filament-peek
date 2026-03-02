@@ -130,11 +130,18 @@ class DemoCommand extends Command
         if ($this->option('sites')) {
             $sitesOption = $this->option('sites');
             if (is_string($sitesOption)) {
-                return array_values(array_filter(array_map(trim(...), explode(',', $sitesOption)), fn ($v): bool => $v !== ''));
+                return array_values(
+                    array_filter(
+                        array_map(trim(...), explode(',', $sitesOption)),
+                        fn (string $siteOption): bool => $siteOption !== '',
+                    ),
+                );
             }
 
             if (is_array($sitesOption)) {
-                return array_values(array_filter(array_map(trim(...), $sitesOption), fn ($v): bool => $v !== ''));
+                return array_values(
+                    array_filter(array_map(trim(...), $sitesOption), fn (string $siteOption): bool => $siteOption !== ''),
+                );
             }
 
             return [];

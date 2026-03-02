@@ -16,7 +16,7 @@ class Siblings extends AbstractPagesWidget
     {
         $page = Frontend::page();
 
-        if (! empty($page->type->meta['hidden'])) {
+        if (isset($page->type->meta['hidden']) && $page->type->meta['hidden'] === true) {
             $this->skipRender = true;
 
             return;

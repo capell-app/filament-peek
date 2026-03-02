@@ -38,7 +38,7 @@ trait HasAssetsRelationManager
             ->color('primary')
             ->successNotificationTitle(__('capell-layout::message.asset_added'))
             ->using(function (array $data, self $livewire): Model {
-                throw_if(empty($data['asset_id']), RuntimeException::class, 'No asset selected');
+                throw_if(! isset($data['asset_id']), RuntimeException::class, 'No asset selected');
 
                 $asset = null;
 
@@ -156,7 +156,7 @@ trait HasAssetsRelationManager
 
         if ($ancestors->isNotEmpty()) {
             $label .= $ancestors->pluck('name')
-                ->map(fn ($item) => Str::limit($item, 30))
+                ->map(fn (string $name): string => Str::limit($name, 30))
                 ->implode(' &raquo; ')
                 . ' &raquo; ';
         }

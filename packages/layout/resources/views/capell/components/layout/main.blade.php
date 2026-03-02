@@ -46,7 +46,7 @@
                     if (! $slotRendered) {
                         $hasSlotWidget = $widgets->contains(
                             fn (\Capell\Layout\Models\Widget $widget) => isset($widget->meta['type']) &&
-                                $widget->meta['type'] === \Capell\Layout\Models\Widget::COMPONENT_SLOT,
+                                $widget->meta['type'] === 'slot',
                         );
 
                         if ($hasSlotWidget) {

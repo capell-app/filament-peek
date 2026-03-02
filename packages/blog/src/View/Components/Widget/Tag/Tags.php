@@ -8,6 +8,8 @@ use Capell\Blog\Support\Loader\TagLoader;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\View\Components\Widget\AbstractWidget;
+use Closure;
+use Illuminate\Contracts\View\View;
 use RuntimeException;
 
 class Tags extends AbstractWidget
@@ -18,7 +20,7 @@ class Tags extends AbstractWidget
 
     protected static string $defaultView = 'capell-blog::components.widget.tag.tags';
 
-    public function render(array $data = [])
+    public function render(array $data = []): View|string|Closure
     {
         return parent::render([
             ...$data,

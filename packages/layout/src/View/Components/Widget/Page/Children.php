@@ -13,7 +13,9 @@ class Children extends AbstractPagesWidget
 
     protected function mountWidget(): void
     {
-        if (! empty(Frontend::page()->type->meta['hidden'])) {
+        $page = Frontend::page();
+
+        if (isset($page->type->meta['hidden']) && $page->type->meta['hidden'] === true) {
             $this->skipRender = true;
 
             return;

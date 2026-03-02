@@ -44,7 +44,7 @@ class WidgetTypeSchema extends DefaultTypeSchema
         return CustomSelectGroup::make(
             'group',
             options: fn (): array => collect(WidgetTypeGroupEnum::cases())
-                ->mapWithKeys(fn ($case): array => [$case->value => $case->name])
+                ->mapWithKeys(fn (WidgetTypeGroupEnum $case): array => [$case->value => $case->name])
                 ->all(),
         );
     }

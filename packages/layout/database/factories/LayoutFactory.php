@@ -18,11 +18,15 @@ class LayoutFactory extends \Capell\Core\Database\Factories\LayoutFactory
     {
         return $this->state([
             'containers' => function (): array {
-                $firstWidget = Widget::query()->firstWhere('key', 'first')
-                    ?: Widget::factory(['key' => 'first'])->create();
+                $firstWidget = Widget::query()->firstWhere('key', 'first');
+                if (! $firstWidget instanceof Widget) {
+                    $firstWidget = Widget::factory(['key' => 'first'])->create();
+                }
 
-                $secondWidget = Widget::query()->firstWhere('key', 'second')
-                    ?: Widget::factory(['key' => 'second'])->create();
+                $secondWidget = Widget::query()->firstWhere('key', 'second');
+                if (! $secondWidget instanceof Widget) {
+                    $secondWidget = Widget::factory(['key' => 'second'])->create();
+                }
 
                 return [
                     'main' => [

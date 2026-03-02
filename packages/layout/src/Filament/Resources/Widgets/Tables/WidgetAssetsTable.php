@@ -117,38 +117,38 @@ class WidgetAssetsTable implements TableConfigurator
                         }),
                 ])
                 ->query(
-                    fn (Builder $query, array $data) => $query
-                        ->unless(
-                            empty($data['asset_type']),
-                            fn (Builder $query) => $query->where('asset_type', $data['asset_type']),
+                    fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            isset($data['asset_type']),
+                            fn (Builder $query): Builder => $query->where('asset_type', $data['asset_type']),
                         )
-                        ->unless(
-                            empty($data['type_id']),
-                            fn (Builder $query) => $query->where('type_id', $data['type_id']),
+                        ->when(
+                            isset($data['type_id']),
+                            fn (Builder $query): Builder => $query->where('type_id', $data['type_id']),
                         )
-                        ->unless(
-                            empty($data['page_id']),
-                            fn (Builder $query) => $query->where('page_id', $data['page_id']),
+                        ->when(
+                            isset($data['page_id']),
+                            fn (Builder $query): Builder => $query->where('page_id', $data['page_id']),
                         ),
                 )
                 ->indicateUsing(function (array $data): array {
                     $indicators = [];
 
-                    if (! empty($data['asset_type'])) {
+                    if (isset($data['asset_type'])) {
                         $indicators['asset_type'] = __(
                             'capell-layout::filter.type',
                             ['type' => $data['asset_type']],
                         );
                     }
 
-                    if (! empty($data['type_id'])) {
+                    if (isset($data['type_id'])) {
                         $indicators['type_id'] = __(
                             'capell-layout::filter.type',
                             ['search' => Type::query()->find($data['type_id'])->name],
                         );
                     }
 
-                    if (! empty($data['page_id'])) {
+                    if (isset($data['page_id'])) {
                         $indicators['page_id'] = __(
                             'capell-layout::filter.page',
                             ['search' => Page::query()->withDrafts()->find($data['page_id'])->name],

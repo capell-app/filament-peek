@@ -66,11 +66,9 @@ class PageContentWidgetSchema implements TypeSchemaInterface
                                         ]),
                                     HeadingSizeSelect::make('heading_size')
                                         ->visible(
-                                            fn (Get $get): bool => in_array(
-                                                'title',
-                                                $get('page_content') ?: [],
-                                                true,
-                                            ),
+                                            fn (Get $get): bool => $get('page_content') !== null
+                                                ? in_array('title', $get('page_content'), true)
+                                                : false,
                                         ),
                                 ]),
                             WidgetDisplaySection::make(),

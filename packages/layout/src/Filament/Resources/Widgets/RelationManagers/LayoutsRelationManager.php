@@ -67,7 +67,7 @@ class LayoutsRelationManager extends RelationManager
                     ->disabledClick()
                     ->toggleable()
                     ->formatStateUsing(
-                        fn (Layout $record, $state): HtmlString => new HtmlString(Blade::render('capell-admin::components.tables.url', [
+                        fn (Layout $record, int $state): HtmlString => new HtmlString(Blade::render('capell-admin::components.tables.url', [
                             'state' => $state,
                             'url' => PageResource::getUrl('index', ['tableFilters[layout_id][value]' => $record->id]),
                         ])),

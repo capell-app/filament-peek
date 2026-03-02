@@ -283,20 +283,20 @@ class DemoCreator
             return $widget;
         }
 
-        $pages = $this->pageModel::query()
+        $relatedPages = $this->pageModel::query()
             ->whereHas('type', fn (BuilderContract $query): BuilderContract => $query->default())
             ->whereHas('image')
             ->where('site_id', $page->site_id)
             ->notHomePage()
             ->inRandomOrder()
             ->limit(3)
-            ->pluck('id');
+            ->get();
 
-        throw_if($pages->isEmpty(), RuntimeException::class, 'No pages with images found to associate with the widget.');
+        throw_if($relatedPages->isEmpty(), RuntimeException::class, 'No pages with images found to associate with the widget.');
 
-        $pages->each(fn ($related_page_id): WidgetAsset => $widget->assets()->create([
+        $relatedPages->each(fn (Page $relatedPage): WidgetAsset => $widget->assets()->create([
             'page_id' => $page->id,
-            'asset_id' => $related_page_id,
+            'asset_id' => $relatedPage->id,
             'asset_type' => resolve($this->pageModel)->getMorphClass(),
             'container' => $container,
             'occurrence' => $occurrence,
@@ -1078,7 +1078,7 @@ class DemoCreator
 
             $content->translations()->createMany(
                 $languages
-                    ->reject(fn (Language $language): bool => (bool) $content->translations->contains('language_id', $language->id))
+                    ->reject(fn (Language $language): bool => $content->translations->contains('language_id', $language->id))
                     ->map(fn (Language $language): array => [
                         'language_id' => $language->id,
                         'title' => $testimonial['name'],
@@ -1204,7 +1204,7 @@ class DemoCreator
 
             $content->translations()->createMany(
                 $languages
-                    ->reject(fn (Language $language): bool => (bool) $content->translations->contains('language_id', $language->id))
+                    ->reject(fn (Language $language): bool => $content->translations->contains('language_id', $language->id))
                     ->map(fn (Language $language): array => [
                         'language_id' => $language->id,
                         'title' => $member['name'],
@@ -1228,8 +1228,7 @@ class DemoCreator
         if (! in_array($name, [null, '', '0'], true)) {
             $base = pathinfo(Str::slug($name), PATHINFO_FILENAME);
             $filters = [
-                /** @param \Spatie\MediaLibrary\MediaCollections\Models\Media $media */
-                fn ($media): bool => str($media->file_name)->contains($base),
+                fn (Media $media): bool => str($media->file_name)->contains($base),
             ];
         }
 

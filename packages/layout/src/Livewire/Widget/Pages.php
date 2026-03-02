@@ -6,7 +6,9 @@ namespace Capell\Layout\Livewire\Widget;
 
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
+use Closure;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\WithPagination;
@@ -19,7 +21,7 @@ class Pages extends AbstractWidget
 
     protected Collection|LengthAwarePaginator $pages;
 
-    public function render(array $data = [])
+    public function render(array $data = []): View|string|Closure
     {
         $data['pages'] = $this->pages;
 
@@ -32,7 +34,7 @@ class Pages extends AbstractWidget
 
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
 
-        $paginationKey = $this->containerKey . ucfirst((string) $this->widget->key) . $this->occurrence;
+        $paginationKey = $this->containerKey . ucfirst($this->widget->key) . $this->occurrence;
         $paginationPage = (int) $this->getPage($paginationKey);
 
         $selection = $this->widget->assets->pluck('asset_id')->toArray();

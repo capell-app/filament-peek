@@ -48,7 +48,7 @@ class WidgetSelect extends Select
                     ),
                 ),
             )
-            ->createOptionUsing(static function ($livewire, Select $component, array $data, Schema $schema) {
+            ->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
                 $record = $component->getRelationship()?->getRelated() ?? new ($component->getModel());
                 $record->fill($data);
                 $record->save();
@@ -70,7 +70,7 @@ class WidgetSelect extends Select
                     ->slideOver()
                     ->closeModalByClickingAway(false)
                     ->closeModalByEscaping()
-                    ->hidden(fn ($state): bool => ! $this->isMultiple() && $state)
+                    ->hidden(fn (?int $state): bool => ! $this->isMultiple() && $state)
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
@@ -86,7 +86,7 @@ class WidgetSelect extends Select
     public function withEditForm(): self
     {
         return $this->editOptionForm(
-            fn ($state, Schema $schema): ?Schema => $state ? WidgetForm::configure($schema) : null,
+            fn (?int $state, Schema $schema): ?Schema => $state ? WidgetForm::configure($schema) : null,
         )
             ->editOptionAction(
                 fn (Action $action): Action => $action

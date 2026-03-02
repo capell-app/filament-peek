@@ -54,11 +54,11 @@ class Navigation extends AbstractWidget
 
     private function getWidgetMenu(): ?Models\Navigation
     {
-        if (! empty($this->widget->meta['navigation_id'])) {
+        if (isset($this->widget->meta['navigation_id']) && is_numeric($this->widget->meta['navigation_id'])) {
             return NavigationLoader::getNavigationById($this->widget->meta['navigation_id']);
         }
 
-        if (empty($this->widget->meta['navigation'])) {
+        if (! isset($this->widget->meta['navigation']) || ! is_string($this->widget->meta['navigation'])) {
             return null;
         }
 

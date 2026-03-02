@@ -78,7 +78,7 @@ class AssetsWidgetSchema extends DefaultWidgetSchema
     {
         return Tab::make(__('capell-admin::tab.assets'))
             ->badge(function (Get $get): ?int {
-                if (! $get('widgetAssets')) {
+                if ($get('widgetAssets') === null) {
                     return null;
                 }
 

@@ -239,7 +239,7 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
                                     if (DB::getDriverName() === 'sqlite') {
                                         $query->orderByRaw(
                                             'CASE language_id '
-                                            . sprintf('WHEN %d THEN 0 ELSE 1 END', (int) $language->id),
+                                            . sprintf('WHEN %d THEN 0 ELSE 1 END', $language->id),
                                         );
                                     } else {
                                         $query->orderByRaw('FIELD(language_id, ?)', [$language->id ?? 0]);
@@ -255,7 +255,7 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
                                     if (DB::getDriverName() === 'sqlite') {
                                         $query->orderByRaw(
                                             'CASE language_id '
-                                            . sprintf('WHEN %d THEN 0 ELSE 1 END', (int) $language->id),
+                                            . sprintf('WHEN %d THEN 0 ELSE 1 END', $language->id),
                                         );
                                     } else {
                                         $query->orderByRaw('FIELD(language_id, ?)', [$language->id ?? 0]);
@@ -266,7 +266,7 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
                 ]);
             },
             'translation' => fn (BuilderContract $query): BuilderContract => $query->with('language')
-                ->when($language, fn ($query) => $query->where('language_id', $language->id)),
+                ->when($language, fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->id)),
             'type',
         ];
 
@@ -420,7 +420,6 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
         /** @var NestedQueryBuilder $query */
         $query = $this->nodeTraitNewScopedQuery();
 
-        /** @phpstan-ignore-next-line provided by Oddvalue\LaravelDrafts */
         return $query->withDrafts();
     }
 

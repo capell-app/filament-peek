@@ -21,6 +21,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -148,7 +149,7 @@ class ContentAlertsWidget extends Widget implements HasActions, HasForms
     protected function loadRecord(): void
     {
         $this->record->load([
-            'site' => fn ($query) => $query->withTrashed(),
+            'site' => fn (Builder $query) => $query->withTrashed(),
         ]);
     }
 

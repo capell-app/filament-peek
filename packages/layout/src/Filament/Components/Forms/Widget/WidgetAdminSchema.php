@@ -36,7 +36,7 @@ class WidgetAdminSchema
                 ->gridContainer()
                 ->columns(['lg' => null, '@lg' => 2])
                 ->columnSpanFull()
-                ->visible(fn (?Widget $record): bool => ! empty($record->type?->admin['asset_types']))
+                ->visible(fn (?Widget $record): bool => isset($record->type?->admin['asset_types']) && $record->type->admin['asset_types'] !== [])
                 ->schema([
                     SchemaSelect::make('widget_asset_schema')
                         ->label(__('capell-layout::form.widget_asset_schema'))

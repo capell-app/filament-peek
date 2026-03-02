@@ -9,8 +9,10 @@ use Capell\Blog\Support\Loader\BlogLoader;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Layout\View\Components\Widget\AbstractWidget;
+use Closure;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
 class Archives extends AbstractWidget
@@ -21,7 +23,7 @@ class Archives extends AbstractWidget
 
     protected static string $defaultView = 'capell-blog::components.widget.page.archives';
 
-    public function render(array $data = [])
+    public function render(array $data = []): View|string|Closure
     {
         return parent::render([
             ...$data,

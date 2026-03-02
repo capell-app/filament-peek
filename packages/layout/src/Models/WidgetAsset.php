@@ -14,6 +14,7 @@ use Capell\Core\Models\Concerns\InteractsWithMedia;
 use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Core\Models\Page;
 use Capell\Layout\Database\Factories\WidgetAssetFactory;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -22,7 +23,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -40,9 +40,9 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
  * @property int|null $asset_id
  * @property string|null $asset_type
  * @property int|null $widget_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property CarbonImmutable|null $deleted_at
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $deleted_by
@@ -140,6 +140,9 @@ class WidgetAsset extends Model implements HasMedia, PageCacheable, Userstampabl
             'meta' => 'json',
             'order' => 'integer',
             'occurrence' => 'integer',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+            'deleted_at' => 'immutable_datetime',
         ];
     }
 }

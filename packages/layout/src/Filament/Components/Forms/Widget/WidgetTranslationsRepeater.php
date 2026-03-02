@@ -28,7 +28,7 @@ class WidgetTranslationsRepeater
                     ->schema([
                         TextInput::make('title')
                             ->label(__('capell-admin::form.title'))
-                            ->columnSpan(fn (Get $get): int => $get('language_id') ? 3 : 2)
+                            ->columnSpan(fn (Get $get): int => $get('language_id') !== null ? 3 : 2)
                             ->requiredBasedOnType(),
                         TranslationLanguageSelect::make()
                             ->dehydratedWhenHidden()

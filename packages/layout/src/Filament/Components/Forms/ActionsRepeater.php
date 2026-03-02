@@ -29,14 +29,14 @@ class ActionsRepeater extends Repeater
             ->collapsed(function (?Schema $item): bool {
                 $state = $item->getRawState();
 
-                return ! empty($state['page_id']) || ! empty($state['url']);
+                return (isset($state['page_id']) && filled($state['page_id'])) || (isset($state['url']) && filled($state['url']));
             })
             ->cloneable()
             ->orderColumn()
             ->defaultItems(0)
             ->addActionLabel(__('capell-layout::button.add_action'))
             ->itemLabel(function (array $state): string {
-                if (! empty($state['label'])) {
+                if (isset($state['label'])) {
                     return $state['label'];
                 }
 

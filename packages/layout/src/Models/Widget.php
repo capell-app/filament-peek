@@ -118,8 +118,6 @@ class Widget extends Model implements HasMedia, PageCacheable, Publishable, Stat
     use LogsActivity;
     use SoftDeletes;
 
-    public const COMPONENT_SLOT = 'slot';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -207,7 +205,11 @@ class Widget extends Model implements HasMedia, PageCacheable, Publishable, Stat
 
     public function getMetaComponentType(): string
     {
-        if ($this->meta['livewire'] ?? $this->type->meta['livewire'] ?? false) {
+        if (isset($this->meta['livewire']) && $this->meta['livewire'] === true) {
+            return 'livewire';
+        }
+
+        if (isset($this->type->meta['livewire']) && $this->type->meta['livewire'] === true) {
             return 'livewire';
         }
 

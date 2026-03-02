@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Capell\Layout\Filament\Components\Forms\Content;
 
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Actions\HintEditAction;
 use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
 use Capell\Core\Facades\CapellCore;
 use Capell\Layout\Enums\ModelEnum;
-use Capell\Layout\Filament\Resources\Contents\ContentResource;
 use Capell\Layout\Models\Content;
 use Closure;
 use Filament\Actions\Action;
@@ -20,7 +18,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\Collection;
@@ -45,7 +42,7 @@ class ContentSelect extends Select
             ->preload()
             ->optionsLimit(100)
             ->allowHtml()
-            ->getSearchResultsUsing(function (self $component, $record, Get $get, string $search): array {
+            ->getSearchResultsUsing(function (self $component, Get $get, string $search): array {
                 $site_id = $get('site_id');
 
                 return $component->getContentOptions(
@@ -119,8 +116,8 @@ class ContentSelect extends Select
     {
         $asset = CapellAdmin::getAsset(ModelEnum::Content);
 
-        return $this->editOptionForm(function (mixed $state, Schema $schema) use ($asset): Schema {
-            if (! $state) {
+        return $this->editOptionForm(function (?int $state, Schema $schema) use ($asset): Schema {
+            if ($state === null) {
                 return $schema;
             }
 
@@ -152,25 +149,10 @@ class ContentSelect extends Select
 
                 return $record?->attributesToArray() ?? [];
             })
-            ->getSelectedRecordUsing(static fn (self $component, $state): ?Model => Content::query()->find($state))
+            ->getSelectedRecordUsing(static fn (?int $state): ?Content => Content::query()->find($state))
             ->updateOptionUsing(static function (array $data, Schema $schema): void {
                 $schema->getRecord()->update($data);
             });
-    }
-
-    public function withHintEditAction(): static
-    {
-        return $this->hintAction(
-            fn ($state, $operation): HintEditAction => HintEditAction::make('edit-content')
-                ->visible(fn (): bool => $operation !== 'create' && filled($state))
-                ->url(function () use ($state): string {
-                    if ($state === []) {
-                        return '';
-                    }
-
-                    return ContentResource::getUrl('edit', ['record' => $state]);
-                }),
-        );
     }
 
     private function getContentOptionLabel(Content $record, ?int $siteId): HtmlString
@@ -185,7 +167,7 @@ class ContentSelect extends Select
 
         if ($ancestors->isNotEmpty()) {
             $label .= $ancestors->pluck('name')
-                ->map(fn ($item) => Str::limit($item, 30))
+                ->map(fn (string $name): string => Str::limit($name, 30))
                 ->implode(' &raquo; ')
                 . ' &raquo; ';
         }

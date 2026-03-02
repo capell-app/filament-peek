@@ -11,11 +11,11 @@ use Capell\Core\Models\Contracts\Statusable;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Kalnoy\Nestedset\Collection;
 use Override;
@@ -26,13 +26,11 @@ use Override;
  * @property array<array-key, mixed> $slug
  * @property string|null $type
  * @property int|null $order_column
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property bool $featured
  * @property bool $status
  * @property int|null $site_id
- * @property-read Collection<int, Content> $contents
- * @property-read int|null $contents_count
  * @property-read Collection<int, Page> $pages
  * @property-read int|null $pages_count
  * @property-read Site|null $site

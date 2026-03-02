@@ -34,7 +34,7 @@ class HeroWidgetHasPrimaryHeadingAction
             $content = $page->translation->meta['hero'] ?? null;
         }
 
-        if (! $hasPrimaryHeading && ! empty($content)) {
+        if (! $hasPrimaryHeading && filled($content)) {
             $hasPrimaryHeading = preg_match('/<h1\b[^>]*>/i', (string) $content) === 1;
         }
 

@@ -143,7 +143,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
 
         foreach ($this->containers as $containerKey => $container) {
             foreach ($container['widgets'] as $widgetIndex => $widget) {
-                if ($this->inPageContext() && ! empty($widget['page_id'])) {
+                if ($this->inPageContext() && isset($widget['page_id'])) {
                     $key = $widget['widget_key'] . '_' . $widget['page_id'] . '_' . $widget['container'] . '_' . $widget['occurrence'];
                 } else {
                     $key = $widget['widget_key'] . '_' . $widget['occurrence'];
@@ -177,7 +177,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
                 collect([$this->getLayoutRecord()])
                     ->when(
                         $this->getLayoutPage(),
-                        fn (SupportCollection $collection, $page): SupportCollection => $collection->push($page),
+                        fn (SupportCollection $collection, Page $page): SupportCollection => $collection->push($page),
                     ),
             );
         }
@@ -314,7 +314,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
                 static fn (self $livewire, Schema $schema, array $arguments): Schema => $schema->operation('editOption')
                     ->schema($livewire->getContainerSchema($schema, $arguments)),
             )
-            ->fillForm(fn (self $livewire, $arguments): array => [
+            ->fillForm(fn (self $livewire, array $arguments): array => [
                 'key' => $arguments['containerKey'],
                 'meta' => $livewire->containers[$arguments['containerKey']]['meta'] ?? [],
             ])
@@ -777,11 +777,11 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
 
                 $widget = $livewire->getContainerWidget($arguments['containerKey'], $arguments['widgetIndex']);
 
-                $assetTypes = empty($widget->admin['asset_types'])
-                    ? $widget->type->admin['asset_types'] ?? []
-                    : ($widget->admin['asset_types']);
+                $assetTypes = isset($widget->admin['asset_types']) && $widget->admin['asset_types'] !== []
+                    ? $widget->admin['asset_types']
+                    : ($widget->type->admin['asset_types'] ?? null);
 
-                if (! $assetTypes) {
+                if ($assetTypes === null) {
                     return false;
                 }
 
@@ -1330,7 +1330,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
 
         $widgetAsset = $this->getWidgetAsset($arguments['containerKey'], $arguments['widgetIndex'], $arguments['index']);
 
-        if (empty($widgetAsset['page_id'])) {
+        if (! isset($widgetAsset['page_id'])) {
             return null;
         }
 
@@ -1348,7 +1348,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
             $record->update($data);
         }
 
-        if (! empty($data['meta'])) {
+        if (isset($data['meta'])) {
             $livewire->updateWidgetAsset($arguments['containerKey'], $arguments['widgetIndex'], $arguments['index'], ['meta' => $data['meta']]);
         }
 
@@ -1752,7 +1752,8 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
             static function (WidgetAsset $widgetAsset) use ($containerKey, $oldContainerKey): array {
                 $asset = [
                     'id' => $widgetAsset->id,
-                    'asset_id' => is_numeric($widgetAsset->asset_id) ? (int) $widgetAsset->asset_id : $widgetAsset->asset_id,
+                    /** @phpstan-ignore-next-line */
+                    'asset_id' => is_string($widgetAsset->asset_id) ? (int) $widgetAsset->asset_id : $widgetAsset->asset_id,
                     'asset_type' => $widgetAsset->asset_type,
                     'meta' => $widgetAsset->meta,
                     'order' => $widgetAsset->order,
@@ -1848,13 +1849,13 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
                 ->required()
                 ->maxLength(128)
                 ->afterStateHydrated(
-                    fn (TextInput $component, $state): TextInput => $component->state(
+                    fn (TextInput $component, ?string $state): TextInput => $component->state(
                         str($state)->slug()->lower()->toString(),
                     ),
                 )
-                ->dehydrateStateUsing(fn ($state): string => str($state)->slug()->lower()->toString())
+                ->dehydrateStateUsing(fn (?string $state): string => str($state)->slug()->lower()->toString())
                 ->rules([
-                    fn (self $livewire): Closure => function (string $attribute, $value, Closure $fail) use ($livewire, $containerKey): void {
+                    fn (self $livewire): Closure => function (string $attribute, string $value, Closure $fail) use ($livewire, $containerKey): void {
                         if (! isset($livewire->containers[$value]) || ($containerKey && $containerKey === $value)) {
                             return;
                         }
@@ -2058,12 +2059,12 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
         }
 
         $existingIds = $widgetAssets
-            ->filter(fn ($asset): bool => isset($asset['id']))
+            ->filter(fn (array $asset): bool => isset($asset['id']))
             ->pluck('id')
             ->all();
 
         $newAssets = $widgetAssets
-            ->reject(fn ($asset): bool => isset($asset['id']))
+            ->reject(fn (array $asset): bool => isset($asset['id']))
             ->all();
 
         return $this->buildPreloadedWidgetAssets($existingIds, $newAssets);
@@ -2085,12 +2086,12 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
         }
 
         $existingIds = $widgetAssets
-            ->filter(fn ($asset): bool => isset($asset['id']))
+            ->filter(fn (array $asset): bool => isset($asset['id']))
             ->pluck('id')
             ->all();
 
         $newAssets = $widgetAssets
-            ->reject(fn ($asset): bool => isset($asset['id']))
+            ->reject(fn (array $asset): bool => isset($asset['id']))
             ->all();
 
         $assets = $this->buildPreloadedWidgetAssets($existingIds, $newAssets);
@@ -2127,7 +2128,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
                     fn (BuilderContract $query): BuilderContract => $query->orderByRaw(
                         'CASE id '
                         . implode(' ', array_map(
-                            fn ($id, $pos): string => sprintf('WHEN %d THEN %d', (int) $id, $pos),
+                            fn (string $id, string $position): string => sprintf('WHEN %d THEN %d', $id, $position),
                             $existingIds,
                             array_keys($existingIds),
                         ))
@@ -2147,7 +2148,8 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
 
         return $eloquentCollection->load(['asset' => fn (BuilderContract $query): BuilderContract => $query->morphWith($this->getAssetRelations())])
             ->map(function (WidgetAsset $widgetAsset): WidgetAsset {
-                if (is_numeric($widgetAsset->asset_id)) {
+                if (is_string($widgetAsset->asset_id)) {
+                    /** @phpstan-ignore-next-line */
                     $widgetAsset->asset_id = (int) $widgetAsset->asset_id;
                 }
 
@@ -2171,7 +2173,7 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
             }
 
             if ($this->page_id !== null && $this->page_id !== 0) {
-                return $widgetAsset->page_id === null || (int) $widgetAsset->page_id === $this->page_id;
+                return $widgetAsset->page_id === null || $widgetAsset->page_id === $this->page_id;
             }
 
             return $widgetAsset->page_id === null;
@@ -2321,8 +2323,8 @@ class Builder extends Component implements HasActions, HasForms, HasPageResource
 
         if ($existingAssets->isNotEmpty()) {
             $currentAssets = collect($assets)
-                ->filter(fn ($widgetAsset): bool => $existingAssets->has(sprintf('%s.%s', $widgetAsset['asset_type'], $widgetAsset['asset_id'])))
-                ->mapWithKeys(fn ($widgetAsset): array => [sprintf('%s.%s', $widgetAsset['asset_type'], $widgetAsset['asset_id']) => $widgetAsset]);
+                ->filter(fn (array $widgetAsset): bool => $existingAssets->has(sprintf('%s.%s', $widgetAsset['asset_type'], $widgetAsset['asset_id'])))
+                ->mapWithKeys(fn (array $widgetAsset): array => [sprintf('%s.%s', $widgetAsset['asset_type'], $widgetAsset['asset_id']) => $widgetAsset]);
 
             $assetsToRemove = $currentAssets->isNotEmpty()
                 ? $existingAssets->diffKeys($currentAssets)

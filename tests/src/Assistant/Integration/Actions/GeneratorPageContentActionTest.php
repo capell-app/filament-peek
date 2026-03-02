@@ -19,7 +19,7 @@ it('generates page content using provider', function (): void {
 
     $result = GeneratorPageContentAction::run(new FakeContext('Create content'));
 
-    $lines = preg_split('/\r\n|\r|\n/', (string) $result) ?: [];
+    $lines = preg_split('/\r\n|\r|\n/', (string) $result) ?? [];
 
     expect($result)->toBeString()
         ->and($result)->toContain('Hello')

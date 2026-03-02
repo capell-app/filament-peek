@@ -33,10 +33,10 @@ class LayoutLoader
         $layout = CapellCore::rememberCache($key, function () use ($id, &$fromCache): ?Layout {
             $fromCache = false;
 
-            return Layout::with('layoutWidgets')->find($id);
-        }) ?: null;
+            return Layout::query()->with('layoutWidgets')->find($id);
+        });
 
-        if ($fromCache && $layout) {
+        if ($fromCache === true && $layout instanceof Layout) {
             resolve(ModelServingInterface::class)->track($layout);
 
             $layout->layoutWidgets->each(function (Widget $widget): void {
@@ -58,17 +58,14 @@ class LayoutLoader
             return;
         }
 
-        // Ensure base widgets are loaded with required relations in a single batch
         $layout->load([
-            'layoutWidgets' => function ($query) use ($language): void {
-                $query->with([
-                    'type',
-                    'image',
-                    'backgroundImage',
-                    'media' => fn (BuilderContract $q): BuilderContract => $q->ordered(),
-                    'translation' => fn (BuilderContract $q): BuilderContract => $q->where('language_id', $language->id),
-                ]);
-            },
+            'layoutWidgets' => fn (BuilderContract $query): BuilderContract => $query->with([
+                'type',
+                'image',
+                'backgroundImage',
+                'media' => fn (BuilderContract $q): BuilderContract => $q->ordered(),
+                'translation' => fn (BuilderContract $q): BuilderContract => $q->where('language_id', $language->id),
+            ]),
         ]);
 
         $layoutWidgets = $layout->layoutWidgets;
@@ -138,7 +135,7 @@ class LayoutLoader
                 continue;
             }
 
-            $container = (string) $asset->container;
+            $container = $asset->container;
             $occurrence = (int) $asset->occurrence;
             $pageAssetsByWidgetIdContainerOcc[$wid][$container][$occurrence] ??= [];
             $pageAssetsByWidgetIdContainerOcc[$wid][$container][$occurrence][] = $asset;
@@ -172,7 +169,7 @@ class LayoutLoader
                 $clone = clone $baseWidget;
                 $clone->translation?->setRelation('language', $language);
 
-                $wid = (int) $baseWidget->id;
+                $wid = $baseWidget->id;
                 $assetsForPosition = $pageAssetsByWidgetIdContainerOcc[$wid][$containerKey][$occurrence] ?? [];
                 if ($assetsForPosition === []) {
                     $assetsForPosition = $defaultAssetsByWidgetId[$wid] ?? [];
@@ -217,9 +214,9 @@ class LayoutLoader
 
                 return $this->getPreloadedWidget($layout, $language, $page, $containerKey, $widgetKey, $occurrence);
             },
-        ) ?: null;
+        );
 
-        if ($fromCache && $widget) {
+        if ($fromCache === true && $widget instanceof Widget) {
             resolve(ModelServingInterface::class)->track($widget);
 
             $widget->assets->each(function (WidgetAsset $resource): void {

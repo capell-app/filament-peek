@@ -48,8 +48,8 @@ class AssetsRepeater extends Repeater
             ->extraItemActions([
                 Action::make('edit_asset')
                     ->visible(
-                        fn (array $arguments, Repeater $component): bool => ! empty(
-                            $component->getRawItemState($arguments['item'])['asset_id']
+                        fn (array $arguments, Repeater $component): bool => filled(
+                            $component->getRawItemState($arguments['item'])['asset_id'],
                         ),
                     )
                     ->tooltip(function (array $arguments, Repeater $component): ?string {
@@ -158,7 +158,7 @@ class AssetsRepeater extends Repeater
                 ->selectablePlaceholder(false)
                 ->getOptionLabelFromRecordUsing(function (Select $component, Model $record): HtmlString {
                     if (! $record instanceof Page) {
-                        return new HtmlString($record->{$component->getRelationshipTitleAttribute()});
+                        return new HtmlString($record->getAttribute($component->getRelationshipTitleAttribute()));
                     }
 
                     $label = $record->site->name . ' &raquo; ';
@@ -167,7 +167,7 @@ class AssetsRepeater extends Repeater
 
                     if ($ancestors->isNotEmpty()) {
                         $label .= $ancestors->pluck('name')
-                            ->map(fn ($item) => Str::limit($item, 30))
+                            ->map(fn (string $name): string => Str::limit($name, 30))
                             ->implode(' &raquo; ')
                             . ' &raquo; ';
                     }

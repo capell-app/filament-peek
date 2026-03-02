@@ -15,7 +15,7 @@ class PageSchemaExtender implements Extenders\PageSchemaExtender
 {
     public function extendRelationManagers(Model $record, array $relationManagers): array
     {
-        $alreadyHasContents = in_array(ContentsRelationManager::class, $relationManagers);
+        $alreadyHasContents = in_array(ContentsRelationManager::class, $relationManagers, true);
 
         if (! $alreadyHasContents) {
             $relationManagers[] = ContentsRelationManager::class;

@@ -41,7 +41,7 @@ class ContentAssets extends AbstractAssets
         }
 
         $query->with([
-            'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', (int) $language_id),
+            'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language_id),
         ]);
 
         return $query;
