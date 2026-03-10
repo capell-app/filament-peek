@@ -50,8 +50,8 @@ test('Can save without affecting widget assets', function (bool $withPage): void
         ->toBe(5);
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $withPage ? $page->id : null,
+        'layout' => $layout,
+        'page' => $withPage ? $page : null,
     ])
         ->assertSuccessful()
         ->call('saveLayout')
@@ -112,8 +112,8 @@ test('Can sync new widget assets to page layout', function (): void {
         ->toBe(2);
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->call(
@@ -177,9 +177,7 @@ test('Can sync new widget assets to layout', function (): void {
                 ->occurrence->toBe($occurrence),
         );
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->call(
             'addAssetsToWidget',
@@ -231,8 +229,8 @@ test('Can sync new page assets', function (): void {
     WidgetAsset::factory()->count(3)->create();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->call(
@@ -257,10 +255,15 @@ test('Can sync new page assets', function (): void {
         )
         ->call('saveLayout');
 
-    expect($widget
+    $widgetPageAssets = $widget
         ->assets()
-        ->where('page_id', $page->id)
-        ->count())
+        ->where([
+            'pageable_id' => $page->getKey(),
+            'pageable_type' => $page->getMorphClass(),
+        ])
+        ->count();
+
+    expect($widgetPageAssets)
         ->toBe(7);
 });
 
@@ -296,9 +299,7 @@ test('Can reorder assets', function (): void {
         ])
         ->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->call(
             'reorderAssets',
@@ -330,7 +331,7 @@ test('Can select all widget assets', function (): void {
             ->widget($widget)
             ->asset($assetType)
             ->container($containerKey)
-            ->state(['occurrence' => 1, 'page_id' => null])
+            ->state(['occurrence' => 1])
             ->create();
     }
 
@@ -354,7 +355,7 @@ test('Can select all widget assets', function (): void {
     }
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
+        'layout' => $layout,
     ])
         ->assertSuccessful()
         ->call('selectAllAssets', containerKey: $containerKey, widgetIndex: 0)
@@ -376,9 +377,7 @@ test('can add page asset', function (): void {
 
     $uuid = (string) Str::uuid();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             TestAction::make('addAsset')
@@ -411,7 +410,8 @@ test('can add page asset', function (): void {
     ]);
 
     assertDatabaseHas('widget_assets', [
-        'page_id' => null,
+        'pageable_id' => null,
+        'pageable_type' => null,
         'widget_id' => $widget->id,
         'container' => null,
         'occurrence' => 1,
@@ -421,9 +421,7 @@ test('can add page asset', function (): void {
 
 test('can add page asset to existing widget with page layout', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
-    $pageLayout = Page::factory()
-        ->layout($layout)
-        ->create();
+    $page = Page::factory()->layout($layout)->create();
 
     $newData = Page::factory()->make();
 
@@ -436,14 +434,14 @@ test('can add page asset to existing widget with page layout', function (): void
 
     WidgetAsset::factory()
         ->widget($widget)
-        ->page($pageLayout, $containerKey, $containerWidget['occurrence'])
+        ->page($page, $containerKey, $containerWidget['occurrence'])
         ->create();
 
     $uuid = (string) Str::uuid();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $pageLayout->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->assertActionExists('addAsset')
@@ -479,7 +477,8 @@ test('can add page asset to existing widget with page layout', function (): void
     ]);
 
     assertDatabaseHas('widget_assets', [
-        'page_id' => $pageLayout->id,
+        'pageable_id' => $page->getKey(),
+        'pageable_type' => $page->getMorphClass(),
         'widget_id' => $widget->id,
         'container' => $containerKey,
         'occurrence' => $containerWidget['occurrence'],
@@ -489,9 +488,7 @@ test('can add page asset to existing widget with page layout', function (): void
 
 test('can add page asset to widget with page layout', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
-    $pageLayout = Page::factory()
-        ->layout($layout)
-        ->create();
+    $page = Page::factory()->layout($layout)->create();
 
     Type::factory()->type(LayoutTypeEnum::Widget)->group('page')->create();
     Type::factory()->type(LayoutTypeEnum::Widget)->group('assets')->create();
@@ -508,8 +505,8 @@ test('can add page asset to widget with page layout', function (): void {
     $uuid = (string) Str::uuid();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $pageLayout->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->mountAction(
@@ -543,7 +540,8 @@ test('can add page asset to widget with page layout', function (): void {
     ]);
 
     assertDatabaseHas('widget_assets', [
-        'page_id' => $pageLayout->id,
+        'pageable_type' => $page->getMorphClass(),
+        'pageable_id' => $page->getKey(),
         'widget_id' => $widget->id,
         'container' => $containerKey,
         'occurrence' => $containerWidget['occurrence'],
@@ -556,7 +554,7 @@ test('can select assets', function (string $assetType): void {
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
 
-    livewire(LayoutBuilder::class, ['layout_id' => $layout->id])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             TestAction::make('selectAsset')
@@ -585,9 +583,7 @@ test('can edit asset', function (): void {
 
     $page = $layoutAsset->asset()->with('translation')->first();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             'editWidgetAsset',
@@ -622,9 +618,7 @@ test('can remove widget assets', function (): void {
         ->count(3)
         ->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->call('selectAllAssets', containerKey: $containerKey, widgetIndex: $widgetIndex)
         ->callAction(
@@ -639,7 +633,7 @@ test('can remove widget assets', function (): void {
 
     expect(
         $widget->assets()
-            ->whereNull('page_id')
+            ->whereNull(['pageable_type', 'pageable_id'])
             ->where('container', $containerKey)
             ->where('occurrence', $containerWidget['occurrence'])
             ->exists(),
@@ -669,8 +663,8 @@ test('can remove all assets', function (): void {
         ->create();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->call('selectAllAssets', containerKey: $containerKey, widgetIndex: $widgetIndex)
@@ -686,14 +680,16 @@ test('can remove all assets', function (): void {
 
     assertDatabaseMissing('widget_assets', [
         'widget_id' => $widget->id,
-        'page_id' => $page->id,
+        'pageable_id' => $page->id,
+        'pageable_type' => $page->getMorphClass(),
         'container' => $containerKey,
         'occurrence' => $containerWidget['occurrence'],
     ]);
 
     assertDatabaseHas('widget_assets', [
         'widget_id' => $widget->id,
-        'page_id' => null,
+        'pageable_id' => null,
+        'pageable_type' => null,
         'container' => null,
         'occurrence' => $containerWidget['occurrence'],
     ]);
@@ -713,9 +709,7 @@ test('can not remove assets if no records selected', function (): void {
         ->count(3)
         ->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             'removeAssets',
@@ -730,7 +724,7 @@ test('can not remove assets if no records selected', function (): void {
 
     expect(
         $widget->assets()
-            ->whereNull('page_id')
+            ->whereNull(['pageable_type', 'pageable_id'])
             ->where('container', $containerKey)
             ->where('occurrence', $containerWidget['occurrence'])
             ->count(),
@@ -756,8 +750,8 @@ test('Can revert page assets', function (): void {
         ->create();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->mountAction(
@@ -766,5 +760,6 @@ test('Can revert page assets', function (): void {
                 'widgetIndex' => $widgetIndex,
             ]),
         )
-        ->callMountedAction();
+        ->callMountedAction()
+        ->assertSuccessful();
 });

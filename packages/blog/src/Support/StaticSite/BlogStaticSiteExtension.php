@@ -37,7 +37,7 @@ class BlogStaticSiteExtension
             return;
         }
 
-        if (! $tagPage->url) {
+        if (! $tagPage->pageUrl) {
             return;
         }
 

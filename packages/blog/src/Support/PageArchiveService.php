@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Blog\Support;
 
 use Capell\Blog\Data\ArchiveMonthData;
+use Capell\Blog\Models\Article;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -30,7 +31,7 @@ class PageArchiveService
         ?int $perPage = null,
         ?string $paginationKey = null,
     ) {
-        $query = Page::query()
+        $query = Article::query()
             ->selectRaw('COUNT(*) as `total`')
             ->when(
                 DB::getDriverName() === 'sqlite',

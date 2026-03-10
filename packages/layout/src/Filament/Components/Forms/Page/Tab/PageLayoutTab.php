@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Components\Forms\Page\Tab;
 
+use Capell\Core\Enums\ModelEnum;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Layout\Enums\LivewireComponentsEnum;
 use Filament\Schemas\Components\Livewire;
@@ -21,11 +24,22 @@ class PageLayoutTab
             ->schema([
                 Livewire::make(
                     LivewireComponentsEnum::LayoutBuilder->value,
-                    fn (Get $get, Page $record): array => [
-                        'site_id' => $record->site_id,
-                        'layout_id' => $get('layout_id') ?? $record->layout_id,
-                        'page_id' => $record->id,
-                    ],
+                    function (Get $get, Page $record): array {
+                        $layout = $record->layout;
+
+                        if ($get('layout_id') && $layout->id !== $get('layout_id')) {
+                            /** @var class-string<Layout> $model */
+                            $model = CapellCore::getModel(ModelEnum::Layout);
+
+                            $layout = $model::find($get('layout_id'));
+                        }
+
+                        return [
+                            'site' => $record->site,
+                            'layout' => $layout,
+                            'page' => $record,
+                        ];
+                    },
                 )
                     ->lazy(config('capell-layout.layout_builder.lazy', true))
                     ->columnSpanFull(),

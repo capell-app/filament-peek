@@ -103,7 +103,7 @@ declare(strict_types=1);
             : null
     "
 >
-    <div class="flex">
+    <div class="flex min-h-[52px]">
         <div
             class="group/widget layout-builder-widget-heading !lg:px-4 flex flex-1 items-center gap-4 px-4 py-3 group-[&:last-child]:rounded-b-lg"
             :class="{

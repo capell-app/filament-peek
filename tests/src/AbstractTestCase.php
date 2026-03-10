@@ -98,6 +98,15 @@ abstract class AbstractTestCase extends TestCase
         $this->withoutVite();
     }
 
+    protected function tearDown(): void
+    {
+        try {
+            $this->cleanupOrderedMigrationWorkspace();
+        } finally {
+            parent::tearDown();
+        }
+    }
+
     protected function migrateDatabases(): void
     {
         $seeder = $this->seeder();

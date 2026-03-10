@@ -13,6 +13,7 @@ use Capell\Layout\Models\Content;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends Factory<WidgetAsset>
@@ -35,13 +36,13 @@ class WidgetAssetFactory extends Factory
 
         return [
             'widget_id' => Widget::factory(),
-            'pageable_id' => Page::factory()->create(),
-            'pageable_type' => app(Page::class)->getMorphClass(),
             'asset_type' => $assetType->value,
             'asset_id' => fn (): string => match ($assetType) {
                 LayoutAssetEnum::Content => (string) Content::factory()->withTranslations()->linkedPage()->create()->id,
                 AssetEnum::Page => (string) Page::factory()->withTranslations()->create()->id,
             },
+            'pageable_id' => null,
+            'pageable_type' => null,
             'occurrence' => 1,
             'order' => fake()->randomNumber(1),
             'created_at' => fake()->dateTimeBetween('-1 year', '-6 month'),
@@ -73,14 +74,16 @@ class WidgetAssetFactory extends Factory
         ]);
     }
 
-    public function asset(AssetEnum|LayoutAssetEnum $type): self
+    public function asset(AssetEnum|LayoutAssetEnum|Model $asset): self
     {
         return $this->state(fn (array $attributes): array => [
-            'asset_type' => $type->value,
-            'asset_id' => fn (): string => match ($type) {
-                LayoutAssetEnum::Content => (string) Content::factory()->withTranslations()->linkedPage()->create()->id,
-                AssetEnum::Page => (string) Page::factory()->withTranslations()->create()->id,
-            },
+            'asset_type' => $asset instanceof Model ? $asset->getMorphClass() : $asset->value,
+            'asset_id' => fn (): mixed => $asset instanceof Model
+                ? $asset->getKey()
+                : match ($asset) {
+                    LayoutAssetEnum::Content => (string) Content::factory()->withTranslations()->linkedPage()->create()->getKey(),
+                    AssetEnum::Page => (string) Page::factory()->withTranslations()->create()->getKey(),
+                },
         ]);
     }
 

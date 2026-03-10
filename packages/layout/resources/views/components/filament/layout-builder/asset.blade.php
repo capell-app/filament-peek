@@ -12,7 +12,7 @@ declare(strict_types=1);
     'meta' => [],
     'name' => null,
     'occurrence',
-    'pageId' => $this->page_id,
+    'pageId' => $this->page?->getKey(),
     'widget',
     'widgetAsset',
     'widgetIndex',

@@ -30,7 +30,11 @@ class HeroEditor extends Group
                         return false;
                     }
 
-                    $page = $record instanceof Page ? $record : $record->page;
+                    $page = $record instanceof Page ? $record : $record->pageable;
+
+                    if (! $page instanceof Page) {
+                        return false;
+                    }
 
                     return ! $this->hasPageWidgetHeroAssets($page);
                 },

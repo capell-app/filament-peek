@@ -34,7 +34,7 @@ declare(strict_types=1);
         >
             <div class="grow">
                 <div class="text-lg font-semibold">
-                    {{ __('capell-layout::heading.layout_record', ['name' => $this->layoutRecord->name]) }}
+                    {{ __('capell-layout::heading.layout_record', ['name' => $this->layout->name]) }}
                 </div>
 
                 <div class="mt-3 text-sm text-gray-500 dark:text-gray-400">
@@ -42,12 +42,17 @@ declare(strict_types=1);
 
                     <span class="text-gray-800 dark:text-gray-300">
                         {!!
-                            trans_choice('capell-layout::message.layout_count_on_pages', $this->layoutRecord->pages_count, [
-                                'count' => $this->layoutRecord->pages_count,
-                                'url' => CapellAdmin::getResource(ResourceEnum::Page)::getUrl('index', [
-                                    'tableFilters' => ['layout_id' => ['value' => $this->layoutRecord->id]],
-                                ]),
-                            ])
+                            trans_choice(
+                                'capell-layout::message.layout_count_on_pages',
+                                $this->layoutPagesCount,
+                                [
+                                    'count' => $this->layoutPagesCount,
+                                    'url' => CapellAdmin::getResource(ResourceEnum::Page)::getUrl(
+                                        'index',
+                                        ['tableFilters' => ['layout_id' => ['value' => $this->layout->id]]],
+                                    ),
+                                ],
+                            )
                         !!}
                     </span>
 
@@ -59,7 +64,7 @@ declare(strict_types=1);
                 </div>
             </div>
             <div class="ml-auto mt-auto space-y-4 text-right">
-                @if ($this->page_id || $changeLayoutAction->isVisible())
+                @if ($this->page || $changeLayoutAction->isVisible())
                     <div class="flex flex-wrap items-center justify-end gap-4">
                         <div class="fi-btn-group flex items-center">
                             {{ $this->changeLayoutAction }}
@@ -85,7 +90,7 @@ declare(strict_types=1);
                                     @endif
 
                                     <x-filament::dropdown.list.item
-                                        href="{{ CapellAdmin::getResource(ResourceEnum::Layout)::getUrl('edit', ['record' => $this->layout_id]) }}"
+                                        href="{{ CapellAdmin::getResource(ResourceEnum::Layout)::getUrl('edit', ['record' => $this->layout->id]) }}"
                                         icon="heroicon-o-arrow-top-right-on-square"
                                         target="_blank"
                                         tag="a"
@@ -136,16 +141,21 @@ declare(strict_types=1);
         </div>
 
         @if ($this->layoutModified)
-            <x-capell-admin::alert
-                class="mb-5"
-                :color="AlertTypeEnum::Warning->value"
-                :actions="[$this->saveLayoutAction]"
+            <x-filament::callout
                 icon="heroicon-o-exclamation-triangle"
+                color="info"
+                class="mb-5"
             >
-                <x-slot:description>
+                <x-slot name="heading">
                     {{ __('capell-layout::message.layout_unsaved') }}
                 </x-slot>
-            </x-capell-admin::alert>
+
+                @if ($this->saveLayoutAction->isVisible())
+                    <x-slot name="controls">
+                        {{ $this->saveLayoutAction }}
+                    </x-slot>
+                @endif
+            </x-filament::callout>
         @endif
 
         <div class="space-y-5">
@@ -165,7 +175,7 @@ declare(strict_types=1);
                 </div>
             @else
                 <div
-                    class="px-3 text-center text-sm font-semibold text-gray-600 dark:text-gray-100"
+                    class="layout-empty rounded-xl border border-gray-200 p-6 px-3 text-center text-base text-gray-600 dark:border-gray-700 dark:text-gray-100"
                 >
                     {{ __('capell-layout::message.layout_empty') }}
                 </div>
@@ -179,12 +189,11 @@ declare(strict_types=1);
 
             {{ $this->addContainerAction }}
 
-            <x-filament::button
+            <x-filament::link
                 color="gray"
                 :size="Size::Small"
-                outlined
                 x-on:click="toggleReordering"
-                x-bind:class="isReordering ? '!bg-primary-500/5 !ring-primary-600 !text-primary-600' : ''"
+                x-bind:class="isReordering ? '!text-primary-600' : ''"
             >
                 @svg('heroicon-o-arrows-up-down',
                     'inline-block h-4 w-4 text-gray-400 transition duration-75 dark:text-gray-500',
@@ -202,7 +211,7 @@ declare(strict_types=1);
                             : '{{ __('capell-layout::button.cancel_reorder') }}'
                     "
                 ></span>
-            </x-filament::button>
+            </x-filament::link>
         </div>
     </div>
 

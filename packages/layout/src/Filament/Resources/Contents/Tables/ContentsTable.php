@@ -60,6 +60,7 @@ class ContentsTable implements TableConfigurator
                         'creator',
                         'editor',
                         'image',
+                        'linkedPage',
                         'parent.type',
                         'site',
                         'translation.language',
@@ -130,6 +131,8 @@ class ContentsTable implements TableConfigurator
                 ->linkRecord(),
             PageNameColumn::make('linkedPage.name')
                 ->label(__('capell-admin::table.page'))
+                // TODO does not work with json morph column
+                ->searchable(false)
                 ->withParents()
                 ->toggleable(isToggledHiddenByDefault: true),
             TypeColumn::make('type.name'),

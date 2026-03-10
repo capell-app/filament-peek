@@ -12,6 +12,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Concerns\HasPageCacheNotification;
 use Capell\Admin\Filament\Contracts\HasPageResource;
 use Capell\Core\Actions\GetResourceFromTypeAction;
+use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
@@ -72,13 +73,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     use InteractsWithForms;
 
     #[Locked]
-    public ?int $page_id = null;
+    public ?Pageable $page = null;
 
     #[Locked]
-    public ?int $site_id = null;
+    public ?Site $site = null;
 
     #[Locked]
-    public int $layout_id;
+    public Layout $layout;
 
     #[Locked]
     public ?array $originalAssets = null;
@@ -93,12 +94,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected array $containerWidgets;
 
-    protected Layout $layoutRecord;
-
-    protected ?Page $layoutPage = null;
-
-    protected ?Site $site = null;
-
     protected string $view = 'capell-layout::livewire.filament.layout-builder.index';
 
     public static function getResource(): string
@@ -106,18 +101,26 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         return CapellAdmin::getResource(ResourceEnum::Page);
     }
 
-    public function mount(int|string|null $record = null): void
+    public function mount(): void
     {
-        if ($record !== null && ! isset($this->layout_id)) {
-            $this->layout_id = (int) $record; // allow Filament style mount passing record id
-        }
-
         $this->loadNew();
     }
 
     public function boot(): void
     {
         throw_if(! Filament::auth()->check(), AuthenticationException::class);
+    }
+
+    #[Computed]
+    public function layoutPagesCount(): int
+    {
+        if ($this->layout->hasAttribute('pages_count')) {
+            return $this->layout->pages_count;
+        }
+
+        $this->layout->loadCount('pages');
+
+        return $this->layout->pages_count;
     }
 
     #[On('save-layout')]
@@ -129,13 +132,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         $this->loadFromStore();
 
-        $this->layoutRecord->update([
+        $this->layout->update([
             'containers' => $this->containers,
         ]);
 
-        if ($this->page_id && $this->getLayoutPage()->layout_id !== $this->layout_id) {
-            $this->layoutPage->update([
-                'layout_id' => $this->layout_id,
+        if ($this->page && $this->page->layout_id !== $this->layout->getKey()) {
+            $this->page->update([
+                'layout_id' => $this->layout->getKey(),
             ]);
         }
 
@@ -143,8 +146,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         foreach ($this->containers as $containerKey => $container) {
             foreach ($container['widgets'] as $widgetIndex => $widget) {
-                if ($this->inPageContext() && isset($widget['page_id'])) {
-                    $key = $widget['widget_key'] . '_' . $widget['page_id'] . '_' . $widget['container'] . '_' . $widget['occurrence'];
+                if ($this->inPageContext() && isset($widget['pageable_type'], $widget['pageable_id'])) {
+                    $key = $widget['widget_key'] . '_' . $widget['pageable_type'] . '_' . $widget['pageable_id'] . '_' . $widget['container'] . '_' . $widget['occurrence'];
                 } else {
                     $key = $widget['widget_key'] . '_' . $widget['occurrence'];
                 }
@@ -174,9 +177,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 ->send();
 
             NotifyClearCachedPagesAction::run(
-                collect([$this->getLayoutRecord()])
+                collect([$this->layout])
                     ->when(
-                        $this->getLayoutPage(),
+                        $this->page,
                         fn (SupportCollection $collection, Page $page): SupportCollection => $collection->push($page),
                     ),
             );
@@ -195,7 +198,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             return;
         }
 
-        if (! isset($this->layoutRecord)) {
+        if (! isset($this->containerWidgets)) {
             $this->loadFromStore();
         }
 
@@ -225,7 +228,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     #[On('sync-selected-assets')]
     public function addAssetsToWidget(array $arguments, string $type, array $assets): void
     {
-        if (! isset($this->layoutRecord)) {
+        if (! isset($this->containerWidgets)) {
             $this->loadFromStore();
         }
 
@@ -244,7 +247,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ->label(__('capell-layout::button.save_layout'))
             ->color('primary')
             ->size(Size::Small)
-            ->button()
+            ->link()
             ->action(function (Action $action, self $livewire): void {
                 $livewire->saveLayout(withNotifications: true);
 
@@ -277,9 +280,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ->tooltip(__('capell-layout::button.add_container'))
             ->icon('heroicon-m-plus')
             ->color('gray')
-            ->outlined()
+            ->link()
             ->size(Size::Small)
-            ->record(fn (): Layout => $this->getLayoutRecord())
+            ->record(fn (): Layout => $this->layout)
             ->modalWidth(Width::ThreeExtraLarge)
             ->modalSubmitActionLabel(fn (Action $action): string => $action->getTooltip())
             ->schema(
@@ -301,7 +304,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ->size(Size::Small)
             ->color('gray')
             ->grouped()
-            ->record(fn (): Layout => $this->getLayoutRecord())
+            ->record(fn (): Layout => $this->layout)
             ->modalWidth(Width::ScreenLarge)
             ->modalHeading(
                 fn (array $arguments): string|array|null => __(
@@ -389,11 +392,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     {
         return Action::make('addWidget')
             ->label(__('capell-layout::button.widget'))
+            ->tooltip(__('capell-layout::button.add_widget'))
             ->modalHeading(__('capell-layout::heading.add_widget_to_container'))
             ->icon('heroicon-c-plus')
             ->size(Size::Small)
             ->color('gray')
-            ->outlined()
+            ->link()
             ->visible(fn (): bool => (bool) $this->containers)
             ->modalWidth(Width::ScreenLarge)
             ->extraModalWindowAttributes([
@@ -532,7 +536,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 if ($totalAssets !== 0) {
                     $hasPageAssets = $livewire->hasPageAssets($arguments['containerKey'], $arguments['widgetIndex']);
                 } else {
-                    $hasPageAssets = (bool) $livewire->page_id;
+                    $hasPageAssets = $livewire->inPageContext();
                 }
 
                 return $hasPageAssets
@@ -564,8 +568,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                         'arguments' => [
                             'containerKey' => $arguments['containerKey'],
                             'widgetIndex' => $arguments['widgetIndex'],
-                            'pageId' => $livewire->page_id,
-                            'siteId' => $livewire->site_id,
+                            'pageableId' => $livewire->page?->getKey(),
+                            'pageableType' => $livewire->page?->getMorphClass(),
+                            'siteId' => $livewire->site?->getKey(),
                         ],
                         'component' => $component,
                         'existingRecords' => $existingRecords,
@@ -740,7 +745,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 fn (Schema $schema, self $livewire): Schema => $schema->operation('editOption')
                     ->schema($livewire->getChangeLayoutSchema()),
             )
-            ->fillForm(fn (self $livewire): array => ['layout_id' => $livewire->layout_id])
+            ->fillForm(fn (self $livewire): array => ['layout_id' => $livewire->layout->getKey()])
             ->modalSubmitActionLabel(__('capell-layout::button.change_layout'))
             ->action(function (self $livewire, Action $action, array $data): void {
                 $livewire->changePageLayout($data['layout_id']);
@@ -771,8 +776,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ->color('warning')
             ->size(Size::ExtraSmall)
             ->visible(function (self $livewire, array $arguments): bool {
-                if ($livewire->page_id === null || $livewire->page_id === 0) {
+                if (! $livewire->inPageContext()) {
                     return false;
+                }
+
+                if (! isset($this->containerWidgets)) {
+                    $this->loadFromStore();
                 }
 
                 $widget = $livewire->getContainerWidget($arguments['containerKey'], $arguments['widgetIndex']);
@@ -814,6 +823,10 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 },
             )
             ->action(function (self $livewire, array $arguments, Action $action): void {
+                if (! isset($this->containerWidgets)) {
+                    $this->loadFromStore();
+                }
+
                 $hasPageAssets = $livewire->hasPageAssets(
                     containerKey: $arguments['containerKey'],
                     widgetIndex: $arguments['widgetIndex'],
@@ -822,7 +835,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 $livewire->togglePageAssets(
                     $arguments['containerKey'],
                     $arguments['widgetIndex'],
-                    pageId: $hasPageAssets ? null : $livewire->page_id,
+                    page: $hasPageAssets ? $livewire->page : null,
                 );
 
                 $action->success();
@@ -916,25 +929,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         return $index;
     }
 
-    // 4. Getters/Helpers
-    public function getLayoutRecord(): Layout
-    {
-        if (! isset($this->layoutRecord)) {
-            $this->loadLayoutRecord();
-        }
-
-        return $this->layoutRecord;
-    }
-
-    public function getLayoutPagesCount(): int
-    {
-        if (! property_exists($this->layoutRecord, 'pages_count')) {
-            $this->layoutRecord->loadCount('pages');
-        }
-
-        return $this->layoutRecord->pages_count;
-    }
-
     public function hasPageAssets(string $containerKey, int $widgetIndex): bool
     {
         if (! $this->inPageContext()) {
@@ -947,20 +941,30 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             return false;
         }
 
-        return collect($assets)->contains('page_id', $this->page_id);
+        return collect($assets)
+            ->contains(
+                fn (array $asset) => $asset['pageable_type'] === $this->page->getMorphClass()
+                    && $asset['pageable_id'] === $this->page->getKey(),
+            );
     }
 
     public function widgetHasPageAssets(Widget $widget): bool
     {
         if (! $this->inPageContext()) {
-            return $widget->assets()->whereNotNull('page_id')->exists();
+            return $widget->assets()->whereNotNull('pageable_type')->whereNotNull('pageable_id')->exists();
         }
 
         if (property_exists($widget, 'page_assets_count')) {
             return $widget->page_assets_count > 0;
         }
 
-        return $widget->assets()->where('page_id', $this->page_id)->exists();
+        return $widget
+            ->assets()
+            ->where([
+                'pageable_type' => $this->page->getMorphClass(),
+                'pageable_id' => $this->page->getKey(),
+            ])
+            ->exists();
     }
 
     public function widgetHasGlobalAssets(Widget $widget): bool
@@ -969,17 +973,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             return $widget->global_assets_count > 0;
         }
 
-        return $widget->assets()->whereNull('page_id')->exists();
-    }
-
-    #[Computed]
-    public function page(): ?Page
-    {
-        if ($this->page_id !== null && $this->page_id !== 0) {
-            return Page::query()->find($this->page_id);
-        }
-
-        return null;
+        return $widget->assets()->whereNull(['pageable_type', 'pageable_id'])->exists();
     }
 
     /**
@@ -1003,7 +997,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
      */
     public function getCurrentResource(): string
     {
-        if ($this->page_id !== null && $this->page_id !== 0) {
+        if ($this->inPageContext()) {
             return $this->getPageResource();
         }
 
@@ -1017,7 +1011,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     public function render(): View
     {
-        if (! isset($this->layoutRecord)) {
+        if (! isset($this->containerWidgets)) {
             $this->loadFromStore();
         }
 
@@ -1109,14 +1103,18 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         }
 
         foreach ($this->assets[$containerKey][$widgetIndex] as $assetIndex => $asset) {
-            $this->assets[$containerKey][$widgetIndex][$assetIndex]['page_id'] = $hasPageAssets ? $this->page_id : null;
+            if ($hasPageAssets) {
+                $this->assets[$containerKey][$widgetIndex][$assetIndex]['pageable_id'] = $this->page->getKey();
+                $this->assets[$containerKey][$widgetIndex][$assetIndex]['pageable_type'] = $this->page->getMorphClass();
+            } else {
+                $this->assets[$containerKey][$widgetIndex][$assetIndex]['pageable_id'] = null;
+                $this->assets[$containerKey][$widgetIndex][$assetIndex]['pageable_type'] = null;
+            }
         }
     }
 
     protected function loadNew(): void
     {
-        $this->loadLayoutRecord();
-
         $this->setupContainers();
 
         $widgets = $this->preloadAllWidgets();
@@ -1132,8 +1130,6 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected function loadFromStore(): void
     {
-        $this->loadLayoutRecord();
-
         $this->setupContainers();
 
         $widgets = $this->preloadAllWidgets(withAssets: false);
@@ -1160,7 +1156,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected function reload(): void
     {
-        $this->reset('containerWidgets', 'selectedRecords', 'assets', 'originalAssets', 'containers', 'layoutRecord');
+        $this->reset('containerWidgets', 'selectedRecords', 'assets', 'originalAssets', 'containers', 'layout');
 
         $this->loadNew();
     }
@@ -1215,7 +1211,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         ];
 
         if ($hasPageAssets) {
-            $asset['page_id'] = $this->page_id;
+            $asset['pageable_id'] = $this->page->getKey();
+            $asset['pageable_type'] = $this->page->getMorphClass();
             $asset['container'] = $containerKey;
         }
 
@@ -1242,13 +1239,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected function duplicateLayout(): void
     {
-        $newLayout = ReplicateLayoutAction::run($this->getLayoutRecord());
+        $newLayout = ReplicateLayoutAction::run($this->layout);
 
-        $this->layout_id = $newLayout->id;
-
-        $this->reload();
-
-        $this->dispatch('page-layout-changed', id: $this->layout_id);
+        $this->dispatch('page-layout-changed', id: $newLayout->getKey());
     }
 
     /**
@@ -1330,11 +1323,11 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         $widgetAsset = $this->getWidgetAsset($arguments['containerKey'], $arguments['widgetIndex'], $arguments['index']);
 
-        if (! isset($widgetAsset['page_id'])) {
+        if (! isset($widgetAsset['pageable_id'], $widgetAsset['pageable_type'])) {
             return null;
         }
 
-        return __('capell-layout::heading.page_widget_asset', ['name' => $livewire->getLayoutPage()->name]);
+        return __('capell-layout::heading.page_widget_asset', ['name' => $livewire->page->name]);
     }
 
     /**
@@ -1342,6 +1335,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
      */
     protected function applyWidgetAssetUpdate(WidgetAsset $record, array $data, self $livewire, array $arguments, Action $action, Schema $schema): void
     {
+        $this->loadFromStore();
+
         $schema->saveRelationships();
 
         if ($data !== []) {
@@ -1370,9 +1365,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                     fn (): array => Layout::query()
                         ->withCount('pages')
                         ->when(
-                            $this->site_id,
-                            fn (EloquentBuilder $query, int $siteId): EloquentBuilder => $query->where(
-                                fn (EloquentBuilder $query) => $query->where('site_id', $siteId)
+                            $this->site,
+                            fn (EloquentBuilder $query, ?Site $site): EloquentBuilder => $query->where(
+                                fn (EloquentBuilder $query) => $query->where('site_id', $site->getKey())
                                     ->orWhereNull('site_id'),
                             ),
                         )
@@ -1418,15 +1413,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected function changePageLayout(int $layoutId): void
     {
-        if (! $this->getLayoutPage() instanceof Page) {
+        if (! $this->inPageContext()) {
             return;
         }
 
-        $this->layout_id = $layoutId;
-
-        $this->reload();
-
         $this->layoutUpdated();
+
+        $this->dispatch('page-layout-changed', id: $layoutId);
     }
 
     protected function getSelectedAssets(string $containerKey, int $widgetIndex): array
@@ -1442,22 +1435,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ->all();
     }
 
-    protected function loadLayoutRecord(): Layout
+    protected function inPageContext(): bool
     {
-        if (isset($this->layoutRecord)) {
-            return $this->layoutRecord;
-        }
-
-        /** @var class-string<Layout> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Layout);
-
-        $layout = $model::query()->withCount('pages')->find($this->layout_id);
-
-        throw_unless($layout, Exception::class, 'Layout not found');
-
-        $this->layoutRecord = $layout;
-
-        return $this->layoutRecord;
+        return $this->page instanceof Pageable;
     }
 
     protected function saveContainer(array $data, ?string $key = null): void
@@ -1498,6 +1478,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected function duplicateWidget(string $containerKey, int $originalIndex, bool $withAssets = true): void
     {
+        $this->loadFromStore();
+
         $containerWidget = $this->containers[$containerKey]['widgets'][$originalIndex];
 
         $containerWidget['occurrence'] = $this->getLastContainerWidgetOccurrence($containerKey, $containerWidget['widget_key']) + 1;
@@ -1571,6 +1553,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     protected function editLayoutWidget(string $containerKey, int $widgetIndex, array $data): void
     {
+        $this->loadFromStore();
+
         $this->containers[$containerKey]['widgets'][$widgetIndex]['meta'] = array_merge(
             $this->containers[$containerKey]['widgets'][$widgetIndex]['meta'] ?? [],
             $data,
@@ -1605,42 +1589,17 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         return $occurrence;
     }
 
-    protected function getLayoutPage(): ?Page
-    {
-        if (! $this->inPageContext()) {
-            return null;
-        }
-
-        if ($this->layoutPage instanceof Page) {
-            return $this->layoutPage;
-        }
-
-        /** @var class-string<Page> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Page);
-
-        $this->layoutPage = $model::withTrashed()->withDrafts()->find($this->page_id);
-
-        return $this->layoutPage;
-    }
-
     protected function getSite(): ?Site
     {
         if ($this->site instanceof Site) {
             return $this->site;
         }
 
-        if ($this->getLayoutPage() instanceof Page) {
-            return $this->getLayoutPage()->site;
-        }
-
-        if ($this->site_id === null || $this->site_id === 0) {
+        if (! $this->inPageContext()) {
             return null;
         }
 
-        /** @var class-string<Site> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Site);
-
-        return $model::query()->find($this->site_id);
+        return $this->page->site;
     }
 
     protected function setupContainers(): void
@@ -1651,11 +1610,11 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         $this->containers = [];
 
-        if (! $this->layoutRecord->containers) {
+        if (! $this->layout->containers) {
             return;
         }
 
-        foreach ($this->layoutRecord->containers as $key => $container) {
+        foreach ($this->layout->containers as $key => $container) {
             $this->containers[$key] = [
                 'widgets' => $container['widgets'] ?? [],
                 'meta' => $container['meta'] ?? [],
@@ -1760,8 +1719,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                     'occurrence' => $widgetAsset->occurrence,
                 ];
 
-                if ($widgetAsset->page_id) {
-                    $asset['page_id'] = $widgetAsset->page_id;
+                if ($widgetAsset->pageable_id && $widgetAsset->pageable_type) {
+                    $asset['pageable_id'] = $widgetAsset->pageable_id;
+                    $asset['pageable_type'] = $widgetAsset->pageable_type;
                     $asset['container'] = $containerKey;
                 }
 
@@ -1806,10 +1766,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 }
 
                 if (! $this->inPageContext()) {
-                    return $asset->page_id === null;
+                    return $asset->pageable_type === null || $asset->pageable_id === null;
                 }
 
-                $matchesPage = $asset->page_id === null || $asset->page_id === $this->page_id;
+                $matchesPage = $asset->pageable_type === $this->page->getMorphClass()
+                    && $asset->pageable_id === $this->page->getKey();
+
                 $matchesContainer = $asset->container === null || $asset->container === $oldContainerKey;
 
                 return $matchesPage && $matchesContainer;
@@ -1821,7 +1783,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
             $widgetAsset = clone $matchingAsset;
             $widgetAsset->order = $widgetAssetData['order'] ?? $widgetAsset->order;
-            $widgetAsset->page_id = $widgetAssetData['page_id'] ?? null;
+            $widgetAsset->pageable_id = $widgetAssetData['pageable_id'] ?? null;
+            $widgetAsset->pageable_type = $widgetAssetData['pageable_type'] ?? null;
 
             $assets->push($widgetAsset);
         }
@@ -1835,7 +1798,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         $adminSchema = CapellAdmin::getSchema(
             TypeSchemaEnum::LayoutContainer->value,
-            $this->layoutRecord->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerSchema::getKey(),
+            $this->layout->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerSchema::getKey(),
         );
 
         $typeSchema = resolve($adminSchema)->make($schema);
@@ -1931,10 +1894,13 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 $withRelations,
                 fn (EloquentBuilder $query) => $query->withCount([
                     'layouts',
-                    'widgetPageAssets as page_assets_count' => fn (EloquentBuilder $query): EloquentBuilder => $query->distinct('page_id')
+                    'widgetPageAssets as page_assets_count' => fn (EloquentBuilder $query): EloquentBuilder => $query->distinct(['pageable_id', 'pageable_type'])
                         ->when(
                             $this->inPageContext(),
-                            fn (EloquentBuilder $query) => $query->where('page_id', $this->page_id),
+                            fn (EloquentBuilder $query) => $query->where([
+                                'pageable_type' => $this->page->getMorphClass(),
+                                'pageable_id' => $this->page->getKey(),
+                            ]),
                         ),
                 ])
                     ->with([
@@ -1984,12 +1950,15 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                     ->orWhereNull('container'),
             )
             ->when(
-                $this->page_id,
+                $this->page,
                 fn (EloquentBuilder $query): EloquentBuilder => $query->where(
-                    fn (EloquentBuilder $query): EloquentBuilder => $query->where('page_id', $this->page_id)
-                        ->orWhereNull('page_id'),
+                    fn (EloquentBuilder $query): EloquentBuilder => $query->where([
+                        'pageable_type' => $this->page->getMorphClass(),
+                        'pageable_id' => $this->page->getKey(),
+                    ])
+                        ->orWhereNull(['pageable_type', 'pageable_id']),
                 ),
-                fn (EloquentBuilder $query): EloquentBuilder => $query->whereNull('page_id'),
+                fn (EloquentBuilder $query): EloquentBuilder => $query->orWhereNull(['pageable_type', 'pageable_id']),
             )
             ->ordered()
             ->get()
@@ -2012,12 +1981,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 $withAssets,
                 fn (EloquentBuilder $query): EloquentBuilder => $query->with([
                     'assets' => fn (BuilderContract $query): BuilderContract => $query->when(
-                        $this->page_id,
-                        fn (EloquentBuilder $query) => $query->where(
-                            fn (EloquentBuilder $query) => $query->where('page_id', $this->page_id)
-                                ->orWhereNull('page_id'),
-                        ),
-                        fn (EloquentBuilder $query) => $query->whereNull('page_id'),
+                        $this->page,
+                        fn (EloquentBuilder $query): EloquentBuilder => $query->where([
+                            'pageable_id' => $this->page->getKey(),
+                            'pageable_type' => $this->page->getMorphClass(),
+                        ]),
+                        fn (EloquentBuilder $query): EloquentBuilder => $query->whereNull(['pageable_id', 'pageable_type']),
                     )
                         ->ordered()
                         ->with(
@@ -2032,11 +2001,11 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         if ($withAssets) {
             foreach ($allWidgetAssets as $widgetAssets) {
-                $hasPageAssets = $widgetAssets->assets->whereNotNull('page_id')->isNotEmpty();
+                $hasPageAssets = $widgetAssets->assets->whereNotNull(['pageable_type', 'pageable_id'])->isNotEmpty();
 
                 if ($hasPageAssets) {
                     $widgetAssets->setRelation('assets', $widgetAssets->assets->filter(
-                        fn (WidgetAsset $asset): bool => $asset->page_id !== null,
+                        fn (WidgetAsset $asset): bool => $asset->pageable_type !== null && $asset->pageable_id !== null,
                     ));
                 }
             }
@@ -2117,11 +2086,15 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             : $model::query()
                 ->whereKey($existingIds)
                 ->when(
-                    $this->page_id,
+                    $this->page,
                     fn (EloquentBuilder $query) => $query->where(
-                        fn (EloquentBuilder $query) => $query->where('page_id', $this->page_id)->orWhereNull('page_id'),
+                        fn (EloquentBuilder $query) => $query->where([
+                            'pageable_type' => $this->page->getMorphClass(),
+                            'pageable_id' => $this->page->getKey(),
+                        ])
+                            ->orWhereNull(['pageable_type', 'pageable_id']),
                     ),
-                    fn (EloquentBuilder $query) => $query->whereNull('page_id'),
+                    fn (EloquentBuilder $query) => $query->whereNull(['pageable_type', 'pageable_id']),
                 )
                 ->when(
                     DB::getDriverName() === 'sqlite',
@@ -2172,11 +2145,16 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 return false;
             }
 
-            if ($this->page_id !== null && $this->page_id !== 0) {
-                return $widgetAsset->page_id === null || $widgetAsset->page_id === $this->page_id;
+            if ($widgetAsset->pageable_type === null && $widgetAsset->pageable_id === null) {
+                return true;
             }
 
-            return $widgetAsset->page_id === null;
+            if (! $this->inPageContext()) {
+                return false;
+            }
+
+            return $widgetAsset->pageable_type === $this->page->getMorphClass()
+                && $widgetAsset->pageable_id === $this->page->getKey();
         })
             ->values();
     }
@@ -2267,7 +2245,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ];
 
             if ($hasPageAssets === true) {
-                $asset['page_id'] = $this->page_id;
+                $asset['pageable_id'] = $this->page->getKey();
+                $asset['pageable_type'] = $this->page->getMorphClass();
                 $asset['container'] = $containerKey;
             }
 
@@ -2314,9 +2293,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             ->where('occurrence', $occurrence)
             ->when(
                 $widgetHasPageAssets ? fn (EloquentBuilder $query) => $query
-                    ->where('container', $oldContainerKey)
-                    ->where('page_id', $this->page_id) : null,
-                fn (EloquentBuilder $query) => $query->whereNull('page_id'),
+                    ->where([
+                        'container' => $oldContainerKey,
+                        'pageable_type' => $this->page->getMorphClass(),
+                        'pageable_id' => $this->page->getKey(),
+                    ]) : null,
+                fn (EloquentBuilder $query) => $query->whereNull(['container', 'pageable_id', 'pageable_type']),
             )
             ->get()
             ->mapWithKeys(fn (WidgetAsset $widgetAsset): array => [$widgetAsset->asset_key => $widgetAsset]);
@@ -2363,10 +2345,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
                     if ($hasPageAssets) {
                         $existingAsset->container = $containerKey;
-                        $existingAsset->page_id = $this->page_id;
+                        $existingAsset->pageable_id = $this->page->getKey();
+                        $existingAsset->pageable_type = $this->page->getMorphClass();
                     } else {
                         $existingAsset->container = null;
-                        $existingAsset->page_id = null;
+                        $existingAsset->pageable_id = null;
+                        $existingAsset->pageable_type = null;
                     }
 
                     $existingAsset->save();
@@ -2396,16 +2380,21 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         int $occurrence,
         int $order,
     ): WidgetAsset {
-        $pageId = $hasPageAssets ? $this->page_id : null;
+        $pageId = $hasPageAssets ? $this->page->getKey() : null;
 
         $widgetAsset = $widget->assets
-            ->where('asset_type', $type)
-            ->where('asset_id', $assetId)
-            ->where('occurrence', $occurrence)
+            ->where([
+                'asset_id' => $assetId,
+                'asset_type' => $type,
+                'occurrence' => $occurrence,
+            ])
             ->when(
                 $pageId,
-                fn (SupportCollection $collection) => $collection->where('container', $containerKey)
-                    ->where('page_id', $pageId),
+                fn (SupportCollection $collection) => $collection->where([
+                    'container' => $containerKey,
+                    'pageable_id' => $pageId,
+                    'pageable_type' => $this->page->getMorphClass(),
+                ]),
             )
             ->first();
 
@@ -2420,8 +2409,9 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                 'occurrence' => $occurrence,
             ]);
 
-            if ($pageId !== null && $pageId !== 0) {
-                $widgetAsset->page_id = $this->page_id;
+            if ($pageId !== null) {
+                $widgetAsset->pageable_id = $pageId;
+                $widgetAsset->pageable_type = $this->page->getMorphClass();
                 $widgetAsset->container = $containerKey;
             }
         }
@@ -2446,10 +2436,12 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
         ];
 
         if ($hasPageAssets) {
-            $attributes['page_id'] = $this->page_id;
+            $attributes['pageable_id'] = $this->page->getKey();
+            $attributes['pageable_type'] = $this->page->getMorphClass();
             $attributes['container'] = $containerKey;
         } else {
-            $attributes['page_id'] = null;
+            $attributes['pageable_id'] = null;
+            $attributes['pageable_type'] = null;
             $attributes['container'] = null;
         }
 
@@ -2531,12 +2523,15 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             return $this->inPageContext();
         }
 
-        return collect($assets)->contains('page_id', $this->page_id);
+        return collect($assets)->contains(
+            fn (array $widgetAsset): bool => $widgetAsset['pageable_id'] === $this->page->getKey()
+                && $widgetAsset['pageable_type'] === $this->page->getMorphClass(),
+        );
     }
 
-    protected function togglePageAssets(string $containerKey, int $widgetIndex, ?int $pageId): void
+    protected function togglePageAssets(string $containerKey, int $widgetIndex, ?Pageable $page): void
     {
-        $hasPageAssets = $pageId !== null && $pageId !== 0;
+        $hasPageAssets = $page instanceof Pageable;
 
         $this->updatePageAssets($containerKey, $widgetIndex, $hasPageAssets);
 
@@ -2580,7 +2575,10 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
                 $hasPageAssets = false;
                 if ($this->inPageContext()) {
-                    $hasPageAssets = collect($originalAssets)->contains('page_id', $this->page_id);
+                    $hasPageAssets = collect($originalAssets)->contains(
+                        fn (array $asset): bool => $asset['pageable_id'] === $this->page->getKey()
+                            && $asset['pageable_type'] === $this->page->getMorphClass(),
+                    );
                 }
 
                 foreach ($originalAssets as $asset) {
@@ -2590,23 +2588,23 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
                     }
 
                     WidgetAsset::query()
-                        ->where('widget_id', $asset['original_widget_id'])
-                        ->where('asset_id', $asset['asset_id'])
-                        ->where('asset_type', $asset['asset_type'])
-                        ->where('occurrence', $asset['occurrence'])
+                        ->where([
+                            'asset_id' => $asset['asset_id'],
+                            'asset_type' => $asset['asset_type'],
+                            'occurrence' => $asset['occurrence'],
+                            'widget_id' => $asset['original_widget_id'],
+                        ])
                         ->when(
                             $hasPageAssets,
-                            fn (EloquentBuilder $query) => $query->where('page_id', $this->page_id)
-                                ->where('container', $asset['original_container_key']),
+                            fn (EloquentBuilder $query) => $query->where([
+                                'container' => $asset['original_container_key'],
+                                'pageable_type' => $this->page->getMorphClass(),
+                                'pageable_id' => $this->page->getKey(),
+                            ]),
                         )
                         ->delete();
                 }
             }
         }
-    }
-
-    protected function inPageContext(): bool
-    {
-        return $this->page_id && $this->page_id > 0;
     }
 }

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Database\Concerns\CreatesDraftsSchema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,8 @@ use Kalnoy\Nestedset\NestedSet;
 
 return new class extends Migration
 {
+    use CreatesDraftsSchema;
+
     /**
      * Run the migrations.
      */
@@ -55,22 +58,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('contents');
-    }
-
-    private function draftsCreateSchema(Blueprint $table): void
-    {
-        $uuid = config('drafts.column_names.uuid', 'uuid');
-        $publishedAt = config('drafts.column_names.published_at', 'published_at');
-        $isPublished = config('drafts.column_names.is_published', 'is_published');
-        $isCurrent = config('drafts.column_names.is_current', 'is_current');
-        $publisherMorphName = config('drafts.column_names.publisher_morph_name', 'publisher');
-
-        $table->uuid($uuid)->nullable()->index();
-        $table->timestamp($publishedAt)->nullable();
-        $table->boolean($isPublished)->default(false);
-        $table->boolean($isCurrent)->default(false);
-        $table->nullableMorphs($publisherMorphName);
-
-        $table->index([$uuid, $isPublished, $isCurrent]);
     }
 };

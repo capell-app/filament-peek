@@ -13,6 +13,21 @@ trait BuildsOrderedMigrationWorkspace
 {
     protected ?string $orderedMigrationWorkspacePath = null;
 
+    protected function cleanupOrderedMigrationWorkspace(): void
+    {
+        $workspacePath = $this->orderedMigrationWorkspacePath;
+
+        if (! is_string($workspacePath) || $workspacePath === '') {
+            return;
+        }
+
+        if (File::isDirectory($workspacePath)) {
+            File::deleteDirectory($workspacePath);
+        }
+
+        $this->orderedMigrationWorkspacePath = null;
+    }
+
     private function discoverPackageMigrations(PackageData $package): array
     {
         $path = $package->path;

@@ -18,6 +18,8 @@ use Capell\Blog\Enums\WidgetComponentEnum;
 use Capell\Blog\Enums\WidgetSchemaEnum;
 use Capell\Blog\Filament\Resources\Articles\Schemas\Types\ArticlePageSchema;
 use Capell\Blog\Listeners\AddBlogPagesToNavigation;
+use Capell\Blog\Listeners\ArticleTranslationCreatedListener;
+use Capell\Blog\Listeners\ArticleTranslationUpdatedListener;
 use Capell\Blog\Models\Tag;
 use Capell\Blog\Support\BlogModelRegistrar;
 use Capell\Blog\Support\Creator\BlogCreator;
@@ -36,6 +38,7 @@ use Capell\Core\Events\NavigationCreating;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\StaticSite\StaticSiteExtensionRegistry;
@@ -64,6 +67,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     public static string $packageName = 'capell-app/blog';
 
     public static string $description = 'Article page type with blog archives.';
+
+    public function bootingPackage(): void
+    {
+        $this->registerTranslationEvents();
+    }
 
     public function configurePackage(Package $package): void
     {
@@ -400,6 +408,14 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
         if (! $registry->has('blog-tags-archives')) {
             $registry->register('blog-tags-archives', resolve(BlogStaticSiteExtension::class));
         }
+
+        return $this;
+    }
+
+    private function registerTranslationEvents(): self
+    {
+        Event::listen('eloquent.created: ' . Translation::class, ArticleTranslationCreatedListener::class);
+        Event::listen('eloquent.updated: ' . Translation::class, ArticleTranslationUpdatedListener::class);
 
         return $this;
     }

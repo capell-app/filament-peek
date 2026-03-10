@@ -114,11 +114,15 @@ class LayoutLoader
             ->ordered();
 
         if ($page instanceof Page) {
-            $assetQuery->where(function (BuilderContract $q) use ($page): void {
-                $q->whereNull('page_id')->orWhere('page_id', $page->id);
+            $assetQuery->where(function (BuilderContract $query) use ($page): void {
+                $query->where([
+                    'pageable_type' => $page->getMorphClass(),
+                    'pageable_id' => $page->getKey(),
+                ])
+                    ->orWhereNull(['pageable_type', 'pageable_id']);
             });
         } else {
-            $assetQuery->whereNull('page_id');
+            $assetQuery->whereNull(['pageable_type', 'pageable_id']);
         }
 
         $assets = $assetQuery->get();
@@ -126,20 +130,21 @@ class LayoutLoader
         // Group assets for fast lookups
         $defaultAssetsByWidgetId = [];
         $pageAssetsByWidgetIdContainerOcc = [];
-        foreach ($assets as $asset) {
+
+        $assets->each(function (WidgetAsset $asset) use (&$defaultAssetsByWidgetId, &$pageAssetsByWidgetIdContainerOcc): void {
             $wid = (int) $asset->widget_id;
-            if ($asset->page_id === null) {
+            if ($asset->pageable_id === null && $asset->pageable_type === null) {
                 $defaultAssetsByWidgetId[$wid] ??= [];
                 $defaultAssetsByWidgetId[$wid][] = $asset;
 
-                continue;
+                return;
             }
 
             $container = $asset->container;
             $occurrence = (int) $asset->occurrence;
             $pageAssetsByWidgetIdContainerOcc[$wid][$container][$occurrence] ??= [];
             $pageAssetsByWidgetIdContainerOcc[$wid][$container][$occurrence][] = $asset;
-        }
+        });
 
         // Build the final preloaded map per container/widget/occurrence
         $result = [];

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Pages\SitemapPage;
+use Capell\Blog\Models\Article;
 use Capell\Blog\Support\Creator\BlogCreator;
-use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Support\Creator\PageCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
@@ -38,7 +38,7 @@ test('can render page', function (): void {
     $archivesPage = $blogCreator->createArchivesPage($blogPage);
     $blogCreator->createArchivePage($archivesPage);
 
-    Page::factory()->count(5)->site($site)->withTranslations($site->languages)->create();
+    Article::factory()->count(5)->site($site)->withTranslations()->create();
 
     livewire(SitemapPage::class)
         ->assertSuccessful();

@@ -62,7 +62,7 @@ describe('from edit article', function (): void {
 
         assertDatabaseHas(Translation::class, [
             'title' => $newData->name,
-            'meta' => ['slug' => $slug],
+            'meta->slug' => $slug,
             'language_id' => $page->site->language_id,
         ]);
 
@@ -126,7 +126,7 @@ describe('from list article', function (): void {
                     (string) Str::uuid() => [
                         'language_id' => $language->getKey(),
                         'title' => $newData->name,
-                        'slug' => str($newData->name)->slug()->toString(),
+                        'meta' => ['slug' => str($newData->name)->slug()->toString()],
                     ],
                 ])
                     ->toArray(),
@@ -169,7 +169,7 @@ describe('from list article', function (): void {
                     (string) Str::uuid() => [
                         'language_id' => $language->getKey(),
                         'title' => $newData->name,
-                        'slug' => str($newData->name)->slug()->toString(),
+                        'meta' => ['slug' => str($newData->name)->slug()->toString()],
                     ],
                 ])
                     ->toArray(),

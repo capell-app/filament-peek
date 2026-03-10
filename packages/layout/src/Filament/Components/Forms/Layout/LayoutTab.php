@@ -24,8 +24,8 @@ class LayoutTab extends Tab
                 Livewire::make(
                     LivewireComponentsEnum::LayoutBuilder->value,
                     fn (Get $get, Layout $record): array => [
-                        'site_id' => $record->site_id,
-                        'layout_id' => $record->id,
+                        'site' => $record->site,
+                        'layout' => $record,
                     ],
                 ),
             ]);

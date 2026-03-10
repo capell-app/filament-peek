@@ -46,6 +46,7 @@ class InstallCommand extends Command
     {
         $migrations = [
             base_path('vendor/spatie/laravel-tags/database/migrations/create_tag_tables.php.stub'),
+            __DIR__ . '/../../../database/migrations/create_articles_table.php',
             __DIR__ . '/../../../database/migrations/alter_tags_table.php',
         ];
 

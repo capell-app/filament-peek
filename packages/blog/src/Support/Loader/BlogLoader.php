@@ -92,4 +92,11 @@ class BlogLoader
 
         return $page;
     }
+
+    public static function getBlogPageUrl(Site $site, Language $language, ?Page $page = null): string
+    {
+        $page ??= self::getBlogPage($site, language: $language);
+
+        return $page?->pageUrl?->full_url ?? '';
+    }
 }

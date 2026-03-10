@@ -32,9 +32,7 @@ beforeEach(function (): void {
 test('Render layout builder', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->assertSeeText(__('capell-layout::heading.layout_record', ['name' => $layout->name]));
 });
@@ -50,9 +48,7 @@ test('can edit layouts', function (LayoutEnum $layoutEnum): void {
     $widgetCreator = resolve(WidgetCreator::class);
     $widgetCreator->createWidgets(collect([$language]));
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->assertSeeText(__('capell-layout::heading.layout_record', ['name' => $layout->name]));
 })->with(LayoutEnum::cases());
@@ -62,8 +58,8 @@ test('Render layout builder with page', function (): void {
     $page = Page::factory()->layout($layout)->create();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->assertSeeText(__('capell-layout::heading.layout_record', ['name' => $layout->name]));
@@ -72,9 +68,7 @@ test('Render layout builder with page', function (): void {
 test('Render layout without containers', function (): void {
     $layout = (new LayoutFactory)->state(['containers' => []])->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->assertSeeHtml(__('capell-layout::message.layout_empty'));
 });
@@ -91,9 +85,7 @@ test('Render layout with widget and assets', function (AssetEnum|Capell\Core\Enu
     $layout = (new LayoutFactory)->state(['containers' => ['main' => ['widgets' => [['widget_key' => $widget->key]]]]])
         ->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful();
 })->with([AssetEnum::Content, ...Capell\Core\Enums\AssetEnum::cases()]);
 
@@ -106,9 +98,7 @@ test('Can reorder containers', function (): void {
         ],
     ])->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->call(
             'reorderContainers',
@@ -138,9 +128,7 @@ test('Can reorder widgets', function (): void {
         ],
     ])->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->call(
             'reorderWidgets',
@@ -164,9 +152,7 @@ test('Can add container', function (): void {
     $containerKey = array_key_first($layout->containers) . '-2';
     $htmlClass = 'test-class';
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->callAction(
             'addContainer',
@@ -196,8 +182,8 @@ test('Can clone layout', function (): void {
     $page = Page::factory()->layout($layout)->create();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->callAction('duplicateLayoutAction')
@@ -219,9 +205,7 @@ test('removeContainer action', function (): void {
 
     $containerKey = array_key_first($layout->containers);
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->callAction('removeContainer', arguments: [
             'containerKey' => $containerKey,
@@ -251,9 +235,7 @@ test('Can save layout without editing container', function (): void {
         ->occurrence($containerWidget['occurrence'])
         ->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->set('layoutModified', true)
         ->call('saveLayout');
@@ -265,11 +247,10 @@ test('Can save layout without editing container', function (): void {
 
     $assets = WidgetAsset::query()
         ->where('widget_id', $widget->id)
-        ->whereNull('page_id')
+        ->whereNull(['pageable_id', 'pageable_type'])
         ->exists();
 
-    expect($assets)
-        ->toBeTrue();
+    expect($assets)->toBeTrue();
 });
 
 test('Can edit container', function (): void {
@@ -288,9 +269,7 @@ test('Can edit container', function (): void {
         ->occurrence($containerWidget['occurrence'])
         ->create();
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->callAction(
             'editContainer',
@@ -310,7 +289,7 @@ test('Can edit container', function (): void {
 
     $assets = WidgetAsset::query()
         ->where('widget_id', $widget->id)
-        ->whereNull('page_id')
+        ->whereNull(['pageable_type', 'pageable_id'])
         ->get();
 
     expect($assets)
@@ -350,8 +329,8 @@ test('Can edit container for page layout', function (string $widgetKey): void {
         ->create();
 
     livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-        'page_id' => $page->id,
+        'layout' => $layout,
+        'page' => $page,
     ])
         ->assertSuccessful()
         ->callAction(
@@ -371,8 +350,11 @@ test('Can edit container for page layout', function (string $widgetKey): void {
         ->toHaveKey($newContainerKey);
 
     $assets = WidgetAsset::query()
-        ->where('widget_id', $widget->id)
-        ->where('page_id', $page->id)
+        ->where([
+            'pageable_type' => $page->getMorphClass(),
+            'pageable_id' => $page->id,
+            'widget_id' => $widget->id,
+        ])
         ->get();
 
     expect($assets)
@@ -381,7 +363,8 @@ test('Can edit container for page layout', function (string $widgetKey): void {
             fn (Expectation $expect) => $expect
                 ->container->toEqual($newContainerKey)
                 ->widget_id->toEqual($widget->id)
-                ->page_id->toEqual($page->id),
+                ->pageable_type->toEqual($page->getMorphClass())
+                ->pageable_id->toEqual($page->id),
         );
 })->with(['first', 'second']);
 
@@ -391,9 +374,7 @@ test('Can add new widget', function (): void {
 
     $containerKey = array_key_first($layout->containers);
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             'addWidget',
@@ -431,9 +412,7 @@ test('Can add existing widget', function (): void {
 
     $widget = Widget::query()->firstWhere('key', $lastWidget['widget_key']);
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             'addWidget',
@@ -478,9 +457,7 @@ test('Can edit container widget', function (): void {
 
     $widgetIndex++;
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction(
             'addWidget',
@@ -525,9 +502,7 @@ test('Can duplicate widget', function (): void {
 
     $widget = Widget::query()->firstWhere('key', $lastWidget['widget_key']);
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->callAction(
             'duplicateWidget',
@@ -557,9 +532,7 @@ test('Can remove widget', function (): void {
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_last($layout->containers[$containerKey]['widgets']);
 
-    livewire(LayoutBuilder::class, [
-        'layout_id' => $layout->id,
-    ])
+    livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->callAction('removeWidget', arguments: [
             'containerKey' => $containerKey,

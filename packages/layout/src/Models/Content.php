@@ -30,6 +30,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Capell\Layout\Database\Factories\ContentFactory;
+use Capell\Layout\Models\Concerns\ComposhipsJsonRelationshipsTrait;
 use Capell\Layout\Observers\ContentObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
@@ -55,7 +56,6 @@ use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
 /**
@@ -220,6 +220,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, HasMedia, PageCacheable, Publishable, Typeable, Userstampable
 {
     use Cloneable;
+    use ComposhipsJsonRelationshipsTrait;
     use HasAssets;
     use HasDrafts {
         bootHasDrafts as protected;
@@ -228,7 +229,6 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
         HasDraftsAndNestedSet::parent as hasDraftsAndNestedSetParent;
     }
     use HasFactory;
-    use HasJsonRelationships;
     use HasMetaData;
     use HasMorphModelRelations;
     use HasPublishDates;
@@ -385,7 +385,7 @@ class Content extends Model implements Draftable, HasDraftsAndNestedSetModel, Ha
 
     public function linkedPage(): MorphTo
     {
-        return $this->morphTo(null, 'meta->linked_pageable_type', 'meta->linked_pageable_id');
+        return $this->morphTo(type: 'meta->linked_pageable_type', id: 'meta->linked_pageable_id');
     }
 
     public function related(): BelongsToJson

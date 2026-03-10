@@ -14,6 +14,7 @@ use Capell\Core\Models\Concerns\InteractsWithMedia;
 use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Core\Models\Page;
 use Capell\Layout\Database\Factories\WidgetAssetFactory;
+use Capell\Layout\Models\Concerns\ComposhipsJsonRelationshipsTrait;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -26,7 +27,6 @@ use Illuminate\Foundation\Auth\User;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 /**
  * Capell\Layout\Models\WidgetAsset
@@ -94,12 +94,12 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
  */
 class WidgetAsset extends Model implements HasMedia, PageCacheable, Userstampable
 {
+    use ComposhipsJsonRelationshipsTrait;
+
     use HasAssets;
 
     /** @use HasFactory<WidgetAssetFactory> */
     use HasFactory;
-
-    use HasJsonRelationships;
     use HasMetaData;
     use HasUserstamps;
     use InteractsWithMedia;
@@ -145,7 +145,7 @@ class WidgetAsset extends Model implements HasMedia, PageCacheable, Userstampabl
 
     public function linkedPage(): MorphTo
     {
-        return $this->morphTo(null, 'meta->linked_pageable_type', 'meta->linked_pageable_id');
+        return $this->morphTo('meta->linked_pageable_type', 'meta->linked_pageable_id');
     }
 
     protected function scopeOrdered(Builder $query, string $dir = 'asc'): void
