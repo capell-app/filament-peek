@@ -32,9 +32,9 @@ declare(strict_types=1);
     :$widget
 >
     @php
-        $showTitle = $widget->getMeta("container_options.{$containerKey}.hide_title")
+        $showTitle = $widget->getMeta("container_options.{$containerKey}.hide_title") !== true
             && ($widget->translation?->title || ($showPageTitle && $page->translation->title));
-        $showContent = $widget->getMeta("container_options.{$containerKey}.hide_content")
+        $showContent = $widget->getMeta("container_options.{$containerKey}.hide_content") !== true
             && ($widget->translation?->content || ($showPageContent && $page->translation->content));
     @endphp
 

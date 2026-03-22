@@ -15,7 +15,7 @@ class Blog extends AbstractPage
 {
     protected static string $defaultView = 'capell::livewire.page.results';
 
-    protected function loadPage(): void
+    protected function setup(): void
     {
         $page = Frontend::page();
 

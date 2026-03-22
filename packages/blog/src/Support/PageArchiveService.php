@@ -9,9 +9,9 @@ use Capell\Blog\Models\Article;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class PageArchiveService
 {
@@ -66,8 +66,9 @@ class PageArchiveService
             ->orderByRaw('COALESCE(`visible_from`, `created_at`) DESC');
 
         if ($paginate) {
-            $paginator = $query->paginate($perPage ?? 15, pageName: $paginationKey);
-            $paginator->getCollection()->transform(fn (Model $row): ArchiveMonthData => new ArchiveMonthData(
+            $paginator = $query->getQuery()->paginate($perPage ?? 15, pageName: $paginationKey);
+
+            $paginator->getCollection()->transform(fn (stdClass $row): ArchiveMonthData => new ArchiveMonthData(
                 (int) $row->year,
                 (int) $row->month,
                 (int) $row->total,
@@ -76,11 +77,14 @@ class PageArchiveService
             return $paginator;
         }
 
-        return $query->get()
-            ->map(fn (Model $row): ArchiveMonthData => new ArchiveMonthData(
-                (int) $row->year,
-                (int) $row->month,
-                (int) $row->total,
-            ));
+        return $query->getQuery()
+            ->get()
+            ->map(
+                fn (stdClass $row): ArchiveMonthData => new ArchiveMonthData(
+                    (int) $row->year,
+                    (int) $row->month,
+                    (int) $row->total,
+                ),
+            );
     }
 }

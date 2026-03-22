@@ -35,7 +35,10 @@ test('children widget', function (): void {
         ->assertOk()
         ->assertElementExists(
             '.widget-children',
-            fn (AssertElement $elm): BaseAssert => $elm->containsText(__($widget->translation->title, GetPageVariablesAction::run($page)))
+            fn (AssertElement $elm): BaseAssert => $elm->find(
+                '.widget-content',
+                fn (AssertElement $elm): BaseAssert => $elm->containsText(__($widget->translation->title, GetPageVariablesAction::run($page))),
+            )
                 ->contains('.children-page-item', 2)
                 ->each(
                     '.children-page-item',

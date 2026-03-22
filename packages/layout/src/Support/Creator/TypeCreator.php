@@ -10,7 +10,6 @@ use Capell\Core\Enums\ContentStructure;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
-use Capell\Layout\Enums\AssetComponentEnum;
 use Capell\Layout\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Layout\Enums\ContentTypeEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
@@ -89,8 +88,8 @@ class TypeCreator
 
     public function createWidgetTypes(): void
     {
-        $this->contentsWidgetType();
         $this->defaultWidgetType();
+        $this->contentsWidgetType();
         $this->contentBuilderWidgetType();
         $this->mediaWidgetType();
         $this->navigationWidgetType();
@@ -104,11 +103,10 @@ class TypeCreator
     public function defaultWidgetType(): Type
     {
         return $this->typeModel::query()->firstOrCreate([
-            'key' => WidgetTypeEnum::Default,
             'type' => LayoutTypeEnum::Widget,
+            'key' => 'default',
         ], [
             'name' => __('capell-admin::generic.default'),
-            'default' => true,
             'admin' => [
                 'type_schema' => WidgetTypeSchema::getKey(),
                 'icon' => 'heroicon-o-puzzle-piece',
@@ -299,7 +297,7 @@ class TypeCreator
             ],
             'meta' => [
                 'component' => WidgetComponentEnum::Assets,
-                'component_item' => AssetComponentEnum::Content,
+                'component_item' => CapellAssetComponentEnum::Card,
                 'margin' => ['lg'],
             ],
         ]);

@@ -46,7 +46,7 @@ $theme = Frontend::theme();
     >
         @if ($content || $title)
             <x-capell::content
-                class="mb-2"
+                class="widget-content mb-2"
                 :compact="true"
                 :content="$content"
                 :content-type="$widget->type->content_structure"

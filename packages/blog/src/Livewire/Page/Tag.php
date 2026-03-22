@@ -26,16 +26,7 @@ class Tag extends AbstractPage
 
     protected ?string $tagName = null;
 
-    #[Override]
-    protected function getViewData(): array
-    {
-        return [
-            'tag_slug' => $this->tagSlug,
-            'tag_name' => $this->tagName,
-        ];
-    }
-
-    protected function loadPage(): void
+    protected function setup(): void
     {
         $params = Frontend::params();
         $this->tagSlug = is_array($params) ? ($params['tag'] ?? null) : null;
@@ -87,5 +78,14 @@ class Tag extends AbstractPage
         $this->params = $this->getViewData();
 
         resolve(FrontendState::class)->withParams($this->params);
+    }
+
+    #[Override]
+    protected function getViewData(): array
+    {
+        return [
+            'tag_slug' => $this->tagSlug,
+            'tag_name' => $this->tagName,
+        ];
     }
 }

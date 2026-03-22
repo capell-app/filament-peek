@@ -10,6 +10,7 @@ $theme = Frontend::theme();
 @php
     use Capell\Core\Enums\AssetComponentEnum;
     use Capell\Core\Facades\CapellCore;
+    use Capell\Frontend\Contracts\AssetsRegistryInterface;
 @endphp
 
 @props([

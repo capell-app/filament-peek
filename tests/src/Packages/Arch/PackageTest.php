@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Frontend\Http\Middleware\HtmlCacheMiddleware;
+use Capell\Frontend\Support\Logging\FrontendLogger;
 use Saade\FilamentAdjacencyList\Forms\Components\Concerns\HasRelationship;
 
 arch()
@@ -11,6 +12,7 @@ arch()
     ->php()
     ->ignoring([
         'var_export',
+        FrontendLogger::class,
     ]);
 
 arch()

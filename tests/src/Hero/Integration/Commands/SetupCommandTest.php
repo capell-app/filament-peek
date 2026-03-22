@@ -9,11 +9,9 @@ use Illuminate\Console\Command;
 use function Pest\Laravel\artisan;
 
 it('runs hero install command successfully', function (): void {
-    Layout::factory()->create();
+    AddHeroToLayoutAction::shouldRun()->once();
 
-    $mock = AddHeroToLayoutAction::mock();
-    $mock->shouldReceive('handle')->once();
-    app()->instance(AddHeroToLayoutAction::class, $mock);
+    Layout::factory()->create();
 
     artisan('capell:hero-setup')
         ->expectsOutput('Capell Hero setup successfully.')

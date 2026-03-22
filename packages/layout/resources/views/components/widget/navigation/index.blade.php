@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 use Capell\Frontend\Facades\Frontend;
 
 $theme = Frontend::theme();
@@ -46,21 +45,25 @@ $theme = Frontend::theme();
     @if ($groupItems && count($items) > 5)
         <div class="grid md:grid-cols-2">
             @php
-                $chunkedItems = collect($items)->chunk(ceil(count($items) / $columns));
+                /**
+                 * @var Collection<NavigationItemData> $items
+                 */
+                $half = (int) ceil(count($items) / $columns);
+
+                /**
+                 * @var Collection<Collection<NavigationItemData>> $chunks
+                 */
+                $chunks = $items->chunk($half);
             @endphp
 
-            @foreach ($chunkedItems as $chunked)
+            @foreach ($chunks as $chunk)
                 <x-dynamic-component
                     :component="$menu->getMeta('component', 'capell::list')"
                     class="widget-navigation-list"
                 >
-                    @foreach ($chunked as $item)
+                    @foreach ($chunk as $item)
                         <x-dynamic-component
-                            :component="
-                                ! empty($item['data']['component'])
-                                ? $item['data']['component']
-                                : 'capell::list.item'
-                            "
+                            :component="! empty($item->data['component']) ? $item->data['component'] : 'capell::list.item'"
                             class="widget-navigation-item"
                             :$item
                         />
@@ -75,11 +78,7 @@ $theme = Frontend::theme();
         >
             @foreach ($items as $item)
                 <x-dynamic-component
-                    :component="
-                        ! empty($item['data']['component'])
-                        ? $item['data']['component']
-                        : 'capell::list.item'
-                    "
+                    :component="! empty($item->data['component']) ? $item->data['component'] : 'capell::list.item'"
                     class="widget-navigation-item widget-navigation-child-item"
                     :$item
                 />

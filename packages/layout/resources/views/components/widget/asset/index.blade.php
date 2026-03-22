@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-use Capell\Frontend\Facades\Frontend;
-
-$theme = Frontend::theme();
 ?>
 
 @php
     use Capell\Core\Enums\AssetComponentEnum;
     use Capell\Core\Facades\CapellCore;
+    use Capell\Frontend\Contracts\AssetsRegistryInterface;
+    use Capell\Frontend\Facades\Frontend;
+
+    $theme = Frontend::theme();
 @endphp
 
 @props([

@@ -46,13 +46,13 @@ it('renders navigation tabs widget on page', function (): void {
         ],
         [
             'label' => 'External link',
-            'type' => 'external_url',
+            'type' => NavigationItemType::Link->value,
             'data' => [
                 'url' => $externalUrl = 'https://example.com/external',
             ],
         ],
     ];
-    $widget = $creator->navigationTabsWidget(navigatonItems: $items);
+    $widget = $creator->navigationTabsWidget(navigationItems: $items);
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
 

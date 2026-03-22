@@ -34,15 +34,15 @@ declare(strict_types=1);
     :$widget
 >
     @php
-        $showTitle = empty($widgetData['hide_title'])
+        $showTitle = $widget->getMeta("container_options.{$containerKey}.hide_title") !== true
             && ($widget->translation?->title || ($showPageTitle && $page->translation->title));
-        $showContent = empty($widgetData['hide_content'])
+        $showContent = $widget->getMeta("container_options.{$containerKey}.hide_content") !== true
             && ($widget->translation?->content || ($showPageContent && $page->translation->content));
     @endphp
 
     @if ($showTitle || $showContent)
         <x-capell::content
-            class="mb-6"
+            class="widget-content mb-6"
             :compact="true"
             :content="$showContent ? ($widget->translation->content ?: ($showPageContent ? $page->translation->content : null)) : null"
             :content-type="$widget->type->content_structure"

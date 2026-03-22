@@ -6,6 +6,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\Type;
 use Capell\Core\Support\Creator\DemoCreator;
 use Illuminate\Support\Facades\File;
 
@@ -20,6 +21,7 @@ it('runs the demo command and creates demo layouts for a site', function (): voi
 
     $language = Language::factory()->english()->create();
     $site = Site::factory()->recycle($language)->withTranslations($language)->state(['name' => 'Test'])->create();
+    $type = Type::factory()->page()->default()->create();
     Page::factory()->site($site)->home()->withTranslations(slug: '/')->create();
 
     Page::factory()->count(4)->site($site)->has(Media::factory())->create();
@@ -29,5 +31,4 @@ it('runs the demo command and creates demo layouts for a site', function (): voi
         '--sites' => $site->name,
     ])
         ->assertExitCode(0);
-
 });

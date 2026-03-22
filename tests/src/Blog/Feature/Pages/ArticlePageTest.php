@@ -35,6 +35,7 @@ test('article page with layout', function (): void {
             ['visible_from' => now()->subDays(1)],
         )
         ->create();
+    /** @var Article $article */
     $article = $articles->get(1);
     $article->tags()->attach($tags);
     $articleTags = $article->tags()->ordered()->get();
@@ -68,18 +69,5 @@ test('article page with layout', function (): void {
                         ),
                 ),
         )
-        ->assertElementExists(
-            '.neighbor-links',
-            fn (AssertElement $elm): BaseAssert => $elm->contains('.neighbor-link', 2)
-                ->each(
-                    '.neighbor-link',
-                    fn (AssertElement $link, int $index): BaseAssert => $link->find(
-                        'a',
-                        fn (AssertElement $link): BaseAssert => $link->has(
-                            'href',
-                            $articles->get($index === 0 ? 0 : 2)->pageUrl->full_url,
-                        ),
-                    ),
-                ),
-        );
+        ->assertDoesntExist('.neighbor-links');
 });

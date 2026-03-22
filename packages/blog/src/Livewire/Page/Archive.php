@@ -23,48 +23,7 @@ class Archive extends AbstractPage
 
     protected static string $defaultView = 'capell::livewire.page.results';
 
-    /**
-     * @return array<int, int>
-     */
-    protected function getArchiveDateFromUrl(): array
-    {
-        $params = Frontend::params();
-        $date = is_array($params) ? ($params['date'] ?? '') : '';
-
-        $month = null;
-        $year = null;
-        abort_if($date === '' || $date === '0', 404);
-
-        $parts = explode('/', (string) $date);
-        $dates = explode('-', $parts[0]);
-
-        $date = isset($parts[1]) ? (int) $parts[1] : 1;
-
-        if (isset($dates[0]) && mb_strlen($dates[0]) === 4) {
-            $year = (int) $dates[0];
-        }
-
-        if (isset($dates[1]) && $dates[1] >= 0 && $dates[1] <= 12) {
-            $month = (int) $dates[1];
-        }
-
-        abort_if(! is_numeric($date) && ($year === 0 || $year === null), 404);
-
-        return [$year, $month];
-    }
-
-    protected function getViewData(): array
-    {
-        $date = Date::create()->day(1)->month($this->month)->year($this->year);
-
-        return [
-            'archive_date' => $date,
-            'archive_month' => $date->format('F'),
-            'archive_year' => $this->year,
-        ];
-    }
-
-    protected function loadPage(): void
+    protected function setup(): void
     {
         if (($this->year === null || $this->year === 0) && ($this->month === null || $this->month === 0)) {
             [$this->year, $this->month] = $this->getArchiveDateFromUrl();
@@ -134,5 +93,46 @@ class Archive extends AbstractPage
         $this->params = $this->getViewData();
 
         resolve(FrontendState::class)->withParams($this->params);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    protected function getArchiveDateFromUrl(): array
+    {
+        $params = Frontend::params();
+        $date = is_array($params) ? ($params['date'] ?? '') : '';
+
+        $month = null;
+        $year = null;
+        abort_if($date === '' || $date === '0', 404);
+
+        $parts = explode('/', (string) $date);
+        $dates = explode('-', $parts[0]);
+
+        $date = isset($parts[1]) ? (int) $parts[1] : 1;
+
+        if (isset($dates[0]) && mb_strlen($dates[0]) === 4) {
+            $year = (int) $dates[0];
+        }
+
+        if (isset($dates[1]) && $dates[1] >= 0 && $dates[1] <= 12) {
+            $month = (int) $dates[1];
+        }
+
+        abort_if(! is_numeric($date) && ($year === 0 || $year === null), 404);
+
+        return [$year, $month];
+    }
+
+    protected function getViewData(): array
+    {
+        $date = Date::create()->day(1)->month($this->month)->year($this->year);
+
+        return [
+            'archive_date' => $date,
+            'archive_month' => $date->format('F'),
+            'archive_year' => $this->year,
+        ];
     }
 }

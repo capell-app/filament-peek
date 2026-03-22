@@ -42,14 +42,15 @@ declare(strict_types=1);
     :$widget
 >
     @php
-        $showTitle = $widget->getMeta("container_options.{$containerKey}.hide_title")
+        $showTitle = $widget->getMeta("container_options.{$containerKey}.hide_title") !== true
             && ($widget->translation?->title || ($showPageTitle && $page->translation->title));
-        $showContent = $widget->getMeta("container_options.{$containerKey}.hide_content")
+        $showContent = $widget->getMeta("container_options.{$containerKey}.hide_content") !== true
             && ($widget->translation?->content || ($showPageContent && $page->translation->content));
     @endphp
 
     @if ($showTitle || $showContent)
         <x-capell::content
+            class="widget-content"
             :compact="true"
             :content="$showContent ? ($widget->translation->content ?: ($showPageContent ? $page->translation->content : null)) : null"
             :content-type="$widget->translation->content ? $widget->type->content_structure : ($showPageContent ? $page->type->content_structure : null)"
@@ -88,12 +89,13 @@ declare(strict_types=1);
             @foreach ($pages as $item)
                 <x-dynamic-component
                     :component="$componentItem"
+                    :class="$widget->key . '-page-item'"
                     :$container
                     :$containerKey
-                    :$loop
                     :count="$withChildCount ? $item->children_count : null"
                     :icon="(bool) $widget->getMeta('icon')"
                     :image="$withImage ? $item->image : null"
+                    :$loop
                     :parent="$withParent && method_exists($item, 'loadParent') ? $item->loadParent($language) : null"
                     :publish-date="$withDate ? $item->getPublishDate() : null"
                     :$size
@@ -101,7 +103,6 @@ declare(strict_types=1);
                     :title="$item->translation->title"
                     :url="$item->pageUrl->full_url"
                     :with-summary="$withSummary"
-                    :class="$widget->key . '-page-item'"
                 />
             @endforeach
         </div>

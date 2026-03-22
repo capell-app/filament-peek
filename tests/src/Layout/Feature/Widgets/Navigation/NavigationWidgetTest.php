@@ -90,7 +90,7 @@ it('renders navigation widget on page', function (): void {
         ],
     ];
 
-    $widget = $creator->navigationWidget(site: $site, navigatonItems: $items);
+    $widget = $creator->navigationWidget(site: $site, navigationItems: $items);
     $layout->update([
         'containers' => [
             'main' => [

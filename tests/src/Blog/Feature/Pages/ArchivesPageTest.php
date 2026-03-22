@@ -24,10 +24,10 @@ test('archives page list articles archives by month/year', function (): void {
     $siteDomain = SiteDomain::factory()->default()->create();
     $site = $siteDomain->site;
 
+    $blogCreator->createArticlePageType();
     $blogPage = $blogCreator->createBlogPage($site);
     $archivesPage = $blogCreator->createArchivesPage($blogPage);
     $archivePage = $blogCreator->createArchivePage($archivesPage);
-    $articleType = $blogCreator->createArticlePageType();
     $articleLayout = $blogCreator->createArticleLayout();
     $tagsPage = $blogCreator->createTagsPage($site, $blogPage);
     $blogCreator->createTagPage($site, $tagsPage);

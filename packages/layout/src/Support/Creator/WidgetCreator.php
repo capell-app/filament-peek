@@ -432,9 +432,9 @@ class WidgetCreator
         ?Site $site = null,
         string $widgetKey = 'widget-navigation',
         array $widgetMeta = [],
-        string $navigatonKey = 'navigation',
-        string $navigatonName = 'Navigation',
-        array $navigatonItems = [],
+        string $navigationKey = 'navigation',
+        string $navigationName = 'Navigation',
+        array $navigationItems = [],
     ): Widget {
         $type ??= resolve(TypeCreator::class)->navigationWidgetType();
         $typeModel = CapellCore::getModel(CoreModelEnum::Type);
@@ -446,18 +446,17 @@ class WidgetCreator
                 'key' => 'navigation',
                 'type' => TypeEnum::Navigation->value,
                 'name' => 'Navigation',
-                'default' => true,
             ]);
         }
 
         /** @var Navigation $navigation */
         $navigation = $navigationModel::query()->firstOrCreate([
-            'key' => $navigatonKey,
+            'key' => $navigationKey,
             'type_id' => $navigationType->id,
             'site_id' => $site?->id,
         ], [
-            'name' => $navigatonName,
-            'items' => $navigatonItems,
+            'name' => $navigationName,
+            'items' => $navigationItems,
         ]);
 
         return $this->widgetModel::query()->firstOrCreate(['key' => $widgetKey], [
@@ -478,18 +477,18 @@ class WidgetCreator
         array $widgetMeta = [
             'view_file' => 'capell-layout::components.widget.navigation.tabs',
         ],
-        string $navigatonKey = 'navigation-tabs',
-        string $navigatonName = 'Tabs',
-        array $navigatonItems = [],
+        string $navigationKey = 'navigation-tabs',
+        string $navigationName = 'Tabs',
+        array $navigationItems = [],
     ): Widget {
         return $this->navigationWidget(
             type: $type,
             site: $site,
             widgetKey: $widgetKey,
             widgetMeta: $widgetMeta,
-            navigatonKey: $navigatonKey,
-            navigatonName: $navigatonName,
-            navigatonItems: $navigatonItems,
+            navigationKey: $navigationKey,
+            navigationName: $navigationName,
+            navigationItems: $navigationItems,
         );
     }
 

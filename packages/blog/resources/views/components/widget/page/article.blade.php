@@ -5,7 +5,9 @@ declare(strict_types=1);
 ?>
 
 @php
+    use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Frontend\Support\Render\RenderHookRegistry;
 
     $page = Frontend::page();
     $theme = Frontend::theme();
@@ -66,14 +68,14 @@ declare(strict_types=1);
             class="neighbor-links mt-10 flex divide-y divide-gray-100 border-t border-gray-100 pt-6 md:divide-x md:divide-y-0"
         >
             @if ($previousPage)
-                <x-capell-blog::page.neighbor-link
+                <x-capell::page.neighbor-link
                     :neighbor-page="$previousPage"
                     neighbor="previous"
                 />
             @endif
 
             @if ($nextPage)
-                <x-capell-blog::page.neighbor-link
+                <x-capell::page.neighbor-link
                     :neighbor-page="$nextPage"
                     neighbor="next"
                     class="ml-auto"
