@@ -22,8 +22,6 @@ use Livewire\LivewireServiceProvider;
 
 class PackagesTestCase extends AbstractTestCase
 {
-    protected string $packageServiceName = 'capell-packages';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,6 +40,11 @@ class PackagesTestCase extends AbstractTestCase
             resolve(SettingsMigrationProviderInterface::class)->getSettingMigrations(),
             __DIR__ . '/../../../vendor/capell-app/frontend/database/settings',
         );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-packages';
     }
 
     /**

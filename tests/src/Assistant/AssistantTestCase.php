@@ -16,8 +16,6 @@ use Override;
 
 class AssistantTestCase extends AbstractTestCase
 {
-    protected string $packageServiceName = 'capell-assistant';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,6 +32,11 @@ class AssistantTestCase extends AbstractTestCase
             ['create_assistant_settings'],
             __DIR__ . '/../../../packages/assistant/database/settings',
         );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-assistant';
     }
 
     /**

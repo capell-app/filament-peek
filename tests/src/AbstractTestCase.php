@@ -75,6 +75,10 @@ abstract class AbstractTestCase extends TestCase
 
     protected function setUp(): void
     {
+        if (getenv('TEST_TOKEN')) {
+            putenv('VIEW_COMPILED_PATH=storage/framework/views/phpunit-' . $this->getPackageServiceName() . '-parallel-' . getenv('TEST_TOKEN'));
+        }
+
         parent::setUp();
 
         $this->loadMigrationsFrom($this->orderedMigrationWorkspacePath());
@@ -103,6 +107,8 @@ abstract class AbstractTestCase extends TestCase
             parent::tearDown();
         }
     }
+
+    abstract protected function getPackageServiceName(): string;
 
     /**
      * @param  Application  $app
@@ -209,8 +215,6 @@ abstract class AbstractTestCase extends TestCase
         ]);
 
         if (getenv('TEST_TOKEN')) {
-            putenv('VIEW_COMPILED_PATH=storage/framework/views/phpunit-parallel-' . getenv('TEST_TOKEN'));
-
             Config::set('settings.cache.prefix', 'settings-cache-' . getenv('TEST_TOKEN'));
         }
     }

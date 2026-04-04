@@ -21,8 +21,6 @@ use Override;
 
 class BlogTestCase extends AbstractTestCase
 {
-    protected string $packageServiceName = 'capell-blog';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,6 +39,11 @@ class BlogTestCase extends AbstractTestCase
             resolve(SettingsMigrationProviderInterface::class)->getSettingMigrations(),
             __DIR__ . '/../../../vendor/capell-app/frontend/database/settings',
         );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-blog';
     }
 
     /**

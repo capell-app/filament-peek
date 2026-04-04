@@ -16,8 +16,6 @@ use Override;
 
 class AddressTestCase extends AbstractTestCase
 {
-    protected string $packageServiceName = 'capell-address';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,6 +29,11 @@ class AddressTestCase extends AbstractTestCase
             CapellAdmin::getSettingMigrations(),
             __DIR__ . '/../../../vendor/capell-app/admin/database/settings',
         );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-address';
     }
 
     /**

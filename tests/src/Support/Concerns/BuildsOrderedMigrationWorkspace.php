@@ -98,15 +98,17 @@ trait BuildsOrderedMigrationWorkspace
 
         $testToken = getenv('TEST_TOKEN');
         $cacheToken = is_string($testToken) && $testToken !== '' ? $testToken : 'default';
-        $workspacePath = storage_path('framework/testing-migrations/' . md5(static::class . '|' . $cacheToken));
+        $workspaceHash = substr(hash('sha256', static::class . '|' . $cacheToken), 0, 40);
+        $workspacePath = storage_path('framework/testing-migrations/' . $workspaceHash);
 
         File::ensureDirectoryExists($workspacePath);
         File::cleanDirectory($workspacePath);
 
         foreach ($this->orderedMigrationSourceFiles() as $index => $migrationPath) {
             $filename = $this->buildOrderedMigrationFilename($migrationPath, $index);
+            $workspaceMigrationPath = $workspacePath . DIRECTORY_SEPARATOR . $filename;
 
-            File::copy($migrationPath, $workspacePath . DIRECTORY_SEPARATOR . $filename);
+            $this->copyMigrationIntoWorkspace($migrationPath, $workspaceMigrationPath);
         }
 
         $this->orderedMigrationWorkspacePath = $workspacePath;
@@ -142,11 +144,14 @@ trait BuildsOrderedMigrationWorkspace
 
         $packageMigrations = [];
 
-        CapellCore::getInstalledPackages()->each(function (PackageData $package) use (&$packageMigrations): void {
-            $packageMigrations = array_merge($packageMigrations, $this->discoverPackageMigrations($package));
-        });
+        CapellCore::getInstalledPackages()
+            ->each(function (PackageData $package) use (&$packageMigrations): void {
+                $packageMigrations = array_merge($packageMigrations, $this->discoverPackageMigrations($package));
+            });
 
-        return array_values(array_merge($testMigrations, $coreMigrations, $packageMigrations));
+        $orderedMigrations = array_merge($testMigrations, $coreMigrations, $packageMigrations);
+
+        return $this->uniqueExistingMigrationPaths($orderedMigrations);
     }
 
     private function buildOrderedMigrationFilename(string $migrationPath, int $index): string
@@ -155,5 +160,37 @@ trait BuildsOrderedMigrationWorkspace
         $normalizedName = preg_replace('/^\d{4}_\d{2}_\d{2}_\d{6}_/', '', $migrationName) ?? $migrationName;
 
         return sprintf('2000_01_01_%06d_%s.php', $index, $normalizedName);
+    }
+
+    private function copyMigrationIntoWorkspace(string $sourceMigrationPath, string $workspaceMigrationPath): void
+    {
+        $migrationContents = File::get($sourceMigrationPath);
+
+        File::put($workspaceMigrationPath, $migrationContents);
+    }
+
+    /**
+     * @param  array<int, string>  $migrationPaths
+     * @return array<int, string>
+     */
+    private function uniqueExistingMigrationPaths(array $migrationPaths): array
+    {
+        $seenPaths = [];
+        $uniqueMigrationPaths = [];
+
+        foreach ($migrationPaths as $migrationPath) {
+            if (! File::exists($migrationPath)) {
+                continue;
+            }
+
+            if (array_key_exists($migrationPath, $seenPaths)) {
+                continue;
+            }
+
+            $seenPaths[$migrationPath] = true;
+            $uniqueMigrationPaths[] = $migrationPath;
+        }
+
+        return $uniqueMigrationPaths;
     }
 }

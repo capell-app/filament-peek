@@ -16,8 +16,6 @@ use Livewire\LivewireServiceProvider;
 
 class LayoutTestCase extends AbstractTestCase
 {
-    protected string $packageServiceName = 'capell-layout';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,6 +29,11 @@ class LayoutTestCase extends AbstractTestCase
             CapellAdmin::getSettingMigrations(),
             __DIR__ . '/../../../vendor/capell-app/admin/database/settings',
         );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-layout';
     }
 
     /**

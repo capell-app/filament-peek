@@ -18,8 +18,6 @@ use Override;
 
 class HeroTestCase extends AbstractTestCase
 {
-    protected string $packageServiceName = 'capell-hero';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,6 +31,11 @@ class HeroTestCase extends AbstractTestCase
             CapellAdmin::getSettingMigrations(),
             __DIR__ . '/../../../vendor/capell-app/admin/database/settings',
         );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-hero';
     }
 
     /**
