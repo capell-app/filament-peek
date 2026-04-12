@@ -34,7 +34,7 @@ enum ContainerWidthEnum: string
             $class .= $padding . ' ';
         }
 
-        $class .= match ($this) {
+        return $class . match ($this) {
             ContainerWidthEnum::Full => 'w-full',
             ContainerWidthEnum::Small => 'sm:container',
             ContainerWidthEnum::Medium => 'md:container',
@@ -46,7 +46,5 @@ enum ContainerWidthEnum: string
             ContainerWidthEnum::FiveExtraLarge => '5xl:container',
             default => 'container',
         };
-
-        return $class;
     }
 }

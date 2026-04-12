@@ -8,7 +8,9 @@ declare(strict_types=1);
     use Capell\Core\Enums\ImageConversionEnum;
     use Capell\Core\Facades\CapellCore;
     use Capell\Core\Models\Layout;
+    use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Layout\Actions\GetWidgetContainerWidthAction;
     use Capell\Layout\Enums\ContainerWidthEnum;
     use Capell\Layout\Facades\CapellLayout;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -20,7 +22,9 @@ declare(strict_types=1);
     'container',
     'containerKey',
     'containerIndex',
-    'containerWidth' => ! empty($container['meta']['container']) ? ContainerWidthEnum::from($container['meta']['container']) : null,
+    'containerWidth' => ! empty($container['meta']['container'])
+    ? ContainerWidthEnum::from($container['meta']['container'])
+    : GetLayoutContainerWidthAction::run(),
     'layout',
     'spacing' => $container['meta']['spacing'] ?? null,
     'padding' => $container['meta']['padding'] ?? [],
@@ -65,7 +69,7 @@ declare(strict_types=1);
             @if (! $previousColspan || $previousColspan === 12)
                 <div
                     @class([
-                        $containerWidth?->getContainerClass(),
+                        $containerWidth->getContainerClass(),
                     ])
                 >
                     <div class="flex w-full flex-col gap-x-12 lg:grid lg:grid-cols-12 xl:gap-x-16">
@@ -148,7 +152,7 @@ declare(strict_types=1);
             :$container
             :$containerKey
             :$containerIndex
-            :$containerWidth
+            :container-width="$colspan === 12 ? $containerWidth : ContainerWidthEnum::Full"
             :$loop
             :$type
             :$widget

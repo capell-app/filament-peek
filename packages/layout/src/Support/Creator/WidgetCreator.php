@@ -99,6 +99,7 @@ class WidgetCreator
             'type_id' => $type->id,
             'meta' => [
                 'component' => WidgetComponentEnum::PageChildren,
+                'content_divider' => true,
                 'with_children_count' => true,
                 'with_summary' => true,
                 'with_image' => true,
@@ -191,12 +192,12 @@ class WidgetCreator
             'type_id' => $type->id,
             'meta' => [
                 'component' => WidgetComponentEnum::PageLatest,
+                'content_divider' => true,
                 'limit' => 6,
                 'pagination' => false,
                 'with_summary' => false,
                 'with_link_text' => true,
                 'with_image' => true,
-                'with_date' => true,
                 'columns' => 1,
             ],
             'admin' => [
@@ -264,7 +265,7 @@ class WidgetCreator
             'type_id' => $type->id,
             'meta' => [
                 'component' => WidgetComponentEnum::PageContent,
-                'margin' => ['t-lg', 'b-md'],
+                'margin' => ['t-lg', 'b-xl'],
                 'page_content' => ['title', 'content'],
             ],
         ]);
@@ -321,6 +322,7 @@ class WidgetCreator
             'type_id' => $type->id,
             'meta' => [
                 'component' => WidgetComponentEnum::PageSiblings,
+                'content_divider' => true,
                 'with_children_count' => true,
                 'with_summary' => true,
                 'heading_style' => 'secondary',

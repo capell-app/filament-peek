@@ -28,7 +28,7 @@ declare(strict_types=1);
     'container',
     'containerKey',
     'containerClass' => '',
-    'containerWidth' => GetWidgetContainerWidthAction::run($widget, $container['meta']['container'] ?? null),
+    'containerWidth' => GetWidgetContainerWidthAction::run($widget),
     'index',
     'margin' => Arr::wrap($widget->getMeta('margin')),
     'padding' => Arr::wrap($widget->getMeta('padding')),

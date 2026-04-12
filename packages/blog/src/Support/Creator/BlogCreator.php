@@ -785,6 +785,7 @@ class BlogCreator
                 'pagination' => false,
                 'with_date' => true,
                 'with_image' => true,
+                'with_summary' => true,
                 'with_link_text' => true,
                 'margin' => ['b-lg'],
             ],
