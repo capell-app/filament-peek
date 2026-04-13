@@ -8,8 +8,8 @@ use BackedEnum;
 use Capell\Core\Actions\DummyContentGeneratorAction;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\ContainerWidthEnum;
-use Capell\Core\Enums\ImageConversionEnum;
 use Capell\Core\Enums\MediaCollectionEnum;
+use Capell\Core\Enums\MediaConversionEnum;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Enums\NavigationItemType;
 use Capell\Core\Facades\CapellCore;
@@ -225,7 +225,7 @@ class DemoCreator
                         [
                             'type' => 'image',
                             'data' => [
-                                'src' => $media->getFullUrl(ImageConversionEnum::Medium->value),
+                                'src' => $media->getFullUrl(MediaConversionEnum::Medium->value),
                                 'alt' => 'Banner',
                             ],
                         ],

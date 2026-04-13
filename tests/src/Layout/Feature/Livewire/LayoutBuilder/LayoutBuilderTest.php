@@ -144,6 +144,53 @@ test('Can reorder widgets', function (): void {
         ->toBe(['second', 'first']);
 });
 
+test('Can reorder newly added widget', function (): void {
+    Widget::factory()->state(['key' => 'first'])->create();
+    Widget::factory()->state(['key' => 'second'])->create();
+    $widget = Widget::factory()->state(['key' => 'third'])->create();
+
+    $containerKey = 'test';
+
+    $layout = (new LayoutFactory)->state([
+        'containers' => [
+            $containerKey => [
+                'widgets' => [
+                    ['widget_key' => 'first', 'occurrence' => 1],
+                    ['widget_key' => 'second', 'occurrence' => 1],
+                ],
+            ],
+        ],
+    ])->create();
+
+    livewire(LayoutBuilder::class, ['layout' => $layout])
+        ->assertSuccessful()
+        ->mountAction(
+            'addWidget',
+            arguments: [
+                'containerKey' => $containerKey,
+            ],
+        )
+        ->assertSeeLivewire(LivewireComponentsEnum::WidgetTableSelect->value)
+        ->callMountedAction()
+        ->dispatch(
+            'add-widgets-to-container',
+            containerKey: $containerKey,
+            widgets: [$widget->id],
+        )
+        ->call(
+            'reorderWidgets',
+            containerKey: $containerKey,
+            containerWidgetIndex: $containerKey . '.2',
+            widgetIndex: 1,
+        )
+        ->call('saveLayout');
+
+    $layout->refresh();
+
+    expect(array_column($layout->containers[$containerKey]['widgets'], 'widget_key'))
+        ->toBe(['first', 'third', 'second']);
+});
+
 todo('Can reorder widgets into different container');
 
 test('Can add container', function (): void {

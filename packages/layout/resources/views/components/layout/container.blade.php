@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
-    use Capell\Core\Enums\ImageConversionEnum;
+    use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\Layout\Facades\CapellLayout;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -52,7 +52,7 @@ declare(strict_types=1);
     <div class="relative">
         <div
             @if ($backgroundImage)
-                style="{{ $backgroundImage ? 'background-image:url('.$backgroundImage->getAvailableUrl([ImageConversionEnum::Large->value]).');' : '' }}"
+                style="{{ $backgroundImage ? 'background-image:url('.$backgroundImage->getAvailableUrl([MediaConversionEnum::Large->value]).');' : '' }}"
             @endif
             @class([
                 "absolute top-0 bottom-0 left-0 w-1/2 -z-1 h-full bg-cover bg-center bg-no-repeat",

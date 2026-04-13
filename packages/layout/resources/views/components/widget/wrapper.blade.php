@@ -7,8 +7,8 @@ declare(strict_types=1);
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
     use Capell\Core\Enums\DefaultColorEnum;
-    use Capell\Core\Enums\ImageConversionEnum;
     use Capell\Core\Enums\MediaCollectionEnum;
+    use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Layout\Actions\GetWidgetContainerWidthAction;
     use Illuminate\Support\Arr;
@@ -103,7 +103,7 @@ declare(strict_types=1);
         ])
     }}
     @if ($backgroundColor && ! $isDefaultColor || $backgroundImage)
-        style="{{ $backgroundColor && ! $isDefaultColor ? 'background-color:' . $backgroundColor . ';' : '' }}{{ $backgroundImage ? 'background-image:url(' . $backgroundImage->getAvailableUrl([ImageConversionEnum::Large->value]) . ');' : '' }}"
+        style="{{ $backgroundColor && ! $isDefaultColor ? 'background-color:' . $backgroundColor . ';' : '' }}{{ $backgroundImage ? 'background-image:url(' . $backgroundImage->getAvailableUrl([MediaConversionEnum::Large->value]) . ');' : '' }}"
     @endif
 >
     @if ($backgroundOverlay)

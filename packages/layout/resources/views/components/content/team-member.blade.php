@@ -5,7 +5,7 @@ declare(strict_types=1);
 ?>
 
 @php
-    use Capell\Core\Enums\ImageConversionEnum;
+    use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Frontend\Facades\Frontend;
 
     $language = Frontend::language();
@@ -30,7 +30,7 @@ declare(strict_types=1);
     @if ($image)
         <img
             class="mx-auto mb-4 h-36 w-64 object-cover"
-            src="{{ $image->getUrl(ImageConversionEnum::Thumbnail->value) }}"
+            src="{{ $image->getUrl(MediaConversionEnum::Thumbnail->value) }}"
             alt="{{ e(strip_tags($title ?? '')) }}"
         />
     @endif

@@ -856,6 +856,10 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     public function reorderWidgets(string $containerKey, string $containerWidgetIndex, int $widgetIndex): void
     {
+        if (! isset($this->containerWidgets)) {
+            $this->loadFromStore();
+        }
+
         [$originalContainer, $originalIndex] = explode('.', $containerWidgetIndex);
 
         $this->moveContainerWidgetAssets($originalContainer, (int) $originalIndex, $containerKey, $widgetIndex);
