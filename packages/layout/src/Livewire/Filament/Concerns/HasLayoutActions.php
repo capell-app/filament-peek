@@ -876,7 +876,7 @@ trait HasLayoutActions
 
     protected function saveWidgetForm(Schema $schema, Widget $record, array $data): void
     {
-        $this->loadFromStore();
+        $this->ensureLoaded();
 
         $schema->saveRelationships();
 

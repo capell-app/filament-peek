@@ -44,7 +44,7 @@ trait ManagesContainers
 
     protected function saveContainer(array $data, ?string $key = null): void
     {
-        $this->loadFromStore();
+        $this->ensureLoaded();
 
         if (in_array($key, [null, '', '0'], true)) {
             $key = $data['key'];

@@ -38,7 +38,11 @@ it('renders pages card widget on page', function (): void {
     WidgetAsset::factory()->count(3)->widget($widget)->asset(AssetEnum::Page)->create();
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $page = Page::factory()->site($site)->layout($layout)->withTranslations($language)->create();
-    $widgetAssets = $widget->widgetAssets()->ordered()->alphabetical($language)->with(['asset.translation', 'asset.type'])->get();
+    $widgetAssets = $widget->widgetAssets()
+        ->ordered()
+        ->alphabetical($language)
+        ->with(['asset.translation', 'asset.type'])
+        ->get();
 
     get($page->pageUrl->full_url)
         ->assertOk()

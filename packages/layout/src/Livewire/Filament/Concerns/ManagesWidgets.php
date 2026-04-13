@@ -7,6 +7,7 @@ namespace Capell\Layout\Livewire\Filament\Concerns;
 use Capell\Core\Facades\CapellCore;
 use Capell\Layout\Enums\ModelEnum;
 use Capell\Layout\Models\Widget;
+use Capell\Layout\Models\WidgetAsset;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -47,7 +48,7 @@ trait ManagesWidgets
 
     protected function duplicateWidget(string $containerKey, int $originalIndex, bool $withAssets = true): void
     {
-        $this->loadFromStore();
+        $this->ensureLoaded();
 
         $containerWidget = $this->containers[$containerKey]['widgets'][$originalIndex];
 
@@ -132,7 +133,7 @@ trait ManagesWidgets
 
     protected function editLayoutWidget(string $containerKey, int $widgetIndex, array $data): void
     {
-        $this->loadFromStore();
+        $this->ensureLoaded();
 
         $this->containers[$containerKey]['widgets'][$widgetIndex]['meta'] = array_merge(
             $this->containers[$containerKey]['widgets'][$widgetIndex]['meta'] ?? [],
@@ -144,6 +145,10 @@ trait ManagesWidgets
 
     protected function getContainerWidget(string $containerKey, int $widgetIndex): Widget
     {
+        if (! isset($this->containerWidgets[$containerKey][$widgetIndex])) {
+            $this->ensureLoaded();
+        }
+
         if (! isset($this->containerWidgets[$containerKey][$widgetIndex])) {
             $widget = $this->loadWidget($containerKey, $widgetIndex, withAssets: false);
 
