@@ -53,8 +53,8 @@ class ContentObserver
             $content->nodeDeleteDescendants();
         }
 
-        // TODO (Checkpoint 3 copy-on-write): when a workspace row is deleted,
-        //   clear `shadowed_by_workspace_id` on the live row it shadowed.
+        // Shadow-column maintenance runs in the BelongsToWorkspace trait's
+        // `deleting` hook, before this observer fires.
 
         CapellCoreHelper::flushCache([
             CacheEnum::RelationExists,
