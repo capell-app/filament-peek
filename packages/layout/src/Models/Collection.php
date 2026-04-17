@@ -30,7 +30,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Capell\Core\Workspaces\BelongsToWorkspace;
-use Capell\Layout\Database\Factories\ContentFactory;
+use Capell\Layout\Database\Factories\CollectionFactory;
 use Capell\Layout\Models\Concerns\ComposhipsJsonRelationshipsTrait;
 use Capell\Layout\Observers\ContentObserver;
 use Carbon\CarbonImmutable;
@@ -58,7 +58,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read Collection<int, AssetRelation> $assets
  * @property-read int|null $assets_count
  * @property-read int|null $audits_count
- * @property-read \Aimeos\Nestedset\Collection<int, Content> $children
+ * @property-read \Aimeos\Nestedset\Collection<int, Collection> $children
  * @property-read int|null $children_count
  * @property-read User|null $creator
  * @property-read User|null $destroyer
@@ -71,7 +71,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read Pageable|null $page
  * @property-read \Aimeos\Nestedset\Collection<int, Pageable> $pages
  * @property-read int|null $pages_count
- * @property-read Content|null $parent
+ * @property-read Collection|null $parent
  * @property-write mixed $parent_id
  * @property-read Site|null $site
  * @property-read Translation|null $translation
@@ -82,7 +82,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read int|null $widgets_count
  * @property-read Collection|Media[] $media
  * @property-read int|null $media_count
- * @property-read Collection|Content[] $related
+ * @property-read Collection|Collection[] $related
  * @property-read int|null $related_count
  * @property-read Page|null $linkedPage
  * @property-read Collection<int, AssetRelation> $assetRelations
@@ -115,7 +115,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @mixin QueryBuilder
  */
 #[ObservedBy(ContentObserver::class)]
-class Content extends Model implements HasMedia, PageCacheable, Publishable, Typeable, Userstampable
+class Collection extends Model implements HasMedia, PageCacheable, Publishable, Typeable, Userstampable
 {
     use BelongsToWorkspace;
     use Cloneable;
@@ -159,7 +159,9 @@ class Content extends Model implements HasMedia, PageCacheable, Publishable, Typ
         'translations',
     ];
 
-    protected static string $factory = ContentFactory::class;
+    protected string $table = 'collections';
+
+    protected static string $factory = CollectionFactory::class;
 
     public static function getMorphRelations(?Language $language = null, bool $normalizeKey = false): array
     {
