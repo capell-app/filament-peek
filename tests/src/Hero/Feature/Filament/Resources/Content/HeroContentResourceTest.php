@@ -5,8 +5,8 @@ declare(strict_types=1);
 use Capell\Core\Models\Type;
 use Capell\Hero\Actions\CreateHeroContentTypeAction;
 use Capell\Hero\Enums\ContentSchemaEnum;
-use Capell\Layout\Filament\Resources\Contents\Pages\EditContent;
-use Capell\Layout\Models\Content;
+use Capell\Layout\Filament\Resources\Collections\Pages\EditCollection;
+use Capell\Layout\Models\Collection;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Pest\Expectation;
 use Pest\Expectations\HigherOrderExpectation;
@@ -22,13 +22,13 @@ beforeEach(function (): void {
 
 it('edits the hero content via Filament', function (): void {
     $type = CreateHeroContentTypeAction::run();
-    $content = Content::factory()->type($type)
+    $content = Collection::factory()->type($type)
         ->state([
             'name' => 'Hero Content',
         ])
         ->create();
 
-    livewire(EditContent::class, [
+    livewire(EditCollection::class, [
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -41,7 +41,7 @@ it('edits the hero content via Filament', function (): void {
     $content->refresh();
 
     expect($content)
-        ->toBeInstanceOf(Content::class)
+        ->toBeInstanceOf(Collection::class)
         ->name->toBe('Updated Hero Content')
         ->type->scoped(
             fn (Expectation $type): HigherOrderExpectation => $type->toBeInstanceOf(Type::class)
@@ -52,13 +52,13 @@ it('edits the hero content via Filament', function (): void {
 
 it('validates edit hero content', function (): void {
     $type = CreateHeroContentTypeAction::run();
-    $content = Content::factory()->type($type)
+    $content = Collection::factory()->type($type)
         ->state([
             'name' => 'Hero Content',
         ])
         ->create();
 
-    livewire(EditContent::class, [
+    livewire(EditCollection::class, [
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()
