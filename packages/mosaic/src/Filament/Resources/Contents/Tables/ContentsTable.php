@@ -26,7 +26,7 @@ use Capell\Mosaic\Actions\ReplicateContentAction;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Filament\Components\Tables\Columns\Content\ContentNameColumn;
-use Capell\Mosaic\Models\Content;
+use Capell\Mosaic\Models\Collection;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -96,7 +96,7 @@ class ContentsTable implements TableConfigurator
                 RestoreBulkAction::make(),
                 ForceDeleteBulkAction::make(),
             ])
-            ->recordClasses(fn (Content $record): ?string => match (true) {
+            ->recordClasses(fn (Collection $record): ?string => match (true) {
                 (bool) $record->deleted_at => 'table-row-warning',
                 default => null,
             });
@@ -146,7 +146,7 @@ class ContentsTable implements TableConfigurator
                 ->sortable()
                 ->toggleable()
                 ->color('primary')
-                ->url(function (Content $record, int $state): ?string {
+                ->url(function (Collection $record, int $state): ?string {
                     if ($state === 0) {
                         return null;
                     }
@@ -166,7 +166,7 @@ class ContentsTable implements TableConfigurator
                 ->sortable()
                 ->toggleable()
                 ->separator('')
-                ->formatStateUsing(fn (Content $record): int => $record->assets_count),
+                ->formatStateUsing(fn (Collection $record): int => $record->assets_count),
             SiteColumn::make('site.name')
                 ->hidden(
                     fn (HasTable $livewire): bool => $livewire->activeTab
@@ -250,7 +250,7 @@ class ContentsTable implements TableConfigurator
                         ->options(function (HasTable $livewire, Get $get): array {
                             $siteId = static::getSiteId($livewire);
 
-                            /** @var class-string<Content> $model */
+                            /** @var class-string<Collection> $model */
                             $model = CapellCore::getModel(ModelEnum::Content->name);
 
                             $contents = $model::with([
@@ -271,7 +271,7 @@ class ContentsTable implements TableConfigurator
                                 ->orderBy('_lft')
                                 ->get();
 
-                            return $contents->mapWithKeys(function (Content $content) use ($siteId): array {
+                            return $contents->mapWithKeys(function (Collection $content) use ($siteId): array {
                                 $label = '';
 
                                 if (! $siteId && $content->site) {
@@ -325,7 +325,7 @@ class ContentsTable implements TableConfigurator
                     }
 
                     if (isset($data['parent_id']) && $data['parent_id'] !== null && $data['parent_id'] !== '') {
-                        /** @var class-string<Content> $model */
+                        /** @var class-string<Collection> $model */
                         $model = CapellCore::getModel(ModelEnum::Content->name);
 
                         $indicators['parent_id'] = __(

@@ -10,7 +10,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
 use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Enums\ModelEnum;
-use Capell\Mosaic\Models\Content;
+use Capell\Mosaic\Models\Collection as MosaicCollection;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -50,7 +50,7 @@ class ContentSelect extends Select
                     search: $search,
                 );
             })
-            ->getOptionLabelUsing(fn (self $component, ?int $value): ?string => Content::query()->find($value, ['name'])?->name)
+            ->getOptionLabelUsing(fn (self $component, ?int $value): ?string => MosaicCollection::query()->find($value, ['name'])?->name)
             ->options(fn (self $component): array => $component->getContentOptions());
     }
 
@@ -109,7 +109,7 @@ class ContentSelect extends Select
 
                 return $record->getKey();
             })
-            ->getOptionLabelFromRecordUsing(fn (Content $record): string => static::getSelectOption($record));
+            ->getOptionLabelFromRecordUsing(fn (MosaicCollection $record): string => static::getSelectOption($record));
     }
 
     public function withEditForm(): self
@@ -144,18 +144,18 @@ class ContentSelect extends Select
                     }),
             )
             ->fillEditOptionActionFormUsing(static function (self $component): array {
-                /** @var Content $record */
+                /** @var MosaicCollection $record */
                 $record = $component->getSelectedRecord();
 
                 return $record?->attributesToArray() ?? [];
             })
-            ->getSelectedRecordUsing(static fn (?int $state): ?Content => Content::query()->find($state))
+            ->getSelectedRecordUsing(static fn (?int $state): ?MosaicCollection => MosaicCollection::query()->find($state))
             ->updateOptionUsing(static function (array $data, Schema $schema): void {
                 $schema->getRecord()->update($data);
             });
     }
 
-    private function getContentOptionLabel(Content $record, ?int $siteId): HtmlString
+    private function getContentOptionLabel(MosaicCollection $record, ?int $siteId): HtmlString
     {
         $label = '';
 
@@ -186,7 +186,7 @@ class ContentSelect extends Select
 
         $parentContentType = $this->parentContentType;
 
-        /** @var class-string<Content> $model */
+        /** @var class-string<MosaicCollection> $model */
         $model = CapellCore::getModel(ModelEnum::Content->name);
 
         /** @var Collection $content */
@@ -226,7 +226,7 @@ class ContentSelect extends Select
             ->get();
 
         return $contents->mapWithKeys(
-            fn (Content $content): array => [$content->getKey() => $this->getContentOptionLabel($content, $site_id)],
+            fn (MosaicCollection $content): array => [$content->getKey() => $this->getContentOptionLabel($content, $site_id)],
         )
             ->toArray();
     }
