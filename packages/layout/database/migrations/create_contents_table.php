@@ -6,7 +6,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Kalnoy\Nestedset\NestedSet;
 
 return new class extends Migration
 {
@@ -26,8 +25,7 @@ return new class extends Migration
             $table->unsignedInteger('order')->default(0)->index();
             $table->visibleDates();
             $table->foreignId('parent_id')->nullable()->constrained('contents')->nullOnDelete()->cascadeOnUpdate();
-            $table->unsignedInteger(NestedSet::LFT)->default(0);
-            $table->unsignedInteger(NestedSet::RGT)->default(0);
+            $table->nestedSet();
             $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
@@ -45,7 +43,8 @@ return new class extends Migration
             $table->index(['site_id', 'type_id', 'order']);
             $table->index(['site_id', 'type_id', 'parent_id']);
             $table->index(['site_id', 'type_id', 'visible_from', 'visible_until']);
-            $table->index(NestedSet::getDefaultColumns());
+            $table->nestedSetDepth();
+            $table->nestedSetIndex();
         });
     }
 

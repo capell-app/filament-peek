@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Tests;
 
+use Aimeos\Nestedset\NestedSetServiceProvider;
 use AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider;
 use Awcodes\BadgeableColumn\BadgeableColumnServiceProvider;
 use BezhanSalleh\FilamentShield\FilamentShieldServiceProvider;
@@ -40,7 +41,6 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
-use Kalnoy\Nestedset\NestedSetServiceProvider;
 use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
 use Lorisleiva\Actions\ActionServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Concerns;
 
+use Aimeos\Nestedset\NestedSet;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Data\AssetData;
@@ -22,7 +23,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Kalnoy\Nestedset\NestedSet;
 use RuntimeException;
 
 /**

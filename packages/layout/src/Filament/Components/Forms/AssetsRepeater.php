@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Components\Forms;
 
+use Aimeos\Nestedset\NestedSet;
 use Capell\Admin\Actions\GetAssetResourceUrlAction;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Components\Forms\SelectWithBelongsToRelation;
@@ -29,7 +30,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Kalnoy\Nestedset\NestedSet;
 
 class AssetsRepeater extends Repeater
 {

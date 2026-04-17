@@ -9,9 +9,7 @@ use Capell\Core\Models\Type;
 use Capell\Core\Support\CapellCoreHelper;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Models\Content;
-use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use Kalnoy\Nestedset\QueryBuilder;
 
 class ContentObserver
 {
@@ -70,18 +68,6 @@ class ContentObserver
 
     public function restored(Content $content): void
     {
-        if ($this->deletedAt !== null && method_exists($content, 'restoreDescendants')) {
-            $content->restoreDescendants($this->deletedAt);
-        }
-
-        Model::withoutEvents(function () use ($content): void {
-            /** @var QueryBuilder $builder */
-            $builder = $content->newQueryWithoutScopes();
-            $builder
-                ->whereDescendantOf($content->getKey())
-                ->update([$content->getDeletedAtColumn() => null]);
-        });
-
         CapellCoreHelper::flushCache([
             CacheEnum::RelationExists,
         ]);

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Models;
 
+use Aimeos\Nestedset\NodeTrait;
+use Aimeos\Nestedset\QueryBuilder;
 use Bkwld\Cloner\Cloneable;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Contracts\PageCacheable;
@@ -45,8 +47,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\DB;
-use Kalnoy\Nestedset\NodeTrait;
-use Kalnoy\Nestedset\QueryBuilder as NestedQueryBuilder;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -58,7 +58,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read Collection<int, AssetRelation> $assets
  * @property-read int|null $assets_count
  * @property-read int|null $audits_count
- * @property-read \Kalnoy\Nestedset\Collection<int, Content> $children
+ * @property-read \Aimeos\Nestedset\Collection<int, Content> $children
  * @property-read int|null $children_count
  * @property-read User|null $creator
  * @property-read User|null $destroyer
@@ -68,9 +68,8 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read Media|null $image
  * @property-read Collection<int, Language> $languages
  * @property-read int|null $languages_count
- * @property-read Content|null $nodeTraitParent
  * @property-read Pageable|null $page
- * @property-read \Kalnoy\Nestedset\Collection<int, Pageable> $pages
+ * @property-read \Aimeos\Nestedset\Collection<int, Pageable> $pages
  * @property-read int|null $pages_count
  * @property-read Content|null $parent
  * @property-write mixed $parent_id
@@ -93,9 +92,6 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read string|null $title
  * @property-read Collection<int, WidgetAsset> $widgetAssets
  * @property-read int|null $widget_assets_count
- *
- * @mixin Model
- *
  * @property int $id
  * @property int $workspace_id
  * @property int $shadowed_by_workspace_id
@@ -114,6 +110,9 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property CarbonImmutable|null $deleted_at
+ *
+ * @mixin Model
+ * @mixin QueryBuilder
  */
 #[ObservedBy(ContentObserver::class)]
 class Content extends Model implements HasMedia, PageCacheable, Publishable, Typeable, Userstampable
@@ -132,13 +131,7 @@ class Content extends Model implements HasMedia, PageCacheable, Publishable, Typ
     use HasUserstamps;
     use InteractsWithMedia;
     use LogsActivity;
-    use NodeTrait {
-        NodeTrait::bootNodeTrait as protected;
-        NodeTrait::parent as nodeTraitParent;
-        NodeTrait::applyNestedSetScope as applyNestedSetScopeParent;
-        NodeTrait::newScopedQuery as nodeTraitNewScopedQuery;
-        NodeTrait::setParentIdAttribute as nodeTraitSetParentIdAttribute;
-    }
+    use NodeTrait;
     use SoftDeletes;
 
     /**
@@ -251,11 +244,6 @@ class Content extends Model implements HasMedia, PageCacheable, Publishable, Typ
         ]);
     }
 
-    public function parent(): BelongsTo
-    {
-        return $this->nodeTraitParent();
-    }
-
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
@@ -296,59 +284,6 @@ class Content extends Model implements HasMedia, PageCacheable, Publishable, Typ
         return $this->widgetAssets()
             ->select('widget_assets.widget_id')
             ->groupBy('widget_assets.widget_id');
-    }
-
-    /**
-     * Public bridge to NodeTrait's protected callPendingAction.
-     */
-    public function nodeCallPendingAction(): void
-    {
-        $this->callPendingAction();
-    }
-
-    /**
-     * Public bridge to NodeTrait's protected refreshNode.
-     */
-    public function nodeRefreshNode(): void
-    {
-        $this->refreshNode();
-    }
-
-    /**
-     * Public bridge to NodeTrait's protected deleteDescendants.
-     */
-    public function nodeDeleteDescendants(): void
-    {
-        $this->deleteDescendants();
-    }
-
-    /**
-     * Public bridge to NodeTrait's protected restoreDescendants.
-     */
-    public function restoreDescendants(mixed $deletedAt): void
-    {
-        $this->restoreDescendants($deletedAt);
-    }
-
-    /**
-     * Helper to expose deleted_at value.
-     */
-    public function nodeGetDeletedAtValue(): mixed
-    {
-        return $this->getAttribute($this->getDeletedAtColumn());
-    }
-
-    protected static function bootNodeTrait(): void
-    {
-        // Handled in observer
-    }
-
-    protected function newScopedQuery(): NestedQueryBuilder
-    {
-        /** @var NestedQueryBuilder $query */
-        $query = $this->nodeTraitNewScopedQuery();
-
-        return $query;
     }
 
     protected function scopeOrdered(Builder $query, string $dir = 'asc'): void

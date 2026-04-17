@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Models;
 
+use Aimeos\Nestedset\Collection;
 use Capell\Blog\Database\Factories\TagFactory;
 use Capell\Core\Contracts\PageCacheable;
 use Capell\Core\Models\Concerns\HasStatus;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\DB;
-use Kalnoy\Nestedset\Collection;
 use Override;
 
 /**
