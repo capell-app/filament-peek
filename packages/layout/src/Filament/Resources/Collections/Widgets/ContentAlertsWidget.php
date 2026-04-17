@@ -61,28 +61,25 @@ class ContentAlertsWidget extends Widget implements HasActions, HasForms
             ));
         }
 
-        switch ($this->record->publish_status) {
-            case PublishStatusEnum::pending:
-                $alerts->put('pending', new MessageData(
-                    message: __('capell-admin::message.resource_pending', [
-                        'date' => $this->record->visible_from?->diffForHumans(),
-                        'name' => __('capell-layout::generic.content'),
-                    ]),
-                    type: AlertTypeEnum::Warning,
-                    icon: 'heroicon-o-clock',
-                ));
-                break;
-            case PublishStatusEnum::expired:
-                $alerts->put('expired', new MessageData(
-                    message: __('capell-admin::message.resource_expired', [
-                        'date' => $this->record->visible_until?->diffForHumans(),
-                        'name' => __('capell-layout::generic.content'),
-                    ]),
-                    type: AlertTypeEnum::Warning,
-                    icon: 'heroicon-o-clock',
-                ));
-                break;
-        }
+        match ($this->record->publish_status) {
+            PublishStatusEnum::pending => $alerts->put('pending', new MessageData(
+                message: __('capell-admin::message.resource_pending', [
+                    'date' => $this->record->visible_from?->diffForHumans(),
+                    'name' => __('capell-layout::generic.content'),
+                ]),
+                type: AlertTypeEnum::Warning,
+                icon: 'heroicon-o-clock',
+            )),
+            PublishStatusEnum::expired => $alerts->put('expired', new MessageData(
+                message: __('capell-admin::message.resource_expired', [
+                    'date' => $this->record->visible_until?->diffForHumans(),
+                    'name' => __('capell-layout::generic.content'),
+                ]),
+                type: AlertTypeEnum::Warning,
+                icon: 'heroicon-o-clock',
+            )),
+            default => $alerts,
+        };
 
         return $alerts;
     }

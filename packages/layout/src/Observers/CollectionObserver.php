@@ -13,8 +13,6 @@ use InvalidArgumentException;
 
 class CollectionObserver
 {
-    private mixed $deletedAt = null;
-
     public function creating(Collection $collection): void
     {
         if (! $collection->type_id) {
@@ -59,12 +57,7 @@ class CollectionObserver
         ]);
     }
 
-    public function restoring(Collection $collection): void
-    {
-        $this->deletedAt = method_exists($collection, 'nodeGetDeletedAtValue')
-            ? $collection->nodeGetDeletedAtValue()
-            : null;
-    }
+    public function restoring(Collection $collection): void {}
 
     public function restored(Collection $collection): void
     {
