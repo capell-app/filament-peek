@@ -288,13 +288,46 @@ php vendor/bin/pest packages/layout-builder/tests
 
 | Package | Namespace | Purpose | Depends on |
 |---------|-----------|---------|------------|
-| `layout` | `Capell\Layout` | Visual layout builder, widgets, content blocks | core, admin, frontend |
-| `blog` | `Capell\Blog` | Blog post types, categories, tags, RSS | core, admin, frontend, layout |
-| `hero` | `Capell\Hero` | Hero section widgets | core, admin, frontend, layout |
-| `address` | `Capell\Address` | Address/country management on Sites | core, admin, frontend, layout |
-| `assistant` | `Capell\Assistant` | AI-assisted editorial tooling | core, admin |
+| `layout` | `Capell\Layout` | Visual layout builder; `Content`/`Widget`/`WidgetAsset` models; Filament resources; runtime relations on Page/Site/Type/Layout | core, admin, frontend |
+| `blog` | `Capell\Blog` | Article page type; custom workspace-aware `Tag` + `Taggable` models; Livewire `Blog`/`Archive`/`Tag` pages; sitemap integration; widgets (when Layout present) | core, admin, frontend; optional: layout |
+| `hero` | `Capell\Hero` | Hero widget (`capell-hero::components.widget.hero`); `HeroEditor` form component; `HeroPageSchemaExtender` injects hero fields at `PageTranslationSchemaHookEnum::AfterTitle`. No tables — stores in Layout's `contents`/`widgets` or page `meta->hero`. | core, admin, layout |
+| `address` | `Capell\Address` | `Country` + `Address` models; `CountrySelect` / `AddressSelect` form components; `SiteSchemaExtender` adds the fields to Site forms; `Site::address()` + `Site::country()` registered via `Site::resolveRelationUsing(...)` reading `meta->address_id` (no schema change on `sites`). | core, admin |
+| `assistant` | `Capell\Assistant` | OpenAI-powered title/meta/content drafting. Actions: `SuggestPageTitlesAction`, `SuggestMetaDescriptionsAction`, `GeneratorPageContentAction`, `ApplyAiDraftAction`, `RecordAiGenerationAction`. Events: `AiGenerationStarted/Completed/Failed`. Table: `ai_generation_histories`. Dashboard widget: `AiUsageWidget`. Requires `openai-php/laravel` and `OPENAI_API_KEY`. | core, admin, frontend |
 
-**Blog, Hero, Address depend on Layout — install Layout first.** Keep inter-package dependencies minimal; most packages should only touch core + admin + frontend + their own layer.
+**Blog, Hero, Address depend on Layout at runtime (widget integration) — install Layout first.** Assistant is independent of Layout.
+
+### Install/setup commands (canonical)
+
+| Package | Install | Other |
+|---------|---------|-------|
+| Layout | `capell:layout-install` | `capell:layout-setup`, `capell:layout-upgrade`, `capell:layout-demo` |
+| Blog | `capell:blog-install` | `capell:blog-setup`, `capell:blog-create-pages {site}`, `capell:blog-demo` |
+| Hero | **`capell:hero-setup`** (no install command) | `capell:hero-demo` |
+| Address | `capell:address-install` | `capell:address-demo` |
+| Assistant | `capell:assistant-install` | `capell:admin-test-openai`, `capell:admin-clear-ai-cache`, `capell:admin-monitor-ai-usage` |
+
+**Convention is `capell:<package>-<verb>`** (colon, then dash). Older docs sometimes used `capell-<package>:<verb>` — that form is wrong; fix on sight.
+
+### Package-specific gotchas
+
+- **Hero has no `install` command.** Registration happens on boot; `hero-setup` only places the widget into a default layout.
+- **Assistant uses a mixed command prefix.** `capell:assistant-install` but three helper commands are `capell:admin-*` — holdover from when they lived in Admin. Don't rename without coordinating.
+- **Assistant config still references `Capell\Admin\Actions\AI\*` action handlers** in `features.title_generation.handler` and `features.meta_description.handler`. The actual actions live in `Capell\Assistant\Actions\*`. Both paths currently resolve; verify before "fixing" the config.
+- **Address stores `address_id` in `Site::meta` JSON** — no schema change to `sites`. If you add Site-facing relations elsewhere, match this pattern.
+- **Blog ships a custom `Tag` model** that replaces Spatie's default (config published via `capell:blog-install`). It adds `workspace_id`, `site_id`, `featured`, and `status` columns. The `taggables` pivot also gets a `workspace_id`.
+- **Layout is foundational.** Widgets from Blog/Hero only register when Layout is detected at boot — check `BlogServiceProvider` / `HeroServiceProvider` before assuming a widget will appear.
+
+### Per-package documentation
+
+Every package ships its own README, Database, and API reference:
+
+- Layout: [`packages/layout/README.md`](packages/layout/README.md), [`docs/Database.md`](packages/layout/docs/Database.md), [`docs/API.md`](packages/layout/docs/API.md)
+- Blog: [`packages/blog/README.md`](packages/blog/README.md), [`docs/Database.md`](packages/blog/docs/Database.md), [`docs/API.md`](packages/blog/docs/API.md)
+- Hero: [`packages/hero/README.md`](packages/hero/README.md), [`docs/Database.md`](packages/hero/docs/Database.md) (no tables), [`docs/API.md`](packages/hero/docs/API.md)
+- Address: [`packages/address/README.md`](packages/address/README.md), [`docs/Database.md`](packages/address/docs/Database.md), [`docs/API.md`](packages/address/docs/API.md)
+- Assistant: [`packages/assistant/README.md`](packages/assistant/README.md), [`docs/Database.md`](packages/assistant/docs/Database.md), [`docs/API.md`](packages/assistant/docs/API.md)
+
+Cross-cutting AI architecture: [`docs/openai-integration.md`](docs/openai-integration.md).
 
 ## Extending Capell from a package
 

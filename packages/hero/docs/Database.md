@@ -1,21 +1,27 @@
-# Database Reference - Capell Hero
+# Database Reference — Capell Hero
 
-The Hero package does not introduce its own database tables. It stores and renders data using the Layout package’s entities:
+**The Hero package ships no migrations.** It stores data inside the Layout package's existing tables:
 
-- Contents (`capell-app/layout` Content model)
-- Widgets (`capell-app/layout` Widget model)
-- Widget assets (`capell-app/layout` WidgetAsset model)
+- `contents` — when the hero is used as reusable content
+- `widgets` — when the hero is placed as a widget in a layout
+- `widget_assets` — for the hero's background media
 
-Install the Layout package first and run its migrations:
+And inside the core page translation `meta` JSON column (`page->translation->meta['hero']`) when the hero is attached to a page via `HeroPageSchemaExtender` rather than placed as a widget.
 
-```
+## Prerequisite
+
+Install Layout first, so the storage tables exist:
+
+```sh
 php artisan capell:layout-install
 ```
 
-Then install Hero:
+Then set up Hero:
 
-```
-php artisan capell-hero:install
+```sh
+php artisan capell:hero-setup
 ```
 
-No additional migrations are required for Hero.
+## See also
+
+- Layout database reference: [`../../layout/docs/Database.md`](../../layout/docs/Database.md)
