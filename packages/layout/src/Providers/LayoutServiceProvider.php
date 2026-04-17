@@ -47,7 +47,7 @@ use Capell\Layout\Listeners\LayoutLoaded;
 use Capell\Layout\Listeners\LayoutSavingListener;
 use Capell\Layout\Listeners\SiteTreeRebuilt;
 use Capell\Layout\Listeners\TypeValidated;
-use Capell\Layout\Models\Content;
+use Capell\Layout\Models\Collection;
 use Capell\Layout\Models\Widget;
 use Capell\Layout\Models\WidgetAsset;
 use Capell\Layout\Support\CapellLayoutManager;
@@ -437,7 +437,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     {
         LayoutModelRegistrar::register();
 
-        WorkspaceRegistry::register(Content::class);
+        WorkspaceRegistry::register(Collection::class);
         WorkspaceRegistry::register(Widget::class);
         WorkspaceRegistry::register(WidgetAsset::class);
 
@@ -457,7 +457,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     private function registerEvents(): self
     {
         $createDeleteModels = [
-            CapellCore::getModel(ModelEnum::Content->name),
+            CapellCore::getModel(ModelEnum::Collection->name),
         ];
 
         foreach ($createDeleteModels as $modelClass) {
@@ -514,7 +514,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
                 'asset_id',
             )
                 ->where('widget_assets.pageable_type', $model->getMorphClass())
-                ->where('widget_assets.asset_type', (new Content)->getMorphClass()),
+                ->where('widget_assets.asset_type', (new Collection)->getMorphClass()),
         );
 
         Page::resolveRelationUsing(
@@ -535,13 +535,13 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         );
 
         Site::resolveRelationUsing(
-            'contents',
-            fn (Site $model): HasMany => $model->hasMany(ModelEnum::Content->value, 'site_id'),
+            'collections',
+            fn (Site $model): HasMany => $model->hasMany(ModelEnum::Collection->value, 'site_id'),
         );
 
         Type::resolveRelationUsing(
-            'contents',
-            fn (Type $model): HasMany => $model->hasMany(ModelEnum::Content->value, 'type_id'),
+            'collections',
+            fn (Type $model): HasMany => $model->hasMany(ModelEnum::Collection->value, 'type_id'),
         );
 
         Type::resolveRelationUsing(
