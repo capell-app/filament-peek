@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Layout\Filament\Components\Forms;
 
+use Aimeos\Nestedset\Collection;
+use Aimeos\Nestedset\NestedSet;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
 use Capell\Core\Facades\CapellCore;
@@ -20,8 +22,6 @@ use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Kalnoy\Nestedset\Collection;
-use Kalnoy\Nestedset\NestedSet;
 
 class ContentSelect extends Select
 {
@@ -192,7 +192,6 @@ class ContentSelect extends Select
         /** @var Collection $content */
         $contents = $model::query()->select('contents.*')
             ->with($relations)
-            ->withDrafts()
             ->join('types', 'contents.type_id', '=', 'types.id')
             ->when(
                 $this->modifySelectOptionsQueryUsing instanceof Closure,

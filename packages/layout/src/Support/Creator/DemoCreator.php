@@ -77,9 +77,11 @@ class DemoCreator
     {
         $siteId = Site::query()->default()?->value('id');
 
+        $type = resolve(TypeCreator::class)->contentBuilderWidgetType();
+
         $widget = $this->widgetModel::query()->firstOrCreate(['key' => 'example-content'], [
             'name' => 'Example Content',
-            'type_id' => $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::ContentBuilder, 'type' => LayoutTypeEnum::Widget])->id,
+            'type_id' => $type->id,
             'meta' => [
                 'size' => 'md',
                 'margin' => 'none',
@@ -181,7 +183,7 @@ class DemoCreator
 
     public function createBannerImageWidget(Collection $languages): Widget
     {
-        $widget = app(WidgetCreator::class)->bannerImageWidget();
+        $widget = resolve(WidgetCreator::class)->bannerImageWidget();
 
         $media = $this->createWidgetMedia($widget);
 
@@ -917,13 +919,6 @@ class DemoCreator
             'name' => 'Features',
         ]);
 
-        if ($this->user instanceof Model) {
-            $parentPage->forceFill([
-                'publisher_type' => $this->user->getMorphClass(),
-                'publisher_id' => $this->user->id,
-            ]);
-        }
-
         $parentPage->save();
 
         $site->languages->each(function (Language $language) use ($parentPage): void {
@@ -948,13 +943,6 @@ class DemoCreator
                     'icon' => $feature['icon'],
                 ],
             ]);
-
-            if ($this->user instanceof Model) {
-                $page->forceFill([
-                    'publisher_type' => $this->user->getMorphClass(),
-                    'publisher_id' => $this->user->id,
-                ]);
-            }
 
             $page->save();
 

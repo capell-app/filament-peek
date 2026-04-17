@@ -14,7 +14,6 @@ use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\LanguagesColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\MediaLibraryImageColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
-use Capell\Admin\Filament\Components\Tables\Columns\PublishIconColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\TypeColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
@@ -173,7 +172,6 @@ class ContentsTable implements TableConfigurator
                     fn (HasTable $livewire): bool => $livewire->activeTab
                         || ($livewire->getTableFilterState('filter')['site_id'] ?? null) !== null && $livewire->getTableFilterState('filter')['site_id'] !== '',
                 ),
-            PublishIconColumn::make('status'),
             DateColumn::make('visible_from')
                 ->label(__('capell-layout::table.visible_from'))
                 ->toggleable(isToggledHiddenByDefault: true),
@@ -354,7 +352,7 @@ class ContentsTable implements TableConfigurator
                     'expired' => __('capell-admin::generic.expired'),
                 ])
                 ->query(fn (Builder $query, array $state): Builder => match ($state['value'] ?? null) {
-                    'published' => $query->published()->publishedDate(),
+                    'published' => $query->publishedDate(),
                     'unpublished' => $query->pending(),
                     'expired' => $query->expired(),
                     default => $query,

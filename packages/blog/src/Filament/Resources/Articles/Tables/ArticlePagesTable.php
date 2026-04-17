@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Blog\Filament\Resources\Articles\Tables;
 
 use Capell\Admin\Enums\FilamentColorEnum;
-use Capell\Admin\Filament\Actions\Table\BulkUpdateStatusAction;
 use Capell\Admin\Filament\Actions\Table\ReplicatePageAction;
 use Capell\Admin\Filament\Components\Tables\Actions\EditAction;
 use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
@@ -14,11 +13,9 @@ use Capell\Admin\Filament\Components\Tables\Columns\LanguagesColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\MediaLibraryImageColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageCachedIconColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
-use Capell\Admin\Filament\Components\Tables\Columns\PublishIconColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\TypeColumn;
 use Capell\Admin\Filament\Components\Tables\Filters\DateFilter;
-use Capell\Admin\Filament\Components\Tables\Filters\DraftFilter;
 use Capell\Admin\Filament\Contracts\HasPageResource;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\Admin\Filament\Contracts\ValidatesDelete;
@@ -31,7 +28,6 @@ use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore; // adjust if different namespace
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
-use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -72,20 +68,6 @@ class ArticlePagesTable implements TableConfigurator
             ->recordActions([
                 EditAction::make(),
                 ActionGroup::make([
-                    Action::make('editPublished')
-                        ->label(__('capell-admin::button.edit_original'))
-                        ->groupedIcon('heroicon-o-pencil')
-                        ->url(
-                            fn (Pageable $record, ResourcePage|HasPageResource $livewire): string => $livewire::getResource()::getUrl(
-                                'edit',
-                                ['record' => $record->publishedPage],
-                            ),
-                        )
-                        ->visible(
-                            fn (Pageable $record): bool => $record->isDraft()
-                                && $record->publishedPage !== null
-                                && $record->publishedPage->isNot($record),
-                        ),
                     ReplicatePageAction::make(),
                     DeleteAction::make()
                         ->after(function (Pageable $record): void {
@@ -108,8 +90,6 @@ class ArticlePagesTable implements TableConfigurator
                             PageDeletedAction::run($record);
                         });
                     }),
-                BulkUpdateStatusAction::make()
-                    ->label(__('capell-admin::table.bulk_publish_status')),
                 RestoreBulkAction::make(),
                 ForceDeleteBulkAction::make()
                     ->after(function (Pageable $record): void {
@@ -129,7 +109,6 @@ class ArticlePagesTable implements TableConfigurator
                 'creator',
                 'editor',
                 'image',
-                'publishedPage',
                 'site' => fn (BuilderContract $query): BuilderContract => $query->withTrashed(),
                 'site.siteDomains',
                 'translation' => fn (BuilderContract $query): BuilderContract => $query->with('language')
@@ -142,8 +121,7 @@ class ArticlePagesTable implements TableConfigurator
                 'type',
                 'pageUrls' => fn (BuilderContract $query): BuilderContract => $query->with('siteDomain')->ordered(),
                 'pageUrl.siteDomain',
-            ])
-            ->current();
+            ]);
     }
 
     protected static function getTableColumns(): array
@@ -163,8 +141,7 @@ class ArticlePagesTable implements TableConfigurator
                         )
                         ->orderByRaw("CAST(IFNULL(NULLIF(POSITION(? IN pages.name), 0), 'void') AS UNSIGNED)", [$search]),
                 )
-                ->toggleable()
-                ->withDraftsRevisions(),
+                ->toggleable(),
             TextColumn::make('translation.title')
                 ->label(__('capell-admin::table.title'))
                 ->html()
@@ -248,16 +225,8 @@ class ArticlePagesTable implements TableConfigurator
                 ->width(0),
             TypeColumn::make('type.name')
                 ->toggleable(isToggledHiddenByDefault: true),
-            TextColumn::make('drafts_count')
-                ->label(__('capell-admin::table.total_drafts'))
-                ->counts('drafts')
-                ->alignCenter()
-                ->numeric()
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
             PageCachedIconColumn::make('cached')
                 ->toggleable(isToggledHiddenByDefault: true),
-            PublishIconColumn::make('status'),
             DateColumn::make('created_at'),
             DateColumn::make('updated_at'),
             DateColumn::make('deleted_at'),
@@ -368,8 +337,6 @@ class ArticlePagesTable implements TableConfigurator
 
             DateFilter::make('visible_from')
                 ->label(__('capell-admin::form.publish_date')),
-
-            DraftFilter::make(),
 
             TrashedFilter::make()
                 ->native(false),

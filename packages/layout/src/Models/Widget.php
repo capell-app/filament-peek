@@ -52,7 +52,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 /**
  * @property-read \Illuminate\Database\Eloquent\Collection<int, WidgetAsset> $assets
  * @property-read int|null $assets_count
- * @property-read \Kalnoy\Nestedset\Collection<int, Content> $contents
+ * @property-read \Aimeos\Nestedset\Collection<int, Content> $contents
  * @property-read int|null $contents_count
  * @property-read User|null $creator
  * @property-read User|null $destroyer
@@ -63,7 +63,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
  * @property-read int|null $languages_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Media> $media
  * @property-read int|null $media_count
- * @property-read \Kalnoy\Nestedset\Collection<int, Page> $pages
+ * @property-read \Aimeos\Nestedset\Collection<int, Page> $pages
  * @property-read int|null $pages_count
  * @property-read Translation|null $translation
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Translation> $translations

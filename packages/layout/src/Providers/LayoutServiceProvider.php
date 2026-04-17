@@ -22,6 +22,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Capell\Core\Workspaces\WorkspaceRegistry;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
 use Capell\Frontend\Providers\FrontendServiceProvider;
@@ -47,6 +48,8 @@ use Capell\Layout\Listeners\LayoutSavingListener;
 use Capell\Layout\Listeners\SiteTreeRebuilt;
 use Capell\Layout\Listeners\TypeValidated;
 use Capell\Layout\Models\Content;
+use Capell\Layout\Models\Widget;
+use Capell\Layout\Models\WidgetAsset;
 use Capell\Layout\Support\CapellLayoutManager;
 use Capell\Layout\Support\Interceptors\Layouts\DefaultLayoutInterceptor;
 use Capell\Layout\Support\Interceptors\Layouts\HomeLayoutInterceptor;
@@ -138,7 +141,7 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
             ->registerModelInterceptors()
             ->registerAssets()
             ->registerSchemaExtenders()
-            ->registerCloneableAndDraftableRelations()
+            ->registerCloneableRelations()
             ->registerThemeViewPath()
             ->registerFilamentAssets()
             ->registerPublishCommands()
@@ -326,10 +329,9 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
-    private function registerCloneableAndDraftableRelations(): self
+    private function registerCloneableRelations(): self
     {
         CapellCore::addCloneableRelations('page', 'widgetAssets');
-        CapellCore::addDraftableRelations('page', 'widgetAssets');
 
         return $this;
     }
@@ -434,6 +436,10 @@ class LayoutServiceProvider extends AbstractPackageServiceProvider
     private function registerModels(): self
     {
         LayoutModelRegistrar::register();
+
+        WorkspaceRegistry::register(Content::class);
+        WorkspaceRegistry::register(Widget::class);
+        WorkspaceRegistry::register(WidgetAsset::class);
 
         return $this;
     }
