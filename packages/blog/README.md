@@ -4,6 +4,8 @@
 
 # Capell Blog
 
+![Blog Hero Banner](./HERO_BANNER.svg)
+
 Article publishing for Capell. Adds a dedicated **Article** page type, tagging, archives, and blog/archive/tag listing pages — all integrated with the workspace-aware editorial pipeline.
 
 **[Full documentation →](https://docs.capell.app/packages/blog/)**

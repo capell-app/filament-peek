@@ -1,5 +1,7 @@
 # Capell Assistant
 
+![Assistant Hero Banner](./HERO_BANNER.svg)
+
 OpenAI-powered content drafting for Capell. Helps editors generate page titles, meta descriptions, and long-form content from the admin panel, with rate limiting, an audit log, and a usage dashboard widget.
 
 **[Full documentation →](https://docs.capell.app/packages/assistant/)**
