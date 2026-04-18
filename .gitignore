@@ -52,8 +52,9 @@ coverage/
 
 # IDE Helpers
 _ide-helper.php
-_ide-helper_models.php
-_ide-helper.stub.php
+_ide_helper.php
+_ide_helper_models.php
+_ide_helper.stub.php
 
 # Debug
 ray.php
