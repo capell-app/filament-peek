@@ -23,7 +23,7 @@ it('can save', function (): void {
         ->parent(Collection::factory()->create())
         ->make();
 
-    livewire(EditContent::class, [
+    livewire(EditCollection::class, [
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -56,7 +56,7 @@ it('can save', function (): void {
 test('validates edit content', function (): void {
     $content = Collection::factory()->create();
 
-    livewire(EditContent::class, [
+    livewire(EditCollection::class, [
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -70,7 +70,7 @@ test('validates edit content', function (): void {
 it('can delete', function (): void {
     $content = Collection::factory()->create();
 
-    livewire(EditContent::class, [
+    livewire(EditCollection::class, [
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()

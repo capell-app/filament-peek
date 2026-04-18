@@ -31,7 +31,7 @@ it('can list pages for a content model', function (): void {
 
     livewire(PagesRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => EditContent::class,
+        'pageClass' => EditCollection::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(1)
@@ -62,7 +62,7 @@ it('can search pages for a content model', function (): void {
 
     livewire(PagesRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => EditContent::class,
+        'pageClass' => EditCollection::class,
     ])
         ->assertSuccessful()
         ->searchTable($page->getKey())

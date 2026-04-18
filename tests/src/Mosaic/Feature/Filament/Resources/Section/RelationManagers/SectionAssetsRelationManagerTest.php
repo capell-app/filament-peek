@@ -18,9 +18,9 @@ it('can list content assets', function (): void {
 
     $resource = $content->assets->first()->load('asset');
 
-    livewire(ContentAssetsRelationManager::class, [
+    livewire(CollectionAssetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => EditContent::class,
+        'pageClass' => EditCollection::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(5)
@@ -66,9 +66,9 @@ it('can search content assets', function (): void {
 
     $resource = $content->assets->first()->load('asset');
 
-    livewire(ContentAssetsRelationManager::class, [
+    livewire(CollectionAssetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => EditContent::class,
+        'pageClass' => EditCollection::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(4)
@@ -87,9 +87,9 @@ test('can create a asset for a widget', function (string $assetType): void {
         'page' => Page::factory()->create(),
     };
 
-    livewire(ContentAssetsRelationManager::class, [
+    livewire(CollectionAssetsRelationManager::class, [
         'ownerRecord' => $content,
-        'pageClass' => EditContent::class,
+        'pageClass' => EditCollection::class,
     ])
         ->assertSuccessful()
         ->assertCountTableRecords(0)

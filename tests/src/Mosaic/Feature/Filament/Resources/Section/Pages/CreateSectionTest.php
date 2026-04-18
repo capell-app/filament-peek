@@ -22,7 +22,7 @@ beforeEach(function (): void {
 test('required fields are required', function (): void {
     (new ContentTypeFactory)->create();
 
-    livewire(CreateContent::class)
+    livewire(CreateCollection::class)
         ->assertSuccessful()
         ->fillForm([
             'name' => '',
@@ -40,7 +40,7 @@ it('can create', function (string $type): void {
         Site::factory()->deleted()->create();
     }
 
-    livewire(CreateContent::class)
+    livewire(CreateCollection::class)
         ->assertSuccessful()
         ->fillForm([
             'type_id' => $newData->type->getKey(),
@@ -74,7 +74,7 @@ test('create with translations', function (string $mode): void {
         Site::factory()->deleted()->create();
     }
 
-    livewire(CreateContent::class)
+    livewire(CreateCollection::class)
         ->assertSuccessful()
         ->set('data.translations', [])
         ->fillForm([
@@ -121,7 +121,7 @@ test('create with translations', function (string $mode): void {
 test('can search parent results', function (): void {
     $parent = Collection::factory()->withTranslations()->create();
 
-    $livewire = livewire(CreateContent::class);
+    $livewire = livewire(CreateCollection::class);
     $instance = $livewire->instance();
     $schema = $instance->getSchema($instance->getDefaultTestingSchemaName());
     $component = $schema->getComponent('parent_id');

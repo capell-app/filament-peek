@@ -29,7 +29,7 @@ class CreateHeroContentTypeAction
             'key' => 'hero',
             'type' => LayoutTypeEnum::Section,
         ], [
-            'name' => __('capell-hero::generic.hero'),
+            'name' => __('capell-mosaic::generic.hero'),
             'admin' => [
                 'schema' => HeroContentSchema::getKey(),
             ],

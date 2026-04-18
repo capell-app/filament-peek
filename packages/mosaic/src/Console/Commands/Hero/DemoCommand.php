@@ -20,7 +20,7 @@ use Capell\Mosaic\Support\Creator\DemoCreator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
-class DemoCommand extends Command
+class HeroDemoCommand extends Command
 {
     use HasSitesOption;
 
@@ -30,9 +30,6 @@ class DemoCommand extends Command
 
     private DemoCreator $demoCreator;
 
-    /**
-     * Execute the console command.
-     */
     public function handle(): int
     {
         $siteOptions = $this->resolveSiteOptions();

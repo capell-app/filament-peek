@@ -60,36 +60,29 @@ All contributed code MUST be fully analyzable by PHPStan at the configured max l
 Follow these rules for all new and existing Enums:
 
 1. Namespace Organization
-
     - Place all Enums under a dedicated namespace, e.g. `App\Enums` (in packages: `Capell\Core\Enums`).
     - Group related Enums by domain (e.g. `Orders`, `Billing`) to avoid catch-all buckets.
 
 2. Backed vs Pure Enums
-
     - Use backed (string or int) Enums when persisting values to the database or interacting with external systems.
     - Prefer string-backed for readability unless integer semantics are domain-critical.
 
 3. Case Naming
-
     - Prefer PascalCase for multi-word cases (e.g. `LanguageLocales`, `TotalSites`) where readability benefits and mirrors existing code.
     - Use UPPER_SNAKE_CASE only for domain state or constant-like flags (e.g. `DRAFT`, `ARCHIVED`, `CANCELLED`) to signal status semantics.
     - Remain consistent within a single Enum: do not mix styles arbitrarily—choose PascalCase OR UPPER_SNAKE_CASE based on semantic category.
 
 4. Helpful Methods
-
     - Provide concise helpers (`label()`, `isTerminal()`, `options()`) to reduce duplication and keep calling code expressive.
 
 5. Documentation
-
     - Document each case with a short description via a docblock above the Enum or inline comments when non-obvious.
     - Explain transitional / deprecated cases clearly (`@deprecated` with planned removal version).
 
 6. Single Responsibility
-
     - If an Enum accumulates many cross-cutting helpers, split into multiple Enums or introduce a dedicated service.
 
 7. Type Safety in Signatures
-
     - Always type-hint Enum parameters and return types:
         ```php
         public function updateOrderStatus(Order $order, OrderStatus $newStatus): void
@@ -100,21 +93,17 @@ Follow these rules for all new and existing Enums:
     - Avoid passing raw scalar values around once an Enum exists.
 
 8. Performance Considerations
-
     - Backed Enums add negligible overhead; optimize only if profiling identifies a hotspot.
     - Cache expensive derived mappings (labels/options) using a static local variable. Avoid global state or external caches unless persistence is required.
 
 9. Interoperability
-
     - For API output, expose both `value` and a human `label`; never force clients to derive labels from case names.
 
 10. Migration Strategy
-
     - When introducing a new backed Enum for an existing varchar/int column, ship a data migration converting legacy values first.
     - Keep legacy constants during transition marked `@deprecated` until confirmation of full rollout.
 
 11. Testing
-
     - Add tests asserting helper methods, option builders, and deprecated case handling.
     - Validate that every `from()` or custom factory rejects invalid input (expect exceptions).
 
@@ -147,16 +136,16 @@ Don't:
 - Avoid excessive or inconsistent blank lines; use spacing to group related logic and visually separate distinct steps.
 - This applies to all PHP, test, and config files.
 
-## 1K. Package Plugin Independence (`address` / `blog` / `hero` / `layout`)
+## 1K. Package Plugin Independence (`address` / `blog` / `mosaic`)
 
-- `address`, `blog`, `hero`, and `layout` plugins MAY depend on each other, but MUST remain decoupled from Core internals except via documented public interfaces.
-- Core MUST NOT depend directly on any plugin (`address`, `blog`, `hero`, `layout`). Avoid imports, facades, or direct calls from Core into these plugins.
+- `address`, `blog`, and `mosaic` plugins MAY depend on each other, but MUST remain decoupled from Core internals except via documented public interfaces.
+- Core MUST NOT depend directly on any plugin (`address`, `blog`, `mosaic`). Avoid imports, facades, or direct calls from Core into these plugins.
 - Cross-plugin coordination should use neutral boundaries (configuration, cache/filesystem paths, events/commands) without introducing compile-time dependencies.
 - When Core needs to trigger a behavior in a plugin (e.g., clear caches), prefer:
     - Removing/invalidating the shared cache file/path via Filesystem, or
     - Emitting a framework event or calling an Artisan command name (string), not importing plugin classes.
 - If shared behavior grows complex, extract a minimal interface in a shared module and implement adapters per plugin; do not point Core to concrete plugin classes.
-- Enforce with static analysis: any `use Capell\Address\...`, `use Capell\Blog\...`, `use Capell\Hero\...`, or `use Capell\Layout\...` from Core is a blocker.
+- Enforce with static analysis: any `use Capell\Address\...`, `use Capell\Blog\...`, or `use Capell\Mosaic\...` from Core is a blocker.
 
 ---
 

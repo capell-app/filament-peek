@@ -37,7 +37,7 @@ class CreateHeroWidgetAction
         return $widgetModel::query()->updateOrCreate([
             'key' => $key,
         ], [
-            'name' => $label ?? __('capell-hero::generic.hero'),
+            'name' => $label ?? __('capell-mosaic::generic.hero'),
             'type_id' => $this->createType()->id,
             'meta' => [
                 'component' => WidgetComponentEnum::Hero,
@@ -72,7 +72,7 @@ class CreateHeroWidgetAction
             'key' => WidgetTypeEnum::Hero,
             'type' => LayoutTypeEnum::Widget,
         ], [
-            'name' => __('capell-hero::generic.hero'),
+            'name' => __('capell-mosaic::generic.hero'),
             'group' => WidgetTypeGroupEnum::Asset,
             'admin' => [
                 'type_schema' => WidgetTypeSchema::getKey(),

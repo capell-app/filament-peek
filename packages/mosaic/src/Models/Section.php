@@ -38,7 +38,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,7 +56,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
 /**
- * @property-read Collection<int, AssetRelation> $assets
+ * @property-read EloquentCollection<int, AssetRelation> $assets
  * @property-read int|null $assets_count
  * @property-read int|null $audits_count
  * @property-read Collection<int, Section> $children
@@ -67,7 +67,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read array $actions
  * @property-read PublishStatusEnum $publish_status
  * @property-read Media|null $image
- * @property-read Collection<int, Language> $languages
+ * @property-read EloquentCollection<int, Language> $languages
  * @property-read int|null $languages_count
  * @property-read Pageable|null $page
  * @property-read Collection<int, Pageable> $pages
@@ -76,22 +76,22 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-write mixed $parent_id
  * @property-read Site|null $site
  * @property-read Translation|null $translation
- * @property-read Collection<int, Translation> $translations
+ * @property-read EloquentCollection<int, Translation> $translations
  * @property-read int|null $translations_count
  * @property-read Type|null $type
- * @property-read Collection<int, Widget> $widgets
+ * @property-read EloquentCollection<int, Widget> $widgets
  * @property-read int|null $widgets_count
- * @property-read Collection|Media[] $media
+ * @property-read EloquentCollection|Media[] $media
  * @property-read int|null $media_count
  * @property-read EloquentCollection|Section[] $related
  * @property-read int|null $related_count
  * @property-read Page|null $linkedPage
- * @property-read Collection<int, AssetRelation> $assetRelations
+ * @property-read EloquentCollection<int, AssetRelation> $assetRelations
  * @property-read int|null $asset_relations_count
- * @property-read Collection<int, Activity> $activities
+ * @property-read EloquentCollection<int, Activity> $activities
  * @property-read int|null $activities_count
  * @property-read string|null $title
- * @property-read Collection<int, WidgetAsset> $widgetAssets
+ * @property-read EloquentCollection<int, WidgetAsset> $widgetAssets
  * @property-read int|null $widget_assets_count
  * @property int $id
  * @property int $workspace_id

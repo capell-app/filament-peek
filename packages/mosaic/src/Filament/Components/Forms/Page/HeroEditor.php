@@ -39,8 +39,8 @@ class HeroEditor extends Group
             })
             ->schema([
                 ContentEditor::make('hero')
-                    ->label(__('capell-hero::form.hero'))
-                    ->hint(__('capell-hero::generic.hero_info'))
+                    ->label(__('capell-mosaic::form.hero'))
+                    ->hint(__('capell-mosaic::generic.hero_info'))
                     ->tap(
                         fn (ContentBuilder|RichEditor|TinyEditor $component): ContentBuilder|RichEditor|TinyEditor => $component instanceof TinyEditor
                             ? $component->profile(TinyEditorProfile::Simple->value)

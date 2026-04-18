@@ -12,25 +12,12 @@ use Capell\Mosaic\Actions\AddHeroWidgetToLayoutAction;
 use Capell\Mosaic\Actions\CreateHeroWidgetAction;
 use Illuminate\Console\Command;
 
-class SetupCommand extends Command
+class HeroSetupCommand extends Command
 {
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Setting up hero package';
+    protected $description = 'Setting up hero widgets';
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'capell:hero-setup';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(): int
     {
         /** @var class-string<Layout> $layoutModel */

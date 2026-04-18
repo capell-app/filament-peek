@@ -42,6 +42,7 @@ use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Capell\Mosaic\Filament\Extenders\Page\HeroPageSchemaExtender;
 use Capell\Mosaic\Filament\Resources\Layouts\LayoutResource;
 use Capell\Mosaic\Filament\Resources\Layouts\Schemas\Extenders\LayoutSchemaExtender;
+use Capell\Mosaic\Filament\Resources\Pages\Schemas\Extenders\HeroPageSchemaExtender;
 use Capell\Mosaic\Filament\Resources\Pages\Schemas\Extenders\PageSchemaExtender;
 use Capell\Mosaic\Filament\Resources\Types\Schemas\Types\ContentTypeSchema;
 use Capell\Mosaic\Filament\Resources\Types\Schemas\Types\WidgetTypeSchema;
@@ -328,6 +329,8 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
     private function registerSchemaExtenders(): self
     {
         $this->registerSchemaExtender(SchemaExtenderEnum::Page->value, PageSchemaExtender::class);
+        $this->registerSchemaExtender(SchemaExtenderEnum::Page->value, HeroPageSchemaExtender::class);
+
         $this->registerSchemaExtender(SchemaExtenderEnum::Page->value, HeroPageSchemaExtender::class);
 
         $this->registerSchemaExtender(SchemaExtenderEnum::Layout->value, LayoutSchemaExtender::class);
