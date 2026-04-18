@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Layout;
-use Capell\Hero\Actions\AddHeroWidgetToLayoutAction;
+use Capell\Mosaic\Actions\AddHeroWidgetToLayoutAction;
 use Illuminate\Console\Command;
 
 use function Pest\Laravel\artisan;

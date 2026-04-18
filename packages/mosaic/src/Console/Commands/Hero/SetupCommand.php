@@ -8,8 +8,8 @@ use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
-use Capell\Hero\Actions\AddHeroWidgetToLayoutAction;
-use Capell\Hero\Actions\CreateHeroWidgetAction;
+use Capell\Mosaic\Actions\AddHeroWidgetToLayoutAction;
+use Capell\Mosaic\Actions\CreateHeroWidgetAction;
 use Illuminate\Console\Command;
 
 class SetupCommand extends Command

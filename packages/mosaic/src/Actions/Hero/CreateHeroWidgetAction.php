@@ -8,15 +8,15 @@ use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
-use Capell\Hero\Enums\WidgetComponentEnum;
-use Capell\Hero\Enums\WidgetTypeEnum;
-use Capell\Hero\Filament\Resources\Widgets\Schemas\Types\HeroWidgetSchema;
 use Capell\Mosaic\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\ModelEnum;
+use Capell\Mosaic\Enums\WidgetComponentEnum;
+use Capell\Mosaic\Enums\WidgetTypeEnum;
 use Capell\Mosaic\Enums\WidgetTypeGroupEnum;
 use Capell\Mosaic\Filament\Resources\Types\Schemas\Types\WidgetTypeSchema;
 use Capell\Mosaic\Filament\Resources\Widgets\Schemas\Types\AssetsWidgetSchema;
+use Capell\Mosaic\Filament\Resources\Widgets\Schemas\Types\HeroWidgetSchema;
 use Capell\Mosaic\Models\Widget;
 use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
@@ -84,7 +84,7 @@ class CreateHeroWidgetAction
                 ],
             ],
             'meta' => [
-                'component' => \Capell\Mosaic\Enums\WidgetComponentEnum::Assets,
+                'component' => WidgetComponentEnum::Assets,
                 'additional_asset_relations' => [
                     'related.translation',
                     'related.pageUrl',

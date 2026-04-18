@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Models\Layout;
-use Capell\Hero\Actions\AddHeroWidgetToLayoutAction;
 use Capell\Layout\Models\Widget;
+use Capell\Mosaic\Actions\AddHeroWidgetToLayoutAction;
 
 it('adds a hero container to a layout without one', function (): void {
     $layout = Layout::factory()->create(['containers' => []]);

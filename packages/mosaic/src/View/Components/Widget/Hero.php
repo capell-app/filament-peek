@@ -7,7 +7,7 @@ namespace Capell\Mosaic\View\Components\Widget;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
-use Capell\Hero\Actions\HeroWidgetHasPrimaryHeadingAction;
+use Capell\Mosaic\Actions\HeroWidgetHasPrimaryHeadingAction;
 use Capell\Mosaic\Models\Content;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 

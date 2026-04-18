@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Core\Actions\GetComponentClassAction;
-use Capell\Hero\View\Components\Widget\Hero;
+use Capell\Mosaic\View\Components\Widget\Hero;
 use Capell\Tests\Support\Concerns\TestingFrontend;
 
 uses(TestingFrontend::class);

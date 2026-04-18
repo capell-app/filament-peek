@@ -8,7 +8,7 @@ arch()
 
 arch()
     ->expect([
-        'Capell\Hero',
+        'Capell\Mosaic',
     ])
     ->classes()
     ->toUseStrictEquality();

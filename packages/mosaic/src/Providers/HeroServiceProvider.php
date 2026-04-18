@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Hero\Providers;
+namespace Capell\Mosaic\Providers;
 
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
@@ -10,13 +10,12 @@ use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
-use Capell\Hero\Console\Commands\DemoCommand;
-use Capell\Hero\Console\Commands\SetupCommand;
-use Capell\Hero\Enums\ContentSchemaEnum;
-use Capell\Hero\Enums\WidgetSchemaEnum;
-use Capell\Hero\Filament\Extenders\Page\HeroPageSchemaExtender;
+use Capell\Mosaic\Console\Commands\Hero\DemoCommand;
+use Capell\Mosaic\Console\Commands\Hero\SetupCommand;
+use Capell\Mosaic\Enums\Hero\ContentSchemaEnum;
+use Capell\Mosaic\Enums\Hero\WidgetSchemaEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
-use Capell\Mosaic\Providers\LayoutServiceProvider;
+use Capell\Mosaic\Filament\Extenders\Page\HeroPageSchemaExtender;
 use Composer\InstalledVersions;
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
@@ -83,7 +82,7 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
             requirements: [
                 AdminServiceProvider::$packageName,
                 FrontendServiceProvider::$packageName,
-                LayoutServiceProvider::$packageName,
+                MosaicServiceProvider::$packageName,
             ],
             version: $this->getVersion(),
             url: 'https://capell.app',
@@ -131,8 +130,8 @@ class HeroServiceProvider extends AbstractPackageServiceProvider
 
     private function registerBladeComponents(): self
     {
-        Blade::componentNamespace('Capell\\Hero\\View\\Components', 'capell-hero');
-        Blade::anonymousComponentNamespace('Capell\\Hero\\View\\Components');
+        Blade::componentNamespace('Capell\\Mosaic\\View\\Components', 'capell-hero');
+        Blade::anonymousComponentNamespace('Capell\\Mosaic\\View\\Components');
 
         return $this;
     }
