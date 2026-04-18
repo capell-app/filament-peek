@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 arch()
-    ->expect('Capell\\Hero')
-    ->toOnlyBeUsedIn('Capell\\Hero');
+    ->expect('Capell\\Mosaic')
+    ->toOnlyBeUsedIn('Capell\\Mosaic');
 
 arch()
     ->expect([
-        'Capell\Hero',
+        'Capell\Mosaic',
     ])
     ->classes()
     ->toUseStrictEquality();

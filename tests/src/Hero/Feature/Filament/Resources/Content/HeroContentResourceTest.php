@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Type;
-use Capell\Hero\Actions\CreateHeroContentTypeAction;
-use Capell\Hero\Enums\ContentSchemaEnum;
 use Capell\Layout\Filament\Resources\Contents\Pages\EditContent;
 use Capell\Layout\Models\Collection;
+use Capell\Mosaic\Actions\Hero\CreateHeroContentTypeAction;
+use Capell\Mosaic\Enums\Hero\ContentSchemaEnum;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Pest\Expectation;
 use Pest\Expectations\HigherOrderExpectation;

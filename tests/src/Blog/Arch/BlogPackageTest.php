@@ -15,7 +15,7 @@ arch()
         DemoCommand::class,
         DemoCreator::class,
         TypeFactory::class,
-        Capell\Hero\Console\Commands\DemoCommand::class,
+        Capell\Mosaic\Console\Commands\Hero\DemoCommand::class,
     ]);
 
 arch()

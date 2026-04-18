@@ -114,7 +114,7 @@ Use extensively. Any structured value crossing a boundary is a `Data` object:
 - **Every PHP file starts with `declare(strict_types=1);`**
 - **Actions**: `packages/{pkg}/src/Actions/`, naming `VerbNounAction` (extend `Lorisleiva\Actions\Action` or use `AsObject` trait). Match the core repo's patterns — see `capell-4/packages/core/src/Actions/` for the reference set (~90 examples).
 - **Data**: `packages/{pkg}/src/Data/`, suffix `Data`, constructor-promoted public properties, getter methods for computed/closure-backed values.
-- **Namespaces**: `Capell\Layout`, `Capell\Blog`, `Capell\Hero`, `Capell\Address`, `Capell\Assistant`.
+- **Namespaces**: `Capell\Mosaic`, `Capell\Blog`, `Capell\Address`, `Capell\Assistant`.
 
 #### Typical slice
 
@@ -290,7 +290,7 @@ php vendor/bin/pest packages/layout-builder/tests
 |---------|-----------|---------|------------|
 | `layout` | `Capell\Layout` | Visual layout builder, widgets, content blocks | core, admin, frontend |
 | `blog` | `Capell\Blog` | Blog post types, categories, tags, RSS | core, admin, frontend, layout |
-| `hero` | `Capell\Hero` | Hero section widgets | core, admin, frontend, layout |
+| _(merged into `mosaic`)_ | `Capell\Mosaic` | Hero section widgets (now part of mosaic) | core, admin, frontend |
 | `address` | `Capell\Address` | Address/country management on Sites | core, admin, frontend, layout |
 | `assistant` | `Capell\Assistant` | AI-assisted editorial tooling | core, admin |
 

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Type;
-use Capell\Hero\Actions\CreateHeroWidgetAction;
-use Capell\Hero\Enums\WidgetComponentEnum;
 use Capell\Layout\Enums\LayoutTypeEnum;
 use Capell\Layout\Enums\WidgetTypeEnum;
 use Capell\Layout\Filament\Resources\Widgets\Pages\CreateWidget;
 use Capell\Layout\Filament\Resources\Widgets\Pages\EditWidget;
 use Capell\Layout\Models\Widget;
+use Capell\Mosaic\Actions\Hero\CreateHeroWidgetAction;
+use Capell\Mosaic\Enums\Hero\WidgetComponentEnum;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Pest\Expectation;
 

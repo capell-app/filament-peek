@@ -156,7 +156,7 @@ Don't:
     - Removing/invalidating the shared cache file/path via Filesystem, or
     - Emitting a framework event or calling an Artisan command name (string), not importing plugin classes.
 - If shared behavior grows complex, extract a minimal interface in a shared module and implement adapters per plugin; do not point Core to concrete plugin classes.
-- Enforce with static analysis: any `use Capell\Address\...`, `use Capell\Blog\...`, `use Capell\Hero\...`, or `use Capell\Layout\...` from Core is a blocker.
+- Enforce with static analysis: any `use Capell\Address\...`, `use Capell\Blog\...`, or `use Capell\Mosaic\...` from Core is a blocker.
 
 ---
 

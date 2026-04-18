@@ -3,8 +3,8 @@
 declare(strict_types=1);
 use Capell\Core\Data\PageTypeData;
 use Capell\Core\Models\Type;
-use Capell\Hero\Actions\CreateHeroWidgetAction;
 use Capell\Layout\Models\Widget;
+use Capell\Mosaic\Actions\Hero\CreateHeroWidgetAction;
 use Pest\Expectation;
 
 describe('CreateHeroWidgetAction', function (): void {
