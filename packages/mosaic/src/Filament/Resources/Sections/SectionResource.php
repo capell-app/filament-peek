@@ -19,7 +19,7 @@ use Capell\Mosaic\Filament\Resources\Sections\RelationManagers\SectionAssetsRela
 use Capell\Mosaic\Filament\Resources\Sections\RelationManagers\WidgetsRelationManager;
 use Capell\Mosaic\Filament\Resources\Sections\Schemas\SectionForm;
 use Capell\Mosaic\Filament\Resources\Sections\Tables\SectionsTable;
-use Capell\Mosaic\Filament\Resources\Sections\Widgets\ContentAlertsWidget;
+use Capell\Mosaic\Filament\Resources\Sections\Widgets\SectionAlertsWidget;
 use Capell\Mosaic\Models\Section;
 use Capell\Mosaic\Providers\MosaicServiceProvider;
 use Filament\Resources\Resource;
@@ -159,7 +159,7 @@ class SectionResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            ContentAlertsWidget::class,
+            SectionAlertsWidget::class,
         ];
     }
 

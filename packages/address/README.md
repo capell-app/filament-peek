@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://capell.app"><img src="https://capell.app/images/logo.svg" alt="Capell" width="280"></a>
+</p>
+
 # Capell Address
 
 Country and address management for Capell sites. Ships a `Country` and `Address` model, Filament resources and form components, and runtime relationships that let any `Site` store a primary address.
