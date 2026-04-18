@@ -186,7 +186,7 @@ class ContentSelect extends Select
         $parentContentType = $this->parentContentType;
 
         /** @var class-string<Section> $model */
-        $model = CapellCore::getModel(ModelEnum::Content->name);
+        $model = CapellCore::getModel(ModelEnum::Section->name);
 
         /** @var Section $content */
         $contents = $model::query()->select('sections.*')

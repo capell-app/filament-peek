@@ -146,7 +146,7 @@ test('can filter by parent', function (): void {
 });
 
 test('can filter by type', function (): void {
-    $type = Type::factory()->type(LayoutTypeEnum::Content)->create();
+    $type = Type::factory()->type(LayoutTypeEnum::Section)->create();
     $contents = Section::factory()->count(3)->type($type)->create();
 
     livewire(ListSections::class)

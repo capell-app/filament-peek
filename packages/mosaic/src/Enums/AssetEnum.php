@@ -48,7 +48,7 @@ enum AssetEnum: string implements HasColor, HasIcon, HasLabel
     public function getModel(): string
     {
         return match ($this) {
-            self::Content => config('capell-mosaic.assets.content.model', Section::class),
+            self::Section => config('capell-mosaic.assets.section.model', Section::class),
         };
     }
 
@@ -65,7 +65,7 @@ enum AssetEnum: string implements HasColor, HasIcon, HasLabel
     public function getFormClass(): string
     {
         return match ($this) {
-            self::Content => SectionForm::class,
+            self::Section => SectionForm::class,
         };
     }
 

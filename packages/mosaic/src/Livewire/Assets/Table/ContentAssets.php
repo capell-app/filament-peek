@@ -50,7 +50,7 @@ class ContentAssets extends AbstractAssets
     protected function getTableQuery(): Builder
     {
         /* @var class-string<\Capell\Mosaic\Models\Section> $model */
-        $model = CapellCore::getModel(ModelEnum::Content->name);
+        $model = CapellCore::getModel(ModelEnum::Section->name);
 
         return $model::with([
             'ancestors.type',

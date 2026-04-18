@@ -16,7 +16,7 @@ use function Pest\Livewire\livewire;
 
 it('can list content assets', function (): void {
     $content = Section::factory()
-        ->has(AssetRelation::factory(['related_type' => AssetEnum::Content->value])->count(5), 'assets')
+        ->has(AssetRelation::factory(['related_type' => AssetEnum::Section->value])->count(5), 'assets')
         ->create();
 
     $resource = $content->assets->first()->load('asset');
@@ -43,8 +43,8 @@ it('can search content assets', function (): void {
         )
         ->has(
             AssetRelation::factory([
-                'related_type' => AssetEnum::Content->value,
-                'asset_type' => AssetEnum::Content->value,
+                'related_type' => AssetEnum::Section->value,
+                'asset_type' => AssetEnum::Section->value,
                 'asset_id' => Section::factory(['name' => 'Second']),
             ]),
             'assets',
@@ -59,8 +59,8 @@ it('can search content assets', function (): void {
         )
         ->has(
             AssetRelation::factory([
-                'related_type' => AssetEnum::Content->value,
-                'asset_type' => AssetEnum::Content->value,
+                'related_type' => AssetEnum::Section->value,
+                'asset_type' => AssetEnum::Section->value,
                 'asset_id' => Section::factory(['name' => 'Fourth']),
             ]),
             'assets',
