@@ -73,4 +73,4 @@ See [docs/Database.md](docs/Database.md) for the full column list, casts, and sc
 
 - [Database reference](docs/Database.md) — tables, indexes, casts, relations
 - [API reference](docs/API.md) — service provider, components, extenders
-- Capell core docs: [Packages overview](../../../capell-4/docs/packages.md)
+- Capell core docs: [docs.capell.app](https://docs.capell.app) — [Packages overview](https://docs.capell.app/core/packages/), [Extending Capell](https://docs.capell.app/core/extending-capell/)

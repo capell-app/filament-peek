@@ -82,4 +82,4 @@ The Article page type registers through `BlogServiceProvider`. To add your own f
 
 - [Database reference](docs/Database.md) — tables, factories, relations
 - [API reference](docs/API.md) — service provider, resources, widgets, commands
-- Capell core docs: [Packages overview](../../../capell-4/docs/packages.md)
+- Capell core docs: [docs.capell.app](https://docs.capell.app) — [Packages overview](https://docs.capell.app/core/packages/), [Extending Capell](https://docs.capell.app/core/extending-capell/)

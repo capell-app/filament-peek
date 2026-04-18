@@ -98,4 +98,4 @@ Plus an alter to the core `layouts` table: `add_container_widgets_to_layouts_tab
 
 - [Database reference](docs/Database.md) — full schema, factories, runtime relations
 - [API reference](docs/API.md) — service provider, actions, enums, extension points
-- Capell core docs: [Packages overview](../../../capell-4/docs/packages.md), [Extending Capell](../../../capell-4/docs/extending-capell.md)
+- Capell core docs: [docs.capell.app](https://docs.capell.app) — [Packages overview](https://docs.capell.app/core/packages/), [Extending Capell](https://docs.capell.app/core/extending-capell/)
