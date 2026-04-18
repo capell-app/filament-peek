@@ -14,6 +14,8 @@ use RuntimeException;
 
 final class InstallPluginAction extends Action
 {
+    private const int STDERR_TAIL_LENGTH = 400;
+
     public function __construct(
         private readonly ComposerRunner $composerRunner,
     ) {}
@@ -61,8 +63,8 @@ final class InstallPluginAction extends Action
                 'created_at' => now(),
             ]);
         } else {
-            // Log failure with stderr tail (last 400 chars)
-            $stderrTail = substr($installResult->stderr, -400);
+            // Log failure with stderr tail
+            $stderrTail = substr($installResult->stderr, -self::STDERR_TAIL_LENGTH);
 
             $plugin->auditLog()->create([
                 'action' => 'install_failed',
@@ -97,7 +99,8 @@ final class InstallPluginAction extends Action
             try {
                 $descriptor = CapabilityRegistry::parse($capabilityString);
                 $descriptors[] = $descriptor;
-                $warnings[] = strtoupper(substr($descriptor->warningLevel->value, 0, 1)) . '. ' . $descriptor->title;
+                $warningLevelLetter = $this->getWarningLevelLetter($descriptor->warningLevel);
+                $warnings[] = $warningLevelLetter . '. ' . $descriptor->title;
             } catch (RuntimeException) {
                 // Skip invalid capability strings
                 continue;
@@ -122,5 +125,14 @@ final class InstallPluginAction extends Action
             highestLevel: $highestLevel,
             warnings: $warnings,
         );
+    }
+
+    private function getWarningLevelLetter(CapabilityWarningLevel $level): string
+    {
+        return match ($level) {
+            CapabilityWarningLevel::Red => 'R',
+            CapabilityWarningLevel::Yellow => 'Y',
+            CapabilityWarningLevel::Green => 'G',
+        };
     }
 }
