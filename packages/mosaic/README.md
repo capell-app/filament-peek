@@ -50,7 +50,7 @@ The installer registers Filament resources and permissions, publishes migrations
 Optional config publish:
 
 ```sh
-php artisan vendor:publish --tag=capell-layout-config
+php artisan vendor:publish --tag=capell-mosaic-config
 ```
 
     ```bash
