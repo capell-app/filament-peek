@@ -1442,4 +1442,124 @@ class DemoCreator
 
         return $widget;
     }
+
+    public function createModernStatsSectionWidget(): Widget
+    {
+        $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
+            ->firstWhere('key', WidgetTypeEnum::Assets);
+
+        if (! $widgetType) {
+            $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
+        }
+
+        $widget = $this->widgetModel::query()->firstOrCreate(['key' => 'modern-stats'], [
+            'name' => 'Modern Stats Section',
+            'type_id' => $widgetType->id,
+            'meta' => [
+                'component' => 'capell-mosaic::components.modern.stats-section',
+                'margin' => ['lg'],
+            ],
+        ]);
+
+        foreach (Site::getDefault()?->languages ?? [] as $language) {
+            $widget->translations()->updateOrCreate(
+                ['language_id' => $language->id],
+                [
+                    'title' => 'By The Numbers',
+                ],
+            );
+        }
+
+        return $widget;
+    }
+
+    public function createModernAlternatingContentWidget(): Widget
+    {
+        $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
+            ->firstWhere('key', WidgetTypeEnum::Assets);
+
+        if (! $widgetType) {
+            $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
+        }
+
+        $widget = $this->widgetModel::query()->firstOrCreate(['key' => 'modern-alternating-content'], [
+            'name' => 'Modern Alternating Content',
+            'type_id' => $widgetType->id,
+            'meta' => [
+                'component' => 'capell-mosaic::components.modern.alternating-content',
+                'margin' => ['lg'],
+            ],
+        ]);
+
+        foreach (Site::getDefault()?->languages ?? [] as $language) {
+            $widget->translations()->updateOrCreate(
+                ['language_id' => $language->id],
+                [
+                    'title' => 'How It Works',
+                ],
+            );
+        }
+
+        return $widget;
+    }
+
+    public function createModernProcessStepsWidget(): Widget
+    {
+        $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
+            ->firstWhere('key', WidgetTypeEnum::Assets);
+
+        if (! $widgetType) {
+            $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
+        }
+
+        $widget = $this->widgetModel::query()->firstOrCreate(['key' => 'modern-process-steps'], [
+            'name' => 'Modern Process Steps',
+            'type_id' => $widgetType->id,
+            'meta' => [
+                'component' => 'capell-mosaic::components.modern.process-steps',
+                'margin' => ['lg'],
+            ],
+        ]);
+
+        foreach (Site::getDefault()?->languages ?? [] as $language) {
+            $widget->translations()->updateOrCreate(
+                ['language_id' => $language->id],
+                [
+                    'title' => 'Our Process',
+                ],
+            );
+        }
+
+        return $widget;
+    }
+
+    public function createModernImageGalleryWidget(): Widget
+    {
+        $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
+            ->firstWhere('key', WidgetTypeEnum::Assets);
+
+        if (! $widgetType) {
+            $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
+        }
+
+        $widget = $this->widgetModel::query()->firstOrCreate(['key' => 'modern-image-gallery'], [
+            'name' => 'Modern Image Gallery',
+            'type_id' => $widgetType->id,
+            'meta' => [
+                'component' => 'capell-mosaic::components.modern.image-gallery',
+                'margin' => ['lg'],
+            ],
+        ]);
+
+        foreach (Site::getDefault()?->languages ?? [] as $language) {
+            $widget->translations()->updateOrCreate(
+                ['language_id' => $language->id],
+                [
+                    'title' => 'Our Work',
+                ],
+            );
+        }
+
+        return $widget;
+    }
 }

@@ -107,7 +107,7 @@ class DemoCommand extends Command
             return false;
         }
 
-        $totalSteps = 4 + 2 + 8 + 1 + 1;
+        $totalSteps = 4 + 2 + 17 + 1 + 1;
         $this->startProgress($totalSteps);
         $this->setupHomepage($home, $languages);
         $this->finishProgress();
@@ -288,6 +288,22 @@ class DemoCommand extends Command
         $faqWidget = $this->demoCreator->createModernFaqWidget();
         $this->advanceProgress();
 
+        $this->setProgressMessage('Creating modern stats section widget');
+        $statsWidget = $this->demoCreator->createModernStatsSectionWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern alternating content widget');
+        $alternatingWidget = $this->demoCreator->createModernAlternatingContentWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern process steps widget');
+        $processWidget = $this->demoCreator->createModernProcessStepsWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern image gallery widget');
+        $galleryWidget = $this->demoCreator->createModernImageGalleryWidget();
+        $this->advanceProgress();
+
         $containers['secondary'] = [
             'meta' => [
                 'colspan' => 12,
@@ -305,6 +321,10 @@ class DemoCommand extends Command
                 ['widget_key' => $clientLogosWidget->key],
                 ['widget_key' => $testimonialsWidget->key],
                 ['widget_key' => $faqWidget->key],
+                ['widget_key' => $statsWidget->key],
+                ['widget_key' => $alternatingWidget->key],
+                ['widget_key' => $processWidget->key],
+                ['widget_key' => $galleryWidget->key],
             ],
         ];
     }
