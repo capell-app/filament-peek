@@ -38,7 +38,6 @@ class HeroWidgetSchema extends AssetsWidgetSchema
                         'medium' => __('capell-admin::generic.medium'),
                         'large' => __('capell-admin::generic.large'),
                     ],
-                    placeholder: __('capell-admin::generic.auto'),
                 )
                     ->label(__('capell-admin::form.height')),
             ]),

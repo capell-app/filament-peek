@@ -8,10 +8,10 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
-use Capell\Layout\Database\Factories\ContentTypeFactory;
-use Capell\Layout\Models\Collection;
-use Capell\Layout\Models\Widget;
-use Capell\Layout\Models\WidgetAsset;
+use Capell\Mosaic\Database\Factories\ContentTypeFactory;
+use Capell\Mosaic\Models\Collection;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 it('belongs to a site', function (): void {

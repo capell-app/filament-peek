@@ -29,7 +29,7 @@ class DemoCommand extends Command
 
     protected $description = 'Inserts demo mosaic layout widgets';
 
-    protected $signature = 'capell:mosaic-demo {--user} {--sites=}';
+    protected $signature = 'capell:mosaic-demo {--user} {--sites=} {--include-hero}';
 
     protected DemoCreator $demoCreator;
 
@@ -81,6 +81,14 @@ class DemoCommand extends Command
 
         $this->newLine();
         $this->info('Demo layouts have been successfully created.');
+
+        if ($this->option('include-hero')) {
+            $this->newLine();
+            $this->comment('Running hero demo...');
+            $this->call('capell:hero-demo', [
+                '--sites' => $this->option('sites'),
+            ]);
+        }
 
         return Command::SUCCESS;
     }

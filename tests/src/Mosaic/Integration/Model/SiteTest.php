@@ -5,7 +5,7 @@ declare(strict_types=1);
 // tests/Integration/Models/SiteTest.php
 
 use Capell\Core\Models\Site;
-use Capell\Layout\Models\Collection;
+use Capell\Mosaic\Models\Collection;
 
 it('has many contents', function (): void {
     $site = Site::factory()->create();

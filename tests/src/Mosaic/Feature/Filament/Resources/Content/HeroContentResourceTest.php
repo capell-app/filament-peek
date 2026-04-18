@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Mosaic\Hero\Feature\Filament;
+namespace Capell\Tests\Mosaic\Feature\Filament\Resources\Content;
 
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Actions\CreateHeroContentTypeAction;
 use Capell\Mosaic\Enums\ContentSchemaEnum;
-use Capell\Mosaic\Models\Filament\Resources\Contents\Pages\EditContent;
-use Capell\Mosaic\Models\Models\Collection;
+use Capell\Mosaic\Filament\Resources\Contents\Pages\EditContent;
+use Capell\Mosaic\Models\Collection;
+use Capell\Mosaic\Models\Content;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Pest\Expectation;
 use Pest\Expectations\HigherOrderExpectation;

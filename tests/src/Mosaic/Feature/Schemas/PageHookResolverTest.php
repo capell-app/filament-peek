@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Mosaic\Hero\Feature;
+namespace Capell\Tests\Mosaic\Feature\Schemas;
 
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\Admin\Enums\PageTranslationSchemaHookEnum;

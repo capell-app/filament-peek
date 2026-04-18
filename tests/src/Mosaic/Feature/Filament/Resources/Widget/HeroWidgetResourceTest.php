@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Mosaic\Hero\Feature\Filament;
+namespace Capell\Tests\Mosaic\Feature\Filament\Resources\Widget;
 
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Actions\CreateHeroWidgetAction;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Enums\WidgetTypeEnum;
-use Capell\Mosaic\Models\Filament\Resources\Widgets\Pages\CreateWidget;
-use Capell\Mosaic\Models\Filament\Resources\Widgets\Pages\EditWidget;
-use Capell\Mosaic\Models\Models\Widget;
+use Capell\Mosaic\Filament\Resources\Widgets\Pages\CreateWidget;
+use Capell\Mosaic\Filament\Resources\Widgets\Pages\EditWidget;
+use Capell\Mosaic\Models\Widget;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Pest\Expectation;
 

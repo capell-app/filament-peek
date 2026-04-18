@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Tests\Mosaic\Hero\Feature\Widgets;
+namespace Capell\Tests\Mosaic\Feature\Widgets;
 
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\Language;
@@ -10,11 +10,11 @@ use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Actions\CreateHeroWidgetAction;
+use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
-use Capell\Mosaic\Models\Database\Factories\LayoutFactory;
-use Capell\Mosaic\Models\Models\Collection;
-use Capell\Mosaic\Models\Models\Widget;
-use Capell\Mosaic\Models\Models\WidgetAsset;
+use Capell\Mosaic\Models\Collection;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Tests\Support\Concerns\TestingFrontend;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Support\Facades\Storage;

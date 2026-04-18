@@ -5,11 +5,11 @@ declare(strict_types=1);
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Layout\Database\Factories\LayoutFactory;
-use Capell\Layout\Models\Widget;
-use Capell\Layout\Models\WidgetAsset;
-use Capell\Layout\Support\Creator\WidgetCreator;
+use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Enums\AssetEnum;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
+use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\TestingFrontend;
 use Pest\Expectation;
 
@@ -29,8 +29,8 @@ it('creates asset block widget with expected meta', function (): void {
         ->toBeInstanceOf(Widget::class)
         ->key->toBe('assets-block')
         ->meta->scoped(
-            fn (Expectation $meta) => $meta->view_file->toBe('capell-layout::components.widget.asset.blocks')
-                ->component_item->toBe('capell-layout::content.block'),
+            fn (Expectation $meta) => $meta->view_file->toBe('capell-mosaic::components.widget.asset.blocks')
+                ->component_item->toBe('capell-mosaic::content.block'),
         )
         ->assets->toHaveCount(3);
 });

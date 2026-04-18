@@ -7,16 +7,16 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Support\Creator\LayoutCreator;
-use Capell\Layout\Database\Factories\LayoutFactory;
-use Capell\Layout\Database\Factories\WidgetTypeFactory;
-use Capell\Layout\Filament\Resources\Layouts\Schemas\Types\Widgets\DefaultLayoutWidgetSchema;
-use Capell\Layout\Livewire\Filament\LayoutBuilder;
-use Capell\Layout\Models\Widget;
-use Capell\Layout\Models\WidgetAsset;
-use Capell\Layout\Support\Creator\TypeCreator;
-use Capell\Layout\Support\Creator\WidgetCreator;
+use Capell\Mosaic\Database\Factories\LayoutFactory;
+use Capell\Mosaic\Database\Factories\WidgetTypeFactory;
 use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\LivewireComponentsEnum;
+use Capell\Mosaic\Filament\Resources\Layouts\Schemas\Types\Widgets\DefaultLayoutWidgetSchema;
+use Capell\Mosaic\Livewire\Filament\LayoutBuilder;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
+use Capell\Mosaic\Support\Creator\TypeCreator;
+use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Actions\Testing\TestAction;
 use Pest\Expectation;
@@ -38,7 +38,7 @@ test('it renders the layout builder with containers', function (): void {
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->assertSeeText(__('capell-layout::heading.layout_record', ['name' => $layout->name]));
+        ->assertSeeText(__('capell-mosaic::heading.layout_record', ['name' => $layout->name]));
 });
 
 test('it renders the layout builder for a page', function (): void {
@@ -50,7 +50,7 @@ test('it renders the layout builder for a page', function (): void {
         'page' => $page,
     ])
         ->assertSuccessful()
-        ->assertSeeText(__('capell-layout::heading.layout_record', ['name' => $layout->name]));
+        ->assertSeeText(__('capell-mosaic::heading.layout_record', ['name' => $layout->name]));
 });
 
 test('it renders an empty layout message when no containers exist', function (): void {
@@ -58,7 +58,7 @@ test('it renders an empty layout message when no containers exist', function ():
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->assertSeeHtml(__('capell-layout::message.layout_empty'));
+        ->assertSeeHtml(__('capell-mosaic::message.layout_empty'));
 });
 
 test('it renders for each layout enum type', function (LayoutEnum $layoutEnum): void {
@@ -71,7 +71,7 @@ test('it renders for each layout enum type', function (LayoutEnum $layoutEnum): 
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->assertSeeText(__('capell-layout::heading.layout_record', ['name' => $layout->name]));
+        ->assertSeeText(__('capell-mosaic::heading.layout_record', ['name' => $layout->name]));
 })->with(LayoutEnum::cases());
 
 test('it renders widgets with asset types', function (AssetEnum|Capell\Core\Enums\AssetEnum $assetType): void {

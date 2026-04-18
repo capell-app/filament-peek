@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Page;
-use Capell\Layout\Models\Collection;
-use Capell\Layout\Models\Widget;
-use Capell\Layout\Models\WidgetAsset;
+use Capell\Mosaic\Models\Collection;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
 
 it('has many widget assets', function (): void {
     $widget = Widget::factory()->create();

@@ -6,11 +6,11 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Layout\Database\Factories\LayoutFactory;
-use Capell\Layout\Database\Factories\WidgetAssetFactory;
-use Capell\Layout\Models\Widget;
-use Capell\Layout\Models\WidgetAsset;
-use Capell\Layout\Support\Creator\WidgetCreator;
+use Capell\Mosaic\Database\Factories\LayoutFactory;
+use Capell\Mosaic\Database\Factories\WidgetAssetFactory;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
+use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\TestingFrontend;
 use Pest\Expectation;
 
@@ -30,7 +30,7 @@ it('creates asset banner widget with expected meta', function (): void {
         ->toBeInstanceOf(Widget::class)
         ->key->toBe('assets-banner')
         ->meta->scoped(
-            fn (Expectation $meta) => $meta->view_file->toBe('capell-layout::components.widget.asset.banners'),
+            fn (Expectation $meta) => $meta->view_file->toBe('capell-mosaic::components.widget.asset.banners'),
         )
         ->assets->toHaveCount(3);
 });

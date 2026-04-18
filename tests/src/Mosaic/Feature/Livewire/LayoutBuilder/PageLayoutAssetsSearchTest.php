@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Page;
-use Capell\Layout\Database\Factories\LayoutFactory;
-use Capell\Layout\Livewire\Assets\Table\ContentAssets;
-use Capell\Layout\Livewire\Assets\Table\PageAssets;
-use Capell\Layout\Models\Collection;
+use Capell\Mosaic\Database\Factories\LayoutFactory;
+use Capell\Mosaic\Livewire\Assets\Table\ContentAssets;
+use Capell\Mosaic\Livewire\Assets\Table\PageAssets;
+use Capell\Mosaic\Models\Collection;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Livewire\livewire;

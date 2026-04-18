@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
-use Capell\Layout\Database\Factories\ContentTypeFactory;
-use Capell\Layout\Filament\Resources\Contents\Pages\CreateContent;
-use Capell\Layout\Models\Collection;
+use Capell\Mosaic\Database\Factories\ContentTypeFactory;
+use Capell\Mosaic\Filament\Resources\Contents\Pages\CreateContent;
+use Capell\Mosaic\Models\Collection;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Illuminate\Support\Str;
 

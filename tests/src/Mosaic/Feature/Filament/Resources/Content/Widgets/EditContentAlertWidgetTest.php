@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\Layout\Filament\Resources\Contents\ContentResource;
-use Capell\Layout\Filament\Resources\Contents\Widgets\ContentAlertsWidget;
-use Capell\Layout\Models\Collection;
+use Capell\Mosaic\Filament\Resources\Contents\ContentResource;
+use Capell\Mosaic\Filament\Resources\Contents\Widgets\ContentAlertsWidget;
+use Capell\Mosaic\Models\Collection;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Laravel\get;
