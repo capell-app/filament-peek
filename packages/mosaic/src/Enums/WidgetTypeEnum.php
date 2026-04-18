@@ -8,9 +8,9 @@ enum WidgetTypeEnum: string
 {
     case Assets = 'assets';
 
-    case Contents = 'contents';
+    case Sections = 'sections';
 
-    case ContentBuilder = 'content-builder';
+    case SectionBuilder = 'section-builder';
 
     case Default = 'default';
 

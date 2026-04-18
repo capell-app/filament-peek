@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://capell.app"><img src="https://capell.app/images/logo.svg" alt="Capell" width="280"></a>
+</p>
+
 # Capell Blog
 
 Article publishing for Capell. Adds a dedicated **Article** page type, tagging, archives, and blog/archive/tag listing pages — all integrated with the workspace-aware editorial pipeline.

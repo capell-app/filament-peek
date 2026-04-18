@@ -11,7 +11,7 @@ enum TypeSchemaEnum: string implements SchemaTypeEnumInterface
 {
     use HasSchemaTypes;
 
-    case Content = 'Contents';
+    case Content = 'Sections';
 
     case LayoutContainer = 'LayoutContainers';
 
