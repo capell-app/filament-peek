@@ -1,5 +1,7 @@
 # Capell Layout (Mosaic)
 
+![Mosaic Hero Banner](./HERO_BANNER.svg)
+
 The foundation package for Capell's content composition system. Layout is what makes pages editable in the admin: a visual builder that lets editors drop reusable **widgets** onto **layouts**, with **content items** as shared data blocks.
 
 **[Full documentation →](https://docs.capell.app/packages/mosaic/)**
