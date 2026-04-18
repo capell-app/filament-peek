@@ -34,7 +34,7 @@ it('shows alert for content state', function (string $state, string $alertKey): 
 
     livewire(SectionAlertsWidget::class, ['record' => $content])
         ->assertSuccessful()
-        ->assertSet('alerts', fn (SupportCollection $alerts): bool => $alerts->has($alertKey));
+        ->assertSet('alerts', fn (Collection $alerts): bool => $alerts->has($alertKey));
 })
     ->with([
         'expired' => ['expired', 'expired'],
