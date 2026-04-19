@@ -30,11 +30,12 @@ class AssistantSettingsSchema implements HasSchema
                         ->label(__('capell-assistant::form.rate_limiting'))
                         ->helperText(__('capell-assistant::generic.rate_limiting_info'))
                         ->placeholder((string) config('capell-assistant.rate_limiting.requests_per_minute')),
-                    Fieldset::make('Title Generation')
+                    Fieldset::make()
+                        ->label(__('capell-assistant::form.title_generation'))
                         ->columnSpanFull()
                         ->schema([
                             Checkbox::make('title_generation')
-                                ->label(__('capell-assistant::form.enabled'))
+                                ->label(__('capell-admin::form.enabled'))
                                 ->reactive(),
                             Grid::make()
                                 ->columnSpanFull()
@@ -48,7 +49,8 @@ class AssistantSettingsSchema implements HasSchema
                                         ->rows(4),
                                 ]),
                         ]),
-                    Fieldset::make('Meta Description')
+                    Fieldset::make()
+                        ->label(__('capell-assistant::form.meta_description'))
                         ->columnSpanFull()
                         ->schema([
                             Checkbox::make('meta_description')
@@ -66,7 +68,8 @@ class AssistantSettingsSchema implements HasSchema
                                         ->rows(4),
                                 ]),
                         ]),
-                    Fieldset::make('Content Generation')
+                    Fieldset::make()
+                        ->label(__('capell-assistant::form.content_generation'))
                         ->columnSpanFull()
                         ->schema([
                             Checkbox::make('content_generation')

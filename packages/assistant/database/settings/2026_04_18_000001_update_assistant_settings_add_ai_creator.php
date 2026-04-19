@@ -11,21 +11,27 @@ return new class extends SettingsMigration
         if (! $this->migrator->exists('assistant.ai_creator')) {
             $this->migrator->add('assistant.ai_creator', true);
         }
+
         if (! $this->migrator->exists('assistant.ai_provider')) {
             $this->migrator->add('assistant.ai_provider', 'openai');
         }
+
         if (! $this->migrator->exists('assistant.ai_model')) {
             $this->migrator->add('assistant.ai_model', 'gpt-4o');
         }
+
         if (! $this->migrator->exists('assistant.ai_api_key')) {
             $this->migrator->add('assistant.ai_api_key', '');
         }
+
         if (! $this->migrator->exists('assistant.image_provider')) {
             $this->migrator->add('assistant.image_provider', 'openai');
         }
+
         if (! $this->migrator->exists('assistant.image_model')) {
             $this->migrator->add('assistant.image_model', 'dall-e-3');
         }
+
         if (! $this->migrator->exists('assistant.image_default_size')) {
             $this->migrator->add('assistant.image_default_size', '1024x1024');
         }

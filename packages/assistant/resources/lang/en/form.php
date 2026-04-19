@@ -11,4 +11,7 @@ return [
     'enabled' => 'Enabled',
     'model' => 'Model',
     'rate_limiting' => 'Rate limiting',
+    'title_generation' => 'Title Generation',
+    'meta_description' => 'Meta Description',
+    'content_generation' => 'Content Generation',
 ];
