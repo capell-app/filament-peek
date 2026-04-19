@@ -52,6 +52,13 @@
             }
         },
         {
+            "type": "path",
+            "url": "./packages/themes/*",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
             "type": "vcs",
             "url": "https://github.com/capell-app/admin"
         },
@@ -79,7 +86,12 @@
         "capell-app/admin": "^2.0",
         "capell-app/core": "^2.0",
         "capell-app/frontend": "^2.0",
+        "capell-app/capell-theme-agency": "@dev",
+        "capell-app/capell-theme-corporate": "@dev",
+        "capell-app/capell-theme-saas": "@dev",
         "capell-app/plugins": "@dev",
+        "capell-app/themes-admin": "@dev",
+        "capell-app/themes-core": "@dev",
         "cms-multi/filament-clear-cache": "^3.0",
         "codewithdennis/filament-select-tree": "^4.0",
         "croustibat/filament-jobs-monitor": "^4.4",
@@ -150,7 +162,12 @@
             "Capell\\Address\\": "packages/address/src",
             "Capell\\Assistant\\": "packages/assistant/src",
             "Capell\\Blog\\": "packages/blog/src",
-            "Capell\\Mosaic\\": "packages/mosaic/src"
+            "Capell\\Mosaic\\": "packages/mosaic/src",
+            "Capell\\Themes\\Agency\\": "packages/themes/agency/src",
+            "Capell\\Themes\\Core\\": "packages/themes-core/src",
+            "Capell\\Themes\\Admin\\": "packages/themes-admin/src",
+            "Capell\\Themes\\Corporate\\": "packages/themes/corporate/src",
+            "Capell\\Themes\\Saas\\": "packages/themes/saas/src"
         }
     },
     "autoload-dev": {
@@ -159,7 +176,12 @@
             "Capell\\Assistant\\Database\\Factories\\": "packages/assistant/database/factories",
             "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories",
             "Capell\\Mosaic\\Database\\Factories\\": "packages/mosaic/database/factories",
-            "Capell\\Tests\\": "tests/src"
+            "Capell\\Tests\\": "tests/src",
+            "Capell\\Themes\\Agency\\Tests\\": "packages/themes/agency/tests",
+            "Capell\\Themes\\Core\\Tests\\": "packages/themes-core/tests",
+            "Capell\\Themes\\Admin\\Tests\\": "packages/themes-admin/tests",
+            "Capell\\Themes\\Corporate\\Tests\\": "packages/themes/corporate/tests",
+            "Capell\\Themes\\Saas\\Tests\\": "packages/themes/saas/tests"
         }
     },
     "config": {
