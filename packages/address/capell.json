@@ -2,6 +2,20 @@
     "label": "Address",
     "slug": "address",
     "kind": "addon",
+    "order": 30,
     "dependsOn": ["mosaic"],
-    "order": 30
+    "description": "Address and country field components for forms.",
+    "icon": null,
+    "url": "https://capell.app",
+    "scopes": [],
+    "commands": {
+        "install": "capell:address-install",
+        "afterInstall": null,
+        "afterInstallParams": [],
+        "setup": null,
+        "setupParams": [],
+        "upgrade": null,
+        "demo": "capell:address-demo",
+        "demoParams": ["sites"]
+    }
 }

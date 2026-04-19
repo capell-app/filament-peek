@@ -69,8 +69,6 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
 
     public static string $packageName = 'capell-app/blog';
 
-    public static string $description = 'Article page type with tags, archives, sitemaps, and Livewire listing components.';
-
     public function bootingPackage(): void
     {
         $this->registerTranslationEvents();
@@ -138,10 +136,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            description: static::getDescription(),
-            permissions: $this->getPackagePermissions(),
             version: $this->getVersion(),
-            url: 'https://capell.app',
+            permissions: $this->getPackagePermissions(),
         );
 
         return $this;

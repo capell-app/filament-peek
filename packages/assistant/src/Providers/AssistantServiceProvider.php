@@ -51,8 +51,6 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
 
     public static string $packageName = 'capell-app/assistant';
 
-    public static string $description = 'AI Assistant for Capell';
-
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
@@ -211,10 +209,8 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            description: static::getDescription(),
-            setting: AssistantSettings::class,
             version: $this->getVersion(),
-            url: 'https://capell.app',
+            setting: AssistantSettings::class,
         );
 
         return $this;

@@ -81,8 +81,6 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
 
     public static string $packageName = 'capell-app/mosaic';
 
-    public static string $description = 'Visual layout builder with drag-and-drop widgets and reusable content blocks.';
-
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
@@ -190,10 +188,8 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            description: static::getDescription(),
-            permissions: $this->getPackagePermissions(),
             version: $this->getVersion(),
-            url: 'https://capell.app',
+            permissions: $this->getPackagePermissions(),
         );
 
         return $this;

@@ -30,8 +30,6 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
 
     public static string $packageName = 'capell-app/address';
 
-    public static string $description = 'Address and country field components for forms.';
-
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
@@ -80,9 +78,7 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            description: static::getDescription(),
             version: $this->getVersion(),
-            url: 'https://capell.app',
         );
 
         return $this;

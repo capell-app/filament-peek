@@ -18,8 +18,6 @@ class PluginsServiceProvider extends AbstractPackageServiceProvider
 
     public static string $packageName = 'capell-app/plugins';
 
-    public static string $description = 'Plugins marketplace for Capell.';
-
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
@@ -80,8 +78,6 @@ class PluginsServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            description: static::getDescription(),
-            installCommand: 'capell:plugins-install',
         );
     }
 }
