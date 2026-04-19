@@ -8,6 +8,7 @@ use Capell\Plugins\Data\AnystackLicenseValidationData;
 use Capell\Plugins\Enums\LicenseStatus;
 use Capell\Plugins\Services\AnystackClient;
 use Capell\Tests\Plugins\PluginsTestCase;
+use DateTimeImmutable;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -146,7 +147,7 @@ final class AnystackClientTest extends PluginsTestCase
     public function test_activate_license_returns_dto_with_activation_id(): void
     {
         Http::fake([
-            'api.anystack.sh/*' => Http::response([
+            '*/activate-key' => Http::response([
                 'data' => [
                     'id' => 'activation-abc',
                     'license_id' => 'license-xyz',
@@ -156,6 +157,10 @@ final class AnystackClientTest extends PluginsTestCase
                     'created_at' => '2024-01-01T00:00:00Z',
                     'updated_at' => '2024-01-01T00:00:00Z',
                 ],
+            ], 200),
+            '*/validate-key' => Http::response([
+                'data' => ['id' => 'license-xyz', 'suspended' => false],
+                'meta' => ['valid' => true],
             ], 200),
         ]);
 
@@ -170,14 +175,22 @@ final class AnystackClientTest extends PluginsTestCase
     public function test_activate_license_sends_fingerprint_in_body(): void
     {
         Http::fake([
-            'api.anystack.sh/*' => Http::response([
+            '*/activate-key' => Http::response([
                 'data' => ['id' => 'activation-abc', 'license_id' => 'license-xyz'],
+            ], 200),
+            '*/validate-key' => Http::response([
+                'data' => ['id' => 'license-xyz', 'suspended' => false],
+                'meta' => ['valid' => true],
             ], 200),
         ]);
 
         $this->client->activateLicense('prod_xyz', 'test-key', 'fp-1', 'host-1');
 
         Http::assertSent(function (Request $request): bool {
+            if (! str_contains($request->url(), 'activate-key')) {
+                return false;
+            }
+
             $body = json_decode($request->body(), true);
 
             return is_array($body)
@@ -185,6 +198,148 @@ final class AnystackClientTest extends PluginsTestCase
                 && ($body['hostname'] ?? null) === 'host-1'
                 && ($body['key'] ?? null) === 'test-key';
         });
+    }
+
+    public function test_activate_chains_into_validate_and_merges_dto(): void
+    {
+        // activate returns activation metadata only; validate supplies real
+        // status + expiry. The returned DTO must merge both.
+        Http::fake([
+            '*/activate-key' => Http::response([
+                'data' => [
+                    'id' => 'activation-abc',
+                    'license_id' => 'license-xyz',
+                    'fingerprint' => 'fp-1',
+                ],
+            ], 200),
+            '*/validate-key' => Http::response([
+                'data' => [
+                    'id' => 'license-xyz',
+                    'suspended' => false,
+                    'expires_at' => '2099-12-31T00:00:00Z',
+                ],
+                'meta' => ['valid' => true],
+            ], 200),
+        ]);
+
+        $result = $this->client->activateLicense('prod_xyz', 'test-key', 'fp-1');
+
+        $this->assertSame('activation-abc', $result->activationId);
+        $this->assertSame(LicenseStatus::Active, $result->status);
+        $this->assertTrue($result->valid);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result->expiresAt);
+        $this->assertSame('2099-12-31', $result->expiresAt->format('Y-m-d'));
+
+        Http::assertSentCount(2);
+    }
+
+    public function test_activate_surfaces_validate_chain_suspended_as_revoked(): void
+    {
+        Http::fake([
+            '*/activate-key' => Http::response([
+                'data' => ['id' => 'activation-abc', 'license_id' => 'license-xyz'],
+            ], 200),
+            '*/validate-key' => Http::response([
+                'data' => ['id' => 'license-xyz', 'suspended' => true],
+                'meta' => ['valid' => true],
+            ], 200),
+        ]);
+
+        $result = $this->client->activateLicense('prod_xyz', 'test-key', 'fp-1');
+
+        $this->assertFalse($result->valid);
+        $this->assertSame(LicenseStatus::Revoked, $result->status);
+        $this->assertSame('activation-abc', $result->activationId);
+    }
+
+    public function test_validate_license_maps_suspended_status_to_revoked(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => ['id' => 'license-123', 'suspended' => false],
+                'meta' => ['valid' => false, 'status' => 'SUSPENDED'],
+            ], 200),
+        ]);
+
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
+
+        $this->assertFalse($result->valid);
+        $this->assertSame(LicenseStatus::Revoked, $result->status);
+        $this->assertSame('SUSPENDED', $result->statusCode);
+    }
+
+    public function test_validate_license_maps_restricted_to_expired_as_a_terminal_state(): void
+    {
+        // RESTRICTED goes in the same "no longer usable" bucket as EXPIRED,
+        // not into PastDue (that's fingerprint recovery) and not into Revoked
+        // (that's actively suspended). Keep the mapping explicit so future
+        // changes have to update this test intentionally.
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => ['id' => 'license-123', 'suspended' => false],
+                'meta' => ['valid' => false, 'status' => 'RESTRICTED'],
+            ], 200),
+        ]);
+
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
+
+        $this->assertFalse($result->valid);
+        $this->assertSame(LicenseStatus::Expired, $result->status);
+        $this->assertSame('RESTRICTED', $result->statusCode);
+    }
+
+    public function test_validate_license_maps_fingerprint_invalid_hostname_to_past_due(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => ['id' => 'license-123', 'suspended' => false],
+                'meta' => ['valid' => false, 'status' => 'FINGERPRINT_INVALID_HOSTNAME'],
+            ], 200),
+        ]);
+
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
+
+        $this->assertSame(LicenseStatus::PastDue, $result->status);
+        $this->assertSame('FINGERPRINT_INVALID_HOSTNAME', $result->statusCode);
+    }
+
+    public function test_validate_license_throws_when_meta_valid_missing(): void
+    {
+        // Malformed anystack response (no meta.valid) is a protocol error,
+        // not an expiration — surface it rather than silently marking the
+        // license expired.
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => ['id' => 'license-123', 'suspended' => false],
+                'meta' => ['some_other_field' => true],
+            ], 200),
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('missing meta.valid');
+
+        $this->client->validateLicense('prod_xyz', 'test-key');
+    }
+
+    public function test_validate_license_maps_suspended_data_with_valid_meta_to_revoked(): void
+    {
+        // Edge case: meta.valid=true but data.suspended=true. Persisting
+        // "Active" would be wrong — the license is NOT usable.
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => [
+                    'id' => 'license-123',
+                    'suspended' => true,
+                    'expires_at' => '2099-12-31T00:00:00Z',
+                ],
+                'meta' => ['valid' => true],
+            ], 200),
+        ]);
+
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
+
+        $this->assertFalse($result->valid);
+        $this->assertSame(LicenseStatus::Revoked, $result->status);
     }
 
     public function test_activate_license_throws_on_422(): void
