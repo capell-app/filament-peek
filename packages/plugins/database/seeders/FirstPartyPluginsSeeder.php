@@ -15,7 +15,7 @@ class FirstPartyPluginsSeeder extends Seeder
     {
         MarketplacePlugin::updateOrCreate(['slug' => 'mosaic'], [
             'composer_name' => 'capell-app/capell-mosaic',
-            'title' => 'Mosaic',
+            'name' => 'Mosaic',
             'vendor' => 'capell',
             'description' => 'Visual layout builder, widgets, and reusable content items.',
             'kind' => PluginKind::Full,
@@ -28,7 +28,7 @@ class FirstPartyPluginsSeeder extends Seeder
 
         MarketplacePlugin::updateOrCreate(['slug' => 'blog'], [
             'composer_name' => 'capell-app/capell-blog',
-            'title' => 'Blog',
+            'name' => 'Blog',
             'vendor' => 'capell',
             'description' => 'Article page type, tags, archives, and Livewire listing pages.',
             'kind' => PluginKind::Full,
@@ -41,7 +41,7 @@ class FirstPartyPluginsSeeder extends Seeder
 
         MarketplacePlugin::updateOrCreate(['slug' => 'assistant'], [
             'composer_name' => 'capell-app/capell-assistant',
-            'title' => 'Assistant',
+            'name' => 'Assistant',
             'vendor' => 'capell',
             'description' => 'OpenAI-powered title, meta, and content drafting with audit logging.',
             'kind' => PluginKind::Full,
@@ -54,7 +54,7 @@ class FirstPartyPluginsSeeder extends Seeder
 
         MarketplacePlugin::updateOrCreate(['slug' => 'address'], [
             'composer_name' => 'capell-app/capell-address',
-            'title' => 'Address',
+            'name' => 'Address',
             'vendor' => 'capell',
             'description' => 'Country and address models for site configuration.',
             'kind' => PluginKind::Full,

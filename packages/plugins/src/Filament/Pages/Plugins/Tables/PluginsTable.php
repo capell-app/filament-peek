@@ -64,20 +64,20 @@ class PluginsTable
                         }
                     })
                     ->distinct()
-                    ->orderBy('title');
+                    ->orderBy('name');
             }
 
             // Updates tab: plugins with available updates
             return $query->whereHas('licenses')
                 ->where('has_update', true)
-                ->orderBy('title');
+                ->orderBy('name');
         };
     }
 
     protected static function getTableColumns(): array
     {
         return [
-            TextColumn::make('title')
+            TextColumn::make('name')
                 ->label(__('Plugin'))
                 ->description(fn (MarketplacePlugin $record): ?string => $record->description)
                 ->weight(FontWeight::Medium)
@@ -130,7 +130,7 @@ class PluginsTable
 
                 return $schema;
             })
-            ->modalHeading(fn (MarketplacePlugin $record): string => __('Install :plugin', ['plugin' => $record->title]))
+            ->modalHeading(fn (MarketplacePlugin $record): string => __('Install :plugin', ['plugin' => $record->name]))
             ->action(function (PluginsPage $livewire, Action $action, MarketplacePlugin $record, array $data): void {
                 try {
                     $licenseKey = $data['license_key'] ?? null;
@@ -161,7 +161,7 @@ class PluginsTable
             ->icon(Heroicon::OutlinedTrash)
             ->visible(fn (PluginsPage $livewire, MarketplacePlugin $record): bool => $livewire->isInstalledTab() && $record->isInstalled())
             ->requiresConfirmation()
-            ->modalHeading(fn (MarketplacePlugin $record): string => __('Uninstall :plugin', ['plugin' => $record->title]))
+            ->modalHeading(fn (MarketplacePlugin $record): string => __('Uninstall :plugin', ['plugin' => $record->name]))
             ->modalDescription(__('This action cannot be undone. Are you sure?'))
             ->modalSubmitActionLabel(__('Uninstall'))
             ->action(function (PluginsPage $livewire, Action $action, MarketplacePlugin $record): void {

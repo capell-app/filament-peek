@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Capell\Plugins\Models;
 
+use Capell\Plugins\Database\Factories\MarketplacePluginLicenseFactory;
 use Capell\Plugins\Enums\LicenseStatus;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +26,8 @@ class MarketplacePluginLicense extends Model
     use HasFactory;
 
     protected $table = 'marketplace_plugin_licenses';
+
+    protected $guarded = [];
 
     protected $hidden = ['encrypted_license_key'];
 
@@ -52,5 +56,10 @@ class MarketplacePluginLicense extends Model
         $graceDays = config('capell-plugins.license_heartbeat.offline_grace_days', 14);
 
         return $this->last_heartbeat_at->greaterThanOrEqualTo($nowCarbon->subDays($graceDays));
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return MarketplacePluginLicenseFactory::new();
     }
 }

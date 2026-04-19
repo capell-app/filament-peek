@@ -14,8 +14,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('marketplace_plugin_id')->constrained('marketplace_plugins')->cascadeOnDelete();
             $table->string('action');
+            $table->unsignedBigInteger('actor_id')->nullable()->index();
             $table->json('data')->nullable();
-            $table->timestamp('created_at')->nullable();
+            $table->timestamp('created_at')->nullable()->index();
         });
     }
 

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\Plugins\Models;
 
+use Capell\Plugins\Database\Factories\MarketplacePluginFactory;
 use Capell\Plugins\Enums\LicenseModel;
 use Capell\Plugins\Enums\PluginKind;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -55,5 +57,10 @@ class MarketplacePlugin extends Model
     public function isInstalled(): bool
     {
         return is_dir(base_path('vendor/' . $this->composer_name));
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return MarketplacePluginFactory::new();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Plugins\Filament\Pages;
 
+use BackedEnum;
 use Capell\Plugins\Filament\Pages\Plugins\Tables\PluginsTable;
 use Capell\Plugins\Models\MarketplacePlugin;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -34,9 +35,9 @@ class PluginsPage extends Page implements HasActions, HasTable
     #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
-    protected static ?string $navigationIcon = Heroicon::OutlinedPuzzlePiece;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPuzzlePiece;
 
-    protected static ?string $activeNavigationIcon = Heroicon::PuzzlePiece;
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::PuzzlePiece;
 
     protected static ?string $slug = 'marketplace-plugins';
 
