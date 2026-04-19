@@ -13,7 +13,10 @@ return new class extends Migration
         Schema::create('marketplace_plugin_licenses', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('marketplace_plugin_id')->constrained('marketplace_plugins')->cascadeOnDelete();
+            $table->string('site_id')->nullable()->index();
             $table->text('encrypted_license_key')->nullable();
+            $table->string('anystack_license_id')->nullable();
+            $table->string('anystack_activation_id')->nullable();
             $table->string('status');
             $table->json('metadata')->nullable();
             $table->timestamp('activated_at')->nullable();
@@ -21,6 +24,8 @@ return new class extends Migration
             $table->timestamp('last_heartbeat_at')->nullable();
             $table->integer('seats')->default(1);
             $table->timestamps();
+
+            $table->unique(['marketplace_plugin_id', 'site_id']);
         });
     }
 

@@ -6,13 +6,13 @@ namespace Capell\Plugins\Filament\Resources\MarketplacePlugin\Schemas;
 
 use Capell\Plugins\Enums\LicenseModel;
 use Capell\Plugins\Enums\PluginKind;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea as FormTextarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class MarketplacePluginForm
@@ -37,7 +37,7 @@ class MarketplacePluginForm
                                     ->unique(ignoreRecord: true)
                                     ->helperText(__('Format: vendor/package'))
                                     ->columnSpan(1),
-                                TextInput::make('title')
+                                TextInput::make('name')
                                     ->label(__('Title'))
                                     ->required()
                                     ->maxLength(100)

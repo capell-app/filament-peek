@@ -13,7 +13,7 @@ test('plugin row casts enums and JSON arrays correctly', function (): void {
     $plugin = MarketplacePlugin::create([
         'slug' => 'mosaic',
         'composer_name' => 'capell-app/mosaic',
-        'title' => 'Mosaic',
+        'name' => 'Mosaic',
         'vendor' => 'capell',
         'description' => 'Visual layout builder',
         'kind' => PluginKind::Full,
@@ -33,7 +33,7 @@ test('license row encrypts the key and decrypts on read', function (): void {
     $plugin = MarketplacePlugin::create([
         'slug' => 'assistant',
         'composer_name' => 'capell-app/assistant',
-        'title' => 'Assistant',
+        'name' => 'Assistant',
         'vendor' => 'capell',
         'description' => 'AI helper',
         'kind' => PluginKind::Integration,
@@ -54,7 +54,7 @@ test('audit log entry persists JSON data and has no updated_at', function (): vo
     $plugin = MarketplacePlugin::create([
         'slug' => 'blog',
         'composer_name' => 'capell-app/blog',
-        'title' => 'Blog',
+        'name' => 'Blog',
         'vendor' => 'capell',
         'description' => 'Article page type and tags',
         'kind' => PluginKind::PageType,
@@ -75,7 +75,7 @@ test('activeLicense returns usable licenses only', function (): void {
     $plugin = MarketplacePlugin::create([
         'slug' => 'address',
         'composer_name' => 'capell-app/address',
-        'title' => 'Address',
+        'name' => 'Address',
         'vendor' => 'capell',
         'description' => 'Country / address models',
         'kind' => PluginKind::Integration,

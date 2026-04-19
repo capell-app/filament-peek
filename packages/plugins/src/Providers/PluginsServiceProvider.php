@@ -23,6 +23,7 @@ class PluginsServiceProvider extends AbstractPackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
+            ->hasConfigFile()
             ->hasMigrations([
                 '2026_01_01_000001_create_marketplace_plugins_table',
                 '2026_01_01_000002_create_marketplace_plugin_licenses_table',
@@ -34,16 +35,28 @@ class PluginsServiceProvider extends AbstractPackageServiceProvider
     {
         parent::register();
 
-        $this->app->singleton(AnystackClient::class, fn () => new AnystackClient(
-            config('capell-plugins.anystack.base_url', 'https://api.anystack.sh'),
-            config('capell-plugins.anystack.timeout_seconds', 10),
-        ));
+        $this->app->singleton(AnystackClient::class, function (): AnystackClient {
+            $baseUrlRaw = config('capell-plugins.anystack.base_url', 'https://api.anystack.sh');
+            $apiKeyRaw = config('capell-plugins.anystack.api_key');
+            $timeoutRaw = config('capell-plugins.anystack.timeout_seconds', 10);
 
-        $this->app->singleton(ComposerRunner::class, fn () => new ComposerRunner(
-            binary: config('capell-plugins.composer.binary', 'composer'),
-            timeoutSeconds: config('capell-plugins.composer.timeout_seconds', 600),
-            workingDirectory: base_path(),
-        ));
+            return new AnystackClient(
+                baseUrl: is_string($baseUrlRaw) ? $baseUrlRaw : 'https://api.anystack.sh',
+                apiKey: is_string($apiKeyRaw) && $apiKeyRaw !== '' ? $apiKeyRaw : null,
+                timeoutSeconds: is_int($timeoutRaw) ? $timeoutRaw : 10,
+            );
+        });
+
+        $this->app->singleton(ComposerRunner::class, function (): ComposerRunner {
+            $binaryRaw = config('capell-plugins.composer.binary', 'composer');
+            $timeoutRaw = config('capell-plugins.composer.timeout_seconds', 600);
+
+            return new ComposerRunner(
+                binary: is_string($binaryRaw) ? $binaryRaw : 'composer',
+                timeoutSeconds: is_int($timeoutRaw) ? $timeoutRaw : 600,
+                workingDirectory: base_path(),
+            );
+        });
     }
 
     public function boot(): void

@@ -20,6 +20,8 @@ final class ActivateLicenseAction extends Action
         MarketplacePlugin $plugin,
         string $licenseKey,
         string $siteId,
+        ?string $fingerprint = null,
+        ?string $hostname = null,
     ): MarketplacePluginLicense {
         if ($plugin->anystack_product_id === null) {
             throw new RuntimeException(
@@ -27,46 +29,50 @@ final class ActivateLicenseAction extends Action
             );
         }
 
-        // Generate site fingerprint from siteId
-        $siteFingerprint = hash('sha256', $siteId);
+        // Anystack requires a non-empty fingerprint; derive one from the site identifier
+        // when the caller doesn't provide one explicitly.
+        $effectiveFingerprint = $fingerprint ?? hash('sha256', "site:{$siteId}");
 
-        // Validate license with Anystack
-        $validation = $this->anystackClient->validateLicense(
+        $activation = $this->anystackClient->activateLicense(
             $plugin->anystack_product_id,
             $licenseKey,
-            $siteFingerprint,
+            $effectiveFingerprint,
+            $hostname,
         );
 
-        if (! $validation->valid) {
+        if (! $activation->valid) {
             throw new RuntimeException(
-                'License validation failed: ' . $validation->status->value,
+                'License activation failed: ' . $activation->status->value,
             );
         }
 
-        // Update or create license
         $license = $plugin->licenses()->updateOrCreate(
             ['site_id' => $siteId],
             [
                 'encrypted_license_key' => $licenseKey,
-                'status' => $validation->status,
+                'status' => $activation->status,
+                'anystack_license_id' => $activation->licenseId,
+                'anystack_activation_id' => $activation->activationId,
                 'activated_at' => now(),
-                'expires_at' => $validation->expiresAt,
+                'expires_at' => $activation->expiresAt,
                 'last_heartbeat_at' => now(),
                 'metadata' => [
-                    'validated_at' => now()->toIso8601String(),
-                    'validation_response' => $validation->raw,
+                    'activated_at' => now()->toIso8601String(),
+                    'fingerprint' => $effectiveFingerprint,
+                    'activation_response' => $activation->raw,
                 ],
             ],
         );
 
-        // Write audit log
         $plugin->auditLog()->create([
             'action' => 'license_activated',
             'actor_id' => auth()->id(),
             'data' => [
                 'site_id' => $siteId,
-                'status' => $validation->status->value,
-                'expires_at' => $validation->expiresAt?->toIso8601String(),
+                'status' => $activation->status->value,
+                'anystack_license_id' => $activation->licenseId,
+                'anystack_activation_id' => $activation->activationId,
+                'expires_at' => $activation->expiresAt?->format(DATE_ATOM),
             ],
             'created_at' => now(),
         ]);

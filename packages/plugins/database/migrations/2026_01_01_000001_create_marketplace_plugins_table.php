@@ -14,11 +14,17 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique();
             $table->string('composer_name')->unique();
-            $table->string('title');
+            $table->string('name');
             $table->string('vendor');
             $table->text('description')->nullable();
             $table->string('kind');
             $table->string('license_model');
+            $table->string('latest_version')->nullable();
+            $table->string('anystack_product_id')->nullable();
+            $table->string('homepage_url')->nullable();
+            $table->string('documentation_url')->nullable();
+            $table->string('support_email')->nullable();
+            $table->string('purchase_url')->nullable();
             $table->json('categories')->nullable();
             $table->json('screenshots')->nullable();
             $table->json('compatibility')->nullable();

@@ -8,6 +8,7 @@ use Capell\Plugins\Data\AnystackLicenseValidationData;
 use Capell\Plugins\Enums\LicenseStatus;
 use Capell\Plugins\Services\AnystackClient;
 use Capell\Tests\Plugins\PluginsTestCase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
@@ -18,139 +19,227 @@ final class AnystackClientTest extends PluginsTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->client = new AnystackClient(
-            'https://api.anystack.sh',
-            10,
+            baseUrl: 'https://api.anystack.sh',
+            apiKey: null,
+            timeoutSeconds: 10,
         );
     }
 
-    public function test_validates_active_license(): void
+    public function test_validate_license_returns_active_when_meta_valid_true(): void
     {
-        Http::fake(fn () => Http::response(json_encode([
-            'data' => [
-                'id' => 'license-123',
-                'key' => 'test-key',
-                'suspended' => false,
-                'expires_at' => '2099-12-31T00:00:00+00:00',
-                'contact_id' => 'contact-456',
-                'policy_id' => 'policy-789',
-                'activations' => 3,
-                'max_activations' => 5,
-                'created_at' => '2021-07-05T09:42:06+00:00',
-                'updated_at' => '2021-07-14T10:56:24+00:00',
-            ],
-        ]), 200));
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => [
+                    'id' => 'license-123',
+                    'key' => 'test-key',
+                    'suspended' => false,
+                    'expires_at' => '2099-12-31T00:00:00Z',
+                    'activations' => 1,
+                    'max_activations' => 3,
+                ],
+                'meta' => ['valid' => true],
+            ], 200),
+        ]);
 
-        $result = $this->client->validateLicense('test-product', 'test-key');
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
 
         $this->assertInstanceOf(AnystackLicenseValidationData::class, $result);
         $this->assertTrue($result->valid);
         $this->assertEquals(LicenseStatus::Active, $result->status);
-        $this->assertEquals('test-product', $result->product);
+        $this->assertEquals('prod_xyz', $result->product);
+        $this->assertEquals('license-123', $result->licenseId);
         $this->assertNotNull($result->expiresAt);
     }
 
-    public function test_validates_expired_license(): void
+    public function test_validate_license_maps_expired_status(): void
     {
-        Http::fake(fn () => Http::response(json_encode([
-            'data' => [
-                'id' => 'license-123',
-                'key' => 'test-key',
-                'suspended' => false,
-                'expires_at' => '2020-01-01T00:00:00+00:00',
-                'contact_id' => 'contact-456',
-                'policy_id' => 'policy-789',
-                'activations' => 0,
-                'max_activations' => 5,
-                'created_at' => '2021-07-05T09:42:06+00:00',
-                'updated_at' => '2021-07-14T10:56:24+00:00',
-            ],
-        ]), 200));
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => [
+                    'id' => 'license-123',
+                    'suspended' => false,
+                    'expires_at' => '2020-01-01T00:00:00Z',
+                ],
+                'meta' => ['valid' => false, 'status' => 'EXPIRED'],
+            ], 200),
+        ]);
 
-        $result = $this->client->validateLicense('test-product', 'test-key');
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
 
         $this->assertFalse($result->valid);
         $this->assertEquals(LicenseStatus::Expired, $result->status);
+        $this->assertEquals('EXPIRED', $result->statusCode);
     }
 
-    public function test_validates_suspended_license(): void
+    public function test_validate_license_maps_suspended_data_to_revoked(): void
     {
-        Http::fake(fn () => Http::response(json_encode([
-            'data' => [
-                'id' => 'license-123',
-                'key' => 'test-key',
-                'suspended' => true,
-                'expires_at' => '2099-12-31T00:00:00+00:00',
-                'contact_id' => 'contact-456',
-                'policy_id' => 'policy-789',
-                'activations' => 3,
-                'max_activations' => 5,
-                'created_at' => '2021-07-05T09:42:06+00:00',
-                'updated_at' => '2021-07-14T10:56:24+00:00',
-            ],
-        ]), 200));
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => [
+                    'id' => 'license-123',
+                    'suspended' => true,
+                    'expires_at' => '2099-12-31T00:00:00Z',
+                ],
+                'meta' => ['valid' => true],
+            ], 200),
+        ]);
 
-        $result = $this->client->validateLicense('test-product', 'test-key');
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
 
         $this->assertFalse($result->valid);
         $this->assertEquals(LicenseStatus::Revoked, $result->status);
     }
 
-    public function test_includes_site_fingerprint_in_request(): void
+    public function test_validate_license_maps_fingerprint_invalid_to_past_due(): void
     {
-        Http::fake(fn () => Http::response(json_encode([
-            'data' => [
-                'id' => 'license-123',
-                'key' => 'test-key',
-                'suspended' => false,
-                'expires_at' => '2099-12-31T00:00:00+00:00',
-                'contact_id' => 'contact-456',
-                'policy_id' => 'policy-789',
-                'activations' => 3,
-                'max_activations' => 5,
-                'created_at' => '2021-07-05T09:42:06+00:00',
-                'updated_at' => '2021-07-14T10:56:24+00:00',
-            ],
-        ]), 200));
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => [
+                    'id' => 'license-123',
+                    'suspended' => false,
+                ],
+                'meta' => ['valid' => false, 'status' => 'FINGERPRINT_INVALID'],
+            ], 200),
+        ]);
 
-        $this->client->validateLicense('test-product', 'test-key', 'site-fingerprint-123');
+        $result = $this->client->validateLicense('prod_xyz', 'test-key');
 
-        Http::assertSent(function ($request) {
-            $body = json_decode($request->body(), true);
-
-            return isset($body['scope']['fingerprint']) &&
-                   $body['scope']['fingerprint'] === 'site-fingerprint-123';
-        });
+        $this->assertFalse($result->valid);
+        $this->assertEquals(LicenseStatus::PastDue, $result->status);
+        $this->assertEquals('FINGERPRINT_INVALID', $result->statusCode);
     }
 
-    public function test_throws_on_http_error(): void
+    public function test_validate_license_sends_bearer_token_when_api_key_configured(): void
     {
-        Http::fake(fn () => Http::response(json_encode([
-            'error' => 'Invalid license key',
-        ]), 400));
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => ['id' => 'license-123', 'suspended' => false],
+                'meta' => ['valid' => true],
+            ], 200),
+        ]);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Anystack license validation failed with status 400');
+        $clientWithKey = new AnystackClient(
+            baseUrl: 'https://api.anystack.sh',
+            apiKey: 'secret-api-key',
+            timeoutSeconds: 10,
+        );
 
-        $this->client->validateLicense('test-product', 'invalid-key');
+        $clientWithKey->validateLicense('prod_xyz', 'test-key');
+
+        Http::assertSent(fn (Request $request): bool => $request->header('Authorization')[0] === 'Bearer secret-api-key');
     }
 
-    public function test_throws_on_server_error(): void
+    public function test_validate_license_throws_on_500(): void
     {
-        Http::fake(fn () => Http::response(json_encode([
-            'error' => 'Internal server error',
-        ]), 500));
+        Http::fake([
+            'api.anystack.sh/*' => Http::response(['error' => 'boom'], 500),
+        ]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Anystack license validation failed with status 500');
 
-        $this->client->validateLicense('test-product', 'test-key');
+        $this->client->validateLicense('prod_xyz', 'test-key');
     }
 
-    public function test_composer_repository_url_construction(): void
+    public function test_activate_license_returns_dto_with_activation_id(): void
     {
-        $url = $this->client->composerRepositoryUrl('vendor-name');
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => [
+                    'id' => 'activation-abc',
+                    'license_id' => 'license-xyz',
+                    'fingerprint' => 'fp-1',
+                    'hostname' => 'host-1',
+                    'platform' => 'linux',
+                    'created_at' => '2024-01-01T00:00:00Z',
+                    'updated_at' => '2024-01-01T00:00:00Z',
+                ],
+            ], 200),
+        ]);
 
-        $this->assertEquals('https://api.anystack.sh/composer/vendor-name', $url);
+        $result = $this->client->activateLicense('prod_xyz', 'test-key', 'fp-1');
+
+        $this->assertTrue($result->valid);
+        $this->assertEquals(LicenseStatus::Active, $result->status);
+        $this->assertEquals('activation-abc', $result->activationId);
+        $this->assertEquals('license-xyz', $result->licenseId);
+    }
+
+    public function test_activate_license_sends_fingerprint_in_body(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'data' => ['id' => 'activation-abc', 'license_id' => 'license-xyz'],
+            ], 200),
+        ]);
+
+        $this->client->activateLicense('prod_xyz', 'test-key', 'fp-1', 'host-1');
+
+        Http::assertSent(function (Request $request): bool {
+            $body = json_decode($request->body(), true);
+
+            return is_array($body)
+                && ($body['fingerprint'] ?? null) === 'fp-1'
+                && ($body['hostname'] ?? null) === 'host-1'
+                && ($body['key'] ?? null) === 'test-key';
+        });
+    }
+
+    public function test_activate_license_throws_on_422(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response([
+                'message' => 'activation limit exceeded',
+                'code' => 'ACTIVATION_LIMIT_EXCEEDED',
+            ], 422),
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Anystack license activation failed with status 422');
+
+        $this->client->activateLicense('prod_xyz', 'test-key', 'fp-1');
+    }
+
+    public function test_deactivate_license_returns_true_on_200(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response('', 200),
+        ]);
+
+        $result = $this->client->deactivateLicense('prod_xyz', 'license-1', 'activation-1');
+
+        $this->assertTrue($result);
+    }
+
+    public function test_deactivate_license_returns_false_on_404(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response(['message' => 'not found'], 404),
+        ]);
+
+        $result = $this->client->deactivateLicense('prod_xyz', 'license-1', 'activation-missing');
+
+        $this->assertFalse($result);
+    }
+
+    public function test_deactivate_license_throws_on_500(): void
+    {
+        Http::fake([
+            'api.anystack.sh/*' => Http::response(['message' => 'boom'], 500),
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Anystack license deactivation failed with status 500');
+
+        $this->client->deactivateLicense('prod_xyz', 'license-1', 'activation-1');
+    }
+
+    public function test_composer_repository_url_uses_product_subdomain(): void
+    {
+        $url = $this->client->composerRepositoryUrl('my-prod');
+
+        $this->assertEquals('https://my-prod.composer.sh', $url);
     }
 }

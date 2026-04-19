@@ -4,15 +4,32 @@ declare(strict_types=1);
 
 namespace Capell\Plugins\Services;
 
+use Closure;
 use Symfony\Component\Process\Process;
 
 final class ComposerRunner
 {
+    /**
+     * @var Closure(array<int, string>, string, int): Process
+     */
+    private Closure $processFactory;
+
+    /**
+     * @param  null|Closure(array<int, string>, string, int): Process  $processFactory
+     */
     public function __construct(
         private readonly string $binary = 'composer',
         private readonly int $timeoutSeconds = 600,
         private readonly string $workingDirectory = '',
-    ) {}
+        ?Closure $processFactory = null,
+    ) {
+        $this->processFactory = $processFactory ?? static function (array $command, string $workingDir, int $timeout): Process {
+            $process = new Process($command, $workingDir);
+            $process->setTimeout($timeout);
+
+            return $process;
+        };
+    }
 
     public function requirePackage(string $composerName, ?string $constraint = null): ComposerResult
     {
@@ -37,49 +54,51 @@ final class ComposerRunner
         return $this->runCommand(['update', '--no-interaction', '--with-all-dependencies', $composerName]);
     }
 
-    public function configureAnystackRepo(string $repoUrl, string $vendor, string $licenseKey): ComposerResult
-    {
-        // Extract host from the repo URL
-        $host = parse_url($repoUrl, PHP_URL_HOST);
+    public function configureAnystackRepo(
+        string $productId,
+        string $licenseKey,
+        ?string $fingerprint = null,
+    ): ComposerResult {
+        $host = "{$productId}.composer.sh";
+        $contactEmailRaw = config('capell-plugins.anystack.composer_contact_email', 'unlock');
+        $user = is_string($contactEmailRaw) && $contactEmailRaw !== '' ? $contactEmailRaw : 'unlock';
+        $password = $fingerprint === null ? $licenseKey : "{$licenseKey}:{$fingerprint}";
 
-        if ($host === null || $host === false) {
-            $host = 'repo.anystack.sh';
-        }
-
-        // First command: set global auth
         $authResult = $this->runCommand([
             'config',
             '--global',
             '--auth',
             "http-basic.{$host}",
-            $vendor,
-            $licenseKey,
+            $user,
+            $password,
         ]);
 
         if (! $authResult->successful()) {
             return $authResult;
         }
 
-        // Second command: add repository configuration
         $repositoryJson = json_encode([
             'type' => 'composer',
-            'url' => $repoUrl,
+            'url' => "https://{$host}",
         ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
 
         return $this->runCommand([
             'config',
-            'repositories.' . $vendor . '-anystack',
+            "repositories.anystack-{$productId}",
             $repositoryJson,
         ]);
     }
 
+    /**
+     * @param  array<int, string>  $args
+     */
     private function runCommand(array $args): ComposerResult
     {
         $command = [$this->binary, ...$args];
         $workingDir = $this->workingDirectory !== '' ? $this->workingDirectory : base_path();
 
-        $process = new Process($command, $workingDir);
-        $process->setTimeout($this->timeoutSeconds)->run();
+        $process = ($this->processFactory)($command, $workingDir, $this->timeoutSeconds);
+        $process->run();
 
         $exitCode = $process->getExitCode();
         if ($exitCode === null) {

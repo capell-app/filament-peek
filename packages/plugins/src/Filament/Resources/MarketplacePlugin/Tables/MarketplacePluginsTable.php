@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\Plugins\Filament\Resources\MarketplacePlugin\Tables;
 
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -22,7 +22,7 @@ class MarketplacePluginsTable
                     ->label(__('Slug'))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('title')
+                TextColumn::make('name')
                     ->label(__('Title'))
                     ->searchable()
                     ->sortable(),
@@ -38,16 +38,16 @@ class MarketplacePluginsTable
                     ->label(__('License Model'))
                     ->badge()
                     ->sortable(),
-                BadgeColumn::make('is_visible')
+                IconColumn::make('is_visible')
                     ->label(__('Visible'))
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                    ->boolean()
                     ->sortable(),
             ])
             ->filters([])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
