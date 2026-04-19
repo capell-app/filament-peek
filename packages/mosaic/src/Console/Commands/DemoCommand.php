@@ -107,7 +107,7 @@ class DemoCommand extends Command
             return false;
         }
 
-        $totalSteps = 4 + 2 + 8 + 1 + 1;
+        $totalSteps = 4 + 2 + 17 + 1 + 1;
         $this->startProgress($totalSteps);
         $this->setupHomepage($home, $languages);
         $this->finishProgress();
@@ -240,8 +240,16 @@ class DemoCommand extends Command
 
     private function populateSecondaryContainer(array &$containers, EloquentCollection $languages, Pageable $page): void
     {
+        $this->setProgressMessage('Creating modern feature list widget');
+        $featureListWidget = $this->demoCreator->createModernFeatureListWidget();
+        $this->advanceProgress();
+
         $this->setProgressMessage('Creating team portfolio widget');
         $teamPortfolioWidget = $this->demoCreator->createTeamPortfolioWidget($languages);
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern team members widget');
+        $modernTeamWidget = $this->demoCreator->createModernTeamMembersWidget();
         $this->advanceProgress();
 
         $this->setProgressMessage('Creating banner image widget');
@@ -256,6 +264,10 @@ class DemoCommand extends Command
         $statisticsWidget = $this->demoCreator->createStatisticsWidget();
         $this->advanceProgress();
 
+        $this->setProgressMessage('Creating modern pricing table widget');
+        $pricingWidget = $this->demoCreator->createModernPricingTableWidget();
+        $this->advanceProgress();
+
         $this->setProgressMessage('Creating business features widget');
         $businessFeaturesWidget = $this->demoCreator->createBusinessFeaturesWidget($page->site);
         $this->advanceProgress();
@@ -268,8 +280,28 @@ class DemoCommand extends Command
         $clientLogosWidget = $this->demoCreator->createClientLogosWidget($languages);
         $this->advanceProgress();
 
-        $this->setProgressMessage('Creating testimonials widget');
-        $testimonialsWidget = $this->demoCreator->createTestimonialsWidget($languages);
+        $this->setProgressMessage('Creating modern testimonials widget');
+        $testimonialsWidget = $this->demoCreator->createModernTestimonialsWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern FAQ section widget');
+        $faqWidget = $this->demoCreator->createModernFaqWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern stats section widget');
+        $statsWidget = $this->demoCreator->createModernStatsSectionWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern alternating content widget');
+        $alternatingWidget = $this->demoCreator->createModernAlternatingContentWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern process steps widget');
+        $processWidget = $this->demoCreator->createModernProcessStepsWidget();
+        $this->advanceProgress();
+
+        $this->setProgressMessage('Creating modern image gallery widget');
+        $galleryWidget = $this->demoCreator->createModernImageGalleryWidget();
         $this->advanceProgress();
 
         $containers['secondary'] = [
@@ -277,14 +309,22 @@ class DemoCommand extends Command
                 'colspan' => 12,
             ],
             'widgets' => [
+                ['widget_key' => $featureListWidget->key],
                 ['widget_key' => $teamPortfolioWidget->key],
+                ['widget_key' => $modernTeamWidget->key],
                 ['widget_key' => $bannerImageWidget->key],
                 ['widget_key' => $contentWidget->key],
                 ['widget_key' => $statisticsWidget->key],
+                ['widget_key' => $pricingWidget->key],
                 ['widget_key' => $businessFeaturesWidget->key],
                 ['widget_key' => $bannersWidget->key],
                 ['widget_key' => $clientLogosWidget->key],
                 ['widget_key' => $testimonialsWidget->key],
+                ['widget_key' => $faqWidget->key],
+                ['widget_key' => $statsWidget->key],
+                ['widget_key' => $alternatingWidget->key],
+                ['widget_key' => $processWidget->key],
+                ['widget_key' => $galleryWidget->key],
             ],
         ];
     }
