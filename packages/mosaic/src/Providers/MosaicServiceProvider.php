@@ -188,8 +188,8 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            permissions: $this->getPackagePermissions(),
             version: $this->getVersion(),
+            permissions: $this->getPackagePermissions(),
         );
 
         return $this;

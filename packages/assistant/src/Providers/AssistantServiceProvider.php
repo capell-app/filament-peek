@@ -209,8 +209,8 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
             type: static::getType(),
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
-            setting: AssistantSettings::class,
             version: $this->getVersion(),
+            setting: AssistantSettings::class,
         );
 
         return $this;
