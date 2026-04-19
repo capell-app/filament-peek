@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Mosaic\Filament\Schemas\Widgets;
 
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
