@@ -117,6 +117,29 @@ class ValidateLicenseActionTest extends PluginsTestCase
         $this->assertTrue($data['grace_period_remaining']);
     }
 
+    public function test_validate_skips_licenses_for_plugin_without_anystack_product_id(): void
+    {
+        // Free plugins have no anystack_product_id. Calling anystack with a
+        // null product would hit `/v1/products//licenses/validate-key` (note
+        // the double slash) and blow up. Skip with an audit entry instead.
+        Http::fake();
+
+        $plugin = MarketplacePlugin::factory()->create([
+            'anystack_product_id' => null,
+        ]);
+        $license = MarketplacePluginLicense::factory()->create([
+            'marketplace_plugin_id' => $plugin->id,
+            'status' => LicenseStatus::Active,
+        ]);
+
+        $action = new ValidateLicenseAction($this->makeClient());
+        $result = $action->handle($license);
+
+        Http::assertNothingSent();
+        $this->assertSame(LicenseStatus::Active, $result->status);
+        $this->assertTrue($plugin->auditLog()->where('action', 'license_skipped_no_product_id')->exists());
+    }
+
     public function test_anystack_offline_past_grace_period_flips_to_expired(): void
     {
         Http::fake([

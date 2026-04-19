@@ -20,6 +20,26 @@ class ValidateLicenseAction extends Action
     {
         $plugin = $license->plugin;
 
+        // A license without a plugin (cascade race) or without an anystack
+        // product id (free plugin, no remote entitlement) has nothing to
+        // validate. Audit the skip and return so we don't call anystack with
+        // a malformed URL (e.g. `/products//licenses/validate-key`).
+        if ($plugin === null || $plugin->anystack_product_id === null) {
+            if ($plugin !== null) {
+                $plugin->auditLog()->create([
+                    'action' => 'license_skipped_no_product_id',
+                    'actor_id' => auth()->id(),
+                    'data' => [
+                        'site_id' => $license->site_id,
+                        'license_id' => $license->id,
+                    ],
+                    'created_at' => now(),
+                ]);
+            }
+
+            return $license;
+        }
+
         try {
             $fingerprint = $this->resolveFingerprint($license);
 
