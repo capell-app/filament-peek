@@ -142,6 +142,11 @@ class SectionResource extends Resource
         return CapellCore::getAsset(LayoutTypeEnum::Section->name)->getActiveIcon();
     }
 
+    public static function getModelLabel(): string
+    {
+        return __('capell-admin::generic.content');
+    }
+
     public static function getPluralModelLabel(): string
     {
         return __('capell-admin::generic.contents');
