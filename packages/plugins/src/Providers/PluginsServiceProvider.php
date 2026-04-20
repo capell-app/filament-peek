@@ -61,6 +61,8 @@ class PluginsServiceProvider extends AbstractPackageServiceProvider
     {
         parent::boot();
 
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'capell-plugins');
+
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->job(ValidateLicensesJob::class)->dailyAt('03:17');
         });
