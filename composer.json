@@ -117,6 +117,7 @@
         "openai-php/laravel": "^0.10|^0.18",
         "opis/json-schema": "^2.3",
         "owenvoke/blade-fontawesome": "^2.8",
+        "pboivin/filament-peek": "^4.0",
         "prism-php/prism": "^0.100",
         "saade/filament-adjacency-list": "^4.0",
         "silber/page-cache": "^1.0.9",
