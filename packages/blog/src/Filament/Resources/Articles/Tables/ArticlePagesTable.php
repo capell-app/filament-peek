@@ -228,6 +228,9 @@ class ArticlePagesTable implements TableConfigurator
                 ->toggleable(isToggledHiddenByDefault: true),
             PageCachedIconColumn::make('cached')
                 ->toggleable(isToggledHiddenByDefault: true),
+            TextColumn::make('creator.name')
+                ->label(__('capell-admin::table.created_by'))
+                ->toggleable(isToggledHiddenByDefault: true),
             DateColumn::make('created_at'),
             DateColumn::make('updated_at'),
             DateColumn::make('deleted_at'),
