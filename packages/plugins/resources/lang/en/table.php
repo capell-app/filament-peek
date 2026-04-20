@@ -12,6 +12,8 @@ return [
     'license_model' => 'License model',
     'visible' => 'Visible',
     'status' => 'Status',
+    'created_at' => 'Created',
+    'updated_at' => 'Updated',
     'install' => 'Install',
     'uninstall' => 'Uninstall',
     'update' => 'Update',
