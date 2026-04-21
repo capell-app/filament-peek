@@ -131,16 +131,7 @@
                 ])
                 data-price-monthly="{{ $plan['price'] ?? '' }}"
                 data-price-annual="{{ $plan['priceAnnual'] ?? $plan['price'] ?? '' }}"
-                style="
-                    background-color: var(--mosaic-surface-container);
-                    @if ($plan['featured'] ?? false)
-                        background: linear-gradient(135deg,
-                        var(--mosaic-primary-container)
-                        0%,
-                        #5a00c6
-                        100%);
-                    @endif
-                "
+                style="background-color: var(--mosaic-surface-container); @if ($plan['featured'] ?? false) background: linear-gradient(135deg, var(--mosaic-primary-container) 0%, #5a00c6 100%); @endif"
             >
                 {{-- Featured Badge --}}
                 @if ($plan['featured'] ?? false)
@@ -237,12 +228,7 @@
                             'mosaic-btn-primary' => $plan['featured'] ?? false,
                             'mosaic-btn-secondary' => ! ($plan['featured'] ?? false),
                         ])
-                        style="
-                            @if ($plan['featured'] ?? false)
-                                background: white;
-                                color: var(--mosaic-primary-container);
-                            @endif
-                        "
+                        style="@if ($plan['featured'] ?? false) background: white; color: var(--mosaic-primary-container); @endif"
                     >
                         {{ $plan['cta']['label'] }}
                     </a>
@@ -259,18 +245,18 @@
 
     {{-- Admin Hint --}}
     @if ($customizable && auth()->check())
-        <div
-            class="mt-12 max-w-full pt-8 text-center"
-            style="
-                border-top: 1px solid var(--mosaic-outline-variant);
-                opacity: 0.6;
-            "
-        >
-            <span class="mosaic-text-label text-xs">
-                ✨ Customize: Add plans, features, pricing, featured plan,
-                billing cycle options
-            </span>
-        </div>
+            <div
+                class="mt-12 max-w-full pt-8 text-center"
+                style="
+                    border-top: 1px solid var(--mosaic-outline-variant);
+                    opacity: 0.6;
+                "
+            >
+                <span class="mosaic-text-label text-xs">
+                    ✨ Customize: Add plans, features, pricing, featured plan,
+                    billing cycle options
+                </span>
+            </div>
     @endif
 </section>
 
@@ -316,170 +302,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .grid {
-        display: grid;
-    }
-    .grid-cols-1 {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-    }
-    .md\:grid-cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .lg\:grid-cols-3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .gap-6 {
-        gap: 1.5rem;
-    }
-    .space-y-3 > * + * {
-        margin-top: 0.75rem;
-    }
-
-    .max-w-2xl {
-        max-width: 42rem;
-    }
-    .max-w-6xl {
-        max-width: 72rem;
-    }
-    .mx-auto {
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .max-w-full {
-        max-width: 100%;
-    }
-
-    .py-12 {
-        padding-top: 3rem;
-        padding-bottom: 3rem;
-    }
-    .py-16 {
-        padding-top: 4rem;
-        padding-bottom: 4rem;
-    }
-    .px-6 {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
-    .px-12 {
-        padding-left: 3rem;
-        padding-right: 3rem;
-    }
-    .py-1 {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-    }
-    .px-4 {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .mb-12 {
-        margin-bottom: 3rem;
-    }
-    .mb-8 {
-        margin-bottom: 2rem;
-    }
-    .mb-6 {
-        margin-bottom: 1.5rem;
-    }
-    .mb-2 {
-        margin-bottom: 0.5rem;
-    }
-    .mt-12 {
-        margin-top: 3rem;
-    }
-    .pt-8 {
-        padding-top: 2rem;
-    }
-
-    .-top-4 {
-        top: -1rem;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    .text-3xl {
-        font-size: 1.875rem;
-    }
-    .text-4xl {
-        font-size: 2.25rem;
-    }
-    .text-2xl {
-        font-size: 1.5rem;
-    }
-    .text-sm {
-        font-size: 0.875rem;
-    }
-    .text-xs {
-        font-size: 0.75rem;
-    }
-
-    .font-bold {
-        font-weight: 700;
-    }
-
-    .relative {
-        position: relative;
-    }
-    .absolute {
-        position: absolute;
-    }
-
-    .left-1/2 {
-        left: 50%;
-    }
-
-    .w-full {
-        width: 100%;
-    }
-
-    .flex {
-        display: flex;
-    }
-    .flex-col {
-        flex-direction: column;
-    }
-    .items-start {
-        align-items: flex-start;
-    }
-    .items-center {
-        align-items: center;
-    }
-    .gap-2 {
-        gap: 0.5rem;
-    }
-
-    .col-span-full {
-        grid-column: 1 / -1;
-    }
-
-    ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .lg\:scale-105 {
-        transform: scale(1.05);
-    }
-
-    @media (max-width: 768px) {
-        .md\:text-4xl {
-            font-size: 2.25rem;
-        }
-        .md\:py-16 {
-            padding-top: 4rem;
-            padding-bottom: 4rem;
-        }
-        .md\:px-12 {
-            padding-left: 3rem;
-            padding-right: 3rem;
-        }
-    }
-</style>

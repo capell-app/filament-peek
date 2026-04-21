@@ -9,7 +9,14 @@
         {
             "files": ["*.blade.php"],
             "options": {
-                "parser": "blade"
+                "parser": "blade",
+                "singleAttributePerLine": false
+            }
+        },
+        {
+            "files": ["*.js", "*.json", "*.css", "*.yml"],
+            "options": {
+                "singleAttributePerLine": true
             }
         }
     ]
