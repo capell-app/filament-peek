@@ -1,8 +1,8 @@
 <x-filament-widgets::widget>
     <x-filament::section heading="AI metrics">
-        <div class="space-y-6">
+        <div class="@container space-y-6">
             {{-- Summary Cards --}}
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div class="@md:grid-cols-4 grid grid-cols-2 gap-4">
                 <div class="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
                     <div
                         class="text-sm font-medium text-gray-600 dark:text-gray-400"
