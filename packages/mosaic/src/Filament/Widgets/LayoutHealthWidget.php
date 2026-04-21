@@ -50,9 +50,9 @@ final class LayoutHealthWidget extends CapellWidget
         $publishedSections = $sectionModel::query()->publishedDate()->count();
         $draftSections = $sectionModel::query()->pending()->count();
 
-        // Get layouts with pending modifications
+        // Layouts with workspace_id > 0 are draft copies with pending modifications
         $layoutModel = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Layout);
-        $layoutsWithModifications = $layoutModel::query()->where('layout_modified', true)->count();
+        $layoutsWithModifications = $layoutModel::query()->where('workspace_id', '>', 0)->count();
 
         // Get least-used widgets
         $leastUsedWidgets = $this->getLeastUsedWidgets($widgetModel);
