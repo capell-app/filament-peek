@@ -30,6 +30,8 @@ declare(strict_types=1);
     'withSummary' => (bool) $widget->getMeta('with_summary'),
     'spacing' => $widget->getMeta('spacing', true),
     'columns' => (int) $widget->getMeta('columns'),
+    'headingSize' => $widget->getMeta('heading_size'),
+    'imagePosition' => $widget->getMeta('image_position', 'left'),
 ])
 <x-capell-mosaic::widget.wrapper
     class="widget-assets widget-assets-grid"
@@ -89,6 +91,8 @@ declare(strict_types=1);
                     :with-child-count="$withChildCount"
                     :with-date="$withDate"
                     :with-image="$withImage"
+                    :heading-size="$headingSize"
+                    :image-position="$imagePosition"
                     :with-parent="$withParent"
                     :with-summary="$withSummary"
                     class="widget-asset"
