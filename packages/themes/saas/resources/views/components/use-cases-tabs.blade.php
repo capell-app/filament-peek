@@ -90,10 +90,7 @@
                                     </p>
                                 @endif
 
-                                <ul
-                                    role="list"
-                                    class="mt-6 space-y-3"
-                                >
+                                <ul role="list" class="mt-6 space-y-3">
                                     @foreach (($case['benefits'] ?? []) as $benefit)
                                         <li
                                             class="flex items-start gap-2 text-sm"

@@ -50,10 +50,7 @@
             @endif
 
             {{-- Honeypot --}}
-            <div
-                class="absolute h-0 w-0 overflow-hidden"
-                aria-hidden="true"
-            >
+            <div class="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
                 <label for="agency-website">Website (leave blank)</label>
                 <input
                     type="text"
@@ -100,10 +97,7 @@
             </div>
 
             <div>
-                <label
-                    for="agency-company"
-                    class="block text-sm font-semibold"
-                >
+                <label for="agency-company" class="block text-sm font-semibold">
                     Company
                     <span class="font-normal text-[var(--color-fg-muted)]">
                         (optional)
@@ -162,10 +156,7 @@
             </div>
 
             <div>
-                <label
-                    for="agency-message"
-                    class="block text-sm font-semibold"
-                >
+                <label for="agency-message" class="block text-sm font-semibold">
                     Tell us about your project
                 </label>
                 <textarea

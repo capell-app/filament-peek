@@ -8,10 +8,7 @@
     class="bg-[var(--color-surface-dark)] py-[var(--section-y,5rem)] text-[var(--color-surface-dark-fg)]"
 >
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <h2
-            id="testimonials-title"
-            class="sr-only"
-        >
+        <h2 id="testimonials-title" class="sr-only">
             {{ $title }}
         </h2>
 

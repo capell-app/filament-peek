@@ -24,10 +24,7 @@
             @endif
         </header>
 
-        <ul
-            role="list"
-            class="space-y-4"
-        >
+        <ul role="list" class="space-y-4">
             @forelse ($services as $service)
                 <li>
                     <details

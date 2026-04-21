@@ -125,10 +125,7 @@ declare(strict_types=1);
                 @if ($assetTypes) x-on:click="! isReordering ? toggleCollapse() : null" @endif
             >
                 <div class="mr-1 flex w-7 shrink-0 items-center gap-3">
-                    <span
-                        class="relative"
-                        x-show="! isReordering"
-                    >
+                    <span class="relative" x-show="! isReordering">
                         <x-filament::icon
                             :class="'h-5 w-5' . ($assetTypes ? ' text-primary-600' : ' text-gray-400')"
                             :x-tooltip.raw="$widget->type?->name"
@@ -184,10 +181,7 @@ declare(strict_types=1);
                 </span>
 
                 @if ($type)
-                    <x-filament::badge
-                        size="xs"
-                        color="info"
-                    >
+                    <x-filament::badge size="xs" color="info">
                         {{ $type }}
                     </x-filament::badge>
                 @endif

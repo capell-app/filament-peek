@@ -3,10 +3,7 @@
 ])
 
 @if (! empty($items))
-    <nav
-        aria-label="Breadcrumb"
-        class="py-3"
-    >
+    <nav aria-label="Breadcrumb" class="py-3">
         <ol
             class="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 text-sm text-[var(--color-fg-muted)] sm:px-6 lg:px-8"
         >

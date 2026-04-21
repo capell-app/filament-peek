@@ -105,10 +105,7 @@
                     >
                         {{ $column['heading'] ?? '' }}
                     </h2>
-                    <ul
-                        role="list"
-                        class="mt-4 space-y-3"
-                    >
+                    <ul role="list" class="mt-4 space-y-3">
                         @foreach ($column['links'] ?? [] as $link)
                             <li>
                                 <a
@@ -132,10 +129,7 @@
             </p>
 
             @if (! empty($socials))
-                <ul
-                    role="list"
-                    class="flex items-center gap-3"
-                >
+                <ul role="list" class="flex items-center gap-3">
                     @foreach ($socials as $social)
                         <li>
                             <a

@@ -8,12 +8,7 @@
 @endphp
 
 <div class="relative">
-    <label
-        for="saas-language-switcher"
-        class="sr-only"
-    >
-        Change language
-    </label>
+    <label for="saas-language-switcher" class="sr-only">Change language</label>
     <select
         id="saas-language-switcher"
         name="locale"
@@ -21,10 +16,7 @@
         class="appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-fg)]"
     >
         @foreach ($locales as $code => $label)
-            <option
-                value="{{ $code }}"
-                @selected($code === $current)
-            >
+            <option value="{{ $code }}" @selected($code === $current)>
                 {{ $label }}
             </option>
         @endforeach

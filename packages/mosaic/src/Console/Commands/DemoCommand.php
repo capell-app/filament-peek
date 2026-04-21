@@ -31,7 +31,10 @@ class DemoCommand extends Command
 
     protected $description = 'Inserts demo mosaic layout widgets';
 
-    protected $signature = 'capell:mosaic-demo {--user} {--sites=} {--include-hero}';
+    protected $signature = 'capell:mosaic-demo
+         {--user= : Whether to associate the created demo content with the first user in the system. If not provided, content will be created without an associated user.}
+         {--sites= : Comma-separated list of site names to target for demo content insertion. If not provided, all sites will be targeted.}
+     ';
 
     protected DemoCreator $demoCreator;
 
@@ -84,13 +87,11 @@ class DemoCommand extends Command
         $this->newLine();
         $this->info('Demo layouts have been successfully created.');
 
-        if ($this->option('include-hero')) {
-            $this->newLine();
-            $this->comment('Running hero demo...');
-            $this->call('capell:hero-demo', [
-                '--sites' => $this->option('sites'),
-            ]);
-        }
+        $this->newLine();
+        $this->comment('Running hero demo...');
+        $this->call('capell:hero-demo', [
+            '--sites' => $this->option('sites'),
+        ]);
 
         return Command::SUCCESS;
     }

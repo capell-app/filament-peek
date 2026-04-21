@@ -22,11 +22,7 @@
             {{ $brand }}
         </a>
 
-        <nav
-            role="navigation"
-            aria-label="Primary"
-            class="hidden md:block"
-        >
+        <nav role="navigation" aria-label="Primary" class="hidden md:block">
             <ul class="flex items-center gap-6 text-sm">
                 @foreach ($links as $link)
                     <li>

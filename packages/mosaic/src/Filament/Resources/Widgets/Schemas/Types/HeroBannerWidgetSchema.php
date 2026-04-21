@@ -40,22 +40,23 @@ class HeroBannerWidgetSchema extends DefaultWidgetSchema
                 Fieldset::make(__('capell-mosaic::form.hero_settings'))
                     ->columns(['default' => 1, 'lg' => 2])
                     ->schema([
-                        TextInput::make('title')
-                            ->label(__('capell-mosaic::form.title'))
-                            ->placeholder('Your Headline Here')
-                            ->required(),
-                        TextInput::make('subtitle')
-                            ->label(__('capell-mosaic::form.subtitle'))
-                            ->placeholder('Supporting text explaining the value proposition'),
-                        TextInput::make('cta_text')
-                            ->label(__('capell-mosaic::form.cta_text'))
+                        TextInput::make('primary_button_text')
+                            ->label(__('capell-mosaic::form.primary_button_text'))
                             ->placeholder('Get Started'),
-                        TextInput::make('cta_url')
-                            ->label(__('capell-mosaic::form.cta_url'))
+                        TextInput::make('primary_button_url')
+                            ->label(__('capell-mosaic::form.primary_button_url'))
                             ->placeholder('/signup')
                             ->url(),
+                        TextInput::make('secondary_button_text')
+                            ->label(__('capell-mosaic::form.secondary_button_text'))
+                            ->placeholder('Learn More'),
+                        TextInput::make('secondary_button_url')
+                            ->label(__('capell-mosaic::form.secondary_button_url'))
+                            ->placeholder('/docs')
+                            ->url(),
                         MediaLibraryFileUpload::make('background_image')
-                            ->label(__('capell-mosaic::form.background_image')),
+                            ->label(__('capell-mosaic::form.background_image'))
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

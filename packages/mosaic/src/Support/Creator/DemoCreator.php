@@ -187,8 +187,12 @@ class DemoCreator
 
         $media = $this->createWidgetMedia($widget);
 
-        $widget->meta['background_color'] = 'light-gray';
-        $widget->meta['background_image'] = $media->getFullUrl(MediaConversionEnum::Medium->value);
+        $meta = $widget->meta;
+
+        $meta['background_color'] = 'light-gray';
+        $meta['background_image'] = $media->getFullUrl(MediaConversionEnum::Medium->value);
+
+        $widget->meta = $meta;
 
         foreach ($languages as $language) {
             $widget->translations()->updateOrCreate(
@@ -865,10 +869,39 @@ class DemoCreator
         foreach (Site::getDefault()?->languages ?? [] as $language) {
             $widget->translations()->updateOrCreate(
                 ['language_id' => $language->id],
-                [
-                    'title' => 'Modern Feature List',
-                ],
+                ['title' => 'Why Choose Our Platform'],
             );
+        }
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        $features = [
+            ['icon' => '🚀', 'title' => 'Lightning Fast', 'description' => 'Static-first architecture delivers every page from Nginx-cached HTML with zero PHP on page load.'],
+            ['icon' => '🔒', 'title' => 'Enterprise Security', 'description' => 'Built-in authentication, role-based access control, and secure content workflows.'],
+            ['icon' => '🌐', 'title' => 'Multi-site Ready', 'description' => 'One installation, unlimited sites with shared or isolated content pools out of the box.'],
+            ['icon' => '🎨', 'title' => 'Visual Layout Builder', 'description' => 'Drag-and-drop widgets with Livewire-powered live preview directly in the Filament admin.'],
+            ['icon' => '⚙️', 'title' => 'Developer Friendly', 'description' => 'Built on Laravel with clean APIs, extensible packages, and first-class PHPStan support.'],
+            ['icon' => '📦', 'title' => 'Modular Packages', 'description' => 'Install only what you need. Blog, address, assistant, and mosaic are all optional add-ons.'],
+        ];
+
+        foreach ($features as $feature) {
+            $section = Section::query()->firstOrCreate(['name' => $feature['title']], [
+                'meta' => ['icon' => $feature['icon']],
+            ]);
+
+            foreach (Site::getDefault()?->languages ?? [] as $language) {
+                $section->translations()->firstOrCreate(
+                    ['language_id' => $language->id],
+                    ['title' => $feature['title'], 'content' => sprintf('<p>%s</p>', $feature['description'])],
+                );
+            }
+
+            $widget->assets()->firstOrCreate([
+                'asset_id' => $section->id,
+                'asset_type' => resolve($this->contentModel)->getMorphClass(),
+            ]);
         }
 
         return $widget;
@@ -1098,6 +1131,7 @@ class DemoCreator
             'type_id' => $widgetType->id,
             'meta' => [
                 'component' => 'capell-mosaic::modern.image-gallery',
+                'columns' => 3,
                 'margin' => ['lg'],
             ],
         ]);
@@ -1105,10 +1139,16 @@ class DemoCreator
         foreach (Site::getDefault()?->languages ?? [] as $language) {
             $widget->translations()->updateOrCreate(
                 ['language_id' => $language->id],
-                [
-                    'title' => 'Our Work',
-                ],
+                ['title' => 'Our Work'],
             );
+        }
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        for ($i = 1; $i <= 6; $i++) {
+            $this->createWidgetMedia($widget);
         }
 
         return $widget;
@@ -1125,10 +1165,10 @@ class DemoCreator
             'name' => 'AP Hero Banner',
             'type_id' => $widgetType->id,
             'meta' => [
-                'title' => 'Architecture-Grade CMS',
-                'subtitle' => 'Build, ship, and scale content-driven platforms with precision and zero compromise.',
-                'cta_text' => 'Get Started',
-                'cta_url' => '/docs/installation',
+                'primary_button_text' => 'Get Started',
+                'primary_button_url' => '/docs/installation',
+                'secondary_button_text' => 'View on GitHub',
+                'secondary_button_url' => 'https://github.com/capell-app/capell',
                 'margin' => ['none'],
             ],
         ]);
@@ -1136,7 +1176,10 @@ class DemoCreator
         foreach (Site::getDefault()?->languages ?? [] as $language) {
             $widget->translations()->updateOrCreate(
                 ['language_id' => $language->id],
-                ['title' => 'AP Hero Banner'],
+                [
+                    'title' => 'Architecture-Grade CMS',
+                    'content' => '<p>Build, ship, and scale content-driven platforms with precision and zero compromise.</p>',
+                ],
             );
         }
 
@@ -1155,11 +1198,6 @@ class DemoCreator
             'type_id' => $widgetType->id,
             'meta' => [
                 'columns' => 3,
-                'cards' => [
-                    ['title' => 'Static-first Architecture', 'description' => 'Zero PHP on page load. Every request served from Nginx-cached HTML.', 'link_text' => 'Learn More', 'link_url' => '/docs/caching'],
-                    ['title' => 'Multi-site Support', 'description' => 'One installation, unlimited sites with shared or isolated content pools.', 'link_text' => 'Learn More', 'link_url' => '/docs/multi-site'],
-                    ['title' => 'Visual Layout Builder', 'description' => 'Drag-and-drop widgets with Livewire-powered live preview in Filament.', 'link_text' => 'Learn More', 'link_url' => '/docs/layout-builder'],
-                ],
                 'margin' => ['lg'],
             ],
         ]);
@@ -1169,6 +1207,38 @@ class DemoCreator
                 ['language_id' => $language->id],
                 ['title' => 'AP Card Grid'],
             );
+        }
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        $cards = [
+            ['icon' => '⚡', 'title' => 'Static-first Architecture', 'description' => 'Zero PHP on page load. Every request served from Nginx-cached HTML.', 'link_text' => 'Learn More', 'link_url' => '/docs/caching'],
+            ['icon' => '🌐', 'title' => 'Multi-site Support', 'description' => 'One installation, unlimited sites with shared or isolated content pools.', 'link_text' => 'Learn More', 'link_url' => '/docs/multi-site'],
+            ['icon' => '🎨', 'title' => 'Visual Layout Builder', 'description' => 'Drag-and-drop widgets with Livewire-powered live preview in Filament.', 'link_text' => 'Learn More', 'link_url' => '/docs/layout-builder'],
+        ];
+
+        foreach ($cards as $card) {
+            $section = Section::query()->firstOrCreate(['name' => $card['title']], [
+                'meta' => [
+                    'icon' => $card['icon'],
+                    'link_text' => $card['link_text'],
+                    'link_url' => $card['link_url'],
+                ],
+            ]);
+
+            foreach (Site::getDefault()?->languages ?? [] as $language) {
+                $section->translations()->firstOrCreate(
+                    ['language_id' => $language->id],
+                    ['title' => $card['title'], 'content' => sprintf('<p>%s</p>', $card['description'])],
+                );
+            }
+
+            $widget->assets()->firstOrCreate([
+                'asset_id' => $section->id,
+                'asset_type' => resolve($this->contentModel)->getMorphClass(),
+            ]);
         }
 
         return $widget;
@@ -1186,12 +1256,6 @@ class DemoCreator
             'type_id' => $widgetType->id,
             'meta' => [
                 'layout' => 'vertical',
-                'features' => [
-                    ['icon' => '✓', 'title' => 'Zero-radius design', 'description' => 'Sharp corners everywhere. The blueprint aesthetic, uncompromised.'],
-                    ['icon' => '▲', 'title' => 'Gold accent system', 'description' => 'Primary gold (#F2CA50) against obsidian surfaces for maximum clarity.'],
-                    ['icon' => '◆', 'title' => 'Ghost border language', 'description' => '1px structural lines at 20% opacity. Structure without noise.'],
-                    ['icon' => '●', 'title' => 'Tonal depth layering', 'description' => 'No shadows. Depth through surface tone shifts from #131313 upward.'],
-                ],
                 'margin' => ['lg'],
             ],
         ]);
@@ -1201,6 +1265,80 @@ class DemoCreator
                 ['language_id' => $language->id],
                 ['title' => 'AP Feature List'],
             );
+        }
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        $features = [
+            ['icon' => '✓', 'title' => 'Zero-radius design', 'description' => 'Sharp corners everywhere. The blueprint aesthetic, uncompromised.'],
+            ['icon' => '▲', 'title' => 'Gold accent system', 'description' => 'Primary gold (#F2CA50) against obsidian surfaces for maximum clarity.'],
+            ['icon' => '◆', 'title' => 'Ghost border language', 'description' => '1px structural lines at 20% opacity. Structure without noise.'],
+            ['icon' => '●', 'title' => 'Tonal depth layering', 'description' => 'No shadows. Depth through surface tone shifts from #131313 upward.'],
+        ];
+
+        foreach ($features as $feature) {
+            $section = Section::query()->firstOrCreate(['name' => $feature['title']], [
+                'meta' => ['icon' => $feature['icon']],
+            ]);
+
+            foreach (Site::getDefault()?->languages ?? [] as $language) {
+                $section->translations()->firstOrCreate(
+                    ['language_id' => $language->id],
+                    ['title' => $feature['title'], 'content' => sprintf('<p>%s</p>', $feature['description'])],
+                );
+            }
+
+            $widget->assets()->firstOrCreate([
+                'asset_id' => $section->id,
+                'asset_type' => resolve($this->contentModel)->getMorphClass(),
+            ]);
+        }
+
+        return $widget;
+    }
+
+    public function createFeatureListWidget(): Widget
+    {
+        $widget = resolve(WidgetCreator::class)->featuresWidget();
+
+        foreach (Site::getDefault()?->languages ?? [] as $language) {
+            $widget->translations()->firstOrCreate(
+                ['language_id' => $language->id],
+                ['title' => 'Features'],
+            );
+        }
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        $features = [
+            ['icon' => 'heroicon-o-light-bulb', 'title' => 'Innovative Solutions', 'description' => 'We leverage cutting-edge technology to create innovative solutions that drive success.'],
+            ['icon' => 'heroicon-o-academic-cap', 'title' => 'Deep Expertise', 'description' => 'Our team brings deep industry knowledge and experience to every project.'],
+            ['icon' => 'heroicon-o-user-group', 'title' => 'Client-Centric Approach', 'description' => "We prioritize our clients' needs and work collaboratively to achieve their goals."],
+            ['icon' => 'heroicon-o-chart-bar', 'title' => 'Measurable Results', 'description' => 'We focus on delivering measurable results that drive growth and success.'],
+            ['icon' => 'heroicon-o-sparkles', 'title' => 'Sustainable Practices', 'description' => 'We are committed to sustainable practices that benefit our clients and the environment.'],
+            ['icon' => 'heroicon-o-globe-alt', 'title' => 'Global Reach', 'description' => 'Our global presence allows us to serve clients across diverse markets and industries.'],
+        ];
+
+        foreach ($features as $feature) {
+            $section = Section::query()->firstOrCreate(['name' => $feature['title']], [
+                'meta' => ['icon' => $feature['icon']],
+            ]);
+
+            foreach (Site::getDefault()?->languages ?? [] as $language) {
+                $section->translations()->firstOrCreate(
+                    ['language_id' => $language->id],
+                    ['title' => $feature['title'], 'content' => sprintf('<p>%s</p>', $feature['description'])],
+                );
+            }
+
+            $widget->assets()->firstOrCreate([
+                'asset_id' => $section->id,
+                'asset_type' => resolve($this->contentModel)->getMorphClass(),
+            ]);
         }
 
         return $widget;
@@ -1217,8 +1355,6 @@ class DemoCreator
             'name' => 'AP CTA Section',
             'type_id' => $widgetType->id,
             'meta' => [
-                'headline' => 'Ready to build with precision?',
-                'description' => 'Join the growing community of developers shipping content platforms on Capell.',
                 'primary_button_text' => 'Get Started Free',
                 'primary_button_url' => '/docs/installation',
                 'secondary_button_text' => 'View on GitHub',
@@ -1230,7 +1366,10 @@ class DemoCreator
         foreach (Site::getDefault()?->languages ?? [] as $language) {
             $widget->translations()->updateOrCreate(
                 ['language_id' => $language->id],
-                ['title' => 'AP CTA Section'],
+                [
+                    'title' => 'Ready to build with precision?',
+                    'content' => '<p>Join the growing community of developers shipping content platforms on Capell.</p>',
+                ],
             );
         }
 
@@ -1251,11 +1390,6 @@ class DemoCreator
                 'layout' => 'grid',
                 'columns' => 3,
                 'lightbox' => true,
-                'images' => [
-                    ['url' => 'https://picsum.photos/seed/capell1/800/600', 'alt' => 'Layout builder interface'],
-                    ['url' => 'https://picsum.photos/seed/capell2/800/600', 'alt' => 'Multi-site dashboard'],
-                    ['url' => 'https://picsum.photos/seed/capell3/800/600', 'alt' => 'Widget editor canvas'],
-                ],
                 'margin' => ['lg'],
             ],
         ]);
@@ -1263,8 +1397,16 @@ class DemoCreator
         foreach (Site::getDefault()?->languages ?? [] as $language) {
             $widget->translations()->updateOrCreate(
                 ['language_id' => $language->id],
-                ['title' => 'AP Image Gallery'],
+                ['title' => 'Our Work'],
             );
+        }
+
+        if ($widget->assets()->exists()) {
+            return $widget;
+        }
+
+        for ($i = 1; $i <= 6; $i++) {
+            $this->createWidgetMedia($widget);
         }
 
         return $widget;

@@ -11,10 +11,7 @@ declare(strict_types=1);
     $key = $getKey();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
         x-data="{
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
@@ -331,10 +328,7 @@ declare(strict_types=1);
                                 </svg>
                             </div>
                             {{ $getNoSearchResultsMessage() }} "
-                            <span
-                                x-text="search"
-                                class="font-medium"
-                            ></span>
+                            <span x-text="search" class="font-medium"></span>
                             "
                         </div>
 

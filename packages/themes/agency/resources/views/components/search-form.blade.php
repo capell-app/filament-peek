@@ -10,10 +10,7 @@
     method="GET"
     class="w-full max-w-md"
 >
-    <label
-        for="agency-search"
-        class="sr-only"
-    >
+    <label for="agency-search" class="sr-only">
         {{ $label }}
     </label>
     <div class="flex items-center gap-2">

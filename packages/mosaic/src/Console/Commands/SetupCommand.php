@@ -14,7 +14,6 @@ class SetupCommand extends Command
         {--sites= : Ignored — accepted for compatibility with capell:install}
         {--languages= : Ignored — accepted for compatibility with capell:install}
         {--url= : Ignored — accepted for compatibility with capell:install}
-        {--include-hero}
     ';
 
     protected $description = 'Setting up the Capell Mosaic package';
@@ -26,11 +25,9 @@ class SetupCommand extends Command
         $this->newLine();
         $this->info('Capell Mosaic setup successfully.');
 
-        if ($this->option('include-hero')) {
-            $this->newLine();
-            $this->comment('Running hero setup...');
-            $this->call('capell:hero-setup');
-        }
+        $this->newLine();
+        $this->comment('Running hero setup...');
+        $this->call('capell:hero-setup');
 
         return self::SUCCESS;
     }

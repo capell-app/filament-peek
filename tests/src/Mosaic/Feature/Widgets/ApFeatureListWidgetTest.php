@@ -7,6 +7,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
+use Capell\Mosaic\Models\Section;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\TestingFrontend;
@@ -45,17 +46,18 @@ it('renders ap feature list widget title on page', function (): void {
         );
 });
 
-it('renders ap feature list widget features from meta', function (): void {
+it('renders ap feature list widget features from assets', function (): void {
     $site = Site::factory()->withTranslations()->create();
     $widget = resolve(WidgetCreator::class)->apFeatureListWidget();
     Translation::factory()->translatable($widget)->language($site->language)->create();
 
-    $widget->update(['meta' => array_merge($widget->meta, [
-        'features' => [
-            ['title' => 'Speed', 'description' => 'Blazing fast performance', 'icon' => '⚡'],
-            ['title' => 'Security', 'description' => 'Enterprise-grade protection', 'icon' => '🔒'],
-        ],
-    ])]);
+    $speed = Section::factory()->create(['name' => 'Speed', 'meta' => ['icon' => '⚡']]);
+    $speed->translations()->create(['language_id' => $site->language->id, 'title' => 'Speed', 'content' => '<p>Blazing fast performance</p>']);
+    $widget->assets()->create(['asset_id' => $speed->id, 'asset_type' => (new Section)->getMorphClass()]);
+
+    $security = Section::factory()->create(['name' => 'Security', 'meta' => ['icon' => '🔒']]);
+    $security->translations()->create(['language_id' => $site->language->id, 'title' => 'Security', 'content' => '<p>Enterprise-grade protection</p>']);
+    $widget->assets()->create(['asset_id' => $security->id, 'asset_type' => (new Section)->getMorphClass()]);
 
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();

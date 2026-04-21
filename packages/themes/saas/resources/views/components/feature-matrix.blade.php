@@ -40,10 +40,7 @@
                 </caption>
                 <thead>
                     <tr class="border-b border-[var(--color-border)]">
-                        <th
-                            scope="col"
-                            class="px-6 py-4 font-semibold"
-                        >
+                        <th scope="col" class="px-6 py-4 font-semibold">
                             Feature
                         </th>
                         @foreach ($tiers as $tier)

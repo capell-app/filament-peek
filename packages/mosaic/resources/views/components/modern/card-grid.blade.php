@@ -5,24 +5,13 @@ declare(strict_types=1);
 ?>
 
 @props([
-    'title' => $widget->translation?->title,
-    'content' => $widget->translation?->content,
     'columns' => (int) ($widget->getMeta('columns', 3)),
-    'cards' => $widget->getMeta('cards', []),
     'container',
     'containerKey',
     'containerWidth' => null,
     'loop',
     'widget',
 ])
-
-@php
-    $gridCols = match ($columns) {
-        2 => 'grid-cols-2',
-        4 => 'grid-cols-4',
-        default => 'grid-cols-3',
-    };
-@endphp
 
 <x-capell-mosaic::widget.wrapper
     class="widget-ap-card-grid"
@@ -35,9 +24,9 @@ declare(strict_types=1);
     <section
         style="padding: 3rem 2rem; background-color: var(--mosaic-surface)"
     >
-        @if ($title || $content)
+        @if ($widget->translation)
             <div style="margin-bottom: 2.5rem; max-width: 38rem">
-                @if ($title)
+                @if ($widget->translation->title)
                     <h2
                         class="ap-card-grid-headline"
                         style="
@@ -48,11 +37,11 @@ declare(strict_types=1);
                             margin-bottom: 0.75rem;
                         "
                     >
-                        {{ $title }}
+                        {{ $widget->translation->title }}
                     </h2>
                 @endif
 
-                @if ($content)
+                @if ($widget->translation->content)
                     <p
                         class="ap-card-grid-description"
                         style="
@@ -61,7 +50,7 @@ declare(strict_types=1);
                             line-height: 1.6;
                         "
                     >
-                        {!! strip_tags($content) !!}
+                        {!! strip_tags($widget->translation->content) !!}
                     </p>
                 @endif
             </div>
@@ -74,18 +63,18 @@ declare(strict_types=1);
                 gap: 1.5rem;
             "
         >
-            @forelse ($cards as $card)
+            @forelse ($widget->assets as $widgetAsset)
                 <div
                     class="ap-card mosaic-card"
                     style="background-color: var(--mosaic-surface-container)"
                 >
-                    @if (! empty($card['icon']))
+                    @if ($widgetAsset->asset->getMeta('icon'))
                         <div style="font-size: 2rem; margin-bottom: 1rem">
-                            {{ $card['icon'] }}
+                            {{ $widgetAsset->asset->getMeta('icon') }}
                         </div>
                     @endif
 
-                    @if (! empty($card['title']))
+                    @if ($widgetAsset->asset->translation?->title)
                         <h3
                             class="ap-card-title"
                             style="
@@ -95,11 +84,11 @@ declare(strict_types=1);
                                 margin-bottom: 0.5rem;
                             "
                         >
-                            {{ $card['title'] }}
+                            {{ $widgetAsset->asset->translation->title }}
                         </h3>
                     @endif
 
-                    @if (! empty($card['description']))
+                    @if ($widgetAsset->asset->translation?->content)
                         <p
                             class="ap-card-description"
                             style="
@@ -108,13 +97,13 @@ declare(strict_types=1);
                                 line-height: 1.55;
                             "
                         >
-                            {{ $card['description'] }}
+                            {{ strip_tags($widgetAsset->asset->translation->content) }}
                         </p>
                     @endif
 
-                    @if (! empty($card['link_text']) && ! empty($card['link_url']))
+                    @if ($widgetAsset->asset->getMeta('link_text') && $widgetAsset->asset->getMeta('link_url'))
                         <a
-                            href="{{ $card['link_url'] }}"
+                            href="{{ $widgetAsset->asset->getMeta('link_url') }}"
                             class="ap-card-link"
                             style="
                                 display: inline-flex;
@@ -127,7 +116,7 @@ declare(strict_types=1);
                                 text-decoration: none;
                             "
                         >
-                            {{ $card['link_text'] }} →
+                            {{ $widgetAsset->asset->getMeta('link_text') }} →
                         </a>
                     @endif
                 </div>

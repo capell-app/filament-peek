@@ -8,19 +8,8 @@
     data-corporate-dark-toggle
     class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-fg-muted)] transition hover:text-[var(--color-fg)]"
 >
-    <span
-        aria-hidden="true"
-        data-icon-light
-    >
-        &#9728;
-    </span>
-    <span
-        aria-hidden="true"
-        data-icon-dark
-        class="hidden"
-    >
-        &#9790;
-    </span>
+    <span aria-hidden="true" data-icon-light>&#9728;</span>
+    <span aria-hidden="true" data-icon-dark class="hidden">&#9790;</span>
     {{ $slot ?? '' }}
 </button>
 

@@ -12,10 +12,7 @@
     $search ??= new DatabaseSiteSearch(app('db')->connection());
 @endphp
 
-<section
-    class="capell-search-results"
-    aria-label="Search results"
->
+<section class="capell-search-results" aria-label="Search results">
     @if ($results->isEmpty())
         <p class="text-gray-600">
             No results for
@@ -29,17 +26,11 @@
             for
             <strong>{{ $query }}</strong>
         </p>
-        <ol
-            class="space-y-4"
-            role="list"
-        >
+        <ol class="space-y-4" role="list">
             @foreach ($results as $result)
                 <li class="rounded-lg border border-gray-100 p-4">
                     <h3 class="text-lg font-semibold">
-                        <a
-                            href="{{ $result->url }}"
-                            class="hover:underline"
-                        >
+                        <a href="{{ $result->url }}" class="hover:underline">
                             {!! $search->highlight($result->title, $query) !!}
                         </a>
                     </h3>

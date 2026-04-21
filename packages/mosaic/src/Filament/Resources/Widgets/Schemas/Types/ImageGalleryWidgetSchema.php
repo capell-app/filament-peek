@@ -8,9 +8,7 @@ use Capell\Mosaic\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Mosaic\Filament\Components\Forms\Widget\ComponentSection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\DisplaySection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -54,25 +52,6 @@ class ImageGalleryWidgetSchema extends DefaultWidgetSchema
                         Toggle::make('lightbox')
                             ->label(__('capell-mosaic::form.lightbox'))
                             ->default(true),
-                    ]),
-                Fieldset::make(__('capell-mosaic::form.images'))
-                    ->columns(['default' => 1])
-                    ->schema([
-                        Repeater::make('images')
-                            ->label('')
-                            ->addActionLabel(__('capell-mosaic::form.add_image'))
-                            ->columns(['default' => 1, 'lg' => 2])
-                            ->schema([
-                                TextInput::make('url')
-                                    ->label(__('capell-mosaic::form.image_url'))
-                                    ->placeholder('image-url.jpg')
-                                    ->url()
-                                    ->required(),
-                                TextInput::make('alt')
-                                    ->label(__('capell-mosaic::form.alt_text'))
-                                    ->placeholder('Alt text')
-                                    ->required(),
-                            ]),
                     ]),
             ]);
     }

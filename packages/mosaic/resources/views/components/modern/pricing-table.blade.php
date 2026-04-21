@@ -63,16 +63,16 @@
             >
                 Monthly
             </span>
-            <button
-                class="billing-toggle-button relative h-8 w-14 rounded-full bg-indigo-600 transition-colors"
-                onclick="
-                    toggleBillingCycle(this)
-                "
-            >
-                <div
-                    class="billing-toggle-dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition-all"
-                ></div>
-            </button>
+            {{-- format-ignore-start --}}
+                    <button
+                        class="billing-toggle-button relative h-8 w-14 rounded-full bg-indigo-600 transition-colors"
+                        onclick="toggleBillingCycle(this)"
+                    >
+                        <div
+                            class="billing-toggle-dot absolute left-1 top-1 h-6 w-6 rounded-full bg-white transition-all"
+                        ></div>
+                    </button>
+                    {{-- format-ignore-end --}}
             <span
                 class="text-gray-700"
             >
@@ -99,29 +99,43 @@
                     data-price-annual="{{ $plan['priceAnnual'] ?? $plan['price'] ?? '' }}"
                 >
                     <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <span class="rounded-full bg-amber-400 px-4 py-1 text-xs font-bold text-amber-900">
+                        <span
+                            class="rounded-full bg-amber-400 px-4 py-1 text-xs font-bold text-amber-900"
+                        >
                             Most Popular
                         </span>
                     </div>
 
-                    <h3 class="mb-1 text-2xl font-bold text-white">{{ $plan['name'] }}</h3>
+                    <h3 class="mb-1 text-2xl font-bold text-white">
+                        {{ $plan['name'] }}
+                    </h3>
 
                     @if (isset($plan['description']))
-                        <p class="mb-6 text-sm text-indigo-200">{{ $plan['description'] }}</p>
+                        <p class="mb-6 text-sm text-indigo-200">
+                            {{ $plan['description'] }}
+                        </p>
                     @endif
 
                     <div class="price-container mb-6">
-                        <span class="plan-price text-4xl font-bold text-white">{{ $currency }}{{ $plan['price'] }}</span>
+                        <span class="plan-price text-4xl font-bold text-white">
+                            {{ $currency }}{{ $plan['price'] }}
+                        </span>
                         @if ($plan['price'] !== 'Custom')
-                            <span class="billing-period text-indigo-200">/month</span>
+                            <span class="billing-period text-indigo-200">
+                                /month
+                            </span>
                         @endif
                     </div>
 
                     @if (isset($plan['features']))
                         <ul class="mb-8 space-y-3">
                             @foreach ($plan['features'] as $feature)
-                                <li class="flex items-center gap-2 text-indigo-100">
-                                    <span class="font-bold text-indigo-300">✓</span>
+                                <li
+                                    class="flex items-center gap-2 text-indigo-100"
+                                >
+                                    <span class="font-bold text-indigo-300">
+                                        ✓
+                                    </span>
                                     <span>{{ $feature }}</span>
                                 </li>
                             @endforeach
@@ -143,24 +157,38 @@
                     data-price-monthly="{{ $plan['price'] ?? '' }}"
                     data-price-annual="{{ $plan['priceAnnual'] ?? $plan['price'] ?? '' }}"
                 >
-                    <h3 class="mb-1 text-2xl font-bold text-gray-900">{{ $plan['name'] }}</h3>
+                    <h3 class="mb-1 text-2xl font-bold text-gray-900">
+                        {{ $plan['name'] }}
+                    </h3>
 
                     @if (isset($plan['description']))
-                        <p class="mb-6 text-sm text-gray-500">{{ $plan['description'] }}</p>
+                        <p class="mb-6 text-sm text-gray-500">
+                            {{ $plan['description'] }}
+                        </p>
                     @endif
 
                     <div class="price-container mb-6">
-                        <span class="plan-price text-4xl font-bold text-gray-900">{{ $currency }}{{ $plan['price'] }}</span>
+                        <span
+                            class="plan-price text-4xl font-bold text-gray-900"
+                        >
+                            {{ $currency }}{{ $plan['price'] }}
+                        </span>
                         @if ($plan['price'] !== 'Custom')
-                            <span class="billing-period text-gray-500">/month</span>
+                            <span class="billing-period text-gray-500">
+                                /month
+                            </span>
                         @endif
                     </div>
 
                     @if (isset($plan['features']))
                         <ul class="mb-8 space-y-3">
                             @foreach ($plan['features'] as $feature)
-                                <li class="flex items-center gap-2 text-gray-700">
-                                    <span class="font-bold text-indigo-500">✓</span>
+                                <li
+                                    class="flex items-center gap-2 text-gray-700"
+                                >
+                                    <span class="font-bold text-indigo-500">
+                                        ✓
+                                    </span>
                                     <span>{{ $feature }}</span>
                                 </li>
                             @endforeach

@@ -41,10 +41,7 @@
                     aria-label="Toggle annual billing"
                     @checked($cycleDefault === 'annual')
                 />
-                <span
-                    class="toggle-track"
-                    aria-hidden="true"
-                >
+                <span class="toggle-track" aria-hidden="true">
                     <span class="toggle-thumb"></span>
                 </span>
                 <label
@@ -61,10 +58,7 @@
             </div>
         </header>
 
-        <ul
-            role="list"
-            class="grid grid-cols-1 gap-6 lg:grid-cols-3"
-        >
+        <ul role="list" class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             @forelse ($tiers as $tier)
                 @php
                     $highlight = $tier['highlight'] ?? false;

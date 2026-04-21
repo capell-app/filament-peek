@@ -34,10 +34,7 @@
             @endif
         </header>
 
-        <ul
-            role="list"
-            class="{{ $gridCols }} grid gap-4"
-        >
+        <ul role="list" class="{{ $gridCols }} grid gap-4">
             @forelse ($integrations as $integration)
                 <li>
                     <a

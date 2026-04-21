@@ -78,12 +78,7 @@
                     aria-label="{{ $primaryCtaLabel }}"
                 >
                     {{ $primaryCtaLabel }}
-                    <span
-                        aria-hidden="true"
-                        class="ml-2"
-                    >
-                        &rarr;
-                    </span>
+                    <span aria-hidden="true" class="ml-2">&rarr;</span>
                 </a>
 
                 @if ($secondaryCtaLabel && $secondaryCtaUrl)

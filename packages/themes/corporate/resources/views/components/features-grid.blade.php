@@ -21,10 +21,7 @@
 >
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <header class="mx-auto mb-12 max-w-2xl text-center">
-            <h2
-                id="features-title"
-                class="text-3xl font-bold sm:text-4xl"
-            >
+            <h2 id="features-title" class="text-3xl font-bold sm:text-4xl">
                 {{ $title }}
             </h2>
             @if ($subtitle)
@@ -34,10 +31,7 @@
             @endif
         </header>
 
-        <ul
-            role="list"
-            class="{{ $gridCols }} grid grid-cols-1 gap-8"
-        >
+        <ul role="list" class="{{ $gridCols }} grid grid-cols-1 gap-8">
             @forelse ($features as $feature)
                 <li
                     class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-muted)] p-6 transition hover:shadow-md dark:bg-[var(--color-bg-muted)]"

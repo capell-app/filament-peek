@@ -567,7 +567,6 @@ class WidgetCreator
             'meta' => [
                 'component' => WidgetComponentEnum::ApCardGrid,
                 'columns' => 3,
-                'cards' => [],
                 'margin' => ['lg'],
             ],
         ]);
@@ -583,7 +582,6 @@ class WidgetCreator
             'meta' => [
                 'component' => WidgetComponentEnum::ApFeatureList,
                 'layout' => 'grid',
-                'features' => [],
                 'margin' => ['lg'],
             ],
         ]);
@@ -615,6 +613,8 @@ class WidgetCreator
             'meta' => [
                 'component' => WidgetComponentEnum::ApImageGallery,
                 'columns' => 3,
+                'layout' => 'grid',
+                'lightbox' => true,
                 'margin' => ['lg'],
             ],
         ]);

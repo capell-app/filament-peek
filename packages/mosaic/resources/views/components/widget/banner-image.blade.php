@@ -114,10 +114,7 @@ declare(strict_types=1);
                     @endif
 
                     @if ($actions)
-                        <x-capell-mosaic::actions
-                            class="mt-4"
-                            :$actions
-                        />
+                        <x-capell-mosaic::actions class="mt-4" :$actions />
                     @endif
                 </div>
             </div>

@@ -11,10 +11,7 @@
 >
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <header class="mx-auto mb-12 max-w-2xl text-center">
-            <h2
-                id="blog-title"
-                class="text-3xl font-bold sm:text-4xl"
-            >
+            <h2 id="blog-title" class="text-3xl font-bold sm:text-4xl">
                 {{ $title }}
             </h2>
             @if ($subtitle)

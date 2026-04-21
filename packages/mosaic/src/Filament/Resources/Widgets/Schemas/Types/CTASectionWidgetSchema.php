@@ -8,7 +8,6 @@ use Capell\Mosaic\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Mosaic\Filament\Components\Forms\Widget\ComponentSection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\DisplaySection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -40,25 +39,13 @@ class CTASectionWidgetSchema extends DefaultWidgetSchema
                 Fieldset::make(__('capell-mosaic::form.cta_settings'))
                     ->columns(['default' => 1, 'lg' => 2])
                     ->schema([
-                        TextInput::make('headline')
-                            ->label(__('capell-mosaic::form.headline'))
-                            ->placeholder('Ready to get started?')
-                            ->required()
-                            ->columnSpanFull(),
-                        Textarea::make('description')
-                            ->label(__('capell-mosaic::form.description'))
-                            ->placeholder('Supporting description text')
-                            ->rows(3)
-                            ->columnSpanFull(),
                         TextInput::make('primary_button_text')
                             ->label(__('capell-mosaic::form.primary_button_text'))
-                            ->placeholder('Get Started')
-                            ->required(),
+                            ->placeholder('Get Started'),
                         TextInput::make('primary_button_url')
                             ->label(__('capell-mosaic::form.primary_button_url'))
                             ->placeholder('/signup')
-                            ->url()
-                            ->required(),
+                            ->url(),
                         TextInput::make('secondary_button_text')
                             ->label(__('capell-mosaic::form.secondary_button_text'))
                             ->placeholder('Learn More'),

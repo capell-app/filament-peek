@@ -37,10 +37,7 @@ declare(strict_types=1);
     {{ $color }}
     @if ($icon)
         <div>
-            <x-capell::icon
-                :$icon
-                class="h-10 w-10"
-            />
+            <x-capell::icon :$icon class="h-10 w-10" />
         </div>
     @endif
 

@@ -17,18 +17,10 @@
                 {{ $title }}
             </h2>
         @else
-            <h2
-                id="clients-title"
-                class="sr-only"
-            >
-                Clients
-            </h2>
+            <h2 id="clients-title" class="sr-only">Clients</h2>
         @endif
 
-        <div
-            aria-hidden="true"
-            class="relative overflow-hidden"
-        >
+        <div aria-hidden="true" class="relative overflow-hidden">
             <div
                 class="agency-marquee-track flex gap-14 whitespace-nowrap"
                 data-speed="{{ $speed }}"
@@ -58,10 +50,7 @@
         </div>
 
         {{-- Visually hidden list for screen readers --}}
-        <ul
-            role="list"
-            class="sr-only"
-        >
+        <ul role="list" class="sr-only">
             @foreach ($clients as $client)
                 <li>{{ $client['name'] ?? '' }}</li>
             @endforeach

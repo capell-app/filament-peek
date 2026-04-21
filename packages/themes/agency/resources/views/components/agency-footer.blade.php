@@ -51,14 +51,8 @@
                     {{ $wordmark }}
                 </p>
                 @if (! empty($socials))
-                    <nav
-                        aria-label="Social"
-                        class="mt-8"
-                    >
-                        <ul
-                            role="list"
-                            class="space-y-3"
-                        >
+                    <nav aria-label="Social" class="mt-8">
+                        <ul role="list" class="space-y-3">
                             @foreach ($socials as $social)
                                 <li>
                                     <a

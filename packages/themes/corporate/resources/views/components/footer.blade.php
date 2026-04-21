@@ -42,10 +42,7 @@
                         >
                             {{ $column['heading'] ?? '' }}
                         </h2>
-                        <ul
-                            role="list"
-                            class="mt-4 space-y-2"
-                        >
+                        <ul role="list" class="mt-4 space-y-2">
                             @foreach ($column['links'] ?? [] as $link)
                                 <li>
                                     <a
@@ -61,10 +58,7 @@
                 @endforeach
 
                 @if ($layout === 'newsletter')
-                    <form
-                        class="md:col-span-1"
-                        aria-label="Newsletter signup"
-                    >
+                    <form class="md:col-span-1" aria-label="Newsletter signup">
                         <label
                             for="footer-newsletter"
                             class="text-sm font-semibold uppercase tracking-widest"

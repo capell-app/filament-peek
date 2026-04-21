@@ -10,19 +10,13 @@
     method="GET"
     class="w-full max-w-lg"
 >
-    <label
-        for="saas-search"
-        class="sr-only"
-    >
+    <label for="saas-search" class="sr-only">
         {{ $label }}
     </label>
     <div
         class="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 focus-within:border-[var(--color-primary)]"
     >
-        <span
-            aria-hidden="true"
-            class="text-[var(--color-fg-subtle)]"
-        >
+        <span aria-hidden="true" class="text-[var(--color-fg-subtle)]">
             &#128269;
         </span>
         <input

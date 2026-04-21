@@ -8,10 +8,7 @@ use Capell\Mosaic\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\Mosaic\Filament\Components\Forms\Widget\ComponentSection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\DisplaySection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -46,28 +43,6 @@ class FeatureListWidgetSchema extends DefaultWidgetSchema
                             ->label(__('capell-mosaic::form.layout'))
                             ->options(['vertical' => 'Vertical', 'horizontal' => 'Horizontal'])
                             ->default('vertical'),
-                    ]),
-                Fieldset::make(__('capell-mosaic::form.features'))
-                    ->columns(['default' => 1])
-                    ->schema([
-                        Repeater::make('features')
-                            ->label('')
-                            ->addActionLabel(__('capell-mosaic::form.add_feature'))
-                            ->columns(['default' => 1, 'lg' => 2])
-                            ->schema([
-                                TextInput::make('icon')
-                                    ->label(__('capell-mosaic::form.icon'))
-                                    ->placeholder('✓')
-                                    ->maxLength(10),
-                                TextInput::make('title')
-                                    ->label(__('capell-mosaic::form.title'))
-                                    ->placeholder('Feature Name')
-                                    ->required(),
-                                Textarea::make('description')
-                                    ->label(__('capell-mosaic::form.description'))
-                                    ->placeholder('Feature explanation text')
-                                    ->rows(3),
-                            ]),
                     ]),
             ]);
     }

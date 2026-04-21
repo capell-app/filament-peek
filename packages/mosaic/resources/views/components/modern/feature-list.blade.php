@@ -1,14 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 ?>
 
 @props([
-    'title' => $widget->translation?->title,
-    'content' => $widget->translation?->content,
     'layout' => $widget->getMeta('layout', 'grid'),
-    'features' => $widget->getMeta('features', []),
     'container',
     'containerKey',
     'containerWidth' => null,
@@ -27,9 +23,9 @@ declare(strict_types=1);
     <section
         style="padding: 3rem 2rem; background-color: var(--mosaic-surface)"
     >
-        @if ($title || $content)
+        @if ($widget->translation)
             <div style="margin-bottom: 2.5rem; max-width: 38rem">
-                @if ($title)
+                @if ($widget->translation->title)
                     <h2
                         class="ap-feature-list-headline"
                         style="
@@ -40,11 +36,11 @@ declare(strict_types=1);
                             margin-bottom: 0.75rem;
                         "
                     >
-                        {{ $title }}
+                        {{ $widget->translation->title }}
                     </h2>
                 @endif
 
-                @if ($content)
+                @if ($widget->translation->content)
                     <p
                         class="ap-feature-list-description"
                         style="
@@ -53,7 +49,7 @@ declare(strict_types=1);
                             line-height: 1.6;
                         "
                     >
-                        {!! strip_tags($content) !!}
+                        {!! strip_tags($widget->translation->content) !!}
                     </p>
                 @endif
             </div>
@@ -68,7 +64,7 @@ declare(strict_types=1);
                     max-width: 38rem;
                 "
             >
-                @forelse ($features as $feature)
+                @forelse ($widget->assets as $widgetAsset)
                     <div
                         class="ap-feature-item mosaic-card"
                         style="
@@ -77,14 +73,14 @@ declare(strict_types=1);
                             background-color: var(--mosaic-surface-container);
                         "
                     >
-                        @if (! empty($feature['icon']))
+                        @if ($widgetAsset->asset->getMeta('icon'))
                             <div style="flex-shrink: 0; font-size: 1.75rem">
-                                {{ $feature['icon'] }}
+                                {{ $widgetAsset->asset->getMeta('icon') }}
                             </div>
                         @endif
 
                         <div>
-                            @if (! empty($feature['title']))
+                            @if ($widgetAsset->asset->translation?->title)
                                 <h3
                                     class="ap-feature-title"
                                     style="
@@ -94,11 +90,11 @@ declare(strict_types=1);
                                         margin-bottom: 0.375rem;
                                     "
                                 >
-                                    {{ $feature['title'] }}
+                                    {{ $widgetAsset->asset->translation->title }}
                                 </h3>
                             @endif
 
-                            @if (! empty($feature['description']))
+                            @if ($widgetAsset->asset->translation?->content)
                                 <p
                                     class="ap-feature-description"
                                     style="
@@ -107,7 +103,7 @@ declare(strict_types=1);
                                         line-height: 1.55;
                                     "
                                 >
-                                    {{ $feature['description'] }}
+                                    {{ strip_tags($widgetAsset->asset->translation->content) }}
                                 </p>
                             @endif
                         </div>
@@ -126,7 +122,7 @@ declare(strict_types=1);
                     gap: 1.5rem;
                 "
             >
-                @forelse ($features as $feature)
+                @forelse ($widget->assets as $widgetAsset)
                     <div
                         class="ap-feature-item mosaic-card"
                         style="
@@ -134,18 +130,18 @@ declare(strict_types=1);
                             background-color: var(--mosaic-surface-container);
                         "
                     >
-                        @if (! empty($feature['icon']))
+                        @if ($widgetAsset->asset->getMeta('icon'))
                             <div
                                 style="
                                     font-size: 2.25rem;
                                     margin-bottom: 0.75rem;
                                 "
                             >
-                                {{ $feature['icon'] }}
+                                {{ $widgetAsset->asset->getMeta('icon') }}
                             </div>
                         @endif
 
-                        @if (! empty($feature['title']))
+                        @if ($widgetAsset->asset->translation?->title)
                             <h3
                                 class="ap-feature-title"
                                 style="
@@ -155,11 +151,11 @@ declare(strict_types=1);
                                     margin-bottom: 0.375rem;
                                 "
                             >
-                                {{ $feature['title'] }}
+                                {{ $widgetAsset->asset->translation->title }}
                             </h3>
                         @endif
 
-                        @if (! empty($feature['description']))
+                        @if ($widgetAsset->asset->translation?->content)
                             <p
                                 class="ap-feature-description"
                                 style="
@@ -168,7 +164,7 @@ declare(strict_types=1);
                                     line-height: 1.55;
                                 "
                             >
-                                {{ $feature['description'] }}
+                                {{ strip_tags($widgetAsset->asset->translation->content) }}
                             </p>
                         @endif
                     </div>

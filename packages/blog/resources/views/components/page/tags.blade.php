@@ -27,10 +27,7 @@ declare(strict_types=1);
         <div class="flex flex-wrap gap-x-2 gap-y-1.5">
             @foreach ($tags as $tag)
                 @php($url = $tagPage->pageUrl->full_url . '/' . $tag->getTranslation('slug', $language->code))
-                <x-capell-blog::tag
-                    :$url
-                    wire:navigate
-                >
+                <x-capell-blog::tag :$url wire:navigate>
                     {{ $tag->getTranslation('name', $language->code) }}
                 </x-capell-blog::tag>
             @endforeach

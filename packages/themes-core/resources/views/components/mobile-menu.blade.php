@@ -1,8 +1,5 @@
 @props(['items' => [], 'label' => 'Menu'])
-<div
-    x-data="{ open: false }"
-    class="md:hidden"
->
+<div x-data="{ open: false }" class="md:hidden">
     <button
         @click="open = !open"
         :aria-expanded="open.toString()"
@@ -10,10 +7,7 @@
         class="flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
         type="button"
     >
-        <span
-            x-text="open ? '✕' : '☰'"
-            aria-hidden="true"
-        ></span>
+        <span x-text="open ? '✕' : '☰'" aria-hidden="true"></span>
         <span class="sr-only">{{ $label }}</span>
     </button>
     <nav

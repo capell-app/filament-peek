@@ -13,10 +13,7 @@
 >
     <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
         <header class="mb-10 text-center">
-            <h2
-                id="contact-title"
-                class="text-3xl font-bold sm:text-4xl"
-            >
+            <h2 id="contact-title" class="text-3xl font-bold sm:text-4xl">
                 {{ $title }}
             </h2>
             @if ($subtitle)
@@ -38,10 +35,7 @@
             @endif
 
             {{-- Honeypot --}}
-            <div
-                class="absolute h-0 w-0 overflow-hidden"
-                aria-hidden="true"
-            >
+            <div class="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
                 <label for="corp-website">Website (leave blank)</label>
                 <input
                     type="text"
@@ -53,10 +47,7 @@
             </div>
 
             <div>
-                <label
-                    for="corp-name"
-                    class="block text-sm font-medium"
-                >
+                <label for="corp-name" class="block text-sm font-medium">
                     Name
                 </label>
                 <input
@@ -70,10 +61,7 @@
             </div>
 
             <div>
-                <label
-                    for="corp-email"
-                    class="block text-sm font-medium"
-                >
+                <label for="corp-email" class="block text-sm font-medium">
                     Email
                 </label>
                 <input
@@ -87,10 +75,7 @@
             </div>
 
             <div>
-                <label
-                    for="corp-message"
-                    class="block text-sm font-medium"
-                >
+                <label for="corp-message" class="block text-sm font-medium">
                     Message
                 </label>
                 <textarea

@@ -14,14 +14,8 @@
 >
     <head>
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-        />
-        <meta
-            name="color-scheme"
-            content="light dark"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light dark" />
         <title>{{ $title ?? config('app.name', 'Capell') }}</title>
         @isset($head)
             {{ $head }}
@@ -31,12 +25,7 @@
         class="min-h-screen bg-[var(--color-bg)] text-[var(--color-fg)] antialiased"
         data-spacing="{{ $spacing ?? 'balanced' }}"
     >
-        <a
-            href="#main"
-            class="skip-to-content"
-        >
-            Skip to content
-        </a>
+        <a href="#main" class="skip-to-content">Skip to content</a>
 
         @isset($header)
             {{ $header }}
@@ -44,12 +33,7 @@
             <x-saas::header />
         @endisset
 
-        <main
-            id="main"
-            role="main"
-            tabindex="-1"
-            class="focus:outline-none"
-        >
+        <main id="main" role="main" tabindex="-1" class="focus:outline-none">
             {{ $slot }}
         </main>
 
