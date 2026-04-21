@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $completion_tokens
  * @property int $total_tokens
  * @property float $duration
+ * @property bool $failed
+ * @property string|null $error_message
  * @property array<array-key, mixed>|null $metadata
  * @property int|string|null $pageable_id
  * @property string|null $pageable_type
@@ -61,6 +63,8 @@ class AIGenerationHistory extends Model
         'completion_tokens',
         'total_tokens',
         'duration',
+        'failed',
+        'error_message',
         'metadata',
         'pageable_id',
         'pageable_type',
@@ -70,6 +74,7 @@ class AIGenerationHistory extends Model
     protected function casts(): array
     {
         return [
+            'failed' => 'boolean',
             'metadata' => 'array',
         ];
     }

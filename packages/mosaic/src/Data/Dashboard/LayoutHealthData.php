@@ -25,31 +25,3 @@ final class LayoutHealthData extends Data
         public readonly DataCollection $leastUsedWidgets,
     ) {}
 }
-
-final class WidgetGroupData extends Data
-{
-    public function __construct(
-        public readonly string $group,
-        public readonly int $count,
-        public readonly int $published,
-        public readonly int $pending,
-        public readonly int $expired,
-    ) {}
-}
-
-final class UnusedWidgetData extends Data
-{
-    public function __construct(
-        public readonly string $name,
-        public readonly string $group,
-    ) {}
-}
-
-final class LeastUsedWidgetData extends Data
-{
-    public function __construct(
-        public readonly string $name,
-        public readonly int $layoutCount,
-        public readonly string $group,
-    ) {}
-}

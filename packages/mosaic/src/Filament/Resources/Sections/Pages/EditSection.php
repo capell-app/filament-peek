@@ -74,14 +74,6 @@ class EditSection extends EditRecord
         ]);
     }
 
-    public function getPageClasses(): array
-    {
-        return [
-            ...parent::getPageClasses(),
-            'filament-page-content-hidden-widgets',
-        ];
-    }
-
     protected function getHeaderActions(): array
     {
         return [

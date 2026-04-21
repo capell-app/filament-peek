@@ -27,21 +27,3 @@ final class ArticleHealthData extends Data
         public readonly DataCollection $languageCoverage,
     ) {}
 }
-
-final class TagCountData extends Data
-{
-    public function __construct(
-        public readonly string $name,
-        public readonly int $articleCount,
-    ) {}
-}
-
-final class LanguageCoverageData extends Data
-{
-    public function __construct(
-        public readonly string $language,
-        public readonly int $withTranslation,
-        public readonly int $withoutTranslation,
-        public readonly int $total,
-    ) {}
-}

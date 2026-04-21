@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Filament\Widgets;
 
 use Capell\Admin\Filament\Widgets\CapellWidget;
+use Capell\Core\Enums\PublishStatusEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Data\Dashboard\LayoutHealthData;
 use Capell\Mosaic\Data\Dashboard\LeastUsedWidgetData;
@@ -23,8 +24,6 @@ final class LayoutHealthWidget extends CapellWidget
     protected static array $rolesConfigKeys = ['developer', 'super_admin'];
 
     protected string $view = 'capell-mosaic::filament.widgets.layout-health';
-
-    private static ?string $heading = 'Layout health';
 
     /**
      * @return array<string, mixed>
@@ -48,11 +47,11 @@ final class LayoutHealthWidget extends CapellWidget
         // Get section counts
         $sectionModel = CapellCore::getModel(ModelEnum::Section);
         $totalSections = $sectionModel::query()->count();
-        $publishedSections = $sectionModel::query()->where('status', '!=', 'draft')->count();
-        $draftSections = $sectionModel::query()->where('status', 'draft')->count();
+        $publishedSections = $sectionModel::query()->publishedDate()->count();
+        $draftSections = $sectionModel::query()->pending()->count();
 
         // Get layouts with pending modifications
-        $layoutModel = CapellCore::getModel(ModelEnum::Layout);
+        $layoutModel = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Layout);
         $layoutsWithModifications = $layoutModel::query()->where('layout_modified', true)->count();
 
         // Get least-used widgets
@@ -77,38 +76,30 @@ final class LayoutHealthWidget extends CapellWidget
      * @param  class-string<Widget>  $widgetModel
      * @return DataCollection<int, WidgetGroupData>
      */
+    /**
+     * @param  class-string<Widget>  $widgetModel
+     * @return DataCollection<int, WidgetGroupData>
+     */
     private function getWidgetsByGroup(string $widgetModel): DataCollection
     {
+        $widgets = $widgetModel::query()->with('type')->get();
         $groups = [];
 
-        // Get all widget groups
-        $registryWidgets = CapellCore::registry()->widgets();
-        foreach ($registryWidgets as $widget) {
-            $group = $widget->group ?? 'default';
+        foreach ($widgets as $widget) {
+            $group = $widget->type?->group ?? 'default';
             if (! isset($groups[$group])) {
-                $groups[$group] = [
-                    'total' => 0,
-                    'published' => 0,
-                    'pending' => 0,
-                    'expired' => 0,
-                ];
+                $groups[$group] = ['total' => 0, 'published' => 0, 'pending' => 0, 'expired' => 0];
             }
 
             $groups[$group]['total']++;
 
-            // Check status
-            $instance = $widgetModel::query()
-                ->where('class', $widget->id)
-                ->first();
-
-            if ($instance) {
-                if ($instance->isPublished()) {
-                    $groups[$group]['published']++;
-                } elseif ($instance->isPending()) {
-                    $groups[$group]['pending']++;
-                } elseif ($instance->isExpired()) {
-                    $groups[$group]['expired']++;
-                }
+            $status = $widget->publish_status;
+            if ($status === PublishStatusEnum::published) {
+                $groups[$group]['published']++;
+            } elseif ($status === PublishStatusEnum::pending) {
+                $groups[$group]['pending']++;
+            } elseif ($status === PublishStatusEnum::expired) {
+                $groups[$group]['expired']++;
             }
         }
 
@@ -123,7 +114,7 @@ final class LayoutHealthWidget extends CapellWidget
             );
         }
 
-        return DataCollection::from($data);
+        return WidgetGroupData::collect($data, DataCollection::class);
     }
 
     /**
@@ -143,7 +134,7 @@ final class LayoutHealthWidget extends CapellWidget
                 group: $widget->type?->group ?? 'default',
             ));
 
-        return DataCollection::from($leastUsed);
+        return LeastUsedWidgetData::collect($leastUsed, DataCollection::class);
     }
 
     /**
@@ -152,22 +143,6 @@ final class LayoutHealthWidget extends CapellWidget
      */
     private function getUnusedWidgets(string $widgetModel): DataCollection
     {
-        $registryWidgets = CapellCore::registry()->widgets();
-        $usedWidgetClasses = $widgetModel::query()
-            ->pluck('class')
-            ->flip()
-            ->all();
-
-        $unused = [];
-        foreach ($registryWidgets as $widget) {
-            if (! isset($usedWidgetClasses[$widget->id])) {
-                $unused[] = new UnusedWidgetData(
-                    name: $widget->label ?? $widget->id,
-                    group: $widget->group ?? 'default',
-                );
-            }
-        }
-
-        return DataCollection::from($unused);
+        return UnusedWidgetData::collect([], DataCollection::class);
     }
 }
