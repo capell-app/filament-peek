@@ -39,6 +39,7 @@ class SiteSchemaExtender implements Extenders\SiteSchemaExtender
     private function getAddressSelect(Schema $schema): AddressSelect
     {
         return AddressSelect::make('address_id')
+            ->columnSpanFull()
             ->when(
                 $schema->isCreating(),
                 fn (AddressSelect $component): AddressSelect => $component->withCreateForm(),
