@@ -126,6 +126,7 @@
         "spatie/laravel-package-tools": "^1.14.1",
         "staudenmeir/eloquent-has-many-deep": "^1.1",
         "staudenmeir/eloquent-json-relations": "^1.1",
+        "stechstudio/filament-impersonate": "^5.3",
         "stijnvanouplines/blade-country-flags": "^1.0",
         "symfony/filesystem": "^7.2",
         "symfony/process": "^7.2",
@@ -167,22 +168,22 @@
     "autoload": {
         "psr-4": {
             "Capell\\Address\\": "packages/address/src",
+            "Capell\\Address\\Database\\Factories\\": "packages/address/database/factories",
             "Capell\\Assistant\\": "packages/assistant/src",
+            "Capell\\Assistant\\Database\\Factories\\": "packages/assistant/database/factories",
             "Capell\\Blog\\": "packages/blog/src",
+            "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories",
             "Capell\\Mosaic\\": "packages/mosaic/src",
+            "Capell\\Mosaic\\Database\\Factories\\": "packages/mosaic/database/factories",
+            "Capell\\Themes\\Admin\\": "packages/themes-admin/src",
             "Capell\\Themes\\Agency\\": "packages/themes/agency/src",
             "Capell\\Themes\\Core\\": "packages/themes-core/src",
-            "Capell\\Themes\\Admin\\": "packages/themes-admin/src",
             "Capell\\Themes\\Corporate\\": "packages/themes/corporate/src",
             "Capell\\Themes\\Saas\\": "packages/themes/saas/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Capell\\Address\\Database\\Factories\\": "packages/address/database/factories",
-            "Capell\\Assistant\\Database\\Factories\\": "packages/assistant/database/factories",
-            "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories",
-            "Capell\\Mosaic\\Database\\Factories\\": "packages/mosaic/database/factories",
             "Capell\\Tests\\": "tests/src",
             "Capell\\Themes\\Agency\\Tests\\": "packages/themes/agency/tests",
             "Capell\\Themes\\Core\\Tests\\": "packages/themes-core/tests",

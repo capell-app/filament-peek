@@ -9,7 +9,7 @@ use Capell\Assistant\Data\Dashboard\AiMetricsData;
 use Capell\Assistant\Data\Dashboard\FeatureUsageData;
 use Capell\Assistant\Models\AIGenerationHistory;
 use Capell\Assistant\Settings\AssistantSettings;
-use Capell\Assistant\Support\Cache\RateLimitCache;
+use Capell\Assistant\Support\AiRateLimiter;
 use Spatie\LaravelData\DataCollection;
 
 final class AiMetricsWidget extends CapellWidget
@@ -36,7 +36,7 @@ final class AiMetricsWidget extends CapellWidget
     private function getData(): AiMetricsData
     {
         $settings = resolve(AssistantSettings::class);
-        $rateLimitCache = resolve(RateLimitCache::class);
+        $rateLimiter = resolve(AiRateLimiter::class);
 
         // Total counts
         $totalGenerations = AIGenerationHistory::query()->count();
@@ -47,7 +47,7 @@ final class AiMetricsWidget extends CapellWidget
             ->count();
 
         // Rate limit status
-        $remainingRequests = $rateLimitCache->getRemainingRequests('global') ?? 0;
+        $remainingRequests = $rateLimiter->getRemainingRequests('global');
         $windowLimitSeconds = config('assistant.rate_limit.window_seconds', 60);
         $lastWindowEnd = null;
 

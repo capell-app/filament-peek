@@ -63,6 +63,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionServiceProvider;
 use Spatie\Tags\TagsServiceProvider;
 use StijnVanouplines\BladeCountryFlags\BladeCountryFlagsServiceProvider;
+use STS\FilamentImpersonate\FilamentImpersonateServiceProvider;
 use Tapp\FilamentAuthenticationLog\FilamentAuthenticationLogServiceProvider;
 
 abstract class AbstractTestCase extends TestCase
@@ -155,6 +156,7 @@ abstract class AbstractTestCase extends TestCase
             FilamentServiceProvider::class,
             FilamentAdjacencyListServiceProvider::class,
             FilamentPeekServiceProvider::class,
+            FilamentImpersonateServiceProvider::class,
             FilamentShieldServiceProvider::class,
             FilamentSelectTreeServiceProvider::class,
             FilamentClearCacheServiceProvider::class,

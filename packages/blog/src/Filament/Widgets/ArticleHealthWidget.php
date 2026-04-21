@@ -10,11 +10,11 @@ use Capell\Blog\Data\Dashboard\LanguageCoverageData;
 use Capell\Blog\Data\Dashboard\TagCountData;
 use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Models\Article;
+use Capell\Blog\Models\Tag;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\LaravelData\DataCollection;
-use Spatie\Tags\Tag;
 
 final class ArticleHealthWidget extends CapellWidget
 {
@@ -106,7 +106,7 @@ final class ArticleHealthWidget extends CapellWidget
             expiredCount: $expiredCount,
             recentlyCreatedCount: $recentlyCreatedCount,
             recentlyUpdatedCount: $recentlyUpdatedCount,
-            topTags: DataCollection::from($topTags),
+            topTags: TagCountData::collect($topTags, DataCollection::class),
             languageCoverage: $languageCoverage,
         );
     }
@@ -136,6 +136,6 @@ final class ArticleHealthWidget extends CapellWidget
             );
         }
 
-        return DataCollection::from($coverage);
+        return LanguageCoverageData::collect($coverage, DataCollection::class);
     }
 }

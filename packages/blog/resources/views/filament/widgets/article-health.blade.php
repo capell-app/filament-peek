@@ -101,7 +101,7 @@
             </div>
 
             {{-- Top Tags --}}
-            @if ($data->topTags->isNotEmpty())
+            @if ($data->topTags->count())
                 <details class="group">
                     <summary
                         class="flex cursor-pointer items-center justify-between gap-2 py-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -140,7 +140,7 @@
             @endif
 
             {{-- Language Coverage --}}
-            @if ($data->languageCoverage->isNotEmpty())
+            @if ($data->languageCoverage->count())
                 <details class="group">
                     <summary
                         class="flex cursor-pointer items-center justify-between gap-2 py-2 text-sm font-medium text-gray-900 dark:text-white"
