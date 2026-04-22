@@ -10,7 +10,7 @@ use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
-use Capell\Mosaic\Filament\Resources\Sections\Schemas\Types\DefaultContentSchema;
+use Capell\Mosaic\Filament\Resources\Sections\Schemas\Types\DefaultSectionSchema;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -46,9 +46,9 @@ class SectionForm implements FormConfigurator
                             $type = $typeId !== null ? $model::query()->find($typeId, ['admin']) : null;
                         }
 
-                        $name = $type->admin['schema'] ?? DefaultContentSchema::getKey();
+                        $name = $type->admin['schema'] ?? DefaultSectionSchema::getKey();
 
-                        return $component->getTypeSchema($schema, TypeSchemaEnum::Content, $name);
+                        return $component->getTypeSchema($schema, TypeSchemaEnum::Section, $name);
                     },
                 ),
         ];

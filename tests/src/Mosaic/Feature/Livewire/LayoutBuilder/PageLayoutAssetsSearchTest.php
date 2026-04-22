@@ -45,15 +45,15 @@ it('searches within page assets table in page layout context', function (): void
         ->assertCanSeeTableRecords([$first]);
 });
 
-it('searches within content assets table in page layout context', function (): void {
+it('searches within section assets table in page layout context', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
 
     $page = Page::factory()->layout($layout)->create();
-    $contents = Section::factory()->count(4)->create();
+    $sections = Section::factory()->count(4)->create();
 
-    $first = $contents->first();
+    $first = $sections->first();
 
     $arguments = [
         'containerKey' => $containerKey,

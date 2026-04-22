@@ -60,7 +60,7 @@ class SectionResource extends Resource
 
     public static function getResourceType(): string
     {
-        return 'Contents';
+        return 'Sections';
     }
 
     public static function getEloquentQuery(): Builder
@@ -120,7 +120,7 @@ class SectionResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return (string) (__('capell-mosaic::navigation.contents'));
+        return (string) (__('capell-mosaic::navigation.sections'));
     }
 
     public static function getPages(): array
@@ -144,12 +144,12 @@ class SectionResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('capell-admin::generic.content');
+        return __('capell-admin::generic.section');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('capell-admin::generic.contents');
+        return __('capell-admin::generic.sections');
     }
 
     public static function getRelations(): array

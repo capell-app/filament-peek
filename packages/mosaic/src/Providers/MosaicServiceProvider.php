@@ -193,7 +193,6 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
             serviceProviderClass: static::class,
             path: realpath(__DIR__ . '/../..'),
             version: $this->getVersion(),
-            permissions: $this->getPackagePermissions(),
         );
 
         return $this;
@@ -210,20 +209,6 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
         }
 
         return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
-    }
-
-    private function getPackagePermissions(): array
-    {
-        return [
-            'create_content',
-            'reorder_content',
-            'replicate_content',
-            'restore_any_content',
-            'restore_content',
-            'update_content',
-            'view_any_content',
-            'view_content',
-        ];
     }
 
     private function registerManager(): self
@@ -281,32 +266,32 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
 
     private function registerAssets(): self
     {
-        $contentAsset = AssetEnum::Section;
+        $sectionAsset = AssetEnum::Section;
 
         CapellCore::registerAsset(
             new AssetData(
-                name: $contentAsset->name,
-                model: $contentAsset->getModel(),
-                icon: $contentAsset->getIcon(),
-                hasTranslations: $contentAsset->hasTranslations(),
+                name: $sectionAsset->name,
+                model: $sectionAsset->getModel(),
+                icon: $sectionAsset->getIcon(),
+                hasTranslations: $sectionAsset->hasTranslations(),
             ),
         );
 
         CapellAdmin::registerAsset(
-            $contentAsset,
+            $sectionAsset,
             new AdminAssetData(
-                formClass: $contentAsset->getFormClass(),
-                createAction: $contentAsset->getCreateActionClass(),
-                defaultDataAction: $contentAsset->getDefaultDataActionClass(),
+                formClass: $sectionAsset->getFormClass(),
+                createAction: $sectionAsset->getCreateActionClass(),
+                defaultDataAction: $sectionAsset->getDefaultDataActionClass(),
             ),
         );
 
         // Defer frontend asset registration until the registry is resolved by FrontendServiceProvider
-        $this->callAfterResolving(AssetsRegistryInterface::class, function (AssetsRegistryInterface $assets) use ($contentAsset): void {
+        $this->callAfterResolving(AssetsRegistryInterface::class, function (AssetsRegistryInterface $assets) use ($sectionAsset): void {
             $assets->registerAsset(
-                $contentAsset,
+                $sectionAsset,
                 new FrontendAssetData(
-                    component: $contentAsset->getComponent(),
+                    component: $sectionAsset->getComponent(),
                 ),
             );
         });
@@ -522,7 +507,7 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
     private function registerRelationships(): self
     {
         Page::resolveRelationUsing(
-            'contents',
+            'sections',
             fn (Page $model): HasManyThrough => $model->hasManyThrough(
                 ModelEnum::Section->value,
                 ModelEnum::WidgetAsset->value,
@@ -553,12 +538,12 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
         );
 
         Site::resolveRelationUsing(
-            'contents',
+            'sections',
             fn (Site $model): HasMany => $model->hasMany(ModelEnum::Section->value, 'site_id'),
         );
 
         Type::resolveRelationUsing(
-            'contents',
+            'sections',
             fn (Type $model): HasMany => $model->hasMany(ModelEnum::Section->value, 'type_id'),
         );
 

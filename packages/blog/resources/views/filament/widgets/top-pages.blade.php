@@ -1,6 +1,6 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading">🏆 Top pages</x-slot>
+        <x-slot name="heading">Top pages</x-slot>
 
         @if ($data->pages->isEmpty())
             <p class="text-sm text-gray-500">No page views recorded yet.</p>

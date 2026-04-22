@@ -18,6 +18,7 @@ use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
 use Capell\Tests\Support\Concerns\BuildsOrderedMigrationWorkspace;
 use Capell\Tests\Support\Concerns\RegistersPublishedConfigs;
+use Capell\Tests\Support\Concerns\TestingFrontendWithVite;
 use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
@@ -82,6 +83,10 @@ abstract class AbstractTestCase extends TestCase
         }
 
         parent::setUp();
+
+        if (! in_array(TestingFrontendWithVite::class, class_uses_recursive(static::class), true)) {
+            $this->withoutVite();
+        }
 
         $this->loadMigrationsFrom($this->orderedMigrationWorkspacePath());
 

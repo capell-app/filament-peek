@@ -340,7 +340,7 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             );
 
             Tag::resolveRelationUsing(
-                'contents',
+                'sections',
                 fn (Tag $model): MorphToMany => $model->morphedByMany(Section::class, 'taggable', 'taggables'),
             );
         }

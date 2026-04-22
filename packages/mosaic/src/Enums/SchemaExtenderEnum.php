@@ -6,7 +6,7 @@ namespace Capell\Mosaic\Enums;
 
 enum SchemaExtenderEnum: string
 {
-    case Content = 'capell.content_schema.extenders';
+    case Section = 'capell.section_schema.extenders';
 
     case LayoutContainer = 'capell.layout_container_schema.extenders';
 

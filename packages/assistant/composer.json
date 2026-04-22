@@ -30,12 +30,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Capell\\Assistant\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Capell\\Assistant\\Tests\\": "tests/"
+            "Capell\\Assistant\\": "src/",
+            "Capell\\Assistant\\Database\\Factories\\": "packages/assistant/database/factories"
         }
     },
     "extra": {

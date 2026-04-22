@@ -7,9 +7,9 @@ declare(strict_types=1);
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Models\Section;
 
-it('has many contents', function (): void {
+it('has many sections', function (): void {
     $site = Site::factory()->create();
-    $content = Section::factory()->create(['site_id' => $site->id]);
+    $section = Section::factory()->create(['site_id' => $site->id]);
 
-    expect($site->contents->pluck('id'))->toContain($content->id);
+    expect($site->sections->pluck('id'))->toContain($section->id);
 });

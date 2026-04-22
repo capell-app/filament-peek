@@ -18,7 +18,7 @@ class ListSections extends ListRecords
     use ApplySearchRelationsTable;
     use HasSiteTableFilterTabs;
 
-    protected string $siteRelation = 'contents';
+    protected string $siteRelation = 'sections';
 
     /** @return class-string<SectionResource> */
     public static function getResource(): string
@@ -28,7 +28,7 @@ class ListSections extends ListRecords
 
     public function getSubheading(): string|Htmlable|null
     {
-        return __('capell-mosaic::generic.contents_info');
+        return __('capell-mosaic::generic.sections_info');
     }
 
     protected function getActions(): array

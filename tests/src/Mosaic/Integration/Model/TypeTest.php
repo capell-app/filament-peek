@@ -10,14 +10,14 @@ use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Models\Section;
 use Capell\Mosaic\Models\Widget;
 
-it('has many contents', function (): void {
+it('has many sections', function (): void {
     $type = (new ContentTypeFactory)->create();
 
     Section::factory()->create(['type_id' => $type->id]);
 
-    $type->refresh()->load('contents');
+    $type->refresh()->load('sections');
 
-    expect($type->getRelation('contents'))->toHaveCount(1);
+    expect($type->getRelation('sections'))->toHaveCount(1);
 });
 
 it('has many widgets', function (): void {
@@ -30,7 +30,7 @@ it('has many widgets', function (): void {
     expect($type->getRelation('widgets'))->toHaveCount(1);
 });
 
-it('can scope content type', function (): void {
+it('can scope section type', function (): void {
     Type::factory()->create(['type' => LayoutTypeEnum::Section]);
     Type::factory()->create(['type' => CoreTypeEnum::Page]);
 

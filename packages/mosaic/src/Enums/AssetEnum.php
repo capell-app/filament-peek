@@ -31,7 +31,7 @@ enum AssetEnum: string implements HasColor, HasIcon, HasLabel
     public function getIcon(): string|BackedEnum
     {
         return match ($this) {
-            self::Section => config('capell-mosaic.assets.section.icon', Heroicon::OutlinedFolder),
+            self::Section => config('capell-mosaic.assets.section.icon', Heroicon::OutlinedClipboardDocumentList),
         };
     }
 

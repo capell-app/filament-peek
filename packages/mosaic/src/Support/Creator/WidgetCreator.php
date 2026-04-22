@@ -196,7 +196,7 @@ class WidgetCreator
                 'content_divider' => true,
                 'limit' => 6,
                 'pagination' => false,
-                'with_summary' => false,
+                'with_summary' => true,
                 'with_link_text' => true,
                 'with_image' => true,
                 'columns' => 1,
@@ -211,6 +211,7 @@ class WidgetCreator
                 'language_id' => $language->id,
             ], [
                 'title' => __('capell-admin::heading.latest_pages'),
+                'content' => '<p>' . __('capell-mosaic::generic.latest_pages_description') . '</p>',
             ]);
         });
 

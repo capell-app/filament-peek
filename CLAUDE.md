@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Claude Code Guidelines for Capell Packages
 
 ## Project Overview
@@ -75,8 +79,10 @@ composer serve
 - **Formatting**: Laravel Pint (based on PSR-12)
 - **Static Analysis**: PHPStan level 5+ (must pass `composer analyze`)
 - **Refactoring**: Rector for consistency (check `composer rector`)
-- **Naming**: No single-letter or cryptic variable names anywhere (closures, migrations, example prose)
+- **Naming**: No single-letter or cryptic variable names anywhere (closures, migrations, example prose) — `$query` not `$q`, `$builder` not `$b`
+- **Closure typing**: All closures must declare parameter types and return types explicitly (`: void` when mutating a passed-in object)
 - **Comments**: Minimal; only when the WHY is non-obvious (hidden constraints, workarounds, subtle invariants)
+- **`php artisan` does not exist** in this package repo — use `vendor/bin/pest` directly and `orchestral/testbench` for Laravel integration
 
 ### JavaScript / Blade
 
@@ -108,6 +114,15 @@ Use extensively. Any structured value crossing a boundary is a `Data` object:
 - **Typed properties only** — no `mixed`, no untyped arrays. Use `DataCollection<T>` for lists.
 - **Prefer `readonly` properties** on DTOs where state is immutable.
 - **Don't wrap a single scalar in a `Data` class** — only use when it carries structure.
+
+#### Enums
+
+- **Backed enums for persisted values** — prefer string-backed for readability
+- **Case naming**: PascalCase for multi-word cases (`LanguageLocales`, `TotalSites`); UPPER_SNAKE_CASE only for domain state/status flags (`DRAFT`, `ARCHIVED`, `CANCELLED`)
+- **Don't mix naming styles** within a single enum
+- **Helpers inside the enum**: `label()`, `options()`, `isTerminal()` — keep calling code expressive; cache derived arrays with a static local variable
+- **Type-hint enums in all signatures** — never pass raw scalar values where an enum exists
+- **Placement**: `packages/{pkg}/src/Enums/`
 
 #### Actual conventions
 
@@ -153,18 +168,27 @@ packages/package-name/
 - **Plugins**: Pest Laravel, Pest Livewire, Pest Arch, Pest Type Coverage
 - **Coverage**: Minimum 80% required
 - **Run Tests**: `composer test` (parallel execution)
+- **Run a single package**: `php vendor/bin/pest packages/mosaic/tests`
 - **Run with Coverage**: `composer coverage` or `composer coverage-report`
+
+### Pest Style
+
+Use chaining for related assertions; split into separate `it()` blocks when they diverge:
+
+```php
+it('calculates totals')
+    ->expect($order)->subtotal->toBe(100_00)
+    ->and($order)->tax->toBe(18_00)
+    ->and($order)->total->toBe(118_00);
+```
+
+Keep names behavior-focused. Use `expect(...)->toContain(...)` rather than snapshot files for most output assertions.
 
 ### Demo Workbench
 
-- Located in `./demo/` directory
-- Pre-configured Laravel application for testing packages
-- Use `composer serve` to run locally
-- Test all package functionality before committing
-- **New**: Includes marketing pages (home, about, contact, features, add-ons showcase)
-- **New**: Livewire components for forms (newsletter signup, contact form)
-- **New**: Design system with Tailwind marketing theme and SVG illustrations
-- **New**: Seeded navigation and content demonstrating Capell capabilities
+- Located in `./demo/` directory — pre-configured Laravel application for testing packages
+- Use `composer serve` to run locally; verify in browser before committing
+- Includes marketing pages, Livewire form components, and seeded navigation/content
 
 ## Git & Commit Workflow
 
@@ -174,7 +198,7 @@ packages/package-name/
 2. **Run preflight**: `composer preflight` — fixes code style and checks static analysis
 3. **Verify no short variable names** in your changes
 4. **Test in demo workbench**: `composer serve` to verify package works end-to-end
-5. **Commit message**: Clear, imperative tone ("Add X", "Fix Y", not "Fixed" or "Changes")
+5. **Commit message**: Use semantic prefixes — `feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:` — followed by imperative ("feat: add hero banner widget")
 
 ### Batching Strategy (Preferred)
 
@@ -255,6 +279,7 @@ capell-packages-4/
 - All packages depend on `capell-app/core` at minimum
 - Some may depend on `capell-app/admin` for Filament integration
 - Minimize inter-package dependencies to keep packages loosely coupled
+- **Core must not import plugin classes** — no `use Capell\Address\...`, `use Capell\Blog\...`, or `use Capell\Mosaic\...` from Core. Cross-plugin coordination uses events, Artisan command names (strings), or shared filesystem paths — never compile-time imports
 
 ### Backward Compatibility
 
@@ -274,7 +299,7 @@ composer prepare
 composer serve
 
 # 3. In another terminal, run tests for a specific package
-php vendor/bin/pest packages/mosaic/tests
+vendor/bin/pest packages/mosaic/tests
 
 # 4. Check integration in the browser at http://localhost:8000
 ```
@@ -290,7 +315,7 @@ php vendor/bin/pest packages/mosaic/tests
 **Migration Errors**:
 
 - Ensure migration files are in `packages/package-name/database/migrations/`
-- Run `php artisan migrate --path=packages/package-name/database/migrations`
+- Run migrations via the demo workbench: `cd demo && php artisan migrate --path=../packages/package-name/database/migrations`
 
 **Tests Failing**:
 
@@ -355,12 +380,9 @@ Packages should **not duplicate** core functionality. When a feature is broadly 
 
 ## Documentation
 
+- **`docs/`**: Local docs — `ARCHITECTURE.md`, `actions-guidelines.md` (comprehensive Actions reference), `widget-blade-vs-livewire.md`, `openai-integration.md`
 - **Core Docs**: See `capell-app/capell` repository docs
-- **Package README**: Each package has its own README explaining:
-    - What it does
-    - Installation instructions
-    - Configuration options
-    - Usage examples
+- **Package README**: Each package has its own README explaining what it does, installation, configuration, and usage
 - **Contributing**: See CONTRIBUTING.md for pull request guidelines
 
 ## Tips for Claude Code Sessions

@@ -17,7 +17,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class TestimonialContentSchema extends DefaultContentSchema
+class TestimonialSectionSchema extends DefaultSectionSchema
 {
     public function make(Schema $schema): array
     {

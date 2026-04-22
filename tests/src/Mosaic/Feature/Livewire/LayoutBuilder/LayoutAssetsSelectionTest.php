@@ -14,13 +14,13 @@ use function Pest\Livewire\livewire;
 
 uses(CreatesAdminUser::class)->group('pages');
 
-$types = ['content', 'page'];
+$types = ['section', 'page'];
 
 beforeEach(function (): void {
     test()->actingAsAdmin();
 });
 
-it('filters by site for contents assets', function (): void {
+it('filters by site for sections assets', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
@@ -82,12 +82,12 @@ it('dispatches sync-selected-assets event with selected records for each asset t
 
     $site = Site::factory()->create();
     $records = match ($assetType) {
-        'content' => Section::factory()->recycle($site)->count(3)->create(),
+        'section' => Section::factory()->recycle($site)->count(3)->create(),
         'page' => Page::factory()->recycle($site)->count(3)->create(),
     };
 
     $component = match ($assetType) {
-        'content' => ContentAssets::class,
+        'section' => ContentAssets::class,
         'page' => PageAssets::class,
     };
 
@@ -116,12 +116,12 @@ it('dispatches sync-selected-assets event with selected records for each asset t
         ->assertDispatched('close-modal', id: 'select-assets');
 })->with($types);
 
-it('searches within contents assets table', function (): void {
+it('searches within sections assets table', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
     $containerKey = array_key_first($layout->containers);
     $widgetIndex = array_key_first($layout->containers[$containerKey]['widgets']);
 
-    $contents = Section::factory()->count(3)->create();
+    $sections = Section::factory()->count(3)->create();
 
     $arguments = [
         'containerKey' => $containerKey,
@@ -129,7 +129,7 @@ it('searches within contents assets table', function (): void {
         'widgetIndex' => $widgetIndex,
     ];
 
-    $first = $contents->first();
+    $first = $sections->first();
 
     livewire(ContentAssets::class, [
         'actionModalId' => 'select-assets',

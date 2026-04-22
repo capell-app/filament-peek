@@ -25,7 +25,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class HeroContentSchema extends DefaultContentSchema
+class HeroSectionSchema extends DefaultSectionSchema
 {
     protected function getMetaSchema(): array
     {

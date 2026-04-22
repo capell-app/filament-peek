@@ -61,7 +61,7 @@ test('can save without affecting widget assets', function (bool $withPage): void
         ->toBe(5);
 })->with(['with page' => true, 'without page' => false]);
 
-test('can sync new content and page assets to widget in page layout context', function (): void {
+test('can sync new section and page assets to widget in page layout context', function (): void {
     $firstWidget = Widget::factory(['key' => 'first'])->create();
     $secondWidget = Widget::factory(['key' => 'second'])->create();
 
@@ -100,7 +100,7 @@ test('can sync new content and page assets to widget in page layout context', fu
         ->create();
 
     // 5 to add
-    $contents = Section::factory()->count(2)->create();
+    $sections = Section::factory()->count(2)->create();
     $pages = Page::factory()->count(3)->create();
 
     // Excluded
@@ -124,7 +124,7 @@ test('can sync new content and page assets to widget in page layout context', fu
                 'hasPageAssets' => true,
             ],
             type: Capell\Mosaic\Enums\AssetEnum::Section->value,
-            assets: $contents->map(fn (Section $record): string => (string) $record->id)->all(),
+            assets: $sections->map(fn (Section $record): string => (string) $record->id)->all(),
         )
         ->call(
             'addAssetsToWidget',
@@ -146,11 +146,11 @@ test('can sync new content and page assets to widget in page layout context', fu
         ->toBe(0);
 });
 
-test('can sync new content and page assets to widget in layout context', function (): void {
+test('can sync new section and page assets to widget in layout context', function (): void {
     $layout = (new LayoutFactory)->containers()->create();
 
     // 5 to add
-    $contents = Section::factory()->count(2)->create();
+    $sections = Section::factory()->count(2)->create();
     $pages = Page::factory()->count(3)->create();
 
     $containerKey = array_key_first($layout->containers);
@@ -187,7 +187,7 @@ test('can sync new content and page assets to widget in layout context', functio
                 'hasPageAssets' => false,
             ],
             type: Capell\Mosaic\Enums\AssetEnum::Section->value,
-            assets: $contents->map(fn (Section $record): string => (string) $record->id)->all(),
+            assets: $sections->map(fn (Section $record): string => (string) $record->id)->all(),
         )
         ->call(
             'addAssetsToWidget',
@@ -216,7 +216,7 @@ test('can sync new page-specific assets with pageable reference', function (): v
 
     $widget = Widget::query()->firstWhere('key', $widgetKey);
 
-    $contents = Section::factory()->count(2)->create();
+    $sections = Section::factory()->count(2)->create();
     $pages = Page::factory()->count(3)->create();
 
     WidgetAsset::factory()
@@ -241,7 +241,7 @@ test('can sync new page-specific assets with pageable reference', function (): v
                 'hasPageAssets' => true,
             ],
             type: Capell\Mosaic\Enums\AssetEnum::Section->value,
-            assets: $contents->map(fn (Section $record): string => (string) $record->id)->all(),
+            assets: $sections->map(fn (Section $record): string => (string) $record->id)->all(),
         )
         ->call(
             'addAssetsToWidget',
@@ -566,7 +566,7 @@ test('can select assets', function (string $assetType): void {
         )
         ->callMountedAction()
         ->assertHasNoFormErrors();
-})->with(['page', 'content']);
+})->with(['page', 'section']);
 
 test('can edit asset', function (): void {
     $layout = (new LayoutFactory)->containers()->create();

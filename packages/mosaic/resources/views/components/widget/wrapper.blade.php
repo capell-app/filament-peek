@@ -75,7 +75,6 @@ declare(strict_types=1);
             'my-20' => in_array('xl', $margin, true),
             'mt-20' => in_array('t-xl', $margin, true),
             'mb-20' => in_array('b-xl', $margin, true),
-            'bg-body' => $backgroundor === 'body',
             'bg-black' => $backgroundColor === DefaultColorEnum::Black->value,
             'bg-dark-gray' => $backgroundColor === DefaultColorEnum::DarkGray->value,
             'bg-danger' => $backgroundColor === DefaultColorEnum::Danger->value,

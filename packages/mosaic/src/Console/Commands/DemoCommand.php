@@ -435,7 +435,7 @@ class DemoCommand extends Command
 
     private function createSiteContents(ContentCreator $contentCreator, array $data, Site $site, ?Collection $languages = null, ?Section $parent = null): void
     {
-        if ($site->contents()->count() > 28) {
+        if ($site->sections()->count() > 28) {
             $this->setProgressMessage('Content limit reached.');
 
             return;

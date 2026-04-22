@@ -254,7 +254,7 @@ class SectionsTable implements TableConfigurator
                             /** @var class-string<Section> $model */
                             $model = CapellCore::getModel(ModelEnum::Section->name);
 
-                            $contents = $model::with([
+                            $sections = $model::with([
                                 'site',
                                 'ancestors',
                             ])
@@ -272,14 +272,14 @@ class SectionsTable implements TableConfigurator
                                 ->orderBy('_lft')
                                 ->get();
 
-                            return $contents->mapWithKeys(function (Section $content) use ($siteId): array {
+                            return $sections->mapWithKeys(function (Section $section) use ($siteId): array {
                                 $label = '';
 
-                                if (! $siteId && $content->site) {
-                                    $label .= $content->site->name . ' &raquo; ';
+                                if (! $siteId && $section->site) {
+                                    $label .= $section->site->name . ' &raquo; ';
                                 }
 
-                                $ancestors = $content->ancestors()->get();
+                                $ancestors = $section->ancestors()->get();
 
                                 if ($ancestors->isNotEmpty()) {
                                     $label .= $ancestors->pluck('name')
@@ -288,9 +288,9 @@ class SectionsTable implements TableConfigurator
                                         . ' &raquo; ';
                                 }
 
-                                $label .= Str::limit($content->name, 40);
+                                $label .= Str::limit($section->name, 40);
 
-                                return [$content->id => $label];
+                                return [$section->id => $label];
                             })
                                 ->all();
                         }),

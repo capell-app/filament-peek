@@ -30,12 +30,12 @@ it('has many widgets', function (): void {
         ->and($page->widgets->pluck('id'))->toContain($widget->id);
 });
 
-it('has many contents through widget assets', function (): void {
+it('has many sections through widget assets', function (): void {
     $page = Page::factory()->create();
-    $content = Section::factory()->create();
-    WidgetAsset::factory()->asset($content)->page($page)->create();
+    $section = Section::factory()->create();
+    WidgetAsset::factory()->asset($section)->page($page)->create();
 
-    expect($page->contents->pluck('id')->toArray())->toContain($content->id);
+    expect($page->sections->pluck('id')->toArray())->toContain($section->id);
 });
 
 it('returns empty collections when no relations exist', function (): void {
@@ -43,7 +43,7 @@ it('returns empty collections when no relations exist', function (): void {
 
     expect($page->widgetAssets)->toBeEmpty();
     expect($page->widgets)->toBeEmpty();
-    expect($page->contents)->toBeEmpty();
+    expect($page->sections)->toBeEmpty();
 });
 
 it('has correct relation types', function (): void {
@@ -51,5 +51,5 @@ it('has correct relation types', function (): void {
 
     expect($page->widgetAssets())->toBeInstanceOf(MorphMany::class);
     expect($page->widgets())->toBeInstanceOf(MorphToMany::class);
-    expect($page->contents())->toBeInstanceOf(HasManyThrough::class);
+    expect($page->sections())->toBeInstanceOf(HasManyThrough::class);
 });

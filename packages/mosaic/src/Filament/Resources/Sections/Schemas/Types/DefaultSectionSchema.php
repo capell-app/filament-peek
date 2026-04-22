@@ -27,15 +27,15 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
-class DefaultContentSchema implements TypeSchemaInterface
+class DefaultSectionSchema implements TypeSchemaInterface
 {
     use HasTypeSchema;
 
-    public static SchemaTypeEnumInterface $schemaType = TypeSchemaEnum::Content;
+    public static SchemaTypeEnumInterface $schemaType = TypeSchemaEnum::Section;
 
     public static function getExtenders(): iterable
     {
-        return app()->tagged(SchemaExtenderEnum::Content->value);
+        return app()->tagged(SchemaExtenderEnum::Section->value);
     }
 
     public function make(Schema $schema): array

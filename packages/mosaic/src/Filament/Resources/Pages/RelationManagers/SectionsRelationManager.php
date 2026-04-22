@@ -17,7 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class ContentsRelationManager extends RelationManager
+class SectionsRelationManager extends RelationManager
 {
     use HasFormConfigurator;
     use HasRelationManagerBadge;
@@ -25,7 +25,7 @@ class ContentsRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string $relationship = 'contents';
+    protected static string $relationship = 'sections';
 
     protected static string $formConfigurator = SectionForm::class;
 
@@ -33,7 +33,7 @@ class ContentsRelationManager extends RelationManager
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('capell-admin::generic.contents');
+        return __('capell-admin::generic.sections');
     }
 
     public static function getIcon(Model $ownerRecord, string $pageClass): string|BackedEnum|null

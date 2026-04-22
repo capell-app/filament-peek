@@ -158,7 +158,6 @@ $theme = Frontend::theme();
                                     :color="$slideColorScheme"
                                     :size="! $images?->isNotEmpty() ? 'lg' : 'md'"
                                 >
-                                    index: #{{ $loop->index }}
                                     {!! $widgetAsset->asset->translation->content !!}
 
                                     @if ($widgetAsset->asset->getMeta('link_text'))

@@ -23,13 +23,13 @@ it('has many pages through widget assets', function (): void {
     expect($widget->pages->pluck('id'))->toContain($page->id);
 });
 
-it('has many contents through widget assets', function (): void {
+it('has many sections through widget assets', function (): void {
     $widget = Widget::factory()->create();
-    $content = Section::factory()->create();
+    $section = Section::factory()->create();
 
-    WidgetAsset::factory()->widget($widget)->asset($content)->create();
+    WidgetAsset::factory()->widget($widget)->asset($section)->create();
 
-    expect($widget->contents->pluck('id'))->toContain($content->id);
+    expect($widget->sections->pluck('id'))->toContain($section->id);
 });
 
 it('can scope sorted', function (): void {

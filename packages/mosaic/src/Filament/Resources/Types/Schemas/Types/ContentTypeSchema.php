@@ -9,7 +9,7 @@ use Capell\Admin\Filament\Components\Forms\IconPicker;
 use Capell\Admin\Filament\Components\Forms\RequiredFields;
 use Capell\Admin\Filament\Components\Forms\SchemaSelect;
 use Capell\Admin\Filament\Resources\Types\Schemas\Types\DefaultTypeSchema;
-use Capell\Mosaic\Enums\ContentSchemaEnum;
+use Capell\Mosaic\Enums\SectionSchemaEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Group;
@@ -43,8 +43,8 @@ class ContentTypeSchema extends DefaultTypeSchema
             ->columns()
             ->schema([
                 SchemaSelect::make('schema')
-                    ->default(fn (): string => ContentSchemaEnum::Default->name)
-                    ->setupOptions(TypeSchemaEnum::Content),
+                    ->default(fn (): string => SectionSchemaEnum::Default->name)
+                    ->setupOptions(TypeSchemaEnum::Section),
                 IconPicker::make('icon')
                     ->label(__('capell-admin::form.admin_icon')),
                 ContentStructureSelect::make('content_structure'),

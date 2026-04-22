@@ -334,6 +334,8 @@ export function buildSwiperSettings(swiperNode, options, controls, signal) {
         loop: options.loop,
         observeParents: true,
         observer: true,
+        preventClicks: false,
+        preventClicksPropagation: false,
         rewind: options.loop ? false : options.rewind,
         slidesPerView: options.fadeEnabled ? 1 : options.perView,
         spaceBetween: 0,

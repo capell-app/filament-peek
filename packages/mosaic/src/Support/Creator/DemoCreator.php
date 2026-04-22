@@ -29,7 +29,7 @@ use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Enums\WidgetTypeEnum;
-use Capell\Mosaic\Filament\Resources\Sections\Schemas\Types\TestimonialContentSchema;
+use Capell\Mosaic\Filament\Resources\Sections\Schemas\Types\TestimonialSectionSchema;
 use Capell\Mosaic\Models\Section;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
@@ -1831,7 +1831,7 @@ class DemoCreator
             'name' => 'Testimonial',
             'admin' => [
                 'icon' => 'heroicon-o-chat-bubble-left-right',
-                'schema' => TestimonialContentSchema::getKey(),
+                'schema' => TestimonialSectionSchema::getKey(),
             ],
         ]);
 

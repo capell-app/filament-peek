@@ -43,6 +43,8 @@ class WidgetResource extends Resource
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Cube;
 
+    protected static ?int $navigationSort = 2;
+
     public static function form(Schema $schema): Schema
     {
         return static::getFormConfigurator()::configure($schema);
