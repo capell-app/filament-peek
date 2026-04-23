@@ -79,7 +79,7 @@ class WorkspacesServiceProvider extends ServiceProvider
 
         // Page requires a finalizeOnPublish hook to retarget PageUrl + Translation rows.
         WorkspaceRegistry::register(Page::class, finalizeOnPublish: static function (Page $draftRow): Page {
-            if ($draftRow->uuid === null || $draftRow->uuid === '') {
+            if ($draftRow->uuid === null || $draftRow->uuid === '' || (int) $draftRow->workspace_id === 0) {
                 return $draftRow;
             }
 
