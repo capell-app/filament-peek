@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\Themes\Agency\SEO;
 
+use Capell\SeoTools\Themes\SEO\AbstractThemeSchemaGenerator;
 use Capell\Themes\Agency\Data\AgencyThemeSettings;
 use Capell\Themes\Core\Data\ThemeSettings;
-use Capell\Themes\Core\SEO\AbstractThemeSchemaGenerator;
 
 class StructuredDataGenerator extends AbstractThemeSchemaGenerator
 {

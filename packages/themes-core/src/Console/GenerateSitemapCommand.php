@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Themes\Core\Console;
 
-use Capell\Themes\Core\SEO\SitemapGenerator;
+use Capell\SeoTools\Themes\SEO\SitemapGenerator;
 use Illuminate\Console\Command;
 
 class GenerateSitemapCommand extends Command

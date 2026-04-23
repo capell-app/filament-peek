@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\Themes\Core\SEO;
+namespace Capell\SeoTools\Themes\SEO;
 
 use DOMDocument;
 use Illuminate\Database\ConnectionInterface;
