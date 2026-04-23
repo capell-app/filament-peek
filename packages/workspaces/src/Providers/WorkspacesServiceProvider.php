@@ -63,6 +63,8 @@ class WorkspacesServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+
         $this->registerMorphMap()
             ->registerWorkspaceDraftables()
             ->applyBehaviorToExternalModels()
