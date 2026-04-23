@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Livewire\Filament\Concerns;
 
 use Capell\Core\Contracts\Pageable;
+use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Exception;

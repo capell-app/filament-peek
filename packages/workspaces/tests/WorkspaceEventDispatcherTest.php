@@ -38,6 +38,7 @@ test('dispatcher calls beforePublish on all subscribers', function (): void {
         public function afterDelete(Workspace $workspace): void {}
     };
 
+    app()->instance($subscriber::class, $subscriber);
     CapellWorkspaces::subscribe($subscriber::class);
 
     $dispatcher = resolve(WorkspaceEventDispatcher::class);
@@ -116,6 +117,7 @@ test('dispatcher calls afterPublish on all subscribers', function (): void {
         public function afterDelete(Workspace $workspace): void {}
     };
 
+    app()->instance($subscriber::class, $subscriber);
     CapellWorkspaces::subscribe($subscriber::class);
 
     $dispatcher = resolve(WorkspaceEventDispatcher::class);

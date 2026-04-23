@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Widgets\TotalAccessLogsWidget;
+use Capell\Admin\Filament\Widgets\Health\TotalAccessLogsWidget;
 use Capell\Blog\Models\Article;
 use Capell\Core\Models\AccessLog;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;

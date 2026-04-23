@@ -8,6 +8,7 @@ use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasFormConfigurator;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
 use Capell\Admin\Filament\Concerns\HasTableConfigurator;
+use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\CreateSection;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\EditSection;

@@ -8,6 +8,7 @@ use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Models\Article;
 use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Contracts\Pageable;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Actions\AddHeroWidgetToLayoutAction;

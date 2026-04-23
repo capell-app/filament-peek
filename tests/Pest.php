@@ -43,4 +43,7 @@ pest()->extends(ThemesAdminTestCase::class)
     ->in($testsRoot . DIRECTORY_SEPARATOR . 'ThemesAdmin');
 
 pest()->extends(WorkspacesTestCase::class)
+    ->in($testsRoot . DIRECTORY_SEPARATOR . 'Workspaces');
+
+pest()->extends(WorkspacesTestCase::class)
     ->in(__DIR__ . '/../packages/workspaces/tests');

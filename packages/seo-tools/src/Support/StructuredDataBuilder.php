@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\SeoTools\Themes\SEO;
+namespace Capell\SeoTools\Support;
 
 use LogicException;
 

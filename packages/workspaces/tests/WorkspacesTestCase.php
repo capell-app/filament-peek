@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Tests;
 
+use Capell\Core\Facades\CapellCore;
 use Capell\Tests\AbstractTestCase;
 use Capell\Workspaces\Providers\WorkspacesServiceProvider;
 use Illuminate\Foundation\Application;
+use Livewire\LivewireServiceProvider;
 use Override;
 
 class WorkspacesTestCase extends AbstractTestCase
@@ -15,6 +17,19 @@ class WorkspacesTestCase extends AbstractTestCase
     protected function getPackageServiceName(): string
     {
         return 'workspaces';
+    }
+
+    #[Override]
+    protected function getEnvironmentSetUp(mixed $app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        CapellCore::registerPackage(
+            'capell-app/workspaces',
+            path: realpath(__DIR__ . '/..'),
+        );
+
+        CapellCore::forcePackageInstalled('capell-app/workspaces');
     }
 
     /**
@@ -27,6 +42,7 @@ class WorkspacesTestCase extends AbstractTestCase
         $providers = parent::getPackageProviders($app);
 
         return array_merge($providers, [
+            LivewireServiceProvider::class,
             WorkspacesServiceProvider::class,
         ]);
     }

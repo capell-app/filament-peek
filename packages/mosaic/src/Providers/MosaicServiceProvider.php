@@ -35,6 +35,7 @@ use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\ComponentTypeEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\LivewireComponentsEnum;
+use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\ResourceEnum as LayoutResourceEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Capell\Mosaic\Filament\Extenders\Page\HeroPageSchemaExtender;

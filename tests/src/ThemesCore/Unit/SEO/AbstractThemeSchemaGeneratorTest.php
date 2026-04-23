@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Themes\Core\SEO\AbstractThemeSchemaGenerator;
+use Capell\SeoTools\Themes\SEO\AbstractThemeSchemaGenerator;
 
 $makeGenerator = (fn (): AbstractThemeSchemaGenerator => new class extends AbstractThemeSchemaGenerator
 {

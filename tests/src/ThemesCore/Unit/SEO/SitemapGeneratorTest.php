@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Themes\Core\SEO\SitemapGenerator;
+use Capell\SeoTools\Themes\SEO\SitemapGenerator;
 use Illuminate\Database\Capsule\Manager;
 
 test('add() accumulates URLs and count() returns the correct count', function (): void {

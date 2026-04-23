@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Themes\Core\SEO\CanonicalUrl;
+use Capell\SeoTools\Themes\SEO\CanonicalUrl;
 use Illuminate\Http\Request;
 
 test('strips UTM parameters', function (): void {

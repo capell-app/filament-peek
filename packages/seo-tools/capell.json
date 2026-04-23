@@ -6,8 +6,7 @@
     "requires": ["capell-app/admin", "capell-app/frontend"],
     "providers": {
         "shared": [
-            "Capell\\SeoTools\\Providers\\SeoToolsServiceProvider",
-            "Capell\\SeoTools\\Assistant\\Providers\\AssistantServiceProvider"
+            "Capell\\SeoTools\\Providers\\SeoToolsServiceProvider"
         ]
     }
 }

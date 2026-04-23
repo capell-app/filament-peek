@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Themes\Core\SEO\StructuredDataBuilder;
+use Capell\SeoTools\Themes\SEO\StructuredDataBuilder;
 
 test('organization schema renders valid JSON-LD with @type Organization', function (): void {
     $builder = new StructuredDataBuilder;

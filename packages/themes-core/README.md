@@ -92,7 +92,7 @@ $checker->meetsAAA($ratio);     // bool — ≥ 7.0
 ### Structured data (JSON-LD)
 
 ```php
-use Capell\SeoTools\Themes\SEO\StructuredDataBuilder;
+use Capell\SeoTools\Support\StructuredDataBuilder;
 
 $ld = StructuredDataBuilder::new()
     ->organization('Acme Corp', 'https://acme.example')

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Admin\Filament\Resources\Media\Tables\MediaTable;
 use Capell\Admin\Filament\Resources\Pages\PageResource;
+use Capell\Media\Filament\Resources\Media\Tables\MediaTable;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 it('returns null for media without model', function (): void {
