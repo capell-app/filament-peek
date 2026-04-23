@@ -61,7 +61,7 @@ class CompareVersionPage extends Page
      */
     public function getDiffs(): Collection
     {
-        return (new WorkspaceDiffService)->diff($this->getWorkspace());
+        return (new WorkspaceDiffService)->diffTree($this->getWorkspace());
     }
 
     public function renderHtmlDiff(mixed $before, mixed $after): string

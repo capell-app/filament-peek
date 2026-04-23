@@ -202,6 +202,16 @@ class WorkspaceDiffService
         );
     }
 
+    public function mediaDiff(mixed $before, mixed $after): MediaDiffResult
+    {
+        return (new MediaDiffService)->compare($before, $after);
+    }
+
+    public function isMediaAttribute(mixed $value): bool
+    {
+        return (new MediaDiffService)->looksLikeMedia($value);
+    }
+
     /**
      * @param  class-string<Model>  $modelClass
      * @return array{
