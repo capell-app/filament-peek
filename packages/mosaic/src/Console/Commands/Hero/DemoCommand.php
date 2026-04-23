@@ -8,8 +8,6 @@ use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Models\Article;
 use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Actions\AddHeroWidgetToLayoutAction;
@@ -86,7 +84,7 @@ class DemoCommand extends Command
     private function getSitesByNames(array $siteNames): Collection
     {
         /** @var class-string<Site> $model */
-        $model = CapellCore::getModel(ModelEnum::Site);
+        $model = Site::class;
 
         return $model::query()
             ->with(['language', 'languages'])
@@ -100,7 +98,7 @@ class DemoCommand extends Command
         $this->line(sprintf('Selected site: %s', $site->name));
 
         /** @var class-string<Page> $model */
-        $model = CapellCore::getModel(ModelEnum::Page);
+        $model = Page::class;
 
         $homepage = $model::getSiteHomePage($site);
 
@@ -122,7 +120,7 @@ class DemoCommand extends Command
     private function updateBlogHeroContent(Site $site): void
     {
         /** @var class-string<Page> $model */
-        $model = CapellCore::getModel(ModelEnum::Page);
+        $model = Page::class;
 
         $model::query()
             ->with('translations.language')
@@ -142,7 +140,7 @@ class DemoCommand extends Command
     private function addHeroContentToArticlePages(Site $site): void
     {
         /** @var class-string<Article> $model */
-        $model = CapellCore::getModel(BlogPageTypeEnum::Article);
+        $model = Article::class;
 
         $model::query()
             ->with('translations.language')

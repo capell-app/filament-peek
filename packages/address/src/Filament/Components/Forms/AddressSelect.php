@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Address\Filament\Components\Forms;
 
-use Capell\Address\Enums\ModelEnum;
 use Capell\Address\Filament\Resources\Addresses\Schemas\AddressForm;
 use Capell\Address\Models\Address;
-use Capell\Core\Facades\CapellCore;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
@@ -27,7 +25,7 @@ class AddressSelect extends Select
             ->options(
                 function (self $component): array {
                     /** @var class-string<Address> $model */
-                    $model = CapellCore::getModel(ModelEnum::Address);
+                    $model = Address::class;
 
                     return $model::query()
                         ->limit($component->getOptionsLimit())
@@ -40,7 +38,7 @@ class AddressSelect extends Select
             ->getSelectedRecordUsing(
                 function (int $state): Address {
                     /** @var class-string<Address> $model */
-                    $model = CapellCore::getModel(ModelEnum::Address);
+                    $model = Address::class;
 
                     return $model::query()
                         ->find($state);
@@ -49,7 +47,7 @@ class AddressSelect extends Select
             ->getOptionLabelUsing(
                 function (?string $value): ?string {
                     /** @var class-string<Address> $model */
-                    $model = CapellCore::getModel(ModelEnum::Address);
+                    $model = Address::class;
 
                     return $model::query()
                         ->whereKey($value)
@@ -59,7 +57,7 @@ class AddressSelect extends Select
             ->getSearchResultsUsing(
                 function (self $component, string $search): array {
                     /** @var class-string<Address> $model */
-                    $model = CapellCore::getModel(ModelEnum::Address);
+                    $model = Address::class;
 
                     return $model::query()
                         ->where(fn (Builder $query): Builder => $query->where('address_line_1', 'like', sprintf('%%%s%%', $search))
@@ -82,7 +80,7 @@ class AddressSelect extends Select
             ->createOptionAction(
                 fn (Action $action): Action => $action
                     ->modalHeading(__('capell-address::generic.address'))
-                    ->model(CapellCore::getModel(ModelEnum::Address))
+                    ->model(Address::class)
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
@@ -107,7 +105,7 @@ class AddressSelect extends Select
                 fn (Action $action): Action => $action
                     ->modalHeading(__('capell-address::generic.address'))
                     ->modalWidth(Width::ScreenMedium)
-                    ->model(CapellCore::getModel(ModelEnum::Address))
+                    ->model(Address::class)
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.updated_successfully',

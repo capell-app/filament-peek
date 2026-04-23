@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Livewire\Filament\Concerns;
 
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Exception;
@@ -635,7 +633,7 @@ trait ManagesAssets
     protected function loadWidgetAssets(Widget $widget, string $containerKey, int $widgetOccurrence): Collection
     {
         /** @var class-string<WidgetAsset> $model */
-        $model = CapellCore::getModel(ModelEnum::WidgetAsset->name);
+        $model = WidgetAsset::class;
 
         $assets = $model::query()
             ->with([
@@ -714,7 +712,7 @@ trait ManagesAssets
     protected function buildPreloadedWidgetAssets(array $existingIds, array $newAssets): Collection
     {
         /** @var class-string<WidgetAsset> $model */
-        $model = CapellCore::getModel(ModelEnum::WidgetAsset->name);
+        $model = WidgetAsset::class;
 
         $existingAssets = $existingIds === []
             ? (new $model)->newCollection()

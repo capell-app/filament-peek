@@ -9,8 +9,6 @@ use Capell\Blog\Enums\BlogTypeGroupEnum;
 use Capell\Blog\Support\Loader\BlogLoader;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Data\SitemapPageData;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\SeoTools\Support\Sitemap\AbstractSitemapPages;
 use Capell\SeoTools\Support\Sitemap\SitemapChainBuilder;
@@ -21,7 +19,7 @@ class ArchivesSitemap extends AbstractSitemapPages
     public function fetch(): Collection
     {
         /** @var class-string<Page> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Page);
+        $model = Page::class;
 
         $maybeArchivePage = $model::getFirstPageByTypeForSite('archive', $this->site, $this->language);
         if (! ($maybeArchivePage instanceof Pageable)) {

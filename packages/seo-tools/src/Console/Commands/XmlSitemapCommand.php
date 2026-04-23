@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Console\Commands;
 
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\SiteDomain;
 use Capell\SeoTools\Support\Sitemap\XmlSitemapGenerator;
@@ -103,7 +101,7 @@ class XmlSitemapCommand extends Command
     private function getSites(): Collection
     {
         /** @var class-string<Site> $model */
-        $model = CapellCore::getModel(ModelEnum::Site);
+        $model = Site::class;
 
         $query = $model::query()
             ->with('siteDomains.language')

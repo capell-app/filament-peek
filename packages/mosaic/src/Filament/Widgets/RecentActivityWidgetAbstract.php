@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Filament\Widgets;
 
 use Capell\Admin\Filament\Widgets\CapellWidget;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Page;
 use Capell\Mosaic\Data\Dashboard\ActivityItemData;
 use Capell\Mosaic\Data\Dashboard\RecentActivityData;
 
@@ -29,7 +28,7 @@ final class RecentActivityWidgetAbstract extends CapellWidget
 
     private function getData(): RecentActivityData
     {
-        $pageModel = CapellCore::getModel(ModelEnum::Page);
+        $pageModel = Page::class;
 
         $pages = $pageModel::query()
             ->with('translation')

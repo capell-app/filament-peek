@@ -8,7 +8,6 @@ use BackedEnum;
 use Capell\Admin\Filament\Resources\Pages\PageResource;
 use Capell\Blog\Actions\GetArticleLayoutAction;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
-use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Filament\Resources\Articles\Pages\CreateArticle;
 use Capell\Blog\Filament\Resources\Articles\Pages\EditArticle;
@@ -16,13 +15,14 @@ use Capell\Blog\Filament\Resources\Articles\Pages\ListArticles;
 use Capell\Blog\Filament\Resources\Articles\Schemas\ArticleForm;
 use Capell\Blog\Filament\Resources\Articles\Tables\ArticlePagesTable;
 use Capell\Blog\Models\Article;
+use Capell\Blog\Models\Article;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Blog\Support\Loader\BlogLoader;
 use Capell\Core\Actions\GetNameFromTranslationsAction;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\Type;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Contracts\Support\Htmlable;
@@ -46,7 +46,7 @@ class ArticleResource extends PageResource
      */
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Article->name);
+        return Article::class;
     }
 
     public static function getResourceType(): string
@@ -121,7 +121,7 @@ class ArticleResource extends PageResource
         $data['layout_id'] = GetArticleLayoutAction::run()?->id;
 
         /* @var class-string<\Capell\Core\Models\Type> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Type);
+        $model = Type::class;
 
         $data['type_id'] = $model::query()
             ->pageType()
@@ -131,7 +131,7 @@ class ArticleResource extends PageResource
         $siteId = $data['site_id'] ?? null;
 
         /* @var class-string<\Capell\Core\Models\Site> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Site);
+        $model = Site::class;
 
         $site = $model::query()->find($siteId) ?? $model::default()->first();
 

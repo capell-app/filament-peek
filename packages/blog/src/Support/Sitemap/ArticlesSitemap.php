@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Capell\Blog\Support\Sitemap;
 
 use Capell\Blog\Enums\BlogTypeGroupEnum;
-use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Models\Article;
 use Capell\Blog\Support\Loader\BlogLoader;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Data\SitemapPageData;
 use Capell\Core\Enums\PageOrderEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Capell\SeoTools\Support\Sitemap\AbstractSitemapPages;
 use Exception;
@@ -36,7 +34,7 @@ class ArticlesSitemap extends AbstractSitemapPages
             limit: 100,
             ordering: PageOrderEnum::Latest,
             pageGroup: BlogTypeGroupEnum::Article->value,
-            morphModel: CapellCore::getModel(ModelEnum::Article),
+            morphModel: Article::class,
         );
 
         $node->children = $articles->map(

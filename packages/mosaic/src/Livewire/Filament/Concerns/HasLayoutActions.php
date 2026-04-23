@@ -8,10 +8,8 @@ use BackedEnum;
 use Capell\Admin\Actions\ReplicateLayoutAction;
 use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Site;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Capell\Mosaic\Exceptions\MissingWidgetAssetException;
 use Capell\Mosaic\Filament\Resources\Pages\Tables\PageSelectionTable;
@@ -426,7 +424,7 @@ trait HasLayoutActions
                         ->record(fn (): WidgetAsset => $this->makeWidgetAssetRecordForCreate($arguments)),
                 ),
             )
-            ->model(fn (): string => CapellCore::getModel(ModelEnum::WidgetAsset->name))
+            ->model(fn (): string => WidgetAsset::class)
             ->fillForm(function (array $arguments): array {
                 $containerKey = $arguments['containerKey'];
                 $widgetIndex = $arguments['widgetIndex'];
@@ -742,7 +740,7 @@ trait HasLayoutActions
         $widget = $this->getContainerWidget($containerKey, $widgetIndex);
 
         /** @var class-string<WidgetAsset> $model */
-        $model = CapellCore::getModel(ModelEnum::WidgetAsset->name);
+        $model = WidgetAsset::class;
 
         $record = $model::query()->make([
             'widget_id' => $widget->id,
@@ -859,7 +857,7 @@ trait HasLayoutActions
                 )
                 ->default(function () {
                     /** @var class-string<Layout> $model */
-                    $model = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Layout);
+                    $model = Layout::class;
 
                     return $model::query()->default()->first(['id'])?->id;
                 })

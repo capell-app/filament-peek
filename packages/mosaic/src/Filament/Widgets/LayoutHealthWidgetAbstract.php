@@ -6,12 +6,12 @@ namespace Capell\Mosaic\Filament\Widgets;
 
 use Capell\Admin\Filament\Widgets\CapellWidget;
 use Capell\Core\Enums\PublishStatusEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Layout;
 use Capell\Mosaic\Data\Dashboard\LayoutHealthData;
 use Capell\Mosaic\Data\Dashboard\LeastUsedWidgetData;
 use Capell\Mosaic\Data\Dashboard\UnusedWidgetData;
 use Capell\Mosaic\Data\Dashboard\WidgetGroupData;
-use Capell\Mosaic\Enums\ModelEnum;
+use Capell\Mosaic\Models\Section;
 use Capell\Mosaic\Models\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -38,20 +38,20 @@ final class LayoutHealthWidgetAbstract extends CapellWidget
     private function getData(): LayoutHealthData
     {
         /** @var class-string<Widget> $widgetModel */
-        $widgetModel = CapellCore::getModel(ModelEnum::Widget);
+        $widgetModel = Widget::class;
 
         // Get total widget counts
         $totalWidgets = $widgetModel::query()->count();
         $widgetsByGroup = $this->getWidgetsByGroup($widgetModel);
 
         // Get section counts
-        $sectionModel = CapellCore::getModel(ModelEnum::Section);
+        $sectionModel = Section::class;
         $totalSections = $sectionModel::query()->count();
         $publishedSections = $sectionModel::query()->publishedDate()->count();
         $draftSections = $sectionModel::query()->pending()->count();
 
         // Layouts with workspace_id > 0 are draft copies with pending modifications
-        $layoutModel = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Layout);
+        $layoutModel = Layout::class;
         $layoutsWithModifications = $layoutModel::query()->where('workspace_id', '>', 0)->count();
 
         // Get least-used widgets

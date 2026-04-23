@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Support\Creator;
 
-use Capell\Blog\Enums\ModelEnum;
+use Capell\Blog\Models\Article;
 use Capell\Core\Contracts\ModelInterceptors\PageInterceptorInterface;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Enums\PageTypeEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -22,7 +21,7 @@ class ArticleCreator extends PageCreator
     {
         parent::__construct();
 
-        $this->pageModel = CapellCore::getModel(ModelEnum::Article);
+        $this->pageModel = Article::class;
     }
 
     public function createPage(array $data, Site $site, Collection $languages): Pageable

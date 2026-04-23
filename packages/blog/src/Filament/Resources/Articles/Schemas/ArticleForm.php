@@ -12,8 +12,6 @@ use Capell\Blog\Filament\Schemas\Articles\ArticlePageSchema;
 use Capell\Blog\Models\Article;
 use Capell\Blog\Support\Creator\BlogCreator;
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -39,7 +37,7 @@ class ArticleForm implements FormConfigurator
 
                         if ($typeId !== null) {
                             /** @var class-string<Type> $model */
-                            $model = CapellCore::getModel(ModelEnum::Type);
+                            $model = Type::class;
 
                             $admin = $model::query()->where('id', $typeId)->value('admin');
                         } else {

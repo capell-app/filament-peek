@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Address\Filament\Resources\Countries;
 
 use BackedEnum;
-use Capell\Address\Enums\ModelEnum;
 use Capell\Address\Filament\Resources\Countries\Pages\ManageCountries;
 use Capell\Address\Filament\Resources\Countries\Schemas\CountryForm;
 use Capell\Address\Filament\Resources\Countries\Tables\CountriesTable;
@@ -59,7 +58,7 @@ class CountryResource extends Resource
     #[Override]
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Country);
+        return Country::class;
     }
 
     public static function getNavigationLabel(): string

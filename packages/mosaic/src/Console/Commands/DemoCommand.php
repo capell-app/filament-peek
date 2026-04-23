@@ -8,8 +8,6 @@ use Capell\Core\Console\Commands\Concerns\HasSitesOption;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\LayoutEnum;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -49,7 +47,7 @@ class DemoCommand extends Command
         $siteOptions = $this->getSiteOptions();
 
         /** @var class-string<Site> $model */
-        $model = CapellCore::getModel(ModelEnum::Site);
+        $model = Site::class;
 
         $sites = $model::query()->with(['languages'])->whereIn('name', $siteOptions)->get();
 
@@ -170,7 +168,7 @@ class DemoCommand extends Command
     {
         if ($this->option('user')) {
             /** @var class-string<User> $model */
-            $model = CapellCore::getModel('User');
+            $model = config('auth.providers.users.model');
 
             return $model::query()->first();
         }
@@ -480,7 +478,7 @@ class DemoCommand extends Command
 
     private function getHomeLayout(): ?Layout
     {
-        $model = CapellCore::getModel(ModelEnum::Layout);
+        $model = Layout::class;
         $layout = $model::query()->firstWhere('key', LayoutEnum::Home);
 
         return $layout instanceof Layout ? $layout : null;

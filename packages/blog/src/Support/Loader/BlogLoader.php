@@ -9,8 +9,6 @@ use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Enums\CacheEnum;
 use Capell\Blog\Support\PageArchiveService;
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -30,7 +28,7 @@ class BlogLoader
             $fromCache = false;
 
             /** @var class-string<Page> $model */
-            $model = CapellCore::getModel(CoreModelEnum::Page);
+            $model = Page::class;
 
             return $model::getFirstPageByTypeForSite(BlogPageTypeEnum::Archive->value, site: $site, language: $language);
         });
@@ -82,7 +80,7 @@ class BlogLoader
             $fromCache = false;
 
             /** @var class-string<Page> $model */
-            $model = CapellCore::getModel(CoreModelEnum::Page);
+            $model = Page::class;
 
             return $model::getFirstPageByTypeForSite($type, site: $site, language: $language);
         });

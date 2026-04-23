@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Address\Filament\Schemas\Countries;
 
-use Capell\Address\Enums\ModelEnum;
 use Capell\Address\Enums\SchemaTypeEnum;
+use Capell\Address\Models\Country;
 use Capell\Admin\Contracts\SchemaTypeEnumInterface;
 use Capell\Admin\Contracts\TypeSchemaInterface;
 use Capell\Admin\Enums\SchemaExtenderEnum;
@@ -13,7 +13,6 @@ use Capell\Admin\Filament\Components\Forms\DefaultToggle;
 use Capell\Admin\Filament\Components\Forms\LanguageSelect;
 use Capell\Admin\Filament\Components\Forms\StatusToggle;
 use Capell\Admin\Filament\Concerns\HasTypeSchema;
-use Capell\Core\Facades\CapellCore;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
@@ -49,7 +48,7 @@ class DefaultCountrySchema implements TypeSchemaInterface
                 ->required()
                 ->maxLength(2)
                 ->unique(
-                    table: CapellCore::getModel(ModelEnum::Country),
+                    table: Country::class,
                     ignoreRecord: $schema->getOperation() !== 'replicate',
                     modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),
@@ -59,7 +58,7 @@ class DefaultCountrySchema implements TypeSchemaInterface
                 ->required()
                 ->maxLength(3)
                 ->unique(
-                    table: CapellCore::getModel(ModelEnum::Country),
+                    table: Country::class,
                     ignoreRecord: $schema->getOperation() !== 'replicate',
                     modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),

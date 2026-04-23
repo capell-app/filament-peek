@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Tags\Filament\Components\Forms;
 
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
-use Capell\Tags\Enums\ModelEnum;
 use Capell\Tags\Models\Tag;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Schemas\Components\Utilities\Get;
@@ -24,7 +22,7 @@ abstract class TagsInput extends SpatieTagsInput
         $this->label(__('capell-tags::form.tags'))
             ->suggestions(function (self $component, Get $get): array {
                 /** @var class-string<Tag> $model */
-                $model = CapellCore::getModel(ModelEnum::Tag);
+                $model = Tag::class;
 
                 return $model::query()->where('type', $component->type)
                     ->where(

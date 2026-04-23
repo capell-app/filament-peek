@@ -10,12 +10,10 @@ use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Resources\Sites\SiteResource;
 use Capell\Admin\Support\Loader\SiteLoader;
-use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Filament\Resources\Articles\ArticleResource;
 use Capell\Blog\Models\Article;
 use Capell\Core\Actions\GetEditPageResourceUrlAction;
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Filament\Actions\Action;
 use Filament\Support\Enums\Alignment;
@@ -66,7 +64,7 @@ class ListArticlesWidget extends BaseWidget
             ->query(
                 function (): Builder {
                     /** @var class-string<Article> $model */
-                    $model = CapellCore::getModel(ModelEnum::Article);
+                    $model = Article::class;
 
                     return $model::query()
                         ->with([

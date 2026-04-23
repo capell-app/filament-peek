@@ -7,8 +7,6 @@ namespace Capell\Mosaic\Filament\Components\Forms;
 use Aimeos\Nestedset\NestedSet;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Models\Section;
 use Closure;
 use Filament\Actions\Action;
@@ -186,7 +184,7 @@ class ContentSelect extends Select
         $parentContentType = $this->parentContentType;
 
         /** @var class-string<Section> $model */
-        $model = CapellCore::getModel(ModelEnum::Section->name);
+        $model = Section::class;
 
         /** @var Section $content */
         $contents = $model::query()->select('sections.*')

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Filament\Resources\Sections\Tables;
 
 use Capell\Admin\Filament\Contracts\TableConfigurator;
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
+use Capell\Mosaic\Models\Section;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,7 +19,7 @@ class SectionSelectionTable implements TableConfigurator
         $table
             ->query(function (): Builder {
                 /* @var class-string<\Capell\Mosaic\Models\Section> $model */
-                $model = CapellCore::getModel(ModelEnum::Section->name);
+                $model = Section::class;
 
                 return $model::query();
             })

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Mosaic\Actions;
 
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Models\Section;
 use Lorisleiva\Actions\Concerns\AsObject;
 
@@ -30,7 +28,7 @@ class CreateContentAction
     public function handle(array $data): Section
     {
         /** @var class-string<Section> $model */
-        $model = CapellCore::getModel(ModelEnum::Section->name);
+        $model = Section::class;
 
         if (! isset($data['name']) && blank($data['name']) && isset($data['translations'])) {
             $data['name'] = collect($data['translations'])->first()['title'];

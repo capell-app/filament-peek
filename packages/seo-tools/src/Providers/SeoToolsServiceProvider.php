@@ -20,15 +20,13 @@ use Capell\SeoTools\Console\Commands\SetupCommand;
 use Capell\SeoTools\Console\Commands\TestOpenAiConnectionCommand;
 use Capell\SeoTools\Console\Commands\XmlSitemapCommand;
 use Capell\SeoTools\Contracts\Schemas\SearchMetaDataSectionExtenderResolverInterface;
+use Capell\SeoTools\Enums\ModelEnum;
 use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
 use Capell\SeoTools\Filament\Settings\AssistantSettingsSchema;
 use Capell\SeoTools\Handlers\ClearCircuitBreakerHandler;
 use Capell\SeoTools\Listeners\LogAiGeneration;
 use Capell\SeoTools\Listeners\NotifyAiFailure;
-use Capell\SeoTools\Models\AiCreatorContext;
-use Capell\SeoTools\Models\AiCreatorSession;
-use Capell\SeoTools\Models\AIGenerationHistory;
 use Capell\SeoTools\Policies\AiCreatorPolicy;
 use Capell\SeoTools\Settings\AssistantSettings;
 use Capell\SeoTools\Support\Admin\AiCreatorPageExtender;
@@ -290,8 +288,6 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
 
     private function registerModels(): void
     {
-        CapellCore::registerModel('AIGenerationHistory', AIGenerationHistory::class);
-        CapellCore::registerModel('AiCreatorContext', AiCreatorContext::class);
-        CapellCore::registerModel('AiCreatorSession', AiCreatorSession::class);
+        CapellCore::registerModels(ModelEnum::cases());
     }
 }

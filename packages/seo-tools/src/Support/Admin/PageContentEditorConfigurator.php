@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Support\Admin;
 
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\SeoTools\Actions\GeneratorPageContentAction;
@@ -58,7 +56,7 @@ class PageContentEditorConfigurator
             ->modalDescription(__('Provide keywords to generate SEO-friendly content using AI.'))
             ->fillForm(function (Get $get): array {
                 /** @var class-string<Site> $model */
-                $model = CapellCore::getModel(ModelEnum::Site);
+                $model = Site::class;
 
                 $site = $model::query()
                     ->whereKey($get('../../site_id'))

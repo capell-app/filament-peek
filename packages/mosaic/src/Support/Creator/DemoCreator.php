@@ -10,13 +10,11 @@ use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\MediaConversionEnum;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
 use Capell\Core\Enums\NavigationItemType;
-use Capell\Core\Facades\CapellCore;
-use Capell\Core\Models;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Media;
+use Capell\Core\Models\Navigation;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
@@ -26,7 +24,6 @@ use Capell\Mosaic\Enums\ActionLinkEnum;
 use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\ContentTypeEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Enums\WidgetTypeEnum;
 use Capell\Mosaic\Filament\Schemas\Sections\TestimonialSectionSchema;
@@ -67,10 +64,10 @@ class DemoCreator
     public function __construct(
         protected readonly ?Model $user = null,
     ) {
-        $this->contentModel = CapellCore::getModel(ModelEnum::Section->name);
-        $this->widgetModel = CapellCore::getModel(ModelEnum::Widget->name);
-        $this->typeModel = CapellCore::getModel(CoreModelEnum::Type);
-        $this->pageModel = CapellCore::getModel(CoreModelEnum::Page);
+        $this->contentModel = Section::class;
+        $this->widgetModel = Widget::class;
+        $this->typeModel = Type::class;
+        $this->pageModel = Page::class;
     }
 
     public function createContentWidget(Collection $languages): Widget
@@ -406,8 +403,8 @@ class DemoCreator
 
     public function createStaticNavigationWidget(Collection $languages, Site $site): Widget
     {
-        /** @var class-string<Models\Navigation> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Navigation);
+        /** @var class-string<Navigation> $model */
+        $model = Navigation::class;
 
         // Create menu + items
         $name = 'Example Menu';
