@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\Workspaces\Models;
 
 use Capell\Core\Database\Factories\WorkspaceReviewAssignmentFactory;
-use Capell\Core\Enums\ReviewDecisionEnum;
+use Capell\Workspaces\Enums\ReviewDecisionEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

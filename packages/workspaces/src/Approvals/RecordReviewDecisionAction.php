@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Approvals;
 
-use Capell\Core\Enums\ReviewDecisionEnum;
+use Capell\Workspaces\Enums\ReviewDecisionEnum;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Enums\WorkspaceTransitionEnum;
 use Capell\Workspaces\Events\WorkspaceStateChanged;
