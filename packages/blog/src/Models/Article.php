@@ -34,7 +34,6 @@ use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Tags\Models\Concerns\HasTags;
-use Capell\Workspaces\BelongsToWorkspace;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,7 +54,6 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 #[ObservedBy(ArticleObserver::class)]
 class Article extends Model implements HasMedia, Pageable, PageCacheable, Publishable, Translatable, Typeable, Userstampable
 {
-    use BelongsToWorkspace;
     use Cloneable;
     use CloneableExcept;
     use HasAssets;

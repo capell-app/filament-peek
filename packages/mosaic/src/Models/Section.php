@@ -33,7 +33,6 @@ use Capell\Core\Models\Type;
 use Capell\Mosaic\Database\Factories\SectionFactory;
 use Capell\Mosaic\Models\Concerns\ComposhipsJsonRelationshipsTrait;
 use Capell\Mosaic\Observers\SectionObserver;
-use Capell\Workspaces\BelongsToWorkspace;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -118,7 +117,6 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 #[ObservedBy(SectionObserver::class)]
 class Section extends Model implements HasMedia, PageCacheable, Publishable, Typeable, Userstampable
 {
-    use BelongsToWorkspace;
     use Cloneable;
     use ComposhipsJsonRelationshipsTrait;
     use HasAssets;
