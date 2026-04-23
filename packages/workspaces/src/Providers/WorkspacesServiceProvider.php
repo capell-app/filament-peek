@@ -30,6 +30,7 @@ use Illuminate\Contracts\Routing\Registrar as Router;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Activitylog\Models\Activity;
 
 class WorkspacesServiceProvider extends ServiceProvider
 {
@@ -142,8 +143,10 @@ class WorkspacesServiceProvider extends ServiceProvider
 
     private function registerEventListeners(): self
     {
+        $activityModel = config('activitylog.activity_model', Activity::class);
+
         Event::listen(
-            'Spatie\Activitylog\Events\ActivitySaved',
+            'eloquent.creating: ' . $activityModel,
             [StampWorkspaceOnActivity::class, 'handle'],
         );
 
