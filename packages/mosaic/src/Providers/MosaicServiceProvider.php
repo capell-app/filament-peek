@@ -21,7 +21,6 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
-use Capell\Core\Workspaces\WorkspaceRegistry;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
 use Capell\Mosaic\Console\Commands\DemoCommand;
@@ -58,6 +57,7 @@ use Capell\Mosaic\Support\Interceptors\Layouts\DefaultLayoutInterceptor;
 use Capell\Mosaic\Support\Interceptors\Layouts\HomeLayoutInterceptor;
 use Capell\Mosaic\Support\Interceptors\Layouts\ResultsLayoutInterceptor;
 use Capell\Mosaic\Support\LayoutModelRegistrar;
+use Capell\Workspaces\WorkspaceRegistry;
 use Composer\InstalledVersions;
 use Exception;
 use Filament\Facades\Filament;
@@ -440,9 +440,11 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
     {
         LayoutModelRegistrar::register();
 
-        WorkspaceRegistry::register(Section::class);
-        WorkspaceRegistry::register(Widget::class);
-        WorkspaceRegistry::register(WidgetAsset::class);
+        if (class_exists(WorkspaceRegistry::class)) {
+            WorkspaceRegistry::register(Section::class);
+            WorkspaceRegistry::register(Widget::class);
+            WorkspaceRegistry::register(WidgetAsset::class);
+        }
 
         return $this;
     }

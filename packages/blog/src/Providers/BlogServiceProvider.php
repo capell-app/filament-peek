@@ -19,9 +19,9 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
-use Capell\Core\Workspaces\WorkspaceRegistry;
 use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Models\Section;
+use Capell\Workspaces\WorkspaceRegistry;
 use Composer\InstalledVersions;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -137,9 +137,11 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     {
         BlogModelRegistrar::register();
 
-        WorkspaceRegistry::register(Article::class);
-        WorkspaceRegistry::register(Tag::class);
-        WorkspaceRegistry::register(Taggable::class);
+        if (class_exists(WorkspaceRegistry::class)) {
+            WorkspaceRegistry::register(Article::class);
+            WorkspaceRegistry::register(Tag::class);
+            WorkspaceRegistry::register(Taggable::class);
+        }
 
         return $this;
     }
