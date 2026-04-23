@@ -99,9 +99,9 @@ class Workspace extends Model implements Userstampable
         return $this->belongsTo(Version::class, 'base_version_id');
     }
 
-    public function publishedVersion(): BelongsTo
+    public function publishedVersion(): HasOne
     {
-        return $this->belongsTo(Version::class, 'id', 'source_workspace_id');
+        return $this->hasOne(Version::class, 'source_workspace_id');
     }
 
     /** @return HasMany<WorkspaceApproval, self> */
