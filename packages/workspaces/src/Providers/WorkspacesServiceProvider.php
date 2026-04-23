@@ -30,6 +30,7 @@ use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\Models\WorkspaceApproval;
 use Capell\Workspaces\Models\WorkspaceFieldComment;
 use Capell\Workspaces\Models\WorkspaceReviewAssignment;
+use Capell\Workspaces\Support\WorkspacesManager;
 use Capell\Workspaces\WorkspaceContext;
 use Capell\Workspaces\WorkspaceContextScope;
 use Capell\Workspaces\WorkspaceRegistry;
@@ -45,7 +46,10 @@ use Spatie\Activitylog\Models\Activity;
 
 class WorkspacesServiceProvider extends ServiceProvider
 {
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->app->singleton(WorkspacesManager::class, fn () => new WorkspacesManager);
+    }
 
     public function boot(): void
     {
