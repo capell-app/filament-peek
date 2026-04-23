@@ -22,6 +22,7 @@ use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Workspaces\Actions\CopyOnWriteAction;
 use Capell\Workspaces\BelongsToWorkspace;
+use Capell\Workspaces\Events\WorkspaceEventDispatcher;
 use Capell\Workspaces\Http\Middleware\ResolveWorkspaceContext;
 use Capell\Workspaces\Listeners\StampWorkspaceOnActivity;
 use Capell\Workspaces\Models\PreviewLink;
@@ -49,6 +50,7 @@ class WorkspacesServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(WorkspacesManager::class, fn () => new WorkspacesManager);
+        $this->app->singleton(WorkspaceEventDispatcher::class);
     }
 
     public function boot(): void
