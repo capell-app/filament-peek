@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Capell\Blog\Filament\Resources\Articles\ArticleResource;
-use Capell\Blog\Filament\Resources\Tags\TagResource;
 use Capell\Blog\Models\Article;
-use Capell\Blog\Models\Tag;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
+use Capell\Tags\Filament\Resources\Tags\TagResource;
+use Capell\Tags\Models\Tag;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;

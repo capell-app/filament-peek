@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Database\Factories;
 
-use Capell\Blog\Enums\TagTypeEnum;
-use Capell\Blog\Models\Tag;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
+use Capell\Tags\Enums\TagTypeEnum;
+use Capell\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Blog\Models\Tag;
+use Capell\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 return [
