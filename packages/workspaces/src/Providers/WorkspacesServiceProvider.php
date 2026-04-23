@@ -23,6 +23,7 @@ use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Workspaces\Actions\CopyOnWriteAction;
 use Capell\Workspaces\BelongsToWorkspace;
 use Capell\Workspaces\Events\WorkspaceEventDispatcher;
+use Capell\Workspaces\Http\Livewire\WorkspacePageDraftHandler;
 use Capell\Workspaces\Http\Middleware\ResolveWorkspaceContext;
 use Capell\Workspaces\Listeners\StampWorkspaceOnActivity;
 use Capell\Workspaces\Models\PreviewLink;
@@ -51,6 +52,7 @@ class WorkspacesServiceProvider extends ServiceProvider
     {
         $this->app->singleton(WorkspacesManager::class, fn (): WorkspacesManager => new WorkspacesManager);
         $this->app->singleton(WorkspaceEventDispatcher::class);
+        $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
     }
 
     public function boot(): void
