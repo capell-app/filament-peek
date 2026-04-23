@@ -11,7 +11,7 @@ use Capell\Core\Models\AccessLog;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-final class TrafficChartWidget extends CapellWidget
+final class TrafficChartWidgetAbstract extends CapellWidget
 {
     protected static string $settingsKey = 'traffic_chart';
 

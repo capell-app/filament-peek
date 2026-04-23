@@ -11,7 +11,7 @@ use Capell\Core\Models\AccessLog;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-final class TopPagesWidget extends CapellWidget
+final class TopPagesWidgetAbstract extends CapellWidget
 {
     protected static string $settingsKey = 'top_pages';
 

@@ -12,7 +12,7 @@ use Capell\Assistant\Settings\AssistantSettings;
 use Capell\Assistant\Support\AiRateLimiter;
 use Illuminate\Support\Collection;
 
-final class AiMetricsWidget extends CapellWidget
+final class AiMetricsWidgetAbstract extends CapellWidget
 {
     protected static string $settingsKey = 'ai_metrics';
 

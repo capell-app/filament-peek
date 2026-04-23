@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Assistant\Filament\Widgets\AiMetricsWidget;
+use Capell\Assistant\Filament\Widgets\AiMetricsWidgetAbstract;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Livewire\livewire;
@@ -19,5 +19,5 @@ beforeEach(function (): void {
 it('renders for a developer user', function (): void {
     test()->actingAsRole(config('capell.roles.developer', 'developer'));
 
-    livewire(AiMetricsWidget::class)->assertOk();
+    livewire(AiMetricsWidgetAbstract::class)->assertOk();
 });

@@ -130,7 +130,7 @@ git commit -m "feat(blog): add TrafficChartData and TrafficPointData"
 
 declare(strict_types=1);
 
-use Capell\Blog\Filament\Widgets\TrafficChartWidget;
+use Capell\Blog\Filament\Widgets\TrafficChartWidgetAbstract;
 use Capell\Core\Models\AccessLog;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
@@ -140,13 +140,13 @@ uses(CreatesAdminUser::class)->group('widget');
 
 it('renders for an admin user', function (): void {
     test()->actingAsAdmin();
-    livewire(TrafficChartWidget::class)->assertOk();
+    livewire(TrafficChartWidgetAbstract::class)->assertOk();
 });
 
 it('shows total views when access logs exist', function (): void {
     test()->actingAsAdmin();
     AccessLog::factory()->count(3)->create();
-    livewire(TrafficChartWidget::class)
+    livewire(TrafficChartWidgetAbstract::class)
         ->assertOk()
         ->assertSee('Site traffic');
 });
@@ -394,7 +394,7 @@ git commit -m "feat(blog): add TopPageData and TopPagesData"
 
 declare(strict_types=1);
 
-use Capell\Blog\Filament\Widgets\TopPagesWidget;
+use Capell\Blog\Filament\Widgets\TopPagesWidgetAbstract;
 use Capell\Core\Models\AccessLog;
 use Capell\Core\Models\Page;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
@@ -405,7 +405,7 @@ uses(CreatesAdminUser::class)->group('widget');
 
 it('renders for an admin user', function (): void {
     test()->actingAsAdmin();
-    livewire(TopPagesWidget::class)->assertOk();
+    livewire(TopPagesWidgetAbstract::class)->assertOk();
 });
 
 it('shows top pages when access logs exist', function (): void {
@@ -414,7 +414,7 @@ it('shows top pages when access logs exist', function (): void {
     $page = Page::factory()->create(['slug' => '/home']);
     AccessLog::factory()->count(5)->create(['url' => '/home', 'loggable_id' => $page->id]);
 
-    livewire(TopPagesWidget::class)
+    livewire(TopPagesWidgetAbstract::class)
         ->assertOk()
         ->assertSee('/home');
 });
@@ -622,7 +622,7 @@ The widget queries the core `Page` model (and optionally `Article` from blog if 
 
 declare(strict_types=1);
 
-use Capell\Mosaic\Filament\Widgets\RecentActivityWidget;
+use Capell\Mosaic\Filament\Widgets\RecentActivityWidgetAbstract;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Livewire\livewire;
@@ -631,12 +631,12 @@ uses(CreatesAdminUser::class)->group('widget');
 
 it('renders for an admin user', function (): void {
     test()->actingAsAdmin();
-    livewire(RecentActivityWidget::class)->assertOk();
+    livewire(RecentActivityWidgetAbstract::class)->assertOk();
 });
 
 it('shows recent activity heading', function (): void {
     test()->actingAsAdmin();
-    livewire(RecentActivityWidget::class)
+    livewire(RecentActivityWidgetAbstract::class)
         ->assertOk()
         ->assertSee('Recent activity');
 });

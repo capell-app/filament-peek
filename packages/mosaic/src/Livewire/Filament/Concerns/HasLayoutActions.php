@@ -11,17 +11,20 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Site;
-use Capell\Mosaic\Enums\LivewireComponentsEnum;
 use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Capell\Mosaic\Exceptions\MissingWidgetAssetException;
+use Capell\Mosaic\Filament\Resources\Pages\Tables\PageSelectionTable;
+use Capell\Mosaic\Filament\Resources\Sections\Tables\SectionSelectionTable;
 use Capell\Mosaic\Filament\Resources\Widgets\Schemas\WidgetAssetForm;
 use Capell\Mosaic\Filament\Resources\Widgets\Schemas\WidgetForm;
+use Capell\Mosaic\Filament\Resources\Widgets\Tables\WidgetSelectionTable;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TableSelect;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
@@ -29,7 +32,6 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 trait HasLayoutActions
@@ -196,33 +198,44 @@ trait HasLayoutActions
             ->extraModalWindowAttributes([
                 'class' => 'capell-mosaic-builder-assets-table',
             ])
-            ->modalContent(function (Action $action, array $arguments): HtmlString {
-                /** @var self $livewire */
-                $livewire = $action->getLivewire();
-
-                return new HtmlString(Blade::render(
-                    <<<'blade'
-                       @livewire($component, [
-                           'actionModalId' => $actionModalId,
-                           'containerKey' => $containerKey,
-                           'containers' => $containers,
-                       ], key($livewireKey))
-                   blade,
-                    [
-                        'actionModalId' => sprintf('fi-%s-action-%s', $livewire->getId(), $action->getNestingIndex()),
-                        'containerKey' => $arguments['containerKey'] ?? '',
-                        'component' => LivewireComponentsEnum::WidgetTableSelect->value,
-                        'livewireKey' => sprintf('fi-%s-action-%s-widgets-table', $livewire->getId(), $action->getNestingIndex()),
-                        'containers' => self::getContainerOptions(),
-                    ],
-                ));
-            })
-            ->formWrapper(false)
             ->closeModalByClickingAway(false)
-            ->modalSubmitAction(false)
-            ->modalCancelAction(false)
-            ->action(null)
-            ->submit(null);
+            ->schema(function (Schema $schema, array $arguments): Schema {
+                $containerOptions = self::getContainerOptions();
+                $containerKey = $arguments['containerKey'] ?? null;
+
+                $components = [];
+
+                if (! $containerKey && $containerOptions->count() > 1) {
+                    $components[] = Select::make('container')
+                        ->label(__('capell-admin::form.container'))
+                        ->hiddenLabel()
+                        ->prefix(fn (Select $component): string => $component->getLabel() . ': ')
+                        ->required()
+                        ->options($containerOptions);
+                }
+
+                $components[] = TableSelect::make('widgets')
+                    ->tableConfiguration(WidgetSelectionTable::class)
+                    ->multiple()
+                    ->hiddenLabel();
+
+                return $schema->schema($components);
+            })
+            ->action(function (array $data, array $arguments, self $livewire): void {
+                $containerOptions = self::getContainerOptions();
+                $containerKey = $arguments['containerKey'] ?? null;
+
+                if (! $containerKey) {
+                    $containerKey = $containerOptions->count() === 1
+                        ? $containerOptions->keys()->first()
+                        : ($data['container'] ?? null);
+                }
+
+                $livewire->addWidgetsToContainer(
+                    containerKey: (string) $containerKey,
+                    widgets: $data['widgets'] ?? [],
+                );
+            });
     }
 
     public function editWidgetAction(): Action
@@ -328,46 +341,49 @@ trait HasLayoutActions
                     ? __('capell-admin::generic.select_page_widget_asset_description', ['type' => $arguments['type']])
                     : __('capell-admin::generic.select_widget_asset_description', ['type' => $arguments['type']]);
             })
-            ->modalContent(function (Action $action, array $arguments): HtmlString {
-                /** @var self $livewire */
-                $livewire = $action->getLivewire();
+            ->closeModalByClickingAway(false)
+            ->schema(function (Schema $schema, array $arguments, self $livewire): Schema {
+                $tableConfiguration = match ($arguments['type']) {
+                    'page' => PageSelectionTable::class,
+                    default => SectionSelectionTable::class,
+                };
 
-                $component = LivewireComponentsEnum::loadAssetComponent($arguments['type'])->value;
-
-                $existingRecords = $livewire->getWidgetAssetsByType(
+                $excludeIds = $livewire->getWidgetAssetsByType(
                     $arguments['containerKey'],
-                    $arguments['widgetIndex'],
+                    (int) $arguments['widgetIndex'],
                     $arguments['type'],
                 );
 
-                return new HtmlString(Blade::render(
-                    <<<'blade'
-                       @livewire($component, [
-                           'actionModalId' => $actionModalId,
-                           'tableArguments' => $arguments,
-                           'existingRecords' => $existingRecords,
-                       ], key($actionModalId))
-                   blade,
-                    [
-                        'actionModalId' => sprintf('fi-%s-action-%s', $livewire->getId(), $action->getNestingIndex()),
-                        'arguments' => [
-                            'containerKey' => $arguments['containerKey'],
-                            'widgetIndex' => $arguments['widgetIndex'],
-                            'pageableId' => $livewire->page?->getKey(),
-                            'pageableType' => $livewire->page?->getMorphClass(),
-                            'siteId' => $livewire->site?->getKey(),
-                        ],
-                        'component' => $component,
-                        'existingRecords' => $existingRecords,
-                    ],
-                ));
+                return $schema->schema([
+                    TableSelect::make('assets')
+                        ->tableConfiguration($tableConfiguration)
+                        ->multiple()
+                        ->hiddenLabel()
+                        ->tableArguments([
+                            'excludeIds' => $excludeIds,
+                            'pageId' => $livewire->page?->getKey(),
+                        ]),
+                ]);
             })
-            ->formWrapper(false)
-            ->closeModalByClickingAway(false)
-            ->modalSubmitAction(false)
-            ->modalCancelAction(false)
-            ->action(null)
-            ->submit(null);
+            ->action(function (array $data, array $arguments, self $livewire): void {
+                $containerKey = $arguments['containerKey'];
+                $widgetIndex = (int) $arguments['widgetIndex'];
+                $type = $arguments['type'];
+
+                $hasPageAssets = $livewire->countWidgetAssets($containerKey, $widgetIndex) > 0
+                    ? $livewire->hasPageAssets($containerKey, $widgetIndex)
+                    : $livewire->inPageContext();
+
+                $livewire->addAssetsToWidget(
+                    arguments: [
+                        'containerKey' => $containerKey,
+                        'widgetIndex' => $widgetIndex,
+                        'hasPageAssets' => $hasPageAssets,
+                    ],
+                    type: $type,
+                    assets: $data['assets'] ?? [],
+                );
+            });
     }
 
     public function addAssetAction(): Action

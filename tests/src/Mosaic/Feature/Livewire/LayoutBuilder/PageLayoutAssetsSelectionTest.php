@@ -134,8 +134,7 @@ it('dispatches sync-selected-assets for page layout context', function (string $
         ->assertSet('tableArguments', $arguments)
         ->assertCountTableRecords(3)
         ->selectTableRecords($records->pluck('id')->toArray())
-        // ->callAction('selectRecords')
-        ->call('selectRecords')
+        ->callAction('selectRecords')
         ->assertDispatched(
             'sync-selected-assets',
             arguments: $arguments,

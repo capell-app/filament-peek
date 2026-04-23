@@ -10,7 +10,6 @@ use Capell\Core\Support\Creator\LayoutCreator;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Database\Factories\WidgetTypeFactory;
 use Capell\Mosaic\Enums\AssetEnum;
-use Capell\Mosaic\Enums\LivewireComponentsEnum;
 use Capell\Mosaic\Filament\Schemas\Layouts\Widgets\DefaultLayoutWidgetSchema;
 use Capell\Mosaic\Livewire\Filament\LayoutBuilder;
 use Capell\Mosaic\Models\Widget;
@@ -19,6 +18,7 @@ use Capell\Mosaic\Support\Creator\TypeCreator;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Pest\Expectation;
 
 use function Pest\Livewire\livewire;
@@ -280,7 +280,7 @@ test('it adds a new widget to a container', function (): void {
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(LivewireComponentsEnum::WidgetTableSelect->value)
+        ->assertSeeLivewire(TableSelectLivewireComponent::class)
         ->callMountedAction()
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->call('saveLayout');
@@ -305,7 +305,7 @@ test('it increments occurrence when adding an existing widget again', function (
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(LivewireComponentsEnum::WidgetTableSelect->value)
+        ->assertSeeLivewire(TableSelectLivewireComponent::class)
         ->callMountedAction()
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->call('saveLayout');
@@ -429,7 +429,7 @@ test('it edits layout widget meta via the editLayoutWidget action', function ():
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(LivewireComponentsEnum::WidgetTableSelect->value)
+        ->assertSeeLivewire(TableSelectLivewireComponent::class)
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->callMountedAction()
         ->mountAction(
@@ -504,7 +504,7 @@ test('it reorders a newly added widget within the same container', function (): 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
         ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(LivewireComponentsEnum::WidgetTableSelect->value)
+        ->assertSeeLivewire(TableSelectLivewireComponent::class)
         ->callMountedAction()
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->call('reorderWidgets', containerKey: $containerKey, containerWidgetIndex: $containerKey . '.2', widgetIndex: 1)

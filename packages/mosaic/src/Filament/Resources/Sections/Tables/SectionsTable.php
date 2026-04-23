@@ -170,7 +170,7 @@ class SectionsTable implements TableConfigurator
                 ->formatStateUsing(fn (Section $record): int => $record->assets_count),
             SiteColumn::make('site.name')
                 ->hidden(
-                    fn (HasTable $livewire): bool => $livewire->activeTab
+                    fn (HasTable $livewire): bool => ($livewire instanceof ListRecords && $livewire->activeTab)
                         || ($livewire->getTableFilterState('filter')['site_id'] ?? null) !== null && $livewire->getTableFilterState('filter')['site_id'] !== '',
                 ),
             DateColumn::make('visible_from')

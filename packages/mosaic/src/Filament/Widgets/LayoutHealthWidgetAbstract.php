@@ -16,7 +16,7 @@ use Capell\Mosaic\Models\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-final class LayoutHealthWidget extends CapellWidget
+final class LayoutHealthWidgetAbstract extends CapellWidget
 {
     protected static string $settingsKey = 'layout_health';
 

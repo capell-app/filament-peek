@@ -10,7 +10,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Data\Dashboard\ActivityItemData;
 use Capell\Mosaic\Data\Dashboard\RecentActivityData;
 
-final class RecentActivityWidget extends CapellWidget
+final class RecentActivityWidgetAbstract extends CapellWidget
 {
     protected static string $settingsKey = 'recent_activity';
 

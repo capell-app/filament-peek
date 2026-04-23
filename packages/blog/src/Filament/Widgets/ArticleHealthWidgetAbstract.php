@@ -16,7 +16,7 @@ use Capell\Core\Models\Language;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-final class ArticleHealthWidget extends CapellWidget
+final class ArticleHealthWidgetAbstract extends CapellWidget
 {
     protected static string $settingsKey = 'article_health';
 

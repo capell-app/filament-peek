@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
-use Capell\Mosaic\Filament\Widgets\RecentActivityWidget;
+use Capell\Mosaic\Filament\Widgets\RecentActivityWidgetAbstract;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Livewire\livewire;
@@ -14,12 +14,12 @@ uses(CreatesAdminUser::class)->group('widget');
 
 it('renders for an admin user', function (): void {
     test()->actingAsAdmin();
-    livewire(RecentActivityWidget::class)->assertOk();
+    livewire(RecentActivityWidgetAbstract::class)->assertOk();
 });
 
 it('shows recent activity heading', function (): void {
     test()->actingAsAdmin();
-    livewire(RecentActivityWidget::class)
+    livewire(RecentActivityWidgetAbstract::class)
         ->assertOk()
         ->assertSee('Recent activity');
 });
@@ -31,7 +31,7 @@ it('shows empty state when no pages exist', function (): void {
     $pageModel = CapellCore::getModel(ModelEnum::Page);
     $pageModel::query()->delete();
 
-    livewire(RecentActivityWidget::class)
+    livewire(RecentActivityWidgetAbstract::class)
         ->assertOk()
         ->assertSee('No recent activity.');
 });
@@ -47,7 +47,7 @@ it('shows draft status when visible_from is null', function (): void {
         'visible_until' => null,
     ]);
 
-    livewire(RecentActivityWidget::class)
+    livewire(RecentActivityWidgetAbstract::class)
         ->assertOk()
         ->assertSee('draft');
 });
@@ -63,7 +63,7 @@ it('shows published status when visible_from is in the past and no visible_until
         'visible_until' => null,
     ]);
 
-    livewire(RecentActivityWidget::class)
+    livewire(RecentActivityWidgetAbstract::class)
         ->assertOk()
         ->assertSee('published');
 });
@@ -79,7 +79,7 @@ it('shows expired status when visible_until is in the past', function (): void {
         'visible_until' => now()->subDay(),
     ]);
 
-    livewire(RecentActivityWidget::class)
+    livewire(RecentActivityWidgetAbstract::class)
         ->assertOk()
         ->assertSee('expired');
 });
