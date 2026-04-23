@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Providers;
 
+use Capell\Admin\Contracts\Extenders\PageEditExtender;
 use Capell\Blog\Models\Article;
 use Capell\Core\Models\AssetRelation;
 use Capell\Core\Models\Language;
@@ -23,6 +24,7 @@ use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Workspaces\Actions\CopyOnWriteAction;
 use Capell\Workspaces\BelongsToWorkspace;
 use Capell\Workspaces\Events\WorkspaceEventDispatcher;
+use Capell\Workspaces\Extenders\WorkspacesPageEditExtender;
 use Capell\Workspaces\Http\Livewire\WorkspacePageDraftHandler;
 use Capell\Workspaces\Http\Middleware\ResolveWorkspaceContext;
 use Capell\Workspaces\Listeners\StampWorkspaceOnActivity;
@@ -53,6 +55,7 @@ class WorkspacesServiceProvider extends ServiceProvider
         $this->app->singleton(WorkspacesManager::class, fn (): WorkspacesManager => new WorkspacesManager);
         $this->app->singleton(WorkspaceEventDispatcher::class);
         $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
+        $this->app->tag([WorkspacesPageEditExtender::class], PageEditExtender::TAG);
     }
 
     public function boot(): void
