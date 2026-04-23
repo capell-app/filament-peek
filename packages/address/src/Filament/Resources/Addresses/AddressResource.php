@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Address\Filament\Resources\Addresses;
 
 use BackedEnum;
-use Capell\Address\Enums\ModelEnum;
 use Capell\Address\Filament\Resources\Addresses\Pages\ManageAddresses;
 use Capell\Address\Filament\Resources\Addresses\Schemas\AddressForm;
 use Capell\Address\Filament\Resources\Addresses\Tables\AddressesTable;
@@ -57,7 +56,7 @@ class AddressResource extends Resource
     #[Override]
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Address);
+        return Address::class;
     }
 
     public static function getNavigationLabel(): string

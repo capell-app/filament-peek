@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Support\Admin;
 
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\SeoTools\Actions\SuggestMetaDescriptionsAction;
@@ -70,7 +68,7 @@ class SearchMetaDataSectionExtender implements SearchMetaDataSectionExtenderCont
             ->modalDescription(__('Provide keywords or page content to generate SEO-friendly meta description suggestions using AI.'))
             ->fillForm(function (Get $get): array {
                 /** @var class-string<Site> $model */
-                $model = CapellCore::getModel(ModelEnum::Site);
+                $model = Site::class;
 
                 $site = $model::query()
                     ->whereKey($get('../../site_id'))

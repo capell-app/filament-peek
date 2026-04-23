@@ -8,6 +8,11 @@ parameters:
         -
             identifier: larastan.relationExistence
             message: '#layoutWidgets#'
+        # ResourceEnum::PreviewLink is added in capell-4 alongside this package's changes;
+        # the vendored capell-4 doesn't include it yet until both branches are merged
+        -
+            identifier: classConstant.notFound
+            message: '#ResourceEnum::PreviewLink#'
         # PHP 8.2 does not support typed constants; constantTypeCoverage cannot be satisfied
         -
             identifier: typeCoverage.constantTypeCoverage

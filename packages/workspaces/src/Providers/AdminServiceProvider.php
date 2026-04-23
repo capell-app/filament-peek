@@ -9,6 +9,8 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Workspaces\Events\WorkspaceStateChanged;
 use Capell\Workspaces\Filament\Widgets\WorkspaceActivityWidgetAbstract;
 use Capell\Workspaces\Listeners\SendWorkspaceStateNotification;
+use Capell\Workspaces\Livewire\DiffPanel;
+use Capell\Workspaces\Livewire\FieldCommentThread;
 use Capell\Workspaces\Livewire\WorkspaceApprovalHistory;
 use Capell\Workspaces\Livewire\WorkspaceContextBanner;
 use Capell\Workspaces\Livewire\WorkspaceSwitcher;
@@ -41,6 +43,8 @@ class AdminServiceProvider extends ServiceProvider
         Livewire::component('capell-workspaces::workspace-switcher', WorkspaceSwitcher::class);
         Livewire::component('capell-workspaces::workspace-context-banner', WorkspaceContextBanner::class);
         Livewire::component('capell-workspaces::workspace-approval-history', WorkspaceApprovalHistory::class);
+        Livewire::component('capell-workspaces::field-comment-thread', FieldCommentThread::class);
+        Livewire::component('capell-workspaces::diff-panel', DiffPanel::class);
 
         Livewire::addNamespace(
             namespace: 'capell-workspaces',

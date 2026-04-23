@@ -7,8 +7,6 @@ namespace Capell\Mosaic\Filament\Resources\Widgets\Pages;
 use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Concerns\ApplySearchRelationsTable;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Mosaic\Enums\ResourceEnum as LayoutResourceEnum;
 use Capell\Mosaic\Filament\Actions\CreateWidgetAction;
@@ -43,7 +41,7 @@ class ListWidgets extends ListRecords
             $language_id = $this->getTableFilterState('filter')['language_id'];
         } else {
             /** @var class-string<Language> $model */
-            $model = CapellCore::getModel(ModelEnum::Language);
+            $model = Language::class;
 
             $language_id = $model::query()->default()->value('id');
         }

@@ -3,13 +3,11 @@
 declare(strict_types=1);
 
 use Capell\Blog\Enums\BlogPageTypeEnum;
-use Capell\Blog\Enums\ModelEnum as BlogModelEnum;
-use Capell\Blog\Enums\TagTypeEnum;
 use Capell\Blog\Models\Article;
-use Capell\Blog\Models\Tag;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
+use Capell\Tags\Enums\TagTypeEnum;
+use Capell\Tags\Models\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -50,7 +48,7 @@ it('runs demo command and creates articles and tags for the site', function (): 
         ->assertExitCode(Command::SUCCESS);
 
     /** @var class-string<Article> $articleModel */
-    $articleModel = CapellCore::getModel(BlogModelEnum::Article);
+    $articleModel = Article::class;
 
     /** @var Collection<int, Article> $articles */
     $articles = $articleModel::query()
@@ -68,7 +66,7 @@ it('runs demo command and creates articles and tags for the site', function (): 
     expect($articlesWithTagsCount)->toBe(2);
 
     /** @var class-string<Tag> $tagModel */
-    $tagModel = CapellCore::getModel(BlogModelEnum::Tag);
+    $tagModel = Tag::class;
     $pageTagsCount = $tagModel::query()
         ->where('type', TagTypeEnum::Page->value)
         ->count();

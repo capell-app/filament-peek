@@ -7,13 +7,10 @@ namespace Capell\Blog\Support\Loader;
 use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Enums\CacheEnum;
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Frontend\Support\ModelServing\RetrievedModelStore;
-use Capell\Tags\Enums\ModelEnum as TagsModelEnum;
 use Capell\Tags\Enums\TagTypeEnum;
 use Capell\Tags\Models\Tag;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
@@ -54,7 +51,7 @@ class TagLoader
             $fromCache = false;
 
             /** @var class-string<Page> $model */
-            $model = CapellCore::getModel(CoreModelEnum::Page);
+            $model = Page::class;
 
             return $model::getFirstPageByTypeForSite(BlogPageTypeEnum::Tag->value, site: $site, language: $language);
         });
@@ -75,7 +72,7 @@ class TagLoader
         bool $hasArticles = false,
     ): Builder {
         /* @var class-string<Tag> $model */
-        $model = CapellCore::getModel(TagsModelEnum::Tag);
+        $model = Tag::class;
 
         return $model::query()
             ->withCount([
@@ -165,7 +162,7 @@ class TagLoader
             $fromCache = false;
 
             /** @var class-string<Tag> $model */
-            $model = CapellCore::getModel(TagsModelEnum::Tag);
+            $model = Tag::class;
 
             return $model::query()->where('type', TagTypeEnum::Page)
                 ->where('slug->' . $language->code, $slug)

@@ -35,7 +35,6 @@ use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\ComponentTypeEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\LivewireComponentsEnum;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\ResourceEnum as LayoutResourceEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Capell\Mosaic\Filament\Extenders\Page\HeroPageSchemaExtender;
@@ -173,7 +172,7 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
 
     private function registerModelInterceptors(): self
     {
-        $layoutModel = CapellCore::getModel(\Capell\Core\Enums\ModelEnum::Layout);
+        $layoutModel = Layout::class;
 
         CapellCore::registerModelInterceptor($layoutModel, DefaultLayoutInterceptor::class, LayoutEnum::Default);
         CapellCore::registerModelInterceptor($layoutModel, HomeLayoutInterceptor::class, LayoutEnum::Home);
@@ -453,7 +452,7 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
     private function registerEvents(): self
     {
         $createDeleteModels = [
-            CapellCore::getModel(ModelEnum::Section->name),
+            Section::class,
         ];
 
         foreach ($createDeleteModels as $modelClass) {

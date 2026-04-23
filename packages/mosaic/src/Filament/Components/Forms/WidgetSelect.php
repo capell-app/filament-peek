@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Filament\Components\Forms;
 
 use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Filament\Resources\Widgets\Schemas\WidgetForm;
 use Capell\Mosaic\Models\Widget;
 use Filament\Actions\Action;
@@ -29,7 +27,7 @@ class WidgetSelect extends Select
 
     public function withCreateForm(): self
     {
-        return $this->model(CapellCore::getModel(ModelEnum::Widget->name))
+        return $this->model(Widget::class)
             ->getOptionLabelFromRecordUsing(
                 fn (Widget $record): string => static::getSelectOption($record),
             )

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Mosaic\Actions;
 
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Filament\Schemas\Sections\HeroSectionSchema;
@@ -23,7 +21,7 @@ class CreateHeroContentTypeAction
     public function handle(): Type
     {
         /** @var class-string<Type> */
-        $type = CapellCore::getModel(ModelEnum::Type->name);
+        $type = Type::class;
 
         return $type::query()->firstOrCreate([
             'key' => 'hero',

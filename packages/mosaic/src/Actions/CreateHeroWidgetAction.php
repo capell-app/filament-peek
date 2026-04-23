@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Actions;
 
 use Capell\Core\Enums\AssetEnum;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Enums\WidgetTypeEnum;
 use Capell\Mosaic\Enums\WidgetTypeGroupEnum;
@@ -32,7 +29,7 @@ class CreateHeroWidgetAction
     public function handle(string $key = 'hero', ?string $label = null, string $height = '', array $meta = []): Widget
     {
         /** @var class-string<Widget> $widgetModel */
-        $widgetModel = CapellCore::getModel(ModelEnum::Widget->name);
+        $widgetModel = Widget::class;
 
         return $widgetModel::query()->updateOrCreate([
             'key' => $key,
@@ -66,7 +63,7 @@ class CreateHeroWidgetAction
     private function createType(): Type
     {
         /** @var class-string<Type> */
-        $typeModel = CapellCore::getModel(CoreModelEnum::Type->name);
+        $typeModel = Type::class;
 
         return $typeModel::query()->firstOrCreate([
             'key' => WidgetTypeEnum::Hero,

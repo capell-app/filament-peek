@@ -6,8 +6,6 @@ namespace Capell\SeoTools\Support\Sitemap\Pages;
 
 use Capell\Core\Data\SitemapPageData;
 use Capell\Core\Enums\CacheEnum;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\SeoTools\Support\Sitemap\AbstractSitemapPages;
 use Illuminate\Support\Collection;
@@ -26,7 +24,7 @@ class PagesSitemap extends AbstractSitemapPages
 
         return Cache::remember($cacheKey, 3600, function (): Collection {
             /** @var class-string<Page> $model */
-            $model = CapellCore::getModel(ModelEnum::Page);
+            $model = Page::class;
 
             return $model::getPagesForSitemap($this->site, $this->language)->toTree()->map(fn (Page $page): SitemapPageData => $this->format($page));
         });

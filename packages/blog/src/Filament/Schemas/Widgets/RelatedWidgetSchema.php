@@ -6,8 +6,6 @@ namespace Capell\Blog\Filament\Schemas\Widgets;
 
 use Capell\Admin\Filament\Components\Forms\CacheFrequencySelect;
 use Capell\Admin\Filament\Components\Forms\FixedWidthSidebar;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Filament\Components\Forms\Widget\ComponentSection;
 use Capell\Mosaic\Filament\Components\Forms\Widget\CreateDetailsSchema;
@@ -85,7 +83,7 @@ class RelatedWidgetSchema extends DefaultWidgetSchema
                                     ->options(
                                         function (): array {
                                             /** @var class-string<Type> $model */
-                                            $model = CapellCore::getModel(ModelEnum::Type);
+                                            $model = Type::class;
 
                                             return $model::query()
                                                 ->pageType()

@@ -7,8 +7,6 @@ namespace Capell\Mosaic\Support\Creator;
 use Capell\Core\Enums\AssetComponentEnum as CapellAssetComponentEnum;
 use Capell\Core\Enums\AssetEnum;
 use Capell\Core\Enums\ContentStructure;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\AssetEnum as LayoutAssetEnum;
 use Capell\Mosaic\Enums\ContentTypeEnum;
@@ -33,12 +31,7 @@ class TypeCreator
     /**
      * @var class-string<Type>
      */
-    public string $typeModel;
-
-    public function __construct()
-    {
-        $this->typeModel = CapellCore::getModel(ModelEnum::Type);
-    }
+    public string $typeModel = Type::class;
 
     public function create(string $key): void
     {

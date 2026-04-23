@@ -10,7 +10,6 @@ use Capell\Admin\Filament\Concerns\HasNavigationBadge;
 use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
-use Capell\Tags\Enums\ModelEnum;
 use Capell\Tags\Filament\Resources\Tags\Pages\CreateTag;
 use Capell\Tags\Filament\Resources\Tags\Pages\EditTag;
 use Capell\Tags\Filament\Resources\Tags\Pages\ListTags;
@@ -62,7 +61,7 @@ class TagResource extends Resource
     #[Override]
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Tag);
+        return Tag::class;
     }
 
     public static function getNavigationGroup(): ?string

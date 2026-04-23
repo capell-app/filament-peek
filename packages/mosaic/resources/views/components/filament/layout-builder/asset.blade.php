@@ -22,8 +22,6 @@ declare(strict_types=1);
     use Capell\Admin\Facades\CapellAdmin;
     use Capell\Core\Actions\GetResourceFromTypeAction;
     use Capell\Core\Enums\MediaConversionEnum;
-    use Capell\Core\Enums\ModelEnum;
-    use Capell\Core\Facades\CapellCore;
     use Capell\Core\Models\Page;
     use Capell\Core\Models\Site;use Capell\Mosaic\Models\Section;
     use Filament\Actions\Action;
@@ -98,7 +96,7 @@ declare(strict_types=1);
     }
 
     /** @var class-string<Site> $model */
-    $model = CapellCore::getModel(ModelEnum::Site);
+    $model = Site::class;
 
     if ($model::totalSites() > 1) {
         if ($widgetAsset->asset->hasAttribute('site_id') && $widgetAsset->asset->site_id) {

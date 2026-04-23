@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\DefaultTheme\Providers;
 
 use Capell\Core\Data\VendorAssetData;
-use Capell\Core\Enums\ModelEnum;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Theme;
 use Capell\DefaultTheme\Support\Interceptors\Themes\DefaultThemeInterceptor;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,7 +16,7 @@ class DefaultThemeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $themeModel = CapellCore::getModel(ModelEnum::Theme);
+        $themeModel = Theme::class;
         CapellCore::registerModelInterceptor($themeModel, interceptorClass: DefaultThemeInterceptor::class);
 
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-default-theme');

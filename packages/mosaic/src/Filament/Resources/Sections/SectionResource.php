@@ -8,9 +8,7 @@ use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasFormConfigurator;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
 use Capell\Admin\Filament\Concerns\HasTableConfigurator;
-use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\CreateSection;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\EditSection;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\ListSections;
@@ -110,7 +108,7 @@ class SectionResource extends Resource
      */
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Section->name);
+        return Section::class;
     }
 
     public static function getNavigationGroup(): ?string

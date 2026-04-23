@@ -7,8 +7,7 @@ namespace Capell\Media\Filament\Resources\Media;
 use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
 use Capell\Admin\Filament\Concerns\HasTableConfigurator;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Media;
 use Capell\Media\Filament\Resources\Media\Pages\ListMedia;
 use Capell\Media\Filament\Resources\Media\Tables\MediaTable;
 use Filament\Resources\Resource;
@@ -51,7 +50,7 @@ class MediaResource extends Resource
     #[Override]
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Media);
+        return Media::class;
     }
 
     public static function getNavigationLabel(): string

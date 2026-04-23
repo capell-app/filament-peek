@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Mosaic\Livewire\Filament\Concerns;
 
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Exception;
@@ -295,7 +293,7 @@ trait ManagesWidgets
     protected function getWidgetQuery(bool $withRelations = true): EloquentBuilder
     {
         /** @var class-string<Widget> $model */
-        $model = CapellCore::getModel(ModelEnum::Widget->name);
+        $model = Widget::class;
 
         return $model::query()
             ->when(

@@ -6,8 +6,6 @@ namespace Capell\Mosaic\Filament\Resources\Widgets\Schemas;
 
 use Capell\Admin\Filament\Components\Forms\Type\TypeSchema;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\TypeSchemaEnum;
 use Capell\Mosaic\Filament\Schemas\Widgets\DefaultWidgetSchema;
@@ -37,7 +35,7 @@ class WidgetForm implements FormConfigurator
 
                         if (! $adminSchema) {
                             /** @var class-string<Type> $model */
-                            $model = CapellCore::getModel(ModelEnum::Type);
+                            $model = Type::class;
 
                             $type = $typeId !== null ? $model::query()->find($typeId, ['admin']) : null;
 

@@ -12,7 +12,6 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Bkwld\Cloner\ServiceProvider as ClonerServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Providers\CapellServiceProvider;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
@@ -211,8 +210,6 @@ abstract class AbstractTestCase extends TestCase
         // config('filament-shield.register_role_policy.enabled', false);
         Config::set('filament-shield.authenticable-resources', [User::class]);
         Config::set('filament-shield.auth_provider_model', User::class);
-        CapellCore::registerModel('User', User::class);
-
         // Prevent role being assigned to created user
         Config::set('filament-shield.panel_user.enabled', false);
 

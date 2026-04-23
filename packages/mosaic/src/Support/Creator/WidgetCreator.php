@@ -6,15 +6,12 @@ namespace Capell\Mosaic\Support\Creator;
 
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\DefaultColorEnum;
-use Capell\Core\Enums\ModelEnum as CoreModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Navigation;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\LivewireComponentsEnum;
-use Capell\Mosaic\Enums\ModelEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Filament\Schemas\Widgets\CarouselWidgetSchema;
 use Capell\Mosaic\Models\Widget;
@@ -29,7 +26,7 @@ class WidgetCreator
 
     public function __construct()
     {
-        $this->widgetModel = CapellCore::getModel(ModelEnum::Widget->name);
+        $this->widgetModel = Widget::class;
     }
 
     public function createWidgets(Collection $languages, bool $extraWidgets = false): void
@@ -88,7 +85,7 @@ class WidgetCreator
     public function childrenWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
         /** @var class-string<Language> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Language);
+        $model = Language::class;
 
         $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->resultsWidgetType();
@@ -149,7 +146,7 @@ class WidgetCreator
     public function galleryWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
         /** @var class-string<Language> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Language);
+        $model = Language::class;
 
         $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->mediaWidgetType();
@@ -181,7 +178,7 @@ class WidgetCreator
     public function latestPagesWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
         /** @var class-string<Language> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Language);
+        $model = Language::class;
 
         $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->resultsWidgetType();
@@ -314,7 +311,7 @@ class WidgetCreator
     public function siblingsWidget(?Type $type = null, ?Collection $languages = null): Widget
     {
         /** @var class-string<Language> $model */
-        $model = CapellCore::getModel(CoreModelEnum::Language);
+        $model = Language::class;
 
         $languages ??= $model::query()->get();
         $type ??= resolve(TypeCreator::class)->resultsWidgetType();
@@ -476,10 +473,10 @@ class WidgetCreator
         array $navigationItems = [],
     ): Widget {
         $type ??= resolve(TypeCreator::class)->navigationWidgetType();
-        $typeModel = CapellCore::getModel(CoreModelEnum::Type);
-        $navigationModel = CapellCore::getModel(CoreModelEnum::Navigation);
+        $typeModel = Type::class;
+        $navigationModel = Navigation::class;
 
-        $navigationType = $typeModel::navigationType()->default()->first();
+        $navigationType = $typeModel::query()->navigationType()->default()->first();
         if (! $navigationType) {
             $navigationType = resolve(\Capell\Core\Support\Creator\TypeCreator::class)->createNavigationType();
         }

@@ -8,8 +8,6 @@ use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasFormConfigurator;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
 use Capell\Admin\Filament\Concerns\HasTableConfigurator;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Filament\Resources\Workspaces\Pages\CompareVersionPage;
 use Capell\Workspaces\Filament\Resources\Workspaces\Pages\ManageWorkspaces;
@@ -83,7 +81,7 @@ class WorkspaceResource extends Resource
     #[Override]
     public static function getModel(): string
     {
-        return CapellCore::getModel(ModelEnum::Workspace);
+        return Workspace::class;
     }
 
     public static function getNavigationGroup(): ?string

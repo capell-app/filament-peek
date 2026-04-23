@@ -8,8 +8,7 @@ use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\SiteColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Page;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -20,7 +19,7 @@ class PageSelectionTable implements TableConfigurator
     public static function configure(Table $table): Table
     {
         /* @var class-string<\Capell\Core\Models\Page> $model */
-        $model = CapellCore::getModel(ModelEnum::Page);
+        $model = Page::class;
 
         return $table
             ->query(fn (): Builder => $model::query()->with([

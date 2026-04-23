@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Livewire\Page;
 
-use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Enums\ResourceEnum;
-use Capell\Core\Facades\CapellCore;
+use Capell\Blog\Models\Article;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Livewire\Page\AbstractPage;
 use Capell\Frontend\Support\Loader\PageLoader;
@@ -46,7 +45,7 @@ class Archive extends AbstractPage
             withDate: $page->type->meta['with_date'] ?? false,
             paginationKey: 'article-archives',
             cacheKeyPrepend: sprintf('year-%s-month-%s', $this->year, $this->month),
-            morphModel: CapellCore::getModel(ModelEnum::Article),
+            morphModel: Article::class,
             modifyQuery: function (Builder $query) {
                 if (DB::getDriverName() === 'sqlite') {
                     return $query

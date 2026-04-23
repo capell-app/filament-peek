@@ -8,9 +8,7 @@ use Capell\Admin\Filament\Widgets\CapellWidget;
 use Capell\Blog\Data\Dashboard\ArticleHealthData;
 use Capell\Blog\Data\Dashboard\LanguageCoverageData;
 use Capell\Blog\Data\Dashboard\TagCountData;
-use Capell\Blog\Enums\ModelEnum;
 use Capell\Blog\Models\Article;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Tags\Models\Tag;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,7 +38,7 @@ final class ArticleHealthWidgetAbstract extends CapellWidget
     private function getData(): ArticleHealthData
     {
         /** @var class-string<Article> $articleModel */
-        $articleModel = CapellCore::getModel(ModelEnum::Article);
+        $articleModel = Article::class;
 
         // Total counts
         $totalArticles = $articleModel::query()->count();

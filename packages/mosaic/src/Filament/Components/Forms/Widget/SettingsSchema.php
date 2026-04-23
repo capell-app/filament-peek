@@ -7,8 +7,7 @@ namespace Capell\Mosaic\Filament\Components\Forms\Widget;
 use Capell\Admin\Filament\Components\Forms\NameInput;
 use Capell\Admin\Filament\Components\Forms\StatusToggle;
 use Capell\Admin\Support\SlugGenerator;
-use Capell\Core\Facades\CapellCore;
-use Capell\Mosaic\Enums\ModelEnum;
+use Capell\Mosaic\Models\Widget;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
@@ -36,7 +35,7 @@ class SettingsSchema
                 ->required()
                 ->maxLength(128)
                 ->unique(
-                    table: CapellCore::getModel(ModelEnum::Widget->name),
+                    table: Widget::class,
                     ignoreRecord: $schema->getOperation() !== 'replicate',
                     modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),

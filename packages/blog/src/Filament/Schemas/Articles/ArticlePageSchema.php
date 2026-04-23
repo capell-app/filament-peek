@@ -17,8 +17,6 @@ use Capell\Admin\Filament\Schemas\Pages\DefaultPageSchema;
 use Capell\Blog\Filament\Components\Forms\Article\Tab\SettingsTab;
 use Capell\Blog\Filament\Components\Forms\Article\TagsInput;
 use Capell\Blog\Support\Loader\BlogLoader;
-use Capell\Core\Enums\ModelEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Closure;
 use Filament\Schemas\Components\Section;
@@ -44,7 +42,7 @@ class ArticlePageSchema extends DefaultPageSchema
     {
         return function (Builder $query) use ($schema) {
             /** @var class-string<Site> $model */
-            $model = CapellCore::getModel(ModelEnum::Site);
+            $model = Site::class;
 
             $site = $model::query()->find($schema->getRawState()['site_id']);
 
