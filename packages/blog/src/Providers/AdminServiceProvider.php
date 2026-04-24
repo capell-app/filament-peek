@@ -14,12 +14,12 @@ use Capell\Blog\Filament\Schemas\Articles\ArticlePageSchema;
 use Capell\Blog\Listeners\AddBlogPagesToNavigation;
 use Capell\Blog\Support\Creator\BlogCreator;
 use Capell\Blog\Support\Loader\BlogLoader;
-use Capell\Core\Events\NavigationCreating;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\ComponentTypeEnum;
 use Capell\Mosaic\Enums\TypeSchemaEnum as LayoutSchemaEnum;
+use Capell\Navigation\Events\NavigationCreating;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
