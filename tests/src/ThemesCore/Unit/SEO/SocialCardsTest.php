@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\SeoTools\Themes\SEO\SocialCards;
+use Capell\SeoTools\Support\SocialCards;
 
 test('render() includes og:title and og:description', function (): void {
     $cards = new SocialCards(
