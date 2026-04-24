@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Navigation\Actions;
 
+use Capell\Navigation\Enums\NavigationItemType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -59,7 +60,7 @@ class ResolveNavigationItemModelsAction
     private function collectPageableIdsByType(array $items): Collection
     {
         return collect($this->flattenItems($items))
-            ->filter(fn (array $item): bool => ($item['type'] ?? null) === 'page')
+            ->filter(fn (array $item): bool => ($item['type'] ?? null) === NavigationItemType::Page->value)
             ->map(function (array $item): ?array {
                 $pageableType = $item['data']['pageable_type'] ?? null;
                 $pageableId = $item['data']['pageable_id'] ?? null;

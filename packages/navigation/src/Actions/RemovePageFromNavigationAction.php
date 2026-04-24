@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Navigation\Actions;
 
 use Capell\Core\Contracts\Pageable;
+use Capell\Navigation\Enums\NavigationItemType;
 use Capell\Navigation\Models\Navigation;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsObject;
@@ -28,7 +29,7 @@ class RemovePageFromNavigationAction
 
     private function isPageItem(array $item, Pageable $page): bool
     {
-        return ($item['type'] ?? null) === 'page'
+        return ($item['type'] ?? null) === NavigationItemType::Page->value
             && (string) $item['data']['pageable_type'] === $page->getMorphClass()
             && (int) $item['data']['pageable_id'] === $page->getKey();
     }
