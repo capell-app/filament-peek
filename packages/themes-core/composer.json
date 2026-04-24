@@ -5,6 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "capell-app/seo-tools": "*",
         "spatie/laravel-data": "^4.0"
     },
     "require-dev": {
