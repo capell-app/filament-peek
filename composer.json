@@ -168,6 +168,10 @@
     },
     "autoload": {
         "psr-4": {
+            "Capell\\Navigation\\": "packages/navigation/src",
+            "Capell\\Navigation\\Database\\Factories\\": "packages/navigation/database/factories",
+            "Capell\\Forms\\": "packages/forms/src",
+            "Capell\\Forms\\Database\\Factories\\": "packages/forms/database/factories",
             "Capell\\Workspaces\\": "packages/workspaces/src",
             "Capell\\Workspaces\\Database\\Factories\\": "packages/workspaces/database/factories",
             "Capell\\Address\\": "packages/address/src",
