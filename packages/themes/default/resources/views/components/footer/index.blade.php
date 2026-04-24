@@ -8,15 +8,15 @@ declare(strict_types=1);
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Enums\NavigationHandle;
     use Capell\Core\Models\Language;
-    use Capell\Core\Models\Navigation;
     use Capell\Core\Models\Page;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
-    use Capell\Frontend\Support\Loader\NavigationItemsLoader;
-    use Capell\Frontend\Support\Loader\NavigationLoader;
     use Capell\Frontend\Support\Loader\SiteLoader;
     use Capell\Frontend\Support\Render\RenderHookRegistry;
+    use Capell\Navigation\Models\Navigation;
+    use Capell\Navigation\Support\Loader\NavigationItemsLoader;
+    use Capell\Navigation\Support\Loader\NavigationLoader;
 
     $language = Frontend::language();
     $site = Frontend::site();
