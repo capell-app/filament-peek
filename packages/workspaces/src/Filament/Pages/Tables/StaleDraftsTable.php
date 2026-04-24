@@ -6,9 +6,9 @@ namespace Capell\Workspaces\Filament\Pages\Tables;
 
 use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
-use Capell\Admin\Filament\Resources\Pages\Actions\DiscardDraftsBulkAction;
-use Capell\Admin\Filament\Resources\Pages\Actions\RequestReviewBulkAction;
 use Capell\Workspaces\Actions\Reports\BuildStaleDraftsQueryAction;
+use Capell\Workspaces\Filament\Resources\Pages\Actions\DiscardDraftsBulkAction;
+use Capell\Workspaces\Filament\Resources\Pages\Actions\RequestReviewBulkAction;
 use Capell\Workspaces\Models\Workspace;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;

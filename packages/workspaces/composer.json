@@ -23,7 +23,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Capell\\Workspaces\\": "src/"
+            "Capell\\Workspaces\\": "src/",
+            "Capell\\Workspaces\\Database\\Factories\\": "database/factories"
         }
     },
     "extra": {

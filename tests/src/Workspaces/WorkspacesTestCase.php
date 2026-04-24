@@ -80,7 +80,7 @@ class WorkspacesTestCase extends AbstractTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            ...parent::getDefaultPackageProviders(),
+            ...parent::getPackageProviders($app),
             ActionsServiceProvider::class,
             BadgeableColumnServiceProvider::class,
             SpatieTranslatableServiceProvider::class,

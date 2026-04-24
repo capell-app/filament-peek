@@ -8,11 +8,10 @@ parameters:
         -
             identifier: larastan.relationExistence
             message: '#layoutWidgets#'
-        # ResourceEnum::PreviewLink is added in capell-4 alongside this package's changes;
-        # the vendored capell-4 doesn't include it yet until both branches are merged
+        # workspace is a dynamic relation added by WorkspacesServiceProvider via resolveRelationUsing
         -
-            identifier: classConstant.notFound
-            message: '#ResourceEnum::PreviewLink#'
+            identifier: larastan.relationExistence
+            message: '#workspace#'
         # PHP 8.2 does not support typed constants; constantTypeCoverage cannot be satisfied
         -
             identifier: typeCoverage.constantTypeCoverage

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Filament\Resources\Workspaces\Pages;
 
-use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Actions\CreateAction;
+use Capell\Workspaces\Enums\ResourceEnum;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Filament\Resources\Workspaces\WorkspaceResource;
 use Capell\Workspaces\Filament\Widgets\WorkspaceMergeHistoryWidgetAbstract as WorkspaceMergeHistoryWidget;

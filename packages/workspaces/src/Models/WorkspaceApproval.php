@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Models;
 
-use Capell\Core\Database\Factories\WorkspaceApprovalFactory;
+use Capell\Workspaces\Database\Factories\WorkspaceApprovalFactory;
 use Capell\Workspaces\Enums\WorkspaceApprovalActionEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
