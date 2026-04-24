@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Models;
 
-use Capell\Core\Database\Factories\WorkspaceFactory;
 use Capell\Core\Models\Concerns\HasUserstamps;
 use Capell\Core\Models\Contracts\Userstampable;
 use Capell\Workspaces\Data\WorkspaceSettingsData;
+use Capell\Workspaces\Database\Factories\WorkspaceFactory;
 use Capell\Workspaces\Enums\WorkspaceApprovalActionEnum;
 use Capell\Workspaces\Enums\WorkspaceKindEnum;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;

@@ -165,10 +165,14 @@ describe('BrokenLinkCheck', function (): void {
             'body' => '<a href="/about-us">About</a><a href="/contact">Contact</a>',
         ]);
 
-        // Only register one of the two URLs
+        // Only register one of the two URLs.
+        // site_id and language_id are NOT NULL in the real schema; supply
+        // placeholder values (SQLite does not enforce FK integrity by default).
         DB::table('page_urls')->insert([
             'url' => '/about-us',
             'workspace_id' => 0,
+            'site_id' => 1,
+            'language_id' => 1,
         ]);
 
         $check = new BrokenLinkCheck;
@@ -186,9 +190,13 @@ describe('BrokenLinkCheck', function (): void {
             'body' => '<a href="/about-us">About</a>',
         ]);
 
+        // site_id and language_id are NOT NULL in the real schema; supply
+        // placeholder values (SQLite does not enforce FK integrity by default).
         DB::table('page_urls')->insert([
             'url' => '/about-us',
             'workspace_id' => 0,
+            'site_id' => 1,
+            'language_id' => 1,
         ]);
 
         $check = new BrokenLinkCheck;
