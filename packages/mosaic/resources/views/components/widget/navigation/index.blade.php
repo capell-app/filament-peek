@@ -5,8 +5,8 @@ declare(strict_types=1);
 ?>
 
 @php
-    use Capell\Core\Data\NavigationItemData;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Navigation\Data\NavigationItemData;
     use Illuminate\Support\Collection;
 
     $theme = Frontend::theme();
