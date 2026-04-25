@@ -10,6 +10,9 @@ use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Core\Data\PackageData;
 use Capell\Core\Enums\PackageTypeEnum;
+use Capell\Core\Events\PageDeleted;
+use Capell\Core\Events\PageSaved;
+use Capell\Core\Events\SiteCreated;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
@@ -27,6 +30,9 @@ use Capell\SeoTools\Filament\Settings\SeoSettingsSchema;
 use Capell\SeoTools\Handlers\ClearCircuitBreakerHandler;
 use Capell\SeoTools\Listeners\LogAiGeneration;
 use Capell\SeoTools\Listeners\NotifyAiFailure;
+use Capell\SeoTools\Listeners\Sitemap\RegenerateSitemapsOnPageDeleted;
+use Capell\SeoTools\Listeners\Sitemap\RegenerateSitemapsOnPageSaved;
+use Capell\SeoTools\Listeners\Sitemap\RegenerateSitemapsOnSiteCreated;
 use Capell\SeoTools\Models\AiCreatorContext;
 use Capell\SeoTools\Models\AiCreatorSession;
 use Capell\SeoTools\Models\AIGenerationHistory;
@@ -240,6 +246,16 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
+    protected function registerSitemapEventListeners(): self
+    {
+        $events = $this->app->make(Dispatcher::class);
+        $events->listen(PageSaved::class, RegenerateSitemapsOnPageSaved::class);
+        $events->listen(PageDeleted::class, RegenerateSitemapsOnPageDeleted::class);
+        $events->listen(SiteCreated::class, RegenerateSitemapsOnSiteCreated::class);
+
+        return $this;
+    }
+
     private function bootInstalledPackage(): self
     {
         return $this
@@ -249,6 +265,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             ->registerAiEventListeners()
             ->registerSettingsSchema()
             ->registerSitemapRegistry()
+            ->registerSitemapEventListeners()
             ->registerFrontendViews();
     }
 
