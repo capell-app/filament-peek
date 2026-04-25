@@ -34,4 +34,9 @@ class HeroPageSchemaExtender implements PageSchemaExtender
 
         return [HeroEditor::make()];
     }
+
+    public function extendSettingsTabComponents(): array
+    {
+        return [];
+    }
 }

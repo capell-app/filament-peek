@@ -6,29 +6,36 @@ namespace Capell\SeoTools\Filament\Extenders\Page;
 
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\Admin\Enums\PageTranslationSchemaHookEnum;
-use Capell\SeoTools\Filament\Components\Forms\Page\TranslationSeoMetaSchema;
-use Capell\SeoTools\Filament\Components\Forms\SearchMetaDataSection;
+use Capell\SeoTools\Enums\RobotsDirectiveEnum;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
-class SearchMetaSchemaExtender implements PageSchemaExtender
+class RobotsDirectiveSchemaExtender implements PageSchemaExtender
 {
+    /**
+     * @return array<int, Component>
+     */
+    public function extendSettingsTabComponents(): array
+    {
+        return [
+            CheckboxList::make('robots')
+                ->options(RobotsDirectiveEnum::class)
+                ->descriptions(
+                    collect(RobotsDirectiveEnum::cases())
+                        ->mapWithKeys(fn (RobotsDirectiveEnum $case): array => [$case->value => $case->getDescription()])
+                        ->all(),
+                ),
+        ];
+    }
+
     /**
      * @return array<int, Component>
      */
     public function extendTranslationComponentsForHook(Schema $schema, PageTranslationSchemaHookEnum $hook): array
     {
-        if ($hook !== PageTranslationSchemaHookEnum::BeforeSearchMeta) {
-            return [];
-        }
-
-        return [
-            SearchMetaDataSection::make()
-                ->statePath('meta')
-                ->visibleOn(['edit', 'editOption'])
-                ->schema(TranslationSeoMetaSchema::make()),
-        ];
+        return [];
     }
 
     /**
@@ -47,13 +54,5 @@ class SearchMetaSchemaExtender implements PageSchemaExtender
     public function extendTabs(Schema $schema, array $tabs): array
     {
         return $tabs;
-    }
-
-    /**
-     * @return array<int, Component>
-     */
-    public function extendSettingsTabComponents(): array
-    {
-        return [];
     }
 }

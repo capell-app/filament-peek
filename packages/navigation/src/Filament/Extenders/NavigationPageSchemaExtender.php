@@ -28,4 +28,9 @@ class NavigationPageSchemaExtender implements PageSchemaExtender
     {
         return [];
     }
+
+    public function extendSettingsTabComponents(): array
+    {
+        return [];
+    }
 }

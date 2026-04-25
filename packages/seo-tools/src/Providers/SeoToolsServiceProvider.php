@@ -30,6 +30,7 @@ use Capell\SeoTools\Console\Commands\XmlSitemapCommand;
 use Capell\SeoTools\Contracts\Schemas\SearchMetaDataSectionExtenderResolverInterface;
 use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
+use Capell\SeoTools\Filament\Extenders\Page\RobotsDirectiveSchemaExtender;
 use Capell\SeoTools\Filament\Extenders\Page\SearchMetaSchemaExtender;
 use Capell\SeoTools\Filament\Pages\SitemapPage;
 use Capell\SeoTools\Filament\Settings\AssistantSettingsSchema;
@@ -233,7 +234,10 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
     protected function registerPageSchemaExtenders(): self
     {
         $this->app->tag(
-            [SearchMetaSchemaExtender::class],
+            [
+                SearchMetaSchemaExtender::class,
+                RobotsDirectiveSchemaExtender::class,
+            ],
             PageSchemaExtender::TAG,
         );
 
