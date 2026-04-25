@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Navigation\Support\Creator;
 
-use Capell\Core\Contracts\Navigation\DemoNavigationCreatorContract;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -18,10 +17,52 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Str;
 
-class NavigationDemoCreator implements DemoNavigationCreatorContract
+class NavigationDemoCreator
 {
-    public function setupMainNavigation(Site $site, Language $language, Page $home, SupportCollection $pages): void
+    public function setupInitialSiteNavigation(Site $site, Page $home, Page $sitemapPage): void
     {
+        /** @var class-string<Type> $typeModel */
+        $typeModel = Type::class;
+        $navigationType = $typeModel::query()->navigationType()->default()->first();
+
+        resolve(NavigationCreator::class)->mainNavigation(site: $site, type: $navigationType, home: $home);
+
+        resolve(NavigationCreator::class)->footerNavigation(
+            site: $site,
+            type: $navigationType,
+            pages: new Collection([$home]),
+        );
+
+        resolve(NavigationCreator::class)->subFooterNavigation(
+            site: $site,
+            type: $navigationType,
+            pages: new Collection([$sitemapPage]),
+        );
+    }
+
+    public function updateRelatedSiteNavigations(): void
+    {
+        Site::query()->with(['related', 'related.translation'])->get()
+            ->each(function (Site $site): void {
+                $this->updateSubFooterNavigation($site, $site->related);
+            });
+    }
+
+    public function setupMainNavigation(Site $site, Language $language, Page $home): void
+    {
+        $pages = Page::query()
+            ->whereHas(
+                'type',
+                fn (BuilderContract $query): BuilderContract => $query->default()->enabled()->accessible()->hiddenSystemGroup(),
+            )
+            ->withWhereHas('children')
+            ->where('site_id', $site->id)
+            ->whereNull('parent_id')
+            ->notHomePage()
+            ->publishedDate()
+            ->limit(6)
+            ->get();
+
         /** @var class-string<Type> $typeModel */
         $typeModel = Type::class;
         $navigationType = $typeModel::query()->navigationType()->default()->first();
@@ -35,8 +76,25 @@ class NavigationDemoCreator implements DemoNavigationCreatorContract
         );
     }
 
-    public function setupFooterNavigation(Site $site, Language $language, SupportCollection $pages): void
+    public function setupFooterNavigation(Site $site, Language $language): void
     {
+        $pages = Page::query()
+            ->whereHas(
+                'type',
+                fn (BuilderContract $query): BuilderContract => $query->default()->enabled()->accessible()->hiddenSystemGroup(),
+            )
+            ->withWhereHas('children')
+            ->withWhereHas(
+                'translations',
+                fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->id),
+            )
+            ->where('site_id', $site->id)
+            ->notHomePage()
+            ->publishedDate()
+            ->limit(8)
+            ->get()
+            ->toTree();
+
         /** @var class-string<Type> $typeModel */
         $typeModel = Type::class;
         $navigationType = $typeModel::query()->navigationType()->default()->first();

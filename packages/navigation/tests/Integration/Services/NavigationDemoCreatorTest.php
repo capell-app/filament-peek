@@ -10,11 +10,13 @@ use Capell\Core\Support\Creator\TypeCreator;
 use Capell\Navigation\Enums\NavigationHandle;
 use Capell\Navigation\Enums\NavigationItemType;
 use Capell\Navigation\Models\Navigation;
+use Capell\Navigation\Support\Creator\NavigationDemoCreator;
 
 use function Pest\Laravel\assertDatabaseHas;
 
 it('sets up main, footer, and sub-footer navigation', function (): void {
     $demoCreator = new DemoCreator;
+    $navigationDemoCreator = app(NavigationDemoCreator::class);
 
     $language = Language::factory()->default()->create();
 
@@ -27,15 +29,16 @@ it('sets up main, footer, and sub-footer navigation', function (): void {
     ], $site, createMedia: false);
     assert($homePage instanceof Page);
 
-    $demoCreator->setupMainNavigation($site, $language, $homePage);
-    $demoCreator->setupFooterNavigation($site, $language);
-    $demoCreator->subFooterNavigation($site, $language);
+    $navigationDemoCreator->setupMainNavigation($site, $language, $homePage);
+    $navigationDemoCreator->setupFooterNavigation($site, $language);
+    $navigationDemoCreator->setupSubFooterNavigation($site, $language);
 
     expect($site->navigations()->count())->toBeGreaterThanOrEqual(1);
 });
 
 it('merges generated footer items into an existing navigation with persisted items', function (): void {
     $demoCreator = new DemoCreator;
+    $navigationDemoCreator = app(NavigationDemoCreator::class);
 
     $language = Language::factory()->english()->create();
 
@@ -106,7 +109,7 @@ it('merges generated footer items into an existing navigation with persisted ite
             ],
         ]);
 
-    $demoCreator->setupFooterNavigation($site, $language);
+    $navigationDemoCreator->setupFooterNavigation($site, $language);
 
     $navigation = Navigation::query()
         ->where('key', NavigationHandle::Footer->value)
@@ -139,7 +142,7 @@ it('merges generated footer items into an existing navigation with persisted ite
 });
 
 it('creates main navigation with the home page and eligible nested pages only', function (): void {
-    $demoCreator = new DemoCreator;
+    $navigationDemoCreator = app(NavigationDemoCreator::class);
 
     $language = Language::factory()->english()->create();
 
@@ -225,7 +228,7 @@ it('creates main navigation with the home page and eligible nested pages only', 
 
     $createPublishedPage('Hidden Draft Child', [], $draftPage);
 
-    $demoCreator->setupMainNavigation($site, $language, $home);
+    $navigationDemoCreator->setupMainNavigation($site, $language, $home);
 
     assertDatabaseHas('navigations', [
         'key' => NavigationHandle::Main->value,
