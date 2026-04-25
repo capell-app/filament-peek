@@ -22,6 +22,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\SeoTools\Console\Commands\ClearAiCacheCommand;
 use Capell\SeoTools\Console\Commands\InstallCommand;
 use Capell\SeoTools\Console\Commands\MonitorAiUsageCommand;
@@ -67,6 +68,7 @@ use Capell\SeoTools\Support\Interceptors\SitemapPageTypeInterceptor;
 use Capell\SeoTools\Support\Pipelines\AiCreatorPipeline;
 use Capell\SeoTools\Support\PrismProvider;
 use Capell\SeoTools\Support\PromptRepository;
+use Capell\SeoTools\Support\RenderHooks\RegisterSeoHeadHooks;
 use Capell\SeoTools\Support\Schemas\SearchMetaDataSectionExtenderResolver;
 use Capell\SeoTools\Support\SectionRegistry;
 use Capell\SeoTools\Support\Sitemap\Pages\PagesSitemap;
@@ -347,6 +349,15 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
+    protected function registerRenderHooks(): self
+    {
+        if (class_exists(RenderHookRegistry::class)) {
+            $this->app->make(RegisterSeoHeadHooks::class)->register();
+        }
+
+        return $this;
+    }
+
     private function bootInstalledPackage(): self
     {
         return $this
@@ -363,7 +374,8 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             ->registerSitemapEventListeners()
             ->registerFilamentPages()
             ->registerLivewireComponents()
-            ->registerFrontendViews();
+            ->registerFrontendViews()
+            ->registerRenderHooks();
     }
 
     private function isPackageInstalled(): bool
