@@ -6,6 +6,7 @@ namespace Capell\SeoTools\Providers;
 
 use Capell\Admin\Contracts\Extenders\PageHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
+use Capell\Admin\Contracts\Extenders\ResourceHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteSchemaExtender;
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
@@ -34,7 +35,9 @@ use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
 use Capell\SeoTools\Filament\Extenders\Page\RobotsDirectiveSchemaExtender;
 use Capell\SeoTools\Filament\Extenders\Page\SearchMetaSchemaExtender;
+use Capell\SeoTools\Filament\Extenders\Page\SitemapResourceHeaderActionExtender;
 use Capell\SeoTools\Filament\Extenders\Site\SiteDetailsMetaExtender;
+use Capell\SeoTools\Filament\Extenders\Site\SitemapSiteHeaderActionExtender;
 use Capell\SeoTools\Filament\Extenders\Site\SiteTranslationMetaExtender;
 use Capell\SeoTools\Filament\Pages\SitemapPage;
 use Capell\SeoTools\Filament\Settings\AssistantSettingsSchema;
@@ -234,7 +237,12 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
 
         $this->app->tag([
             AiCreatorSiteExtender::class,
+            SitemapSiteHeaderActionExtender::class,
         ], SiteHeaderActionExtender::TAG);
+
+        $this->app->tag([
+            SitemapResourceHeaderActionExtender::class,
+        ], ResourceHeaderActionExtender::TAG);
 
         return $this;
     }
