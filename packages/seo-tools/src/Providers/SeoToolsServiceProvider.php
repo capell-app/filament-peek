@@ -38,6 +38,7 @@ use Capell\SeoTools\Filament\Extenders\Site\SiteTranslationMetaExtender;
 use Capell\SeoTools\Filament\Pages\SitemapPage;
 use Capell\SeoTools\Filament\Settings\AssistantSettingsSchema;
 use Capell\SeoTools\Filament\Settings\SeoSettingsSchema;
+use Capell\SeoTools\Filament\Settings\StructuredDataSettingsSchema;
 use Capell\SeoTools\Handlers\ClearCircuitBreakerHandler;
 use Capell\SeoTools\Listeners\LogAiGeneration;
 use Capell\SeoTools\Listeners\NotifyAiFailure;
@@ -267,6 +268,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         $registry->register('assistant', AssistantSettingsSchema::class);
         $registry->registerSettingsClass('assistant', AssistantSettings::class);
         $registry->register('core', SeoSettingsSchema::class);
+        $registry->register('frontend', StructuredDataSettingsSchema::class);
 
         return $this;
     }
