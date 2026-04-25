@@ -6,7 +6,7 @@ use Capell\Admin\Filament\Pages\SitemapPage;
 use Capell\Blog\Models\Article;
 use Capell\Blog\Support\Creator\BlogCreator;
 use Capell\Core\Models\Site;
-use Capell\Core\Support\Creator\PageCreator;
+use Capell\SeoTools\Support\Creator\SitemapPageCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Livewire\livewire;
@@ -27,7 +27,7 @@ test('can render page', function (): void {
 
     $site = Site::factory()->withTranslations()->create();
 
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
 
     $pageCreator->createSitemapPage($site);
 

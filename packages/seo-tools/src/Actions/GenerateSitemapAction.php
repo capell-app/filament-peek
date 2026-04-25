@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Actions;
 
-use Capell\Core\Enums\CacheKey;
 use Capell\Core\Models;
 use Capell\Core\Models\Site;
+use Capell\SeoTools\Enums\SitemapCacheKey;
 use Capell\SeoTools\Support\Sitemap\XmlSitemapGenerator;
 use Exception;
 use Illuminate\Support\Facades\Cache;
@@ -22,7 +22,7 @@ class GenerateSitemapAction
     use AsJob;
     use AsObject;
 
-    protected string $cacheKey = CacheKey::GeneratingSitemaps->value;
+    protected string $cacheKey = SitemapCacheKey::Generating->value;
 
     public function handle(Site $site): string
     {
@@ -31,7 +31,7 @@ class GenerateSitemapAction
 
             $this->updateCache();
 
-            Cache::forget(CacheKey::Sitemaps->value);
+            Cache::forget(SitemapCacheKey::Sitemaps->value);
 
             return $xml;
         } catch (Throwable) {

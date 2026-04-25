@@ -11,10 +11,13 @@ use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Admin\Support\CapellAdminManager;
 use Capell\Core\Data\PackageData;
 use Capell\Core\Enums\PackageTypeEnum;
+use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Events\PageDeleted;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Events\SiteCreated;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Site;
+use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\SeoTools\Console\Commands\ClearAiCacheCommand;
@@ -51,6 +54,8 @@ use Capell\SeoTools\Support\AiTokenCounter;
 use Capell\SeoTools\Support\Cache\AIGenerationCache;
 use Capell\SeoTools\Support\Cache\RateLimitCache;
 use Capell\SeoTools\Support\ContentTargetResolver;
+use Capell\SeoTools\Support\Creator\SitemapPageCreator;
+use Capell\SeoTools\Support\Interceptors\SitemapPageTypeInterceptor;
 use Capell\SeoTools\Support\Pipelines\AiCreatorPipeline;
 use Capell\SeoTools\Support\PrismProvider;
 use Capell\SeoTools\Support\PromptRepository;
@@ -58,10 +63,12 @@ use Capell\SeoTools\Support\Schemas\SearchMetaDataSectionExtenderResolver;
 use Capell\SeoTools\Support\SectionRegistry;
 use Capell\SeoTools\Support\Sitemap\Pages\PagesSitemap;
 use Capell\SeoTools\Support\Sitemap\SitemapPageRegistry;
+use Capell\SeoTools\Support\Sitemap\SitemapPageType;
 use Capell\SeoTools\Targets\FlatJsonTarget;
 use Composer\InstalledVersions;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Collection;
 use Spatie\LaravelPackageTools\Package;
 
 class SeoToolsServiceProvider extends AbstractPackageServiceProvider
@@ -246,6 +253,36 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
+    protected function registerSitemapPageType(): self
+    {
+        /** @var class-string<Type> $typeModel */
+        $typeModel = Type::class;
+
+        CapellCore::registerModelInterceptor(
+            $typeModel,
+            interceptorClass: SitemapPageTypeInterceptor::class,
+            key: [
+                'key' => SitemapPageType::Key,
+                'type' => TypeEnum::Page,
+            ],
+        );
+
+        return $this;
+    }
+
+    protected function registerSitemapDefaultPage(): self
+    {
+        CapellCore::addDefaultPage(
+            'sitemap',
+            __('capell::generic.sitemap'),
+            function (Site $site, ?Collection $languages = null): void {
+                resolve(SitemapPageCreator::class)->createSitemapPage($site, $languages);
+            },
+        );
+
+        return $this;
+    }
+
     protected function registerSitemapRegistry(): self
     {
         $this->app->singleton(SitemapPageRegistry::class);
@@ -275,6 +312,8 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             ->registerAiServices()
             ->registerAiEventListeners()
             ->registerSettingsSchema()
+            ->registerSitemapPageType()
+            ->registerSitemapDefaultPage()
             ->registerSitemapRegistry()
             ->registerSitemapEventListeners()
             ->registerFilamentPages()

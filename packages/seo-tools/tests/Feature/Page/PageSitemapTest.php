@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Core\Support\Creator\PageCreator;
+use Capell\SeoTools\Support\Creator\SitemapPageCreator;
 use Capell\SeoTools\Support\Sitemap\XmlSitemapGenerator;
 use Capell\Tests\Support\Concerns\TestingFrontend;
 use Illuminate\Support\Facades\Cache;
@@ -30,7 +30,7 @@ test('sitemap html page', function (): void {
     $languages = Language::factory()->count(3)->create();
     $site = Site::factory()->withTranslations($languages)->create();
 
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
 
     $sitemapPage = $pageCreator->createSitemapPage($site, $languages);
 
@@ -68,7 +68,7 @@ test('sitemap xml page', function (): void {
     $languages = Language::factory()->count(3)->create();
     $site = Site::factory()->withTranslations($languages)->create();
 
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
     $sitemapPage = $pageCreator->createSitemapPage($site, $languages);
     $homepage = Page::factory()->site($site)->home()->withTranslations($languages, slug: '/')->create();
     $pages = Page::factory()->count(5)->site($site)->withTranslations($languages)->create();
@@ -109,7 +109,7 @@ test('sitemap xml page returns 404 if file missing', function (): void {
 
     $languages = Language::factory()->create();
     $site = Site::factory()->withTranslations($languages)->create();
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
     $sitemapPage = $pageCreator->createSitemapPage($site, collect([$languages]));
 
     get($sitemapPage->pageUrl->full_url . '-xml')
@@ -123,7 +123,7 @@ test('sitemap xml page returns 304 with ETag', function (): void {
 
     $languages = Language::factory()->create();
     $site = Site::factory()->withTranslations($languages)->create();
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
     $sitemapPage = $pageCreator->createSitemapPage($site, collect([$languages]));
 
     Page::factory()->count(5)->site($site)->withTranslations($languages)->create();
@@ -160,7 +160,7 @@ test('sitemap xml page serves a chunk file when ?p=N is provided', function (): 
 
     $languages = Language::factory()->create();
     $site = Site::factory()->withTranslations(collect([$languages]))->create();
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
     $sitemapPage = $pageCreator->createSitemapPage($site, collect([$languages]));
 
     // 3 pages + 1 sitemap page = 4 URLs → 2 chunks of 2 (limit=2)
@@ -197,7 +197,7 @@ test('sitemap xml page serves a sitemapindex as the main file when chunks exist'
 
     $languages = Language::factory()->create();
     $site = Site::factory()->withTranslations(collect([$languages]))->create();
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
     $sitemapPage = $pageCreator->createSitemapPage($site, collect([$languages]));
 
     Page::factory()->count(2)->site($site)->withTranslations(collect([$languages]))->create();
@@ -218,7 +218,7 @@ test('sitemap xml page returns 404 for a chunk page that does not exist', functi
 
     $languages = Language::factory()->create();
     $site = Site::factory()->withTranslations(collect([$languages]))->create();
-    $pageCreator = resolve(PageCreator::class);
+    $pageCreator = resolve(SitemapPageCreator::class);
     $sitemapPage = $pageCreator->createSitemapPage($site, collect([$languages]));
 
     // Generate a regular (non-chunked) sitemap — no chunk files exist
