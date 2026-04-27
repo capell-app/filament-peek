@@ -14,5 +14,12 @@
         "admin": ["Capell\\Blog\\Providers\\AdminServiceProvider"],
         "frontend": ["Capell\\Blog\\Providers\\FrontendServiceProvider"],
         "console": ["Capell\\Blog\\Providers\\ConsoleServiceProvider"]
+    },
+    "commands": {
+        "install": "capell:blog-install",
+        "setup": "capell:blog-setup",
+        "setupParams": ["sites", "languages"],
+        "demo": "capell:blog-demo",
+        "demoParams": ["sites", "user", "limit"]
     }
 }
