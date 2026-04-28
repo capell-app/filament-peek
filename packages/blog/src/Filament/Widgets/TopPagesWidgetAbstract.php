@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Filament\Widgets;
 
-use Capell\Admin\Filament\Widgets\CapellWidget;
+use Capell\Admin\Contracts\CapellWidgetContract;
+use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\Blog\Data\Dashboard\TopPageData;
 use Capell\Blog\Data\Dashboard\TopPagesData;
 use Capell\Core\Models\AccessLog;
+use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-final class TopPagesWidgetAbstract extends CapellWidget
+final class TopPagesWidgetAbstract extends Widget implements CapellWidgetContract
 {
+    use GatedByRoleAndSettings;
+
     protected static string $settingsKey = 'top_pages';
 
     /** @var list<string> */

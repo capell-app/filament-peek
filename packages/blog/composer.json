@@ -22,7 +22,6 @@
         "capell-app/admin": "*",
         "capell-app/frontend": "*",
         "capell-app/navigation": "*",
-        "capell-app/seo-tools": "*",
         "capell-app/tags": "*",
         "capell-app/workspaces": "*"
     },

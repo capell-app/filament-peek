@@ -33,7 +33,7 @@ class ArticlesSitemap extends AbstractSitemapPages
             limit: 100,
             ordering: PageOrderEnum::Latest,
             pageGroup: BlogTypeGroupEnum::Article->value,
-            morphModel: Article::class,
+            morphModel: 'article',
         );
 
         $node->children = $articles->map(

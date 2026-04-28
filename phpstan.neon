@@ -6,16 +6,9 @@ parameters:
     peststan:
         pestConfigFiles:
             - tests/Pest.php
-            - packages/workspaces/tests/Integration/Pest.php
-            - packages/themes/corporate/tests/Pest.php
-            - packages/themes/agency/tests/Pest.php
-            - packages/themes/saas/tests/Pest.php
     paths:
         - packages
         - tests
-    excludePaths:
-        # media-curator requires awcodes/filament-curator which is not in the root vendor
-        - packages/media-curator
     checkAuthCallsWhenInRequestScope: true
     checkConfigTypes: true
     checkExplicitMixedMissingReturn: true
@@ -36,15 +29,22 @@ parameters:
     databaseMigrationsPath:
         - packages/address/database/migrations
         - packages/blog/database/migrations
+        - packages/forms/database/migrations
         - packages/mosaic/database/migrations
+        - packages/navigation/database/migrations
         - packages/plugins/database/migrations
+        - packages/seo-tools/database/migrations
+        - packages/tags/database/migrations
+        - packages/themes/agency/database/migrations
+        - packages/themes/corporate/database/migrations
+        - packages/themes/saas/database/migrations
+        - packages/workspaces/database/migrations
     configDirectories:
-        - packages/assistant/config
-        - packages/blog/config
         - packages/default-theme/config
         - packages/mosaic/config
         - packages/plugins/config
         - packages/seo-tools/config
+        - packages/tags/publishes/config
         - packages/themes/agency/config
         - packages/themes/corporate/config
         - packages/themes/saas/config
@@ -53,12 +53,21 @@ parameters:
         - packages/address/resources/lang
         - packages/blog/resources/lang
         - packages/mosaic/resources/lang
+        - packages/plugins/resources/lang
+        - packages/seo-tools/resources/lang
+        - packages/tags/resources/lang
+        - packages/toolbar/resources/lang
     viewDirectories:
-        - packages/address/resources/views
         - packages/blog/resources/views
+        - packages/default-theme/resources/views
         - packages/mosaic/resources/views
+        - packages/navigation/resources/views
+        - packages/seo-tools/resources/views
+        - packages/themes-core/resources/views
+        - packages/themes/agency/resources/views
+        - packages/themes/corporate/resources/views
+        - packages/themes/default/resources/views
+        - packages/themes/saas/resources/views
+        - packages/toolbar/resources/views
+        - packages/workspaces/resources/views
     tmpDir: /tmp/phpstan
-    scanFiles:
-        - phpstan/stubs/admin-extenders.php
-        - phpstan/stubs/admin-widgets.php
-        - phpstan/stubs/core-workspaces.php

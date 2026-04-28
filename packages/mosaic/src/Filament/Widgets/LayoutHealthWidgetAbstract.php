@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Mosaic\Filament\Widgets;
 
-use Capell\Admin\Filament\Widgets\CapellWidget;
+use Capell\Admin\Contracts\CapellWidgetContract;
+use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\Core\Enums\PublishStatusEnum;
 use Capell\Core\Models\Layout;
 use Capell\Mosaic\Data\Dashboard\LayoutHealthData;
@@ -13,11 +14,14 @@ use Capell\Mosaic\Data\Dashboard\UnusedWidgetData;
 use Capell\Mosaic\Data\Dashboard\WidgetGroupData;
 use Capell\Mosaic\Models\Section;
 use Capell\Mosaic\Models\Widget;
+use Filament\Widgets\Widget as FilamentWidget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-final class LayoutHealthWidgetAbstract extends CapellWidget
+final class LayoutHealthWidgetAbstract extends FilamentWidget implements CapellWidgetContract
 {
+    use GatedByRoleAndSettings;
+
     protected static string $settingsKey = 'layout_health';
 
     /** @var list<string> */

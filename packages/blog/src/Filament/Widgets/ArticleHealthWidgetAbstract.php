@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Filament\Widgets;
 
-use Capell\Admin\Filament\Widgets\CapellWidget;
+use Capell\Admin\Contracts\CapellWidgetContract;
+use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\Blog\Data\Dashboard\ArticleHealthData;
 use Capell\Blog\Data\Dashboard\LanguageCoverageData;
 use Capell\Blog\Data\Dashboard\TagCountData;
 use Capell\Blog\Models\Article;
 use Capell\Core\Models\Language;
 use Capell\Tags\Models\Tag;
+use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-final class ArticleHealthWidgetAbstract extends CapellWidget
+final class ArticleHealthWidgetAbstract extends Widget implements CapellWidgetContract
 {
+    use GatedByRoleAndSettings;
+
     protected static string $settingsKey = 'article_health';
 
     /** @var list<string> */

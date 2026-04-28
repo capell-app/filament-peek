@@ -141,7 +141,7 @@ test('missing_fk_column_is_warned_not_fatal', function (): void {
 
 test('command_populates_only_null_fk_columns', function (): void {
     // Create two owner rows: one already has image_id populated, one does not.
-    $existingCuratorId = (int) DB::table('curator')->insertGetId([
+    $existingCuratorId = DB::table('curator')->insertGetId([
         'disk' => 'public',
         'directory' => '',
         'visibility' => 'public',

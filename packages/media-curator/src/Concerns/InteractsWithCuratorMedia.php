@@ -57,8 +57,7 @@ trait InteractsWithCuratorMedia
     {
         $column = static::curatorMediaColumn($collection);
 
-        /** @var Model $this */
-        $mediaId = $this->{$column} ?? null;
+        $mediaId = $this->getAttribute($column);
 
         if ($mediaId === null) {
             return null;
@@ -104,8 +103,7 @@ trait InteractsWithCuratorMedia
         ]);
 
         $column = static::curatorMediaColumn($collection);
-        /** @var Model $this */
-        $this->{$column} = $media->getKey();
+        $this->setAttribute($column, $media->getKey());
         $this->save();
 
         return $media;
@@ -114,8 +112,7 @@ trait InteractsWithCuratorMedia
     public function clearMediaCollection(string $collection = 'default'): static
     {
         $column = static::curatorMediaColumn($collection);
-        /** @var Model $this */
-        $this->{$column} = null;
+        $this->setAttribute($column, null);
         $this->save();
 
         return $this;

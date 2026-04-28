@@ -19,7 +19,7 @@ class SubmitAiCreatorDraftAction
 
     public function handle(AiCreatorSession $session): void
     {
-        $sections = (array) ($session->layout_proposal ?? []);
+        $sections = $session->layout_proposal ?? [];
 
         $target = $this->targetResolver->preferred();
 

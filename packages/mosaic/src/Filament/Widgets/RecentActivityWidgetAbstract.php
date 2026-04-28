@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Capell\Mosaic\Filament\Widgets;
 
-use Capell\Admin\Filament\Widgets\CapellWidget;
+use Capell\Admin\Contracts\CapellWidgetContract;
+use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\Core\Models\Page;
 use Capell\Mosaic\Data\Dashboard\ActivityItemData;
 use Capell\Mosaic\Data\Dashboard\RecentActivityData;
+use Filament\Widgets\Widget;
 
-final class RecentActivityWidgetAbstract extends CapellWidget
+final class RecentActivityWidgetAbstract extends Widget implements CapellWidgetContract
 {
+    use GatedByRoleAndSettings;
+
     protected static string $settingsKey = 'recent_activity';
 
     /** @var list<string> */

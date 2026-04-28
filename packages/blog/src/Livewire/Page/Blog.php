@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Livewire\Page;
 
-use Capell\Blog\Models\Article;
+use Capell\Core\Enums\PageOrderEnum;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Livewire\Page\AbstractPage;
 use Capell\Frontend\Support\Loader\PageLoader;
@@ -27,12 +27,13 @@ class Blog extends AbstractPage
             paginationPage: (int) $this->getPage($paginationPage),
             pageGroup: $page->type->meta['page_group'] ?? null,
             typeKey: $page->type->meta['page_type'] ?? null,
+            ordering: $page->type->meta['ordering'] ?? PageOrderEnum::Latest,
             withImage: $page->type->meta['with_image'] ?? false,
             withPagination: $page->type->meta['pagination'] ?? true,
             withParent: $page->type->meta['with_parent'] ?? false,
             withDate: $page->type->meta['with_date'] ?? false,
             paginationKey: 'articles',
-            morphModel: Article::class,
+            morphModel: 'article',
             modifyQuery: fn (Builder $query) => $query->with(['tags']),
         );
     }

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Filament\Widgets;
 
-use Capell\Admin\Filament\Widgets\CapellWidget;
+use Capell\Admin\Contracts\CapellWidgetContract;
+use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\SeoTools\Data\Dashboard\AiMetricsData;
 use Capell\SeoTools\Data\Dashboard\FeatureUsageData;
 use Capell\SeoTools\Models\AIGenerationHistory;
 use Capell\SeoTools\Settings\AssistantSettings;
 use Capell\SeoTools\Support\AiRateLimiter;
+use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 
-final class AiMetricsWidgetAbstract extends CapellWidget
+final class AiMetricsWidgetAbstract extends Widget implements CapellWidgetContract
 {
+    use GatedByRoleAndSettings;
+
     protected static string $settingsKey = 'ai_metrics';
 
     /** @var list<string> */

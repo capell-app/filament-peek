@@ -8,15 +8,21 @@ use Capell\Address\Providers\AddressServiceProvider;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
+use Capell\Blog\Providers\AdminServiceProvider as BlogAdminServiceProvider;
 use Capell\Blog\Providers\BlogServiceProvider;
+use Capell\Blog\Providers\FrontendServiceProvider as BlogFrontendServiceProvider;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Media;
 use Capell\Core\Providers\CapellServiceProvider;
+use Capell\DefaultTheme\Providers\DefaultThemeServiceProvider;
 use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Mosaic\Providers\MosaicServiceProvider;
 use Capell\SeoTools\Providers\SeoToolsServiceProvider;
+use Capell\Tags\Models\Tag;
 use Capell\Tags\Providers\TagsServiceProvider;
 use Capell\Tests\AbstractTestCase;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
 
@@ -58,12 +64,15 @@ class PackagesTestCase extends AbstractTestCase
             AddressServiceProvider::class,
             MosaicServiceProvider::class,
             BlogServiceProvider::class,
+            BlogAdminServiceProvider::class,
+            BlogFrontendServiceProvider::class,
             SeoToolsServiceProvider::class,
             TagsServiceProvider::class,
             FrontendServiceProvider::class,
             CapellServiceProvider::class,
             AdminPanelProvider::class,
             AdminServiceProvider::class,
+            DefaultThemeServiceProvider::class,
             LivewireServiceProvider::class,
         ];
     }
@@ -82,5 +91,11 @@ class PackagesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(AddressServiceProvider::$packageName);
+
+        CapellCore::registerPackage('capell-app/navigation', path: realpath(__DIR__ . '/../../packages/navigation'));
+        CapellCore::forcePackageInstalled('capell-app/navigation');
+
+        $app->make(Repository::class)->set('tags.tag_model', Tag::class);
+        $app->make(Repository::class)->set('media-library.media_model', Media::class);
     }
 }

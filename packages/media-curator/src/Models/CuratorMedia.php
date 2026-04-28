@@ -26,7 +26,7 @@ final class CuratorMedia extends BaseCuratorMedia implements MediaContract
     {
         // `url` is an Eloquent accessor on BaseCuratorMedia; reading
         // $this->url triggers it and returns a storage-resolved URL.
-        return (string) $this->url;
+        return $this->url;
     }
 
     public function getFullUrl(string $conversion = ''): string
@@ -62,32 +62,32 @@ final class CuratorMedia extends BaseCuratorMedia implements MediaContract
         $name = $this->name ?? null;
 
         if ($name !== null && $name !== '') {
-            return (string) $name;
+            return $name;
         }
 
         $prettyName = $this->pretty_name ?? null;
 
-        return $prettyName === null ? '' : (string) $prettyName;
+        return $prettyName ?? '';
     }
 
     public function getPath(): string
     {
-        return (string) $this->path;
+        return $this->path;
     }
 
     public function getMimeType(): string
     {
-        return (string) $this->type;
+        return $this->type;
     }
 
     public function getWidth(): ?int
     {
-        return $this->width === null ? null : (int) $this->width;
+        return $this->width;
     }
 
     public function getHeight(): ?int
     {
-        return $this->height === null ? null : (int) $this->height;
+        return $this->height;
     }
 
     public function getCustomProperty(string $key, mixed $default = null): mixed
@@ -97,8 +97,8 @@ final class CuratorMedia extends BaseCuratorMedia implements MediaContract
             'title' => $this->title ?? $default,
             'description' => $this->description ?? $default,
             'caption' => $this->caption ?? $default,
-            'width' => $this->getWidth() ?? $default,
-            'height' => $this->getHeight() ?? $default,
+            'width' => $this->width ?? $default,
+            'height' => $this->height ?? $default,
             default => $default,
         };
     }

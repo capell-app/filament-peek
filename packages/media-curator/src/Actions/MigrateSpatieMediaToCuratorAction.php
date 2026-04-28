@@ -137,7 +137,7 @@ final class MigrateSpatieMediaToCuratorAction
             $directory = dirname($spatieRow->file_name);
             $directory = ($directory === '.' || $directory === '') ? '' : $directory;
 
-            $curatorId = DB::transaction(fn (): int => (int) DB::table('curator')->insertGetId([
+            $curatorId = DB::transaction(fn (): int => DB::table('curator')->insertGetId([
                 'disk' => $spatieRow->disk,
                 'directory' => $directory,
                 'visibility' => 'public',

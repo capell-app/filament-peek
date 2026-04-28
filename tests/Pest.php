@@ -33,3 +33,9 @@ pest()->extend(ThemesTestCase::class)->in('../packages/themes/tests');
 pest()->extend(ThemesCoreTestCase::class)->in('../packages/themes-core/tests');
 pest()->extend(ToolbarTestCase::class)->in('../packages/toolbar/tests');
 pest()->extend(WorkspacesTestCase::class)->in('../packages/workspaces/tests');
+
+uses()->in(
+    '../packages/themes/agency/tests/Unit',
+    '../packages/themes/corporate/tests/Unit',
+    '../packages/themes/saas/tests/Unit',
+);

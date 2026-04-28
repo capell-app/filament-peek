@@ -41,7 +41,7 @@ final class MigrateSpatieToCuratorCommand extends Command
             dryRun: $isDryRun,
             collections: (array) ($this->option('collection') ?? []),
             chunkSize: $chunkSize > 0 ? $chunkSize : 200,
-            ownerType: $this->option('owner-type') ?: null,
+            ownerType: $this->option('owner-type') ? (string) $this->option('owner-type') : null,
         );
 
         if ($isDryRun) {

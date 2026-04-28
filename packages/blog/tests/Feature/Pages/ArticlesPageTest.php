@@ -51,7 +51,14 @@ test('blog page lists articles', function (): void {
         ->layout($articleLayout)
         ->type($articleType)
         ->withTranslations($site->languages)
+        ->forEachSequence(
+            ['visible_from' => '2023-01-01'],
+            ['visible_from' => '2023-02-01'],
+            ['visible_from' => '2023-03-01'],
+        )
         ->create();
+
+    $articles = $articles->reverse()->values();
 
     expect($blogPage)
         ->toBeInstanceOf(Page::class)
@@ -60,10 +67,34 @@ test('blog page lists articles', function (): void {
 
     get($blogUrl->full_url)
         ->assertOk()
-        ->assertSeeHtml($blogPage->title)
-        ->assertSeeHtml($articles[0]->title)
-        ->assertSeeHtml($articles[1]->title)
-        ->assertSeeHtml($articles[2]->title);
+        ->assertElementExists(
+            'title',
+            fn (AssertElement $elm): BaseAssert => $elm->containsText($blogPage->title . ' | ' . $site->title),
+        )
+        ->assertElementExists(
+            'h1',
+            fn (AssertElement $elm): BaseAssert => $elm->containsText($blogPage->translation->title),
+        )
+        ->assertElementExists(
+            '.results',
+            fn (AssertElement $elm): BaseAssert => $elm->doesntContain('.no-results')
+                ->contains('.asset-index', count: $articles->count())
+                ->each(
+                    '.asset-index',
+                    function (AssertElement $titleElm, int $index) use ($articles): BaseAssert {
+                        $article = $articles->get($index);
+
+                        return $titleElm->containsText($article->translation->title)
+                            ->find(
+                                'a',
+                                fn (AssertElement $linkElm): BaseAssert => $linkElm->has(
+                                    'href',
+                                    $article->pageUrl->full_url,
+                                ),
+                            );
+                    },
+                ),
+        );
 });
 
 test('visit blogs page with no articles and see appropriate message', function (): void {
@@ -189,9 +220,11 @@ test('articles pagination', function (): void {
         ->layout($articleLayout)
         ->type($articleType)
         ->withTranslations($site->languages)
+        ->sequence(fn ($sequence): array => ['visible_from' => CarbonImmutable::now()->subDays($sequence->index)])
         ->create();
 
     $orderedArticles = Article::query()->with(['translation'])->whereKey($articles->pluck('id'))->publishedLatest()->get();
+
     $this->shownArticles = 0;
 
     expect($blogPage)
