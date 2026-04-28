@@ -93,10 +93,10 @@ Not in scope until this lands: nothing in the current flow blocks users — reje
 
 Three entry points — all land in the same **Open** workspace:
 
-| Entry                                                                                                                    | Buttons presented                                              |
-| ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| **Edit Page form** (`capell/admin` → `Filament/Resources/Pages/Pages/EditPage.php`)                                  | `Save`, `Save as Draft`, `Cancel`                              |
-| **Create Page form** (direct URL, `capell/admin` → `Filament/Resources/Pages/Pages/CreatePage.php`)                | `Create`, `Save as Draft`, `Create & create another`, `Cancel` |
+| Entry                                                                                                        | Buttons presented                                              |
+| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| **Edit Page form** (`capell/admin` → `Filament/Resources/Pages/Pages/EditPage.php`)                          | `Save`, `Save as Draft`, `Cancel`                              |
+| **Create Page form** (direct URL, `capell/admin` → `Filament/Resources/Pages/Pages/CreatePage.php`)          | `Create`, `Save as Draft`, `Create & create another`, `Cancel` |
 | **Create Page modal** from list/edit headers (`capell/admin` → `Filament/Actions/Page/CreatePageAction.php`) | Main submit button + `Save as Draft` footer action             |
 
 **`Save as Draft` vs `Save/Create`:**

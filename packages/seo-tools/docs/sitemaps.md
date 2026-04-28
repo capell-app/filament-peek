@@ -29,21 +29,21 @@ Generator service: `Capell\SeoTools\Support\Sitemap\XmlSitemapGenerator` builds 
 
 The generator iterates a site's domains and listable pages, adding URLs with their `lastmod`, `changefreq`, and `priority` attributes, and writes files under the configured storage disk and directory (defaults: `disk=local`, `directory=sitemaps`).
 
-| Method                            | Purpose                                                                  |
-| --------------------------------- | ------------------------------------------------------------------------ |
-| `generate(Site $site): string`    | Produce sitemaps and return the XML of the first domain's file.          |
-| `process(...)`                    | Same as `generate` with progress callbacks for CLI / ops.                |
-| `processIncremental(...)`         | Skip domains whose pages haven't changed — see Incremental Regeneration. |
-| `delete(Site $site)`              | Remove existing sitemap files, chunk files, and state files per domain.  |
+| Method                         | Purpose                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------ |
+| `generate(Site $site): string` | Produce sitemaps and return the XML of the first domain's file.          |
+| `process(...)`                 | Same as `generate` with progress callbacks for CLI / ops.                |
+| `processIncremental(...)`      | Skip domains whose pages haven't changed — see Incremental Regeneration. |
+| `delete(Site $site)`           | Remove existing sitemap files, chunk files, and state files per domain.  |
 
 ### Configuration
 
-| Key                                   | Env                                | Default        | Purpose                                                                              |
-| ------------------------------------- | ---------------------------------- | -------------- | ------------------------------------------------------------------------------------ |
-| `capell.sitemap.disk`                 | —                                  | `local`        | Storage disk name.                                                                   |
-| `capell.sitemap.directory`            | —                                  | `sitemaps`     | Base directory under the disk.                                                       |
-| `capell.sitemap.max_urls_per_file`    | `CAPELL_SITEMAP_MAX_URLS_PER_FILE` | `50000`        | URLs per sitemap file before splitting into chunks.                                  |
-| `capell.sitemap.xml_path`             | `CAPELL_SITEMAP_XML_PATH`          | `/sitemap-xml` | Public path appended to the domain base URL when constructing chunk `<loc>` entries. |
+| Key                                | Env                                | Default        | Purpose                                                                              |
+| ---------------------------------- | ---------------------------------- | -------------- | ------------------------------------------------------------------------------------ |
+| `capell.sitemap.disk`              | —                                  | `local`        | Storage disk name.                                                                   |
+| `capell.sitemap.directory`         | —                                  | `sitemaps`     | Base directory under the disk.                                                       |
+| `capell.sitemap.max_urls_per_file` | `CAPELL_SITEMAP_MAX_URLS_PER_FILE` | `50000`        | URLs per sitemap file before splitting into chunks.                                  |
+| `capell.sitemap.xml_path`          | `CAPELL_SITEMAP_XML_PATH`          | `/sitemap-xml` | Public path appended to the domain base URL when constructing chunk `<loc>` entries. |
 
 These keys live in `capell/core`'s `config/capell.php`.
 

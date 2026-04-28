@@ -44,6 +44,7 @@ it('no two TypeSchemaInterface implementations share the same key for the same t
         if ($reflection->isAbstract()) {
             continue;
         }
+
         if (! $reflection->implementsInterface(TypeSchemaInterface::class)) {
             continue;
         }

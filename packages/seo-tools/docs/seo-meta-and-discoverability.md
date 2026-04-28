@@ -49,14 +49,14 @@ DTO: `Capell\Core\Data\SchemaGraphData` (lives in `capell/core` because the data
 
 ## Related files
 
-| Concern        | File                                                                                       |
-| -------------- | ------------------------------------------------------------------------------------------ |
-| Social meta    | `src/Actions/BuildSocialMetaAction.php`, `src/Data/SocialMetaData.php`                     |
-| Schema `@graph`| `src/Actions/SchemaGraphAction.php`, `src/Enums/SchemaEntityTypeEnum.php`                  |
-| Schema views   | `resources/views/components/schema/{graph,website,webpage,breadcrumb,image,organization}.blade.php` |
-| llms.txt       | `src/Actions/GenerateLlmsTxtAction.php`, `src/Http/Controllers/LlmsTxtController.php`      |
-| Enums          | `src/Enums/{OpenGraphTypeEnum,RobotsDirectiveEnum,SchemaEntityTypeEnum,MetaSchemaEnum}.php` |
-| Hook registration | `src/Support/RenderHooks/RegisterSeoHeadHooks.php`                                      |
-| Shared DTOs    | `capell/core` → `src/Data/{SchemaGraphData,LlmsTxtEntryData}.php`                          |
+| Concern           | File                                                                                                |
+| ----------------- | --------------------------------------------------------------------------------------------------- |
+| Social meta       | `src/Actions/BuildSocialMetaAction.php`, `src/Data/SocialMetaData.php`                              |
+| Schema `@graph`   | `src/Actions/SchemaGraphAction.php`, `src/Enums/SchemaEntityTypeEnum.php`                           |
+| Schema views      | `resources/views/components/schema/{graph,website,webpage,breadcrumb,image,organization}.blade.php` |
+| llms.txt          | `src/Actions/GenerateLlmsTxtAction.php`, `src/Http/Controllers/LlmsTxtController.php`               |
+| Enums             | `src/Enums/{OpenGraphTypeEnum,RobotsDirectiveEnum,SchemaEntityTypeEnum,MetaSchemaEnum}.php`         |
+| Hook registration | `src/Support/RenderHooks/RegisterSeoHeadHooks.php`                                                  |
+| Shared DTOs       | `capell/core` → `src/Data/{SchemaGraphData,LlmsTxtEntryData}.php`                                   |
 
 For the editor-facing SEO checklist widgets in the admin panel, see [SEO audit widgets](https://docs.capell.app/seo-audit-widgets/) (in the `capell/admin` package).
