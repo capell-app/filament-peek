@@ -1,32 +1,40 @@
 # Capell Corporate Theme
 
-Professional, trust-building theme for corporate and B2B websites.
+The Corporate theme gives Capell a calm, trust-building frontend for B2B, professional services, institutions, and company websites.
 
-## Highlights
+## When to install it
 
-- Clean editorial layout with Playfair Display headings
-- Hero section, features grid, team grid, case studies carousel
-- Accessible contact form with honeypot spam protection
-- Dark mode with `prefers-color-scheme` support
-- WCAG 2.1 AA accessible throughout
+Install this theme when the site needs clear service pages, team content, case studies, contact flows, and accessible brand presentation without starting from a blank Blade theme.
 
 ## Quick install
 
 ```bash
 composer require capell-app/capell-theme-corporate
-php artisan corporate:install
+php artisan migrate
+php artisan corporate:install --seed-layouts
 ```
 
-Then open **Settings → Theme** in the Filament admin and choose **Corporate**.
+Then open **Settings -> Theme** and choose **Corporate**.
 
-## Documentation
+## What appears in the admin
 
-| Doc                                            | Description                                         |
-| ---------------------------------------------- | --------------------------------------------------- |
-| [docs/INSTALLATION.md](docs/INSTALLATION.md)   | Full install steps, publishing assets, uninstalling |
-| [docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md) | CSS tokens, typography, spacing presets, dark mode  |
-| [docs/COMPONENTS.md](docs/COMPONENTS.md)       | All seven widgets + support components              |
+| Area           | What editors can do                                                              |
+| -------------- | -------------------------------------------------------------------------------- |
+| Theme settings | Select Corporate and tune brand colors                                           |
+| Mosaic widgets | Use corporate hero, features, team, case study, and contact blocks               |
+| Layouts        | Start from seeded home, about, and contact layouts when `--seed-layouts` is used |
 
-## License
+## What developers get
 
-MIT
+- Editorial layout patterns with accessible components.
+- Dark mode via `prefers-color-scheme`.
+- Contact form support with honeypot spam protection.
+- Theme docs for tokens, typography, spacing, and component overrides.
+
+## Deeper docs
+
+| Doc                                    | Covers                                        |
+| -------------------------------------- | --------------------------------------------- |
+| [Installation](docs/INSTALLATION.md)   | Full install, publishing assets, uninstalling |
+| [Customization](docs/CUSTOMIZATION.md) | CSS tokens, typography, spacing, dark mode    |
+| [Components](docs/COMPONENTS.md)       | Corporate widgets and component props         |

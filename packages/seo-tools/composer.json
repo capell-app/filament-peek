@@ -16,6 +16,7 @@
         "php": "^8.2",
         "capell-app/admin": "*",
         "capell-app/frontend": "*",
+        "icamys/php-sitemap-generator": "^4.4",
         "prism-php/prism": "^0.100"
     },
     "require-dev": {

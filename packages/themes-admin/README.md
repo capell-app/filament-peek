@@ -1,50 +1,40 @@
-# capell-app/themes-admin
+# Capell Themes Admin
 
-Filament 4 admin panel integration for the Capell theme system. Provides a
-**Theme Settings** page that lets admins choose the active theme and configure
-brand colors without leaving the admin UI.
+Themes Admin adds the Filament settings screen for Capell themes. It lets administrators choose the active theme and change brand colors from the admin panel.
 
-## What's inside
+## When to install it
 
-| Class                        | Purpose                                                                     |
-| ---------------------------- | --------------------------------------------------------------------------- |
-| `ThemesAdminServiceProvider` | Registers the package, config, and Filament page                            |
-| `ThemeSettingsPage`          | Filament `Page` that renders the theme settings form                        |
-| `ThemeSettingsSchema`        | Filament schema factory — `Tabs` with active theme select and color pickers |
+Install Themes Admin when your project uses Capell theme packages or a custom theme that should be selectable from Settings.
 
-## Requirements
-
-- PHP 8.2+
-- Laravel 10+
-- Filament 4.7+ (panel provider already configured in your app)
-- `capell-app/themes-core` (pulled in automatically)
-
-## Installation
+## Quick install
 
 ```bash
 composer require capell-app/themes-admin
+php artisan optimize:clear
+php artisan capell:static-site
 ```
 
-The service provider is auto-discovered. The **Theme** page appears in your
-Filament admin under **Settings → Theme**.
+## What appears in the admin
 
-## Using the settings page
+| Area              | What administrators can do                        |
+| ----------------- | ------------------------------------------------- |
+| Settings -> Theme | Pick the active theme                             |
+| Theme settings    | Set primary and accent brand colors               |
+| Extended schemas  | Show extra fields registered by individual themes |
 
-Navigate to **Settings → Theme** in the Filament admin panel.
+## Requirements
 
-- **Active theme** — dropdown to choose Corporate, Agency, or SaaS
-- **Primary color** — brand color used for CTAs and highlights
-- **Accent color** — secondary brand color
+| Tool     | Version                 |
+| -------- | ----------------------- |
+| PHP      | 8.2+                    |
+| Laravel  | 11.44.2+, 12.x, or 13.x |
+| Filament | 4.7+ or 5.2+            |
 
-Changes apply immediately on save; no cache clear or deploy needed.
+`capell-app/themes-core` is installed automatically.
 
-## Extending the schema
-
-To add theme-specific fields, resolve `ThemeSettingsSchema` and call additional
-`schema()` or `schema()->tab()` methods before passing it to the page:
+## Extend the settings schema
 
 ```php
-// In your theme's ServiceProvider:
 use Capell\Themes\Admin\Schemas\ThemeSettingsSchema;
 use Filament\Forms\Components\Toggle;
 
@@ -60,9 +50,3 @@ ThemeSettingsSchema::extend(function (array $components): array {
 ```bash
 php -d memory_limit=-1 vendor/bin/pest packages/themes-admin/tests
 ```
-
-See [../../TESTING.md](../../TESTING.md) for full testing instructions.
-
-## License
-
-MIT

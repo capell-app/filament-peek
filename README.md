@@ -1,42 +1,71 @@
 # Capell Packages
 
-Optional add-on packages for [Capell CMS](https://github.com/capell-app/capell). Each package can be installed independently (subject to the dependency matrix below) via Composer.
+First-party add-ons for [Capell CMS](https://github.com/capell-app/capell). Install only the packages your project needs: visual page building, blog publishing, SEO, themes, addresses, workspaces, and media alternatives all live here.
 
-## Packages
+## Pick the package by job
 
-| Package   | Composer package         | Requires                  | Required by     | What it adds                                                              |
-| --------- | ------------------------ | ------------------------- | --------------- | ------------------------------------------------------------------------- |
-| Mosaic    | `capell-app/mosaic`      | `admin`, `frontend`       | `blog`, `address` | Visual layout builder, reusable widgets, content management              |
-| Blog      | `capell-app/blog`        | `admin`, `frontend`, `mosaic` | —           | Article pages, tags, category archives                                    |
-| Address   | `capell-app/address`     | `admin`, `frontend`, `mosaic` | —           | Country and address management on Sites                                   |
-| Assistant | `capell-app/assistant`   | `admin`, `frontend`       | —               | OpenAI-powered title, meta, and content drafting                          |
+| Need                                              | Package            | Composer package                                                                                      |
+| ------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------- |
+| Visual page builder                               | Mosaic             | `capell-app/mosaic`                                                                                   |
+| Articles, tags, archives, RSS                     | Blog               | `capell-app/blog`                                                                                     |
+| Drafts, previews, approvals, scheduled publishing | Workspaces         | `capell-app/workspaces`                                                                               |
+| Sitemaps, structured data, AI-assisted SEO        | SEO Tools          | `capell-app/seo-tools`                                                                                |
+| Header, footer, and sidebar menus                 | Navigation         | `capell-app/navigation`                                                                               |
+| Shared tagging across content types               | Tags               | `capell-app/tags`                                                                                     |
+| Editor-managed forms and submissions              | Forms              | `capell-app/forms`                                                                                    |
+| Country and address fields                        | Address            | `capell-app/address`                                                                                  |
+| Login and activity visibility                     | Authentication Log | `capell-app/authentication-log`                                                                       |
+| Curator instead of Spatie MediaLibrary            | Media Curator      | `capell-app/media-curator`                                                                            |
+| Default Tailwind/frontend pipeline                | Default Theme      | `capell-app/default-theme`                                                                            |
+| Theme settings in Filament                        | Themes Admin       | `capell-app/themes-admin`                                                                             |
+| SaaS, Corporate, or Agency frontend               | Themes             | `capell-app/capell-theme-saas`, `capell-app/capell-theme-corporate`, `capell-app/capell-theme-agency` |
 
-> `admin` and `frontend` are core packages from [capell-app/capell](https://github.com/capell-app/capell) and are required by every add-on.
+## Common install pattern
 
-## Installing everything
+Most packages follow this shape:
 
-```sh
-composer require capell-app/mosaic capell-app/blog capell-app/address capell-app/assistant
-php artisan capell:install
+```bash
+composer require capell-app/<package>
+php artisan capell:<package>-install
+php artisan capell:<package>-demo
 ```
 
-Add the VCS repositories to your `composer.json` first:
+Some packages auto-register through Laravel package discovery or have theme-specific commands. Check each package README for the exact commands.
 
-```json
-{
-    "repositories": [
-        { "type": "vcs", "url": "https://github.com/capell-app/mosaic" },
-        { "type": "vcs", "url": "https://github.com/capell-app/blog" },
-        { "type": "vcs", "url": "https://github.com/capell-app/address" },
-        { "type": "vcs", "url": "https://github.com/capell-app/assistant" }
-    ]
-}
+## Recommended editorial stack
+
+For a content-heavy site with pages, widgets, articles, approvals, and search metadata:
+
+```bash
+composer require capell-app/mosaic capell-app/blog capell-app/workspaces capell-app/seo-tools
+php artisan capell:mosaic-install
+php artisan capell:blog-install
 ```
+
+Then configure SEO Tools and Workspaces from the Capell admin.
+
+## Package notes
+
+| Package            | What appears in the admin                                    |
+| ------------------ | ------------------------------------------------------------ |
+| Mosaic             | Contents, Widgets, Layouts, and visual builder fields        |
+| Blog               | Articles, Tags, blog pages, archive pages                    |
+| Workspaces         | Workspace switcher, approvals, preview links, publish checks |
+| SEO Tools          | SEO settings, AI-assist panels, sitemap and metadata tools   |
+| Navigation         | Menu builders and site/page navigation extenders             |
+| Tags               | Shared tag management used by packages such as Blog          |
+| Forms              | Form and submission records                                  |
+| Address            | Countries, Addresses, Site address fields                    |
+| Authentication Log | Dashboard authentication activity                            |
+| Themes Admin       | Settings -> Theme                                            |
+| Media Curator      | Curator picker fields when selected as the media backend     |
 
 ## Documentation
 
-Full documentation lives at [docs.capell.app](https://docs.capell.app). Per-package README and API/Database references are in each package directory under `packages/<name>/`.
+- Core docs: [docs.capell.app](https://docs.capell.app)
+- Package registry: [Capell-approved packages](https://docs.capell.app/packages/)
+- Per-package API and database references live beside each package under `packages/<name>/docs/`.
 
 ## License
 
-Proprietary — see each package for its license file.
+Proprietary unless an individual package states otherwise.

@@ -1,28 +1,12 @@
 # Capell SaaS Theme
 
-Modern, conversion-optimized SaaS theme for Capell CMS.
+The SaaS theme gives Capell a conversion-focused marketing frontend: hero sections, feature matrices, pricing, integrations, testimonials, FAQ, and CTA blocks.
 
-## Design
+## When to install it
 
-- Electric indigo primary (`#6366f1`) + vibrant emerald accent (`#10b981`)
-- Inter for every text element — tight tracking, modern geometric feel
-- Gradient hero with product-screenshot mockup, dual CTAs, trust badges
-- Pricing table with CSS-only monthly/annual toggle (no Alpine needed)
-- Native `<details>/<summary>` FAQ accordion for accessibility
-- Full dark mode + `prefers-reduced-motion` support
+Install this theme for software, subscription, platform, or product-led marketing sites that need polished landing pages quickly.
 
-## Features
-
-- 9 Mosaic widgets: Hero (with screenshot), Feature Matrix, Pricing Table,
-  Integrations Grid, Use Cases Tabs, Testimonials Wall, FAQ Accordion,
-  CTA Banner, SaaS Footer
-- SEO: JSON-LD for Organization, SoftwareApplication, Product + Offers
-  (per pricing tier), FAQPage, BreadcrumbList
-- Accessibility: skip-to-content, landmark roles, ARIA labels, WCAG 2.1 AA
-- Fully responsive: 375 / 768 / 1024 / 1440 breakpoints
-- Idempotent install migration + seeder
-
-## Installation
+## Quick install
 
 ```bash
 composer require capell-app/capell-theme-saas
@@ -30,12 +14,27 @@ php artisan migrate
 php artisan saas:install --seed-layouts
 ```
 
-## Documentation
+Then open **Settings -> Theme** and choose **SaaS**.
 
-- [Installation](docs/INSTALLATION.md)
-- [Customization](docs/CUSTOMIZATION.md)
-- [Components](docs/COMPONENTS.md)
+## What appears in the admin
 
-## License
+| Area           | What editors can do                                                                |
+| -------------- | ---------------------------------------------------------------------------------- |
+| Theme settings | Select SaaS and tune brand colors                                                  |
+| Mosaic widgets | Use SaaS-specific hero, pricing, FAQ, testimonials, integrations, and CTA blocks   |
+| Layouts        | Start from seeded home, pricing, and feature layouts when `--seed-layouts` is used |
 
-MIT License
+## What developers get
+
+- Tailwind-based responsive theme components.
+- JSON-LD for Organization, SoftwareApplication, Product, FAQPage, and BreadcrumbList.
+- Dark mode and `prefers-reduced-motion` support.
+- Accessible landmarks, skip links, and ARIA labels.
+
+## Deeper docs
+
+| Doc                                    | Covers                                        |
+| -------------------------------------- | --------------------------------------------- |
+| [Installation](docs/INSTALLATION.md)   | Full install, publishing assets, uninstalling |
+| [Customization](docs/CUSTOMIZATION.md) | CSS tokens, typography, spacing, dark mode    |
+| [Components](docs/COMPONENTS.md)       | SaaS widgets and component props              |

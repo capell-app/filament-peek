@@ -1,32 +1,40 @@
 # Capell Agency Theme
 
-Bold, creative theme for design studios and marketing agencies.
+The Agency theme gives Capell a bold frontend for design studios, marketing teams, creative portfolios, and case-study-led sites.
 
-## Highlights
+## When to install it
 
-- Oversized statement hero with gradient background
-- Filterable portfolio / case-study grid
-- Animated client logo marquee
-- Dark mode with `prefers-color-scheme` support
-- WCAG 2.1 AA accessible throughout
+Install this theme when the site needs expressive landing pages, portfolio grids, case studies, client logos, and strong visual sections managed from Capell.
 
 ## Quick install
 
 ```bash
 composer require capell-app/capell-theme-agency
-php artisan agency:install
+php artisan migrate
+php artisan agency:install --seed-layouts
 ```
 
-Then open **Settings → Theme** in the Filament admin and choose **Agency**.
+Then open **Settings -> Theme** and choose **Agency**.
 
-## Documentation
+## What appears in the admin
 
-| Doc                                            | Description                                                |
-| ---------------------------------------------- | ---------------------------------------------------------- |
-| [docs/INSTALLATION.md](docs/INSTALLATION.md)   | Full install steps, publishing assets, uninstalling        |
-| [docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md) | CSS tokens, dark mode, spacing presets, widget overrides   |
-| [docs/COMPONENTS.md](docs/COMPONENTS.md)       | All nine widgets + support components with prop signatures |
+| Area           | What editors can do                                                             |
+| -------------- | ------------------------------------------------------------------------------- |
+| Theme settings | Select Agency and tune brand colors                                             |
+| Mosaic widgets | Use agency hero, portfolio, logo marquee, case study, and CTA blocks            |
+| Layouts        | Start from seeded home, work, and contact layouts when `--seed-layouts` is used |
 
-## License
+## What developers get
 
-MIT
+- Responsive Blade and Tailwind theme components.
+- Portfolio and case-study patterns.
+- Dark mode via `prefers-color-scheme`.
+- Accessible components that target WCAG 2.1 AA.
+
+## Deeper docs
+
+| Doc                                    | Covers                                           |
+| -------------------------------------- | ------------------------------------------------ |
+| [Installation](docs/INSTALLATION.md)   | Full install, publishing assets, uninstalling    |
+| [Customization](docs/CUSTOMIZATION.md) | CSS tokens, dark mode, spacing, widget overrides |
+| [Components](docs/COMPONENTS.md)       | Agency widgets and component props               |

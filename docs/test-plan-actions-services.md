@@ -1,8 +1,8 @@
 # Test Plan: Actions & Services Coverage
 
-> **Scope note.** This document predates the split of AI functionality into the standalone `capell-app/assistant` package. Entries in the _Admin Package → AI/\*_ section below actually live in the Assistant package today (`Capell\Assistant\Actions\*`, `Capell\Assistant\Support\AI\*`). They are kept in the Admin section here for historical test-planning continuity — when you add new AI tests, place them under `packages/assistant/tests/` and mirror this structure.
+> **Historical note.** This document predates the move of AI functionality into `capell-app/seo-tools`. Entries in the _Admin Package → AI/\*_ section are legacy planning notes. New AI-assisted SEO tests belong under `packages/seo-tools/tests/`.
 
-This document inventories Actions and Services across the Core, Admin, and Assistant packages and defines the test scope (Unit vs Integration) and representative scenarios per class. Tests live under each package's `tests/` directory.
+This document inventories Actions and Services across the Core, Admin, and SEO Tools-era packages and defines the test scope (Unit vs Integration) and representative scenarios per class. Tests live under each package's `tests/` directory.
 
 Conventions:
 

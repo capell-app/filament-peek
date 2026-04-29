@@ -1,43 +1,40 @@
 # Capell Media Curator
 
-Awcodes Curator backend for Capell CMS media. Drop-in replacement for the default Spatie MediaLibrary backend via Capell's media contracts.
+Media Curator swaps Capell's default Spatie MediaLibrary backend for [Awcodes Curator](https://github.com/awcodes/filament-curator). Use it when your editors prefer Curator's media library and your models only need one asset per media slot.
 
-## What it does
+## When to install it
 
-Swaps the two media contracts shipped in `capell-app/core`:
+Install Media Curator when a project wants a Curator-backed picker for single-image fields such as hero image, thumbnail, social image, or logo.
 
-- `config('capell.media.model')` → `Capell\MediaCurator\Models\CuratorMedia`
-- `Capell\Core\Contracts\Media\MediaFieldFactory` → `Capell\MediaCurator\Filament\Components\CuratorMediaFieldFactory`
+Stay on the default Spatie backend if you need galleries, ordered media collections, responsive image sets, or Spatie conversions.
 
-`CuratorMedia` extends `Awcodes\Curator\Models\Media` (table `curator`) and implements `MediaContract`. The Filament factory returns a `CuratorPicker` field.
-
-## Install
+## Quick install
 
 ```bash
 composer require capell-app/media-curator
+php artisan migrate
+php artisan optimize:clear
 ```
 
-Auto-registers via Laravel package discovery. Run Curator's own migrations to create the `curator` table.
+The package auto-registers through Laravel discovery and rebinds Capell's media contracts.
 
-## Limitations (read before switching)
+## What appears in the admin
 
-- **One media per collection.** This backend is single-FK: each collection maps to ONE `{snake_collection}_id` column on the owner table. There are no galleries, no ordered multi-item collections.
-- **No responsive image sets.** `hasResponsiveImages()` returns `false` and `getSrcset()` returns `''`.
-- **No Spatie-style conversions.** `hasConversion()` is always `false`; the `$conversion` argument on `getUrl()` / `getFullUrl()` is accepted but ignored.
+| Area         | What editors can do                                 |
+| ------------ | --------------------------------------------------- |
+| Media fields | Pick Curator media through `CuratorPicker`          |
+| Owner forms  | Store one selected media record per configured slot |
 
-If a consumer model needs multi-item collections or Spatie conversions, keep it on the default backend.
+## What developers get
+
+- `CuratorMedia` implementing Capell's `MediaContract`.
+- `CuratorMediaFieldFactory` returning Curator picker fields.
+- `InteractsWithCuratorMedia` for owner models.
+- A migration command for moving existing Spatie media rows into Curator records.
 
 ## Model setup
 
-Replace `use HasCapellMedia` with `use InteractsWithCuratorMedia` on any owner model, and add one FK column per media collection it uses. Column name is `Str::snake($collection) . '_id'`:
-
-| Collection    | FK column         |
-| ------------- | ----------------- |
-| `image`       | `image_id`        |
-| `socialImage` | `social_image_id` |
-| `hero`        | `hero_id`         |
-
-Example migration:
+Add one nullable foreign key for each media slot:
 
 ```php
 Schema::table('pages', function (Blueprint $table): void {
@@ -46,7 +43,7 @@ Schema::table('pages', function (Blueprint $table): void {
 });
 ```
 
-Example model:
+Then use the Curator trait on the owner model:
 
 ```php
 use Capell\Core\Contracts\Media\HasMediaContract;
@@ -58,12 +55,11 @@ final class Page extends Model implements HasMediaContract
 }
 ```
 
-## Migrating existing Spatie data
-
-The Phase 4 Artisan command migrates existing `media` rows into the `curator` table and populates the new FK columns:
+## Migrate existing Spatie media
 
 ```bash
+php artisan capell:media-migrate-to-curator --dry-run
 php artisan capell:media-migrate-to-curator
 ```
 
-Run it once per environment during the cutover.
+Run the dry run first. Add missing foreign-key columns before the real migration.

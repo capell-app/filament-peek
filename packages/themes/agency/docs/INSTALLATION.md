@@ -3,7 +3,7 @@
 ## Requirements
 
 - PHP 8.2+
-- Laravel 10+
+- Laravel 11.44.2+, 12.x, or 13.x
 - Capell CMS (`capell-app/capell` ^4.0)
 - Filament 4 (optional — needed only for the admin schema UI)
 - Mosaic (optional — unlocks the visual layout editor)

@@ -1,6 +1,6 @@
 # Test Coverage & Quality Plan — `capell-packages-4`
 
-This plan complements [`docs/test-plan-actions-services.md`](test-plan-actions-services.md), which covers Core/Admin/Assistant. This document is scoped to **the optional add-on packages** in this repo and focuses on (a) raising meaningful coverage where it is thinnest, (b) making the suite a faster signal of regressions, and (c) catching cross-package install conflicts that single-package suites cannot see.
+This plan complements [`docs/test-plan-actions-services.md`](test-plan-actions-services.md), which covers Core/Admin and historical AI planning now superseded by SEO Tools. This document is scoped to **the optional add-on packages** in this repo and focuses on (a) raising meaningful coverage where it is thinnest, (b) making the suite a faster signal of regressions, and (c) catching cross-package install conflicts that single-package suites cannot see.
 
 ## 1. Where we are today
 
