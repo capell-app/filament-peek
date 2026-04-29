@@ -7,8 +7,6 @@ description: Use when working on the Capell Blog package. Covers Article model (
 
 Blog provides article publishing tightly integrated with Capell's page/type/layout system.
 
-**Package location:** `~/Sites/packages/capell/capell-packages-4/packages/blog`
-
 ---
 
 ## Key Concept: Articles Are Pages

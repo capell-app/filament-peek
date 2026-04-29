@@ -7,9 +7,7 @@ description: Use when working on the Capell Mosaic package — Mosaic's own widg
 
 Mosaic is the most powerful content composition system in the Capell ecosystem. It provides a **fully flexible, schema-less layout builder** built on independently publishable `Widget` and `Section` entities — a system that gives editors and developers complete control over page composition without predefined templates.
 
-> **Critical distinction:** Capell core has a separate `Layout` model and a `layout` package. Mosaic is **architecturally independent** — it uses `CapellLayoutManager` and JSON-backed relationships, not the core Layout infrastructure. Do not conflate the two systems. Load this skill when you're in `capell-packages-4/packages/mosaic/`.
-
-**Package location:** `~/Sites/packages/capell/capell-packages-4/packages/mosaic`
+> **Critical distinction:** Capell core has a separate `Layout` model and a `layout` package. Mosaic is **architecturally independent** — it uses `CapellLayoutManager` and JSON-backed relationships, not the core Layout infrastructure. Do not conflate the two systems.
 
 ---
 

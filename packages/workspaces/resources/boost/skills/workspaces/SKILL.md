@@ -7,8 +7,6 @@ description: Use when working on the Capell Workspaces package. Covers the Works
 
 Workspaces is a **draft/approval/versioning infrastructure** package — a meta-layer over the entire CMS. Any content model opts into draft workflows via the `BelongsToWorkspace` trait. Changes are isolated in a workspace, reviewed, approved, and published atomically as immutable `Version` snapshots.
 
-**Package location:** `~/Sites/packages/capell/capell-packages-4/packages/workspaces`
-
 ---
 
 ## Core Concepts
