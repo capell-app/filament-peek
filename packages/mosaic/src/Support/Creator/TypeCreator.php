@@ -151,9 +151,8 @@ class TypeCreator
                 'asset_types' => [LayoutAssetEnum::Section],
             ],
             'meta' => [
-                'component' => WidgetComponentEnum::Assets,
+                'component' => WidgetComponentEnum::AssetMedia,
                 'component_item' => CapellAssetComponentEnum::Media,
-                'view_file' => 'capell-mosaic::components.widget.asset.media',
             ],
         ]);
     }

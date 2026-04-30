@@ -8,6 +8,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Database\Factories\WidgetAssetFactory;
+use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
@@ -31,7 +32,7 @@ it('creates asset testimonials widget with expected meta', function (): void {
         ->key->toBe('asset-testimonials')
         ->meta->scoped(
             fn (Expectation $meta) => $meta
-                ->view_file->toBe('capell-mosaic::components.widget.asset.testimonials')
+                ->component->toBe(WidgetComponentEnum::AssetTestimonials->value)
                 ->carousel_effect->toBe('fade')
                 ->carousel_drag->toBeFalse()
                 ->carousel_touch->toBeFalse(),

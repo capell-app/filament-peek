@@ -110,7 +110,13 @@ class Tag extends \Spatie\Tags\Tag implements PageCacheable, Statusable
 
     public function getUrl(Page $tagPage, Language $language): string
     {
-        return $tagPage->pageUrl->full_url . '/' . $this->translate('slug', $language->code);
+        $slug = $this->translate('slug', $language->code);
+
+        if (str_contains($tagPage->pageUrl->full_url, '*')) {
+            return str_replace('*', $slug, $tagPage->pageUrl->full_url);
+        }
+
+        return $tagPage->pageUrl->full_url . '/' . $slug;
     }
 
     public function site(): BelongsTo

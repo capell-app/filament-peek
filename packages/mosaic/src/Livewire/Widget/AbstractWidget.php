@@ -14,7 +14,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Livewire\Drawer\Utils;
 use stdClass;
 
 /**
@@ -87,9 +86,7 @@ abstract class AbstractWidget extends Component
     public function render(array $data = []): View|Closure|string
     {
         if ($this->skipRender) {
-            return Utils::insertAttributesIntoHtmlRoot('<div></div>', [
-                'wire:id' => $this->getId(),
-            ]);
+            return '<div style="display: none"></div>';
         }
 
         $data = array_merge([

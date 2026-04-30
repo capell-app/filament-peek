@@ -7,6 +7,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Enums\AssetEnum;
+use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
@@ -29,7 +30,7 @@ it('creates asset block widget with expected meta', function (): void {
         ->toBeInstanceOf(Widget::class)
         ->key->toBe('assets-block')
         ->meta->scoped(
-            fn (Expectation $meta) => $meta->view_file->toBe('capell-mosaic::components.widget.asset.blocks')
+            fn (Expectation $meta) => $meta->component->toBe(WidgetComponentEnum::AssetBlock->value)
                 ->component_item->toBe('capell-mosaic::section.block'),
         )
         ->assets->toHaveCount(3);

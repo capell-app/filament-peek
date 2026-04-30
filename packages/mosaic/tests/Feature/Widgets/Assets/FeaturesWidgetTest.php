@@ -8,6 +8,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Database\Factories\WidgetAssetFactory;
+use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
@@ -30,7 +31,7 @@ it('creates asset features widget with expected meta', function (): void {
         ->toBeInstanceOf(Widget::class)
         ->key->toBe('asset-features')
         ->meta->scoped(
-            fn (Expectation $meta) => $meta->view_file->toBe('capell-mosaic::components.widget.asset.features'),
+            fn (Expectation $meta) => $meta->component->toBe(WidgetComponentEnum::AssetFeatures->value),
         )
         ->assets->toHaveCount(3);
 });

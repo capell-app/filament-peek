@@ -10,7 +10,6 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\AssetEnum;
-use Capell\Mosaic\Enums\LivewireComponentsEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Filament\Schemas\Widgets\CarouselWidgetSchema;
 use Capell\Mosaic\Models\Widget;
@@ -280,8 +279,7 @@ class WidgetCreator
             'name' => __('capell-admin::generic.pages_card'),
             'type_id' => $type->id,
             'meta' => [
-                'component' => LivewireComponentsEnum::PagesWidget,
-                'livewire' => true,
+                'component' => WidgetComponentEnum::Pages,
                 'limit' => 10,
                 'with_image' => true,
                 'with_summary' => true,
@@ -387,7 +385,7 @@ class WidgetCreator
             'meta' => [
                 'align' => 'center',
                 'background_overlay' => true,
-                'view_file' => 'capell-mosaic::components.widget.asset.banners',
+                'component' => WidgetComponentEnum::AssetBanner,
             ],
         ]);
     }
@@ -400,8 +398,8 @@ class WidgetCreator
             'name' => 'Blocks',
             'type_id' => $type->id,
             'meta' => [
+                'component' => WidgetComponentEnum::AssetBlock,
                 'component_item' => 'capell-mosaic::section.block',
-                'view_file' => 'capell-mosaic::components.widget.asset.blocks',
                 'spacing' => 'none',
                 'columns' => 0,
                 'margin' => 'none',
@@ -423,8 +421,8 @@ class WidgetCreator
             'type_id' => $type->id,
             'meta' => [
                 'align' => 'center',
+                'component' => WidgetComponentEnum::AssetFeatures,
                 'margin' => ['lg'],
-                'view_file' => 'capell-mosaic::components.widget.asset.features',
             ],
         ]);
     }
@@ -455,7 +453,7 @@ class WidgetCreator
                 'carousel_speed' => 300,
                 'carousel_touch' => false,
                 'carousel_wheel' => false,
-                'view_file' => 'capell-mosaic::components.widget.asset.testimonials',
+                'component' => WidgetComponentEnum::AssetTestimonials,
             ],
             'admin' => [
                 'schema' => CarouselWidgetSchema::getKey(),

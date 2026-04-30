@@ -1,4 +1,5 @@
 @php
+    use Capell\Blog\Support\Loader\TagLoader;
     use Capell\Frontend\Facades\Frontend;
 
     $language = Frontend::language();
@@ -19,6 +20,17 @@
 @php
     $tagPage ??= null;
     $tags ??= collect();
+
+    if ($tags->isEmpty()) {
+        $tags = TagLoader::getTags(
+            site: $site,
+            language: $language,
+            limit: $widget->meta['limit'] ?? null,
+            hasArticles: true,
+        );
+    }
+
+    $tagPage ??= TagLoader::getTagResultsPage($site, $language);
 @endphp
 
 <x-capell-mosaic::widget.wrapper

@@ -149,6 +149,8 @@ class BlogCreator
             ]);
         });
 
+        SetupPageUrlsAction::run($page);
+
         return $page;
     }
 
@@ -189,6 +191,8 @@ class BlogCreator
                 ],
             ]);
         });
+
+        SetupPageUrlsAction::run($page);
 
         return $page;
     }
@@ -258,6 +262,8 @@ class BlogCreator
                 ],
             ]);
         });
+
+        SetupPageUrlsAction::run($page);
 
         return $page;
     }
@@ -508,6 +514,8 @@ class BlogCreator
                 ],
             ]);
         });
+
+        SetupPageUrlsAction::run($page);
 
         return $page;
     }

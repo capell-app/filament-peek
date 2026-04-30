@@ -26,13 +26,15 @@ final class FrontendServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        if (! CapellCore::getPackage('capell-app/blog')->isInstalled()) {
-            return;
-        }
+        $this->app->booted(function (): void {
+            if (! CapellCore::getPackage('capell-app/blog')->isInstalled()) {
+                return;
+            }
 
-        $this->registerSitemapPages();
-        $this->registerRenderHooks();
-        $this->registerStaticSiteExtensions();
+            $this->registerSitemapPages();
+            $this->registerRenderHooks();
+            $this->registerStaticSiteExtensions();
+        });
     }
 
     private function registerSitemapPages(): void

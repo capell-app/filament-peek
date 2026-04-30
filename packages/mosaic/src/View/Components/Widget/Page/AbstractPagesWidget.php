@@ -11,9 +11,9 @@ use Illuminate\Support\Collection;
 
 abstract class AbstractPagesWidget extends AbstractWidget
 {
-    protected static string $defaultView = 'capell-mosaic::components.widget.asset.pages';
+    public Collection $pages;
 
-    protected Collection $pages;
+    protected static string $defaultView = 'capell-mosaic::components.widget.asset.pages';
 
     public function render(array $data = []): View|string|Closure
     {
