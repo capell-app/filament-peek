@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Capell\Themes\Core\Search;
+namespace Capell\SiteSearch\Drivers;
 
+use Capell\SiteSearch\Contracts\SiteSearch;
+use Capell\SiteSearch\Data\SearchResultData;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Collection;
@@ -14,12 +16,12 @@ use Illuminate\Support\Collection;
  * Bind this in your ServiceProvider when Meilisearch/Algolia/Typesense is
  * configured:
  *
- *   $this->app->bind(SiteSearch::class, fn () =>
+ *   $this->app->bind(SiteSearch::class, fn (): SiteSearch =>
  *       new ScoutSiteSearch(\App\Models\Page::class, urlColumn: 'slug')
  *   );
  *
  * The model class must use the Searchable trait. The driver maps model
- * instances to SearchResult objects using toArray().
+ * instances to SearchResultData objects using toArray().
  */
 class ScoutSiteSearch implements SiteSearch
 {
@@ -43,16 +45,16 @@ class ScoutSiteSearch implements SiteSearch
         /** @var LengthAwarePaginator $paginator */
         $paginator = ($this->modelClass)::search($query)->paginate(perPage: $perPage, page: $page);
 
-        $results = (new Collection($paginator->items()))->map(function ($model) use ($query): SearchResult {
+        $results = (new Collection($paginator->items()))->map(function (object $model) use ($query): SearchResultData {
             $row = $model->toArray();
             $title = (string) ($row['title'] ?? '');
             $excerptRaw = (string) ($row['excerpt'] ?? $row['body'] ?? '');
 
-            return new SearchResult(
+            return new SearchResultData(
                 title: $title,
                 url: '/' . ltrim((string) ($row[$this->urlColumn] ?? ''), '/'),
                 excerpt: mb_strlen($excerptRaw) > $this->excerptLength
-                    ? rtrim(mb_substr($excerptRaw, 0, $this->excerptLength)) . '…'
+                    ? rtrim(mb_substr($excerptRaw, 0, $this->excerptLength)) . '...'
                     : $excerptRaw,
                 type: (string) ($row[$this->typeColumn] ?? 'page'),
                 score: (float) substr_count(mb_strtolower($title . ' ' . $excerptRaw), mb_strtolower($query)),

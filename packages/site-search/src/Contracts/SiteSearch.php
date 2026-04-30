@@ -2,18 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Capell\Themes\Core\Search;
+namespace Capell\SiteSearch\Contracts;
 
+use Capell\SiteSearch\Data\SearchResultData;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
- * Interface for site search backends. A theme can ship its own Scout- or
- * Meilisearch-backed implementation; the default ships as DatabaseSiteSearch.
+ * Interface for site search backends. A site can use the default database
+ * driver or bind a Scout-backed implementation.
  */
 interface SiteSearch
 {
     /**
-     * @return LengthAwarePaginator<int, SearchResult>
+     * @return LengthAwarePaginator<int, SearchResultData>
      */
     public function search(string $query, int $perPage = 10, int $page = 1): LengthAwarePaginator;
 

@@ -2,19 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Capell\Themes\Core\Search;
+namespace Capell\SiteSearch\Drivers;
 
+use Capell\SiteSearch\Contracts\SiteSearch;
+use Capell\SiteSearch\Data\SearchResultData;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Collection;
 
 /**
  * Default DB-backed search. Runs a LIKE query against the configured table and
- * columns. Suitable as a fallback until a theme wires in Scout or Meilisearch.
+ * columns. Suitable as a fallback until a site wires in Scout or Meilisearch.
  */
 class DatabaseSiteSearch implements SiteSearch
 {
+    private const MINIMUM_QUERY_LENGTH = 2;
+
+    private const MINIMUM_PER_PAGE = 1;
+
+    private const MAXIMUM_PER_PAGE = 100;
+
     /**
      * @param  list<string>  $columns  Columns to search against.
      */
@@ -24,19 +33,29 @@ class DatabaseSiteSearch implements SiteSearch
         private readonly array $columns = ['title', 'excerpt', 'body'],
         private readonly string $urlColumn = 'slug',
         private readonly string $typeColumn = 'type',
+        private readonly string $titleColumn = 'title',
+        private readonly string $excerptColumn = 'excerpt',
+        private readonly string $bodyColumn = 'body',
     ) {}
 
     public function search(string $query, int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
         $query = trim($query);
-        if ($query === '') {
+        $perPage = max(self::MINIMUM_PER_PAGE, min(self::MAXIMUM_PER_PAGE, $perPage));
+        $page = max(1, $page);
+
+        if ($query === '' || mb_strlen($query) < self::MINIMUM_QUERY_LENGTH) {
             return new Paginator([], 0, $perPage, $page);
         }
 
+        $likeQuery = '%' . $this->escapeLike($query) . '%';
         $builder = $this->db->table($this->table);
-        $builder->where(function ($q) use ($query): void {
+        $builder->where(function (Builder $queryBuilder) use ($likeQuery): void {
             foreach ($this->columns as $column) {
-                $q->orWhere($column, 'like', '%' . $query . '%');
+                $queryBuilder->orWhereRaw(
+                    $queryBuilder->getGrammar()->wrap($column) . " LIKE ? ESCAPE '!'",
+                    [$likeQuery],
+                );
             }
         });
 
@@ -46,11 +65,11 @@ class DatabaseSiteSearch implements SiteSearch
             ->forPage($page, $perPage)
             ->get();
 
-        $results = (new Collection($rows))->map(function ($row) use ($query): SearchResult {
-            $title = (string) ($row->title ?? '');
-            $excerptRaw = (string) ($row->excerpt ?? $row->body ?? '');
+        $results = (new Collection($rows))->map(function (object $row) use ($query): SearchResultData {
+            $title = (string) ($row->{$this->titleColumn} ?? '');
+            $excerptRaw = (string) ($row->{$this->excerptColumn} ?? $row->{$this->bodyColumn} ?? '');
 
-            return new SearchResult(
+            return new SearchResultData(
                 title: $title,
                 url: '/' . ltrim((string) ($row->{$this->urlColumn} ?? ''), '/'),
                 excerpt: $this->truncate($excerptRaw, 200),
@@ -81,7 +100,12 @@ class DatabaseSiteSearch implements SiteSearch
             return $text;
         }
 
-        return rtrim(mb_substr($text, 0, $length)) . '…';
+        return rtrim(mb_substr($text, 0, $length)) . '...';
+    }
+
+    private function escapeLike(string $query): string
+    {
+        return str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $query);
     }
 
     private function score(string $haystack, string $needle): float

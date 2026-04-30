@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-use Capell\Themes\Core\Search\DatabaseSiteSearch;
-use Capell\Themes\Core\Search\SearchResult;
+use Capell\SiteSearch\Data\SearchResultData;
+use Capell\SiteSearch\Drivers\DatabaseSiteSearch;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Schema\Blueprint;
 
 // Bootstrap an in-memory SQLite database once for all tests in this file.
 beforeAll(function (): void {
@@ -14,7 +15,7 @@ beforeAll(function (): void {
     $capsule->setAsGlobal();
     $capsule->bootEloquent();
 
-    Capsule::schema()->create('pages', function ($table): void {
+    Capsule::schema()->create('pages', function (Blueprint $table): void {
         $table->increments('id');
         $table->string('title');
         $table->text('excerpt')->nullable();
@@ -27,13 +28,15 @@ beforeAll(function (): void {
         ['title' => 'Laravel Tutorial', 'excerpt' => 'Learn Laravel today', 'body' => null, 'slug' => 'laravel-tutorial', 'type' => 'post'],
         ['title' => 'About Us', 'excerpt' => 'Company info', 'body' => 'We are a company', 'slug' => 'about', 'type' => 'page'],
         ['title' => 'Contact', 'excerpt' => null, 'body' => 'Reach out anytime', 'slug' => 'contact', 'type' => 'page'],
+        ['title' => '50% Discount', 'excerpt' => 'Literal percent offer', 'body' => null, 'slug' => 'percent', 'type' => 'page'],
+        ['title' => '500 Discount', 'excerpt' => 'Numeric offer', 'body' => null, 'slug' => 'numeric', 'type' => 'page'],
     ]);
 });
 
 test('returns empty paginator for empty query', function (): void {
-    $db = Mockery::mock(ConnectionInterface::class);
+    $databaseConnection = Mockery::mock(ConnectionInterface::class);
 
-    $search = new DatabaseSiteSearch($db);
+    $search = new DatabaseSiteSearch($databaseConnection);
     $results = $search->search('   ');
 
     expect($results->total())->toBe(0);
@@ -46,7 +49,7 @@ test('search returns matching results from the database', function (): void {
     $results = $search->search('Laravel');
 
     expect($results->total())->toBe(1);
-    expect($results->first())->toBeInstanceOf(SearchResult::class);
+    expect($results->first())->toBeInstanceOf(SearchResultData::class);
     expect($results->first()->title)->toBe('Laravel Tutorial');
 });
 
@@ -70,7 +73,7 @@ test('search falls back to body when excerpt is null', function (): void {
 test('search returns all matches when multiple rows satisfy query', function (): void {
     $search = new DatabaseSiteSearch(Capsule::connection());
 
-    $results = $search->search('a'); // matches all rows
+    $results = $search->search('ar');
 
     expect($results->total())->toBeGreaterThanOrEqual(2);
 });
@@ -78,12 +81,39 @@ test('search returns all matches when multiple rows satisfy query', function ():
 test('search paginates correctly', function (): void {
     $search = new DatabaseSiteSearch(Capsule::connection());
 
-    $page1 = $search->search('a', perPage: 1, page: 1);
-    $page2 = $search->search('a', perPage: 1, page: 2);
+    $firstPage = $search->search('ar', perPage: 1, page: 1);
+    $secondPage = $search->search('ar', perPage: 1, page: 2);
 
-    expect($page1->count())->toBe(1);
-    expect($page2->count())->toBe(1);
-    expect($page1->first()->url)->not->toBe($page2->first()->url);
+    expect($firstPage->count())->toBe(1);
+    expect($secondPage->count())->toBe(1);
+    expect($firstPage->first()->url)->not->toBe($secondPage->first()->url);
+});
+
+test('search requires a meaningful minimum query length', function (): void {
+    $search = new DatabaseSiteSearch(Capsule::connection());
+
+    $results = $search->search('a');
+
+    expect($results->total())->toBe(0);
+    expect($results->isEmpty())->toBeTrue();
+});
+
+test('search escapes like wildcards', function (): void {
+    $search = new DatabaseSiteSearch(Capsule::connection());
+
+    $results = $search->search('50%');
+
+    expect($results->total())->toBe(1);
+    expect($results->first()->title)->toBe('50% Discount');
+});
+
+test('search clamps pagination arguments', function (): void {
+    $search = new DatabaseSiteSearch(Capsule::connection());
+
+    $results = $search->search('Laravel', perPage: 500, page: -10);
+
+    expect($results->perPage())->toBe(100);
+    expect($results->currentPage())->toBe(1);
 });
 
 test('search score is a float', function (): void {
@@ -95,8 +125,8 @@ test('search score is a float', function (): void {
 });
 
 test('wraps matches in <mark> tags with escaping', function (): void {
-    $db = Mockery::mock(ConnectionInterface::class);
-    $search = new DatabaseSiteSearch($db);
+    $databaseConnection = Mockery::mock(ConnectionInterface::class);
+    $search = new DatabaseSiteSearch($databaseConnection);
 
     $html = $search->highlight('<b>Laravel is great</b> for sites', 'Laravel');
 
@@ -106,8 +136,8 @@ test('wraps matches in <mark> tags with escaping', function (): void {
 });
 
 test('highlight returns escaped text when query is empty', function (): void {
-    $db = Mockery::mock(ConnectionInterface::class);
-    $search = new DatabaseSiteSearch($db);
+    $databaseConnection = Mockery::mock(ConnectionInterface::class);
+    $search = new DatabaseSiteSearch($databaseConnection);
 
     $html = $search->highlight('<script>alert(1)</script>', '');
 

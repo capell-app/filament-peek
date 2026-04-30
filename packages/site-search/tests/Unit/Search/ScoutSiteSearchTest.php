@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Capell\Themes\Core\Search\ScoutSiteSearch;
-use Capell\Themes\Core\Search\SiteSearch;
+use Capell\SiteSearch\Contracts\SiteSearch;
+use Capell\SiteSearch\Drivers\ScoutSiteSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 test('ScoutSiteSearch implements SiteSearch', function (): void {
