@@ -12,7 +12,7 @@ use Filament\Schemas\Schema;
 
 class SeoSettingsSchema implements HasSchema
 {
-    public static function make(Schema $schema): array
+    public static function make(Schema $configurator): array
     {
         return [
             Fieldset::make(__('capell-admin::tab.seo_settings'))

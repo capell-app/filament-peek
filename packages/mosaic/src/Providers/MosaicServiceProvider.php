@@ -7,9 +7,9 @@ namespace Capell\Mosaic\Providers;
 use Capell\Admin\Actions\CreatedModelAction;
 use Capell\Admin\Actions\DeletedModelAction;
 use Capell\Admin\Data\AdminAssetData;
+use Capell\Admin\Enums\ConfiguratorTypeEnum as AdminConfiguratorTypeEnum;
 use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaExtenderEnum;
-use Capell\Admin\Enums\SchemaTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Contracts\Makers\MakerRegistryInterface;
@@ -35,16 +35,16 @@ use Capell\Mosaic\Console\Commands\SetupCommand;
 use Capell\Mosaic\Console\Commands\UpgradeCommand;
 use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\ComponentTypeEnum;
+use Capell\Mosaic\Enums\ConfiguratorTypeEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\LivewireComponentsEnum;
 use Capell\Mosaic\Enums\ResourceEnum as LayoutResourceEnum;
-use Capell\Mosaic\Enums\TypeSchemaEnum;
+use Capell\Mosaic\Filament\Configurators\Types\ContentTypeConfigurator;
+use Capell\Mosaic\Filament\Configurators\Types\WidgetTypeConfigurator;
 use Capell\Mosaic\Filament\Extenders\Page\HeroPageSchemaExtender;
 use Capell\Mosaic\Filament\Resources\Layouts\LayoutResource;
 use Capell\Mosaic\Filament\Resources\Layouts\Schemas\Extenders\LayoutSchemaExtender;
 use Capell\Mosaic\Filament\Resources\Pages\Schemas\Extenders\PageSchemaExtender;
-use Capell\Mosaic\Filament\Schemas\Types\ContentTypeSchema;
-use Capell\Mosaic\Filament\Schemas\Types\WidgetTypeSchema;
 use Capell\Mosaic\Listeners\AfterRecordSaved;
 use Capell\Mosaic\Listeners\LayoutLoaded;
 use Capell\Mosaic\Listeners\LayoutSavingListener;
@@ -143,7 +143,7 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
     {
         return $this
             ->registerListeners()
-            ->registerSchemas()
+            ->registerConfigurators()
             ->registerManager()
             ->registerFilamentServing()
             ->registerTypes()
@@ -494,14 +494,14 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
-    private function registerSchemas(): self
+    private function registerConfigurators(): self
     {
-        foreach (TypeSchemaEnum::getAllSchemas() as $type => $schemas) {
-            CapellAdmin::registerSchemas($type, $schemas, defaultSchemas: true);
+        foreach (ConfiguratorTypeEnum::getAllConfigurators() as $type => $configurators) {
+            CapellAdmin::registerConfigurators($type, $configurators, defaultConfigurators: true);
         }
 
-        CapellAdmin::registerSchema(SchemaTypeEnum::Type, ContentTypeSchema::class);
-        CapellAdmin::registerSchema(SchemaTypeEnum::Type, WidgetTypeSchema::class);
+        CapellAdmin::registerConfigurator(AdminConfiguratorTypeEnum::Type, ContentTypeConfigurator::class);
+        CapellAdmin::registerConfigurator(AdminConfiguratorTypeEnum::Type, WidgetTypeConfigurator::class);
 
         return $this;
     }

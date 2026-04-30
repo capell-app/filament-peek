@@ -1,32 +1,43 @@
 <?php
 
 declare(strict_types=1);
-
-use Capell\Admin\Console\Commands\DemoCommand;
-use Capell\Admin\Console\Commands\InstallCommand;
-use Capell\Admin\Filament\Pages\SystemHealthPage;
 use Capell\Blog\Providers\FrontendServiceProvider;
 use Capell\Blog\Support\Sitemap\ArchivesSitemap;
 use Capell\Blog\Support\Sitemap\ArticlesSitemap;
 use Capell\Blog\Support\Sitemap\TagsSitemap;
-use Capell\Core\Database\Factories\TypeFactory;
-use Capell\Core\Support\Creator\DemoCreator;
-use Capell\Workspaces\Providers\WorkspacesServiceProvider;
-use Capell\Workspaces\Tests\WorkspacesTestCase;
+use Symfony\Component\Finder\Finder;
 
-arch()
-    ->expect('Capell\Blog')
-    ->toOnlyBeUsedIn('Capell\Blog')
-    ->ignoring([
-        InstallCommand::class,
-        DemoCommand::class,
-        DemoCreator::class,
-        TypeFactory::class,
-        Capell\Mosaic\Console\Commands\Hero\DemoCommand::class,
-        SystemHealthPage::class,
-        WorkspacesServiceProvider::class,
-        WorkspacesTestCase::class,
-    ]);
+it('keeps blog package references inside the blog source package except intentional bridges', function (): void {
+    $rootPath = dirname(__DIR__, 4);
+    $allowedPaths = [
+        'packages/mosaic/src/Console/Commands/Hero/DemoCommand.php',
+        'packages/workspaces/src/Providers/WorkspacesServiceProvider.php',
+    ];
+    $violations = [];
+
+    $files = (new Finder)
+        ->files()
+        ->in($rootPath . '/packages')
+        ->path('/\/src\//')
+        ->name('*.php')
+        ->contains('Capell\\Blog');
+
+    foreach ($files as $file) {
+        $relativePath = str_replace($rootPath . '/', '', $file->getPathname());
+
+        if (str_starts_with($relativePath, 'packages/blog/src/')) {
+            continue;
+        }
+
+        if (in_array($relativePath, $allowedPaths, true)) {
+            continue;
+        }
+
+        $violations[] = $relativePath;
+    }
+
+    expect($violations)->toBeEmpty();
+});
 
 arch()
     ->expect('Capell\Blog')

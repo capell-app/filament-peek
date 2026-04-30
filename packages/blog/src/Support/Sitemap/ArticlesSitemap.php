@@ -6,9 +6,9 @@ namespace Capell\Blog\Support\Sitemap;
 
 use Capell\Blog\Enums\BlogTypeGroupEnum;
 use Capell\Blog\Models\Article;
-use Capell\Blog\Support\Loader\BlogLoader;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\PageOrderEnum;
+use Capell\Core\Models\Page;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Capell\SeoTools\Data\SitemapPageData;
 use Capell\SeoTools\Support\Sitemap\AbstractSitemapPages;
@@ -19,7 +19,7 @@ class ArticlesSitemap extends AbstractSitemapPages
     public function fetch(): Collection
     {
         // Locate the Blog page for the site & language
-        $blogPage = BlogLoader::getBlogPage($this->site);
+        $blogPage = Page::getFirstPageByTypeForSite('blog', site: $this->site, language: $this->language);
         if (! $blogPage instanceof Pageable) {
             return collect();
         }

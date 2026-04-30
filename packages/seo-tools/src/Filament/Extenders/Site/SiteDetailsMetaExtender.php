@@ -10,7 +10,7 @@ use Filament\Schemas\Schema;
 
 class SiteDetailsMetaExtender extends AbstractSiteSchemaExtender
 {
-    public function extendSiteMetaDetailsComponents(Schema $schema, array $components): array
+    public function extendSiteMetaDetailsComponents(Schema $configurator, array $components): array
     {
         return [MetaSchema::make(), ...$components];
     }

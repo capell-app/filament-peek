@@ -104,9 +104,9 @@ class ModalTableSelect extends Component implements HasActions, HasForms, HasTab
         return $table;
     }
 
-    public function form(Schema $schema): Schema
+    public function form(Schema $configurator): Schema
     {
-        return $schema
+        return $configurator
             ->statePath('data');
     }
 

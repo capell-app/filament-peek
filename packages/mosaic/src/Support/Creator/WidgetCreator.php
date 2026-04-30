@@ -11,7 +11,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\AssetEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
-use Capell\Mosaic\Filament\Schemas\Widgets\CarouselWidgetSchema;
+use Capell\Mosaic\Filament\Configurators\Widgets\CarouselWidgetConfigurator;
 use Capell\Mosaic\Models\Widget;
 use Capell\Navigation\Models\Navigation;
 use Illuminate\Support\Collection;
@@ -108,6 +108,13 @@ class WidgetCreator
             ],
         ]);
 
+        $widget->forceFill([
+            'meta' => [
+                ...$widget->meta,
+                'component' => WidgetComponentEnum::PageChildren->value,
+            ],
+        ])->save();
+
         $languages->each(function (Language $language) use ($widget): void {
             $widget->translations()->firstOrCreate([
                 'language_id' => $language->id,
@@ -202,6 +209,13 @@ class WidgetCreator
             ],
         ]);
 
+        $widget->forceFill([
+            'meta' => [
+                ...$widget->meta,
+                'component' => WidgetComponentEnum::PageLatest->value,
+            ],
+        ])->save();
+
         $languages->each(function (Language $language) use ($widget): void {
             $widget->translations()->firstOrCreate([
                 'language_id' => $language->id,
@@ -247,7 +261,7 @@ class WidgetCreator
                 'padding' => ['md'],
             ],
             'admin' => [
-                'schema' => CarouselWidgetSchema::getKey(),
+                'configurator' => CarouselWidgetConfigurator::getKey(),
             ],
         ]);
     }
@@ -331,6 +345,13 @@ class WidgetCreator
                 'icon' => 'heroicon-c-user-group',
             ],
         ]);
+
+        $widget->forceFill([
+            'meta' => [
+                ...$widget->meta,
+                'component' => WidgetComponentEnum::PageSiblings->value,
+            ],
+        ])->save();
 
         $languages->each(function (Language $language) use ($widget): void {
             $widget->translations()->firstOrCreate([
@@ -456,7 +477,7 @@ class WidgetCreator
                 'component' => WidgetComponentEnum::AssetTestimonials,
             ],
             'admin' => [
-                'schema' => CarouselWidgetSchema::getKey(),
+                'configurator' => CarouselWidgetConfigurator::getKey(),
             ],
         ]);
     }
@@ -489,6 +510,10 @@ class WidgetCreator
             'items' => $navigationItems,
         ]);
 
+        if ($navigationItems !== [] && $navigation->items !== $navigationItems) {
+            $navigation->forceFill(['items' => $navigationItems])->save();
+        }
+
         return $this->widgetModel::query()->firstOrCreate(['key' => $widgetKey], [
             'name' => __('Navigation'),
             'type_id' => $type->id,
@@ -505,13 +530,14 @@ class WidgetCreator
         ?Site $site = null,
         string $widgetKey = 'widget-navigation-tabs',
         array $widgetMeta = [
+            'component' => 'capell-mosaic::widget.navigation.tabs',
             'view_file' => 'capell-mosaic::components.widget.navigation.tabs',
         ],
         string $navigationKey = 'navigation-tabs',
         string $navigationName = 'Tabs',
         array $navigationItems = [],
     ): Widget {
-        return $this->navigationWidget(
+        $widget = $this->navigationWidget(
             type: $type,
             site: $site,
             widgetKey: $widgetKey,
@@ -520,6 +546,17 @@ class WidgetCreator
             navigationName: $navigationName,
             navigationItems: $navigationItems,
         );
+
+        if (($widget->meta['view_file'] ?? null) !== ($widgetMeta['view_file'] ?? null)) {
+            $widget->forceFill([
+                'meta' => [
+                    ...$widget->meta,
+                    ...$widgetMeta,
+                ],
+            ])->save();
+        }
+
+        return $widget;
     }
 
     public function bannerImageWidget(?Type $type = null): Widget

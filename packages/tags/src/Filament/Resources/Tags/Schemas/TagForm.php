@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Tags\Filament\Resources\Tags\Schemas;
 
+use Capell\Admin\Data\Configurators\ConfiguratorContextData;
 use Capell\Admin\Filament\Components\Forms\NameInput;
 use Capell\Admin\Filament\Components\Forms\SiteSelect;
 use Capell\Admin\Filament\Components\Forms\StatusToggle;
@@ -17,12 +18,12 @@ use Filament\Schemas\Schema;
 
 class TagForm implements FormConfigurator
 {
-    public static function configure(Schema $schema): Schema
+    public static function configure(Schema $configurator, ?ConfiguratorContextData $context = null): Schema
     {
-        return $schema->components(self::getFormSchema($schema))->columns();
+        return $configurator->components(self::getFormSchema($configurator))->columns();
     }
 
-    protected static function getFormSchema(Schema $schema): array
+    protected static function getFormSchema(Schema $configurator): array
     {
         return [
             Section::make()
@@ -61,7 +62,7 @@ class TagForm implements FormConfigurator
                             StatusToggle::make('status'),
                         ]),
                 ])
-                ->contained(in_array($schema->getOperation(), ['create', 'edit'], true)),
+                ->contained(in_array($configurator->getOperation(), ['create', 'edit'], true)),
         ];
     }
 }

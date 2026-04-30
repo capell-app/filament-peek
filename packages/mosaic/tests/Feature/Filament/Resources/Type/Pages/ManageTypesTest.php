@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Enums\SchemaTypeEnum;
+use Capell\Admin\Enums\ConfiguratorTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Resources\Types\Pages\ManageTypes;
 use Capell\Core\Database\Factories\TypeFactory;
@@ -26,12 +26,12 @@ beforeEach(function (): void {
 test('can create type', function (TypeEnum $type): void {
     $record = Type::factory()->make();
 
-    $hasTypeSchema = CapellAdmin::hasSchema(SchemaTypeEnum::Type, $type->name);
+    $hasTypeConfigurator = CapellAdmin::hasConfigurator(ConfiguratorTypeEnum::Type, $type->name);
 
     $admin = $record->admin;
 
-    if ($hasTypeSchema) {
-        $admin['type_schema'] = $type->name;
+    if ($hasTypeConfigurator) {
+        $admin['type_configurator'] = $type->name;
     }
 
     livewire(ManageTypes::class)
@@ -48,7 +48,7 @@ test('can create type', function (TypeEnum $type): void {
             $admin,
         ])
         ->fillForm([
-            'admin.schema' => 'Default',
+            'admin.configurator' => 'Default',
         ])
         ->callMountedAction()
         ->assertHasNoFormErrors()
@@ -64,8 +64,8 @@ test('can update type', function (TypeEnum $typeEnum): void {
     $type = Type::factory()
         ->type($typeEnum)
         ->when(
-            CapellAdmin::hasSchema(SchemaTypeEnum::Type, $typeEnum->name),
-            fn (TypeFactory $factory): TypeFactory => $factory->adminTypeSchema($typeEnum->name),
+            CapellAdmin::hasConfigurator(ConfiguratorTypeEnum::Type, $typeEnum->name),
+            fn (TypeFactory $factory): TypeFactory => $factory->adminTypeConfigurator($typeEnum->name),
         )
         ->create();
 

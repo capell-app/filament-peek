@@ -11,9 +11,9 @@ use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Enums\WidgetComponentEnum;
 use Capell\Mosaic\Enums\WidgetTypeEnum;
 use Capell\Mosaic\Enums\WidgetTypeGroupEnum;
-use Capell\Mosaic\Filament\Schemas\Types\WidgetTypeSchema;
-use Capell\Mosaic\Filament\Schemas\Widgets\AssetsWidgetSchema;
-use Capell\Mosaic\Filament\Schemas\Widgets\HeroWidgetSchema;
+use Capell\Mosaic\Filament\Configurators\Types\WidgetTypeConfigurator;
+use Capell\Mosaic\Filament\Configurators\Widgets\AssetsWidgetConfigurator;
+use Capell\Mosaic\Filament\Configurators\Widgets\HeroWidgetConfigurator;
 use Capell\Mosaic\Models\Widget;
 use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
@@ -54,7 +54,7 @@ class CreateHeroWidgetAction
             ],
             'admin' => [
                 'icon' => 'heroicon-o-gift',
-                'schema' => HeroWidgetSchema::getKey(),
+                'configurator' => HeroWidgetConfigurator::getKey(),
                 'asset_types' => [LayoutAssetEnum::Section->value],
             ],
         ]);
@@ -72,8 +72,8 @@ class CreateHeroWidgetAction
             'name' => __('capell-mosaic::generic.hero'),
             'group' => WidgetTypeGroupEnum::Asset,
             'admin' => [
-                'type_schema' => WidgetTypeSchema::getKey(),
-                'schema' => AssetsWidgetSchema::getKey(),
+                'type_configurator' => WidgetTypeConfigurator::getKey(),
+                'configurator' => AssetsWidgetConfigurator::getKey(),
                 'icon' => 'heroicon-o-gift',
                 'asset_types' => [
                     AssetEnum::Page,

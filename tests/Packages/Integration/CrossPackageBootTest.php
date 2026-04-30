@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Capell\Address\Providers\AddressServiceProvider;
-use Capell\Admin\Contracts\SchemaTypeEnumInterface;
-use Capell\Admin\Contracts\TypeSchemaInterface;
-use Capell\Admin\Enums\SchemaTypeEnum;
+use Capell\Admin\Contracts\ConfiguratorInterface;
+use Capell\Admin\Contracts\ConfiguratorTypeEnumInterface;
+use Capell\Admin\Enums\ConfiguratorTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Core\Facades\CapellCore;
@@ -43,23 +43,23 @@ it('every registered page type is a usable PageTypeData', function (): void {
     }
 });
 
-it('every registered admin schema points to a real class implementing TypeSchemaInterface', function (): void {
-    $schemas = CapellAdmin::getSchemas();
+it('every registered admin configurator points to a real class implementing ConfiguratorInterface', function (): void {
+    $configurators = CapellAdmin::getConfigurators();
 
-    expect($schemas)->toBeArray();
+    expect($configurators)->toBeArray();
 
-    foreach ($schemas as $type => $perType) {
+    foreach ($configurators as $type => $perType) {
         foreach ($perType as $key => $class) {
-            expect(class_exists($class))->toBeTrue(sprintf('Schema class %s for type %s/%s does not exist', $class, $type, $key));
-            expect(is_a($class, TypeSchemaInterface::class, true))
-                ->toBeTrue(sprintf('Schema class %s does not implement TypeSchemaInterface', $class));
+            expect(class_exists($class))->toBeTrue(sprintf('Configurator class %s for type %s/%s does not exist', $class, $type, $key));
+            expect(is_a($class, ConfiguratorInterface::class, true))
+                ->toBeTrue(sprintf('Configurator class %s does not implement ConfiguratorInterface', $class));
         }
     }
 });
 
-it('every SchemaTypeEnum value resolves to a non-empty schema list when implementations exist', function (): void {
-    foreach (SchemaTypeEnum::cases() as $case) {
-        $registered = CapellAdmin::getSchemas($case);
+it('every ConfiguratorTypeEnum value resolves to a configurator map', function (): void {
+    foreach (ConfiguratorTypeEnum::cases() as $case) {
+        $registered = CapellAdmin::getConfigurators($case);
 
         expect($registered)->toBeArray();
 
@@ -69,12 +69,12 @@ it('every SchemaTypeEnum value resolves to a non-empty schema list when implemen
         foreach ($registered as $key => $class) {
             expect($key)->toBeString();
             expect(is_string($class) && class_exists($class))->toBeTrue(
-                sprintf('Schema %s registered under %s/%s is not a loadable class', $class, $case->value, $key),
+                sprintf('Configurator %s registered under %s/%s is not a loadable class', $class, $case->value, $key),
             );
         }
     }
 });
 
-it('SchemaTypeEnumInterface contract is satisfied by SchemaTypeEnum', function (): void {
-    expect(is_a(SchemaTypeEnum::class, SchemaTypeEnumInterface::class, true))->toBeTrue();
+it('ConfiguratorTypeEnumInterface contract is satisfied by ConfiguratorTypeEnum', function (): void {
+    expect(is_a(ConfiguratorTypeEnum::class, ConfiguratorTypeEnumInterface::class, true))->toBeTrue();
 });

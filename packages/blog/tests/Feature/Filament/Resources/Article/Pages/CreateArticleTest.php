@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Actions\Page\CreatePageAction;
 use Capell\Blog\Enums\BlogLayoutEnum;
 use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Filament\Resources\Articles\Pages\EditArticle;
@@ -39,8 +38,9 @@ describe('from edit article', function (): void {
 
         livewire(EditArticle::class, ['record' => $article->getRouteKey()])
             ->assertSuccessful()
-            ->mountAction(CreatePageAction::class)
+            ->mountAction('create')
             ->fillForm([
+                'name' => $newData->name,
                 'type_id' => $newData->type_id,
                 'site_id' => $newData->site_id,
             ])
@@ -77,7 +77,7 @@ describe('from edit article', function (): void {
 
         livewire(EditArticle::class, ['record' => $article->getRouteKey()])
             ->assertSuccessful()
-            ->callAction(CreatePageAction::class, [
+            ->callAction('create', [
                 'translations' => [
                     'abc' => [
                         'language_id' => $article->site->language_id,
@@ -202,7 +202,7 @@ describe('from list article', function (): void {
 
         livewire(ListArticles::class)
             ->assertSuccessful()
-            ->callAction(CreatePageAction::class)
+            ->callAction('create')
             ->assertHasErrors();
     });
 });

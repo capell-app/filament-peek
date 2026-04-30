@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\SeoTools\Support\Sitemap;
 
 use Capell\Core\Actions\GetEditPageResourceUrlAction;
+use Capell\Core\Exceptions\UrlMissingSiteDomainException;
 use Capell\Core\Models\Page;
 use Capell\SeoTools\Data\SitemapPageData;
 use Illuminate\Support\Collection;
@@ -20,8 +21,8 @@ final class SitemapChainBuilder
     public static function build(Page $page, ?Collection $children = null, bool $withEditUrl = false): SitemapPageData
     {
         $node = new SitemapPageData(
-            label: $page->translation->label,
-            url: $page->pageUrl->full_url,
+            label: $page->translation?->label ?? $page->name,
+            url: self::pageUrl($page),
             children: $children,
             lastModified: SitemapPageData::resolveLastModified($page),
             changeFrequency: self::resolveChangeFrequency($page),
@@ -34,8 +35,8 @@ final class SitemapChainBuilder
         $ancestor = $page->parent;
         while ($ancestor !== null) {
             $node = new SitemapPageData(
-                label: $ancestor->translation->label,
-                url: $ancestor->pageUrl->full_url,
+                label: $ancestor->translation?->label ?? $ancestor->name,
+                url: self::pageUrl($ancestor),
                 children: collect([$node]),
                 lastModified: SitemapPageData::resolveLastModified($ancestor),
                 changeFrequency: self::resolveChangeFrequency($ancestor),
@@ -59,5 +60,14 @@ final class SitemapChainBuilder
     private static function resolvePriority(Page $page): float
     {
         return (float) ($page->meta['priority'] ?? 0.5);
+    }
+
+    private static function pageUrl(Page $page): string
+    {
+        try {
+            return $page->pageUrl->full_url;
+        } catch (UrlMissingSiteDomainException) {
+            return $page->pageUrl->url;
+        }
     }
 }

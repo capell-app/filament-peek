@@ -6,6 +6,7 @@ namespace Capell\SeoTools\Data;
 
 use Capell\Core\Actions\GetEditPageResourceUrlAction;
 use Capell\Core\Contracts\Pageable;
+use Capell\Core\Exceptions\UrlMissingSiteDomainException;
 use Capell\Core\Models\Page;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
@@ -54,8 +55,8 @@ class SitemapPageData extends Data
         }
 
         return new self(
-            label: $page->translation->label,
-            url: $page->pageUrl->full_url,
+            label: $page->translation?->label ?? $page->name,
+            url: self::pageUrl($page),
             children: $page->hasPageHierarchy()
                 ? $page->children
                     ?->map(fn (Page $child): SitemapPageData => self::fromPage($child, withEditUrl: $withEditUrl))
@@ -75,5 +76,14 @@ class SitemapPageData extends Data
         $date = $page->published_at ?? $page->visible_from ?? $page->created_at ?? now();
 
         return CarbonImmutable::make($date);
+    }
+
+    private static function pageUrl(Pageable $page): string
+    {
+        try {
+            return $page->pageUrl->full_url;
+        } catch (UrlMissingSiteDomainException) {
+            return $page->pageUrl->url ?? '';
+        }
     }
 }

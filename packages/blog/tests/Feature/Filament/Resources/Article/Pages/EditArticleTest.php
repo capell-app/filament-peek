@@ -12,7 +12,6 @@ use Capell\Core\Models\Translation;
 use Capell\Tags\Enums\TagTypeEnum;
 use Capell\Tags\Models\Tag;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
@@ -97,7 +96,7 @@ it('can delete', function (): void {
         'record' => $article->getRouteKey(),
     ])
         ->assertSuccessful()
-        ->callAction(DeleteAction::class)
+        ->callAction('delete')
         ->assertHasNoFormErrors();
 
     assertSoftDeleted($article, ['id' => $article->id]);

@@ -32,7 +32,7 @@ class PublishPageAction extends Action
             ->modalHeading(__('capell-admin::message.publish_heading'))
             ->modalDescription(fn (Pageable $record): HtmlString => new HtmlString($this->buildModalDescription($record)))
             ->action(function (Pageable $record): void {
-                $workspace = $record->workspace;
+                $workspace = $this->workspace($record);
 
                 if (! $workspace instanceof Workspace) {
                     return;
@@ -67,7 +67,7 @@ class PublishPageAction extends Action
     private function userCanPublish(Pageable $record): bool
     {
         $user = auth()->user();
-        $workspace = $record->workspace;
+        $workspace = $this->workspace($record);
 
         if ($user === null || ! $workspace instanceof Workspace) {
             return false;
@@ -85,11 +85,11 @@ class PublishPageAction extends Action
 
     private function shouldBeVisible(Pageable $record): bool
     {
-        if ($record->isLive()) {
+        if (method_exists($record, 'isLive') && $record->isLive()) {
             return false;
         }
 
-        $status = $record->workspace?->status;
+        $status = $this->workspace($record)?->status;
 
         return in_array($status, [
             WorkspaceStatusEnum::Open,
@@ -100,12 +100,12 @@ class PublishPageAction extends Action
 
     private function shouldBeDisabled(Pageable $record): bool
     {
-        return $record->workspace?->status === WorkspaceStatusEnum::InReview;
+        return $this->workspace($record)?->status === WorkspaceStatusEnum::InReview;
     }
 
     private function buttonLabel(Pageable $record): string
     {
-        $workspace = $record->workspace;
+        $workspace = $this->workspace($record);
 
         if (! $workspace instanceof Workspace) {
             return __('capell-admin::button.publish');
@@ -125,7 +125,7 @@ class PublishPageAction extends Action
 
     private function buildModalDescription(Pageable $record): string
     {
-        $workspace = $record->workspace;
+        $workspace = $this->workspace($record);
 
         if (! $workspace instanceof Workspace) {
             return '';
@@ -145,5 +145,16 @@ class PublishPageAction extends Action
         }
 
         return __('capell-admin::message.publish_single_page', ['page' => $record->name]);
+    }
+
+    private function workspace(Pageable $record): ?Workspace
+    {
+        $workspaceId = $record->getAttributes()['workspace_id'] ?? null;
+
+        if ($workspaceId === null) {
+            return null;
+        }
+
+        return Workspace::query()->find($workspaceId);
     }
 }

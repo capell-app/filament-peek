@@ -8,7 +8,6 @@ use Capell\Navigation\Enums\NavigationItemType;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\EditNavigation;
 use Capell\Navigation\Models\Navigation;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Str;
 
@@ -82,7 +81,7 @@ it('can delete', function (): void {
         'record' => $navigation->getRouteKey(),
     ])
         ->assertSuccessful()
-        ->callAction(DeleteAction::class)
+        ->callAction('delete')
         ->assertHasNoFormErrors();
 
     assertSoftDeleted($navigation, ['id' => $navigation->id]);

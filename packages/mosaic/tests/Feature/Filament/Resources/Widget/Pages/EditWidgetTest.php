@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Actions\ReplicateAction;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Enums\ActionLinkEnum;
@@ -12,7 +11,6 @@ use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Support\Creator\TypeCreator;
 use Capell\Navigation\Models\Navigation;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
@@ -83,7 +81,7 @@ test('can replicate widget', function (): void {
         'record' => $widget->getRouteKey(),
     ])
         ->assertSuccessful()
-        ->callAction(ReplicateAction::class, [
+        ->callAction('replicate', [
             'name' => $newData->name,
             'key' => $newData->key,
         ])
@@ -99,7 +97,7 @@ it('can delete', function (): void {
         'record' => $widget->getRouteKey(),
     ])
         ->assertSuccessful()
-        ->callAction(DeleteAction::class)
+        ->callAction('delete')
         ->assertHasNoFormErrors();
 
     assertSoftDeleted($widget, ['id' => $widget->id]);

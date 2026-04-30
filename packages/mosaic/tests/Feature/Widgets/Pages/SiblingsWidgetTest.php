@@ -25,7 +25,7 @@ it('renders siblings widget on page', function (): void {
     $widget = $creator->siblingsWidget(null, collect([$language]));
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $parent = Page::factory()->site($site)->withTranslations()->create();
-    $pages = Page::factory()->count(3)->site($site)->parent($parent)->layout($layout)->withTranslations()->create();
+    $pages = Page::factory()->count(3)->site($site)->parent($parent)->layout($layout)->withTranslations($language)->create();
     $page = $pages->random();
     $siblings = $pages
         ->where('id', '!=', $page->id)

@@ -24,7 +24,6 @@ use Capell\Mosaic\Actions\ReplicateContentAction;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Filament\Components\Tables\Columns\Content\ContentNameColumn;
 use Capell\Mosaic\Models\Section;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
@@ -81,18 +80,15 @@ class SectionsTable implements TableConfigurator
             ])
             ->columnManagerColumns(3)
             ->recordActions([
-                EditAction::make(),
-                ActionGroup::make([
-                    ReplicateAction::make()
-                        ->replicaModelAction(ReplicateContentAction::class),
-                    DeleteAction::make(),
-                ])
-                    ->color('gray'),
+                EditAction::make('edit'),
+                ReplicateAction::make('replicate')
+                    ->replicaModelAction(ReplicateContentAction::class),
+                DeleteAction::make('delete'),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
-                RestoreBulkAction::make(),
-                ForceDeleteBulkAction::make(),
+                DeleteBulkAction::make('delete'),
+                RestoreBulkAction::make('restore'),
+                ForceDeleteBulkAction::make('forceDelete'),
             ])
             ->recordClasses(fn (Section $record): ?string => match (true) {
                 (bool) $record->deleted_at => 'table-row-warning',

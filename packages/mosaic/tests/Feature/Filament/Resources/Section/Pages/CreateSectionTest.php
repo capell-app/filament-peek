@@ -125,8 +125,8 @@ test('can search parent results', function (): void {
 
     $livewire = livewire(CreateSection::class);
     $instance = $livewire->instance();
-    $schema = $instance->getSchema($instance->getDefaultTestingSchemaName());
-    $component = $schema->getComponent('parent_id');
+    $configurator = $instance->getSchema($instance->getDefaultTestingSchemaName());
+    $component = $configurator->getComponent('parent_id');
 
     $livewire->call('callSchemaComponentMethod', $component->getKey(), $parent->name)
         ->assertSuccessful();

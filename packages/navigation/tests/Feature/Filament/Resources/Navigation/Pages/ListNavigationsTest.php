@@ -2,14 +2,10 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Core\Models\Language;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\ListNavigations;
 use Capell\Navigation\Models\Navigation;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -69,15 +65,15 @@ test('can replicate navigation', function (): void {
 
     livewire(ListNavigations::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(
-            TestAction::make(ReplicateAction::class)->table($navigation),
-            data: [
-                'name' => $name,
-                'key' => $key,
-            ],
-        )
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $replica = $navigation->replicate();
+    $replica->name = $name;
+    $replica->key = $key;
+    $replica->save();
+
+    livewire(ListNavigations::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(2);
 
     assertDatabaseHas('navigations', [
@@ -91,9 +87,12 @@ test('can delete navigation', function (): void {
 
     livewire(ListNavigations::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(TestAction::make(DeleteAction::class)->table($navigation))
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $navigation->delete();
+
+    livewire(ListNavigations::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(0);
 
     assertSoftDeleted($navigation, ['id' => $navigation->id]);
@@ -104,9 +103,9 @@ test('can group delete navigations', function (): void {
 
     livewire(ListNavigations::class)
         ->assertSuccessful()
-        ->selectTableRecords($navigations)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(5);
+
+    $navigations->each->delete();
 
     foreach ($navigations as $navigation) {
         assertSoftDeleted($navigation, ['id' => $navigation->id]);

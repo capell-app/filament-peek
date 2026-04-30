@@ -42,9 +42,9 @@ it('generates correct schema for site with meta data', function (): void {
 
     $site->refresh();
 
-    $schema = SiteMetaSchemaAction::run($site, $language);
+    $configurator = SiteMetaSchemaAction::run($site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->toHaveKey('@context', 'https://schema.org')
         ->toHaveKey('@type', 'Organization')
         ->toHaveKey('name', 'Test Business')
@@ -57,14 +57,14 @@ it('generates correct schema for site with meta data', function (): void {
         ->toHaveKey('sameAs')
         ->toHaveKey('openingHoursSpecification');
 
-    expect(Arr::first($schema['areaServed']))
+    expect(Arr::first($configurator['areaServed']))
         ->toHaveKey('@type', 'Country')
         ->toHaveKey('name', 'USA')
         ->toHaveKey('@id', 'https://example.com/usa');
 
-    expect($schema['sameAs'][0])->toBe('https://twitter.com/test');
+    expect($configurator['sameAs'][0])->toBe('https://twitter.com/test');
 
-    $openingHours = $schema['openingHoursSpecification'][0];
+    $openingHours = $configurator['openingHoursSpecification'][0];
     expect($openingHours)
         ->toHaveKey('dayOfWeek')
         ->toHaveKey('opens', '09:00')
@@ -90,9 +90,9 @@ it('handles missing meta fields gracefully', function (): void {
 
     $site->refresh();
 
-    $schema = SiteMetaSchemaAction::run($site, $language);
+    $configurator = SiteMetaSchemaAction::run($site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->toHaveKey('@context', 'https://schema.org')
         ->toHaveKey('@type', 'Organization')
         ->toHaveKey('name', $site->translation->title)
@@ -124,12 +124,12 @@ it('generates schema with multiple media and social links', function (): void {
     // Attach two media items if possible (simulate if factory supports)
     $site->refresh();
 
-    $schema = SiteMetaSchemaAction::run($site, $language);
+    $configurator = SiteMetaSchemaAction::run($site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->toHaveKey('currenciesAccepted')
         ->toHaveKey('sameAs');
-    expect($schema['sameAs'])
+    expect($configurator['sameAs'])
         ->toContain('https://twitter.com/test')
         ->toContain('https://facebook.com/test');
 });
@@ -163,13 +163,13 @@ it('generates schema with multiple open hours and edge days', function (): void 
 
     $site->refresh();
 
-    $schema = SiteMetaSchemaAction::run($site, $language);
+    $configurator = SiteMetaSchemaAction::run($site, $language);
 
-    expect($schema['openingHoursSpecification'])->toHaveCount(2);
-    expect($schema['openingHoursSpecification'][0]['dayOfWeek'])
+    expect($configurator['openingHoursSpecification'])->toHaveCount(2);
+    expect($configurator['openingHoursSpecification'][0]['dayOfWeek'])
         ->toContain('https://schema.org/Saturday')
         ->toContain('https://schema.org/Sunday');
-    expect($schema['openingHoursSpecification'][1]['dayOfWeek'])
+    expect($configurator['openingHoursSpecification'][1]['dayOfWeek'])
         ->toContain('https://schema.org/PublicHolidays');
 });
 
@@ -190,9 +190,9 @@ it('handles empty media collection without error', function (): void {
 
     $site->refresh();
     $site->media()->delete(); // Ensure no media
-    $schema = SiteMetaSchemaAction::run($site, $language);
-    expect($schema)->not()->toHaveKey('image');
-    expect($schema)->not()->toHaveKey('photos');
+    $configurator = SiteMetaSchemaAction::run($site, $language);
+    expect($configurator)->not()->toHaveKey('image');
+    expect($configurator)->not()->toHaveKey('photos');
 });
 
 it('handles all optional fields present', function (): void {
@@ -230,9 +230,9 @@ it('handles all optional fields present', function (): void {
 
     $site->refresh();
 
-    $schema = SiteMetaSchemaAction::run($site, $language);
+    $configurator = SiteMetaSchemaAction::run($site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->toHaveKey('areaServed')
         ->toHaveKey('currenciesAccepted')
         ->toHaveKey('email', 'contact@fulloption.com')
@@ -260,9 +260,9 @@ it('handles all optional fields missing', function (): void {
 
     $site->refresh();
 
-    $schema = SiteMetaSchemaAction::run($site, $language);
+    $configurator = SiteMetaSchemaAction::run($site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->not()->toHaveKey('areaServed')
         ->not()->toHaveKey('currenciesAccepted')
         ->not()->toHaveKey('email')

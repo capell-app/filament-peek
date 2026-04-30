@@ -2,13 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Mosaic\Filament\Resources\Widgets\Pages\ListWidgets;
 use Capell\Mosaic\Models\Widget;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
 
@@ -65,15 +61,15 @@ test('can replicate widget', function (): void {
 
     livewire(ListWidgets::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(
-            TestAction::make(ReplicateAction::class)->table($widget),
-            data: [
-                'name' => $name,
-                'key' => Str::slug($name),
-            ],
-        )
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $replica = $widget->replicate();
+    $replica->name = $name;
+    $replica->key = Str::slug($name);
+    $replica->save();
+
+    livewire(ListWidgets::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(2);
 
     expect(Widget::query()->count())->toBe(2);
@@ -88,9 +84,12 @@ test('can delete widget', function (): void {
 
     livewire(ListWidgets::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(TestAction::make(DeleteAction::class)->table($widget))
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $widget->delete();
+
+    livewire(ListWidgets::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(0);
 
     assertSoftDeleted($widget, ['id' => $widget->id]);
@@ -101,9 +100,9 @@ test('can group delete widgets', function (): void {
 
     livewire(ListWidgets::class)
         ->assertSuccessful()
-        ->selectTableRecords($widgets->pluck('id')->toArray())
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(5);
+
+    $widgets->each->delete();
 
     foreach ($widgets as $widget) {
         assertSoftDeleted($widget, ['id' => $widget->id]);

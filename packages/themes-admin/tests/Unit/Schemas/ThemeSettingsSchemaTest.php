@@ -59,14 +59,14 @@ function flattenThemeComponents(object $component): array
 }
 
 test('ThemeSettingsSchema::make() returns a Tabs instance', function (): void {
-    $schema = ThemeSettingsSchema::make();
+    $configurator = ThemeSettingsSchema::make();
 
-    expect($schema)->toBeInstanceOf(Tabs::class);
+    expect($configurator)->toBeInstanceOf(Tabs::class);
 });
 
 test('schema contains an active_theme Select', function (): void {
-    $schema = ThemeSettingsSchema::make();
-    $components = flattenThemeComponents($schema);
+    $configurator = ThemeSettingsSchema::make();
+    $components = flattenThemeComponents($configurator);
 
     $matches = array_filter(
         $components,
@@ -77,8 +77,8 @@ test('schema contains an active_theme Select', function (): void {
 });
 
 test('schema includes at least two ColorPickers', function (): void {
-    $schema = ThemeSettingsSchema::make();
-    $components = flattenThemeComponents($schema);
+    $configurator = ThemeSettingsSchema::make();
+    $components = flattenThemeComponents($configurator);
 
     $pickers = array_filter(
         $components,

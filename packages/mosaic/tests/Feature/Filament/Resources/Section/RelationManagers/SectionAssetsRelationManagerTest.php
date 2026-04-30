@@ -9,7 +9,6 @@ use Capell\Mosaic\Filament\Resources\Sections\Pages\EditSection;
 use Capell\Mosaic\Filament\Resources\Sections\RelationManagers\SectionAssetsRelationManager;
 use Capell\Mosaic\Models\Section;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -143,7 +142,7 @@ it('can bulk delete section assets', function (): void {
         ->assertSuccessful()
         ->assertCountTableRecords(3)
         ->selectTableRecords($assets->pluck('id')->toArray())
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
+        ->callAction(TestAction::make('delete')->table()->bulk())
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(0);
 

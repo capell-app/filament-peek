@@ -7,8 +7,8 @@ namespace Capell\Address\Providers;
 use Capell\Address\Console\Commands\DemoCommand;
 use Capell\Address\Console\Commands\FakerCommand;
 use Capell\Address\Console\Commands\InstallCommand;
+use Capell\Address\Enums\ConfiguratorTypeEnum;
 use Capell\Address\Enums\ResourceEnum;
-use Capell\Address\Enums\SchemaTypeEnum;
 use Capell\Address\Filament\Resources\Sites\Schemas\Extenders\SiteSchemaExtender;
 use Capell\Address\Models\Address;
 use Capell\Address\Models\Country;
@@ -69,7 +69,7 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
     {
         return $this
             ->registerBladeComponents()
-            ->registerSchemas()
+            ->registerConfigurators()
             ->registerSchemaExtenders();
     }
 
@@ -122,10 +122,10 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
-    private function registerSchemas(): self
+    private function registerConfigurators(): self
     {
-        foreach (SchemaTypeEnum::getAllSchemas() as $type => $schemas) {
-            CapellAdmin::registerSchemas($type, $schemas, defaultSchemas: true);
+        foreach (ConfiguratorTypeEnum::getAllConfigurators() as $type => $configurators) {
+            CapellAdmin::registerConfigurators($type, $configurators, defaultConfigurators: true);
         }
 
         return $this;

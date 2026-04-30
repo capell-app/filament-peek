@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Providers;
 
+use Capell\Admin\Enums\ConfiguratorTypeEnum;
 use Capell\Admin\Enums\ResourceEnum as AdminResourceEnum;
-use Capell\Admin\Enums\SchemaTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Blog\Enums\ResourceEnum;
 use Capell\Blog\Enums\WidgetComponentEnum;
-use Capell\Blog\Enums\WidgetSchemaEnum;
-use Capell\Blog\Filament\Schemas\Articles\ArticlePageSchema;
+use Capell\Blog\Enums\WidgetConfiguratorEnum;
+use Capell\Blog\Filament\Configurators\Articles\ArticlePageConfigurator;
 use Capell\Blog\Listeners\AddBlogPagesToNavigation;
 use Capell\Blog\Support\Creator\BlogCreator;
 use Capell\Blog\Support\Loader\BlogLoader;
@@ -18,7 +18,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\ComponentTypeEnum;
-use Capell\Mosaic\Enums\TypeSchemaEnum as LayoutSchemaEnum;
+use Capell\Mosaic\Enums\ConfiguratorTypeEnum as LayoutSchemaEnum;
 use Capell\Navigation\Events\NavigationCreating;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -37,7 +37,7 @@ final class AdminServiceProvider extends ServiceProvider
         }
 
         $this->registerWidgetComponents();
-        $this->registerSchemas();
+        $this->registerConfigurators();
         $this->registerDefaultPages();
         $this->registerNavigationListener();
     }
@@ -58,12 +58,12 @@ final class AdminServiceProvider extends ServiceProvider
         CapellCore::registerComponents(ComponentTypeEnum::Widget->name, WidgetComponentEnum::cases());
     }
 
-    private function registerSchemas(): void
+    private function registerConfigurators(): void
     {
-        CapellAdmin::registerSchema(SchemaTypeEnum::Page, ArticlePageSchema::class);
+        CapellAdmin::registerConfigurator(ConfiguratorTypeEnum::Page, ArticlePageConfigurator::class);
 
-        foreach (WidgetSchemaEnum::cases() as $schemas) {
-            CapellAdmin::registerSchema(LayoutSchemaEnum::Widget, $schemas->value);
+        foreach (WidgetConfiguratorEnum::cases() as $configurators) {
+            CapellAdmin::registerConfigurator(LayoutSchemaEnum::Widget, $configurators->value);
         }
     }
 

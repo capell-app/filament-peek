@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Filament\Resources\Workspaces\Schemas;
 
+use Capell\Admin\Data\Configurators\ConfiguratorContextData;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
 use Capell\Workspaces\Models\Workspace;
 use Filament\Forms\Components\ColorPicker;
@@ -17,9 +18,9 @@ use Illuminate\Support\HtmlString;
 
 class WorkspaceForm implements FormConfigurator
 {
-    public static function configure(Schema $schema): Schema
+    public static function configure(Schema $configurator, ?ConfiguratorContextData $context = null): Schema
     {
-        return $schema->components([
+        return $configurator->components([
             Section::make(__('capell-admin::workspace.approval_history.title'))
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->collapsible()

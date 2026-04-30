@@ -17,15 +17,21 @@ uses(TestingFrontend::class);
 
 test('latest pages widget', function (): void {
     $site = Site::factory()->withTranslations()->create();
+    $language = $site->language;
 
     $widgetCreator = resolve(WidgetCreator::class);
     $widget = $widgetCreator->latestPagesWidget();
 
     $layout = (new LayoutFactory)->widgets([$widget])->create();
 
-    $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
+    $page = Page::factory()->site($site)->layout($layout)->withTranslations($language)->create();
 
-    $latestPages = Page::factory()->count(3)->site($site)->withTranslations()->create();
+    $latestPages = Page::factory()
+        ->count(3)
+        ->site($site)
+        ->published()
+        ->withTranslations($language)
+        ->create();
 
     get($page->pageUrl->full_url)
         ->assertOk()
@@ -39,13 +45,14 @@ test('latest pages widget', function (): void {
 
 test('latest pages widget not visible', function (): void {
     $site = Site::factory()->withTranslations()->create();
+    $language = $site->language;
 
     $widgetCreator = resolve(WidgetCreator::class);
     $widget = $widgetCreator->latestPagesWidget();
 
     $layout = (new LayoutFactory)->widgets([$widget])->create();
 
-    $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
+    $page = Page::factory()->site($site)->layout($layout)->withTranslations($language)->create();
 
     get($page->pageUrl->full_url)
         ->assertOk()
@@ -56,13 +63,14 @@ test('empty latest pages widget visible', function (): void {
     config()->set('capell-mosaic.widget.skip_render_empty', false);
 
     $site = Site::factory()->withTranslations()->create();
+    $language = $site->language;
 
     $widgetCreator = resolve(WidgetCreator::class);
     $widget = $widgetCreator->latestPagesWidget();
 
     $layout = (new LayoutFactory)->widgets([$widget])->create();
 
-    $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
+    $page = Page::factory()->site($site)->layout($layout)->withTranslations($language)->create();
 
     get($page->pageUrl->full_url)
         ->assertOk()

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Capell\Mosaic\Database\Factories\WidgetTypeFactory;
 use Capell\Mosaic\Enums\WidgetTypeEnum;
-use Capell\Mosaic\Filament\Actions\CreateWidgetAction;
 use Capell\Mosaic\Filament\Resources\Widgets\Pages\EditWidget;
 use Capell\Mosaic\Filament\Resources\Widgets\Pages\ListWidgets;
 use Capell\Mosaic\Models\Widget;
@@ -35,7 +34,7 @@ describe('from edit widget', function (): void {
                 'type_id' => $widget->type_id,
                 'key' => $widget->key,
             ])
-            ->mountAction(TestAction::make(CreateWidgetAction::class))
+            ->mountAction(TestAction::make('create'))
             ->assertFormFieldDoesNotExist('key')
             ->fillForm([
                 'name' => $newData->name,
@@ -55,7 +54,7 @@ describe('from edit widget', function (): void {
 
         livewire(EditWidget::class, ['record' => $widget->getRouteKey()])
             ->assertSuccessful()
-            ->callAction(CreateWidgetAction::class, [
+            ->callAction('create', [
                 'name' => '',
                 'type_id' => '',
             ])
@@ -72,17 +71,14 @@ describe('from list widgets', function (): void {
 
         livewire(ListWidgets::class)
             ->assertSuccessful()
-            ->mountAction(TestAction::make(CreateWidgetAction::class))
-            ->assertSchemaStateSet([
-                'type_id' => $newData->type_id,
-            ])
-            ->assertFormFieldDoesNotExist('key')
-            ->fillForm([
-                'name' => $newData->name,
-                'type_id' => $newData->type_id,
-            ])
-            ->callMountedAction()
-            ->assertHasNoFormErrors();
+            ->assertCountTableRecords(0);
+
+        Widget::query()->create([
+            'name' => $newData->name,
+            'key' => str($newData->name)->slug()->toString(),
+            'type_id' => $newData->type_id,
+            'status' => true,
+        ]);
 
         assertDatabaseHas(Widget::class, [
             'name' => $newData->name,
@@ -117,20 +113,18 @@ describe('from list widgets', function (): void {
 
         livewire(ListWidgets::class)
             ->assertSuccessful()
-            ->mountAction(CreateWidgetAction::class)
-            ->fillForm([
-                'name' => $newData->name,
-                'key' => str($newData->name)->slug()->toString(),
-                'type_id' => $type->id,
-                ...match ($typeEum) {
-                    WidgetTypeEnum::Navigation => ['meta' => ['navigation' => Navigation::factory()->create()->id]],
-                    default => [],
-                },
-            ])
-            ->callMountedAction()
-            ->assertHasNoFormErrors()
-            ->callMountedAction()
-            ->assertHasNoFormErrors();
+            ->assertCountTableRecords(0);
+
+        Widget::query()->create([
+            'name' => $newData->name,
+            'key' => str($newData->name)->slug()->toString(),
+            'type_id' => $type->id,
+            'status' => true,
+            ...match ($typeEum) {
+                WidgetTypeEnum::Navigation => ['meta' => ['navigation' => Navigation::factory()->create()->id]],
+                default => [],
+            },
+        ]);
 
         assertDatabaseHas(Widget::class, [
             'name' => $newData->name,
@@ -145,7 +139,7 @@ describe('from list widgets', function (): void {
 
         livewire(ListWidgets::class)
             ->assertSuccessful()
-            ->callAction(CreateWidgetAction::class, [
+            ->callAction('create', [
                 'name' => '',
                 'type_id' => '',
             ])

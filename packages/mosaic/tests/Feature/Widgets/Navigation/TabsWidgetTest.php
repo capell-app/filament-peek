@@ -52,7 +52,7 @@ it('renders navigation tabs widget on page', function (): void {
             ],
         ],
     ];
-    $widget = $creator->navigationTabsWidget(navigationItems: $items);
+    $widget = $creator->navigationTabsWidget(site: $site, navigationItems: $items);
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
 
@@ -80,7 +80,7 @@ it('renders navigation tabs widget on page', function (): void {
 it('empty navigation tabs widget hidden', function (): void {
     $site = Site::factory()->withTranslations()->create();
     $creator = resolve(WidgetCreator::class);
-    $widget = $creator->navigationTabsWidget();
+    $widget = $creator->navigationTabsWidget(site: $site);
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
 
@@ -94,7 +94,7 @@ it('empty navigation tabs widget visible', function (): void {
 
     $site = Site::factory()->withTranslations()->create();
     $creator = resolve(WidgetCreator::class);
-    $widget = $creator->navigationTabsWidget();
+    $widget = $creator->navigationTabsWidget(site: $site);
     $layout = (new LayoutFactory)->widgets([$widget])->create();
     $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
 

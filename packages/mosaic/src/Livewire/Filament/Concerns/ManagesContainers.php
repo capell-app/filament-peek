@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Livewire\Filament\Concerns;
 
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Mosaic\Enums\TypeSchemaEnum;
-use Capell\Mosaic\Filament\Schemas\Layouts\DefaultLayoutContainerSchema;
+use Capell\Mosaic\Enums\ConfiguratorTypeEnum;
+use Capell\Mosaic\Filament\Configurators\Layouts\DefaultLayoutContainerConfigurator;
 use Closure;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -139,16 +139,16 @@ trait ManagesContainers
         }
     }
 
-    protected function getContainerSchema(Schema $schema, array $arguments): array
+    protected function getContainerSchema(Schema $configurator, array $arguments): array
     {
         $containerKey = $arguments['containerKey'] ?? null;
 
-        $adminSchema = CapellAdmin::getSchema(
-            TypeSchemaEnum::LayoutContainer->value,
-            $this->layout->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerSchema::getKey(),
+        $adminSchema = CapellAdmin::getConfigurator(
+            ConfiguratorTypeEnum::LayoutContainer->value,
+            $this->layout->admin['container_schema'][$containerKey] ?? DefaultLayoutContainerConfigurator::getKey(),
         );
 
-        $typeSchema = resolve($adminSchema)->make($schema);
+        $typeSchema = resolve($adminSchema)->make($configurator);
 
         return [
             TextInput::make('key')

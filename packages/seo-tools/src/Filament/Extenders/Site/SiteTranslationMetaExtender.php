@@ -11,7 +11,7 @@ use Filament\Schemas\Schema;
 
 class SiteTranslationMetaExtender extends AbstractSiteSchemaExtender
 {
-    public function extendTranslationComponentsForHook(Schema $schema, PageTranslationSchemaHookEnum $hook): array
+    public function extendTranslationComponentsForHook(Schema $configurator, PageTranslationSchemaHookEnum $hook): array
     {
         if ($hook !== PageTranslationSchemaHookEnum::AfterTitle) {
             return [];

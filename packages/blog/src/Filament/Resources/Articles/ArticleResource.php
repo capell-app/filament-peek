@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Blog\Filament\Resources\Articles;
 
 use BackedEnum;
+use Capell\Admin\Enums\ConfiguratorTypeEnum;
 use Capell\Admin\Filament\Resources\Pages\PageResource;
 use Capell\Blog\Actions\GetArticleLayoutAction;
 use Capell\Blog\Enums\BlogTypeGroupEnum;
@@ -48,9 +49,9 @@ class ArticleResource extends PageResource
         return Article::class;
     }
 
-    public static function getResourceType(): string
+    public static function getResourceType(): ConfiguratorTypeEnum
     {
-        return 'Pages';
+        return ConfiguratorTypeEnum::Page;
     }
 
     public static function getBasePath(Site $site, Language $language): string

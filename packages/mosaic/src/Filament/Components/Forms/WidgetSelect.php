@@ -38,20 +38,20 @@ class WidgetSelect extends Select
                     ->toArray(),
             )
             ->createOptionForm(
-                fn (Select $component, Schema $schema): Schema => WidgetForm::configure(
-                    $schema->model(
+                fn (Select $component, Schema $configurator): Schema => WidgetForm::configure(
+                    $configurator->model(
                         $component->getRelationship()
                             ? $component->getRelationship()->getModel()::class
                             : $component->getModel(),
                     ),
                 ),
             )
-            ->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
+            ->createOptionUsing(static function (Select $component, array $data, Schema $configurator) {
                 $record = $component->getRelationship()?->getRelated() ?? new ($component->getModel());
                 $record->fill($data);
                 $record->save();
 
-                $schema->model($record)->saveRelationships();
+                $configurator->model($record)->saveRelationships();
 
                 Notification::make('save_before_continue')
                     ->title(__('capell-admin::generic.message_save_before_continue'))
@@ -84,7 +84,7 @@ class WidgetSelect extends Select
     public function withEditForm(): self
     {
         return $this->editOptionForm(
-            fn (?int $state, Schema $schema): ?Schema => $state ? WidgetForm::configure($schema) : null,
+            fn (?int $state, Schema $configurator): ?Schema => $state ? WidgetForm::configure($configurator) : null,
         )
             ->editOptionAction(
                 fn (Action $action): Action => $action

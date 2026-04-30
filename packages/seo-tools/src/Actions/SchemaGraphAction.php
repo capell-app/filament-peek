@@ -71,7 +71,7 @@ class SchemaGraphAction
     {
         $siteUrl = $site->siteDomain?->full_url;
 
-        $schema = [
+        $configurator = [
             '@type' => 'WebSite',
             '@id' => $siteUrl !== null && $siteUrl !== '' ? SchemaEntityTypeEnum::WebSite->toId($siteUrl) : null,
             'name' => $site->getMeta('business_name', $site->translation?->title),
@@ -83,7 +83,7 @@ class SchemaGraphAction
         $searchPage = Page::getFirstPageByTypeForSite('results', $site, $language);
 
         if ($searchPage?->pageUrl?->full_url !== null && $searchPage?->pageUrl?->full_url !== '') {
-            $schema['potentialAction'] = [
+            $configurator['potentialAction'] = [
                 '@type' => 'SearchAction',
                 'target' => [
                     '@type' => 'EntryPoint',
@@ -93,17 +93,17 @@ class SchemaGraphAction
             ];
         }
 
-        return array_filter($schema, static fn (mixed $value): bool => $value !== null);
+        return array_filter($configurator, static fn (mixed $value): bool => $value !== null);
     }
 
     /**
-     * @param  array<string, mixed>  $schema
+     * @param  array<string, mixed>  $configurator
      * @return array<string, mixed>
      */
-    private function stripContext(array $schema): array
+    private function stripContext(array $configurator): array
     {
-        unset($schema['@context']);
+        unset($configurator['@context']);
 
-        return $schema;
+        return $configurator;
     }
 }

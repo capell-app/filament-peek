@@ -62,7 +62,7 @@ class InstallSaasThemeAction
                 'accent_color' => '#10b981',
             ]),
             'admin' => json_encode([
-                'schema' => ThemeSettingsSchema::class,
+                'configurator' => ThemeSettingsSchema::class,
             ]),
             'order' => 0,
             'default' => 0,

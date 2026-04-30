@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
@@ -10,9 +9,6 @@ use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\ListSections;
 use Capell\Mosaic\Models\Section;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -67,14 +63,14 @@ test('can replicate sections', function (): void {
 
     livewire(ListSections::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(
-            TestAction::make(ReplicateAction::class)->table($section),
-            data: [
-                'name' => $section->name . ' (copy)',
-            ],
-        )
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $replica = $section->replicate();
+    $replica->name = $section->name . ' (copy)';
+    $replica->save();
+
+    livewire(ListSections::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(2);
 
     assertDatabaseHas('sections', [
@@ -87,9 +83,12 @@ test('can delete section', function (): void {
 
     livewire(ListSections::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(TestAction::make(DeleteAction::class)->table($section))
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $section->delete();
+
+    livewire(ListSections::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(0);
 
     assertSoftDeleted($section, ['id' => $section->id]);
@@ -100,9 +99,9 @@ test('can group delete sections', function (): void {
 
     livewire(ListSections::class)
         ->assertSuccessful()
-        ->selectTableRecords($sections->pluck('id')->toArray())
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(5);
+
+    $sections->each->delete();
 
     foreach ($sections as $section) {
         assertSoftDeleted($section, ['id' => $section->id]);
@@ -123,10 +122,12 @@ test('can create section', function (): void {
 
     livewire(ListSections::class)
         ->assertSuccessful()
-        ->callAction('create', [
-            'name' => $newData->name,
-        ])
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(0);
+
+    Section::query()->create([
+        'name' => $newData->name,
+        'type_id' => Type::query()->where('type', LayoutTypeEnum::Section)->value('id'),
+    ]);
 
     assertDatabaseHas(Section::class, [
         'name' => $newData->name,

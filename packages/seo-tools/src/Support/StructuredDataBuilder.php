@@ -13,7 +13,7 @@ class StructuredDataBuilder
 
     public function organization(string $name, string $url, ?string $logo = null): static
     {
-        $schema = [
+        $configurator = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
             'name' => $name,
@@ -21,10 +21,10 @@ class StructuredDataBuilder
         ];
 
         if ($logo !== null) {
-            $schema['logo'] = $logo;
+            $configurator['logo'] = $logo;
         }
 
-        $this->schemas[] = $schema;
+        $this->schemas[] = $configurator;
 
         return $this;
     }
@@ -87,7 +87,7 @@ class StructuredDataBuilder
 
     public function article(string $headline, string $description, string $url, string $datePublished, ?string $author = null): static
     {
-        $schema = [
+        $configurator = [
             '@context' => 'https://schema.org',
             '@type' => 'Article',
             'headline' => $headline,
@@ -97,13 +97,13 @@ class StructuredDataBuilder
         ];
 
         if ($author !== null) {
-            $schema['author'] = [
+            $configurator['author'] = [
                 '@type' => 'Person',
                 'name' => $author,
             ];
         }
 
-        $this->schemas[] = $schema;
+        $this->schemas[] = $configurator;
 
         return $this;
     }
@@ -172,8 +172,8 @@ class StructuredDataBuilder
     {
         $output = '';
 
-        foreach ($this->schemas as $schema) {
-            $json = json_encode($schema, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        foreach ($this->schemas as $configurator) {
+            $json = json_encode($configurator, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             $output .= '<script type="application/ld+json">' . $json . '</script>' . "\n";
         }
 

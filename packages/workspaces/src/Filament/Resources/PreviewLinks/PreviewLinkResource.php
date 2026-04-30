@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\Workspaces\Filament\Resources\PreviewLinks;
 
 use BackedEnum;
-use Capell\Admin\Filament\Concerns\HasTableConfigurator;
+use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Workspaces\Filament\Resources\PreviewLinks\Pages\ManagePreviewLinks;
 use Capell\Workspaces\Filament\Resources\PreviewLinks\Tables\PreviewLinksTable;
 use Capell\Workspaces\Models\PreviewLink;
@@ -17,7 +17,7 @@ use Override;
 
 class PreviewLinkResource extends Resource
 {
-    use HasTableConfigurator;
+    use HasConfiguredTable;
 
     protected static ?string $model = PreviewLink::class;
 

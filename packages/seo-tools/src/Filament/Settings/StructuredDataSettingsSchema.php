@@ -11,7 +11,7 @@ use Filament\Schemas\Schema;
 
 class StructuredDataSettingsSchema implements HasSchema
 {
-    public static function make(Schema $schema): array
+    public static function make(Schema $configurator): array
     {
         return [
             Fieldset::make(__('capell-frontend::form.structured_data'))

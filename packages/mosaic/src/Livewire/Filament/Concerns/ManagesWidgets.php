@@ -193,9 +193,9 @@ trait ManagesWidgets
         return $occurrence;
     }
 
-    protected function getContainerWidgetSchema(string $containerKey, int $widgetIndex): ?string
+    protected function getContainerWidgetConfigurator(string $containerKey, int $widgetIndex): ?string
     {
-        return $this->getContainerWidget($containerKey, $widgetIndex)?->type->admin['layout_widget_schema']
+        return $this->getContainerWidget($containerKey, $widgetIndex)?->type->admin['layout_widget_configurator']
             ?? null;
     }
 

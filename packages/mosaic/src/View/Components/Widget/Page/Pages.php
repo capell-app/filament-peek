@@ -38,6 +38,7 @@ class Pages extends AbstractPagesWidget
             withDate: $this->widget->meta['with_date'] ?? false,
             cacheKeyPrepend: 'pages-widget-' . $this->widget->id,
             morphModel: $morphModel,
+            useCache: false,
             modifyQuery: fn (Builder $query): Builder => $query->whereIn('id', $selection),
         );
 

@@ -15,7 +15,7 @@ use Filament\Schemas\Schema;
 
 class AssistantSettingsSchema implements HasSchema
 {
-    public static function make(Schema $schema): array
+    public static function make(Schema $configurator): array
     {
         return [
             Grid::make()

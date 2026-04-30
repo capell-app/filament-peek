@@ -6,7 +6,7 @@ namespace Capell\Mosaic\Tests\Feature\Filament\Resources\Section;
 
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Actions\CreateHeroContentTypeAction;
-use Capell\Mosaic\Enums\SectionSchemaEnum;
+use Capell\Mosaic\Enums\SectionConfiguratorEnum;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\EditSection;
 use Capell\Mosaic\Models\Section;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
@@ -48,7 +48,7 @@ it('edits the hero content via Filament', function (): void {
         ->type->scoped(
             fn (Expectation $type): HigherOrderExpectation => $type->toBeInstanceOf(Type::class)
                 ->key->toBe('hero')
-                ->admin->scoped(fn (Expectation $admin): HigherOrderExpectation => $admin->schema->toBe(SectionSchemaEnum::Hero->name)),
+                ->admin->scoped(fn (Expectation $admin): HigherOrderExpectation => $admin->configurator->toBe(SectionConfiguratorEnum::Hero->name)),
         );
 });
 

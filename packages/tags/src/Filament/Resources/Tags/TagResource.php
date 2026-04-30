@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\Tags\Filament\Resources\Tags;
 
 use BackedEnum;
-use Capell\Admin\Filament\Concerns\HasFormConfigurator;
+use Capell\Admin\Filament\Concerns\HasConfiguredForm;
+use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
-use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Tags\Filament\Resources\Tags\Pages\CreateTag;
@@ -28,9 +28,9 @@ use RuntimeException;
 
 class TagResource extends Resource
 {
-    use HasFormConfigurator;
+    use HasConfiguredForm;
+    use HasConfiguredTable;
     use HasNavigationBadge;
-    use HasTableConfigurator;
     use Translatable;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
@@ -44,9 +44,9 @@ class TagResource extends Resource
     protected static string $tableConfigurator = TagsTable::class;
 
     #[Override]
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $configurator): Schema
     {
-        return static::getFormConfigurator()::configure($schema);
+        return static::getFormConfigurator()::configure($configurator);
     }
 
     #[Override]

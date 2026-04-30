@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\Workspaces\Filament\Resources\Workspaces;
 
 use BackedEnum;
-use Capell\Admin\Filament\Concerns\HasFormConfigurator;
+use Capell\Admin\Filament\Concerns\HasConfiguredForm;
+use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
-use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Filament\Resources\Workspaces\Pages\CompareVersionPage;
 use Capell\Workspaces\Filament\Resources\Workspaces\Pages\ManageWorkspaces;
@@ -25,9 +25,9 @@ use Override;
 
 class WorkspaceResource extends Resource
 {
-    use HasFormConfigurator;
+    use HasConfiguredForm;
+    use HasConfiguredTable;
     use HasNavigationBadge;
-    use HasTableConfigurator;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -40,9 +40,9 @@ class WorkspaceResource extends Resource
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Briefcase;
 
     #[Override]
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $configurator): Schema
     {
-        return static::getFormConfigurator()::configure($schema);
+        return static::getFormConfigurator()::configure($configurator);
     }
 
     #[Override]

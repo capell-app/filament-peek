@@ -14,7 +14,7 @@ use Filament\Schemas\Schema;
 
 final class AuthenticationLogSettingsSchema implements HasSchema
 {
-    public static function make(Schema $schema): array
+    public static function make(Schema $configurator): array
     {
         return [
             Fieldset::make(__('capell-authentication-log::settings.fieldset'))

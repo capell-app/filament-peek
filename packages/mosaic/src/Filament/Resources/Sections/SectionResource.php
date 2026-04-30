@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Capell\Mosaic\Filament\Resources\Sections;
 
 use BackedEnum;
-use Capell\Admin\Filament\Concerns\HasFormConfigurator;
+use Capell\Admin\Filament\Concerns\HasConfiguredForm;
+use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
-use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Core\Facades\CapellCore;
+use Capell\Mosaic\Enums\ConfiguratorTypeEnum;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\CreateSection;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\EditSection;
@@ -32,9 +33,9 @@ use Illuminate\Support\HtmlString;
 
 class SectionResource extends Resource
 {
-    use HasFormConfigurator;
+    use HasConfiguredForm;
+    use HasConfiguredTable;
     use HasNavigationBadge;
-    use HasTableConfigurator;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -42,9 +43,9 @@ class SectionResource extends Resource
 
     protected static string $tableConfigurator = SectionsTable::class;
 
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $configurator): Schema
     {
-        return static::getFormConfigurator()::configure($schema);
+        return static::getFormConfigurator()::configure($configurator);
     }
 
     public static function table(Table $table): Table
@@ -57,9 +58,9 @@ class SectionResource extends Resource
         return CapellCore::getPackage(MosaicServiceProvider::$packageName)->isInstalled();
     }
 
-    public static function getResourceType(): string
+    public static function getResourceType(): ConfiguratorTypeEnum
     {
-        return 'Sections';
+        return ConfiguratorTypeEnum::Section;
     }
 
     public static function getEloquentQuery(): Builder

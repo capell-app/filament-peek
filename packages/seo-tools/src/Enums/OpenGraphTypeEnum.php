@@ -16,13 +16,13 @@ enum OpenGraphTypeEnum: string implements HasLabel
     /**
      * Map a Schema.org type to an Open Graph type.
      */
-    public static function fromSchemaType(?string $schemaType): self
+    public static function fromSchemaType(?string $configuratorType): self
     {
-        if ($schemaType === null) {
+        if ($configuratorType === null) {
             return self::Website;
         }
 
-        return match ($schemaType) {
+        return match ($configuratorType) {
             'Article', 'BlogPosting', 'NewsArticle', 'TechArticle', 'Report' => self::Article,
             'Product' => self::Product,
             'Person', 'ProfilePage' => self::Profile,

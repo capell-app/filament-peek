@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Filament\Resources\Pages\Actions;
 
-use Capell\Core\Contracts\Pageable;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\WorkspaceContext;
@@ -25,7 +24,6 @@ class SaveAsDraftFormAction extends Action
         $this->label(__('capell-admin::button.save_as_draft'))
             ->icon('heroicon-o-document-text')
             ->color('gray')
-            ->visible(fn (Pageable $record): bool => $record->isLive())
             ->modalHeading(__('capell-admin::button.save_as_draft_modal_heading'))
             ->modalDescription(__('capell-admin::message.save_as_draft_description'))
             ->modalSubmitActionLabel(__('capell-admin::button.save_as_draft_modal_submit'))

@@ -8,13 +8,13 @@ test('organization schema renders valid JSON-LD with @type Organization', functi
     $builder = new StructuredDataBuilder;
     $builder->organization('Acme Corp', 'https://example.com');
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas)->toHaveCount(1);
-    expect($schemas[0]['@type'])->toBe('Organization');
-    expect($schemas[0]['name'])->toBe('Acme Corp');
-    expect($schemas[0]['url'])->toBe('https://example.com');
-    expect($schemas[0]['@context'])->toBe('https://schema.org');
+    expect($configurators)->toHaveCount(1);
+    expect($configurators[0]['@type'])->toBe('Organization');
+    expect($configurators[0]['name'])->toBe('Acme Corp');
+    expect($configurators[0]['url'])->toBe('https://example.com');
+    expect($configurators[0]['@context'])->toBe('https://schema.org');
 });
 
 test('BreadcrumbList renders correctly with ItemList structure', function (): void {
@@ -24,14 +24,14 @@ test('BreadcrumbList renders correctly with ItemList structure', function (): vo
         ['name' => 'About', 'url' => 'https://example.com/about'],
     ]);
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas[0]['@type'])->toBe('BreadcrumbList');
-    expect($schemas[0]['itemListElement'])->toHaveCount(2);
-    expect($schemas[0]['itemListElement'][0]['@type'])->toBe('ListItem');
-    expect($schemas[0]['itemListElement'][0]['position'])->toBe(1);
-    expect($schemas[0]['itemListElement'][0]['name'])->toBe('Home');
-    expect($schemas[0]['itemListElement'][1]['position'])->toBe(2);
+    expect($configurators[0]['@type'])->toBe('BreadcrumbList');
+    expect($configurators[0]['itemListElement'])->toHaveCount(2);
+    expect($configurators[0]['itemListElement'][0]['@type'])->toBe('ListItem');
+    expect($configurators[0]['itemListElement'][0]['position'])->toBe(1);
+    expect($configurators[0]['itemListElement'][0]['name'])->toBe('Home');
+    expect($configurators[0]['itemListElement'][1]['position'])->toBe(2);
 });
 
 test('FAQPage renders with Question and Answer pairs', function (): void {
@@ -41,14 +41,14 @@ test('FAQPage renders with Question and Answer pairs', function (): void {
         ['question' => 'Is it free?', 'answer' => 'Yes.'],
     ]);
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas[0]['@type'])->toBe('FAQPage');
-    expect($schemas[0]['mainEntity'])->toHaveCount(2);
-    expect($schemas[0]['mainEntity'][0]['@type'])->toBe('Question');
-    expect($schemas[0]['mainEntity'][0]['name'])->toBe('What is Capell?');
-    expect($schemas[0]['mainEntity'][0]['acceptedAnswer']['@type'])->toBe('Answer');
-    expect($schemas[0]['mainEntity'][0]['acceptedAnswer']['text'])->toBe('A CMS platform.');
+    expect($configurators[0]['@type'])->toBe('FAQPage');
+    expect($configurators[0]['mainEntity'])->toHaveCount(2);
+    expect($configurators[0]['mainEntity'][0]['@type'])->toBe('Question');
+    expect($configurators[0]['mainEntity'][0]['name'])->toBe('What is Capell?');
+    expect($configurators[0]['mainEntity'][0]['acceptedAnswer']['@type'])->toBe('Answer');
+    expect($configurators[0]['mainEntity'][0]['acceptedAnswer']['text'])->toBe('A CMS platform.');
 });
 
 test('article schema includes all expected fields', function (): void {
@@ -61,14 +61,14 @@ test('article schema includes all expected fields', function (): void {
         author: 'Jane Doe',
     );
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas[0]['@type'])->toBe('Article');
-    expect($schemas[0]['headline'])->toBe('Hello World');
-    expect($schemas[0]['description'])->toBe('A blog post');
-    expect($schemas[0]['url'])->toBe('https://example.com/blog/hello');
-    expect($schemas[0]['datePublished'])->toBe('2024-01-01');
-    expect($schemas[0]['author']['name'])->toBe('Jane Doe');
+    expect($configurators[0]['@type'])->toBe('Article');
+    expect($configurators[0]['headline'])->toBe('Hello World');
+    expect($configurators[0]['description'])->toBe('A blog post');
+    expect($configurators[0]['url'])->toBe('https://example.com/blog/hello');
+    expect($configurators[0]['datePublished'])->toBe('2024-01-01');
+    expect($configurators[0]['author']['name'])->toBe('Jane Doe');
 });
 
 test('render() wraps each schema in its own script tag', function (): void {
@@ -95,14 +95,14 @@ test('address() attaches address schema to the last schema', function (): void {
     $builder->organization('Acme Corp', 'https://example.com')
         ->address('123 Main St', 'Springfield', 'US', '12345');
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas[0])->toHaveKey('address');
-    expect($schemas[0]['address']['@type'])->toBe('PostalAddress');
-    expect($schemas[0]['address']['streetAddress'])->toBe('123 Main St');
-    expect($schemas[0]['address']['addressLocality'])->toBe('Springfield');
-    expect($schemas[0]['address']['addressCountry'])->toBe('US');
-    expect($schemas[0]['address']['postalCode'])->toBe('12345');
+    expect($configurators[0])->toHaveKey('address');
+    expect($configurators[0]['address']['@type'])->toBe('PostalAddress');
+    expect($configurators[0]['address']['streetAddress'])->toBe('123 Main St');
+    expect($configurators[0]['address']['addressLocality'])->toBe('Springfield');
+    expect($configurators[0]['address']['addressCountry'])->toBe('US');
+    expect($configurators[0]['address']['postalCode'])->toBe('12345');
 });
 
 test('contactPoint() throws LogicException when called on a fresh builder', function (): void {
@@ -117,27 +117,27 @@ test('contactPoint() attaches contact schema to the last schema', function (): v
     $builder->organization('Acme Corp', 'https://example.com')
         ->contactPoint('hello@example.com', '+1-555-0100', 'sales');
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas[0])->toHaveKey('contactPoint');
-    expect($schemas[0]['contactPoint']['@type'])->toBe('ContactPoint');
-    expect($schemas[0]['contactPoint']['email'])->toBe('hello@example.com');
-    expect($schemas[0]['contactPoint']['telephone'])->toBe('+1-555-0100');
-    expect($schemas[0]['contactPoint']['contactType'])->toBe('sales');
+    expect($configurators[0])->toHaveKey('contactPoint');
+    expect($configurators[0]['contactPoint']['@type'])->toBe('ContactPoint');
+    expect($configurators[0]['contactPoint']['email'])->toBe('hello@example.com');
+    expect($configurators[0]['contactPoint']['telephone'])->toBe('+1-555-0100');
+    expect($configurators[0]['contactPoint']['contactType'])->toBe('sales');
 });
 
 test('webPage() creates a WebPage schema with the correct fields', function (): void {
     $builder = new StructuredDataBuilder;
     $builder->webPage('About Us', 'Learn more about Acme Corp', 'https://example.com/about');
 
-    $schemas = $builder->toArray();
+    $configurators = $builder->toArray();
 
-    expect($schemas)->toHaveCount(1);
-    expect($schemas[0]['@type'])->toBe('WebPage');
-    expect($schemas[0]['@context'])->toBe('https://schema.org');
-    expect($schemas[0]['name'])->toBe('About Us');
-    expect($schemas[0]['description'])->toBe('Learn more about Acme Corp');
-    expect($schemas[0]['url'])->toBe('https://example.com/about');
+    expect($configurators)->toHaveCount(1);
+    expect($configurators[0]['@type'])->toBe('WebPage');
+    expect($configurators[0]['@context'])->toBe('https://schema.org');
+    expect($configurators[0]['name'])->toBe('About Us');
+    expect($configurators[0]['description'])->toBe('Learn more about Acme Corp');
+    expect($configurators[0]['url'])->toBe('https://example.com/about');
 });
 
 test('toArray() returns the raw schemas array', function (): void {
@@ -147,7 +147,7 @@ test('toArray() returns the raw schemas array', function (): void {
 
     $builder->webPage('About', 'About us', 'https://example.com/about');
 
-    $schemas = $builder->toArray();
-    expect($schemas)->toHaveCount(1);
-    expect($schemas[0])->toBeArray();
+    $configurators = $builder->toArray();
+    expect($configurators)->toHaveCount(1);
+    expect($configurators[0])->toBeArray();
 });

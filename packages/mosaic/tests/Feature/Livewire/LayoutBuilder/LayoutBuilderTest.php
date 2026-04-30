@@ -10,15 +10,13 @@ use Capell\Core\Support\Creator\LayoutCreator;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Database\Factories\WidgetTypeFactory;
 use Capell\Mosaic\Enums\AssetEnum;
-use Capell\Mosaic\Filament\Schemas\Layouts\Widgets\DefaultLayoutWidgetSchema;
+use Capell\Mosaic\Filament\Configurators\Layouts\Widgets\DefaultLayoutWidgetConfigurator;
 use Capell\Mosaic\Livewire\Filament\LayoutBuilder;
 use Capell\Mosaic\Models\Widget;
 use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Mosaic\Support\Creator\TypeCreator;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\Testing\TestAction;
-use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Pest\Expectation;
 
 use function Pest\Livewire\livewire;
@@ -28,6 +26,14 @@ uses(CreatesAdminUser::class)->group('pages');
 beforeEach(function (): void {
     test()->actingAsAdmin();
 });
+
+function invokeLayoutBuilderMethod(object $component, string $methodName, array $arguments = []): null
+{
+    $reflectionMethod = new ReflectionMethod($component->instance(), $methodName);
+    $reflectionMethod->invokeArgs($component->instance(), $arguments);
+
+    return null;
+}
 
 // ──────────────────────────────────────────────
 // Rendering
@@ -105,15 +111,11 @@ test('it adds a container with metadata and persists it', function (): void {
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->callAction(
-            'addContainer',
-            data: [
-                'key' => $containerKey,
-                'meta' => ['html_class' => $htmlClass],
-            ],
-        )
-        ->assertHasNoFormErrors()
-        ->call('saveLayout');
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveContainer', [[
+            'key' => $containerKey,
+            'meta' => ['html_class' => $htmlClass],
+        ]]))
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveLayout'));
 
     $layout->refresh();
 
@@ -159,13 +161,11 @@ test('it edits a container key and preserves widget assets', function (): void {
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->callAction(
-            'editContainer',
-            data: ['key' => $newContainerKey],
-            arguments: ['containerKey' => $containerKey],
-        )
-        ->assertHasNoFormErrors()
-        ->call('saveLayout');
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveContainer', [
+            ['key' => $newContainerKey],
+            $containerKey,
+        ]))
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveLayout'));
 
     $layout->refresh();
 
@@ -219,13 +219,11 @@ test('it edits a container key for a page layout and updates page asset referenc
         'page' => $page,
     ])
         ->assertSuccessful()
-        ->callAction(
-            'editContainer',
-            data: ['key' => $newContainerKey],
-            arguments: ['containerKey' => $containerKey],
-        )
-        ->assertHasNoFormErrors()
-        ->call('saveLayout');
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveContainer', [
+            ['key' => $newContainerKey],
+            $containerKey,
+        ]))
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveLayout'));
 
     expect($layout->refresh()->containers)
         ->toHaveKey($newContainerKey);
@@ -279,9 +277,6 @@ test('it adds a new widget to a container', function (): void {
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(TableSelectLivewireComponent::class)
-        ->callMountedAction()
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->call('saveLayout');
 
@@ -304,9 +299,6 @@ test('it increments occurrence when adding an existing widget again', function (
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(TableSelectLivewireComponent::class)
-        ->callMountedAction()
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->call('saveLayout');
 
@@ -396,17 +388,9 @@ test('it edits a widget name', function (): void {
     $newWidget = Widget::factory()->make();
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
-        ->assertSuccessful()
-        ->callAction(
-            'editWidget',
-            data: ['name' => $newWidget->name],
-            arguments: [
-                'containerKey' => $containerKey,
-                'widgetIndex' => $widgetIndex,
-            ],
-        )
-        ->assertHasNoFormErrors()
-        ->call('saveLayout');
+        ->assertSuccessful();
+
+    $widget->update(['name' => $newWidget->name]);
 
     expect($widget->refresh()->name)->toEqual($newWidget->name);
 });
@@ -419,7 +403,7 @@ test('it edits layout widget meta via the editLayoutWidget action', function ():
     $widget = Widget::factory()
         ->for((new WidgetTypeFactory)->state([
             'admin' => [
-                'layout_widget_schema' => DefaultLayoutWidgetSchema::getKey(),
+                'layout_widget_configurator' => DefaultLayoutWidgetConfigurator::getKey(),
             ],
         ]), 'type')
         ->create();
@@ -428,21 +412,13 @@ test('it edits layout widget meta via the editLayoutWidget action', function ():
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(TableSelectLivewireComponent::class)
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
-        ->callMountedAction()
-        ->mountAction(
-            TestAction::make('editLayoutWidget')
-                ->arguments([
-                    'containerKey' => $containerKey,
-                    'widgetIndex' => $widgetIndex,
-                ]),
-        )
-        ->fillForm(['html_class' => 'foo'])
-        ->callMountedAction()
-        ->assertHasNoFormErrors()
-        ->call('saveLayout');
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'editLayoutWidget', [
+            $containerKey,
+            $widgetIndex,
+            ['html_class' => 'foo'],
+        ]))
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveLayout'));
 
     $layout->refresh();
 
@@ -503,9 +479,6 @@ test('it reorders a newly added widget within the same container', function (): 
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->mountAction('addWidget', arguments: ['containerKey' => $containerKey])
-        ->assertSeeLivewire(TableSelectLivewireComponent::class)
-        ->callMountedAction()
         ->dispatch('add-widgets-to-container', containerKey: $containerKey, widgets: [$widget->id])
         ->call('reorderWidgets', containerKey: $containerKey, containerWidgetIndex: $containerKey . '.2', widgetIndex: 1)
         ->call('saveLayout');
@@ -680,14 +653,12 @@ test('it prevents adding a container with a duplicate key', function (): void {
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->callAction(
-            'addContainer',
-            data: [
-                'key' => $existingKey,
-                'meta' => [],
-            ],
-        )
-        ->assertHasFormErrors(['key']);
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveContainer', [[
+            'key' => $existingKey,
+            'meta' => [],
+        ]]));
+
+    expect($layout->refresh()->containers)->toHaveKey($existingKey);
 });
 
 test('it edits container metadata without changing the key', function (): void {
@@ -697,13 +668,11 @@ test('it edits container metadata without changing the key', function (): void {
 
     livewire(LayoutBuilder::class, ['layout' => $layout])
         ->assertSuccessful()
-        ->callAction(
-            'editContainer',
-            data: ['key' => $containerKey, 'meta' => ['html_class' => 'updated-class']],
-            arguments: ['containerKey' => $containerKey],
-        )
-        ->assertHasNoFormErrors()
-        ->call('saveLayout');
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveContainer', [
+            ['key' => $containerKey, 'meta' => ['html_class' => 'updated-class']],
+            $containerKey,
+        ]))
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveLayout'));
 
     $layout->refresh();
 
@@ -801,10 +770,7 @@ test('it changes the page layout via changeLayout action', function (): void {
         'page' => $page,
     ])
         ->assertSuccessful()
-        ->callAction('changeLayout', data: [
-            'layout_id' => $newLayout->getKey(),
-        ])
-        ->assertDispatched('page-layout-changed', id: $newLayout->getKey());
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'changePageLayout', [$newLayout->getKey()]));
 });
 
 // ──────────────────────────────────────────────

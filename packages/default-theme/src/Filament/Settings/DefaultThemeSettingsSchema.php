@@ -12,7 +12,7 @@ use Filament\Schemas\Schema;
 
 class DefaultThemeSettingsSchema implements HasSchema
 {
-    public static function make(Schema $schema): array
+    public static function make(Schema $configurator): array
     {
         return [
             Fieldset::make(__('capell-frontend::form.performance'))

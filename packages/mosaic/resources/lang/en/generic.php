@@ -40,7 +40,7 @@ return [
     'widget' => 'Widget',
     'page_model_helper' => 'The model to use for results',
     'widget_asset_page' => 'Page Asset',
-    'widget_asset_schema_info' => 'Schema fields for Layout Assets.',
+    'widget_asset_configurator_info' => 'Configurator fields for Layout Assets.',
     'widget_assets' => 'Widget Assets',
     'widget_assets_info' => 'Shared across all pages using this widget.',
     'widget_assets_page_info' => 'For this page only.',

@@ -26,7 +26,7 @@ class ResubmitForReviewAction extends Action
             ->visible(fn (Pageable $record): bool => $this->shouldBeVisible($record))
             ->requiresConfirmation()
             ->action(function (Pageable $record): void {
-                $workspace = $record->workspace;
+                $workspace = $this->workspace($record);
 
                 if (! $workspace instanceof Workspace) {
                     return;
@@ -48,11 +48,11 @@ class ResubmitForReviewAction extends Action
 
     private function shouldBeVisible(Pageable $record): bool
     {
-        if ($record->isLive()) {
+        if (method_exists($record, 'isLive') && $record->isLive()) {
             return false;
         }
 
-        $workspace = $record->workspace;
+        $workspace = $this->workspace($record);
 
         if (! $workspace instanceof Workspace) {
             return false;
@@ -73,5 +73,16 @@ class ResubmitForReviewAction extends Action
             WorkspaceApprovalActionEnum::ChangesRequested,
             WorkspaceApprovalActionEnum::Rejected,
         ], true);
+    }
+
+    private function workspace(Pageable $record): ?Workspace
+    {
+        $workspaceId = $record->getAttributes()['workspace_id'] ?? null;
+
+        if ($workspaceId === null) {
+            return null;
+        }
+
+        return Workspace::query()->find($workspaceId);
     }
 }

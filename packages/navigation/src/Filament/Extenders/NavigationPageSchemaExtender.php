@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NavigationPageSchemaExtender implements PageSchemaExtender
 {
-    public function extendTabs(Schema $schema, array $tabs): array
+    public function extendTabs(Schema $configurator, array $tabs): array
     {
         $tabs[] = NavigationTab::make();
 
@@ -24,7 +24,7 @@ class NavigationPageSchemaExtender implements PageSchemaExtender
         return $relationManagers;
     }
 
-    public function extendTranslationComponentsForHook(Schema $schema, PageTranslationSchemaHookEnum $hook): array
+    public function extendTranslationComponentsForHook(Schema $configurator, PageTranslationSchemaHookEnum $hook): array
     {
         return [];
     }

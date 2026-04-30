@@ -29,12 +29,12 @@ test('agency footer declares contentinfo landmark', function () use ($components
 
 test('contact inquiry form has labeled fields including budget and timeline', function () use ($componentsDir): void {
     $html = file_get_contents($componentsDir . '/contact-inquiry.blade.php');
-    expect($html)->toContain('<label for="agency-name"')
-        ->toContain('<label for="agency-email"')
-        ->toContain('<label for="agency-message"')
-        ->toContain('<label for="agency-budget"')
-        ->toContain('<label for="agency-timeline"')
-        ->toContain('required');
+
+    foreach (['name', 'email', 'message', 'budget', 'timeline'] as $field) {
+        expect($html)->toMatch('/<label\\s+[^>]*for="agency-' . $field . '"/m');
+    }
+
+    expect($html)->toContain('required');
 });
 
 test('breadcrumbs set aria-current on last item', function () use ($componentsDir): void {

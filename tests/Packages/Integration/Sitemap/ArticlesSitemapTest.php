@@ -20,7 +20,7 @@ it('returns blog page with all Article children recursively', function (): void 
 
     $language = Language::factory()->create();
     $site = Site::factory()->recycle($language)->withTranslations()->create();
-    $domain = SiteDomain::factory()->for($site)->create();
+    $domain = SiteDomain::factory()->for($site)->create(['language_id' => $language->id]);
 
     // Create a blog page and a tree of children
     $blogPage = $blogCreator->createBlogPage($site);

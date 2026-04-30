@@ -22,6 +22,9 @@ use Spatie\LaravelData\DataCollection;
 
 class NavigationItemsLoader
 {
+    /** @var array<string, array<string, Pageable>> */
+    protected static array $pagesByMorphKeyCache = [];
+
     public function __construct(
         public Navigation $navigation,
         public Pageable $page,
@@ -171,6 +174,7 @@ class NavigationItemsLoader
 
                 $children = PageLoader::getPages(
                     language: $this->language,
+                    site: $this->site,
                     ordering: PageOrderEnum::Default,
                     optionalLanguage: true,
                     withChildren: true,
@@ -285,10 +289,43 @@ class NavigationItemsLoader
      */
     protected function getPagesByMorphKey(array $pageableIdsByType): array
     {
-        $pagesByMorphKey = [];
+        $currentPageType = $this->page->getMorphClass();
+        $currentPageId = (int) $this->page->getKey();
+        $currentPageLookupKey = $this->buildMorphLookupKey($currentPageType, $currentPageId);
+
+        $pagesByMorphKey = [
+            $currentPageLookupKey => $this->page,
+        ];
 
         foreach ($pageableIdsByType as $pageableType => $pageableIds) {
             if ($pageableIds === []) {
+                continue;
+            }
+
+            if ($pageableType === $currentPageType) {
+                $pageableIds = array_values(array_filter(
+                    $pageableIds,
+                    static fn (int $pageableId): bool => $pageableId !== $currentPageId,
+                ));
+            }
+
+            if ($pageableIds === []) {
+                continue;
+            }
+
+            $cacheKey = implode(':', [
+                $pageableType,
+                $this->language->getKey(),
+                $this->siteDomain->getKey(),
+                implode(',', $pageableIds),
+            ]);
+
+            if (isset(self::$pagesByMorphKeyCache[$cacheKey])) {
+                $pagesByMorphKey = [
+                    ...$pagesByMorphKey,
+                    ...self::$pagesByMorphKeyCache[$cacheKey],
+                ];
+
                 continue;
             }
 
@@ -304,25 +341,39 @@ class NavigationItemsLoader
             /** @var class-string<Model&Pageable> $modelClass */
             $model = new $modelClass;
 
-            $pages = PageLoader::getPages(
-                language: $this->language,
-                ordering: PageOrderEnum::Alphabetical,
-                optionalLanguage: true,
-                onlyListableTypes: false,
-                cacheKeyPrepend: 'pages-' . $pageableType . '-' . implode('-', $pageableIds),
-                morphModel: $modelClass,
-                modifyQuery: fn (BuilderContract $query): BuilderContract => $query->whereIn(
-                    $model->getKeyName(),
-                    $pageableIds,
-                ),
-            );
+            $pages = $modelClass::query()
+                ->with(['translation', 'pageUrl'])
+                ->whereIn($model->getKeyName(), $pageableIds)
+                ->orderBy($model->getKeyName())
+                ->get();
 
             /** @var Model&Pageable $page */
+            $cachedPages = [];
+
             foreach ($pages as $page) {
+                if (
+                    $page->pageUrl !== null
+                    && $page->pageUrl->site_id === $this->siteDomain->site_id
+                    && $page->pageUrl->language_id === $this->siteDomain->language_id
+                ) {
+                    $page->pageUrl->setRelation('siteDomain', $this->siteDomain);
+                } elseif ($page->pageUrl !== null) {
+                    $page->pageUrl->setRelation(
+                        'siteDomain',
+                        SiteDomain::query()
+                            ->where('site_id', $page->pageUrl->site_id)
+                            ->where('language_id', $page->pageUrl->language_id)
+                            ->first(),
+                    );
+                }
+
                 $lookupKey = $this->buildMorphLookupKey($pageableType, (int) $page->getKey());
 
                 $pagesByMorphKey[$lookupKey] = $page;
+                $cachedPages[$lookupKey] = $page;
             }
+
+            self::$pagesByMorphKeyCache[$cacheKey] = $cachedPages;
         }
 
         return $pagesByMorphKey;

@@ -20,7 +20,7 @@ it('builds recursive sitemap for tag results page with parent chain and tag chil
 
     $language = Language::factory()->create();
     $site = Site::factory()->recycle($language)->withTranslations()->create();
-    $domain = SiteDomain::factory()->for($site)->create();
+    $domain = SiteDomain::factory()->for($site)->create(['language_id' => $language->id]);
     $blogPage = $blogCreator->createBlogPage($site);
     $tagsPage = $blogCreator->createTagsPage($site, $blogPage);
     $tagPage = $blogCreator->createTagPage($site, $tagsPage);

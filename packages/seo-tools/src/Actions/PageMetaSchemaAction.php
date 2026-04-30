@@ -21,15 +21,15 @@ class PageMetaSchemaAction
     {
         $page->loadMissing('translations.language');
 
-        $schemaType = $page->type->meta['schema']['type'] ?? 'WebPage';
+        $configuratorType = $page->type->meta['schema']['type'] ?? 'WebPage';
         $pageUrl = $page->pageUrl?->full_url;
         $siteUrl = $site->siteDomain?->full_url;
 
-        $entityType = SchemaEntityTypeEnum::fromSchemaType($schemaType);
+        $entityType = SchemaEntityTypeEnum::fromSchemaType($configuratorType);
 
         $return = [
             '@context' => 'https://schema.org',
-            '@type' => $schemaType,
+            '@type' => $configuratorType,
             '@id' => $pageUrl !== null && $pageUrl !== '' ? $entityType->toId($pageUrl) : null,
             'isPartOf' => $siteUrl !== null && $siteUrl !== '' ? ['@id' => SchemaEntityTypeEnum::WebSite->toId($siteUrl)] : null,
             'breadcrumb' => BreadcrumbsSchemaAction::run($page, $site, $language),
@@ -45,7 +45,7 @@ class PageMetaSchemaAction
             'description' => $page->translation->meta_description,
         ];
 
-        if (in_array($schemaType, ['Article', 'BlogPosting', 'NewsArticle', 'TechArticle', 'Report'], true)) {
+        if (in_array($configuratorType, ['Article', 'BlogPosting', 'NewsArticle', 'TechArticle', 'Report'], true)) {
             $return = array_merge($return, $this->articleFields($page, $site));
         }
 

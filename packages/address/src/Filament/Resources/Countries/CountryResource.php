@@ -10,9 +10,9 @@ use Capell\Address\Filament\Resources\Countries\Schemas\CountryForm;
 use Capell\Address\Filament\Resources\Countries\Tables\CountriesTable;
 use Capell\Address\Models\Country;
 use Capell\Address\Providers\AddressServiceProvider;
-use Capell\Admin\Filament\Concerns\HasFormConfigurator;
+use Capell\Admin\Filament\Concerns\HasConfiguredForm;
+use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
-use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Core\Facades\CapellCore;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -24,9 +24,9 @@ use Override;
 
 class CountryResource extends Resource
 {
-    use HasFormConfigurator;
+    use HasConfiguredForm;
+    use HasConfiguredTable;
     use HasNavigationBadge;
-    use HasTableConfigurator;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFlag;
 
@@ -41,9 +41,9 @@ class CountryResource extends Resource
     protected static bool $shouldRegisterNavigation = false;
 
     #[Override]
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $configurator): Schema
     {
-        return static::getFormConfigurator()::configure($schema);
+        return static::getFormConfigurator()::configure($configurator);
     }
 
     #[Override]

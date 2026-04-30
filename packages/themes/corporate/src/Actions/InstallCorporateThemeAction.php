@@ -63,7 +63,7 @@ class InstallCorporateThemeAction
                 'accent_color' => '#f59e0b',
             ]),
             'admin' => json_encode([
-                'schema' => ThemeSettingsSchema::class,
+                'configurator' => ThemeSettingsSchema::class,
             ]),
             'order' => 0,
             'default' => 0,

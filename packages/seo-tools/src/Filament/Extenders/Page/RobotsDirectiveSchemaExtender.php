@@ -33,7 +33,7 @@ class RobotsDirectiveSchemaExtender implements PageSchemaExtender
     /**
      * @return array<int, Component>
      */
-    public function extendTranslationComponentsForHook(Schema $schema, PageTranslationSchemaHookEnum $hook): array
+    public function extendTranslationComponentsForHook(Schema $configurator, PageTranslationSchemaHookEnum $hook): array
     {
         return [];
     }
@@ -51,7 +51,7 @@ class RobotsDirectiveSchemaExtender implements PageSchemaExtender
      * @param  array<int, mixed>  $tabs
      * @return array<int, mixed>
      */
-    public function extendTabs(Schema $schema, array $tabs): array
+    public function extendTabs(Schema $configurator, array $tabs): array
     {
         return $tabs;
     }

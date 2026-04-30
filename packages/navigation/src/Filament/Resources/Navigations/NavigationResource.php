@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\Navigation\Filament\Resources\Navigations;
 
 use BackedEnum;
-use Capell\Admin\Filament\Concerns\HasFormConfigurator;
+use Capell\Admin\Filament\Concerns\HasConfiguredForm;
+use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
-use Capell\Admin\Filament\Concerns\HasTableConfigurator;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\CreateNavigation;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\EditNavigation;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\ListNavigations;
@@ -27,9 +27,9 @@ use Override;
 
 class NavigationResource extends Resource
 {
-    use HasFormConfigurator;
+    use HasConfiguredForm;
+    use HasConfiguredTable;
     use HasNavigationBadge;
-    use HasTableConfigurator;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -42,9 +42,9 @@ class NavigationResource extends Resource
     protected static string $tableConfigurator = NavigationsTable::class;
 
     #[Override]
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $configurator): Schema
     {
-        return static::getFormConfigurator()::configure($schema);
+        return static::getFormConfigurator()::configure($configurator);
     }
 
     #[Override]

@@ -19,9 +19,9 @@ enum SchemaEntityTypeEnum: string
     /**
      * Determine the entity type from a Schema.org @type string.
      */
-    public static function fromSchemaType(string $schemaType): self
+    public static function fromSchemaType(string $configuratorType): self
     {
-        return self::tryFrom($schemaType) ?? self::WebPage;
+        return self::tryFrom($configuratorType) ?? self::WebPage;
     }
 
     /**

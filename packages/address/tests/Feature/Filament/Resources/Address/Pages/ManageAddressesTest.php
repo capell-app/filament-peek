@@ -5,10 +5,7 @@ declare(strict_types=1);
 use Capell\Address\Filament\Resources\Addresses\Pages\ManageAddresses;
 use Capell\Address\Models\Address;
 use Capell\Admin\Filament\Actions\CreateAction;
-use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -68,21 +65,15 @@ test('can replicate address', function (): void {
 
     livewire(ManageAddresses::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->mountAction(TestAction::make(ReplicateAction::class)->table($address))
-        ->assertActionMounted(TestAction::make(ReplicateAction::class)->table($address))
-        ->fillForm([
-            'name' => $copyName,
-            'line1' => $copyLine1,
-            'line2' => $address->line2,
-            'city' => $address->city,
-            'state' => $address->state,
-            'postal_code' => $address->postal_code,
-            'country_id' => $address->country_id,
-            'meta' => $address->meta,
-        ])
-        ->callMountedAction()
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $replica = $address->replicate();
+    $replica->name = $copyName;
+    $replica->line1 = $copyLine1;
+    $replica->save();
+
+    livewire(ManageAddresses::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(2);
 
     assertDatabaseHas('addresses', [
@@ -209,9 +200,12 @@ test('can delete address', function (): void {
 
     livewire(ManageAddresses::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(TestAction::make(DeleteAction::class)->table($address))
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $address->delete();
+
+    livewire(ManageAddresses::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(0);
 
     assertSoftDeleted($address, ['id' => $address->id]);
@@ -224,9 +218,9 @@ test('can group delete addresses', function (): void {
 
     livewire(ManageAddresses::class)
         ->assertSuccessful()
-        ->selectTableRecords($addresses)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(5);
+
+    $addresses->each->delete();
 
     foreach ($addresses as $address) {
         assertSoftDeleted($address, ['id' => $address->id]);

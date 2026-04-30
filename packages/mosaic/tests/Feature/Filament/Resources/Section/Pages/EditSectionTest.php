@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Capell\Admin\Filament\Actions\DeleteAction;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Filament\Resources\Sections\Pages\EditSection;
 use Capell\Mosaic\Models\Section;
@@ -76,7 +75,7 @@ it('can delete', function (): void {
         'record' => $content->getRouteKey(),
     ])
         ->assertSuccessful()
-        ->callAction(DeleteAction::class)
+        ->callAction('delete')
         ->assertHasNoFormErrors();
 
     assertSoftDeleted($content, ['id' => $content->id]);

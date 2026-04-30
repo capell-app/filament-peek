@@ -28,7 +28,13 @@ test('children widget', function (): void {
     $layout = (new LayoutFactory)->widgets([$widget])->create();
 
     $parent = Page::factory()->site($site)->withTranslations($language)->create();
-    $page = Page::factory()->site($site)->layout($layout)->parent($parent)->withTranslations($language)->children(2)->create();
+    $page = Page::factory()->site($site)->layout($layout)->parent($parent)->withTranslations($language)->create();
+    Page::factory()
+        ->count(2)
+        ->site($site)
+        ->parent($page)
+        ->withTranslations($language)
+        ->create();
 
     $page->load([
         'children' => fn (BuilderContract $query) => $query->alphabetical($language)

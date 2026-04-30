@@ -6,7 +6,7 @@ namespace Capell\Mosaic\Actions;
 
 use Capell\Core\Models\Type;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
-use Capell\Mosaic\Filament\Schemas\Sections\HeroSectionSchema;
+use Capell\Mosaic\Filament\Configurators\Sections\HeroSectionConfigurator;
 use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
 
@@ -29,7 +29,7 @@ class CreateHeroContentTypeAction
         ], [
             'name' => __('capell-mosaic::generic.hero'),
             'admin' => [
-                'schema' => HeroSectionSchema::getKey(),
+                'configurator' => HeroSectionConfigurator::getKey(),
             ],
         ]);
     }

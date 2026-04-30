@@ -17,9 +17,9 @@ class HeroEditorTestFixture extends Component implements HasForms
 
     public ?Model $record = null;
 
-    public function form(Schema $schema): Schema
+    public function form(Schema $configurator): Schema
     {
-        return $schema
+        return $configurator
             ->model($this->record)
             ->components([HeroEditor::make()]);
     }

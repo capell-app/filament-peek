@@ -12,7 +12,6 @@ use Capell\Mosaic\Enums\ResourceEnum as LayoutResourceEnum;
 use Capell\Mosaic\Filament\Actions\CreateWidgetAction;
 use Capell\Mosaic\Filament\Resources\Widgets\WidgetResource;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Contracts\Support\Htmlable;
@@ -58,14 +57,12 @@ class ListWidgets extends ListRecords
         $layoutResource = CapellAdmin::getResource(ResourceEnum::Layout);
 
         return [
-            CreateWidgetAction::make()
+            CreateWidgetAction::make('create')
                 ->redirectAfterCreate(),
-            ActionGroup::make([
-                Action::make('layouts')
-                    ->url($layoutResource::getUrl())
-                    ->label($layoutResource::getNavigationLabel())
-                    ->groupedIcon($layoutResource::getNavigationIcon()),
-            ]),
+            Action::make('layouts')
+                ->url($layoutResource::getUrl())
+                ->label($layoutResource::getNavigationLabel())
+                ->groupedIcon($layoutResource::getNavigationIcon()),
         ];
     }
 

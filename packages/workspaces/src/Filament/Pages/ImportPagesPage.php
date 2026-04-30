@@ -150,9 +150,9 @@ class ImportPagesPage extends Page implements HasForms
         return __('capell-admin::exchanger.import_pages');
     }
 
-    public function form(Schema $schema): Schema
+    public function form(Schema $configurator): Schema
     {
-        return $schema
+        return $configurator
             ->statePath('data')
             ->components([
                 Section::make(__('capell-admin::exchanger.upload_package'))

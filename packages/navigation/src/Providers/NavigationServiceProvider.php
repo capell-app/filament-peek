@@ -19,7 +19,7 @@ use Capell\Navigation\Console\Commands\DemoCommand;
 use Capell\Navigation\Console\Commands\SetupCommand;
 use Capell\Navigation\Contracts\NavigationNamesResolver;
 use Capell\Navigation\Contracts\NavigationPageSyncer;
-use Capell\Navigation\Enums\NavigationSchemaTypeEnum;
+use Capell\Navigation\Enums\NavigationConfiguratorTypeEnum;
 use Capell\Navigation\Filament\Extenders\NavigationPageSchemaExtender;
 use Capell\Navigation\Filament\Extenders\NavigationSiteExtender;
 use Capell\Navigation\Filament\Resources\Navigations\NavigationResource;
@@ -53,8 +53,8 @@ class NavigationServiceProvider extends ServiceProvider
 
         CapellAdmin::registerResource('Navigation', NavigationResource::class);
 
-        foreach (NavigationSchemaTypeEnum::getAllSchemas() as $type => $schemas) {
-            CapellAdmin::registerSchemas($type, $schemas, defaultSchemas: true);
+        foreach (NavigationConfiguratorTypeEnum::getAllConfigurators() as $type => $configurators) {
+            CapellAdmin::registerConfigurators($type, $configurators, defaultConfigurators: true);
         }
     }
 

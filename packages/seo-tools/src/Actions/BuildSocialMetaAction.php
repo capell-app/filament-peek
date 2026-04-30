@@ -22,8 +22,8 @@ class BuildSocialMetaAction
 
     public function handle(Pageable $page, Site $site, Language $language): SocialMetaData
     {
-        $schemaType = $page->type?->meta['schema']['type'] ?? null;
-        $ogType = OpenGraphTypeEnum::fromSchemaType($schemaType);
+        $configuratorType = $page->type?->meta['schema']['type'] ?? null;
+        $ogType = OpenGraphTypeEnum::fromSchemaType($configuratorType);
 
         $socialTitle = $this->resolveSocialTitle($page, $site);
         $socialDescription = $this->resolveSocialDescription($page);

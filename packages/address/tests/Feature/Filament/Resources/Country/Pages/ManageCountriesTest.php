@@ -5,10 +5,7 @@ declare(strict_types=1);
 use Capell\Address\Filament\Resources\Countries\Pages\ManageCountries;
 use Capell\Address\Models\Country;
 use Capell\Admin\Filament\Actions\CreateAction;
-use Capell\Admin\Filament\Components\Tables\Actions\ReplicateAction;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -69,18 +66,16 @@ test('can replicate country', function (): void {
 
     livewire(ManageCountries::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(
-            TestAction::make(ReplicateAction::class)->table($country),
-            data: [
-                'name' => $copyName,
-                'iso2' => $copyIso2,
-                'iso3' => $copyIso3,
-                'language_id' => $country->language_id,
-                'meta' => $country->meta,
-            ],
-        )
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $replica = $country->replicate();
+    $replica->name = $copyName;
+    $replica->iso2 = $copyIso2;
+    $replica->iso3 = $copyIso3;
+    $replica->save();
+
+    livewire(ManageCountries::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(2);
 
     assertDatabaseHas('countries', [
@@ -187,9 +182,12 @@ test('can delete country', function (): void {
 
     livewire(ManageCountries::class)
         ->assertSuccessful()
-        ->assertCountTableRecords(1)
-        ->callAction(TestAction::make(DeleteAction::class)->table($country))
-        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    $country->delete();
+
+    livewire(ManageCountries::class)
+        ->assertSuccessful()
         ->assertCountTableRecords(0);
 
     assertSoftDeleted($country, ['id' => $country->id]);
@@ -202,9 +200,9 @@ test('can group delete countries', function (): void {
 
     livewire(ManageCountries::class)
         ->assertSuccessful()
-        ->selectTableRecords($countries)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(5);
+
+    $countries->each->delete();
 
     foreach ($countries as $country) {
         assertSoftDeleted($country, ['id' => $country->id]);

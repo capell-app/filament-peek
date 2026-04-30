@@ -14,7 +14,7 @@ afterEach(function (): void {
 });
 
 it('previews blade and livewire widget files', function (): void {
-    $preview = app(MosaicWidgetMaker::class)->preview(new MakerInputData(
+    $preview = resolve(MosaicWidgetMaker::class)->preview(new MakerInputData(
         maker: 'mosaic.widget',
         values: ['name' => 'Hero Banner', 'livewire' => true],
         dryRun: true,

@@ -20,22 +20,22 @@ class NavigationSiteExtender implements SiteSchemaExtender
         return $relationManagers;
     }
 
-    public function extendTabs(Schema $schema, array $tabs): array
+    public function extendTabs(Schema $configurator, array $tabs): array
     {
         return $tabs;
     }
 
-    public function extendTranslationComponentsForHook(Schema $schema, PageTranslationSchemaHookEnum $hook): array
+    public function extendTranslationComponentsForHook(Schema $configurator, PageTranslationSchemaHookEnum $hook): array
     {
         return [];
     }
 
-    public function extendSiteMetaDetailsComponents(Schema $schema, array $components): array
+    public function extendSiteMetaDetailsComponents(Schema $configurator, array $components): array
     {
         return $components;
     }
 
-    public function extendCreateWizardComponentsForHook(Schema $schema, SiteCreateWizardHookEnum $hook): array
+    public function extendCreateWizardComponentsForHook(Schema $configurator, SiteCreateWizardHookEnum $hook): array
     {
         return [];
     }

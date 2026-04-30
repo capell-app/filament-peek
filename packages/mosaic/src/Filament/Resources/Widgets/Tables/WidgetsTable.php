@@ -21,7 +21,6 @@ use Capell\Core\Models\Language;
 use Capell\Mosaic\Enums\LayoutTypeEnum;
 use Capell\Mosaic\Filament\Resources\Widgets\Pages\ListWidgets;
 use Capell\Mosaic\Models\Widget;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
@@ -62,17 +61,14 @@ class WidgetsTable implements TableConfigurator
                 default => null,
             })
             ->recordActions([
-                EditAction::make(),
-                ActionGroup::make([
-                    ReplicateAction::make(),
-                    DeleteAction::make(),
-                ])
-                    ->color('gray'),
+                EditAction::make('edit'),
+                ReplicateAction::make('replicate'),
+                DeleteAction::make('delete'),
             ])
             ->toolbarActions([
-                DeleteBulkAction::make(),
-                ForceDeleteBulkAction::make(),
-                RestoreBulkAction::make(),
+                DeleteBulkAction::make('delete'),
+                ForceDeleteBulkAction::make('forceDelete'),
+                RestoreBulkAction::make('restore'),
             ]);
     }
 

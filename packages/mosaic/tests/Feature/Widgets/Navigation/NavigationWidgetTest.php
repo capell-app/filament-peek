@@ -48,7 +48,10 @@ it('renders navigation widget on page', function (): void {
         'children' => fn (Relation $query) => $query->ordered()->alphabetical($language)->with(['translation', 'pageUrl.siteDomain']),
     ]);
 
-    $anotherSiteHome = Page::factory()->home()->withTranslations(slug: '/')->create();
+    $anotherSite = Site::factory()->language($language)->withTranslations($language)->create();
+    $anotherSiteHome = Page::factory()->site($anotherSite)->home()->withTranslations($language, slug: '/')->create();
+    $anotherSiteHome->load('pageUrl.siteDomain');
+
     $externalUrl = 'https://example.com/external';
     $items = [
         [

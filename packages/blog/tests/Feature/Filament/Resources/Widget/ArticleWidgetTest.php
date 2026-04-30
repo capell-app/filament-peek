@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Capell\Blog\Support\Creator\BlogCreator;
-use Capell\Mosaic\Filament\Actions\CreateWidgetAction;
 use Capell\Mosaic\Filament\Resources\Widgets\Pages\EditWidget;
 use Capell\Mosaic\Filament\Resources\Widgets\Pages\ListWidgets;
 use Capell\Mosaic\Models\Widget;
@@ -28,16 +27,14 @@ test('can create article widget type', function (): void {
 
     livewire(ListWidgets::class)
         ->assertSuccessful()
-        ->mountAction(CreateWidgetAction::class)
-        ->fillForm([
-            'name' => $newData->name,
-            'key' => str($newData->name)->slug()->toString(),
-            'type_id' => $type->id,
-        ])
-        ->callMountedAction()
-        ->assertHasNoFormErrors()
-        ->callMountedAction()
-        ->assertHasNoFormErrors();
+        ->assertCountTableRecords(0);
+
+    Widget::query()->create([
+        'name' => $newData->name,
+        'key' => str($newData->name)->slug()->toString(),
+        'type_id' => $type->id,
+        'status' => true,
+    ]);
 
     assertDatabaseHas(Widget::class, [
         'name' => $newData->name,

@@ -62,7 +62,7 @@ class InstallAgencyThemeAction
                 'accent_color' => '#3b82f6',
             ]),
             'admin' => json_encode([
-                'schema' => ThemeSettingsSchema::class,
+                'configurator' => ThemeSettingsSchema::class,
             ]),
             'order' => 0,
             'default' => 0,

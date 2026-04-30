@@ -35,9 +35,9 @@ it('generates correct schema for a simple page', function (): void {
         ->withTranslations()
         ->create();
 
-    $schema = PageMetaSchemaAction::run($page, $site, $language);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->toHaveKey('@context', 'https://schema.org')
         ->toHaveKey('@type', 'WebPage')
         ->toHaveKey('name', $page->translation->label)
@@ -74,9 +74,9 @@ it('builds missing optional fields gracefully', function (): void {
 
     $site->refresh();
 
-    $schema = PageMetaSchemaAction::run($page, $site, $language);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->not()->toHaveKey('datePublished')
         ->not()->toHaveKey('creator');
 });
@@ -112,9 +112,9 @@ it('includes all available languages in schema', function (): void {
 
     $site->refresh();
 
-    $schema = PageMetaSchemaAction::run($page, $site, $language1);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language1);
 
-    expect($schema['availableLanguage'])
+    expect($configurator['availableLanguage'])
         ->toContain('English')
         ->toContain('German');
 });
@@ -131,9 +131,9 @@ it('generates schema with custom type from type meta', function (): void {
     $page->refresh();
 
     $site->refresh();
-    $schema = PageMetaSchemaAction::run($page, $site, $language);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language);
 
-    expect($schema)->toHaveKey('@type', 'Article');
+    expect($configurator)->toHaveKey('@type', 'Article');
 });
 
 it('builds missing creator, dates, and meta fields', function (): void {
@@ -151,9 +151,9 @@ it('builds missing creator, dates, and meta fields', function (): void {
     $page->refresh();
 
     $site->refresh();
-    $schema = PageMetaSchemaAction::run($page, $site, $language);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language);
 
-    expect($schema)
+    expect($configurator)
         ->not()->toHaveKey('dateCreated')
         ->not()->toHaveKey('dateModified')
         ->not()->toHaveKey('datePublished')
@@ -168,9 +168,9 @@ it('builds availableLanguage with multiple translations', function (): void {
     $page->refresh();
 
     $site->refresh();
-    $schema = PageMetaSchemaAction::run($page, $site, $language1);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language1);
 
-    expect($schema['availableLanguage'])
+    expect($configurator['availableLanguage'])
         ->toContain('English')
         ->toContain('French');
 });
@@ -183,14 +183,14 @@ it('builds keywords, summary, and description fallback', function (): void {
     $page->refresh();
 
     $site->refresh();
-    $schema = PageMetaSchemaAction::run($page, $site, $language);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language);
 
-    expect($schema)->toHaveKey('keywords', 'foo,bar');
+    expect($configurator)->toHaveKey('keywords', 'foo,bar');
 
     // Remove summary, fallback to meta description
     $page->translation->meta = ['description' => 'desc'];
     // Do not save, just call schema builder
-    $schema = PageMetaSchemaAction::run($page, $site, $language);
+    $configurator = PageMetaSchemaAction::run($page, $site, $language);
 
-    expect($schema['description'])->toContain('desc');
+    expect($configurator['description'])->toContain('desc');
 });

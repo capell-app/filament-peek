@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Blog\Support\Sitemap;
 
+use Capell\Blog\Enums\BlogPageTypeEnum;
 use Capell\Blog\Support\Loader\TagLoader;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Models\Page;
@@ -18,10 +19,24 @@ class TagsSitemap extends AbstractSitemapPages
 {
     public function fetch(): Collection
     {
-        $tagPage = TagLoader::getTagResultsPage($this->site, $this->language);
+        $tagPage = Page::getFirstPageByTypeForSite(BlogPageTypeEnum::Tag->value, site: $this->site, language: $this->language);
 
         if (! $tagPage instanceof Pageable) {
             return collect([]);
+        }
+
+        $tagPage->loadMissing([
+            'parent.translation',
+            'parent.pageUrl.siteDomain',
+            'parent.parent.translation',
+            'parent.parent.pageUrl.siteDomain',
+        ]);
+
+        $page = $tagPage;
+        while ($page instanceof Page) {
+            $page->pageUrl?->setRelation('siteDomain', $this->domain);
+            $page->pageUrl?->setRelation('language', $this->language);
+            $page = $page->parent;
         }
 
         $tagChildren = $this->getTagPages($tagPage);

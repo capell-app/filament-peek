@@ -15,7 +15,7 @@ use Illuminate\Validation\Rules\Unique;
 
 class SettingsSchema
 {
-    public static function make(Schema $schema, array $components = []): array
+    public static function make(Schema $configurator, array $components = []): array
     {
         return [
             NameInput::make('name')
@@ -36,14 +36,14 @@ class SettingsSchema
                 ->maxLength(128)
                 ->unique(
                     table: Widget::class,
-                    ignoreRecord: $schema->getOperation() !== 'replicate',
+                    ignoreRecord: $configurator->getOperation() !== 'replicate',
                     modifyRuleUsing: fn (Unique $rule) => $rule->withoutTrashed(),
                 ),
 
             TypeSelect::make('type_id')
                 ->withRelation()
                 ->when(
-                    $schema->isCreating(),
+                    $configurator->isCreating(),
                     fn (TypeSelect $component): TypeSelect => $component->withCreateForm(),
                     fn (TypeSelect $component): TypeSelect => $component->withEditForm(),
                 ),

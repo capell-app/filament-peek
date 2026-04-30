@@ -12,7 +12,13 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 use Bkwld\Cloner\ServiceProvider as ClonerServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
+use Capell\Address\Models\Address;
+use Capell\Address\Models\Country;
+use Capell\Blog\Models\Article;
 use Capell\Core\Providers\CapellServiceProvider;
+use Capell\Mosaic\Models\Section;
+use Capell\Mosaic\Models\Widget;
+use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
 use Capell\Tests\Support\Concerns\BuildsOrderedMigrationWorkspace;
@@ -94,7 +100,13 @@ abstract class AbstractTestCase extends TestCase
         Http::preventStrayRequests();
 
         Relation::morphMap([
+            'address' => Address::class,
+            'article' => Article::class,
+            'country' => Country::class,
+            'section' => Section::class,
             'user' => User::class,
+            'widget' => Widget::class,
+            'widget_asset' => WidgetAsset::class,
         ]);
 
         Model::shouldBeStrict();
