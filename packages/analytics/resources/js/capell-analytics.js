@@ -20,13 +20,34 @@
     var defaultIgnoredSelectors = ['[data-capell-analytics-ignore]']
     var sequence = 0
     var visitStorageKey = 'capell_analytics_visit_id'
+    var visitCookieName = 'capell_analytics_visit'
 
     function currentVisitId() {
+        var storedVisitId = null
+
         try {
-            return window.localStorage.getItem(visitStorageKey)
+            storedVisitId = window.localStorage.getItem(visitStorageKey)
         } catch (error) {
+            storedVisitId = null
+        }
+
+        return storedVisitId || currentVisitCookie()
+    }
+
+    function currentVisitCookie() {
+        var cookiePrefix = visitCookieName + '='
+        var cookies = document.cookie ? document.cookie.split(';') : []
+        var matchingCookie = cookies.find(function (cookie) {
+            return cookie.trim().indexOf(cookiePrefix) === 0
+        })
+
+        if (!matchingCookie) {
             return null
         }
+
+        return decodeURIComponent(
+            matchingCookie.trim().slice(cookiePrefix.length),
+        )
     }
 
     function storeVisitId(visitId) {
@@ -140,10 +161,6 @@
     }
 
     function selectorFor(element) {
-        if (element.id) {
-            return '#' + escapeIdentifier(element.id)
-        }
-
         var selector = element.tagName.toLowerCase()
         var trackingElement = element.closest('[data-capell-analytics]')
 
@@ -152,14 +169,6 @@
         }
 
         return selector
-    }
-
-    function escapeIdentifier(identifier) {
-        if (window.CSS && window.CSS.escape) {
-            return window.CSS.escape(identifier)
-        }
-
-        return identifier.replace(/[^a-zA-Z0-9_-]/g, '\\$&')
     }
 
     function explicitTrackingElement(element) {
@@ -246,16 +255,32 @@
 
     window.CapellAnalytics = {
         consent: function (payload) {
-            sendJson(
-                config.consentUrl,
+            var consentJson = JSON.stringify(
                 Object.assign(
                     { policy_version: config.policyVersion },
                     payload,
                 ),
-                function (response) {
-                    storeVisitId(response.visit_id)
-                },
             )
+
+            fetch(config.consentUrl, {
+                method: 'POST',
+                body: consentJson,
+                headers: { 'Content-Type': 'application/json' },
+                keepalive: true,
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        return
+                    }
+
+                    response
+                        .json()
+                        .then(function (response) {
+                            storeVisitId(response.visit_id)
+                        })
+                        .catch(function () {})
+                })
+                .catch(function () {})
         },
         track: sendEvent,
     }
