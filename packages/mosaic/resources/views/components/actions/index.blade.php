@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Models\PageUrl;
     use Capell\Frontend\Facades\Frontend;
@@ -100,5 +94,3 @@ declare(strict_types=1);
         </x-capell::button>
     @endforeach
 </div>
-
-<?php

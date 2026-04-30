@@ -28,7 +28,7 @@
     "autoload": {
         "psr-4": {
             "Capell\\Blog\\": "src/",
-            "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories"
+            "Capell\\Blog\\Database\\Factories\\": "database/factories"
         }
     },
     "extra": {

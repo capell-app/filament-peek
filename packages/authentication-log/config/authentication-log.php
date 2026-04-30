@@ -39,7 +39,7 @@ return [
     'notifications' => [
         'new-device' => [
             // Send the NewDevice notification
-            'enabled' => env('NEW_DEVICE_NOTIFICATION', true),
+            'enabled' => true,
 
             // Use torann/geoip to attempt to get a location
             'location' => false,
@@ -49,7 +49,7 @@ return [
         ],
         'failed-login' => [
             // Send the FailedLogin notification
-            'enabled' => env('FAILED_LOGIN_NOTIFICATION', false),
+            'enabled' => false,
 
             // Use torann/geoip to attempt to get a location
             'location' => false,

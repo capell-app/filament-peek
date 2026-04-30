@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 <div
     x-data="lightbox"
     @lightbox.window="lightbox(event)"
@@ -104,5 +98,3 @@ declare(strict_types=1);
         </div>
     </div>
 </div>
-
-<?php

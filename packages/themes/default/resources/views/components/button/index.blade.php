@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Frontend\Facades\Frontend;
 
 $site = Frontend::site();
@@ -111,5 +108,3 @@ $site = Frontend::site();
         @endif
     </button>
 @endif
-
-<?php

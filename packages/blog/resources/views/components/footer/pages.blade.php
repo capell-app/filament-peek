@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'headingClass',
     'pages',
@@ -63,5 +57,3 @@ declare(strict_types=1);
         @endforelse
     </div>
 </div>
-
-<?php

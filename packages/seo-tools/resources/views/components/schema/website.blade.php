@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
 use Capell\SeoTools\Enums\SchemaEntityTypeEnum;

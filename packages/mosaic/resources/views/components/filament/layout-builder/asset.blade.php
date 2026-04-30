@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'containerKey',
     'description' => null,
@@ -278,5 +272,3 @@ declare(strict_types=1);
         </x-filament::dropdown>
     </div>
 </div>
-
-<?php

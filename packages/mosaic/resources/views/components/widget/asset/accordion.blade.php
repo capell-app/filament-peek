@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 {{-- format-ignore-start --}}
 @php
     use Capell\Core\Contracts\Pageable;
@@ -166,5 +160,3 @@ declare(strict_types=1);
         </div>
     @endif
 </x-capell-mosaic::widget.wrapper>
-
-<?php

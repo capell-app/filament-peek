@@ -151,7 +151,7 @@ class ListArticlesWidget extends BaseWidget
     {
         return $query->cursorPaginate(
             perPage: ($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage(),
-            cursorName: (in_array($this->getTable()->getQueryStringIdentifier(), [null, '', '0'], true) ? 'authentication-logs' : $this->getTable()->getQueryStringIdentifier()) . '_cursor',
+            cursorName: (in_array($this->getTable()->getQueryStringIdentifier(), [null, '', '0'], true) ? 'list-articles' : $this->getTable()->getQueryStringIdentifier()) . '_cursor',
         );
     }
 }

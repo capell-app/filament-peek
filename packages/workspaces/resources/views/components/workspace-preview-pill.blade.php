@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\WorkspaceContext;
 

@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Contracts\Pageable;
     use Capell\Navigation\Filament\Resources\Navigations\NavigationResource;
@@ -81,5 +75,3 @@ declare(strict_types=1);
         </div>
     @endif
 </div>
-
-<?php

@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Frontend\Facades\Frontend;
     use Spatie\Image\Image;
@@ -221,5 +215,3 @@ declare(strict_types=1);
         @endif
     </div>
 </x-capell-mosaic::widget.wrapper>
-
-<?php

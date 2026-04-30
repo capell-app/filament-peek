@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'container',
     'containerKey',
@@ -176,5 +170,3 @@ declare(strict_types=1);
         </style>
     </div>
 </div>
-
-<?php

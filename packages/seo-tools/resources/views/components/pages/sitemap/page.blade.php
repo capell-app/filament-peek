@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 <li>
     <a
         class="sitemap-link flex text-sm leading-tight"
@@ -33,5 +27,3 @@ declare(strict_types=1);
         </ul>
     @endif
 </li>
-
-<?php

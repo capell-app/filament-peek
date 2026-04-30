@@ -22,5 +22,12 @@
         "psr-4": {
             "Capell\\Themes\\Core\\Tests\\": "tests/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Capell\\Themes\\Core\\ThemesCoreServiceProvider"
+            ]
+        }
     }
 }

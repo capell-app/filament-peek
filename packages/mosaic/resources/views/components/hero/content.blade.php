@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @aware(['carouselArrows'])
 
 @props([
@@ -62,5 +56,3 @@ declare(strict_types=1);
 </div>
 
 {{-- format-ignore-end --}}
-
-<?php

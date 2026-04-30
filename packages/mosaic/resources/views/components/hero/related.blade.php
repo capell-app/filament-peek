@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Frontend\Facades\Frontend;
 @endphp
@@ -97,5 +91,3 @@ declare(strict_types=1);
         </div>
     @endforeach
 </div>
-
-<?php

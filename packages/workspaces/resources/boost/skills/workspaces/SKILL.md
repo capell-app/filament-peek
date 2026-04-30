@@ -75,18 +75,21 @@ $table->foreignId('shadowed_by_workspace_id')->nullable()->constrained('workspac
 ## Key Models
 
 ### Workspace
+
 - Fields: `uuid`, `name`, `slug`, `description`, `status`, `kind`, `base_version_id`, `publish_at`, `submitted_at`, `approved_at`, `published_at`, `settings` (WorkspaceSettingsData)
 - Relationships:
-  - `baseVersion()` — BelongsTo Version (state workspace branched from)
-  - `publishedVersion()` — HasOne Version (resulting live version after publish)
-  - `approvals()` — HasMany WorkspaceApproval (full history)
-  - `latestApproval()` — HasOne WorkspaceApproval (most recent)
+    - `baseVersion()` — BelongsTo Version (state workspace branched from)
+    - `publishedVersion()` — HasOne Version (resulting live version after publish)
+    - `approvals()` — HasMany WorkspaceApproval (full history)
+    - `latestApproval()` — HasOne WorkspaceApproval (most recent)
 
 ### Version
+
 - Fields: `uuid`, `number`, `name`, `notes`, `is_live`, `manifest` (array), `source_workspace_id`, `published_at`, `published_by` (polymorphic)
 - Key methods: `Version::liveId()`, `Version::currentLive()`, `Version::manifestIdsFor(ModelClass::class)`
 
 ### PreviewLink
+
 - Temporary shareable URL for previewing workspace content without CMS login
 - Managed via `GenerateWorkspacePreviewUrlAction`, `ExtendPreviewLinkAction`, `RevokePreviewLinkAction`
 
@@ -94,18 +97,18 @@ $table->foreignId('shadowed_by_workspace_id')->nullable()->constrained('workspac
 
 ## Lifecycle Actions
 
-| Action | Transition |
-|--------|-----------|
-| `SaveAsDraftAction` | Persists edits within Open workspace |
-| `SubmitForApprovalAction` | Open → InReview |
-| `ApproveAction` | InReview → Approved |
-| `RequestChangesAction` | InReview → Open (with review comment) |
-| `RejectAction` | InReview → Abandoned |
-| `ScheduleAction` | Approved → Scheduled (sets `publish_at`) |
-| `UnscheduleAction` | Scheduled → Approved |
-| `PublishAction` | Approved → Published (creates new live Version) |
-| `RollbackAction` | Creates new Version from a prior Version's manifest |
-| `DiscardWorkspacesAction` | Open → Abandoned (bulk) |
+| Action                    | Transition                                          |
+| ------------------------- | --------------------------------------------------- |
+| `SaveAsDraftAction`       | Persists edits within Open workspace                |
+| `SubmitForApprovalAction` | Open → InReview                                     |
+| `ApproveAction`           | InReview → Approved                                 |
+| `RequestChangesAction`    | InReview → Open (with review comment)               |
+| `RejectAction`            | InReview → Abandoned                                |
+| `ScheduleAction`          | Approved → Scheduled (sets `publish_at`)            |
+| `UnscheduleAction`        | Scheduled → Approved                                |
+| `PublishAction`           | Approved → Published (creates new live Version)     |
+| `RollbackAction`          | Creates new Version from a prior Version's manifest |
+| `DiscardWorkspacesAction` | Open → Abandoned (bulk)                             |
 
 ---
 
@@ -113,31 +116,34 @@ $table->foreignId('shadowed_by_workspace_id')->nullable()->constrained('workspac
 
 Return structured data only — do not mutate state:
 
-| Action | Returns |
-|--------|---------|
-| `BuildSiteStatsAction` | Page/article counts |
-| `BuildWorkspaceMergeHistoryAction` | Timeline of published versions |
-| `BuildMyWorkQueueAction` | Items awaiting the current user's review |
-| `BuildContentHealthAction` | SEO/translation/metadata quality scores |
-| `BuildRecentlyPublishedAction` | Recent version snapshots |
-| `BuildWorkspaceActivityAction` | Workspace state change log |
-| `BuildStaleDraftsQueryAction` | Query for long-abandoned workspaces |
-| `BuildScheduledPublishingQueryAction` | Upcoming scheduled publishes |
-| `BuildActivityTrailQueryAction` | Full audit log |
+| Action                                | Returns                                  |
+| ------------------------------------- | ---------------------------------------- |
+| `BuildSiteStatsAction`                | Page/article counts                      |
+| `BuildWorkspaceMergeHistoryAction`    | Timeline of published versions           |
+| `BuildMyWorkQueueAction`              | Items awaiting the current user's review |
+| `BuildContentHealthAction`            | SEO/translation/metadata quality scores  |
+| `BuildRecentlyPublishedAction`        | Recent version snapshots                 |
+| `BuildWorkspaceActivityAction`        | Workspace state change log               |
+| `BuildStaleDraftsQueryAction`         | Query for long-abandoned workspaces      |
+| `BuildScheduledPublishingQueryAction` | Upcoming scheduled publishes             |
+| `BuildActivityTrailQueryAction`       | Full audit log                           |
 
 ---
 
 ## Filament Resources
 
 ### WorkspaceResource
+
 - Pages: `ManageWorkspaces` (list/filter), `CompareVersionPage` (side-by-side diff via `jfcherng/php-diff`)
 - Record actions: full lifecycle as Filament actions (Preview, Validate, Compare, SubmitForApproval, Approve, RequestChanges, Reject, Schedule, Unschedule, Publish, Rollback)
 - Bulk action: `RequestReviewBulkAction`
 
 ### PreviewLinkResource
+
 - Pages: `ManagePreviewLinks` — manage temporary share links, expiry, usage
 
 ### Page Extension (non-invasive extenders)
+
 - `WorkspacesPageEditExtender` — adds workspace context to page edit form
 - `WorkspacesPageTableExtender` — adds workspace status column to pages list
 - `WorkspacesPageResourcePageExtender` — adds workspace actions to page resource header
@@ -173,8 +179,8 @@ Register in your service provider's `$listen` array.
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
+| Command                          | Purpose              |
+| -------------------------------- | -------------------- |
 | `php artisan workspaces:install` | Package installation |
 
 ---

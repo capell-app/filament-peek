@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Themes\Agency;
 
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Mosaic\Facades\Mosaic;
 use Capell\Mosaic\Models\Widget;
 use Capell\Themes\Agency\Console\InstallCommand;
@@ -59,6 +60,7 @@ class AgencyThemeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'agency');
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../resources/views/components');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         ThemeRegistrar::register('agency', 'Agency');

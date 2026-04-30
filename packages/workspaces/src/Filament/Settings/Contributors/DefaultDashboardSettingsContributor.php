@@ -22,7 +22,6 @@ final class DefaultDashboardSettingsContributor implements DashboardSettingsCont
             ['key' => 'top_pages', 'label' => 'Top pages', 'group' => 'Admin'],
             ['key' => 'cache_health', 'label' => 'Cache health', 'group' => 'Admin'],
             ['key' => 'workspace_activity', 'label' => 'Workspace activity', 'group' => 'Admin'],
-            ['key' => 'authentication_logs', 'label' => 'Authentication logs', 'group' => 'Admin'],
         ];
     }
 }

@@ -1,6 +1,4 @@
 <?php
-declare(strict_types=1);
-
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\SiteLoader;
 

@@ -8,6 +8,7 @@ use Capell\Blog\Enums\LivewirePageComponentEnum;
 use Capell\Blog\Listeners\ArticleTranslationSavedListener;
 use Capell\Blog\Models\Article;
 use Capell\Blog\Support\BlogModelRegistrar;
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Data\PageTypeData;
 use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Facades\CapellCore;
@@ -51,7 +52,8 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
             ->registerModels()
             ->registerRelationships()
             ->registerPackageMetadata()
-            ->registerPackageAssets();
+            ->registerPackageAssets()
+            ->registerBlazeComponents();
 
         $this->booted(function (): void {
             if (! $this->isPackageInstalled()) {
@@ -152,6 +154,13 @@ class BlogServiceProvider extends AbstractPackageServiceProvider
     {
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
         Blade::anonymousComponentNamespace('Capell\\Blog\\View\\Components');
+
+        return $this;
+    }
+
+    private function registerBlazeComponents(): self
+    {
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../../resources/views/components');
 
         return $this;
     }

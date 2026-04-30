@@ -53,9 +53,20 @@ class BlogLoader
         ?int $paginationPage = null,
         string $paginationKey = 'archives',
     ): Collection|LengthAwarePaginator {
+        if ($pagination) {
+            return resolve(PageArchiveService::class)->getArchivedCountsByMonth(
+                site: $site,
+                language: $language,
+                group: $group,
+                paginate: $pagination,
+                perPage: $limit,
+                paginationKey: $paginationKey,
+            );
+        }
+
         $cacheKey = CacheEnum::archives($site->id, $language->id, $group, $limit, $paginationPage);
 
-        return CapellCore::rememberCache(
+        $archives = CapellCore::rememberCache(
             $cacheKey,
             fn (): Collection|LengthAwarePaginator => resolve(PageArchiveService::class)->getArchivedCountsByMonth(
                 site: $site,
@@ -66,6 +77,9 @@ class BlogLoader
                 paginationKey: $paginationKey,
             ),
         );
+
+        return collect($archives)
+            ->map(fn (ArchiveMonthData|array $archive): ArchiveMonthData => ArchiveMonthData::from($archive));
     }
 
     public static function getBlogPage(

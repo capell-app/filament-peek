@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 <input
     type="checkbox"
     id="toolbar-toggle-checkbox"

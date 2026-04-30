@@ -69,3 +69,5 @@ tmp/
 temp/
 *.tmp
 *.phar
+.dual-graph/
+.dual-graph-context/

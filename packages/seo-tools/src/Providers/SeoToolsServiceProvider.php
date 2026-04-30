@@ -14,6 +14,7 @@ use Capell\Admin\Contracts\Extenders\SiteSchemaExtender;
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Admin\Support\CapellAdminManager;
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Data\PackageData;
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Enums\TypeEnum;
@@ -122,6 +123,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         $this->registerPackageMetadata();
         $this->registerExtenderResolvers();
         $this->registerModels();
+        $this->registerBlazeComponents();
 
         $this->booted(function (): void {
             if (! $this->isPackageInstalled()) {
@@ -310,6 +312,13 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
     protected function registerFrontendViews(): self
     {
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell');
+
+        return $this;
+    }
+
+    protected function registerBlazeComponents(): self
+    {
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../../resources/views/components/schema');
 
         return $this;
     }

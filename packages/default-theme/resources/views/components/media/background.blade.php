@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @if (isset($curatedMedia))
     <div
         alt="{{ $media['alt'] }}"
@@ -29,5 +23,3 @@ declare(strict_types=1);
         </span>
     </div>
 @endif
-
-<?php

@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'background' => 'bg-white/95',
     'containerClass' => 'relative',
@@ -196,5 +190,3 @@ declare(strict_types=1);
         @endif
     </div>
 @endif
-
-<?php

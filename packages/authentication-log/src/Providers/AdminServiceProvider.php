@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Capell\AuthenticationLog\Providers;
 
+use Capell\Admin\Contracts\DashboardSettingsContributor;
+use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\AuthenticationLog\Filament\Extenders\AuthenticationLogAdminPanelExtender;
 use Capell\AuthenticationLog\Filament\Resources\AuthenticationLogs\AuthenticationLogResource;
+use Capell\AuthenticationLog\Filament\Settings\Contributors\AuthenticationLogDashboardSettingsContributor;
 use Capell\AuthenticationLog\Filament\Widgets\AuthenticationLogsWidget;
-use Capell\AuthenticationLog\Http\Middleware\AdminActivityMiddleware;
-use Capell\AuthenticationLog\Http\Middleware\UserActivityMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
@@ -23,8 +25,8 @@ class AdminServiceProvider extends ServiceProvider
             AuthenticationLogResource::class,
         );
 
-        $this->app->bind('capell.authentication-log.admin-middleware', fn (): string => AdminActivityMiddleware::class);
-        $this->app->bind('capell.authentication-log.user-middleware', fn (): string => UserActivityMiddleware::class);
+        $this->app->tag([AuthenticationLogAdminPanelExtender::class], AdminPanelExtender::TAG);
+        $this->app->tag([AuthenticationLogDashboardSettingsContributor::class], DashboardSettingsContributor::TAG);
 
         CapellAdmin::registerExtraResource(AuthenticationLogResource::class);
     }

@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Capell\AuthenticationLog\Providers;
 
+use Capell\AuthenticationLog\Filament\Settings\AuthenticationLogSettingsSchema;
+use Capell\AuthenticationLog\Http\Middleware\UserActivityMiddleware;
 use Capell\AuthenticationLog\Models\AuthenticationLog;
+use Capell\AuthenticationLog\Settings\AuthenticationLogSettings;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 
 class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
@@ -20,7 +26,9 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
         $package
             ->name(self::$name)
             ->hasConfigFile('authentication-log')
+            ->hasTranslations()
             ->hasMigrations([
+                'create_authentication_log_table',
                 'add_last_seen_at_to_authentication_log_table',
                 'add_authenticatable_login_at_authentication_log_table',
             ]);
@@ -34,7 +42,10 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
     public function packageRegistered(): void
     {
         $this->registerPackageMetadata()
-            ->registerModels();
+            ->registerModels()
+            ->registerSettings()
+            ->registerProtectedTables()
+            ->registerMiddlewareAliases();
     }
 
     private function registerPackageMetadata(): self
@@ -53,7 +64,34 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerModels(): self
     {
+        Config::set('authentication-log.authentication_log_model', AuthenticationLog::class);
+
         CapellCore::registerModels([AuthenticationLog::class]);
+
+        return $this;
+    }
+
+    private function registerSettings(): self
+    {
+        /** @var SettingsSchemaRegistry $registry */
+        $registry = $this->app->make(SettingsSchemaRegistry::class);
+
+        $registry->registerSettingsClass('authentication_log', AuthenticationLogSettings::class);
+        $registry->register('authentication_log', AuthenticationLogSettingsSchema::class);
+
+        return $this;
+    }
+
+    private function registerProtectedTables(): self
+    {
+        CapellCore::registerProtectedTable(fn (): string => config('authentication-log.table_name', 'authentication_log'));
+
+        return $this;
+    }
+
+    private function registerMiddlewareAliases(): self
+    {
+        Route::aliasMiddleware('frontend.activity', UserActivityMiddleware::class);
 
         return $this;
     }

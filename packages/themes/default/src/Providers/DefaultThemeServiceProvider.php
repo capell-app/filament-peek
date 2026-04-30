@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\DefaultTheme\Providers;
 
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Theme;
@@ -22,6 +23,7 @@ class DefaultThemeServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-default-theme');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell');
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../../resources/views/components');
 
         BladeDirectives::register();
 

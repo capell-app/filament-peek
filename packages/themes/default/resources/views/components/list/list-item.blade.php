@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'url' => null,
     'count' => null,
@@ -60,5 +54,3 @@ declare(strict_types=1);
         </div>
     @endif
 </li>
-
-<?php

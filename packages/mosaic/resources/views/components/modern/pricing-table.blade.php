@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'currency' => $widget->getMeta('currency', '$'),
     'billingOptions' => $widget->getMeta('billing_options', 'monthly'),
@@ -221,5 +215,3 @@ declare(strict_types=1);
         dot.style.left = newBilling === 'annual' ? '30px' : '4px'
     }
 </script>
-
-<?php

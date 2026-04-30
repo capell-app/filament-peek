@@ -14,6 +14,7 @@ Blog provides article publishing tightly integrated with Capell's page/type/layo
 Articles implement `Pageable` — they're routed, SEO'd, and cached like any Capell page. They do **not** have a parent-child hierarchy (`hasPageHierarchy() => false`). Instead they associate with multiple blog/archive pages via `MorphToMany`.
 
 This means:
+
 - Articles inherit full Capell SEO, versioning, and multilingual support
 - Article URLs are managed via `PageUrl` like all other pages
 - Publishing flows through the `Publishable` trait (same as pages)
@@ -25,8 +26,8 @@ This means:
 
 - Key fields: `name`, `type_id`, `status`, `publish_at`, `publish_status`, `language_id`, `site_id`, `workspace_id`
 - Relationships:
-  - `pages()` — MorphToMany (article appears on multiple blog/archive pages)
-  - Tags via `HasTags` (Capell Tags package)
+    - `pages()` — MorphToMany (article appears on multiple blog/archive pages)
+    - Tags via `HasTags` (Capell Tags package)
 - Traits: `HasCapellMedia`, `HasMetaData`, `HasPublishDates`, `HasStatus`, `HasTranslations`, `HasUserstamps`, `CloneableExcept`, `LogsActivity`, `HasTags`, `BelongsToWorkspace`
 - Observer: `ArticleObserver` — handles cache invalidation and content sync on create/update/delete
 
@@ -52,29 +53,29 @@ Never recreate this structure manually — use `CreateBlogPagesAction` or `php a
 
 Fixed page types for the blog structure:
 
-| Case | Purpose |
-|------|---------|
-| `Blog` | Root blog listing page |
-| `Archive` | Date-based archive |
-| `Article` | Individual article |
+| Case      | Purpose                |
+| --------- | ---------------------- |
+| `Blog`    | Root blog listing page |
+| `Archive` | Date-based archive     |
+| `Article` | Individual article     |
 
 ### BlogLayoutEnum
 
-| Case | Purpose |
-|------|---------|
-| `Archives` | Archive list display |
-| `Results` | Archive detail / result display |
+| Case       | Purpose                         |
+| ---------- | ------------------------------- |
+| `Archives` | Archive list display            |
+| `Results`  | Archive detail / result display |
 
 ---
 
 ## Key Actions
 
-| Action | Purpose |
-|--------|---------|
-| `CreateBlogPagesAction` | Full blog structure install — root page, archives, tag pages, navigation registration |
-| `GetArticleLayoutAction` | Resolves which layout renders a given article |
-| `GenerateArchiveUrl` | Creates archive URLs (monthly/yearly) |
-| `InstallPackageAction` | Package installation setup |
+| Action                   | Purpose                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| `CreateBlogPagesAction`  | Full blog structure install — root page, archives, tag pages, navigation registration |
+| `GetArticleLayoutAction` | Resolves which layout renders a given article                                         |
+| `GenerateArchiveUrl`     | Creates archive URLs (monthly/yearly)                                                 |
+| `InstallPackageAction`   | Package installation setup                                                            |
 
 ---
 
@@ -107,12 +108,12 @@ Articles have `workspace_id` and use `BelongsToWorkspace`. Draft articles live i
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `php artisan blog:install` | Package installation |
-| `php artisan blog:setup` | Post-install configuration |
+| Command                                | Purpose                            |
+| -------------------------------------- | ---------------------------------- |
+| `php artisan blog:install`             | Package installation               |
+| `php artisan blog:setup`               | Post-install configuration         |
 | `php artisan capell:blog:create-pages` | Create default blog page structure |
-| `php artisan capell:blog:demo` | Seed demo articles |
+| `php artisan capell:blog:demo`         | Seed demo articles                 |
 
 ---
 

@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Frontend\Facades\Frontend;
@@ -49,5 +43,3 @@ declare(strict_types=1);
         </div>
     @endif
 </div>
-
-<?php

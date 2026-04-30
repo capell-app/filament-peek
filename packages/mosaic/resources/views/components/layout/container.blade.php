@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
     use Capell\Core\Enums\MediaConversionEnum;
@@ -172,5 +166,3 @@ declare(strict_types=1);
 @endif
 @endif
 {{-- format-ignore-end --}}
-
-<?php

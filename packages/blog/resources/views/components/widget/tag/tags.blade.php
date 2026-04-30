@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Frontend\Facades\Frontend;
 
@@ -22,6 +16,11 @@ declare(strict_types=1);
     'showPageTitle' => $widgetData['meta']['show_page_title'] ?? false,
     'widget',
 ])
+@php
+    $tagPage ??= null;
+    $tags ??= collect();
+@endphp
+
 <x-capell-mosaic::widget.wrapper
     class="widget-tags"
     :$container
@@ -79,5 +78,3 @@ declare(strict_types=1);
         />
     @endif
 </x-capell-mosaic::widget.wrapper>
-
-<?php

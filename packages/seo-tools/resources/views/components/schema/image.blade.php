@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Core\Enums\MediaConversionEnum;
 use Capell\Core\Models\Media;
 use Capell\Frontend\Facades\Frontend;

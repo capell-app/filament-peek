@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\Themes\Tests;
 
-use PHPUnit\Framework\TestCase;
+use Capell\Tests\Packages\PackagesTestCase;
 
-abstract class ThemesTestCase extends TestCase {}
+abstract class ThemesTestCase extends PackagesTestCase {}

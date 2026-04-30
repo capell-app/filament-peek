@@ -28,10 +28,10 @@ The result is a layout system that can power anything from a simple hero+content
 
 ## Two Layout Systems — Choosing the Right One
 
-| System | Package | Key entities | Container mechanism | When to use |
-|--------|---------|-------------|---------------------|-------------|
-| **Standard layout** | `layout` | `Content`, `Layout` model | Predefined page templates | Simple sites with fixed template structures |
-| **Mosaic** | `mosaic` | `Widget`, `Section`, `WidgetAsset` | `CapellLayoutManager` — named container slots + JSON | Complex editorial layouts, reusable widgets, flexible page composition |
+| System              | Package  | Key entities                       | Container mechanism                                  | When to use                                                            |
+| ------------------- | -------- | ---------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Standard layout** | `layout` | `Content`, `Layout` model          | Predefined page templates                            | Simple sites with fixed template structures                            |
+| **Mosaic**          | `mosaic` | `Widget`, `Section`, `WidgetAsset` | `CapellLayoutManager` — named container slots + JSON | Complex editorial layouts, reusable widgets, flexible page composition |
 
 When working in Mosaic, ignore the `Layout` model. When working with standard layouts, ignore Mosaic.
 
@@ -46,6 +46,7 @@ The primary content entity in Mosaic. Widgets are **independently publishable** 
 **Key fields:** `name`, `type_id`, `language_id`, `status`, `publish_at`, `publish_status`
 
 **Relationships:**
+
 - `image()` — MorphOne to Media (primary image)
 - `backgroundImage()` — MorphOne to Media (background image)
 - `assets()` / `widgetAssets()` — HasMany `WidgetAsset` (unlimited additional assets with metadata)
@@ -60,6 +61,7 @@ The primary content entity in Mosaic. Widgets are **independently publishable** 
 An organisational container that groups widgets and/or child pages. Sections sit above widgets in the composition hierarchy and can link to a page via polymorphic relationship.
 
 **Relationships:**
+
 - `site()` — BelongsTo
 - `linkedPage()` — MorphTo (optionally links to a Capell page)
 - `related()` — BelongsToJson (JSON relationship for related items)
@@ -115,17 +117,17 @@ Traditional CMS layouts define a template: "this page has a hero, a three-column
 
 ## Key Actions
 
-| Action | Purpose |
-|--------|---------|
-| `MakeWidgetAction` | Scaffolds a new widget: generates Blade view template and seeder snippet |
-| `AddWidgetToLayoutContainerAction` | Places a widget into a named container slot |
-| `AddHeroWidgetToLayoutAction` | Adds hero widgets to their designated container |
-| `CreateHeroWidgetAction` | Instantiates a Hero widget entity |
-| `CreateHeroContentTypeAction` | Bootstraps Hero-specific content types in the type registry |
-| `ReplicateContentAction` | Clones widget/section content across pages or languages |
-| `MutateContentDataBeforeFillAction` | Hook to modify widget data before Filament form fill |
-| `SaveFormComponentRelationshipAction` | Persists form-component relationships after save |
-| `GetWidgetContainerWidthAction` | Resolves the width constraint for a named container |
+| Action                                | Purpose                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------ |
+| `MakeWidgetAction`                    | Scaffolds a new widget: generates Blade view template and seeder snippet |
+| `AddWidgetToLayoutContainerAction`    | Places a widget into a named container slot                              |
+| `AddHeroWidgetToLayoutAction`         | Adds hero widgets to their designated container                          |
+| `CreateHeroWidgetAction`              | Instantiates a Hero widget entity                                        |
+| `CreateHeroContentTypeAction`         | Bootstraps Hero-specific content types in the type registry              |
+| `ReplicateContentAction`              | Clones widget/section content across pages or languages                  |
+| `MutateContentDataBeforeFillAction`   | Hook to modify widget data before Filament form fill                     |
+| `SaveFormComponentRelationshipAction` | Persists form-component relationships after save                         |
+| `GetWidgetContainerWidthAction`       | Resolves the width constraint for a named container                      |
 
 ---
 
@@ -192,6 +194,7 @@ Manages layout configurations for Mosaic — uses `LayoutSchemaExtender` to exte
 ### SectionResource
 
 Full CRUD for sections. Relation managers:
+
 - `PagesRelationManager` — child pages within this section
 - `WidgetsRelationManager` — child widgets within this section
 - `SectionAssetsRelationManager` — assets belonging to this section
@@ -201,6 +204,7 @@ Widget: `SectionAlertsWidget` — status indicators for the section.
 ### WidgetResource
 
 Full CRUD for widgets. Includes:
+
 - `WidgetsTable` — main list view
 - `WidgetAssetsTable` — assets attached to a widget
 - `WidgetSelectionTable` — specialised table for picking a widget inside form builders
@@ -213,11 +217,11 @@ Provides polymorphic handling for both `Section` and `Widget` as "layoutable" ty
 
 ## Two-Tier Asset System
 
-| Tier | Accessor | Backed by | When to use |
-|------|----------|-----------|-------------|
-| Primary image | `$widget->image()` | MorphOne to Media | Single hero or feature image |
-| Background image | `$widget->backgroundImage()` | MorphOne to Media | Background / decorative image |
-| Additional assets | `$widget->widgetAssets()` | HasMany WidgetAsset | Carousel, gallery, multiple files, or per-page assets |
+| Tier              | Accessor                     | Backed by           | When to use                                           |
+| ----------------- | ---------------------------- | ------------------- | ----------------------------------------------------- |
+| Primary image     | `$widget->image()`           | MorphOne to Media   | Single hero or feature image                          |
+| Background image  | `$widget->backgroundImage()` | MorphOne to Media   | Background / decorative image                         |
+| Additional assets | `$widget->widgetAssets()`    | HasMany WidgetAsset | Carousel, gallery, multiple files, or per-page assets |
 
 `WidgetAsset` carries widget-level metadata beyond what Spatie Media provides. The `pageAssets()` method on `WidgetAsset` supports assigning different assets to the same widget on a per-page basis.
 
@@ -225,28 +229,28 @@ Provides polymorphic handling for both `Section` and `Widget` as "layoutable" ty
 
 ## Integration Points
 
-| Hook | How |
-|------|-----|
-| Register a widget type | `CapellCore::registerWidget(MyWidget::class)` |
+| Hook                                           | How                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------ |
+| Register a widget type                         | `CapellCore::registerWidget(MyWidget::class)`                      |
 | Extend page form with Mosaic container options | Implement `PageSchemaExtender`, tag with `PageSchemaExtender::TAG` |
-| React to layout loading | Listen to `LayoutLoaded` event |
-| React to layout saving | Listen to `LayoutSavingListener` event |
-| Hook into site tree rebuild | Listen to `SiteTreeRebuilt` event |
+| React to layout loading                        | Listen to `LayoutLoaded` event                                     |
+| React to layout saving                         | Listen to `LayoutSavingListener` event                             |
+| Hook into site tree rebuild                    | Listen to `SiteTreeRebuilt` event                                  |
 
 ---
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
+| Command                                        | Purpose                                       |
+| ---------------------------------------------- | --------------------------------------------- |
 | `php artisan capell:mosaic-make-widget {name}` | Scaffold widget Blade view and seeder snippet |
-| `php artisan mosaic:install` | Package installation |
-| `php artisan mosaic:setup` | Post-install configuration |
-| `php artisan mosaic:demo` | Seed demo widget and section data |
-| `php artisan mosaic:faker` | Generate fake widget data for testing |
-| `php artisan mosaic:hero:setup` | Initialise hero widget configuration |
-| `php artisan mosaic:hero:demo` | Seed hero demo content |
-| `php artisan mosaic:upgrade` | Run version upgrade steps |
+| `php artisan mosaic:install`                   | Package installation                          |
+| `php artisan mosaic:setup`                     | Post-install configuration                    |
+| `php artisan mosaic:demo`                      | Seed demo widget and section data             |
+| `php artisan mosaic:faker`                     | Generate fake widget data for testing         |
+| `php artisan mosaic:hero:setup`                | Initialise hero widget configuration          |
+| `php artisan mosaic:hero:demo`                 | Seed hero demo content                        |
+| `php artisan mosaic:upgrade`                   | Run version upgrade steps                     |
 
 ---
 

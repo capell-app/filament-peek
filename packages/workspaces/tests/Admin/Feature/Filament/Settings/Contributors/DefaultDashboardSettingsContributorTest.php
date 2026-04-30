@@ -18,8 +18,7 @@ it('declares one settings entry per default-dashboard widget', function (): void
         'top_pages',
         'cache_health',
         'workspace_activity',
-        'authentication_logs',
-    );
+    )->not->toContain('authentication_logs');
 });
 
 it('groups entries as Setup / Editor / Admin', function (): void {

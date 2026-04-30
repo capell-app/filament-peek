@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'language',
     'element' => 'div',
@@ -85,5 +79,3 @@ declare(strict_types=1);
         @endforeach
     </ul>
 </{{ $element }}>
-
-<?php

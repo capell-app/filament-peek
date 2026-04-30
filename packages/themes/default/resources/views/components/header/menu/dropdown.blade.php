@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'id' => null,
     'itemClass',
@@ -110,5 +104,3 @@ declare(strict_types=1);
         @endif
     @endforeach
 </x-capell::dropdown>
-
-<?php

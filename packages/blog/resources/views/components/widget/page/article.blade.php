@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
@@ -24,6 +18,12 @@ declare(strict_types=1);
     'withDate' => (bool) $widget->getMeta('with_date'),
     'withNextPrev' => (bool) $widget->getMeta('with_next_prev'),
 ])
+@php
+    $author ??= null;
+    $nextPage ??= null;
+    $previousPage ??= null;
+@endphp
+
 <x-capell-mosaic::widget.wrapper
     :$container
     :$containerKey
@@ -84,5 +84,3 @@ declare(strict_types=1);
         </div>
     @endif
 </x-capell-mosaic::widget.wrapper>
-
-<?php

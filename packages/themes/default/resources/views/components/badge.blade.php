@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'count' => null,
     'size' => 'md',
@@ -53,5 +47,3 @@ declare(strict_types=1);
         {{ $content() }}
     </span>
 @endif
-
-<?php

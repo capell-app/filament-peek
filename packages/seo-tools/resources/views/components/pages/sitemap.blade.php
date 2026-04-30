@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 <x-filament-panels::page>
     <div class="grid gap-4 sm:grid-cols-2">
         <label for="site_id" class="sr-only">
@@ -211,5 +205,3 @@ declare(strict_types=1);
         /***** End Vertical Sitemap *****/
     </style>
 </x-filament-panels::page>
-
-<?php

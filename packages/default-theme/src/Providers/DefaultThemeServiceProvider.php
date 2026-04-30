@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\DefaultTheme\Providers;
 
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Events\PackageInstalled;
@@ -50,6 +51,7 @@ final class DefaultThemeServiceProvider extends AbstractPackageServiceProvider
     {
         $this->registerAssets();
         $this->registerBladeDirectives();
+        $this->registerBlazeComponents();
         $this->registerTailwindEventListeners();
         $this->registerVendorNpmDependencies();
         $this->registerVendorCssJsAssets();
@@ -84,6 +86,11 @@ final class DefaultThemeServiceProvider extends AbstractPackageServiceProvider
     private function registerBladeDirectives(): void
     {
         BladeDirectives::register();
+    }
+
+    private function registerBlazeComponents(): void
+    {
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../../resources/views/components/button/index.blade.php');
     }
 
     private function registerTailwindEventListeners(): void

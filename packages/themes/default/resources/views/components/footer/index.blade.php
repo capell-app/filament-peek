@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Models\Language;
@@ -139,5 +133,3 @@ declare(strict_types=1);
 </footer>
 
 @include('capell::partials.svg-sprite')
-
-<?php

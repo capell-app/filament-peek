@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 {{-- format-ignore-start --}}
 @php
     use Capell\Admin\Enums\AlertTypeEnum;
@@ -218,5 +212,3 @@ declare(strict_types=1);
 
     <x-filament-actions::modals />
 </div>
-
-<?php

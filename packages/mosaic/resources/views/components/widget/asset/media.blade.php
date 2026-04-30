@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
     use Capell\Frontend\Facades\Frontend;
@@ -122,5 +116,3 @@ declare(strict_types=1);
         </div>
     @endif
 </x-capell-mosaic::widget.wrapper>
-
-<?php

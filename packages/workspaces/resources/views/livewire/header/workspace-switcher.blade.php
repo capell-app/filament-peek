@@ -1,8 +1,3 @@
-<?php
-
-declare(strict_types=1);
-?>
-
 @php
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Icons\Heroicon;

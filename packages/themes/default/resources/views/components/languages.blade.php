@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Frontend\Facades\Frontend;
 
 $page = Frontend::page();
@@ -67,5 +64,3 @@ $theme = Frontend::theme();
         </div>
     @endforeach
 </x-capell::dropdown>
-
-<?php

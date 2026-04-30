@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Context\FrontendContext;
 
@@ -27,5 +24,3 @@ $beacon = [
 
     <div id="capell-frontend-toolbar"></div>
 </div>
-
-<?php

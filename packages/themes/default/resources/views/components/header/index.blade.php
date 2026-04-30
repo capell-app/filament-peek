@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
@@ -312,5 +306,3 @@ declare(strict_types=1);
         })
     </script>
 @endpush
-
-<?php

@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'tag' => 'div',
     'size' => $tag !== 'div' ? $tag : null,
@@ -22,5 +16,3 @@ declare(strict_types=1);
 >
     {{ $slot }}
 </{{ $tag }}>
-
-<?php

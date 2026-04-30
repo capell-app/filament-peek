@@ -30,7 +30,7 @@ class AdminActivityMiddleware
             return;
         }
 
-        $ip = config('authentication-log.behind_cdn')
+        $ip = config('authentication-log.behind_cdn') !== false
             ? (string) $request->server(config('authentication-log.behind_cdn.http_header_field'))
             : (string) $request->ip();
 

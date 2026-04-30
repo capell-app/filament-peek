@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Frontend\Facades\Frontend;
     use Capell\Navigation\Data\NavigationItemData;
@@ -93,5 +87,3 @@ declare(strict_types=1);
         </x-dynamic-component>
     @endif
 </x-capell-mosaic::widget.wrapper>
-
-<?php

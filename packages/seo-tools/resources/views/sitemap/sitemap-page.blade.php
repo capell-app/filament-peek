@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props(['sitemapPage', 'level'])
 <li class="sitemap-page-item">
     <a
@@ -30,5 +24,3 @@ declare(strict_types=1);
         </ul>
     @endif
 </li>
-
-<?php

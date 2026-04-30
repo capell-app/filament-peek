@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 use Capell\Navigation\Data\NavigationItemData;
 
 /**
@@ -45,5 +42,3 @@ use Capell\Navigation\Data\NavigationItemData;
         </x-capell::list>
     @endif
 </li>
-
-<?php

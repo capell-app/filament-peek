@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @props([
     'color' => null,
     'icon' => null,
@@ -62,5 +56,3 @@ declare(strict_types=1);
         @endif
     </h2>
 </div>
-
-<?php

@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 @php
     use Capell\Core\Contracts\Pageable;
     use Capell\Core\Enums\MediaCollectionEnum;
@@ -153,5 +147,3 @@ declare(strict_types=1);
         @endif
     </div>
 </section>
-
-<?php

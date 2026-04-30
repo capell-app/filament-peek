@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Themes\Saas;
 
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Mosaic\Models\Widget;
 use Capell\Themes\Core\Theme\ThemeRegistrar;
 use Capell\Themes\Saas\Console\InstallCommand;
@@ -58,6 +59,7 @@ class SaasThemeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'saas');
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../resources/views/components');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         ThemeRegistrar::register('saas', 'SaaS');

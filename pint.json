@@ -67,5 +67,6 @@
         },
         "void_return": true
     },
-    "exclude": ["tests/.pest"]
+    "exclude": ["tests/.pest"],
+    "notName": ["*.blade.php"]
 }

@@ -11,6 +11,7 @@ use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Enums\SchemaExtenderEnum;
 use Capell\Admin\Enums\SchemaTypeEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Data\AssetData;
 use Capell\Core\Data\PageTypeData;
 use Capell\Core\Data\VendorAssetData;
@@ -106,7 +107,8 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
             ->registerModels()
             ->registerModelFillableAndCasts()
             ->registerRelationships()
-            ->registerPackageMetadata();
+            ->registerPackageMetadata()
+            ->registerBlazeComponents();
 
         $this->booted(function (): void {
             if (! $this->isPackageInstalled()) {
@@ -350,6 +352,13 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
 
         Blade::componentNamespace('Capell\\Mosaic\\View\\Components', 'capell-hero');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-hero');
+
+        return $this;
+    }
+
+    private function registerBlazeComponents(): self
+    {
+        RegisterBlazeOptimizedViewsAction::run(__DIR__ . '/../../resources/views/components');
 
         return $this;
     }

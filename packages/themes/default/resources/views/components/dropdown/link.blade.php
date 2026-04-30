@@ -1,9 +1,3 @@
-<?php
-
-declare(strict_types=1);
-
-?>
-
 <a
     {{
         $attributes->merge([
@@ -14,5 +8,3 @@ declare(strict_types=1);
 >
     {{ $slot }}
 </a>
-
-<?php
