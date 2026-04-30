@@ -31,7 +31,8 @@ class ListArticlesWidget extends BaseWidget
 {
     use HasWidgetShield;
 
-    protected int|string|array $columnSpan = ['default' => 2, 'sm' => 2, 'md' => 1];
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
 
     protected static ?int $sort = 5;
 

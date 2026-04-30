@@ -32,7 +32,8 @@ final class AuthenticationLogsWidget extends BaseWidget implements CapellWidgetC
 
     protected static string $settingsKey = 'authentication_logs';
 
-    protected int|string|array $columnSpan = 2;
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
 
     protected static ?int $sort = 6;
 

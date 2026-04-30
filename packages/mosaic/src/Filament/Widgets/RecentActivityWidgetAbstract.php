@@ -22,6 +22,9 @@ final class RecentActivityWidgetAbstract extends Widget implements CapellWidgetC
 
     protected string $view = 'capell-mosaic::filament.widgets.recent-activity';
 
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+
     /**
      * @return array<string, mixed>
      */

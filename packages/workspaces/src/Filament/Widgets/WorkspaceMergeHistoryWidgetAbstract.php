@@ -24,8 +24,8 @@ final class WorkspaceMergeHistoryWidgetAbstract extends Widget implements Capell
 
     protected string $view = 'capell-workspaces::widgets.workspace-merge-history';
 
-    /** @var int|string|array<mixed> */
-    protected int|string|array $columnSpan = 2;
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
 
     #[Computed(persist: true, seconds: 300)]
     public function data(): WorkspaceMergeHistoryData

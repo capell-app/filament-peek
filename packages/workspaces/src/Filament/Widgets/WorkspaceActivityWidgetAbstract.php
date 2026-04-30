@@ -24,6 +24,9 @@ final class WorkspaceActivityWidgetAbstract extends Widget implements CapellWidg
 
     protected string $view = 'capell-workspaces::widgets.workspace-activity';
 
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+
     #[Computed(persist: true, seconds: 60)]
     public function data(): WorkspaceActivityData
     {
