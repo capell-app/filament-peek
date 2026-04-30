@@ -13,6 +13,7 @@ use Capell\Address\Filament\Resources\Sites\Schemas\Extenders\SiteSchemaExtender
 use Capell\Address\Models\Address;
 use Capell\Address\Models\Country;
 use Capell\Address\Support\AddressModelRegistrar;
+use Capell\Address\Support\FlagIconRenderer;
 use Capell\Admin\Enums\SchemaExtenderEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Data\VendorAssetData;
@@ -34,6 +35,7 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package->name(self::$name)
+            ->hasViews(self::$name)
             ->hasCommands([
                 DemoCommand::class,
                 FakerCommand::class,
@@ -49,7 +51,9 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
             ->registerRelationships()
             ->registerResources()
             ->registerPackageMetadata()
-            ->registerPackageAssets();
+            ->registerPackageAssets()
+            ->registerSupportServices()
+            ->registerBladeComponents();
 
         $this->booted(function (): void {
             if (! $this->isPackageInstalled()) {
@@ -68,7 +72,6 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
     private function bootInstalledPackage(): self
     {
         return $this
-            ->registerBladeComponents()
             ->registerConfigurators()
             ->registerSchemaExtenders();
     }
@@ -92,6 +95,13 @@ class AddressServiceProvider extends AbstractPackageServiceProvider
         CapellCore::registerVendorAsset(
             VendorAssetData::tailwindSource('resources/views/**/*.blade.php', static::$packageName),
         );
+
+        return $this;
+    }
+
+    private function registerSupportServices(): self
+    {
+        $this->app->singleton(FlagIconRenderer::class);
 
         return $this;
     }

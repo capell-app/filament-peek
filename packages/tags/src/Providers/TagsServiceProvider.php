@@ -35,6 +35,7 @@ class TagsServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
+        $this->repairLegacyTagModelConfig();
         TagModelRegistrar::register();
         $this->registerWorkspaces();
         $this->registerPackageMetadata();
@@ -42,6 +43,21 @@ class TagsServiceProvider extends AbstractPackageServiceProvider
         $this->booted(function (): void {
             $this->registerPublishCommands();
         });
+    }
+
+    private function repairLegacyTagModelConfig(): void
+    {
+        $configuredModel = config('tags.tag_model');
+
+        if ($configuredModel === Tag::class) {
+            return;
+        }
+
+        if (is_string($configuredModel) && class_exists($configuredModel)) {
+            return;
+        }
+
+        config(['tags.tag_model' => Tag::class]);
     }
 
     private function registerWorkspaces(): void

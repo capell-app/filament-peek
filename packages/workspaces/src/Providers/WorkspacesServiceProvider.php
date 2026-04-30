@@ -61,6 +61,8 @@ class WorkspacesServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->register(AdminServiceProvider::class);
+
         CapellCore::registerPackage('capell-app/workspaces', path: realpath(__DIR__ . '/../..'));
 
         $this->app->singleton(WorkspacesManager::class, fn (): WorkspacesManager => new WorkspacesManager);

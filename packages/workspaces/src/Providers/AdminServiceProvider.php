@@ -10,6 +10,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Models\Page;
 use Capell\Workspaces\Events\WorkspaceStateChanged;
+use Capell\Workspaces\Filament\Pages\ActivityTrailPage;
 use Capell\Workspaces\Filament\Pages\ImportPagesPage;
 use Capell\Workspaces\Filament\Pages\ScheduledPublishingPage;
 use Capell\Workspaces\Filament\Pages\StaleDraftsPage;
@@ -111,6 +112,7 @@ class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(WorkspaceActivityWidgetAbstract::class, DashboardEnum::Main);
         CapellAdmin::registerResource('Workspace', WorkspaceResource::class);
         CapellAdmin::registerResource('PreviewLink', PreviewLinkResource::class);
+        CapellAdmin::registerPage(ActivityTrailPage::class);
         CapellAdmin::registerPage(ImportPagesPage::class);
         CapellAdmin::registerPage(ScheduledPublishingPage::class);
         CapellAdmin::registerPage(StaleDraftsPage::class);
