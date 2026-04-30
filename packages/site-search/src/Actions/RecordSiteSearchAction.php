@@ -15,12 +15,20 @@ final class RecordSiteSearchAction
 
     public function handle(SearchRequestData $data, int $resultsCount, Request $request): ?SiteSearchLog
     {
-        if (! (bool) config('capell-site-search.record_search_logs', true)) {
+        if (! (bool) ResolveSiteSearchSettingAction::run(
+            'record_search_logs',
+            'capell-site-search.record_search_logs',
+            true,
+        )) {
             return null;
         }
 
         $normalizedQuery = NormalizeSearchQueryAction::run($data->query);
-        $minimumLength = (int) config('capell-site-search.minimum_query_length', 2);
+        $minimumLength = (int) ResolveSiteSearchSettingAction::run(
+            'minimum_query_length',
+            'capell-site-search.minimum_query_length',
+            2,
+        );
 
         if ($normalizedQuery === '' || mb_strlen($normalizedQuery) < $minimumLength) {
             return null;
@@ -40,7 +48,11 @@ final class RecordSiteSearchAction
 
     private function hashVisitorValue(?string $value): ?string
     {
-        if (! (bool) config('capell-site-search.hash_visitor_data', true)) {
+        if (! (bool) ResolveSiteSearchSettingAction::run(
+            'hash_visitor_data',
+            'capell-site-search.hash_visitor_data',
+            true,
+        )) {
             return null;
         }
 

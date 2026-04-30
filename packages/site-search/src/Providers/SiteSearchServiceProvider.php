@@ -7,6 +7,7 @@ namespace Capell\SiteSearch\Providers;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\SiteSearch\Actions\ResolveSiteSearchSettingAction;
 use Capell\SiteSearch\Contracts\SiteSearch;
 use Capell\SiteSearch\Drivers\DatabaseSiteSearch;
 use Capell\SiteSearch\Drivers\ScoutSiteSearch;
@@ -17,7 +18,6 @@ use Capell\SiteSearch\Settings\SiteSearchSettings;
 use Capell\SiteSearch\Support\RenderHooks\RegisterHeaderSearchHook;
 use Illuminate\Contracts\Foundation\Application;
 use Spatie\LaravelPackageTools\Package;
-use Throwable;
 
 final class SiteSearchServiceProvider extends AbstractPackageServiceProvider
 {
@@ -111,24 +111,11 @@ final class SiteSearchServiceProvider extends AbstractPackageServiceProvider
 
     private function resolveDriver(): string
     {
-        try {
-            if (class_exists(SiteSearchSettings::class)) {
-                $settings = $this->app->make(SiteSearchSettings::class);
-                $settingsDriver = $settings->driver;
-
-                if ($settingsDriver instanceof SearchDriver) {
-                    return $settingsDriver->value;
-                }
-
-                if (is_string($settingsDriver) && $settingsDriver !== '') {
-                    return $settingsDriver;
-                }
-            }
-        } catch (Throwable) {
-            //
-        }
-
-        $configDriver = config('capell-site-search.driver', SearchDriver::Database->value);
+        $configDriver = ResolveSiteSearchSettingAction::run(
+            'driver',
+            'capell-site-search.driver',
+            SearchDriver::Database->value,
+        );
 
         if ($configDriver instanceof SearchDriver) {
             return $configDriver->value;

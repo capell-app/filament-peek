@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 return [
     'enabled' => true,
+    'show_header_search' => true,
     'driver' => env('CAPELL_SITE_SEARCH_DRIVER', 'database'),
     'route_path' => 'search',
     'results_per_page' => 10,
     'excerpt_length' => 200,
     'minimum_query_length' => 2,
+    'record_search_logs' => true,
+    'hash_visitor_data' => true,
     'database' => [
         'table' => 'pages',
         'columns' => ['title', 'excerpt', 'body'],

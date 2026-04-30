@@ -6,6 +6,7 @@ namespace Capell\SiteSearch\Http\Controllers;
 
 use Capell\Frontend\Facades\Frontend;
 use Capell\SiteSearch\Actions\RecordSiteSearchAction;
+use Capell\SiteSearch\Actions\ResolveSiteSearchSettingAction;
 use Capell\SiteSearch\Actions\RunSiteSearchAction;
 use Capell\SiteSearch\Data\SearchRequestData;
 use Illuminate\Contracts\View\View;
@@ -19,7 +20,11 @@ final class SearchController
     {
         $query = (string) $request->query('q', '');
         $page = max(1, (int) $request->query('page', 1));
-        $perPage = (int) config('capell-site-search.results_per_page', 10);
+        $perPage = (int) ResolveSiteSearchSettingAction::run(
+            'results_per_page',
+            'capell-site-search.results_per_page',
+            10,
+        );
 
         $site = $request->attributes->get('site');
         $language = $request->attributes->get('language');

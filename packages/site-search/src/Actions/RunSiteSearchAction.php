@@ -19,7 +19,11 @@ final class RunSiteSearchAction
     public function handle(SearchRequestData $data): LengthAwarePaginator
     {
         $normalizedQuery = NormalizeSearchQueryAction::run($data->query);
-        $minimumLength = (int) config('capell-site-search.minimum_query_length', 2);
+        $minimumLength = (int) ResolveSiteSearchSettingAction::run(
+            'minimum_query_length',
+            'capell-site-search.minimum_query_length',
+            2,
+        );
 
         if ($normalizedQuery === '' || mb_strlen($normalizedQuery) < $minimumLength) {
             return new Paginator([], 0, $data->perPage, $data->page);

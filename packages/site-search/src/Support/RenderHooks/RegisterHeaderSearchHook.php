@@ -6,6 +6,7 @@ namespace Capell\SiteSearch\Support\RenderHooks;
 
 use Capell\Frontend\Enums\RenderHookLocation;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
+use Capell\SiteSearch\Actions\ResolveSiteSearchSettingAction;
 
 final class RegisterHeaderSearchHook
 {
@@ -13,11 +14,19 @@ final class RegisterHeaderSearchHook
 
     public function register(): void
     {
-        if (! (bool) config('capell-site-search.enabled', true)) {
+        if (! (bool) ResolveSiteSearchSettingAction::run(
+            'enabled',
+            'capell-site-search.enabled',
+            true,
+        )) {
             return;
         }
 
-        if (! (bool) config('capell-site-search.show_header_search', true)) {
+        if (! (bool) ResolveSiteSearchSettingAction::run(
+            'show_header_search',
+            'capell-site-search.show_header_search',
+            true,
+        )) {
             return;
         }
 
