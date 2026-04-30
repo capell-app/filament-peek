@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\SiteSearch\Http\Controllers;
 
+use Capell\Frontend\Facades\Frontend;
 use Capell\SiteSearch\Actions\RunSiteSearchAction;
 use Capell\SiteSearch\Data\SearchRequestData;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\HtmlString;
+use Throwable;
 
 final class SearchController
 {
@@ -30,9 +33,40 @@ final class SearchController
 
         $results = RunSiteSearchAction::run($data);
 
-        return view('capell-site-search::pages.search', [
+        $content = view('capell-site-search::pages.search', [
             'query' => $query,
             'results' => $results,
         ]);
+
+        if (! $this->canRenderFrontendShell()) {
+            return $content;
+        }
+
+        $slot = view('capell-site-search::layouts.frontend', [
+            'query' => $query,
+            'results' => $results,
+        ]);
+
+        return view('capell::app', [
+            'language' => Frontend::language(),
+            'layout' => Frontend::layout(),
+            'pageRecord' => Frontend::page(),
+            'site' => Frontend::site(),
+            'slot' => new HtmlString($slot->render()),
+            'theme' => Frontend::theme(),
+        ]);
+    }
+
+    private function canRenderFrontendShell(): bool
+    {
+        try {
+            return Frontend::language() !== null
+                && Frontend::layout() !== null
+                && Frontend::page() !== null
+                && Frontend::site() !== null
+                && Frontend::theme() !== null;
+        } catch (Throwable) {
+            return false;
+        }
     }
 }

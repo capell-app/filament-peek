@@ -1,7 +1,9 @@
 @php
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
+    use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Frontend\Support\Render\RenderHookRegistry;
     use Capell\Navigation\Enums\NavigationHandle;
     use Capell\Navigation\Models\Navigation;
     use Capell\Navigation\Support\Loader\NavigationItemsLoader;
@@ -63,6 +65,8 @@
         --header-bg-opacity: 0.8;
     }
 </style>
+
+{!! app(RenderHookRegistry::class)->renderAll(RenderHookLocation::HeaderBefore) !!}
 
 <header
     x-data="siteHeader({ scrollUp: {{ $theme->scroll_up_header ? 'true' : 'false' }} })"
@@ -224,6 +228,10 @@
                 </nav>
             </div>
         @endif
+
+        <div class="hidden shrink-0 items-center py-3 lg:flex">
+            {!! app(RenderHookRegistry::class)->renderAll(RenderHookLocation::HeaderAfter) !!}
+        </div>
     </div>
 </header>
 
