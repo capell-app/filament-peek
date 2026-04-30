@@ -20,7 +20,14 @@ class AnalyticsConsentController
     {
         $validated = $request->validate([
             'region' => ['required', Rule::enum(AnalyticsConsentRegion::class)],
-            'status' => ['required', Rule::enum(AnalyticsConsentStatus::class)],
+            'status' => [
+                'required',
+                Rule::in([
+                    AnalyticsConsentStatus::AcceptedAll->value,
+                    AnalyticsConsentStatus::RejectedNonEssential->value,
+                    AnalyticsConsentStatus::Granular->value,
+                ]),
+            ],
             'terms_accepted' => ['boolean'],
             'categories.analytics' => ['boolean'],
             'categories.marketing' => ['boolean'],

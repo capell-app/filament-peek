@@ -23,6 +23,16 @@ it('rejects granular consent without accepted terms', function (): void {
     ])->assertUnprocessable();
 });
 
+it('rejects pending as a submitted consent decision', function (): void {
+    $this->postJson(route('capell-analytics.consent'), [
+        'region' => AnalyticsConsentRegion::UkOrEurope->value,
+        'status' => AnalyticsConsentStatus::Pending->value,
+    ])->assertUnprocessable();
+
+    expect(AnalyticsConsent::query()->count())->toBe(0)
+        ->and(AnalyticsVisit::query()->count())->toBe(0);
+});
+
 it('stores uk or europe granular consent categories and visit row', function (): void {
     $response = $this->postJson(route('capell-analytics.consent'), [
         'region' => AnalyticsConsentRegion::UkOrEurope->value,
