@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\SiteSearch\Http\Controllers;
 
 use Capell\Frontend\Facades\Frontend;
+use Capell\SiteSearch\Actions\RecordSiteSearchAction;
 use Capell\SiteSearch\Actions\RunSiteSearchAction;
 use Capell\SiteSearch\Data\SearchRequestData;
 use Illuminate\Contracts\View\View;
@@ -32,6 +33,8 @@ final class SearchController
         );
 
         $results = RunSiteSearchAction::run($data);
+
+        RecordSiteSearchAction::run($data, $results->total(), $request);
 
         $content = view('capell-site-search::pages.search', [
             'query' => $query,
