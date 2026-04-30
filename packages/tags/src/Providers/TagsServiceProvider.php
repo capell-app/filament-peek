@@ -9,9 +9,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Tags\Console\Commands\InstallCommand;
 use Capell\Tags\Models\Tag;
-use Capell\Tags\Models\Taggable;
 use Capell\Tags\Support\TagModelRegistrar;
-use Capell\Workspaces\WorkspaceRegistry;
 use Composer\InstalledVersions;
 use Spatie\LaravelPackageTools\Package;
 
@@ -37,7 +35,6 @@ class TagsServiceProvider extends AbstractPackageServiceProvider
     {
         $this->repairLegacyTagModelConfig();
         TagModelRegistrar::register();
-        $this->registerWorkspaces();
         $this->registerPackageMetadata();
 
         $this->booted(function (): void {
@@ -58,14 +55,6 @@ class TagsServiceProvider extends AbstractPackageServiceProvider
         }
 
         config(['tags.tag_model' => Tag::class]);
-    }
-
-    private function registerWorkspaces(): void
-    {
-        if (class_exists(WorkspaceRegistry::class)) {
-            WorkspaceRegistry::register(Tag::class);
-            WorkspaceRegistry::register(Taggable::class);
-        }
     }
 
     private function registerPackageMetadata(): void

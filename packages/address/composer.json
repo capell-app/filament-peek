@@ -20,7 +20,6 @@
     "require": {
         "php": "^8.2",
         "capell-app/admin": "*",
-        "capell-app/navigation": "*",
         "stijnvanouplines/blade-country-flags": "^1.0"
     },
     "autoload": {

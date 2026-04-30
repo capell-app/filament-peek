@@ -8,6 +8,7 @@ use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasConfiguredForm;
 use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
+use Capell\Admin\Support\SiteScope;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Tags\Filament\Resources\Tags\Pages\CreateTag;
@@ -22,6 +23,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 use LaraZeus\SpatieTranslatable\Resources\Concerns\Translatable;
 use Override;
 use RuntimeException;
@@ -79,6 +82,23 @@ class TagResource extends Resource
         return CapellCore::getPackage(TagsServiceProvider::$packageName)->isInstalled();
     }
 
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return static::applySiteScope(parent::getEloquentQuery());
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'slug'];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return static::applySiteScope(parent::getGlobalSearchEloquentQuery())
+            ->with(['site:id,name']);
+    }
+
     public static function getPages(): array
     {
         return [
@@ -110,5 +130,24 @@ class TagResource extends Resource
         }
 
         throw new RuntimeException('At least one language must be defined to use translatable features.');
+    }
+
+    private static function applySiteScope(Builder $query): Builder
+    {
+        $actor = auth()->user();
+
+        if (! $actor instanceof Authenticatable || SiteScope::isGlobalActor($actor) || ! method_exists($actor, 'getAssignedSiteIds')) {
+            return $query;
+        }
+
+        $assignedSiteIds = $actor->getAssignedSiteIds();
+
+        return $query->where(function (Builder $query) use ($assignedSiteIds): void {
+            $query->whereNull('site_id');
+
+            if ($assignedSiteIds->isNotEmpty()) {
+                $query->orWhereIn('site_id', $assignedSiteIds);
+            }
+        });
     }
 }

@@ -10,6 +10,9 @@ use Capell\SeoTools\Support\AiRateLimiter;
 use Capell\SeoTools\Support\AiResponse;
 use Capell\SeoTools\Support\PrismProvider;
 use Capell\SeoTools\Support\PromptRepository;
+use DOMDocument;
+use DOMElement;
+use DOMNode;
 use Illuminate\Pipeline\Pipeline;
 use InvalidArgumentException;
 
@@ -141,33 +144,230 @@ class GenerateContentPipeline
      */
     private function sanitizeHtml(string $html): string
     {
+        if (class_exists(DOMDocument::class)) {
+            return $this->sanitizeHtmlWithDom($html);
+        }
+
+        return $this->sanitizeHtmlWithPatterns($html);
+    }
+
+    private function sanitizeHtmlWithDom(string $html): string
+    {
+        $document = new DOMDocument('1.0', 'UTF-8');
+        $previousErrorHandling = libxml_use_internal_errors(true);
+
+        $document->loadHTML(
+            '<?xml encoding="UTF-8"><div id="capell-sanitizer-root">' . $html . '</div>',
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD,
+        );
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousErrorHandling);
+
+        $root = $document->getElementById('capell-sanitizer-root');
+
+        if (! $root instanceof DOMElement) {
+            return $this->sanitizeHtmlWithPatterns($html);
+        }
+
+        $this->sanitizeChildNodes($root, $document);
+
+        $output = '';
+        foreach ($root->childNodes as $childNode) {
+            $output .= $document->saveHTML($childNode);
+        }
+
+        return $output;
+    }
+
+    private function sanitizeChildNodes(DOMNode $node, DOMDocument $document): void
+    {
+        $childNode = $node->firstChild;
+
+        while ($childNode instanceof DOMNode) {
+            $nextNode = $childNode->nextSibling;
+
+            if ($childNode instanceof DOMElement) {
+                $tagName = strtolower($childNode->tagName);
+
+                if (in_array($tagName, $this->blockedTags(), true)) {
+                    $node->removeChild($childNode);
+                    $childNode = $nextNode;
+
+                    continue;
+                }
+
+                if (! in_array($tagName, $this->allowedTags(), true)) {
+                    $this->sanitizeChildNodes($childNode, $document);
+                    $this->unwrapElement($childNode);
+                    $childNode = $nextNode;
+
+                    continue;
+                }
+
+                if ($tagName === 'a' && ! $this->isSafeRelativeHref($childNode->getAttribute('href'))) {
+                    $node->replaceChild($this->textSpan($document, $childNode->textContent), $childNode);
+                    $childNode = $nextNode;
+
+                    continue;
+                }
+
+                $this->sanitizeAttributes($childNode);
+                $this->sanitizeChildNodes($childNode, $document);
+            }
+
+            $childNode = $nextNode;
+        }
+    }
+
+    private function sanitizeAttributes(DOMElement $element): void
+    {
+        $tagName = strtolower($element->tagName);
+        $allowedAttributes = $this->allowedAttributesForTag($tagName);
+
+        foreach (iterator_to_array($element->attributes) as $attribute) {
+            $attributeName = strtolower($attribute->nodeName);
+            $attributeValue = $attribute->nodeValue ?? '';
+
+            if (str_starts_with($attributeName, 'on') || ! in_array($attributeName, $allowedAttributes, true)) {
+                $element->removeAttributeNode($attribute);
+
+                continue;
+            }
+
+            if ($attributeName === 'src' && ! $this->isSafeImageSource($attributeValue)) {
+                $element->removeAttributeNode($attribute);
+            }
+        }
+    }
+
+    private function unwrapElement(DOMElement $element): void
+    {
+        $parentNode = $element->parentNode;
+
+        if (! $parentNode instanceof DOMNode) {
+            return;
+        }
+
+        while ($element->firstChild instanceof DOMNode) {
+            $parentNode->insertBefore($element->firstChild, $element);
+        }
+
+        $parentNode->removeChild($element);
+    }
+
+    private function textSpan(DOMDocument $document, string $text): DOMElement
+    {
+        $span = $document->createElement('span');
+        $span->appendChild($document->createTextNode($text));
+
+        return $span;
+    }
+
+    /** @return list<string> */
+    private function blockedTags(): array
+    {
+        return ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'math'];
+    }
+
+    /** @return list<string> */
+    private function allowedTags(): array
+    {
+        return [
+            'a',
+            'b',
+            'blockquote',
+            'br',
+            'code',
+            'div',
+            'em',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'h5',
+            'h6',
+            'i',
+            'img',
+            'li',
+            'ol',
+            'p',
+            'pre',
+            'span',
+            'strong',
+            'u',
+            'ul',
+        ];
+    }
+
+    /** @return list<string> */
+    private function allowedAttributesForTag(string $tagName): array
+    {
+        return match ($tagName) {
+            'a' => ['href', 'title'],
+            'img' => ['src', 'alt', 'title', 'width', 'height'],
+            default => [],
+        };
+    }
+
+    private function isSafeRelativeHref(string $href): bool
+    {
+        $normalizedHref = $this->normalizeUrl($href);
+
+        return str_starts_with($normalizedHref, '/')
+            || str_starts_with($normalizedHref, './')
+            || str_starts_with($normalizedHref, '../')
+            || str_starts_with($normalizedHref, '#');
+    }
+
+    private function isSafeImageSource(string $source): bool
+    {
+        $normalizedSource = $this->normalizeUrl($source);
+
+        if ($normalizedSource === '') {
+            return false;
+        }
+
+        if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $normalizedSource) !== 1) {
+            return ! str_starts_with($normalizedSource, '//');
+        }
+
+        return preg_match('#^https?://#i', $normalizedSource) === 1;
+    }
+
+    private function normalizeUrl(string $value): string
+    {
+        $decoded = html_entity_decode(trim($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return (string) preg_replace('/[\x00-\x20]+/', '', $decoded);
+    }
+
+    private function sanitizeHtmlWithPatterns(string $html): string
+    {
         // Remove <script> and <style> blocks
-        $clean = preg_replace('#<\s*(script|style)[^>]*>.*?<\s*/\s*\1\s*>#is', '', $html) ?? $html;
+        $clean = preg_replace('#<\s*(script|style|iframe|object|embed|svg|math)[^>]*>.*?<\s*/\s*\1\s*>#is', '', $html) ?? $html;
 
         // Remove <iframe> blocks entirely
         $clean = preg_replace('#<\s*iframe[^>]*>.*?<\s*/\s*iframe\s*>#is', '', $clean) ?? $clean;
 
         // Remove inline event handlers like onclick, onerror, onload
-        $clean = preg_replace('/\son\w+="[^"]*"/i', '', $clean) ?? $clean;
-        $clean = preg_replace('/\son\w+=\'[^\"]*\'/i', '', $clean) ?? $clean;
-        $clean = preg_replace("/\\son\\w+='[^']*'/i", '', $clean) ?? $clean;
+        $clean = preg_replace('/\son[a-z0-9:_-]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $clean) ?? $clean;
 
         // Neutralize javascript: URLs
-        $clean = preg_replace('/\shref="javascript:[^"]*"/i', ' href="#"', $clean) ?? $clean;
-        $clean = preg_replace('/\shref=\'javascript:[^\']*\'/i', " href='#'", $clean) ?? $clean;
+        $clean = preg_replace('/\shref\s*=\s*(?:"\s*javascript:[^"]*"|\'\s*javascript:[^\']*\'|\s*javascript:[^\s>]+)/i', ' href="#"', $clean) ?? $clean;
 
         // Convert external absolute links to plain text or '#'
         // Preserve relative links (/, ./, ../) and anchors (#...)
-        $clean = preg_replace_callback('#<a\s+[^>]*href\s*=\s*(["\'])([^"\']+)\1[^>]*>(.*?)</a>#is', function (array $m): string {
-            $href = $m[2];
-            $text = trim(strip_tags($m[3]));
+        $clean = preg_replace_callback('#<a\s+[^>]*href\s*=\s*(["\'])([^"\']+)\1[^>]*>(.*?)</a>#is', function (array $matches): string {
+            $href = $matches[2];
+            $text = trim(strip_tags($matches[3]));
 
             $isRelative = str_starts_with($href, '/') || str_starts_with($href, './') || str_starts_with($href, '../') || str_starts_with($href, '#');
             $isAbsolute = preg_match('#^https?://#i', $href) === 1;
 
             if ($isRelative) {
                 // keep relative links, but remove target and rel attributes
-                $safeAnchor = preg_replace(['/\s+target=(["\']).*?\1/i', '/\s+rel=(["\']).*?\1/i'], ['', ''], $m[0]) ?? $m[0];
+                $safeAnchor = preg_replace(['/\s+target=(["\']).*?\1/i', '/\s+rel=(["\']).*?\1/i'], ['', ''], $matches[0]) ?? $matches[0];
 
                 return $safeAnchor;
             }

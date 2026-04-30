@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Capell\DeveloperTools\Actions\Dashboard;
 
+use Capell\Core\Facades\CapellCore;
 use Capell\DeveloperTools\Data\Dashboard\ConfigDriftData;
 use Capell\DeveloperTools\Data\Dashboard\ConfigDriftEntryData;
+use Composer\InstalledVersions;
 use Illuminate\Support\Facades\File;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Spatie\LaravelData\DataCollection;
+use Throwable;
 
 /**
  * @method static ConfigDriftData run()
@@ -58,13 +61,71 @@ class BuildConfigDriftAction
      */
     protected function configPairs(): array
     {
-        $base = base_path();
-
-        return [
-            ['core', $base . '/packages/core/config/capell.php', config_path('capell.php')],
-            ['admin', $base . '/packages/admin/config/capell-admin.php', config_path('capell-admin.php')],
-            ['frontend', $base . '/packages/frontend/config/capell-frontend.php', config_path('capell-frontend.php')],
+        $packages = [
+            ['core', 'capell-app/core', 'capell.php', 'packages/core'],
+            ['admin', 'capell-app/admin', 'capell-admin.php', 'packages/admin'],
+            ['frontend', 'capell-app/frontend', 'capell-frontend.php', 'packages/frontend'],
         ];
+
+        $pairs = [];
+
+        foreach ($packages as [$shortName, $packageName, $configFileName, $localPackagePath]) {
+            $shippedPath = $this->shippedConfigPath($packageName, $configFileName, $localPackagePath);
+
+            if ($shippedPath === null) {
+                continue;
+            }
+
+            $pairs[] = [$shortName, $shippedPath, config_path($configFileName)];
+        }
+
+        return $pairs;
+    }
+
+    private function shippedConfigPath(string $packageName, string $configFileName, string $localPackagePath): ?string
+    {
+        foreach ($this->packagePaths($packageName, $localPackagePath) as $packagePath) {
+            $configPath = $packagePath . '/config/' . $configFileName;
+
+            if (File::exists($configPath)) {
+                return $configPath;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function packagePaths(string $packageName, string $localPackagePath): array
+    {
+        $paths = [];
+
+        if (class_exists(InstalledVersions::class) && InstalledVersions::isInstalled($packageName)) {
+            $installPath = InstalledVersions::getInstallPath($packageName);
+
+            if (is_string($installPath) && $installPath !== '') {
+                $paths[] = $installPath;
+            }
+        }
+
+        try {
+            if (CapellCore::hasPackage($packageName)) {
+                $packagePath = CapellCore::getPackage($packageName)->path;
+
+                if (is_string($packagePath) && $packagePath !== '') {
+                    $paths[] = $packagePath;
+                }
+            }
+        } catch (Throwable) {
+            // Package metadata may not be registered in lightweight test contexts.
+        }
+
+        $paths[] = base_path($localPackagePath);
+        $paths[] = base_path('vendor/' . $packageName);
+
+        return array_values(array_unique($paths));
     }
 
     /**

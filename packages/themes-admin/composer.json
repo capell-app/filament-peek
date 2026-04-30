@@ -5,6 +5,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "capell-app/admin": "*",
+        "capell-app/core": "*",
         "capell-app/themes-core": "*",
         "filament/filament": "^4.7|^5.2",
         "spatie/laravel-package-tools": "^1.14"

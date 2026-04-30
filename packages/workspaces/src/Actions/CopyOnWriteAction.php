@@ -44,43 +44,46 @@ final readonly class CopyOnWriteAction
      */
     public function cloneForEdit(Model $liveRecord, Workspace $workspace): Model
     {
-        $this->guardLive($liveRecord);
+        return DB::transaction(function () use ($liveRecord, $workspace): Model {
+            $this->guardLive($liveRecord);
+            $this->guardNotShadowedByAnotherWorkspace($liveRecord, $workspace);
 
-        $dirtyAttributes = $liveRecord->getDirty();
+            $dirtyAttributes = $liveRecord->getDirty();
 
-        $excludeFromClone = array_filter(
-            array_keys($liveRecord->getAttributes()),
-            static fn (string $attr): bool => str_ends_with($attr, '_count'),
-        );
-        $clone = $liveRecord->replicate($excludeFromClone);
-        $clone->setAttribute('workspace_id', $workspace->id);
-        $clone->setAttribute('shadowed_by_workspace_id', 0);
+            $excludeFromClone = array_filter(
+                array_keys($liveRecord->getAttributes()),
+                static fn (string $attribute): bool => str_ends_with($attribute, '_count'),
+            );
+            $clone = $liveRecord->replicate($excludeFromClone);
+            $clone->setAttribute('workspace_id', $workspace->id);
+            $clone->setAttribute('shadowed_by_workspace_id', 0);
 
-        // Merge dirty attributes via setRawAttributes to avoid double-encoding:
-        // getDirty() returns raw stored values (e.g. JSON strings for json casts),
-        // and setAttribute() would re-apply the cast, corrupting already-encoded values.
-        $filteredDirty = array_diff_key(
-            $dirtyAttributes,
-            ['workspace_id' => null, 'shadowed_by_workspace_id' => null],
-        );
+            // Merge dirty attributes via setRawAttributes to avoid double-encoding:
+            // getDirty() returns raw stored values (e.g. JSON strings for json casts),
+            // and setAttribute() would re-apply the cast, corrupting already-encoded values.
+            $filteredDirty = array_diff_key(
+                $dirtyAttributes,
+                ['workspace_id' => null, 'shadowed_by_workspace_id' => null],
+            );
 
-        if ($filteredDirty !== []) {
-            $clone->setRawAttributes(array_merge($clone->getAttributes(), $filteredDirty));
-        }
+            if ($filteredDirty !== []) {
+                $clone->setRawAttributes(array_merge($clone->getAttributes(), $filteredDirty));
+            }
 
-        // Preserve the live row's primary-key-linked uuid when present so the
-        // publisher can match the clone back to its live counterpart on flip.
-        if (array_key_exists('uuid', $liveRecord->getAttributes())
-            && $clone->getAttribute('uuid') === null
-            && $liveRecord->getAttribute('uuid') !== null) {
-            $clone->setAttribute('uuid', $liveRecord->getAttribute('uuid'));
-        }
+            // Preserve the live row's primary-key-linked uuid when present so the
+            // publisher can match the clone back to its live counterpart on flip.
+            if (array_key_exists('uuid', $liveRecord->getAttributes())
+                && $clone->getAttribute('uuid') === null
+                && $liveRecord->getAttribute('uuid') !== null) {
+                $clone->setAttribute('uuid', $liveRecord->getAttribute('uuid'));
+            }
 
-        $clone->save();
+            $clone->save();
 
-        $this->stampShadow($liveRecord, $workspace);
+            $this->stampShadow($liveRecord, $workspace);
 
-        return $clone;
+            return $clone;
+        });
     }
 
     /**
@@ -97,24 +100,27 @@ final readonly class CopyOnWriteAction
      */
     public function cloneForDelete(Model $liveRecord, Workspace $workspace): Model
     {
-        $this->guardLive($liveRecord);
-        $this->guardSoftDeletes($liveRecord);
+        return DB::transaction(function () use ($liveRecord, $workspace): Model {
+            $this->guardLive($liveRecord);
+            $this->guardSoftDeletes($liveRecord);
+            $this->guardNotShadowedByAnotherWorkspace($liveRecord, $workspace);
 
-        $clone = $liveRecord->replicate();
-        $clone->setAttribute('workspace_id', $workspace->id);
-        $clone->setAttribute('shadowed_by_workspace_id', 0);
+            $clone = $liveRecord->replicate();
+            $clone->setAttribute('workspace_id', $workspace->id);
+            $clone->setAttribute('shadowed_by_workspace_id', 0);
 
-        if (array_key_exists('uuid', $liveRecord->getAttributes())
-            && $liveRecord->getAttribute('uuid') !== null) {
-            $clone->setAttribute('uuid', $liveRecord->getAttribute('uuid'));
-        }
+            if (array_key_exists('uuid', $liveRecord->getAttributes())
+                && $liveRecord->getAttribute('uuid') !== null) {
+                $clone->setAttribute('uuid', $liveRecord->getAttribute('uuid'));
+            }
 
-        $clone->save();
-        $clone->delete();
+            $clone->save();
+            $clone->delete();
 
-        $this->stampShadow($liveRecord, $workspace);
+            $this->stampShadow($liveRecord, $workspace);
 
-        return $clone;
+            return $clone;
+        });
     }
 
     /**
@@ -140,6 +146,29 @@ final readonly class CopyOnWriteAction
 
         $liveRecord->setAttribute('shadowed_by_workspace_id', $workspace->id);
         $liveRecord->syncOriginalAttribute('shadowed_by_workspace_id');
+    }
+
+    private function guardNotShadowedByAnotherWorkspace(Model $liveRecord, Workspace $workspace): void
+    {
+        $query = DB::table($liveRecord->getTable())
+            ->where($liveRecord->getKeyName(), $liveRecord->getKey())
+            ->where('workspace_id', 0);
+
+        if (DB::connection()->getDriverName() !== 'sqlite') {
+            $query->lockForUpdate();
+        }
+
+        $shadowingWorkspaceId = (int) ($query->value('shadowed_by_workspace_id') ?? 0);
+
+        if ($shadowingWorkspaceId !== 0 && $shadowingWorkspaceId !== $workspace->id) {
+            throw new LogicException(sprintf(
+                '%s#%s is already shadowed by workspace #%d; workspace #%d cannot draft it concurrently.',
+                $liveRecord::class,
+                (string) $liveRecord->getKey(),
+                $shadowingWorkspaceId,
+                $workspace->id,
+            ));
+        }
     }
 
     private function guardLive(Model $record): void

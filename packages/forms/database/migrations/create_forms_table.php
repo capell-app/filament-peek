@@ -12,16 +12,18 @@ return new class extends Migration
     {
         Schema::create('forms', function (Blueprint $table): void {
             $table->id();
+            $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
             $table->string('name');
+            $table->string('handle');
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('site_id')->nullable();
+            $table->json('schema')->nullable();
+            $table->json('settings')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
+            $table->unique(['site_id', 'handle']);
             $table->index('site_id');
-            $table->foreign('site_id')
-                ->references('id')
-                ->on('sites')
-                ->onDelete('cascade');
+            $table->index('is_active');
         });
     }
 

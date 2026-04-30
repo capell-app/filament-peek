@@ -12,6 +12,7 @@ use Capell\DeveloperTools\Filament\Pages\QueueHealthPage;
 use Capell\DeveloperTools\Filament\Pages\SystemHealthPage;
 use Capell\DeveloperTools\Filament\Widgets\Health\AlertsWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\CacheHealthWidgetAbstract;
+use Capell\DeveloperTools\Filament\Widgets\Health\ConfigDriftWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\ContentHealthWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\MigrationsHealthWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\PackagesInstalledWidgetAbstract;
@@ -38,6 +39,7 @@ final class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(RegistryHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(MigrationsHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(PackagesInstalledWidgetAbstract::class, DashboardEnum::SystemHealth);
+        CapellAdmin::registerDashboardWidget(ConfigDriftWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(CacheHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(TailwindBuildStatusWidgetAbstract::class, DashboardEnum::SystemHealth);
     }

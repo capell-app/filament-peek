@@ -119,7 +119,7 @@
                         <span
                             class="header-logo-text whitespace-nowrap text-lg font-bold tracking-tight xl:text-xl"
                         >
-                            {!! $site->translation->title !!}
+                            {{ $site->translation->title }}
                         </span>
                     @endif
                 </a>

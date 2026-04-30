@@ -12,6 +12,8 @@ namespace Capell\Themes\Core\Analytics;
  */
 class GoogleAnalytics4 implements AnalyticsProvider
 {
+    private const JSON_SCRIPT_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR;
+
     public function __construct(
         private readonly string $measurementId,
         private readonly bool $anonymiseIp = true,
@@ -41,7 +43,7 @@ class GoogleAnalytics4 implements AnalyticsProvider
         $config = json_encode([
             'anonymize_ip' => $this->anonymiseIp,
             'send_page_view' => true,
-        ], JSON_THROW_ON_ERROR);
+        ], self::JSON_SCRIPT_FLAGS);
 
         return <<<HTML
 <script async src="https://www.googletagmanager.com/gtag/js?id={$id}"></script>
@@ -65,9 +67,9 @@ HTML;
             return '';
         }
 
-        $payload = json_encode($params, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+        $payload = json_encode($params, self::JSON_SCRIPT_FLAGS);
 
-        return sprintf("gtag('event', %s, %s);", json_encode($event, JSON_THROW_ON_ERROR), $payload);
+        return sprintf("gtag('event', %s, %s);", json_encode($event, self::JSON_SCRIPT_FLAGS), $payload);
     }
 
     public function formSubmission(string $formName): string
@@ -90,7 +92,7 @@ HTML;
             'value' => $value,
             'currency' => $currency,
             'items' => $items,
-        ], static fn ($v): bool => $v !== null));
+        ], static fn (mixed $value): bool => $value !== null));
     }
 
     private function escapeJs(string $value): string

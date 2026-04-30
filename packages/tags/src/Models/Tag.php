@@ -97,6 +97,10 @@ class Tag extends \Spatie\Tags\Tag implements PageCacheable, Statusable
                     'slug' => [$locale => str($name)->slug()],
                     'type' => $type,
                 ]);
+            } elseif (! $tag->hasTranslation('name', $locale)) {
+                $tag->setTranslation('name', $locale, $name);
+                $tag->setTranslation('slug', $locale, str($name)->slug()->toString());
+                $tag->save();
             }
         }
 

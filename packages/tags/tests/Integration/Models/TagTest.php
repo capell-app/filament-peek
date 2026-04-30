@@ -30,3 +30,19 @@ it('can be attached to pages', function (): void {
     expect($tag->pages)->toHaveCount(1)
         ->and($tag->pages->first()->id)->toBe($page->id);
 });
+
+it('persists missing locale translations when falling back to the default locale', function (): void {
+    app()->setLocale('en');
+
+    $tag = Tag::factory()->create([
+        'name' => ['en' => 'Latest News'],
+        'slug' => ['en' => 'latest-news'],
+        'type' => 'page',
+    ]);
+
+    $resolvedTag = Tag::findOrCreateFromString('Latest News', 'page', 'cy');
+
+    expect($resolvedTag->getKey())->toBe($tag->getKey())
+        ->and($resolvedTag->fresh()->getTranslation('name', 'cy'))->toBe('Latest News')
+        ->and($resolvedTag->fresh()->getTranslation('slug', 'cy'))->toBe('latest-news');
+});

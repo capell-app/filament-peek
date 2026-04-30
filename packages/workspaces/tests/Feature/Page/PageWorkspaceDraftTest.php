@@ -27,6 +27,16 @@ test('exit workspace preview redirects to specified path', function (): void {
         ->assertRedirect('/about');
 });
 
+test('exit workspace preview refuses external redirects', function (): void {
+    get(route('capell-frontend.preview.exit', ['redirect' => 'https://evil.example/phish']))
+        ->assertRedirect('/');
+});
+
+test('exit workspace preview allows same host absolute redirects as local paths', function (): void {
+    get(route('capell-frontend.preview.exit', ['redirect' => url('/about?tab=preview')]))
+        ->assertRedirect('/about?tab=preview');
+});
+
 test('exit workspace preview clears the workspace cookie', function (): void {
     $workspace = Workspace::factory()->create();
 

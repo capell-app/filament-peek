@@ -7,6 +7,7 @@ namespace Capell\DeveloperTools\Filament\Pages;
 use BackedEnum;
 use Capell\Admin\Contracts\RegistryInspectorInterface;
 use Capell\Admin\Filament\Actions\Makers\RunMakerFilamentAction;
+use Capell\Core\Contracts\Makers\Maker;
 use Capell\Core\Contracts\Makers\MakerRegistryInterface;
 use Capell\Core\Data\Makers\MakerDefinitionData;
 use Capell\Core\Support\Makers\MakerSafety;
@@ -58,7 +59,7 @@ class DeveloperToolsPage extends Page implements HasActions
     public function makers(): Collection
     {
         return resolve(MakerRegistryInterface::class)->all()
-            ->map(fn ($maker): MakerDefinitionData => $maker->definition());
+            ->map(fn (Maker $maker): MakerDefinitionData => $maker->definition());
     }
 
     public function safety(): array

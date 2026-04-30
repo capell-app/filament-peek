@@ -42,7 +42,6 @@ use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
 use Livewire\LivewireServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
 use Override;
-use Pboivin\FilamentPeek\FilamentPeekServiceProvider;
 use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
 use STS\FilamentImpersonate\FilamentImpersonateServiceProvider;
 use Tanmuhittin\LaravelGoogleTranslate\LaravelGoogleTranslateServiceProvider;
@@ -114,7 +113,6 @@ class WorkspacesTestCase extends AbstractTestCase
             FilamentShieldServiceProvider::class,
             FilamentSelectTreeServiceProvider::class,
             FilamentClearCacheServiceProvider::class,
-            FilamentPeekServiceProvider::class,
             FilamentImpersonateServiceProvider::class,
             FormsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,

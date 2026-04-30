@@ -34,7 +34,7 @@ class FormSubmissionNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'capell::mail.form-submission',
+            view: 'capell-themes-core::mail.form-submission',
             with: [
                 'formName' => $this->formName,
                 'fields' => $this->fields,

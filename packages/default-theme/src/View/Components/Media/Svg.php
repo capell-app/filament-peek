@@ -28,6 +28,7 @@ class Svg extends Component
         'object',
         'embed',
         'handler',
+        'style',
         'animate',
         'animateMotion',
         'animateTransform',
@@ -138,7 +139,13 @@ class Svg extends Component
                 continue;
             }
 
-            if (($name === 'href' || $name === 'xlink:href') && $this->isDangerousUrl($value)) {
+            if (($name === 'href' || $name === 'xlink:href') && $this->isUnsafeReferenceUrl($value)) {
+                $element->removeAttributeNode($attr);
+
+                continue;
+            }
+
+            if ($name === 'style' && $this->containsUnsafeCss($value)) {
                 $element->removeAttributeNode($attr);
             }
         }
@@ -150,12 +157,65 @@ class Svg extends Component
         }
     }
 
-    private function isDangerousUrl(string $url): bool
+    private function isUnsafeReferenceUrl(string $url): bool
     {
-        $normalized = strtolower(trim($url));
+        $normalized = $this->normalizeUrl($url);
 
-        return str_starts_with($normalized, 'javascript:')
-            || str_starts_with($normalized, 'data:')
-            || str_starts_with($normalized, 'vbscript:');
+        if ($normalized === '') {
+            return true;
+        }
+
+        if ($this->hasDangerousScheme($normalized)) {
+            return true;
+        }
+
+        if (str_starts_with($normalized, 'http://')
+            || str_starts_with($normalized, 'https://')
+            || str_starts_with($normalized, '//')) {
+            return true;
+        }
+
+        if (preg_match('/^[a-z][a-z0-9+.-]*:/i', $normalized) === 1) {
+            return true;
+        }
+
+        return preg_match('/^[A-Za-z0-9._~\/#?=&:%-]+$/', $url) !== 1;
+    }
+
+    private function containsUnsafeCss(string $css): bool
+    {
+        $normalized = strtolower($css);
+
+        if (str_contains($normalized, '@import')
+            || str_contains($normalized, 'expression(')
+            || str_contains($normalized, '-moz-binding')) {
+            return true;
+        }
+
+        preg_match_all('/url\(\s*([^)]+?)\s*\)/i', $css, $matches);
+
+        foreach ($matches[1] as $rawUrl) {
+            $url = trim($rawUrl, " \t\n\r\0\x0B'\"");
+
+            if ($this->isUnsafeReferenceUrl($url)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function normalizeUrl(string $url): string
+    {
+        $decoded = html_entity_decode(trim($url), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return strtolower((string) preg_replace('/[\x00-\x20]+/', '', $decoded));
+    }
+
+    private function hasDangerousScheme(string $normalizedUrl): bool
+    {
+        return str_starts_with($normalizedUrl, 'javascript:')
+            || str_starts_with($normalizedUrl, 'data:')
+            || str_starts_with($normalizedUrl, 'vbscript:');
     }
 }

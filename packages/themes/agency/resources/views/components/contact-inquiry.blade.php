@@ -43,7 +43,6 @@
             method="{{ strtoupper($method) }}"
             class="space-y-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg)] p-6 sm:p-10"
             aria-describedby="inquiry-title"
-            novalidate
         >
             @if (function_exists('csrf_field'))
                 {!! csrf_field() !!}

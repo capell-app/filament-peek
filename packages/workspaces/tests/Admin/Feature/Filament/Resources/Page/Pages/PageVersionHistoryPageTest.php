@@ -132,18 +132,12 @@ test('version history action exists on edit page with draft count in label', fun
 test('version history action label includes the draft count', function (): void {
     $live = Page::factory()->create();
 
-    $firstWorkspace = Workspace::factory()->create();
+    $workspace = Workspace::factory()->create();
     (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'first draft']),
-        $firstWorkspace,
-    );
-
-    $secondWorkspace = Workspace::factory()->create();
-    (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'second draft']),
-        $secondWorkspace,
+        $live->fresh()->fill(['name' => 'draft']),
+        $workspace,
     );
 
     livewire(EditPage::class, ['record' => $live->getRouteKey()])
-        ->assertActionHasLabel('revisions', __('capell-admin::button.revisions', ['count' => 2]));
+        ->assertActionHasLabel('revisions', __('capell-admin::button.revisions', ['count' => 1]));
 });

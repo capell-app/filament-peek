@@ -8,6 +8,7 @@ use Capell\Core\Data\LlmsTxtEntryData;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\SeoTools\Enums\RobotsDirectiveEnum;
 use Capell\SeoTools\Support\Sitemap\Queries\PagesForSitemap;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -54,9 +55,9 @@ class GenerateLlmsTxtAction
 
         return $pages
             ->filter(function (Page $page): bool {
-                $robots = (array) ($page->translation?->getMeta('robots') ?? []);
+                $robots = (array) $page->getMeta('robots', []);
 
-                return ! in_array('noindex', $robots, true);
+                return ! in_array(RobotsDirectiveEnum::NoIndex->value, $robots, true);
             })
             ->map(fn (Page $page): LlmsTxtEntryData => new LlmsTxtEntryData(
                 title: strip_tags($page->translation?->title ?? $page->translation?->label ?? ''),

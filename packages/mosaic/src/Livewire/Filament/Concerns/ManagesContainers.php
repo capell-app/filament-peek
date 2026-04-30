@@ -16,6 +16,8 @@ trait ManagesContainers
 {
     public function addContainer(string $key): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->containers[$key] = [
             'widgets' => [],
         ];
@@ -27,6 +29,8 @@ trait ManagesContainers
 
     public function reorderContainers(string $containerKey, int $position): void
     {
+        $this->assertCanUpdateLayout();
+
         $containers = $this->containers;
 
         $container = $containers[$containerKey];
@@ -44,6 +48,8 @@ trait ManagesContainers
 
     protected function saveContainer(array $data, ?string $key = null): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
 
         if (in_array($key, [null, '', '0'], true)) {
@@ -67,6 +73,8 @@ trait ManagesContainers
 
     protected function removeContainer(string $containerKey): void
     {
+        $this->assertCanUpdateLayout();
+
         foreach (['containers', 'containerWidgets', 'assets'] as $property) {
             if (! isset($this->{$property}[$containerKey])) {
                 continue;

@@ -6,10 +6,13 @@ use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
+use Capell\Core\Models\Site;
 use Capell\Core\Support\Creator\LayoutCreator;
 use Capell\Mosaic\Database\Factories\LayoutFactory;
 use Capell\Mosaic\Database\Factories\WidgetTypeFactory;
 use Capell\Mosaic\Enums\AssetEnum;
+use Capell\Mosaic\Enums\ContainerAlignmentEnum;
+use Capell\Mosaic\Enums\ResponsiveVisibilityEnum;
 use Capell\Mosaic\Filament\Configurators\Layouts\Widgets\DefaultLayoutWidgetConfigurator;
 use Capell\Mosaic\Livewire\Filament\LayoutBuilder;
 use Capell\Mosaic\Models\Widget;
@@ -17,6 +20,7 @@ use Capell\Mosaic\Models\WidgetAsset;
 use Capell\Mosaic\Support\Creator\TypeCreator;
 use Capell\Mosaic\Support\Creator\WidgetCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
+use Illuminate\Support\Facades\Gate;
 use Pest\Expectation;
 
 use function Pest\Livewire\livewire;
@@ -124,6 +128,38 @@ test('it adds a container with metadata and persists it', function (): void {
         ->toHaveKey($containerKey)
         ->and($layout->containers[$containerKey]['meta']['html_class'])
         ->toEqual($htmlClass);
+});
+
+test('it edits container settings metadata and persists it', function (): void {
+    $layout = (new LayoutFactory)->containers()->create();
+    $containerKey = array_key_first($layout->containers);
+
+    livewire(LayoutBuilder::class, ['layout' => $layout])
+        ->assertSuccessful()
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveContainer', [
+            [
+                'key' => $containerKey,
+                'meta' => [
+                    'alignment' => ContainerAlignmentEnum::Center->value,
+                    'hidden_on' => [
+                        ResponsiveVisibilityEnum::Mobile->value,
+                        ResponsiveVisibilityEnum::Desktop->value,
+                    ],
+                ],
+            ],
+            $containerKey,
+        ]))
+        ->tap(fn (object $component): null => invokeLayoutBuilderMethod($component, 'saveLayout'));
+
+    $layout->refresh();
+
+    expect($layout->containers[$containerKey]['meta']['alignment'])
+        ->toEqual(ContainerAlignmentEnum::Center->value)
+        ->and($layout->containers[$containerKey]['meta']['hidden_on'])
+        ->toEqual([
+            ResponsiveVisibilityEnum::Mobile->value,
+            ResponsiveVisibilityEnum::Desktop->value,
+        ]);
 });
 
 test('it removes a container and persists the change', function (): void {
@@ -623,6 +659,85 @@ test('it saves layout with notification via saveLayout action', function (): voi
         ->set('layoutModified', true)
         ->callAction('saveLayout')
         ->assertNotified();
+});
+
+test('it requires update authorization before mounting', function (): void {
+    test()->actingAsUser();
+
+    Gate::before(fn (mixed $user, string $ability): ?bool => $ability === 'update' ? false : null);
+
+    $layout = (new LayoutFactory)->containers()->create();
+
+    livewire(LayoutBuilder::class, ['layout' => $layout])
+        ->assertForbidden();
+});
+
+test('it only persists selected assets allowed for the widget and current site', function (): void {
+    $site = Site::factory()->create();
+    $otherSite = Site::factory()->create();
+
+    $widget = Widget::factory()
+        ->for((new WidgetTypeFactory)->state(['admin' => ['asset_types' => ['page']]]))
+        ->create(['key' => 'site-scoped-assets']);
+
+    $layout = (new LayoutFactory)->widgets([$widget])->site($site)->create();
+    $page = Page::factory()->site($site)->layout($layout)->create();
+
+    $validPage = Page::factory()->site($site)->create();
+    $otherSitePage = Page::factory()->site($otherSite)->create();
+
+    livewire(LayoutBuilder::class, [
+        'layout' => $layout,
+        'page' => $page,
+        'site' => $site,
+    ])
+        ->assertSuccessful()
+        ->call('addAssetsToWidget', [
+            'containerKey' => 'main',
+            'widgetIndex' => 0,
+            'hasPageAssets' => true,
+        ], 'page', [
+            $validPage->id,
+            $otherSitePage->id,
+            $page->id,
+            999999,
+        ])
+        ->call('saveLayout');
+
+    expect(WidgetAsset::query()
+        ->where('widget_id', $widget->id)
+        ->where('asset_type', 'page')
+        ->pluck('asset_id')
+        ->all())->toEqual([$validPage->id]);
+});
+
+test('it ignores browser supplied asset types that are not allowed by the widget', function (): void {
+    $site = Site::factory()->create();
+
+    $widget = Widget::factory()
+        ->for((new WidgetTypeFactory)->state(['admin' => ['asset_types' => ['section']]]))
+        ->create(['key' => 'section-only-assets']);
+
+    $layout = (new LayoutFactory)->widgets([$widget])->site($site)->create();
+    $page = Page::factory()->site($site)->layout($layout)->create();
+    $pageAsset = Page::factory()->site($site)->create();
+
+    livewire(LayoutBuilder::class, [
+        'layout' => $layout,
+        'page' => $page,
+        'site' => $site,
+    ])
+        ->assertSuccessful()
+        ->call('addAssetsToWidget', [
+            'containerKey' => 'main',
+            'widgetIndex' => 0,
+            'hasPageAssets' => true,
+        ], 'page', [$pageAsset->id])
+        ->call('saveLayout');
+
+    expect(WidgetAsset::query()
+        ->where('widget_id', $widget->id)
+        ->exists())->toBeFalse();
 });
 
 test('it shows warning when dispatching empty widget list to container', function (): void {

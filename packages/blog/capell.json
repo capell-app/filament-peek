@@ -7,6 +7,7 @@
         "capell-app/core",
         "capell-app/admin",
         "capell-app/frontend",
+        "capell-app/mosaic",
         "capell-app/tags"
     ],
     "providers": {

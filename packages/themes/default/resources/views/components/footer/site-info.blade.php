@@ -24,7 +24,7 @@
             @endif
         @else
             <span class="footer-logo-text text-2xl font-semibold leading-tight">
-                {!! $site->translation->title !!}
+                {{ $site->translation->title }}
             </span>
         @endif
     </a>

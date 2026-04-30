@@ -14,7 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\HtmlString;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class AuthenticationLogsTable implements TableConfigurator
@@ -34,20 +34,9 @@ class AuthenticationLogsTable implements TableConfigurator
             IdentifierColumn::make('id'),
             TextColumn::make('authenticatable')
                 ->label(__('capell-admin::table.user_who_logged_in'))
-                ->formatStateUsing(function (?string $state, AuthenticationLog $record): HtmlString {
-                    if ($record->authenticatable_id === null) {
-                        return new HtmlString('&mdash;');
-                    }
-
-                    $url = route(
-                        'filament.' . Filament::getCurrentOrDefaultPanel()->getId() . '.resources.' . Str::plural(Str::lower(class_basename($record->authenticatable::class))) . '.edit',
-                        ['record' => $record->authenticatable_id],
-                    );
-
-                    $name = $record->authenticatable->getAttribute('name');
-
-                    return new HtmlString('<a href="' . $url . '" class="inline-flex items-center justify-center hover:underline focus:outline-none focus:underline filament-tables-link text-primary-600 hover:text-primary-500 text-sm font-medium filament-tables-link-action">' . $name . '</a>');
-                })
+                ->color(fn (AuthenticationLog $record): ?string => $record->authenticatable === null ? 'danger' : null)
+                ->getStateUsing(fn (AuthenticationLog $record): string => self::getAuthenticatableName($record))
+                ->url(fn (AuthenticationLog $record): ?string => self::getAuthenticatableUrl($record))
                 ->sortable(),
             TextColumn::make('ip_address')
                 ->label(trans('filament-authentication-log::filament-authentication-log.column.ip_address'))
@@ -108,5 +97,36 @@ class AuthenticationLogsTable implements TableConfigurator
                 ->toggle()
                 ->query(fn (Builder $query): Builder => $query->where('cleared_by_user', true)),
         ];
+    }
+
+    private static function getAuthenticatableName(AuthenticationLog $record): string
+    {
+        $authenticatable = $record->authenticatable;
+
+        if (! $authenticatable instanceof Model) {
+            return (string) __('capell-admin::generic.missing');
+        }
+
+        $name = $authenticatable->getAttribute('name');
+
+        if (blank($name)) {
+            return (string) __('capell-admin::generic.missing');
+        }
+
+        return (string) $name;
+    }
+
+    private static function getAuthenticatableUrl(AuthenticationLog $record): ?string
+    {
+        $authenticatable = $record->authenticatable;
+
+        if (! $authenticatable instanceof Model) {
+            return null;
+        }
+
+        return route(
+            'filament.' . Filament::getCurrentOrDefaultPanel()->getId() . '.resources.' . Str::plural(Str::lower(class_basename($authenticatable::class))) . '.edit',
+            ['record' => $authenticatable->getKey()],
+        );
     }
 }

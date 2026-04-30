@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Livewire;
 
+use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\Models\WorkspaceFieldComment;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 class FieldCommentThread extends Component
@@ -23,6 +26,8 @@ class FieldCommentThread extends Component
 
     public function mount(int $workspaceId, string $entityType, string $entityUuid, string $fieldPath): void
     {
+        Gate::authorize('view', Workspace::query()->findOrFail($workspaceId));
+
         $this->workspaceId = $workspaceId;
         $this->entityType = $entityType;
         $this->entityUuid = $entityUuid;
@@ -31,6 +36,8 @@ class FieldCommentThread extends Component
 
     public function postComment(): void
     {
+        $this->authorizeMutation();
+
         $this->validate(['newComment' => 'required|string|max:5000']);
 
         $comment = new WorkspaceFieldComment([
@@ -55,25 +62,25 @@ class FieldCommentThread extends Component
 
     public function resolveComment(int $commentId): void
     {
-        $comment = WorkspaceFieldComment::query()->findOrFail($commentId);
+        $this->authorizeMutation();
+
+        $comment = $this->threadCommentQuery()->findOrFail($commentId);
         $comment->resolve();
     }
 
     public function reopenComment(int $commentId): void
     {
-        $comment = WorkspaceFieldComment::query()->findOrFail($commentId);
+        $this->authorizeMutation();
+
+        $comment = $this->threadCommentQuery()->findOrFail($commentId);
         $comment->reopen();
     }
 
     /** @return Collection<int, WorkspaceFieldComment> */
     public function getCommentsProperty(): Collection
     {
-        return WorkspaceFieldComment::query()
+        return $this->threadCommentQuery()
             ->with('author')
-            ->where('workspace_id', $this->workspaceId)
-            ->where('entity_type', $this->entityType)
-            ->where('entity_uuid', $this->entityUuid)
-            ->where('field_path', $this->fieldPath)
             ->orderByRaw('resolved_at IS NOT NULL')
             ->latest('id')
             ->get();
@@ -84,5 +91,19 @@ class FieldCommentThread extends Component
         return view('capell-workspaces::components.workspaces.field-comment-thread', [
             'comments' => $this->comments,
         ]);
+    }
+
+    private function authorizeMutation(): void
+    {
+        Gate::authorize('update', Workspace::query()->findOrFail($this->workspaceId));
+    }
+
+    private function threadCommentQuery(): Builder
+    {
+        return WorkspaceFieldComment::query()
+            ->where('workspace_id', $this->workspaceId)
+            ->where('entity_type', $this->entityType)
+            ->where('entity_uuid', $this->entityUuid)
+            ->where('field_path', $this->fieldPath);
     }
 }

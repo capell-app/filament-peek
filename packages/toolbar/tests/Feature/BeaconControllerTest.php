@@ -103,3 +103,36 @@ it('returns only csrf token for guest', function (): void {
     $response->assertJsonStructure(['csrf_token']);
     $response->assertJsonMissing(['user']);
 });
+
+it('rejects oversized beacon urls', function (): void {
+    $response = postJson(route('capell-frontend.beacon'), [
+        'url' => 'https://example.com/' . str_repeat('a', 2049),
+    ]);
+
+    $response->assertUnprocessable();
+    $response->assertJsonValidationErrors(['url']);
+});
+
+it('throttles beacon requests', function (): void {
+    foreach (range(1, 60) as $requestNumber) {
+        $response = postJson(route('capell-frontend.beacon'), [
+            'url' => 'https://example.com/foo',
+        ]);
+
+        $response->assertStatus(404);
+    }
+
+    $response = postJson(route('capell-frontend.beacon'), [
+        'url' => 'https://example.com/foo',
+    ]);
+
+    $response->assertTooManyRequests();
+});
+
+it('renders page data without throwing when configured beacon route is missing', function (): void {
+    Config::set('capell-page.frontend.route_name', 'capell-frontend.missing-beacon');
+
+    $rendered = view('capell::components.page-data')->render();
+
+    expect($rendered)->toContain('"url":null');
+});

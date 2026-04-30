@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Capell\MediaCurator\Actions\MigrateSpatieMediaToCuratorAction;
+use Capell\MediaCurator\Data\MigrateSpatieMediaInput;
 use Capell\MediaCurator\Tests\Fixtures\TestCuratorOwner;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +32,7 @@ function seedSpatieFixture(int $rowCount, array $collections = ['image']): void
             'uuid' => (string) Str::uuid(),
             'collection_name' => $collection,
             'name' => 'file-' . $index,
-            'file_name' => sprintf('media/file-%d.jpg', $index),
+            'file_name' => sprintf('file-%d.jpg', $index),
             'mime_type' => 'image/jpeg',
             'disk' => 'public',
             'conversions_disk' => null,
@@ -78,9 +80,11 @@ beforeEach(function (): void {
 test('dry_run_reports_without_writing', function (): void {
     seedSpatieFixture(2, ['image']);
 
-    $this->artisan('capell:media-migrate-to-curator', ['--dry-run' => true])
-        ->assertSuccessful()
-        ->expectsOutputToContain('Processed');
+    $result = MigrateSpatieMediaToCuratorAction::run(new MigrateSpatieMediaInput(dryRun: true));
+
+    expect($result->processed)->toBe(2);
+    expect($result->created)->toBe(2);
+    expect($result->ownersUpdated)->toBe(2);
 
     expect(DB::table('curator')->count())->toBe(0);
 
@@ -88,6 +92,117 @@ test('dry_run_reports_without_writing', function (): void {
     foreach ($owners as $owner) {
         expect($owner->image_id)->toBeNull();
     }
+});
+
+test('migration_uses_spatie_disk_relative_paths_to_avoid_same_filename_collisions', function (): void {
+    $firstOwner = TestCuratorOwner::query()->create(['name' => 'First Owner']);
+    $secondOwner = TestCuratorOwner::query()->create(['name' => 'Second Owner']);
+
+    $firstMediaId = DB::table('media')->insertGetId([
+        'model_type' => TestCuratorOwner::class,
+        'model_id' => $firstOwner->getKey(),
+        'uuid' => (string) Str::uuid(),
+        'collection_name' => 'image',
+        'name' => 'shared-photo',
+        'file_name' => 'shared.jpg',
+        'mime_type' => 'image/jpeg',
+        'disk' => 'public',
+        'conversions_disk' => null,
+        'size' => 8000,
+        'manipulations' => '[]',
+        'custom_properties' => '[]',
+        'generated_conversions' => '[]',
+        'responsive_images' => '[]',
+        'order_column' => 1,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $secondMediaId = DB::table('media')->insertGetId([
+        'model_type' => TestCuratorOwner::class,
+        'model_id' => $secondOwner->getKey(),
+        'uuid' => (string) Str::uuid(),
+        'collection_name' => 'image',
+        'name' => 'shared-photo',
+        'file_name' => 'shared.jpg',
+        'mime_type' => 'image/jpeg',
+        'disk' => 'public',
+        'conversions_disk' => null,
+        'size' => 9000,
+        'manipulations' => '[]',
+        'custom_properties' => '[]',
+        'generated_conversions' => '[]',
+        'responsive_images' => '[]',
+        'order_column' => 2,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $this->artisan('capell:media-migrate-to-curator')->assertSuccessful();
+
+    expect(DB::table('curator')->count())->toBe(2);
+
+    expect(DB::table('curator')->pluck('path')->all())->toContain(
+        $firstMediaId . '/shared.jpg',
+        $secondMediaId . '/shared.jpg',
+    );
+
+    expect(DB::table('curator')->pluck('directory')->all())->toContain(
+        (string) $firstMediaId,
+        (string) $secondMediaId,
+    );
+});
+
+test('migration_preserves_spatie_metadata_in_curator_columns', function (): void {
+    $owner = TestCuratorOwner::query()->create(['name' => 'Metadata Owner']);
+
+    $mediaId = DB::table('media')->insertGetId([
+        'model_type' => TestCuratorOwner::class,
+        'model_id' => $owner->getKey(),
+        'uuid' => (string) Str::uuid(),
+        'collection_name' => 'image',
+        'name' => 'metadata-photo',
+        'file_name' => 'metadata.jpg',
+        'mime_type' => 'image/jpeg',
+        'disk' => 'public',
+        'conversions_disk' => 'public',
+        'size' => 12000,
+        'manipulations' => json_encode(['thumb' => ['fit' => 'crop']], JSON_THROW_ON_ERROR),
+        'custom_properties' => json_encode([
+            'alt' => 'A dramatic test image',
+            'title' => 'Metadata title',
+            'description' => 'Metadata description',
+            'caption' => 'Metadata caption',
+            'dimensions' => ['width' => 1600, 'height' => 900],
+            'credit' => 'Capell Studio',
+        ], JSON_THROW_ON_ERROR),
+        'generated_conversions' => json_encode(['thumb' => true], JSON_THROW_ON_ERROR),
+        'responsive_images' => json_encode([
+            'media_library_original' => [
+                'urls' => ['metadata___media_library_original_800_450.jpg'],
+                'base64svg' => 'placeholder',
+            ],
+        ], JSON_THROW_ON_ERROR),
+        'order_column' => 1,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $this->artisan('capell:media-migrate-to-curator')->assertSuccessful();
+
+    $curatorRow = DB::table('curator')->where('path', $mediaId . '/metadata.jpg')->first();
+    $exif = json_decode((string) $curatorRow->exif, true);
+
+    expect($curatorRow->alt)->toBe('A dramatic test image');
+    expect($curatorRow->title)->toBe('Metadata title');
+    expect($curatorRow->description)->toBe('Metadata description');
+    expect($curatorRow->caption)->toBe('Metadata caption');
+    expect($curatorRow->width)->toBe(1600);
+    expect($curatorRow->height)->toBe(900);
+    expect($exif['spatie_media_library']['custom_properties']['credit'])->toBe('Capell Studio');
+    expect($exif['spatie_media_library']['responsive_images']['media_library_original']['base64svg'])->toBe('placeholder');
+    expect($exif['spatie_media_library']['generated_conversions']['thumb'])->toBeTrue();
+    expect($exif['spatie_media_library']['manipulations']['thumb']['fit'])->toBe('crop');
 });
 
 test('full_migration_creates_curator_rows_and_populates_owner_fk', function (): void {

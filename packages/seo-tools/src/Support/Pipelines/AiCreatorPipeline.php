@@ -35,12 +35,12 @@ class AiCreatorPipeline
         $result = resolve(Pipeline::class)
             ->send($payload)
             ->through([
-                fn (array $p, callable $next): array => $this->loadOrCreateSession($p, $next),
-                fn (array $p, callable $next): array => $this->loadContext($p, $next),
-                fn (array $p, callable $next): array => $this->checkRateLimit($p, $next),
-                fn (array $p, callable $next): array => $this->executeAiCall($p, $next),
-                fn (array $p, callable $next): array => $this->parseSections($p, $next),
-                fn (array $p, callable $next): array => $this->persistResult($p, $next),
+                fn (array $pipelinePayload, callable $next): array => $this->loadOrCreateSession($pipelinePayload, $next),
+                fn (array $pipelinePayload, callable $next): array => $this->loadContext($pipelinePayload, $next),
+                fn (array $pipelinePayload, callable $next): array => $this->checkRateLimit($pipelinePayload, $next),
+                fn (array $pipelinePayload, callable $next): array => $this->executeAiCall($pipelinePayload, $next),
+                fn (array $pipelinePayload, callable $next): array => $this->parseSections($pipelinePayload, $next),
+                fn (array $pipelinePayload, callable $next): array => $this->persistResult($pipelinePayload, $next),
             ])
             ->thenReturn();
 
@@ -53,7 +53,12 @@ class AiCreatorPipeline
         $data = $payload['data'];
 
         if ($data->existingSessionId !== null) {
-            $session = AiCreatorSession::query()->findOrFail($data->existingSessionId);
+            $session = AiCreatorSession::query()
+                ->whereKey($data->existingSessionId)
+                ->where('site_id', $data->siteId)
+                ->where('user_id', $data->userId)
+                ->where('status', 'review')
+                ->firstOrFail();
         } else {
             $session = AiCreatorSession::query()->create([
                 'site_id' => $data->siteId,
@@ -137,7 +142,47 @@ class AiCreatorPipeline
             'AI response was not a valid JSON array of sections: ' . $content,
         );
 
-        $payload['sections'] = $decoded;
+        throw_if(count($decoded) > 8, InvalidArgumentException::class, 'AI response may contain at most 8 sections.');
+
+        $registeredSections = $this->sectionRegistry->all();
+        $validatedSections = [];
+
+        foreach ($decoded as $sectionIndex => $section) {
+            throw_unless(
+                is_array($section),
+                InvalidArgumentException::class,
+                'AI response section ' . ($sectionIndex + 1) . ' was not an object.',
+            );
+
+            $sectionType = $section['section_type'] ?? null;
+
+            throw_unless(
+                is_string($sectionType) && $sectionType !== '',
+                InvalidArgumentException::class,
+                'AI response section ' . ($sectionIndex + 1) . ' is missing a section_type.',
+            );
+
+            throw_unless(
+                $registeredSections === [] || array_key_exists($sectionType, $registeredSections),
+                InvalidArgumentException::class,
+                'AI response section type "' . $sectionType . '" is not registered.',
+            );
+
+            $fields = $section['fields'] ?? [];
+
+            throw_unless(
+                is_array($fields),
+                InvalidArgumentException::class,
+                'AI response section ' . ($sectionIndex + 1) . ' fields must be an object.',
+            );
+
+            $validatedSections[] = [
+                'section_type' => $sectionType,
+                'fields' => $fields,
+            ];
+        }
+
+        $payload['sections'] = $validatedSections;
 
         return $next($payload);
     }

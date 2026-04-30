@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Capell\Themes\Admin\Schemas\ThemeSettingsSchema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -69,8 +70,8 @@ return new class extends Migration
         }
 
         $row = DB::table('theme_types')
-            ->where(function ($q): void {
-                $q->where('key', 'frontend')->orWhere('name', 'frontend');
+            ->where(function (Builder $queryBuilder): void {
+                $queryBuilder->where('key', 'frontend')->orWhere('name', 'frontend');
             })
             ->first();
 

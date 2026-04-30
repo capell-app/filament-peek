@@ -2,16 +2,20 @@
 
 declare(strict_types=1);
 
-use Capell\Address\Tests\AddressTestCase;
+use Capell\Address\Support\FlagIconRenderer;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 
 require_once __DIR__ . '/../AddressTestCase.php';
-
-uses(AddressTestCase::class);
+require_once __DIR__ . '/../../src/Support/FlagIconRenderer.php';
+require_once __DIR__ . '/../../src/View/Components/FlagIcon.php';
 
 beforeEach(function (): void {
     File::deleteDirectory(public_path('vendor/blade-country-flags'));
+    app()->singleton(FlagIconRenderer::class);
+    View::addNamespace('capell-address', __DIR__ . '/../../resources/views');
+    Blade::componentNamespace('Capell\\Address\\View\\Components', 'capell-address');
 });
 
 afterEach(function (): void {

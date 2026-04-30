@@ -640,6 +640,8 @@ trait HasLayoutActions
 
     protected function addAssetFromAction(Action $action, array $arguments, array $data): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->loadFromStore();
 
         $configurator = $this->getMountedActionSchema();
@@ -722,6 +724,8 @@ trait HasLayoutActions
 
     protected function duplicateLayout(): void
     {
+        $this->assertCanUpdateLayout();
+
         $newLayout = ReplicateLayoutAction::run($this->layout);
 
         $this->dispatch('page-layout-changed', id: $newLayout->getKey());
@@ -729,6 +733,8 @@ trait HasLayoutActions
 
     protected function changePageLayout(int $layoutId): void
     {
+        $this->assertCanUpdateLayout();
+
         if (! $this->inPageContext()) {
             return;
         }
@@ -814,6 +820,8 @@ trait HasLayoutActions
 
     protected function applyWidgetAssetUpdate(WidgetAsset $record, array $data, self $livewire, array $arguments, Action $action, Schema $configurator): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->loadFromStore();
 
         $configurator->saveRelationships();
@@ -897,6 +905,8 @@ trait HasLayoutActions
 
     protected function saveWidgetForm(Schema $configurator, Widget $record, array $data): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
 
         $configurator->saveRelationships();

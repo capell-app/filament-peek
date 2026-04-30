@@ -15,6 +15,8 @@ trait ManagesWidgets
 {
     public function addWidgetToContainer(Widget $widget, string $containerKey): int
     {
+        $this->assertCanUpdateLayout();
+
         $occurrence = $this->getLastContainerWidgetOccurrence($containerKey, $widget->key) + 1;
 
         $this->containers[$containerKey]['widgets'][] = [
@@ -33,6 +35,8 @@ trait ManagesWidgets
 
     public function reorderWidgets(string $containerKey, string $containerWidgetIndex, int $widgetIndex): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
 
         [$originalContainer, $originalIndex] = explode('.', $containerWidgetIndex);
@@ -46,6 +50,8 @@ trait ManagesWidgets
 
     protected function duplicateWidget(string $containerKey, int $originalIndex, bool $withAssets = true): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
 
         $containerWidget = $this->containers[$containerKey]['widgets'][$originalIndex];
@@ -66,6 +72,8 @@ trait ManagesWidgets
 
     protected function removeWidget(string $containerKey, int $widgetIndex): void
     {
+        $this->assertCanUpdateLayout();
+
         if (isset($this->containers[$containerKey]['widgets'][$widgetIndex])) {
             unset($this->containers[$containerKey]['widgets'][$widgetIndex]);
             $this->containers[$containerKey]['widgets'] = array_values($this->containers[$containerKey]['widgets']);

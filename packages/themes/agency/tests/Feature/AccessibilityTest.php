@@ -34,7 +34,8 @@ test('contact inquiry form has labeled fields including budget and timeline', fu
         expect($html)->toMatch('/<label\\s+[^>]*for="agency-' . $field . '"/m');
     }
 
-    expect($html)->toContain('required');
+    expect($html)->toContain('required')
+        ->not->toContain('novalidate');
 });
 
 test('breadcrumbs set aria-current on last item', function () use ($componentsDir): void {

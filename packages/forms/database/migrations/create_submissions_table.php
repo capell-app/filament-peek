@@ -12,16 +12,18 @@ return new class extends Migration
     {
         Schema::create('submissions', function (Blueprint $table): void {
             $table->id();
-            $table->unsignedBigInteger('form_id');
-            $table->json('data')->nullable();
+            $table->foreignId('form_id')->constrained('forms')->cascadeOnDelete();
+            $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
+            $table->longText('payload')->nullable();
+            $table->longText('meta')->nullable();
+            $table->string('status')->default('new');
             $table->timestamp('submitted_at')->nullable();
             $table->timestamps();
 
             $table->index('form_id');
-            $table->foreign('form_id')
-                ->references('id')
-                ->on('forms')
-                ->onDelete('cascade');
+            $table->index('site_id');
+            $table->index('status');
+            $table->index('submitted_at');
         });
     }
 

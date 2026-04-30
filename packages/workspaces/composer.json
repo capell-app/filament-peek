@@ -1,9 +1,13 @@
 {
     "name": "capell-app/workspaces",
-    "description": "Workspace drafting system for Capell",
+    "description": "Editorial workflow package for Capell revisions, scheduling, approvals, and controlled publishing",
     "keywords": [
         "capell",
         "workspaces",
+        "revisions",
+        "scheduling",
+        "approvals",
+        "editorial-workflow",
         "laravel",
         "cms"
     ],

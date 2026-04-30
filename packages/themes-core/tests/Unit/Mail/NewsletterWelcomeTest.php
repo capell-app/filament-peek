@@ -14,7 +14,7 @@ test('passes data to the view', function (): void {
     $mail = new NewsletterWelcome('Capell', 'Ada', 'https://example.com/unsubscribe');
     $content = $mail->content();
 
-    expect($content->view)->toBe('capell::mail.newsletter-welcome');
+    expect($content->view)->toBe('capell-themes-core::mail.newsletter-welcome');
     expect($content->with)->toMatchArray([
         'siteName' => 'Capell',
         'subscriberName' => 'Ada',

@@ -39,7 +39,7 @@
                     wire:navigate
                 >
                     <span class="font-semibold">
-                        {!! $page->getTranslation('label') !!}
+                        {{ $page->getTranslation('label') }}
                     </span>
                     <time
                         class="float-right mt-0.5 whitespace-nowrap text-xs font-light leading-none tracking-wide opacity-80"

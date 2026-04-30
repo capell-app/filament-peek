@@ -3,15 +3,14 @@
 declare(strict_types=1);
 
 use Capell\Address\Support\FlagIconRenderer;
-use Capell\Address\Tests\AddressTestCase;
 use Illuminate\Support\Facades\File;
 
 require_once __DIR__ . '/../AddressTestCase.php';
-
-uses(AddressTestCase::class);
+require_once __DIR__ . '/../../src/Support/FlagIconRenderer.php';
 
 beforeEach(function (): void {
     File::deleteDirectory(public_path('vendor/blade-country-flags'));
+    app()->singleton(FlagIconRenderer::class);
 });
 
 afterEach(function (): void {
@@ -23,6 +22,25 @@ it('resolves a published blade country flag asset from an iso code', function ()
     File::put(public_path('vendor/blade-country-flags/4x3-fr.svg'), '<svg></svg>');
 
     expect(app(FlagIconRenderer::class)->assetPath('fr'))->toBe('vendor/blade-country-flags/4x3-fr.svg');
+});
+
+it('renders a published country flag through the admin renderer contract', function (): void {
+    if (! interface_exists('Capell\\Admin\\Contracts\\Support\\FlagIconRenderer')) {
+        $this->markTestSkipped('The installed admin package does not expose the flag renderer contract.');
+    }
+
+    app()->singleton('Capell\\Admin\\Contracts\\Support\\FlagIconRenderer', FlagIconRenderer::class);
+    File::ensureDirectoryExists(public_path('vendor/blade-country-flags'));
+    File::put(public_path('vendor/blade-country-flags/4x3-fr.svg'), '<svg></svg>');
+
+    $html = app('Capell\\Admin\\Contracts\\Support\\FlagIconRenderer')
+        ->render('flag-4x3-fr', 'France', attributes: ['class' => 'h-4'])
+        ->toHtml();
+
+    expect($html)
+        ->toContain('src="http://localhost/vendor/blade-country-flags/4x3-fr.svg"')
+        ->toContain('alt="France"')
+        ->toContain('h-4');
 });
 
 it('resolves a published blade country flag asset from a blade icon name', function (): void {

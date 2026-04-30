@@ -11,7 +11,7 @@ use Spatie\LaravelData\Data;
  *
  * @property int $processed Total Spatie rows examined.
  * @property int $created Curator rows inserted (new).
- * @property int $skipped Rows whose owner FK was already non-null (idempotency).
+ * @property int $skipped Rows whose Curator record already existed (idempotency).
  * @property int $ownersUpdated Owner rows whose FK column was populated.
  * @property array<int, string> $warnings Human-readable messages for unplaceable rows.
  */

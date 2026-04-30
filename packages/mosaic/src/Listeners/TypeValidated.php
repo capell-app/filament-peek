@@ -38,16 +38,6 @@ class TypeValidated implements ValidationSubscriber
             return true;
         }
 
-        // Validate if the custom type can be deleted
-        // Return false to prevent deletion, true to allow it
-        // Add error message or notification if needed
-        return ! ($context->name === 'custom_type' && $this->hasRelatedRecords());
-    }
-
-    private function hasRelatedRecords(): bool
-    {
-        // Custom logic to check if the type has related records
         return true;
-        // or false
     }
 }

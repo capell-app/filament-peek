@@ -32,7 +32,16 @@ test('contact form inputs have labels and required attributes', function () use 
     expect($html)->toContain('<label for="corp-name"')
         ->toContain('<label for="corp-email"')
         ->toContain('<label for="corp-message"')
-        ->toContain('required');
+        ->toContain('required')
+        ->not->toContain('novalidate');
+});
+
+test('hero background image url is validated before css interpolation', function () use ($componentsDir): void {
+    $html = file_get_contents($componentsDir . '/hero-section.blade.php');
+
+    expect($html)
+        ->toContain('$safeImageUrl')
+        ->not->toContain('url(\'{{ $imageUrl }}\')');
 });
 
 test('breadcrumbs set aria-current on last item', function () use ($componentsDir): void {

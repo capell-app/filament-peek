@@ -52,8 +52,8 @@ A realistic scenario showing every role, a change request round-trip, and the fi
 1. **John** (Editor) creates the _Q2 Product Launch_ article and clicks **Save as Draft**. The workspace is created in **Open** state — nothing is visible on live.
 2. John clicks **Submit for approval**. Workspace transitions **Open → InReview**.
 3. **Emma** (Reviewer) receives an email: _"Action required: Q2 Product Launch needs your approval"_, with a **Review & Approve** button.
-4. Emma opens the workspace, reviews the article, and decides changes are needed. She clicks **Reject**, entering notes: _"Update pricing section + add CTA"_. Workspace returns to **Open** and is editable again.
-5. John (or **Josh**, another editor) is emailed: _"Workspace rejected: please revise"_, with the rejection notes. Josh opens the workspace, updates the pricing section, adds the CTA, and clicks **Save as Draft**.
+4. Emma opens the workspace, reviews the article, and decides changes are needed. She clicks **Request changes**, entering notes: _"Update pricing section + add CTA"_. Workspace returns to **Open** and is editable again.
+5. John (or **Josh**, another editor) is emailed that changes were requested, with the reviewer notes. Josh opens the workspace, updates the pricing section, adds the CTA, and clicks **Save as Draft**.
 6. Josh clicks **Submit for approval** again. Workspace transitions **Open → InReview**; Emma gets a fresh approval request.
 7. Emma reviews the updated article and clicks **Approve**. Workspace transitions **InReview → Approved**.
 8. **Harry** (MD / Release Manager) is emailed: _"Workspace approved: Q2 Product Launch"_. He can open the workspace to inspect it, or use the **Preview** action to mint a **signed, expiring preview URL** that shows the workspace on the public-facing site (see [Workspaces — Preview](workspaces.md#preview)).
@@ -64,26 +64,16 @@ A realistic scenario showing every role, a change request round-trip, and the fi
 
 ---
 
-## Change requests (today vs planned)
+## Change requests vs rejection
 
-**Today.** A reviewer who wants iterative changes uses the **Reject** action with notes. The workspace returns to **Open**, the editor can act on the feedback, and the cycle continues. The audit log captures every submit / reject / approve event on `workspace_approvals`. There is **no separate "Request changes" action** — rejection _is_ the change-request primitive.
+Reviewers have two negative decisions, each using editorial workflow terminology deliberately:
 
-**Planned enhancement.** Split the concept so the UX matches editor intent:
+| Action              | Meaning                                                            | Workspace transition |
+| ------------------- | ------------------------------------------------------------------ | -------------------- |
+| **Request changes** | "Nearly there; revise this and resubmit." Expected to be iterated. | `InReview -> Open`   |
+| **Reject**          | "This should not ship in its current direction."                   | `InReview -> Open`   |
 
-| Action              | Meaning                                                                          | Workspace transitions                                                                           |
-| ------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Request changes** | "Nearly there — here's what to tweak." Expected to be iterated on.               | `InReview → Open`, increments a `review_round` counter on the workspace.                        |
-| **Reject**          | "This workspace should not ship." Terminal unless the editor explicitly reopens. | `InReview → Open` and marks the workspace's last approval row as `rejected` (as it does today). |
-
-Scope of the change:
-
-- New `RequestChangesAction` next to `RejectAction` (shares most of the machinery).
-- New `WorkspaceApprovalActionEnum::RequestedChanges` value (so the audit trail distinguishes change requests from rejections).
-- New email notification key (`request_changes_subject`, `request_changes_intro`, `request_changes_cta`).
-- Admin UI: surface review-round count + latest reviewer notes on the workspace header so editors don't need to open the activity log.
-- Policy: gated by the existing `approve_workspace` permission (reviewers can do both).
-
-Not in scope until this lands: nothing in the current flow blocks users — rejection already covers iterative feedback; this is a UX clarity upgrade.
+Both decisions require notes, notify editors, unlock the workspace for revisions, and write a distinct audit row to `workspace_approvals` through `WorkspaceApprovalActionEnum::ChangesRequested` or `WorkspaceApprovalActionEnum::Rejected`.
 
 ---
 
@@ -115,9 +105,9 @@ No state transition happens on save — the workspace stays in **Open**.
 **📧 Emails sent to:** Reviewers + Release Managers
 (configured at `capell.workspaces.notifications.recipients.submitted`)
 
-### 3. Reviewer approves or rejects
+### 3. Reviewer approves, requests changes, or rejects
 
-Two outcomes from **InReview**:
+Three outcomes from **InReview**:
 
 #### Approve
 
@@ -130,9 +120,20 @@ Two outcomes from **InReview**:
 **📧 Emails sent to:** Editors + Release Managers
 (configured at `capell.workspaces.notifications.recipients.approved`)
 
+#### Request changes
+
+`Request changes` action -> `InReview -> Open`.
+
+- Reviewer notes are **required** and logged.
+- Editor can revise the draft and resubmit.
+- `WorkspaceStateChanged` event fires with `transition: changes_requested`.
+
+**📧 Emails sent to:** Editors
+(configured at `capell.workspaces.notifications.recipients.changes_requested`)
+
 #### Reject
 
-`Reject` action → `InReview → Open`.
+`Reject` action -> `InReview -> Open`.
 
 - Rejection notes are **required** and logged.
 - Editor can address feedback and resubmit.

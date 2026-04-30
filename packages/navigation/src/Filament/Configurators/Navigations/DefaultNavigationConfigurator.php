@@ -28,6 +28,7 @@ use Capell\Navigation\Enums\NavigationHandle;
 use Capell\Navigation\Enums\NavigationItemTarget;
 use Capell\Navigation\Enums\NavigationItemType;
 use Capell\Navigation\Filament\Components\Forms\Navigation\TypeSelect;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
@@ -45,6 +46,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Illuminate\Validation\Rules\Unique;
 use Saade\FilamentAdjacencyList\Forms\Components\AdjacencyList;
 
@@ -57,7 +59,7 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
     /**
      * Array cache for loaded Page models by ID.
      *
-     * @var array<int, Pageable|null>
+     * @var array<string, Pageable|null>
      */
     private static array $pageCache = [];
 
@@ -259,6 +261,13 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
                     Group::make([
                         SiteSelect::make('site_id')
                             ->dehydrated(false)
+                            ->default(fn (Get $get): ?int => is_numeric($get('../../site_id')) ? (int) $get('../../site_id') : null)
+                            ->modifyQueryUsing(
+                                fn (Builder $query, Get $get): Builder => $query->when(
+                                    $get('../../site_id'),
+                                    fn (Builder $query, int $siteId): Builder => $query->whereKey($siteId),
+                                ),
+                            )
                             ->afterStateUpdatedJs(<<<'JS'
                                 $set('pageable_id', null);
                                 $set('pageable_type', null);
@@ -270,6 +279,12 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
                     ]),
                     PageMorphToOptionSelect::make()
                         ->whenTruthy('site_id')
+                        ->modifyKeySelectOptionsQueryUsing(
+                            fn (Builder $query, Get $get): Builder => $query->when(
+                                $get('../../site_id') ?? $get('site_id'),
+                                fn (Builder $query, int $siteId): Builder => $query->where('site_id', $siteId),
+                            ),
+                        )
                         ->modifyTypeSelectUsing(
                             fn (ToggleButtons $select): ToggleButtons => $select->default(PageVariationEnum::Page->value),
                         )
@@ -293,6 +308,13 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
                         ->label(__('capell-admin::form.url'))
                         ->validationAttribute(strtoupper(__('capell-admin::form.url')))
                         ->required()
+                        ->rules([
+                            fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                                if (! is_string($value) || ! $this->isSafeNavigationUrl($value)) {
+                                    $fail(__('validation.url'));
+                                }
+                            },
+                        ])
                         ->columnSpanFull()
                         ->suffixAction(
                             fn (?string $state): ?Action => $state !== null
@@ -360,11 +382,16 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
         switch ($navigationItem->type) {
             case NavigationItemType::Page:
                 $languageId = $get('language_id');
-                $siteId = $get('site_id');
+                $siteId = $get('../../site_id') ?? $get('site_id');
 
+                if (! is_numeric($siteId)) {
+                    return null;
+                }
+
+                $siteId = (int) $siteId;
                 $language = $this->getLanguageById($languageId, $siteId);
 
-                $page = $this->getCachedPageItem($navigationItem->data, $pageCache, true, $language?->id);
+                $page = $this->getCachedPageItem($navigationItem->data, $pageCache, true, $language?->id, $siteId);
 
                 if (! $page instanceof Pageable) {
                     return null;
@@ -388,9 +415,9 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
     /**
      * Get a Page model from cache, loading if necessary.
      *
-     * @param  array<int, Pageable|null>  $pageCache
+     * @param  array<string, Pageable|null>  $pageCache
      */
-    private function getCachedPageItem(array $data, array &$pageCache, bool $withUrl = false, ?int $languageId = null): ?Page
+    private function getCachedPageItem(array $data, array &$pageCache, bool $withUrl = false, ?int $languageId = null, ?int $siteId = null): ?Page
     {
         $pageId = $data['pageable_id'] ?? null;
         $pageType = $data['pageable_type'] ?? null;
@@ -399,28 +426,65 @@ class DefaultNavigationConfigurator implements ConfiguratorInterface
             return null;
         }
 
-        if (isset($pageCache[$pageType][$pageId])) {
-            return $pageCache[$pageType][$pageId];
+        $cacheKey = implode(':', [
+            $pageType,
+            (string) $pageId,
+            $siteId === null ? 'any-site' : (string) $siteId,
+            $withUrl ? (string) ($languageId ?? 'any-language') : 'no-url',
+        ]);
+
+        if (array_key_exists($cacheKey, $pageCache)) {
+            return $pageCache[$cacheKey];
         }
 
         /** @var class-string<Pageable&Model> $model */
         $model = Relation::getMorphedModel($pageType) ?? Page::class;
 
-        if ($withUrl && $languageId !== null) {
-            $page = $model::query()
-                ->with([
-                    'pageUrl.siteDomain' => fn (BuilderContract $query): BuilderContract => DB::getDriverName() === 'sqlite'
-                        ? $query->orderByRaw('CASE WHEN language_id = ? THEN 0 ELSE 1 END', [$languageId])
-                        : $query->orderByRaw('FIELD(language_id, ?) DESC', [$languageId]),
-                ])
-                ->find($pageId);
-        } else {
-            $page = $model::query()->find($pageId);
+        $query = $model::query();
+
+        if ($siteId !== null && DatabaseSchema::hasColumn((new $model)->getTable(), 'site_id')) {
+            $query->where('site_id', $siteId);
         }
 
-        $pageCache[$pageType][$pageId] = $page;
+        if ($withUrl && $languageId !== null) {
+            $page = $query->with([
+                'pageUrl.siteDomain' => fn (BuilderContract $query): BuilderContract => DB::getDriverName() === 'sqlite'
+                    ? $query->orderByRaw('CASE WHEN language_id = ? THEN 0 ELSE 1 END', [$languageId])
+                    : $query->orderByRaw('FIELD(language_id, ?) DESC', [$languageId]),
+            ])
+                ->find($pageId);
+        } else {
+            $page = $query->find($pageId);
+        }
+
+        $pageCache[$cacheKey] = $page;
 
         return $page;
+    }
+
+    private function isSafeNavigationUrl(string $url): bool
+    {
+        $url = trim($url);
+
+        if ($url === '' || preg_match('/[\x00-\x1F\x7F]/', $url) === 1) {
+            return false;
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        if (is_string($scheme)) {
+            return in_array(strtolower($scheme), ['http', 'https', 'mailto', 'tel'], true);
+        }
+
+        if (str_starts_with($url, '//')) {
+            return false;
+        }
+
+        return str_starts_with($url, '/')
+            || str_starts_with($url, '#')
+            || str_starts_with($url, '?')
+            || str_starts_with($url, './')
+            || str_starts_with($url, '../');
     }
 
     private function getLabelField(): TextInput

@@ -18,6 +18,13 @@ test('validateToken returns true for a fresh token with correct path', function 
     expect($preview->validateToken($token, '/page/my-draft'))->toBeTrue();
 });
 
+test('validateToken normalizes request paths without a leading slash', function (): void {
+    $preview = new PreviewMode(secretKey: 'my-app-key');
+    $token = $preview->generateToken('/page/my-draft', expiresInMinutes: 60);
+
+    expect($preview->validateToken($token, 'page/my-draft'))->toBeTrue();
+});
+
 test('validateToken returns false for wrong path', function (): void {
     $preview = new PreviewMode(secretKey: 'my-app-key');
     $token = $preview->generateToken('/page/my-draft', expiresInMinutes: 60);

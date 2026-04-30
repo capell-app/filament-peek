@@ -27,22 +27,24 @@ final class BuildCacheHealthAction
 
         $service = resolve(PageCacheService::class);
 
-        $urls = $model::query()
+        $query = $model::query()
+            ->select(['id', 'site_id', 'language_id', 'url', 'type', 'status', 'updated_at'])
             ->with(['siteDomain'])
             ->where('site_id', $site->id)
             ->enabled()
             ->where(function (Builder $query): void {
                 $query->whereNull('type')
                     ->orWhere('type', '!=', UrlTypeEnum::Redirect->value);
-            })
-            ->get();
+            });
+
+        $totalEnabledUrls = (clone $query)->count();
 
         $cachedCount = 0;
         $staleCount = 0;
         $missingCount = 0;
         $newestTimestamp = null;
 
-        foreach ($urls as $pageUrl) {
+        foreach ($query->lazyById(500) as $pageUrl) {
             $cacheFile = $pageUrl->page_cache_file;
 
             if ($cacheFile === null || ! $service->exists($cacheFile)) {
@@ -71,7 +73,7 @@ final class BuildCacheHealthAction
             : null;
 
         return new CacheHealthData(
-            totalEnabledUrls: $urls->count(),
+            totalEnabledUrls: $totalEnabledUrls,
             cachedCount: $cachedCount,
             staleCount: $staleCount,
             missingCount: $missingCount,

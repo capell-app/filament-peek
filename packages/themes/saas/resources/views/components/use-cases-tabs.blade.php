@@ -6,6 +6,23 @@
 
 @php
     $name = 'usecase-' . substr(md5(json_encode($useCases)), 0, 6);
+    $resolveCssUrl = static function (mixed $url): ?string {
+        if (! is_string($url)) {
+            return null;
+        }
+
+        $trimmedUrl = trim($url);
+        $urlScheme = parse_url($trimmedUrl, PHP_URL_SCHEME);
+        $isHttpUrl = is_string($urlScheme) && in_array($urlScheme, ['http', 'https'], true);
+        $isRelativeUrl = str_starts_with($trimmedUrl, '/') && ! str_starts_with($trimmedUrl, '//');
+        $hasUnsafeCssCharacters = preg_match('/[\s\'"()\\\\<>]/', $trimmedUrl) === 1;
+
+        if (($isHttpUrl || $isRelativeUrl) && ! $hasUnsafeCssCharacters) {
+            return $trimmedUrl;
+        }
+
+        return null;
+    };
 @endphp
 
 <section
@@ -66,6 +83,10 @@
                 {{-- Panels --}}
                 <div class="p-6 sm:p-10">
                     @foreach ($useCases as $i => $case)
+                        @php
+                            $safeCaseImageUrl = $resolveCssUrl($case['image_url'] ?? null);
+                        @endphp
+
                         <div
                             id="{{ $name }}-panel-{{ $i }}"
                             role="tabpanel"
@@ -110,7 +131,7 @@
                             <div
                                 class="aspect-[4/3] rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-muted)] shadow-inner"
                                 style="
-                                    background-image: @if(! empty($case['image_url'])) url('{{ $case['image_url'] }}'); background-size: cover; background-position: center; @else linear-gradient(135deg, var(--color-primary-soft), var(--color-accent-soft)); @endif;
+                                    background-image: @if($safeCaseImageUrl) url('{{ $safeCaseImageUrl }}'); background-size: cover; background-position: center; @else linear-gradient(135deg, var(--color-primary-soft), var(--color-accent-soft)); @endif;
                                 "
                                 role="img"
                                 aria-label="{{ $case['heading'] ?? '' }} illustration"

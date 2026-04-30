@@ -15,6 +15,7 @@ class PreviewMode
 
     public function generateToken(string $path, int $expiresInMinutes = 60): string
     {
+        $path = $this->normalizePath($path);
         $issuedAt = Date::now()->getTimestamp();
         $expiresAt = $issuedAt + ($expiresInMinutes * 60);
 
@@ -32,6 +33,7 @@ class PreviewMode
 
     public function signedUrl(string $path, string $baseUrl, int $expiresInMinutes = 60): string
     {
+        $path = $this->normalizePath($path);
         $token = $this->generateToken($path, $expiresInMinutes);
 
         return rtrim($baseUrl, '/') . $path . '?' . $this->tokenParam . '=' . urlencode($token);
@@ -39,6 +41,7 @@ class PreviewMode
 
     public function validateToken(string $token, string $path): bool
     {
+        $path = $this->normalizePath($path);
         $parts = explode('.', $token, 2);
 
         if (count($parts) !== 2) {
@@ -98,5 +101,16 @@ class PreviewMode
     public function tokenParam(): string
     {
         return $this->tokenParam;
+    }
+
+    private function normalizePath(string $path): string
+    {
+        $trimmedPath = trim($path);
+
+        if ($trimmedPath === '' || $trimmedPath === '/') {
+            return '/';
+        }
+
+        return '/' . ltrim($trimmedPath, '/');
     }
 }

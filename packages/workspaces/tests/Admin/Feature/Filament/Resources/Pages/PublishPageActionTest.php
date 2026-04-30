@@ -8,9 +8,12 @@ use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Capell\Workspaces\Actions\CopyOnWriteAction;
 use Capell\Workspaces\Enums\WorkspaceApprovalActionEnum;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
+use Capell\Workspaces\Filament\Resources\Pages\Actions\PublishPageAction;
 use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\Models\WorkspaceApproval;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 uses(CreatesAdminUser::class);
@@ -52,6 +55,25 @@ it('is visible on a draft with Approved status', function (): void {
 
     Livewire::test(EditPage::class, ['record' => $draft->getRouteKey()])
         ->assertActionVisible('publish');
+});
+
+it('is hidden for users who can update the page but cannot publish the workspace', function (): void {
+    Permission::findOrCreate('View:Page');
+    Permission::findOrCreate('ViewAny:Page');
+    Permission::findOrCreate('Update:Page');
+
+    $user = $this->createUserWithPermission(['View:Page', 'ViewAny:Page', 'Update:Page']);
+    $this->actingAs($user);
+
+    $draft = draftInWorkspace(WorkspaceStatusEnum::Approved);
+
+    Gate::define('update', fn (mixed $actor, Page $record): bool => true);
+
+    $method = new ReflectionMethod(PublishPageAction::class, 'userCanPublish');
+    $method->setAccessible(true);
+
+    expect($user->can('update', $draft))->toBeTrue()
+        ->and($method->invoke(PublishPageAction::make(), $draft))->toBeFalse();
 });
 
 it('is disabled on a draft with InReview status', function (): void {

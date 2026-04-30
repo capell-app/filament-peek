@@ -58,12 +58,12 @@
                                         class="text-link hover:text-primary-600 focus:text-primary-600 font-medium no-underline"
                                     >
                                         <strong class="font-semibold">
-                                            {!! $feature->translation->title !!}
+                                            {{ $feature->translation->title }}
                                         </strong>
                                     </a>
                                 @else
                                     <strong class="font-semibold">
-                                        {!! $feature->translation->title !!}
+                                        {{ $feature->translation->title }}
                                     </strong>
                                 @endif
                             </p>
@@ -72,7 +72,7 @@
                         <div
                             class="line-clamp-4 break-words font-medium leading-6 opacity-80"
                         >
-                            {!! $feature->translation->summary !!}
+                            {{ $feature->translation->summary }}
                         </div>
 
                         @if ($linkText)

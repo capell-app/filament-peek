@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
+use Capell\Workspaces\Contracts\WorkspaceTableActionContributor;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Filament\Resources\Workspaces\Actions\ApproveAction;
 use Capell\Workspaces\Filament\Resources\Workspaces\Actions\CompareAction;
@@ -42,29 +43,7 @@ class WorkspacesTable implements TableConfigurator
         return $table
             ->defaultSort('updated_at', 'desc')
             ->columns(static::getTableColumns())
-            ->recordActions([
-                EditAction::make()
-                    ->modalWidth(Width::ScreenLarge)
-                    ->slideOver()
-                    ->hidden(fn (Workspace $record): bool => $record->trashed()),
-                SaveAsDraftAction::make(),
-                SubmitForApprovalAction::make(),
-                ApproveAction::make(),
-                RequestChangesAction::make(),
-                RejectAction::make(),
-                PublishAction::make(),
-                ScheduleAction::make(),
-                UnscheduleAction::make(),
-                PreviewAction::make(),
-                ValidateAction::make(),
-                CompareAction::make(),
-                RollbackAction::make(),
-                ActionGroup::make([
-                    DeleteAction::make(),
-                    RestoreAction::make(),
-                ])
-                    ->color('gray'),
-            ])
+            ->recordActions(static::getRecordActions())
             ->filters([
                 SelectFilter::make('status')
                     ->label(__('capell-admin::table.status'))
@@ -84,6 +63,48 @@ class WorkspacesTable implements TableConfigurator
             ->emptyStateHeading(__('capell-admin::generic.no_workspaces'))
             ->emptyStateDescription(__('capell-admin::generic.no_workspaces_description'))
             ->emptyStateIcon('heroicon-o-beaker');
+    }
+
+    protected static function getRecordActions(): array
+    {
+        return [
+            EditAction::make()
+                ->modalWidth(Width::ScreenLarge)
+                ->slideOver()
+                ->hidden(fn (Workspace $record): bool => $record->trashed()),
+            SaveAsDraftAction::make(),
+            SubmitForApprovalAction::make(),
+            ApproveAction::make(),
+            RequestChangesAction::make(),
+            RejectAction::make(),
+            PublishAction::make(),
+            ScheduleAction::make(),
+            UnscheduleAction::make(),
+            PreviewAction::make(),
+            ...static::getContributorRecordActions(),
+            ValidateAction::make(),
+            CompareAction::make(),
+            RollbackAction::make(),
+            ActionGroup::make([
+                DeleteAction::make(),
+                RestoreAction::make(),
+            ])
+                ->color('gray'),
+        ];
+    }
+
+    protected static function getContributorRecordActions(): array
+    {
+        /** @var iterable<WorkspaceTableActionContributor> $contributors */
+        $contributors = app()->tagged(WorkspaceTableActionContributor::TAG);
+
+        $actions = [];
+
+        foreach ($contributors as $contributor) {
+            array_push($actions, ...$contributor->actions());
+        }
+
+        return $actions;
     }
 
     protected static function getTableColumns(): array

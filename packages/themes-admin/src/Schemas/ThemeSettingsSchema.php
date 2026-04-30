@@ -4,90 +4,100 @@ declare(strict_types=1);
 
 namespace Capell\Themes\Admin\Schemas;
 
+use Capell\Admin\Filament\Contracts\HasSchema;
+use Capell\Themes\Admin\Rules\SafeCssColor;
 use Capell\Themes\Core\Theme\ThemeRegistrar;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 
-class ThemeSettingsSchema
+final class ThemeSettingsSchema implements HasSchema
 {
-    public static function make(): Tabs
+    public static function make(Schema $schema): array
     {
-        return Tabs::make('Theme Settings')
+        return [self::tabs()];
+    }
+
+    public static function tabs(): Tabs
+    {
+        return Tabs::make(__('capell-themes-admin::settings.theme_settings'))
             ->tabs([
-                Tab::make('Theme')
+                Tab::make(__('capell-themes-admin::settings.tabs.theme'))
                     ->schema([
                         Select::make('active_theme')
-                            ->label('Active Theme')
+                            ->label(__('capell-themes-admin::settings.active_theme'))
                             ->options(ThemeRegistrar::options())
                             ->required(),
                     ]),
-                Tab::make('Colors')
+                Tab::make(__('capell-themes-admin::settings.tabs.colors'))
                     ->schema([
                         ColorPicker::make('primary_color')
-                            ->label('Primary Color')
-                            ->required(),
+                            ->label(__('capell-themes-admin::settings.primary_color'))
+                            ->required()
+                            ->rule(new SafeCssColor),
                         ColorPicker::make('accent_color')
-                            ->label('Accent Color')
-                            ->required(),
+                            ->label(__('capell-themes-admin::settings.accent_color'))
+                            ->required()
+                            ->rule(new SafeCssColor),
                     ]),
-                Tab::make('Typography')
+                Tab::make(__('capell-themes-admin::settings.tabs.typography'))
                     ->schema([
                         Select::make('headline_font')
-                            ->label('Headline Font')
+                            ->label(__('capell-themes-admin::settings.headline_font'))
                             ->options([
-                                'playfair' => 'Playfair Display',
-                                'sora' => 'Sora',
-                                'inter' => 'Inter',
+                                'playfair' => __('capell-themes-admin::settings.fonts.playfair'),
+                                'sora' => __('capell-themes-admin::settings.fonts.sora'),
+                                'inter' => __('capell-themes-admin::settings.fonts.inter'),
                             ])
                             ->required(),
                         Select::make('body_font')
-                            ->label('Body Font')
+                            ->label(__('capell-themes-admin::settings.body_font'))
                             ->options([
-                                'inter' => 'Inter',
-                                'manrope' => 'Manrope',
+                                'inter' => __('capell-themes-admin::settings.fonts.inter'),
+                                'manrope' => __('capell-themes-admin::settings.fonts.manrope'),
                             ])
                             ->required(),
                     ]),
-                Tab::make('Layout')
+                Tab::make(__('capell-themes-admin::settings.tabs.layout'))
                     ->schema([
                         Select::make('hero_style')
-                            ->label('Hero Background')
+                            ->label(__('capell-themes-admin::settings.hero_style'))
                             ->options([
-                                'image' => 'Image',
-                                'gradient' => 'Gradient',
-                                'video' => 'Video',
+                                'image' => __('capell-themes-admin::settings.hero_styles.image'),
+                                'gradient' => __('capell-themes-admin::settings.hero_styles.gradient'),
+                                'video' => __('capell-themes-admin::settings.hero_styles.video'),
                             ])
                             ->required(),
                         Select::make('footer_layout')
-                            ->label('Footer Layout')
+                            ->label(__('capell-themes-admin::settings.footer_layout'))
                             ->options([
-                                'minimal' => 'Minimal',
-                                'expanded' => 'Expanded',
-                                'newsletter' => 'Newsletter',
+                                'minimal' => __('capell-themes-admin::settings.footer_layouts.minimal'),
+                                'expanded' => __('capell-themes-admin::settings.footer_layouts.expanded'),
+                                'newsletter' => __('capell-themes-admin::settings.footer_layouts.newsletter'),
                             ])
                             ->required(),
                         Select::make('spacing_preset')
-                            ->label('Spacing')
+                            ->label(__('capell-themes-admin::settings.spacing_preset'))
                             ->options([
-                                'compact' => 'Compact',
-                                'balanced' => 'Balanced',
-                                'spacious' => 'Spacious',
+                                'compact' => __('capell-themes-admin::settings.spacing_presets.compact'),
+                                'balanced' => __('capell-themes-admin::settings.spacing_presets.balanced'),
+                                'spacious' => __('capell-themes-admin::settings.spacing_presets.spacious'),
                             ])
                             ->required(),
                     ]),
-                Tab::make('Sections')
+                Tab::make(__('capell-themes-admin::settings.tabs.sections'))
                     ->schema([
                         Toggle::make('show_testimonials')
-                            ->label('Show Testimonials Section'),
+                            ->label(__('capell-themes-admin::settings.show_testimonials')),
                         Toggle::make('show_pricing')
-                            ->label('Show Pricing Section'),
+                            ->label(__('capell-themes-admin::settings.show_pricing')),
                         Toggle::make('show_blog')
-                            ->label('Show Blog Section'),
+                            ->label(__('capell-themes-admin::settings.show_blog')),
                         Toggle::make('show_contact')
-                            ->label('Show Contact Section'),
+                            ->label(__('capell-themes-admin::settings.show_contact')),
                     ]),
             ]);
     }

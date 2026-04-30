@@ -1,7 +1,7 @@
 @props(['analytics' => null, 'utm' => null])
 
-@if ($analytics && $analytics->enabled())
-    {!! $analytics->initScript() !!}
+@if ($analytics && $analytics->isEnabled())
+    {!! $analytics->renderInitScript() !!}
     @if ($utm)
         <script>
             {!! $utm->toJavaScript() !!}

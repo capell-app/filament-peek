@@ -61,6 +61,8 @@ final readonly class Rollback
             ));
         }
 
+        $this->assertManifestIsSafeToRollback($target);
+
         $previousLiveSnapshot = Version::currentLive();
         $previousLiveId = $previousLiveSnapshot?->id;
 
@@ -163,5 +165,28 @@ final readonly class Rollback
         );
 
         return in_array(SoftDeletes::class, $traitNames, true);
+    }
+
+    private function assertManifestIsSafeToRollback(Version $target): void
+    {
+        $manifest = $target->manifest;
+
+        if ($manifest === []) {
+            throw new LogicException(sprintf(
+                'Version #%d cannot be used as a rollback target: it has an empty manifest.',
+                $target->id,
+            ));
+        }
+
+        $registeredModelClasses = array_keys($this->registry::all());
+        $missingModelClasses = array_values(array_diff($registeredModelClasses, array_keys($manifest)));
+
+        if ($missingModelClasses !== []) {
+            throw new LogicException(sprintf(
+                'Version #%d cannot be used as a rollback target: it is missing manifest entries for %s.',
+                $target->id,
+                implode(', ', $missingModelClasses),
+            ));
+        }
     }
 }

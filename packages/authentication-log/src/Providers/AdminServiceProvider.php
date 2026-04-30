@@ -8,6 +8,7 @@ use Capell\Admin\Contracts\DashboardSettingsContributor;
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\AuthenticationLog\Actions\ApplyAuthenticationLogSettingsAction;
 use Capell\AuthenticationLog\Filament\Extenders\AuthenticationLogAdminPanelExtender;
 use Capell\AuthenticationLog\Filament\Resources\AuthenticationLogs\AuthenticationLogResource;
 use Capell\AuthenticationLog\Filament\Settings\Contributors\AuthenticationLogDashboardSettingsContributor;
@@ -36,7 +37,14 @@ class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(AuthenticationLogsWidget::class, DashboardEnum::SystemHealth);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
-            $schedule->command('authentication-log:purge')->monthly();
+            ApplyAuthenticationLogSettingsAction::run();
+
+            $schedule
+                ->command('authentication-log:purge')
+                ->before(function (): void {
+                    ApplyAuthenticationLogSettingsAction::run();
+                })
+                ->monthly();
         });
     }
 }

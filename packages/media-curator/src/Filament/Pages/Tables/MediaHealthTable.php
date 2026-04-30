@@ -6,8 +6,8 @@ namespace Capell\MediaCurator\Filament\Pages\Tables;
 
 use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
-use Capell\Core\Models\Media;
 use Capell\MediaCurator\Actions\Reports\BuildMediaHealthQueryAction;
+use Capell\MediaCurator\Models\CuratorMedia;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,9 +32,9 @@ class MediaHealthTable implements TableConfigurator
                 TextColumn::make('usage_count')
                     ->label(__('capell-admin::table.usage_count'))
                     ->size('sm')
-                    ->state(fn (Media $record): int => $record->model_id !== null ? 1 : 0)
+                    ->state(fn (CuratorMedia $record): int => (int) ($record->getAttribute('usage_count') ?? 0))
                     ->sortable(),
-                TextColumn::make('media_type')
+                TextColumn::make('type')
                     ->label(__('capell-admin::table.media_type'))
                     ->size('sm')
                     ->badge()

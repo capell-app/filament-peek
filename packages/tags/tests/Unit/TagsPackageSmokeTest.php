@@ -17,7 +17,7 @@ it('TagsServiceProvider class exists', function (): void {
 it('repairs stale published tag model config', function (): void {
     config(['tags.tag_model' => 'Capell\\Blog\\Models\\Tag']);
 
-    resolve(TagsServiceProvider::class)->registeringPackage();
+    (new TagsServiceProvider(app()))->registeringPackage();
 
     expect(config('tags.tag_model'))->toBe(Tag::class);
 });

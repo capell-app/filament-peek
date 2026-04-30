@@ -72,6 +72,14 @@ test('use-cases tabs declare tablist/tab/tabpanel roles', function () use ($comp
         ->toContain('role="tabpanel"');
 });
 
+test('use-cases image url is validated before css interpolation', function () use ($componentsDir): void {
+    $html = file_get_contents($componentsDir . '/use-cases-tabs.blade.php');
+
+    expect($html)
+        ->toContain('$safeCaseImageUrl')
+        ->not->toContain('url(\'{{ $case[\'image_url\'] }}\')');
+});
+
 test('css exposes focus-visible outline and reduced-motion block', function (): void {
     $css = file_get_contents(__DIR__ . '/../../resources/css/theme.css');
     expect($css)->toContain('focus-visible')

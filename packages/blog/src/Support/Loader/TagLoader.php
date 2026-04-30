@@ -153,20 +153,24 @@ class TagLoader
         return $tags;
     }
 
-    public static function tagPage(string $slug, Language $language): ?Tag
+    public static function tagPage(string $slug, Site $site, Language $language): ?Tag
     {
-        $key = CacheEnum::tagPage($slug);
+        $key = CacheEnum::tagPage($site->id, $language->id, $slug);
 
         $fromCache = true;
 
-        $tag = CapellCore::rememberCache($key, function () use ($slug, $language, &$fromCache): ?Tag {
+        $tag = CapellCore::rememberCache($key, function () use ($slug, $site, $language, &$fromCache): ?Tag {
             $fromCache = false;
 
             /** @var class-string<Tag> $model */
             $model = Tag::class;
 
-            return $model::query()->where('type', TagTypeEnum::Page)
+            return $model::query()->where('type', TagTypeEnum::Page->value)
                 ->where('slug->' . $language->code, $slug)
+                ->where(
+                    fn (Builder $query): Builder => $query->where('site_id', $site->id)->orWhereNull('site_id'),
+                )
+                ->orderByRaw('CASE WHEN site_id = ? THEN 0 ELSE 1 END', [$site->id])
                 ->first();
         });
 

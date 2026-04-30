@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\DeveloperTools\Filament\Pages;
 
 use BackedEnum;
+use BadMethodCallException;
 use Capell\DeveloperTools\Filament\Pages\Tables\QueueHealthTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -13,6 +14,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 
 class QueueHealthPage extends Page implements HasActions, HasTable
 {
@@ -36,7 +38,26 @@ class QueueHealthPage extends Page implements HasActions, HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->can('View:' . class_basename(static::class)) ?? false;
+        $user = auth()->user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        try {
+            $superAdminRole = config('capell.roles.super_admin', 'super_admin');
+
+            if (is_string($superAdminRole) && $superAdminRole !== '' && $user->hasRole($superAdminRole)) {
+                return true;
+            }
+        } catch (BadMethodCallException) {
+            // Role system not available; fall back to developer-tools permissions.
+        }
+
+        return Gate::allows('accessDeveloperTools')
+            || Gate::allows('viewDeveloperTools')
+            || $user->can('accessDeveloperTools') === true
+            || $user->can('viewDeveloperTools') === true;
     }
 
     public static function getNavigationGroup(): ?string

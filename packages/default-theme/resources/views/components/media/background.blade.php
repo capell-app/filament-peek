@@ -1,22 +1,33 @@
 @if (isset($curatedMedia))
+    @php
+        $curatedStyle = "background-image: url('{$curatedMedia['url']}'); width: {$curatedMedia['width']}px; height: {$curatedMedia['height']}px;";
+        $curatedAttributeStyle = $attributes->get('style');
+
+        if (is_scalar($curatedAttributeStyle) && (string) $curatedAttributeStyle !== '') {
+            $curatedStyle .= ' ' . rtrim((string) $curatedAttributeStyle, ';') . ';';
+        }
+    @endphp
+
     <div
         alt="{{ $media['alt'] }}"
-        style="background-image: url('{{ $curatedMedia['url'] }}')"
-        style="
-            width: {{ $curatedMedia['width'] }}px;
-            height: {{ $curatedMedia['height'] }}px;
-        "
-        {{ $attributes }}
+        style="{{ $curatedStyle }}"
+        {{ $attributes->except('style') }}
     ></div>
 @elseif ($media)
+    @php
+        $mediaWidth = $width && $height ? $width : ($media->getWidth() ?? 0);
+        $mediaHeight = $width && $height ? $height : ($media->getHeight() ?? 0);
+        $mediaStyle = "background-image: url('{$media->getUrl()}'); width: {$mediaWidth}px; height: {$mediaHeight}px;";
+        $mediaAttributeStyle = $attributes->get('style');
+
+        if (is_scalar($mediaAttributeStyle) && (string) $mediaAttributeStyle !== '') {
+            $mediaStyle .= ' ' . rtrim((string) $mediaAttributeStyle, ';') . ';';
+        }
+    @endphp
+
     <div
-        style="background-image: url('{{ $media->getUrl() }}')"
-        @if ($width && $height)
-            style="width: {{ $width }}px; height: {{ $height }}px;"
-        @else
-            style="width: {{ $media->getWidth() ?? 0 }}px; height: {{ $media->getHeight() ?? 0 }}px;"
-        @endif
-        {{ $attributes->except(['alt', 'width', 'height']) }}
+        style="{{ $mediaStyle }}"
+        {{ $attributes->except(['alt', 'width', 'height', 'style']) }}
     >
         <span class="sr-only">
             {{ $attributes->get('alt', $media->getCustomProperty('alt', $media->getName())) }}

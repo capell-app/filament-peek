@@ -28,11 +28,11 @@ if ($relatedSites->isEmpty()) {
                     class="text-link text-lg font-bold"
                     style="{{ $relatedSite->getThemeColor('primary') ? 'color:' . $relatedSite->getThemeColor('primary') : '' }}"
                 >
-                    {!! $relatedSite->translation->title !!}
+                    {{ $relatedSite->translation->title }}
                 </span>
                 @if ($description = $relatedSite->translation->getMeta('description'))
                     <span class="text-sm leading-tight">
-                        {!! $description !!}
+                        {{ $description }}
                     </span>
                 @endif
             </a>

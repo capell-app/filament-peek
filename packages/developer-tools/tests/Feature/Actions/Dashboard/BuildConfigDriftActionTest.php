@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Capell\DeveloperTools\Actions\Dashboard\BuildConfigDriftAction;
 use Capell\DeveloperTools\Data\Dashboard\ConfigDriftEntryData;
+use Composer\InstalledVersions;
+use Illuminate\Support\Facades\File;
 
 // ---------------------------------------------------------------------------
 // Helper: subclass that overrides configPairs() to point at temp files.
@@ -173,5 +175,36 @@ it('detects drift across multiple packages', function (): void {
         @unlink($coreHostPath);
         @unlink($adminShippedPath);
         @unlink($adminHostPath);
+    }
+});
+
+it('resolves shipped configs from composer install paths', function (): void {
+    if (! InstalledVersions::isInstalled('capell-app/core')) {
+        $this->markTestSkipped('capell-app/core is not installed.');
+    }
+
+    $installPath = InstalledVersions::getInstallPath('capell-app/core');
+
+    if (! is_string($installPath)) {
+        $this->markTestSkipped('capell-app/core has no install path.');
+    }
+
+    $shippedPath = $installPath . '/config/capell.php';
+    $hostPath = config_path('capell.php');
+    $originalHostConfig = File::exists($hostPath) ? File::get($hostPath) : null;
+
+    File::ensureDirectoryExists(dirname($hostPath));
+    File::copy($shippedPath, $hostPath);
+
+    try {
+        $result = BuildConfigDriftAction::run();
+
+        expect($result->packagesChecked)->toBeGreaterThanOrEqual(1);
+    } finally {
+        if ($originalHostConfig === null) {
+            File::delete($hostPath);
+        } else {
+            File::put($hostPath, $originalHostConfig);
+        }
     }
 });

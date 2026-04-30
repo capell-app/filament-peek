@@ -49,8 +49,7 @@ class AddressesTable implements TableConfigurator
                 DeleteBulkAction::make('delete'),
                 RestoreBulkAction::make('restore'),
                 ForceDeleteBulkAction::make('forceDelete'),
-            ])
-            ->reorderable('order');
+            ]);
     }
 
     protected static function getTableColumns(): array

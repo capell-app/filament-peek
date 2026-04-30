@@ -57,6 +57,15 @@ test('can sort addresses', function (): void {
         ->assertCanSeeTableRecords($sorted, inOrder: true);
 });
 
+test('ignores address reordering because addresses do not have an order column', function (): void {
+    $addresses = Address::factory()->count(2)->create();
+
+    livewire(ManageAddresses::class)
+        ->assertSuccessful()
+        ->call('reorderTable', $addresses->pluck('id')->reverse()->values()->all())
+        ->assertSuccessful();
+});
+
 test('can replicate address', function (): void {
     $address = Address::factory()->create();
 

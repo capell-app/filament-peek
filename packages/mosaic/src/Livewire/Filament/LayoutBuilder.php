@@ -26,7 +26,9 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -80,6 +82,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
     public function mount(): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->loadNew();
     }
 
@@ -103,6 +107,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     #[On('save-layout')]
     public function saveLayout(bool $withNotifications = false): void
     {
+        $this->assertCanUpdateLayout();
+
         if (! $this->layoutModified) {
             return;
         }
@@ -166,6 +172,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     #[On('add-widgets-to-container')]
     public function addWidgetsToContainer(string $containerKey, array $widgets, ?string $actionModalId = null): void
     {
+        $this->assertCanUpdateLayout();
+
         if ($widgets === []) {
             Notification::make('no-widgets-selected')
                 ->body(__('capell-mosaic::message.no_widgets_selected'))
@@ -203,6 +211,8 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     #[On('sync-selected-assets')]
     public function addAssetsToWidget(array $arguments, string $type, array $assets): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
 
         $containerKey = $arguments['containerKey'];
@@ -312,6 +322,19 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
     protected function inPageContext(): bool
     {
         return $this->page instanceof Pageable;
+    }
+
+    protected function assertCanUpdateLayout(): void
+    {
+        $actor = Filament::auth()->user();
+
+        throw_if($actor === null, AuthenticationException::class);
+
+        if ($this->page instanceof Model) {
+            Gate::forUser($actor)->authorize('update', $this->page);
+        }
+
+        Gate::forUser($actor)->authorize('update', $this->layout);
     }
 
     protected function layoutUpdated(bool $modified = true): void
