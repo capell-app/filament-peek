@@ -13,10 +13,12 @@ Route::prefix($routePrefix)
     ->middleware(['web'])
     ->group(function (): void {
         Route::post('events', AnalyticsBeaconController::class)
+            ->middleware(['throttle:60,1'])
             ->withoutMiddleware([VerifyCsrfToken::class])
             ->name('capell-analytics.events');
 
         Route::post('consent', AnalyticsConsentController::class)
+            ->middleware(['throttle:60,1'])
             ->withoutMiddleware([VerifyCsrfToken::class])
             ->name('capell-analytics.consent');
     });
