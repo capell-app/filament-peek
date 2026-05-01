@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\Admin\Support\SafeAdminUrl;
 use Capell\SeoTools\Actions\Reports\BuildBrokenLinksQueryAction;
+use Capell\SeoTools\Filament\Actions\CreateRedirectFromBrokenLinkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,6 +41,9 @@ class BrokenLinksTable implements TableConfigurator
                     ->label(__('capell-admin::table.last_checked'))
                     ->size('sm')
                     ->sortable(),
+            ])
+            ->recordActions([
+                CreateRedirectFromBrokenLinkAction::make(),
             ])
             ->defaultSort('last_checked_at', 'desc');
     }
