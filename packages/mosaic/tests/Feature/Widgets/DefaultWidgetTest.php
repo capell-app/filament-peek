@@ -108,3 +108,33 @@ it('renders default actions widget on page', function (): void {
             '.widget-default',
         );
 });
+
+it('skips incomplete page actions when rendering default widget actions', function (): void {
+    $site = Site::factory()->withTranslations()->create();
+    $creator = resolve(WidgetCreator::class);
+    $widget = $creator->defaultWidget();
+    $meta = $widget->meta;
+    $meta['actions'] = [
+        [
+            'type' => ActionLinkEnum::Page->value,
+            'pageable_type' => resolve(Page::class)->getMorphClass(),
+            'pageable_id' => null,
+            'site_id' => $site->id,
+        ],
+        [
+            'type' => ActionLinkEnum::Link->value,
+            'url' => 'https://example.com',
+            'label' => 'External',
+        ],
+    ];
+    $widget->update(['meta' => $meta]);
+
+    Translation::factory()->translatable($widget)->language($site->language)->create();
+
+    $layout = (new LayoutFactory)->widgets([$widget])->create();
+    $page = Page::factory()->site($site)->layout($layout)->withTranslations()->create();
+
+    get($page->pageUrl->full_url)
+        ->assertOk()
+        ->assertSee('External');
+});

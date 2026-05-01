@@ -501,7 +501,6 @@ class DemoCommand extends Command
         $this->progress = $this->output->createProgressBar($max);
         $this->progress->setFormat(' [%bar%] %percent:3s%% | %message%');
         $this->progress->setMessage('');
-        $this->progress->start();
     }
 
     private function setProgressMessage(string $message): void

@@ -81,13 +81,6 @@ class NavigationTestCase extends AbstractTestCase
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
-
-        // Register navigation with its path so BuildsOrderedMigrationWorkspace can
-        // discover and include navigation's migrations in the ordered workspace.
-        CapellCore::registerPackage(
-            NavigationServiceProvider::$packageName,
-            path: realpath(__DIR__ . '/../'),
-        );
         CapellCore::forcePackageInstalled(NavigationServiceProvider::$packageName);
     }
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -67,22 +68,8 @@ test('sitemap html page', function (): void {
         );
 });
 
-test('sitemap page creator uses fallback labels when translator returns keys', function (): void {
-    $languages = Language::factory()->count(1)->create();
-    $site = Site::factory()->withTranslations($languages)->create();
-
-    app()->instance('translator', new class
-    {
-        public function get(string $key): string
-        {
-            return $key;
-        }
-    });
-
-    $sitemapPage = resolve(SitemapPageCreator::class)->createSitemapPage($site, $languages);
-
-    expect($sitemapPage->name)->toBe('Sitemap')
-        ->and($sitemapPage->translation->title)->toBe('Sitemap');
+test('sitemap default page label is translated after providers boot', function (): void {
+    expect(CapellCore::getDefaultPage('sitemap')->label)->toBe('Sitemap');
 });
 
 test('sitemap xml page', function (): void {

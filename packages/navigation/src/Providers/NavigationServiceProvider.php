@@ -34,11 +34,11 @@ use Illuminate\Support\ServiceProvider;
 
 class NavigationServiceProvider extends ServiceProvider
 {
-    /** @var string */
-    public static $packageName = 'capell-app/navigation';
+    public static string $packageName = 'capell-app/navigation';
 
     public function register(): void
     {
+        $this->registerPackageMetadata();
         $this->registerSchemaExtender(SchemaExtenderEnum::Page->value, NavigationPageSchemaExtender::class);
         $this->registerSchemaExtender(SchemaExtenderEnum::Site->value, NavigationSiteExtender::class);
 
@@ -104,5 +104,16 @@ class NavigationServiceProvider extends ServiceProvider
     {
         $this->app->singleton($class, fn (): object => new $class);
         $this->app->tag($class, $tag);
+    }
+
+    private function registerPackageMetadata(): void
+    {
+        CapellCore::registerPackage(
+            static::$packageName,
+            serviceProviderClass: static::class,
+            path: realpath(__DIR__ . '/../..'),
+            version: CapellCore::getInstalledPrettyVersion(static::$packageName),
+            description: 'Navigation for Capell',
+        );
     }
 }
