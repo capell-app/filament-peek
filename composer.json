@@ -69,6 +69,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/capell-app/backup"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/capell-app/core"
         },
         {
@@ -101,6 +105,7 @@
         "bkwld/cloner": "^3.11",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "capell-app/admin": "^2.0",
+        "capell-app/backup": "^2.0",
         "capell-app/core": "^2.0",
         "capell-app/frontend": "^2.0",
         "capell-app/installer": "^2.0",

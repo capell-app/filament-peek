@@ -11,8 +11,8 @@ arch('core does not reference Capell\\Workspaces namespace')
     ->expect('Capell\Core')
     ->not->toUse('Capell\Workspaces')
     ->ignoring([
-        // Exchanger (core sub-module) works with workspace data directly
-        'Capell\Core\Exchanger',
+        // Backup import/export workflows work with workspace data directly.
+        'Capell\Backup',
         // Page model uses the BelongsToWorkspace trait
         Page::class,
         // PageUrlObserver needs WorkspaceContextScope for draft-aware URL queries

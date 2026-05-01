@@ -38,10 +38,10 @@ final class BuildPackagesInstalledAction
             'config' => 'capell-frontend',
             'docs' => 'https://github.com/capell-app/capell/blob/4.x/packages/frontend/README.md',
         ],
-        'capell-app/exchanger' => [
-            'short' => 'exchanger',
-            'config' => 'exchanger',
-            'docs' => 'https://github.com/capell-app/capell/blob/4.x/packages/exchanger/README.md',
+        'capell-app/backup' => [
+            'short' => 'backup',
+            'config' => 'backup',
+            'docs' => 'https://github.com/capell-app/capell/blob/4.x/packages/backup/README.md',
         ],
         'capell-app/capell-mosaic' => [
             'short' => 'mosaic',
