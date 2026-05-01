@@ -31,9 +31,6 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
             ->hasTranslations()
             ->hasMigrations([
                 'create_authentication_log_table',
-                'add_v6_columns_to_authentication_log_table',
-                'add_last_seen_at_to_authentication_log_table',
-                'add_authenticatable_login_at_authentication_log_table',
             ]);
     }
 

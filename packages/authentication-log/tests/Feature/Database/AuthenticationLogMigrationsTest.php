@@ -17,7 +17,7 @@ it('loads the package-owned authentication log table migration', function (): vo
         ->and(Schema::hasColumn($tableName, 'suspicious_reason'))->toBeTrue();
 });
 
-it('runs follow-up migrations against a custom authentication log table name', function (): void {
+it('creates the final authentication log schema with a custom table name', function (): void {
     $tableName = 'custom_authentication_log';
 
     config()->set('authentication-log.table_name', $tableName);
@@ -27,12 +27,8 @@ it('runs follow-up migrations against a custom authentication log table name', f
 
     $migrationPath = dirname(__DIR__, 3) . '/database/migrations';
     $createMigration = include $migrationPath . '/create_authentication_log_table.php';
-    $lastSeenMigration = include $migrationPath . '/add_last_seen_at_to_authentication_log_table.php';
-    $loginIndexMigration = include $migrationPath . '/add_authenticatable_login_at_authentication_log_table.php';
 
     $createMigration->up();
-    $lastSeenMigration->up();
-    $loginIndexMigration->up();
 
     expect(Schema::hasTable($tableName))->toBeTrue()
         ->and(Schema::hasColumn($tableName, 'last_seen_at'))->toBeTrue()

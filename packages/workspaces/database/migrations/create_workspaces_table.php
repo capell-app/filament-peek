@@ -25,12 +25,16 @@ return new class extends Migration
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('publish_at')->nullable()->index();
+            $table->timestamp('unpublish_at')->nullable()->index();
+            $table->timestamp('embargo_until')->nullable()->index();
+            $table->timestamp('review_reminder_at')->nullable()->index();
             $table->timestamp('published_at')->nullable();
             $table->userstamps();
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['status', 'updated_at']);
+            $table->index(['status', 'publish_at']);
         });
     }
 

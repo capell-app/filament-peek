@@ -39,7 +39,6 @@ class InstallCommand extends Command
             __DIR__ . '/../../../database/migrations/z_add_workspace_columns_to_core_tables.php',
             __DIR__ . '/../../../database/migrations/z_add_workspace_id_to_import_sessions_table.php',
             __DIR__ . '/../../../database/migrations/z_add_workspace_id_to_external_tables.php',
-            __DIR__ . '/../../../database/migrations/z_add_content_scheduler_columns_to_workspaces_table.php',
         ];
 
         $this->call('capell:publish-migrations', ['--items' => $migrations]);

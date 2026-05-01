@@ -35,9 +35,6 @@ class FormsServiceProvider extends AbstractPackageServiceProvider
             ->hasMigrations([
                 'create_forms_table',
                 'create_submissions_table',
-                'z_add_structure_to_forms_table',
-                'z_add_meta_to_submissions_table',
-                'encrypt_submission_payload_and_meta',
             ]);
     }
 

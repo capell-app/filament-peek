@@ -27,12 +27,18 @@ return new class extends Migration
             $table->timestamp('login_at')->nullable();
             $table->timestamp('logout_at')->nullable();
             $table->timestamp('last_activity_at')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
             $table->boolean('login_successful')->default(false);
             $table->boolean('cleared_by_user')->default(false);
             $table->json('location')->nullable();
             $table->boolean('is_suspicious')->default(false);
             $table->string('suspicious_reason')->nullable();
             $table->timestamps();
+
+            $table->index(
+                ['authenticatable_type', 'authenticatable_id', 'login_at'],
+                'authenticatable_login_at_index',
+            );
         });
     }
 
