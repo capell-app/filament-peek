@@ -10,7 +10,7 @@ Served by the Livewire component `Capell\SeoTools\Livewire\Page\Sitemap` using t
 - Each page is rendered as an anchor with its label and a child count when it has descendants.
 - CSS for the vertical layout is inlined under an `@once` block.
 
-HTML responses may be minified by `Capell\Frontend\Http\Middleware\HtmlMinifyMiddleware` (in the `capell/frontend` package) when `capell-frontend.minify_html` is enabled. Minification is conservative — attribute order and quotes are preserved so HTML-comparison tests stay stable.
+HTML responses may be minified by `capell-app/html-minify` when `capell-frontend.minify_html` is enabled. Minification is conservative — attribute order and quotes are preserved so HTML-comparison tests stay stable.
 
 ## XML sitemap
 
@@ -82,7 +82,7 @@ The Livewire `Sitemap` component serves chunk files transparently via `?p=N` —
 ## Troubleshooting
 
 - **304 not returned** — ensure the client sends `If-None-Match` with `W/"<digest>"`, `"<digest>"`, the raw digest, or `*`. Confirm the sitemap XML file exists on the configured disk and directory.
-- **HTML differences in tests** — set `capell-frontend.minify_html=false` in testing, or rely on the conservative minification in `HtmlMinifier` (in `capell/frontend`).
+- **HTML differences in tests** — set `capell-frontend.minify_html=false` in testing, or rely on the conservative `Capell\Frontend\Contracts\HtmlMinifier` binding provided by `capell-app/html-minify`.
 
 ## References
 

@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('utm_campaign')->nullable()->index();
             $table->string('ip_hash')->nullable();
             $table->string('user_agent_hash')->nullable();
-            $table->timestamp('started_at')->index();
-            $table->timestamp('last_seen_at')->nullable()->index();
+            $table->dateTime('started_at')->index();
+            $table->dateTime('last_seen_at')->nullable()->index();
             $table->timestamps();
         });
     }

@@ -46,6 +46,7 @@ return new class extends Migration
         // live counterpart, so workspace_id must be part of the key to avoid conflicts.
         if (Schema::hasTable('translations')) {
             Schema::table('translations', function (Blueprint $configurator): void {
+                $configurator->index('language_id', 'translations_language_id_index');
                 $configurator->dropUnique('translations_key_unique');
                 $configurator->unique(
                     ['language_id', 'translatable_type', 'translatable_id', 'workspace_id'],

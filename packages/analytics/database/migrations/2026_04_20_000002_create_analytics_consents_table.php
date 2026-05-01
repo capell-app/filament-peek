@@ -21,7 +21,7 @@ return new class extends Migration
             $table->json('categories');
             $table->string('policy_version');
             $table->timestamp('terms_accepted_at')->nullable();
-            $table->timestamp('decided_at')->index();
+            $table->dateTime('decided_at')->index();
             $table->string('ip_hash')->nullable();
             $table->string('user_agent_hash')->nullable();
             $table->timestamps();

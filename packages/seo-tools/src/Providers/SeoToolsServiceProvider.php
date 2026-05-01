@@ -21,6 +21,7 @@ use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Events\PageDeleted;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Events\SiteCreated;
+use Capell\Core\Events\UrlVisitFailed;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
@@ -55,6 +56,7 @@ use Capell\SeoTools\Handlers\ClearCircuitBreakerHandler;
 use Capell\SeoTools\Http\Controllers\LlmsTxtController;
 use Capell\SeoTools\Listeners\LogAiGeneration;
 use Capell\SeoTools\Listeners\NotifyAiFailure;
+use Capell\SeoTools\Listeners\RecordBrokenLink;
 use Capell\SeoTools\Listeners\Sitemap\RegenerateSitemapsOnPageDeleted;
 use Capell\SeoTools\Listeners\Sitemap\RegenerateSitemapsOnPageSaved;
 use Capell\SeoTools\Listeners\Sitemap\RegenerateSitemapsOnSiteCreated;
@@ -63,6 +65,7 @@ use Capell\SeoTools\Livewire\Tools\SitemapTool;
 use Capell\SeoTools\Models\AiCreatorContext;
 use Capell\SeoTools\Models\AiCreatorSession;
 use Capell\SeoTools\Models\AIGenerationHistory;
+use Capell\SeoTools\Models\BrokenLink;
 use Capell\SeoTools\Policies\AiCreatorPolicy;
 use Capell\SeoTools\Settings\AssistantSettings;
 use Capell\SeoTools\Support\Admin\AiCreatorPageExtender;
@@ -218,6 +221,14 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             AiGenerationCompleted::class,
             LogAiGeneration::class,
         );
+
+        return $this;
+    }
+
+    protected function registerBrokenLinkEventListeners(): self
+    {
+        $events = $this->app->make(Dispatcher::class);
+        $events->listen(UrlVisitFailed::class, RecordBrokenLink::class);
 
         return $this;
     }
@@ -420,6 +431,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             ->registerSiteSchemaExtenders()
             ->registerAiServices()
             ->registerAiEventListeners()
+            ->registerBrokenLinkEventListeners()
             ->registerSettingsSchema()
             ->registerSitemapPageType()
             ->registerSitemapDefaultPage()
@@ -499,6 +511,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             AIGenerationHistory::class,
             AiCreatorContext::class,
             AiCreatorSession::class,
+            BrokenLink::class,
         ]);
     }
 }

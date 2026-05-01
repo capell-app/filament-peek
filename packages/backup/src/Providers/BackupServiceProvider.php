@@ -4,23 +4,33 @@ declare(strict_types=1);
 
 namespace Capell\Backup\Providers;
 
+use Capell\Admin\Contracts\Backup\PageExporter;
+use Capell\Admin\Filament\Resources\ImportSessions\ImportSessionResource;
+use Capell\Admin\Listeners\SendImportSessionNotifications;
+use Capell\Admin\Policies\ImportSessionPolicy;
+use Capell\Admin\Support\CapellAdminManager;
 use Capell\Backup\Contracts\BackupContextResolver;
 use Capell\Backup\Contracts\BackupRowContributor;
 use Capell\Backup\Contracts\NullBackupContextResolver;
 use Capell\Backup\Contracts\NullBackupRowContributor;
 use Capell\Backup\Contracts\NullPageCollisionDetector;
 use Capell\Backup\Contracts\PageCollisionDetector;
+use Capell\Backup\Events\ImportCompleted;
+use Capell\Backup\Events\ImportFailed;
 use Capell\Backup\Models\BackupRestore;
 use Capell\Backup\Models\ImportSession;
 use Capell\Backup\Services\Import\Resolvers\FingerprintMatchResolver;
 use Capell\Backup\Services\Import\Resolvers\KeyedMatchResolver;
 use Capell\Backup\Services\Import\Resolvers\MediaMatchResolver;
 use Capell\Backup\Services\Import\Resolvers\RelationMatchResolverRegistry;
+use Capell\Backup\Support\AdminPageExporter;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 
 class BackupServiceProvider extends AbstractPackageServiceProvider
@@ -66,5 +76,35 @@ class BackupServiceProvider extends AbstractPackageServiceProvider
                 return $registry;
             },
         );
+
+        if (interface_exists(PageExporter::class)) {
+            $this->app->singleton(PageExporter::class, AdminPageExporter::class);
+        }
+
+        if (class_exists(SendImportSessionNotifications::class)) {
+            Event::listen(ImportCompleted::class, [SendImportSessionNotifications::class, 'handleCompleted']);
+            Event::listen(ImportFailed::class, [SendImportSessionNotifications::class, 'handleFailed']);
+        }
+
+        if (class_exists(ImportSessionPolicy::class)) {
+            Gate::policy(ImportSession::class, ImportSessionPolicy::class);
+        }
+
+        if (
+            class_exists(CapellAdminManager::class)
+            && class_exists(ImportSessionResource::class)
+        ) {
+            $registerImportSessionResource = static function (CapellAdminManager $capellAdminManager): void {
+                if (! $capellAdminManager->hasResource('ImportSession')) {
+                    $capellAdminManager->registerResource('ImportSession', ImportSessionResource::class);
+                }
+            };
+
+            $this->app->afterResolving(CapellAdminManager::class, $registerImportSessionResource);
+
+            if ($this->app->resolved(CapellAdminManager::class)) {
+                $registerImportSessionResource($this->app->make(CapellAdminManager::class));
+            }
+        }
     }
 }

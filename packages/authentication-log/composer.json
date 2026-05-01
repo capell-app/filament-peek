@@ -27,6 +27,9 @@
             "providers": [
                 "Capell\\AuthenticationLog\\Providers\\AuthenticationLogServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     },
     "config": {

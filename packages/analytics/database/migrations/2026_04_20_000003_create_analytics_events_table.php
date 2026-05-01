@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('url', 512)->index();
             $table->string('path', 512)->index();
             $table->string('title')->nullable();
-            $table->timestamp('occurred_at')->index();
+            $table->dateTime('occurred_at')->index();
             $table->unsignedInteger('sequence');
             $table->string('event_name')->nullable()->index();
             $table->string('label')->nullable();

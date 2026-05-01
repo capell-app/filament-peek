@@ -30,6 +30,9 @@
             "providers": [
                 "Capell\\FilamentPeek\\Providers\\FilamentPeekServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     },
     "config": {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 return new class extends Migration
@@ -17,6 +18,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('versions')) {
+            return;
+        }
+
         if (DB::table('versions')->where('is_live', true)->exists()) {
             return;
         }
@@ -41,6 +46,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasTable('versions')) {
+            return;
+        }
+
         DB::table('versions')
             ->where('name', 'Bootstrap')
             ->where('number', 1)

@@ -18,6 +18,9 @@
             "providers": [
                 "Capell\\DefaultTheme\\Providers\\DefaultThemeServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     }
 }

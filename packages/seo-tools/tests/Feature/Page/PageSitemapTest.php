@@ -67,6 +67,24 @@ test('sitemap html page', function (): void {
         );
 });
 
+test('sitemap page creator uses fallback labels when translator returns keys', function (): void {
+    $languages = Language::factory()->count(1)->create();
+    $site = Site::factory()->withTranslations($languages)->create();
+
+    app()->instance('translator', new class
+    {
+        public function get(string $key): string
+        {
+            return $key;
+        }
+    });
+
+    $sitemapPage = resolve(SitemapPageCreator::class)->createSitemapPage($site, $languages);
+
+    expect($sitemapPage->name)->toBe('Sitemap')
+        ->and($sitemapPage->translation->title)->toBe('Sitemap');
+});
+
 test('sitemap xml page', function (): void {
     config(['capell.sitemap.disk' => 'array', 'capell.sitemap.directory' => 'sitemaps']);
     Storage::fake('array');

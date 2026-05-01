@@ -31,6 +31,9 @@
             "providers": [
                 "Capell\\Themes\\Admin\\ThemesAdminServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     }
 }

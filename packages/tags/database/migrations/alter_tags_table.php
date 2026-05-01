@@ -12,15 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tags', function (Blueprint $table): void {
-            $table->unsignedBigInteger('workspace_id')->default(0)->after('id')->index();
-            $table->boolean('featured')->index()->default(0);
-            $table->boolean('status')->index()->default(1);
-            $table->foreignId('site_id')->nullable()->constrained()->nullOnDelete();
+            if (! Schema::hasColumn('tags', 'workspace_id')) {
+                $table->unsignedBigInteger('workspace_id')->default(0)->after('id')->index();
+            }
+
+            if (! Schema::hasColumn('tags', 'featured')) {
+                $table->boolean('featured')->index()->default(0);
+            }
+
+            if (! Schema::hasColumn('tags', 'status')) {
+                $table->boolean('status')->index()->default(1);
+            }
+
+            if (! Schema::hasColumn('tags', 'site_id')) {
+                $table->foreignId('site_id')->nullable()->constrained()->nullOnDelete();
+            }
         });
 
         if (Schema::hasTable('taggables')) {
             Schema::table('taggables', function (Blueprint $table): void {
-                $table->unsignedBigInteger('workspace_id')->default(0)->after('tag_id')->index();
+                if (! Schema::hasColumn('taggables', 'workspace_id')) {
+                    $table->unsignedBigInteger('workspace_id')->default(0)->after('tag_id')->index();
+                }
             });
         }
     }

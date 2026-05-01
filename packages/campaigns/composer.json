@@ -19,12 +19,12 @@
     ],
     "require": {
         "php": "^8.2",
-        "capell-app/admin": "^2.0",
-        "capell-app/analytics": "^2.0",
-        "capell-app/core": "^2.0",
-        "capell-app/forms": "^2.0",
-        "capell-app/frontend": "^2.0",
-        "capell-app/mosaic": "^2.0",
+        "capell-app/admin": "^4.0",
+        "capell-app/analytics": "^4.0",
+        "capell-app/core": "^4.0",
+        "capell-app/forms": "^4.0",
+        "capell-app/frontend": "^4.0",
+        "capell-app/mosaic": "^4.0",
         "lorisleiva/laravel-actions": "^2.8",
         "spatie/laravel-data": "^4.5",
         "spatie/laravel-package-tools": "^1.14.1"
@@ -45,6 +45,9 @@
             "providers": [
                 "Capell\\Campaigns\\Providers\\CampaignsServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     },
     "config": {

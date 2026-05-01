@@ -33,6 +33,9 @@
             "providers": [
                 "Capell\\SiteSearch\\Providers\\SiteSearchServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     },
     "config": {

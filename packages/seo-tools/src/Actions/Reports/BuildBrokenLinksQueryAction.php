@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\SeoTools\Actions\Reports;
 
 use Capell\Admin\Support\SiteScope;
-use Capell\Core\Models\BrokenLink;
+use Capell\SeoTools\Models\BrokenLink;
 use Illuminate\Database\Eloquent\Builder;
 use Lorisleiva\Actions\Concerns\AsAction;
 

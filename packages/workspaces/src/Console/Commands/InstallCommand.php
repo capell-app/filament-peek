@@ -29,13 +29,13 @@ class InstallCommand extends Command
     private function publishMigrations(): bool
     {
         $migrations = [
-            __DIR__ . '/../../../database/migrations/seed_bootstrap_workspace_version.php',
             __DIR__ . '/../../../database/migrations/create_workspaces_table.php',
             __DIR__ . '/../../../database/migrations/create_workspace_approvals_table.php',
             __DIR__ . '/../../../database/migrations/create_workspace_review_assignments_table.php',
             __DIR__ . '/../../../database/migrations/create_workspace_field_comments_table.php',
             __DIR__ . '/../../../database/migrations/create_preview_links_table.php',
             __DIR__ . '/../../../database/migrations/create_versions_table.php',
+            __DIR__ . '/../../../database/migrations/seed_bootstrap_workspace_version.php',
             __DIR__ . '/../../../database/migrations/z_add_workspace_columns_to_core_tables.php',
             __DIR__ . '/../../../database/migrations/z_add_workspace_id_to_import_sessions_table.php',
             __DIR__ . '/../../../database/migrations/z_add_workspace_id_to_external_tables.php',

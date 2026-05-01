@@ -34,6 +34,9 @@
             "providers": [
                 "Capell\\Mosaic\\Providers\\MosaicServiceProvider"
             ]
+        },
+        "branch-alias": {
+            "dev-main": "4.x-dev"
         }
     },
     "config": {

@@ -115,7 +115,7 @@ Conventions:
 
 ### Services
 
-- HtmlMinifier — Unit; minify while preserving pre/code; edge cases.
+- HtmlMinifier (`capell-app/html-minify`) — Unit; minify while preserving pre/code; edge cases.
 - DatasetPublisher — Integration; writes files; File::spy; permission error.
 - LanguageFlagsService — Unit; ISO code → asset path; edge: unsupported code.
 - PageCacheService — Integration; exists, lastModified, path, delete, root, directories, allDirectories, files, allFiles, deleteDirectory; failure paths wrap exceptions with actionable messages.
@@ -156,7 +156,7 @@ Conventions:
 
 ## Phased Implementation (before running tests)
 
-Phase 1: Core (PageCacheService, SignedUrlService, HtmlMinifier, SitemapGenerator); Admin (SlugGenerator, DeletePageCacheAction, AI/AiRateLimiter, AI/SuggestPageTitlesAction).
+Phase 1: Core (PageCacheService, SignedUrlService, SitemapGenerator); HTML Minify (HtmlMinifier); Admin (SlugGenerator, DeletePageCacheAction, AI/AiRateLimiter, AI/SuggestPageTitlesAction).
 
 Phase 2: Navigation/Pages/Types/Themes/Languages clusters in both packages.
 

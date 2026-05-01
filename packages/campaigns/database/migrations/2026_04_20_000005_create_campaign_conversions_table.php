@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('site_id')->nullable()->index();
             $table->unsignedBigInteger('language_id')->nullable()->index();
             $table->json('attribution')->nullable();
-            $table->timestamp('converted_at')->index();
+            $table->dateTime('converted_at')->index();
             $table->timestamps();
             $table->unique([
                 'campaign_conversion_goal_id',

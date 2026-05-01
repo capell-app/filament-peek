@@ -108,6 +108,7 @@
         "capell-app/backup": "^2.0",
         "capell-app/core": "^2.0",
         "capell-app/frontend": "^2.0",
+        "capell-app/html-minify": "^2.0",
         "capell-app/installer": "^2.0",
         "capell-app/plugins": "^2.0",
         "cms-multi/filament-clear-cache": "^3.0",
@@ -145,8 +146,10 @@
         "symplify/monorepo-builder": "^10.3.3",
         "tanmuhittin/laravel-google-translate": "^2.4",
         "tapp/filament-authentication-log": "^4.0|^5.0",
-        "torann/geoip": "^3.0",
-        "voku/html-min": "^4.5"
+        "torann/geoip": "^3.0"
+    },
+    "conflict": {
+        "firebase/php-jwt": "<7.0.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "*",
@@ -195,6 +198,7 @@
             "Capell\\FilamentPeek\\": "packages/filament-peek/src",
             "Capell\\Forms\\": "packages/forms/src",
             "Capell\\Forms\\Database\\Factories\\": "packages/forms/database/factories",
+            "Capell\\HtmlMinify\\": "packages/html-minify/src",
             "Capell\\MediaCurator\\": "packages/media-curator/src",
             "Capell\\Mosaic\\": "packages/mosaic/src",
             "Capell\\Mosaic\\Database\\Factories\\": "packages/mosaic/database/factories",
@@ -228,6 +232,7 @@
             "Capell\\DeveloperTools\\Tests\\": "packages/developer-tools/tests",
             "Capell\\FilamentPeek\\Tests\\": "packages/filament-peek/tests",
             "Capell\\Forms\\Tests\\": "packages/forms/tests",
+            "Capell\\HtmlMinify\\Tests\\": "packages/html-minify/tests",
             "Capell\\MediaCurator\\Tests\\": "packages/media-curator/tests",
             "Capell\\Mosaic\\Tests\\": "packages/mosaic/tests",
             "Capell\\Navigation\\Tests\\": "packages/navigation/tests",

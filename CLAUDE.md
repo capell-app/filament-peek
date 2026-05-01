@@ -14,25 +14,28 @@ Optional add-on packages for the Capell CMS. Companion to `capell-app/capell` (`
 ## Architecture: Actions + Data
 
 **All domain logic in Actions** (`packages/{pkg}/src/Actions/`, suffix `VerbNounAction`):
+
 - Single `handle()` method. Extend `Lorisleiva\Actions\Action` or use `AsObject`.
 - Components, resources, commands call `::run()` — no logic inside them.
 
 **Structured data across boundaries** (`packages/{pkg}/src/Data/`, suffix `Data`):
+
 - Inbound: `Data::from($request)`. Outbound: form state, wire-props, view models.
 - Model JSON columns cast via `AsData` / `AsDataCollection`. No bare arrays across layers.
 
 **Enums** (`packages/{pkg}/src/Enums/`):
+
 - Backed enums for persisted values. Implement `HasLabel` for Filament options — never inline arrays.
 - PascalCase multi-word cases; UPPER_SNAKE_CASE for status flags only.
 
 ## Packages
 
-| Package | Namespace | Depends on |
-|---------|-----------|-----------|
-| `mosaic` | `Capell\Mosaic` | core, admin, frontend |
-| `blog` | `Capell\Blog` | core, admin, frontend, **mosaic** |
-| `address` | `Capell\Address` | core, admin |
-| `assistant` | `Capell\Assistant` | core, admin |
+| Package     | Namespace          | Depends on                        |
+| ----------- | ------------------ | --------------------------------- |
+| `mosaic`    | `Capell\Mosaic`    | core, admin, frontend             |
+| `blog`      | `Capell\Blog`      | core, admin, frontend, **mosaic** |
+| `address`   | `Capell\Address`   | core, admin                       |
+| `assistant` | `Capell\Assistant` | core, admin                       |
 
 **Blog requires Mosaic — install Mosaic first.**
 
@@ -44,13 +47,13 @@ Optional add-on packages for the Capell CMS. Companion to `capell-app/capell` (`
 
 ## Extension points (use these, don't bypass them)
 
-| Need | How |
-|------|-----|
-| Register type / schema / widget | `CapellCore::registerPageType\|registerSchema\|registerWidget()` in `ServiceProvider::register()` |
-| Inject form fields | Implement `PageSchemaExtender`, tag with `PageSchemaExtender::TAG` |
-| Lifecycle events / validation gates | `CapellAdmin::register()` / `subscribe()` / `ValidationSubscriber` |
-| Inject HTML into Blade | `RenderHookRegistry::register(RenderHookLocation::X, ...)` |
-| Package settings | `SettingsSchemaRegistry::register()` + `registerSettingsClass()` |
+| Need                                | How                                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Register type / schema / widget     | `CapellCore::registerPageType\|registerSchema\|registerWidget()` in `ServiceProvider::register()` |
+| Inject form fields                  | Implement `PageSchemaExtender`, tag with `PageSchemaExtender::TAG`                                |
+| Lifecycle events / validation gates | `CapellAdmin::register()` / `subscribe()` / `ValidationSubscriber`                                |
+| Inject HTML into Blade              | `RenderHookRegistry::register(RenderHookLocation::X, ...)`                                        |
+| Package settings                    | `SettingsSchemaRegistry::register()` + `registerSettingsClass()`                                  |
 
 Auto-discovered: types in `src/Types/`, schemas in `src/Schemas/`, widgets in `src/Widgets/`.
 
@@ -70,17 +73,21 @@ Any model in draft/publish must implement `Capell\Core\Contracts\Draftable` and 
 - Run single package: `vendor/bin/pest packages/mosaic/tests`
 - Minimum 80% coverage. Full suite: `composer test`.
 
+## Composer local overlay
+
+- Common issue: if a package test case class is not found, check `composer.local.json` as well as `composer.json`. The local overlay often needs matching `autoload` and `autoload-dev` PSR-4 entries for package namespaces, then regenerate with `COMPOSER=composer.local.json composer dump-autoload --no-scripts`.
+
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `composer test` | Pest tests (parallel) |
-| `composer preflight` | Rector + Pint + PHPStan |
-| `composer lint` | Pint only |
-| `composer analyze` | PHPStan only |
-| `composer prepare` | Seed demo workbench |
-| `composer serve` | Build + serve localhost:8000 |
-| `vendor/bin/pest packages/X/tests` | Single package tests |
+| Command                            | Purpose                      |
+| ---------------------------------- | ---------------------------- |
+| `composer test`                    | Pest tests (parallel)        |
+| `composer preflight`               | Rector + Pint + PHPStan      |
+| `composer lint`                    | Pint only                    |
+| `composer analyze`                 | PHPStan only                 |
+| `composer prepare`                 | Seed demo workbench          |
+| `composer serve`                   | Build + serve localhost:8000 |
+| `vendor/bin/pest packages/X/tests` | Single package tests         |
 
 ## Git
 
