@@ -156,16 +156,46 @@ class TailwindAssetsGenerator
         $metaOutputCss = $theme->getMeta('output_css');
 
         if (is_string($metaOutputCss) && $metaOutputCss !== '') {
-            return Path::isAbsolute($metaOutputCss)
-                ? $metaOutputCss
-                : $this->resolveAppRelativePath($metaOutputCss);
+            $themeOutputPath = $this->validatedThemeOutputPath($metaOutputCss, $baseTargetPath, $theme);
+
+            if ($themeOutputPath !== null) {
+                return $themeOutputPath;
+            }
         }
 
+        return $this->derivedThemeOutputPath($theme, $baseTargetPath);
+    }
+
+    private function derivedThemeOutputPath(Theme $theme, string $baseTargetPath): string
+    {
         $dir = dirname($baseTargetPath);
         $stem = pathinfo($baseTargetPath, PATHINFO_FILENAME);
         $extension = pathinfo($baseTargetPath, PATHINFO_EXTENSION);
 
         return $dir . '/' . $stem . '-' . $theme->key . ($extension !== '' ? '.' . $extension : '');
+    }
+
+    private function validatedThemeOutputPath(string $path, string $baseTargetPath, Theme $theme): ?string
+    {
+        $approvedDirectory = $this->normalizeFilesystemPath(dirname($baseTargetPath));
+        $candidatePath = Path::isAbsolute($path)
+            ? $path
+            : $this->resolveAppRelativePath($path);
+        $candidatePath = $this->normalizeFilesystemPath($candidatePath);
+
+        if (strtolower(pathinfo($candidatePath, PATHINFO_EXTENSION)) !== 'css') {
+            $this->logInvalidThemeOutputPath($theme, $path, 'Output path must use a .css extension.');
+
+            return null;
+        }
+
+        if (! $this->isPathInsideDirectory($candidatePath, $approvedDirectory)) {
+            $this->logInvalidThemeOutputPath($theme, $path, 'Output path must stay inside the configured Tailwind CSS directory.');
+
+            return null;
+        }
+
+        return $candidatePath;
     }
 
     private function registerDefaults(TailwindAssetsRegistry $registry, string $targetPath): void
@@ -245,7 +275,7 @@ class TailwindAssetsGenerator
                     return;
                 }
 
-                $registry->registerThemeColor($colorName, $colorValue, $this->originForAsset($asset));
+                $this->registerThemeColor($registry, $colorName, $colorValue, $this->originForAsset($asset));
             });
     }
 
@@ -307,6 +337,15 @@ class TailwindAssetsGenerator
     private function renderThemeBlock(Collection $colors): string
     {
         $inner = $colors
+            ->filter(function (string $value, string $name): bool {
+                if ($this->isSafeThemeColor($name, $value)) {
+                    return true;
+                }
+
+                $this->logInvalidThemeColor($name, $value, 'render');
+
+                return false;
+            })
             ->map(fn (string $value, string $name): string => sprintf('  --color-%s: %s;', $name, $value))
             ->values()
             ->implode(PHP_EOL);
@@ -331,7 +370,13 @@ class TailwindAssetsGenerator
                 continue;
             }
 
-            $colors[$name] = $value;
+            if (! $this->isSafeThemeColor($name, $value)) {
+                $this->logInvalidThemeColor($name, $value, 'theme:' . $theme->key);
+
+                continue;
+            }
+
+            $colors[$name] = trim($value);
         }
 
         if ($colors === []) {
@@ -489,5 +534,87 @@ class TailwindAssetsGenerator
         }
 
         return $this->resolveAppRelativePath($relativePath);
+    }
+
+    private function registerThemeColor(TailwindAssetsRegistry $registry, string $name, string $value, string $origin): void
+    {
+        if (! $this->isSafeThemeColor($name, $value)) {
+            $this->logInvalidThemeColor($name, $value, $origin);
+
+            return;
+        }
+
+        $registry->registerThemeColor(trim($name), trim($value), $origin);
+    }
+
+    private function isSafeThemeColor(string $name, string $value): bool
+    {
+        $name = trim($name);
+        $value = trim($value);
+
+        if ($name === '' || $value === '') {
+            return false;
+        }
+
+        if (preg_match('/^[A-Za-z0-9][A-Za-z0-9_-]*$/', $name) !== 1) {
+            return false;
+        }
+
+        $customPropertyName = '--color-' . $name;
+        if (preg_match('/^--[A-Za-z_][A-Za-z0-9_-]*$/', $customPropertyName) !== 1) {
+            return false;
+        }
+
+        if (preg_match('/[\x00-\x1F\x7F;{}<>]/', $value) === 1) {
+            return false;
+        }
+
+        if (preg_match('/^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/', $value) === 1) {
+            return true;
+        }
+
+        if (preg_match('/^(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([A-Za-z0-9\s.,%\/+\-]*\)$/i', $value) === 1) {
+            return true;
+        }
+
+        return preg_match('/^(?:black|white|transparent|currentColor|red|green|blue|yellow|orange|purple|pink|gray|grey|indigo|violet|cyan|teal|lime|navy|silver|maroon|olive|aqua|fuchsia)$/i', $value) === 1;
+    }
+
+    private function normalizeFilesystemPath(string $path): string
+    {
+        return rtrim(Path::canonicalize(str_replace('\\', '/', $path)), '/');
+    }
+
+    private function isPathInsideDirectory(string $path, string $directory): bool
+    {
+        $normalizedDirectory = rtrim($directory, '/') . '/';
+
+        return str_starts_with($path, $normalizedDirectory);
+    }
+
+    private function logInvalidThemeOutputPath(Theme $theme, string $path, string $reason): void
+    {
+        if (! app()->bound('log')) {
+            return;
+        }
+
+        Log::warning('Ignoring invalid theme Tailwind output path.', [
+            'theme' => $theme->key,
+            'path' => $path,
+            'reason' => $reason,
+        ]);
+    }
+
+    private function logInvalidThemeColor(string $name, string $value, string $origin): void
+    {
+        if (! app()->bound('log')) {
+            return;
+        }
+
+        Log::warning('Skipping invalid Tailwind theme color.', [
+            'name' => $name,
+            'value' => $value,
+            'origin' => $origin,
+        ]);
     }
 }

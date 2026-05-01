@@ -15,6 +15,8 @@ trait ManagesWidgets
 {
     public function addWidgetToContainer(Widget $widget, string $containerKey): int
     {
+        $this->assertCanUpdateLayout();
+
         $occurrence = $this->getLastContainerWidgetOccurrence($containerKey, $widget->key) + 1;
 
         $this->containers[$containerKey]['widgets'][] = [
@@ -31,9 +33,36 @@ trait ManagesWidgets
         return $index;
     }
 
+    public function addWidgetToContainerAtPosition(Widget $widget, string $containerKey, ?int $position = null): int
+    {
+        $widgetIndex = $this->addWidgetToContainer($widget, $containerKey);
+
+        if ($position === null || $position >= $widgetIndex) {
+            return $widgetIndex;
+        }
+
+        $position = max(0, $position);
+
+        $this->insertContainerWidgetAtPosition($containerKey, $widgetIndex, $position);
+
+        return $position;
+    }
+
     public function reorderWidgets(string $containerKey, string $containerWidgetIndex, int $widgetIndex): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
+
+        if (str_starts_with($containerWidgetIndex, 'palette.')) {
+            $this->addPaletteWidgetToContainer(
+                widgetId: (int) str($containerWidgetIndex)->after('palette.')->toString(),
+                containerKey: $containerKey,
+                position: $widgetIndex,
+            );
+
+            return;
+        }
 
         [$originalContainer, $originalIndex] = explode('.', $containerWidgetIndex);
 
@@ -46,6 +75,8 @@ trait ManagesWidgets
 
     protected function duplicateWidget(string $containerKey, int $originalIndex, bool $withAssets = true): void
     {
+        $this->assertCanUpdateLayout();
+
         $this->ensureLoaded();
 
         $containerWidget = $this->containers[$containerKey]['widgets'][$originalIndex];
@@ -66,6 +97,8 @@ trait ManagesWidgets
 
     protected function removeWidget(string $containerKey, int $widgetIndex): void
     {
+        $this->assertCanUpdateLayout();
+
         if (isset($this->containers[$containerKey]['widgets'][$widgetIndex])) {
             unset($this->containers[$containerKey]['widgets'][$widgetIndex]);
             $this->containers[$containerKey]['widgets'] = array_values($this->containers[$containerKey]['widgets']);
@@ -127,6 +160,42 @@ trait ManagesWidgets
         $this->originalAssets[$containerKey][$widgetIndex] = $originalContainerWidgetAssets;
 
         $this->updatePageAssets($containerKey, $widgetIndex);
+    }
+
+    protected function insertContainerWidgetAtPosition(string $containerKey, int $originalIndex, int $position): void
+    {
+        if (isset($this->containers[$containerKey]['widgets'][$originalIndex])) {
+            $this->containers[$containerKey]['widgets'] = $this->insertArrayItemAtPosition(
+                $this->containers[$containerKey]['widgets'],
+                $originalIndex,
+                $position,
+            );
+        }
+
+        foreach (['containerWidgets', 'assets', 'originalAssets', 'selectedRecords'] as $property) {
+            if (! isset($this->{$property}[$containerKey][$originalIndex])) {
+                continue;
+            }
+
+            $this->{$property}[$containerKey] = $this->insertArrayItemAtPosition(
+                $this->{$property}[$containerKey],
+                $originalIndex,
+                $position,
+            );
+        }
+
+        $this->updatePageAssets($containerKey, $position);
+    }
+
+    protected function insertArrayItemAtPosition(array $items, int $originalIndex, int $position): array
+    {
+        $item = $items[$originalIndex];
+
+        unset($items[$originalIndex]);
+
+        $items = array_values($items);
+
+        return array_merge(array_slice($items, 0, $position), [$item], array_slice($items, $position));
     }
 
     protected function editLayoutWidget(string $containerKey, int $widgetIndex, array $data): void
@@ -318,12 +387,12 @@ trait ManagesWidgets
             );
     }
 
-    protected function preloadAllWidgets(bool $withAssets = true): ?array
+    protected function preloadAllWidgets(bool $withAssets = true): array
     {
         $widgetKeys = $this->getContainerWidgetKeys();
 
         if ($widgetKeys === []) {
-            return null;
+            return [];
         }
 
         $allWidgetAssets = $this->getWidgetQuery()

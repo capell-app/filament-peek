@@ -24,7 +24,8 @@ final class TrafficChartWidgetAbstract extends Widget implements CapellWidgetCon
 
     protected string $view = 'capell-blog::filament.widgets.traffic-chart';
 
-    protected int|string|array $columnSpan = 'full';
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full'];
 
     /**
      * @return array<string, mixed>

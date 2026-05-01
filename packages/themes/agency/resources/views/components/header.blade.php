@@ -9,6 +9,8 @@
     ],
 ])
 
+{!! app(\Capell\Frontend\Support\Render\RenderHookRegistry::class)->renderAll(\Capell\Frontend\Enums\RenderHookLocation::HeaderBefore) !!}
+
 <header
     role="banner"
     class="bg-[var(--color-bg)]/85 sticky top-0 z-40 border-b border-[var(--color-border)] backdrop-blur"
@@ -40,6 +42,7 @@
 
         <div class="flex items-center gap-3">
             {{ $slot ?? '' }}
+            {!! app(\Capell\Frontend\Support\Render\RenderHookRegistry::class)->renderAll(\Capell\Frontend\Enums\RenderHookLocation::HeaderAfter) !!}
             <x-agency::dark-mode-toggle />
             <x-agency::language-switcher />
             <a

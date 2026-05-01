@@ -122,12 +122,12 @@
             :$siteLanguages
             class="sub-footer border-t border-white/5"
         >
-            {!!
+            {{
                 Lang::get($footerCopy, [
                     'name' => $site->name,
                     'year' => date('Y'),
                 ])
-            !!}
+            }}
         </x-capell::footer.sub-footer>
     @endif
 </footer>

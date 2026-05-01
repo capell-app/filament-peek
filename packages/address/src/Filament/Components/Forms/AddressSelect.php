@@ -60,8 +60,8 @@ class AddressSelect extends Select
                     $model = Address::class;
 
                     return $model::query()
-                        ->where(fn (Builder $query): Builder => $query->where('address_line_1', 'like', sprintf('%%%s%%', $search))
-                            ->orWhere('address_line_2', 'like', sprintf('%%%s%%', $search))
+                        ->where(fn (Builder $query): Builder => $query->where('line1', 'like', sprintf('%%%s%%', $search))
+                            ->orWhere('line2', 'like', sprintf('%%%s%%', $search))
                             ->orWhere('city', 'like', sprintf('%%%s%%', $search))
                             ->orWhere('state', 'like', sprintf('%%%s%%', $search))
                             ->orWhere('postal_code', 'like', sprintf('%%%s%%', $search))

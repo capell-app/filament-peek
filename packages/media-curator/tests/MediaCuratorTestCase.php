@@ -13,6 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class MediaCuratorTestCase extends OrchestraTestCase
 {
@@ -39,6 +40,7 @@ class MediaCuratorTestCase extends OrchestraTestCase
 
         return [
             LivewireServiceProvider::class,
+            MediaLibraryServiceProvider::class,
             CuratorServiceProvider::class,
             CapellMediaCuratorServiceProvider::class,
         ];

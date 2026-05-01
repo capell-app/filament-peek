@@ -32,7 +32,7 @@ $page = Frontend::page();
                         'dark:prose-invert' => $theme->withDarkMode,
                     ])
                 >
-                    {!! $author->bio !!}
+                    {!! nl2br(e($author->bio)) !!}
                 </div>
             @endif
         </div>

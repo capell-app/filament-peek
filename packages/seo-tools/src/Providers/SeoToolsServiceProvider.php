@@ -43,7 +43,11 @@ use Capell\SeoTools\Filament\Extenders\Site\SiteDetailsMetaExtender;
 use Capell\SeoTools\Filament\Extenders\Site\SitemapSiteHeaderActionExtender;
 use Capell\SeoTools\Filament\Extenders\Site\SitemapSiteRecordActionExtender;
 use Capell\SeoTools\Filament\Extenders\Site\SiteTranslationMetaExtender;
+use Capell\SeoTools\Filament\Pages\BrokenLinksPage;
+use Capell\SeoTools\Filament\Pages\NotFoundUrlsPage;
+use Capell\SeoTools\Filament\Pages\SEOAuditPage;
 use Capell\SeoTools\Filament\Pages\SitemapPage;
+use Capell\SeoTools\Filament\Pages\TranslationCoveragePage;
 use Capell\SeoTools\Filament\Settings\AssistantSettingsSchema;
 use Capell\SeoTools\Filament\Settings\SeoSettingsSchema;
 use Capell\SeoTools\Filament\Settings\StructuredDataSettingsSchema;
@@ -304,6 +308,10 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
     {
         /** @var CapellAdminManager $adminManager */
         $adminManager = $this->app->make(CapellAdminManager::class);
+        $adminManager->registerPage(NotFoundUrlsPage::class);
+        $adminManager->registerPage(BrokenLinksPage::class);
+        $adminManager->registerPage(SEOAuditPage::class);
+        $adminManager->registerPage(TranslationCoveragePage::class);
         $adminManager->registerPage(SitemapPage::class);
 
         return $this;

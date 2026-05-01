@@ -28,7 +28,6 @@
             method="{{ strtoupper($method) }}"
             class="space-y-6"
             aria-describedby="contact-title"
-            novalidate
         >
             @if (function_exists('csrf_field'))
                 {!! csrf_field() !!}

@@ -10,15 +10,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (! Schema::hasTable('authentication_log')) {
+        $tableName = config('authentication-log.table_name', 'authentication_log');
+
+        if (! Schema::hasTable($tableName)) {
             return;
         }
 
-        if (Schema::hasIndex('authentication_log', 'authenticatable_login_at_index')) {
+        if (Schema::hasIndex($tableName, 'authenticatable_login_at_index')) {
             return;
         }
 
-        Schema::table('authentication_log', function (Blueprint $table): void {
+        Schema::table($tableName, function (Blueprint $table): void {
             $table->index(
                 ['authenticatable_type', 'authenticatable_id', 'login_at'],
                 'authenticatable_login_at_index',
@@ -28,15 +30,17 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (! Schema::hasTable('authentication_log')) {
+        $tableName = config('authentication-log.table_name', 'authentication_log');
+
+        if (! Schema::hasTable($tableName)) {
             return;
         }
 
-        if (! Schema::hasIndex('authentication_log', 'authenticatable_login_at_index')) {
+        if (! Schema::hasIndex($tableName, 'authenticatable_login_at_index')) {
             return;
         }
 
-        Schema::table('authentication_log', function (Blueprint $table): void {
+        Schema::table($tableName, function (Blueprint $table): void {
             $table->dropIndex('authenticatable_login_at_index');
         });
     }

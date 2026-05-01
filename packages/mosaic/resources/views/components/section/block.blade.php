@@ -38,7 +38,7 @@
     <h2 class="space-y-8">
         @if ($summary)
             <span class="mb-1 block text-2xl font-bold tracking-tight">
-                {!! $summary !!}
+                {{ $summary }}
             </span>
         @endif
 

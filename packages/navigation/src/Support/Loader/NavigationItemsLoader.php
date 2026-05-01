@@ -12,7 +12,6 @@ use Capell\Core\Models\SiteDomain;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Capell\Navigation\Data\NavigationItemData;
 use Capell\Navigation\Enums\NavigationItemType;
-use Capell\Navigation\Exceptions\NavigationItemPageNotFoundException;
 use Capell\Navigation\Models\Navigation;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Model;
@@ -61,7 +60,7 @@ class NavigationItemsLoader
 
             switch ($item->type) {
                 case NavigationItemType::Link:
-                    if (! isset($item->data['url'])) {
+                    if (! isset($item->data['url']) || $item->data['url'] === '') {
                         continue 2;
                     }
 
@@ -123,10 +122,6 @@ class NavigationItemsLoader
 
         // Cast to Illuminate\Support\Collection explicitly
         $pageableIdsByType = $this->extractMenuItemsPagesByType(new Collection($items->all()));
-
-        if ($pageableIdsByType === []) {
-            return collect();
-        }
 
         $pagesByMorphKey = $this->getPagesByMorphKey($pageableIdsByType);
 
@@ -197,7 +192,7 @@ class NavigationItemsLoader
                 ]);
 
                 if ($pageableReference === null) {
-                    throw new NavigationItemPageNotFoundException(sprintf("Unable to find Page '%s' for '%s' Navigation", 'unknown', $navigation->key));
+                    return;
                 }
 
                 $lookupKey = $this->buildMorphLookupKey(
@@ -209,7 +204,7 @@ class NavigationItemsLoader
                 $page = $pagesByMorphKey[$lookupKey] ?? null;
 
                 if (! $page instanceof Pageable) {
-                    throw new NavigationItemPageNotFoundException(sprintf("Unable to find Page '%s' for '%s' Navigation", $item->data['pageable_id'] ?? 'unknown', $navigation->key));
+                    return;
                 }
 
                 if (blank($item->label)) {
@@ -341,11 +336,16 @@ class NavigationItemsLoader
             /** @var class-string<Model&Pageable> $modelClass */
             $model = new $modelClass;
 
-            $pages = $modelClass::query()
+            $query = $modelClass::query()
                 ->with(['translation', 'pageUrl'])
                 ->whereIn($model->getKeyName(), $pageableIds)
-                ->orderBy($model->getKeyName())
-                ->get();
+                ->orderBy($model->getKeyName());
+
+            if (method_exists($model, 'site')) {
+                $query->where('site_id', $this->site->getKey());
+            }
+
+            $pages = $query->get();
 
             /** @var Model&Pageable $page */
             $cachedPages = [];

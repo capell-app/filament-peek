@@ -8,6 +8,7 @@ use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasConfiguredForm;
 use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
+use Capell\Admin\Support\SiteScope;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\CreateNavigation;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\EditNavigation;
 use Capell\Navigation\Filament\Resources\Navigations\Pages\ListNavigations;
@@ -18,6 +19,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -95,7 +97,7 @@ class NavigationResource extends Resource
     #[Override]
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
+        return static::applySiteScope(parent::getEloquentQuery())
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
@@ -114,7 +116,7 @@ class NavigationResource extends Resource
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getGlobalSearchEloquentQuery()
+        return static::applySiteScope(parent::getGlobalSearchEloquentQuery())
             ->with([
                 'site' => fn (BuilderContract $query): BuilderContract => $query->select(['id', 'name']),
             ])
@@ -146,5 +148,24 @@ class NavigationResource extends Resource
         $pages['edit'] = EditNavigation::route('/{record}/edit');
 
         return $pages;
+    }
+
+    private static function applySiteScope(Builder $query): Builder
+    {
+        $actor = auth()->user();
+
+        if (! $actor instanceof Authenticatable || SiteScope::isGlobalActor($actor) || ! method_exists($actor, 'getAssignedSiteIds')) {
+            return $query;
+        }
+
+        $assignedSiteIds = $actor->getAssignedSiteIds();
+
+        return $query->where(function (Builder $query) use ($assignedSiteIds): void {
+            $query->whereNull('site_id');
+
+            if ($assignedSiteIds->isNotEmpty()) {
+                $query->orWhereIn('site_id', $assignedSiteIds);
+            }
+        });
     }
 }

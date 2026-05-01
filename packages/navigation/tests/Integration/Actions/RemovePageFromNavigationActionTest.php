@@ -86,3 +86,45 @@ it('leaves other pages intact when removing one page', function (): void {
     expect($pageIds)->not()->toContain($pageToRemove->getKey())
         ->and($pageIds)->toContain($pageToKeep->getKey());
 });
+
+it('persists nested page removals', function (): void {
+    $site = Site::factory()->create();
+    $pageToRemove = Page::factory()->create(['site_id' => $site->id]);
+    $pageToKeep = Page::factory()->create(['site_id' => $site->id]);
+
+    $navigation = Navigation::factory()->create([
+        'site_id' => $site->id,
+        'items' => [
+            [
+                'label' => 'Parent',
+                'type' => NavigationItemType::Page->value,
+                'data' => [
+                    'site_id' => $site->id,
+                    'pageable_id' => $pageToKeep->getKey(),
+                    'pageable_type' => $pageToKeep->getMorphClass(),
+                ],
+                'children' => [
+                    [
+                        'label' => 'Nested',
+                        'type' => NavigationItemType::Page->value,
+                        'data' => [
+                            'site_id' => $site->id,
+                            'pageable_id' => $pageToRemove->getKey(),
+                            'pageable_type' => $pageToRemove->getMorphClass(),
+                        ],
+                        'children' => [],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    RemovePageFromNavigationAction::run($pageToRemove, $navigation);
+
+    $navigation->refresh();
+
+    $parentItem = $navigation->items->toCollection()->first();
+
+    expect($parentItem)->toBeInstanceOf(NavigationItemData::class)
+        ->and($parentItem->children->toCollection())->toHaveCount(0);
+});

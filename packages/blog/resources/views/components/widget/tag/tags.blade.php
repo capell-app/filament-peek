@@ -66,7 +66,7 @@
 
     @if ($tags->isEmpty())
         <x-capell::no-results>
-            {!! $widget->translation->getMeta('no_results', __('capell-blog::messages.no_tags_found')) !!}
+            {{ $widget->translation->getMeta('no_results', __('capell-blog::messages.no_tags_found')) }}
         </x-capell::no-results>
     @else
         <ul class="flex flex-wrap gap-2">

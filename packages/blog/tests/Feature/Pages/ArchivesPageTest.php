@@ -6,6 +6,7 @@ use Capell\Blog\Actions\GenerateArchiveUrl;
 use Capell\Blog\Data\ArchiveMonthData;
 use Capell\Blog\Models\Article;
 use Capell\Blog\Support\Creator\BlogCreator;
+use Capell\Blog\Support\Sitemap\ArchivesSitemap;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\SiteDomain;
 use Capell\Tests\Support\Concerns\TestingFrontend;
@@ -125,6 +126,25 @@ test('archive page list articles by month/year', function (): void {
             ),
         )
         ->assertDontSeeText('no-results');
+});
+
+test('archives sitemap formats archive page urls without wildcard', function (): void {
+    $blogCreator = resolve(BlogCreator::class);
+
+    $siteDomain = SiteDomain::factory()->default()->create();
+    $site = $siteDomain->site;
+
+    $blogPage = $blogCreator->createBlogPage($site);
+    $archivesPage = $blogCreator->createArchivesPage($blogPage);
+    $archivePage = $blogCreator->createArchivePage($archivesPage);
+    $archiveMonth = new ArchiveMonthData(year: 2025, month: 3);
+
+    $sitemap = new ArchivesSitemap($site, $siteDomain, $siteDomain->language);
+    $sitemapPage = $sitemap->format($archiveMonth, $archivePage);
+
+    expect($sitemapPage->url)
+        ->toBe(GenerateArchiveUrl::run($archivePage->pageUrl, $archiveMonth))
+        ->not->toContain('*');
 });
 
 test('error page when no articles found for given month/year', function (string $slug): void {

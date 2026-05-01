@@ -126,6 +126,29 @@ it('cloneForEdit stamps the shadow flag on the live row', function (): void {
         ->and($liveRow->shadowed_by_workspace_id)->toBe($workspace->id);
 });
 
+it('cloneForEdit refuses a live row already shadowed by another workspace', function (): void {
+    $ownerWorkspace = Workspace::factory()->create();
+    $otherWorkspace = Workspace::factory()->create();
+    $liveRow = makeLiveShadowableRow();
+
+    $liveRow->name = 'owner edit';
+    (new CopyOnWriteAction)->cloneForEdit($liveRow, $ownerWorkspace);
+
+    $freshLiveRow = ShadowableDraftableFixture::query()
+        ->withoutGlobalScopes()
+        ->findOrFail($liveRow->id);
+    $freshLiveRow->name = 'other edit';
+
+    expect(fn (): Model => (new CopyOnWriteAction)->cloneForEdit($freshLiveRow, $otherWorkspace))
+        ->toThrow(LogicException::class, 'already shadowed by workspace');
+
+    expect(ShadowableDraftableFixture::query()
+        ->withoutGlobalScopes()
+        ->where('workspace_id', $otherWorkspace->id)
+        ->where('uuid', $liveRow->uuid)
+        ->exists())->toBeFalse();
+});
+
 it('cloneForDelete persists the clone and soft-deletes it to mark a tombstone', function (): void {
     $workspace = Workspace::factory()->create();
     $liveRow = makeLiveShadowableRow();
@@ -143,6 +166,28 @@ it('cloneForDelete persists the clone and soft-deletes it to mark a tombstone', 
 
     expect($storedLive->trashed())->toBeFalse()
         ->and($storedLive->shadowed_by_workspace_id)->toBe($workspace->id);
+});
+
+it('cloneForDelete refuses a live row already shadowed by another workspace', function (): void {
+    $ownerWorkspace = Workspace::factory()->create();
+    $otherWorkspace = Workspace::factory()->create();
+    $liveRow = makeLiveShadowableRow();
+
+    $liveRow->name = 'owner edit';
+    (new CopyOnWriteAction)->cloneForEdit($liveRow, $ownerWorkspace);
+
+    $freshLiveRow = ShadowableDraftableFixture::query()
+        ->withoutGlobalScopes()
+        ->findOrFail($liveRow->id);
+
+    expect(fn (): Model => (new CopyOnWriteAction)->cloneForDelete($freshLiveRow, $otherWorkspace))
+        ->toThrow(LogicException::class, 'already shadowed by workspace');
+
+    expect(ShadowableDraftableFixture::query()
+        ->withoutGlobalScopes()
+        ->where('workspace_id', $otherWorkspace->id)
+        ->where('uuid', $liveRow->uuid)
+        ->exists())->toBeFalse();
 });
 
 it('cloneForDelete throws a LogicException for models that do not use SoftDeletes', function (): void {

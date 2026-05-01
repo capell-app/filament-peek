@@ -4,10 +4,20 @@ declare(strict_types=1);
 
 namespace Capell\AuthenticationLog\Observers;
 
-use Capell\AuthenticationLog\Models\AuthenticationLog;
+use Capell\AuthenticationLog\Actions\ShouldTrackUserIpAddressesAction;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog;
 
 class AuthenticationLogObserver
 {
+    public function saving(AuthenticationLog $authenticationLog): void
+    {
+        if (app(ShouldTrackUserIpAddressesAction::class)->handle()) {
+            return;
+        }
+
+        $authenticationLog->ip_address = null;
+    }
+
     public function creating(AuthenticationLog $authenticationLog): void
     {
         $authenticationLog->last_seen_at = $authenticationLog->login_at;

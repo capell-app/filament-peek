@@ -73,14 +73,7 @@ class PublishPageAction extends Action
             return false;
         }
 
-        if ($user->can('publish', $workspace)) {
-            return true;
-        }
-
-        // Fallback for Open/InReview states where the publish policy gate
-        // requires Approved status — a user that can update the page may
-        // still see the (disabled / approval-pending) button.
-        return $user->can('update', $record);
+        return $user->can('publish', $workspace);
     }
 
     private function shouldBeVisible(Pageable $record): bool

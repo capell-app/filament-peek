@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Capell\Blog\Actions\CreateBlogPagesAction;
 use Capell\Blog\Actions\InstallPackageAction;
 use Capell\Blog\Enums\BlogPageTypeEnum;
+use Capell\Core\Enums\LayoutEnum;
+use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Mosaic\Actions\InstallPackageAction as MosaicInstallPackageAction;
@@ -26,6 +28,13 @@ it('creates the blog, archives, archive, tags, and tag pages for the site', func
     $pageTypeKeys = $pages->pluck('type.key')->filter()->unique()->values()->all();
 
     expect($pageTypeKeys)->toContain(BlogPageTypeEnum::Blog->value);
+});
+
+it('adds the archives widget to the results layout sidebar during install', function (): void {
+    $resultsLayout = Layout::query()->firstWhere('key', LayoutEnum::Results->value);
+    $sidebarWidgetKeys = array_column($resultsLayout->containers['sidebar']['widgets'], 'widget_key');
+
+    expect($sidebarWidgetKeys)->toContain('archives');
 });
 
 it('creates an archive placeholder page under the archives parent', function (): void {

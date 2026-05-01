@@ -37,6 +37,8 @@ return [
     'below_content' => 'Below content',
     'pages_card' => 'Pages Card',
     'pages_tile' => 'Pages',
+    'section' => 'Section',
+    'sections' => 'Sections',
     'widget' => 'Widget',
     'page_model_helper' => 'The model to use for results',
     'widget_asset_page' => 'Page Asset',

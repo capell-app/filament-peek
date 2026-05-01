@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\MediaCurator;
 
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Contracts\Media\MediaFieldFactory;
 use Capell\MediaCurator\Console\MigrateSpatieToCuratorCommand;
 use Capell\MediaCurator\Filament\Components\CuratorMediaFieldFactory;
+use Capell\MediaCurator\Filament\Pages\MediaHealthPage;
 use Capell\MediaCurator\Models\CuratorMedia;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +27,10 @@ final class CapellMediaCuratorServiceProvider extends ServiceProvider
         config()->set('capell.media.model', CuratorMedia::class);
 
         $this->app->bind(MediaFieldFactory::class, CuratorMediaFieldFactory::class);
+
+        if (class_exists(CapellAdmin::class)) {
+            CapellAdmin::registerPage(MediaHealthPage::class);
+        }
     }
 
     public function boot(): void

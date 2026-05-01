@@ -14,7 +14,7 @@ test('exposes content view with payload', function (): void {
     $mail = new FormSubmissionNotification('Contact', ['name' => 'Ada'], 'example.com');
     $content = $mail->content();
 
-    expect($content->view)->toBe('capell::mail.form-submission');
+    expect($content->view)->toBe('capell-themes-core::mail.form-submission');
     expect($content->with)->toMatchArray([
         'formName' => 'Contact',
         'fields' => ['name' => 'Ada'],

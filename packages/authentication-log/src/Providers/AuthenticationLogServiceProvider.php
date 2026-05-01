@@ -7,12 +7,14 @@ namespace Capell\AuthenticationLog\Providers;
 use Capell\AuthenticationLog\Filament\Settings\AuthenticationLogSettingsSchema;
 use Capell\AuthenticationLog\Http\Middleware\UserActivityMiddleware;
 use Capell\AuthenticationLog\Models\AuthenticationLog;
+use Capell\AuthenticationLog\Observers\AuthenticationLogObserver;
 use Capell\AuthenticationLog\Settings\AuthenticationLogSettings;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog as VendorAuthenticationLog;
 use Spatie\LaravelPackageTools\Package;
 
 class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
@@ -29,6 +31,7 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
             ->hasTranslations()
             ->hasMigrations([
                 'create_authentication_log_table',
+                'add_v6_columns_to_authentication_log_table',
                 'add_last_seen_at_to_authentication_log_table',
                 'add_authenticatable_login_at_authentication_log_table',
             ]);
@@ -46,6 +49,11 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
             ->registerSettings()
             ->registerProtectedTables()
             ->registerMiddlewareAliases();
+    }
+
+    public function packageBooted(): void
+    {
+        VendorAuthenticationLog::observe(AuthenticationLogObserver::class);
     }
 
     private function registerPackageMetadata(): self

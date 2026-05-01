@@ -24,4 +24,27 @@ describe('address capell.json manifest', function (): void {
 
         expect($manifest['requires'])->toContain('capell-app/admin');
     });
+
+    it('keeps composer package requirements aligned with the manifest', function (): void {
+        $manifest = json_decode(
+            file_get_contents(__DIR__ . '/../../../../packages/address/capell.json'),
+            associative: true,
+        );
+        $composer = json_decode(
+            file_get_contents(__DIR__ . '/../../../../packages/address/composer.json'),
+            associative: true,
+        );
+
+        $composerPackageRequirements = array_values(array_filter(
+            array_keys($composer['require'] ?? []),
+            fn (string $packageName): bool => str_starts_with($packageName, 'capell-app/'),
+        ));
+
+        sort($composerPackageRequirements);
+
+        $manifestRequirements = $manifest['requires'] ?? [];
+        sort($manifestRequirements);
+
+        expect($composerPackageRequirements)->toBe($manifestRequirements);
+    });
 });

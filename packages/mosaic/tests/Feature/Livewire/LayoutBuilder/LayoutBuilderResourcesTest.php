@@ -100,8 +100,8 @@ test('can sync new section and page assets to widget in page layout context', fu
         ->create();
 
     // 5 to add
-    $sections = Section::factory()->count(2)->create();
-    $pages = Page::factory()->count(3)->create();
+    $sections = Section::factory()->site($page->site)->count(2)->create();
+    $pages = Page::factory()->site($page->site)->count(3)->create();
 
     // Excluded
     WidgetAsset::factory()
@@ -216,8 +216,8 @@ test('can sync new page-specific assets with pageable reference', function (): v
 
     $widget = Widget::query()->firstWhere('key', $widgetKey);
 
-    $sections = Section::factory()->count(2)->create();
-    $pages = Page::factory()->count(3)->create();
+    $sections = Section::factory()->site($page->site)->count(2)->create();
+    $pages = Page::factory()->site($page->site)->count(3)->create();
 
     WidgetAsset::factory()
         ->count(2)

@@ -90,3 +90,51 @@ test('tag page list articles by tag', function (): void {
                 ),
         );
 });
+
+test('tag page resolves site tag before global tag with same slug', function (): void {
+    $blogCreator = resolve(BlogCreator::class);
+
+    $language = Language::factory()->create();
+    $site = Site::factory()->recycle($language)->withTranslations()->create();
+
+    $blogPage = $blogCreator->createBlogPage($site);
+    $tagsPage = $blogCreator->createTagsPage($site, $blogPage, createWidgets: true);
+    $tagPage = $blogCreator->createTagPage($site, $tagsPage);
+
+    $slug = 'shared-topic';
+
+    $globalTag = Tag::factory()
+        ->type(TagTypeEnum::Page)
+        ->site(null)
+        ->create([
+            'name' => [$language->code => 'Global Topic'],
+            'slug' => [$language->code => $slug],
+        ]);
+
+    $siteTag = Tag::factory()
+        ->type(TagTypeEnum::Page)
+        ->site($site)
+        ->create([
+            'name' => [$language->code => 'Site Topic'],
+            'slug' => [$language->code => $slug],
+        ]);
+
+    $globalArticle = Article::factory()
+        ->site($site)
+        ->withTranslations($site->languages, ['title' => 'Global Tagged Article'])
+        ->hasAttached($globalTag)
+        ->create(['visible_from' => '2023-01-01']);
+
+    $siteArticle = Article::factory()
+        ->site($site)
+        ->withTranslations($site->languages, ['title' => 'Site Tagged Article'])
+        ->hasAttached($siteTag)
+        ->create(['visible_from' => '2023-02-01']);
+
+    get($siteTag->getUrl($tagPage, $language))
+        ->assertOk()
+        ->assertSeeText('Site Topic Articles')
+        ->assertSeeText($siteArticle->translation->title)
+        ->assertDontSeeText('Global Topic Articles')
+        ->assertDontSeeText($globalArticle->translation->title);
+});

@@ -11,32 +11,36 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (! Schema::hasTable('authentication_log')) {
+        $tableName = config('authentication-log.table_name', 'authentication_log');
+
+        if (! Schema::hasTable($tableName)) {
             return;
         }
 
-        if (! Schema::hasColumn('authentication_log', 'last_seen_at')) {
-            Schema::table('authentication_log', function (Blueprint $table): void {
+        if (! Schema::hasColumn($tableName, 'last_seen_at')) {
+            Schema::table($tableName, function (Blueprint $table): void {
                 $table->timestamp('last_seen_at')->nullable();
             });
         }
 
-        DB::table('authentication_log')->update([
+        DB::table($tableName)->update([
             'last_seen_at' => DB::raw('CASE WHEN login_at > logout_at THEN login_at ELSE logout_at END'),
         ]);
     }
 
     public function down(): void
     {
-        if (! Schema::hasTable('authentication_log')) {
+        $tableName = config('authentication-log.table_name', 'authentication_log');
+
+        if (! Schema::hasTable($tableName)) {
             return;
         }
 
-        if (! Schema::hasColumn('authentication_log', 'last_seen_at')) {
+        if (! Schema::hasColumn($tableName, 'last_seen_at')) {
             return;
         }
 
-        Schema::table('authentication_log', function (Blueprint $table): void {
+        Schema::table($tableName, function (Blueprint $table): void {
             $table->dropColumn('last_seen_at');
         });
     }

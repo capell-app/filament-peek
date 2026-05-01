@@ -89,7 +89,7 @@
                                 ])
                             </div>
                             <div class="font-medium">
-                                {!! $widgetAsset->asset->translation?->title !!}
+                                {{ $widgetAsset->asset->translation?->title }}
                             </div>
                         </button>
 

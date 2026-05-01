@@ -1,10 +1,19 @@
 # Capell Workspaces
 
-Workspaces gives Capell editors a safe draft and approval layer. Editors can group related changes, preview them together, request review, schedule publishing, and roll back versions without pushing half-finished content live.
+Workspaces is Capell's editorial workflow package for revisions, scheduling, approvals, and controlled publishing. Editors can group related changes, preview them together, request review, schedule publishing, and roll back versions without pushing half-finished content live.
 
 ## When to install it
 
-Install Workspaces when more than one person edits content, when campaigns need staged changes, or when publishing requires approval checks.
+Install Workspaces when more than one person edits content, when campaigns need staged revisions, or when publishing requires approval checks and release scheduling.
+
+## Editorial workflow coverage
+
+| Capability         | What Workspaces provides                                                                  |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| Revisions          | Page revisions, draft copies, immutable published versions, comparisons, and rollback     |
+| Scheduling         | Approved workspaces can be scheduled, unscheduled, and published automatically when due   |
+| Approvals          | Submit for approval, approve, request changes, reject, review assignments, and history    |
+| Editorial workflow | Workspace switcher, preview links, publish checks, activity feed, and stale draft reports |
 
 ## Quick install
 
@@ -18,12 +27,12 @@ The package registers through Laravel discovery and adds admin, console, and sha
 
 ## What appears in the admin
 
-| Area               | What editors can do                                     |
-| ------------------ | ------------------------------------------------------- |
-| Workspace switcher | Move between live content and draft workspaces          |
-| Page editor        | Save drafts, preview changes, and request review        |
-| Approval panels    | Review decisions, comments, history, and publish checks |
-| Preview links      | Share signed draft previews without publishing          |
+| Area               | What editors can do                                           |
+| ------------------ | ------------------------------------------------------------- |
+| Revisions          | Save drafts, compare versions, and restore earlier content    |
+| Scheduling         | Queue approved workspaces for a future publish time           |
+| Approvals          | Submit, approve, request changes, reject, and review history  |
+| Editorial workflow | Move between live and draft workspaces, preview, and validate |
 
 ![Workspace pages list](docs/images/screenshots/01-pages-list.png)
 

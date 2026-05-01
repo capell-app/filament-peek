@@ -44,10 +44,10 @@
                     href="{{ $url }}"
                     wire:navigate
                 >
-                    {!! $title !!}
+                    {{ $title }}
                 </a>
             @else
-                {!! $title !!}
+                {{ $title }}
             @endif
         </{{ $headingSize }}>
     @endif

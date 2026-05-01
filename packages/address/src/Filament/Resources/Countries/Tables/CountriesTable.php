@@ -42,8 +42,7 @@ class CountriesTable implements TableConfigurator
                 DeleteBulkAction::make('delete'),
                 RestoreBulkAction::make('restore'),
                 ForceDeleteBulkAction::make('forceDelete'),
-            ])
-            ->reorderable('order');
+            ]);
     }
 
     protected static function getTableColumns(): array
@@ -52,7 +51,7 @@ class CountriesTable implements TableConfigurator
             IdentifierColumn::make('id'),
             NameColumn::make('name')
                 ->defaultBadge(),
-            TextColumn::make('iso_3166_1_alpha_2')
+            TextColumn::make('iso2')
                 ->label(__('capell-address::table.iso_code'))
                 ->sortable()
                 ->toggleable(),

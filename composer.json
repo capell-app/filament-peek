@@ -69,6 +69,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/capell-app/backup"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/capell-app/core"
         },
         {
@@ -101,6 +105,7 @@
         "bkwld/cloner": "^3.11",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "capell-app/admin": "^2.0",
+        "capell-app/backup": "^2.0",
         "capell-app/core": "^2.0",
         "capell-app/frontend": "^2.0",
         "capell-app/installer": "^2.0",
@@ -135,7 +140,6 @@
         "staudenmeir/eloquent-has-many-deep": "^1.1",
         "staudenmeir/eloquent-json-relations": "^1.1",
         "stechstudio/filament-impersonate": "^5.3",
-        "stijnvanouplines/blade-country-flags": "^1.0",
         "symfony/filesystem": "^7.2",
         "symfony/process": "^7.2",
         "symplify/monorepo-builder": "^10.3.3",
@@ -176,11 +180,15 @@
         "psr-4": {
             "Capell\\Address\\": "packages/address/src",
             "Capell\\Address\\Database\\Factories\\": "packages/address/database/factories",
+            "Capell\\Analytics\\": "packages/analytics/src",
+            "Capell\\Analytics\\Database\\Factories\\": "packages/analytics/database/factories",
             "Capell\\AuthenticationLog\\": "packages/authentication-log/src",
             "Capell\\AuthenticationLog\\Database\\Factories\\": "packages/authentication-log/database/factories",
             "Capell\\Blog\\": "packages/blog/src",
             "Capell\\Blog\\Database\\Factories\\": "packages/blog/database/factories",
+            "Capell\\DeveloperTools\\": "packages/developer-tools/src",
             "Capell\\DefaultTheme\\": "packages/themes/default/src",
+            "Capell\\FilamentPeek\\": "packages/filament-peek/src",
             "Capell\\Forms\\": "packages/forms/src",
             "Capell\\Forms\\Database\\Factories\\": "packages/forms/database/factories",
             "Capell\\MediaCurator\\": "packages/media-curator/src",
@@ -190,6 +198,8 @@
             "Capell\\Navigation\\Database\\Factories\\": "packages/navigation/database/factories",
             "Capell\\SeoTools\\": "packages/seo-tools/src",
             "Capell\\SeoTools\\Database\\Factories\\": "packages/seo-tools/database/factories",
+            "Capell\\SiteSearch\\": "packages/site-search/src",
+            "Capell\\SiteSearch\\Database\\Factories\\": "packages/site-search/database/factories",
             "Capell\\Tags\\": "packages/tags/src",
             "Capell\\Tags\\Database\\Factories\\": "packages/tags/database/factories",
             "Capell\\Themes\\Admin\\": "packages/themes-admin/src",
@@ -205,14 +215,18 @@
     "autoload-dev": {
         "psr-4": {
             "Capell\\Address\\Tests\\": "packages/address/tests",
+            "Capell\\Analytics\\Tests\\": "packages/analytics/tests",
             "Capell\\AuthenticationLog\\Tests\\": "packages/authentication-log/tests",
             "Capell\\Blog\\Tests\\": "packages/blog/tests",
+            "Capell\\DeveloperTools\\Tests\\": "packages/developer-tools/tests",
+            "Capell\\FilamentPeek\\Tests\\": "packages/filament-peek/tests",
             "Capell\\Forms\\Tests\\": "packages/forms/tests",
             "Capell\\MediaCurator\\Tests\\": "packages/media-curator/tests",
             "Capell\\Mosaic\\Tests\\": "packages/mosaic/tests",
             "Capell\\Navigation\\Tests\\": "packages/navigation/tests",
             "Capell\\Plugins\\Tests\\": "packages/plugins/tests",
             "Capell\\SeoTools\\Tests\\": "packages/seo-tools/tests",
+            "Capell\\SiteSearch\\Tests\\": "packages/site-search/tests",
             "Capell\\Tags\\Tests\\": "packages/tags/tests",
             "Capell\\Tests\\": "tests",
             "Capell\\Tests\\Packages\\": "tests/Packages",

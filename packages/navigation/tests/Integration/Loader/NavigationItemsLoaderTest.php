@@ -83,3 +83,77 @@ it('loads morph navigation items and preserves order', function (): void {
         ->and($items[2]->children[1]->active)->toBeTrue()
         ->and($items[2]->active)->toBeTrue();
 });
+
+it('loads pure link navigation items', function (): void {
+    $language = Language::factory()->default()->create();
+    $site = Site::factory()->language($language)->withTranslations(siteDomainData: ['scheme' => 'https', 'domain' => 'localhost', 'path' => null])->create();
+    $currentPage = Page::factory()->site($site)->home()->withTranslations(slug: '/')->create();
+
+    $navigation = Navigation::factory()->make([
+        'key' => 'main',
+        'site_id' => $site->id,
+        'language_id' => $site->language->id,
+        'items' => [
+            [
+                'label' => 'Docs',
+                'type' => NavigationItemType::Link->value,
+                'data' => ['url' => '/docs'],
+            ],
+        ],
+    ]);
+
+    $loader = new NavigationItemsLoader(
+        navigation: $navigation,
+        page: $currentPage,
+        site: $site,
+        language: $site->language,
+        siteDomain: $site->siteDomains->first(),
+    );
+
+    $items = $loader->fetchMenuItems();
+
+    expect($items)->toHaveCount(1)
+        ->and($items[0]->type->value)->toBe(NavigationItemType::Link->value)
+        ->and($items[0]->data['url'])->toBe('/docs');
+});
+
+it('skips page items that belong to a different site', function (): void {
+    $language = Language::factory()->default()->create();
+    $site = Site::factory()->language($language)->withTranslations(siteDomainData: ['scheme' => 'https', 'domain' => 'localhost', 'path' => null])->create();
+    $otherSite = Site::factory()->language($language)->withTranslations()->create();
+    $currentPage = Page::factory()->site($site)->home()->withTranslations(slug: '/')->create();
+    $otherSitePage = Page::factory()->site($otherSite)->withTranslations()->create();
+
+    $navigation = Navigation::factory()->make([
+        'key' => 'main',
+        'site_id' => $site->id,
+        'language_id' => $site->language->id,
+        'items' => [
+            [
+                'type' => NavigationItemType::Page->value,
+                'data' => [
+                    'pageable_id' => $otherSitePage->id,
+                    'pageable_type' => $otherSitePage->getMorphClass(),
+                ],
+            ],
+            [
+                'label' => 'Safe Link',
+                'type' => NavigationItemType::Link->value,
+                'data' => ['url' => '/safe'],
+            ],
+        ],
+    ]);
+
+    $loader = new NavigationItemsLoader(
+        navigation: $navigation,
+        page: $currentPage,
+        site: $site,
+        language: $site->language,
+        siteDomain: $site->siteDomains->first(),
+    );
+
+    $items = $loader->fetchMenuItems();
+
+    expect($items)->toHaveCount(1)
+        ->and($items[0]->label)->toBe('Safe Link');
+});

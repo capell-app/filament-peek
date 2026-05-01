@@ -6,13 +6,21 @@ use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Capell\Workspaces\Livewire\FieldCommentThread;
 use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\Models\WorkspaceFieldComment;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function Pest\Livewire\livewire;
 
+use Spatie\Permission\Models\Permission;
+
 uses(CreatesAdminUser::class)->group('workspace');
 
+beforeEach(function (): void {
+    Permission::findOrCreate('View:Workspace');
+    Permission::findOrCreate('Update:Workspace');
+});
+
 it('posts a comment and appears in the thread', function (): void {
-    $user = test()->createUser();
+    $user = test()->createUserWithPermission(['View:Workspace', 'Update:Workspace']);
     test()->actingAs($user);
 
     $workspace = Workspace::factory()->create();
@@ -38,7 +46,7 @@ it('posts a comment and appears in the thread', function (): void {
 });
 
 it('resolves a comment and sets resolved_at', function (): void {
-    $user = test()->createUser();
+    $user = test()->createUserWithPermission(['View:Workspace', 'Update:Workspace']);
     test()->actingAs($user);
 
     $workspace = Workspace::factory()->create();
@@ -65,7 +73,7 @@ it('resolves a comment and sets resolved_at', function (): void {
 });
 
 it('reopens a resolved comment and clears resolved_at', function (): void {
-    $user = test()->createUser();
+    $user = test()->createUserWithPermission(['View:Workspace', 'Update:Workspace']);
     test()->actingAs($user);
 
     $workspace = Workspace::factory()->create();
@@ -93,7 +101,7 @@ it('reopens a resolved comment and clears resolved_at', function (): void {
 });
 
 it('returns unresolved comments before resolved ones in getComments', function (): void {
-    $user = test()->createUser();
+    $user = test()->createUserWithPermission(['View:Workspace']);
     test()->actingAs($user);
 
     $workspace = Workspace::factory()->create();
@@ -130,4 +138,59 @@ it('returns unresolved comments before resolved ones in getComments', function (
 
     expect($comments->first()->id)->toBe($openComment->id)
         ->and($comments->last()->id)->toBe($resolvedComment->id);
+});
+
+it('requires workspace view permission when mounted', function (): void {
+    $user = test()->createUser();
+    test()->actingAs($user);
+
+    $workspace = Workspace::factory()->create();
+
+    livewire(FieldCommentThread::class, [
+        'workspaceId' => $workspace->id,
+        'entityType' => 'page',
+        'entityUuid' => 'test-uuid-5',
+        'fieldPath' => 'title',
+    ])->assertForbidden();
+});
+
+it('requires workspace update permission to post comments', function (): void {
+    $user = test()->createUserWithPermission(['View:Workspace']);
+    test()->actingAs($user);
+
+    $workspace = Workspace::factory()->create();
+
+    livewire(FieldCommentThread::class, [
+        'workspaceId' => $workspace->id,
+        'entityType' => 'page',
+        'entityUuid' => 'test-uuid-6',
+        'fieldPath' => 'title',
+    ])->set('newComment', 'Needs more context.')
+        ->call('postComment')
+        ->assertForbidden();
+});
+
+it('does not resolve comments outside the mounted thread', function (): void {
+    $user = test()->createUserWithPermission(['View:Workspace', 'Update:Workspace']);
+    test()->actingAs($user);
+
+    $workspace = Workspace::factory()->create();
+    $otherWorkspace = Workspace::factory()->create();
+
+    $comment = WorkspaceFieldComment::query()->create([
+        'workspace_id' => $otherWorkspace->id,
+        'entity_type' => 'page',
+        'entity_uuid' => 'test-uuid-7',
+        'field_path' => 'title',
+        'body' => 'Different workspace comment.',
+    ]);
+
+    expect(fn (): mixed => livewire(FieldCommentThread::class, [
+        'workspaceId' => $workspace->id,
+        'entityType' => 'page',
+        'entityUuid' => 'test-uuid-7',
+        'fieldPath' => 'title',
+    ])->call('resolveComment', $comment->id))->toThrow(ModelNotFoundException::class);
+
+    expect($comment->fresh()->isResolved())->toBeFalse();
 });

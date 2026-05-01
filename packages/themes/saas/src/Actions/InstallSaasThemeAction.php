@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Themes\Saas\Actions;
 
 use Capell\Themes\Admin\Schemas\ThemeSettingsSchema;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -96,8 +97,8 @@ class InstallSaasThemeAction
         }
 
         $row = DB::table('theme_types')
-            ->where(function ($q): void {
-                $q->where('key', 'frontend')->orWhere('name', 'frontend');
+            ->where(function (Builder $queryBuilder): void {
+                $queryBuilder->where('key', 'frontend')->orWhere('name', 'frontend');
             })
             ->first();
 

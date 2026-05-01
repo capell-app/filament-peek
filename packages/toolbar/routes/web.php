@@ -10,7 +10,7 @@ Route::name('capell-frontend.')
     ->middleware(['web'])
     ->group(function (): void {
         Route::post('beacon', BeaconController::class)
-            ->middleware(['frontend.activity'])
+            ->middleware(['frontend.activity', 'throttle:60,1'])
             ->withoutMiddleware([VerifyCsrfToken::class])
             ->name('beacon');
     });

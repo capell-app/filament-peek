@@ -57,6 +57,31 @@ test('can sort countries', function (): void {
         ->assertCanSeeTableRecords($sorted, inOrder: true);
 });
 
+test('can sort countries by iso2', function (): void {
+    $lastByIso2 = Country::factory()->create([
+        'name' => 'Country A',
+        'iso2' => 'ZZ',
+    ]);
+    $firstByIso2 = Country::factory()->create([
+        'name' => 'Country B',
+        'iso2' => 'AA',
+    ]);
+
+    livewire(ManageCountries::class)
+        ->assertSuccessful()
+        ->sortTable('iso2')
+        ->assertCanSeeTableRecords([$firstByIso2, $lastByIso2], inOrder: true);
+});
+
+test('ignores country reordering because countries do not have an order column', function (): void {
+    $countries = Country::factory()->count(2)->create();
+
+    livewire(ManageCountries::class)
+        ->assertSuccessful()
+        ->call('reorderTable', $countries->pluck('id')->reverse()->values()->all())
+        ->assertSuccessful();
+});
+
 test('can replicate country', function (): void {
     $country = Country::factory()->create();
 

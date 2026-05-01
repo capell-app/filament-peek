@@ -173,9 +173,9 @@ class AiCreatorAction extends Action
 
             $set('ai_session_id', $session->id);
 
-            $previewData = array_map(fn (array $s): array => [
-                'section_type' => $s['section_type'] ?? '',
-                'fields_preview' => json_encode($s['fields'] ?? [], JSON_PRETTY_PRINT),
+            $previewData = array_map(fn (array $section): array => [
+                'section_type' => $section['section_type'] ?? '',
+                'fields_preview' => json_encode($section['fields'] ?? [], JSON_PRETTY_PRINT),
             ], $sections);
 
             $set('layout_preview', $previewData);
@@ -193,7 +193,22 @@ class AiCreatorAction extends Action
     private function runCreator(array $data): void
     {
         $sessionId = $data['ai_session_id'] ?? null;
-        $session = $sessionId ? AiCreatorSession::query()->find((int) $sessionId) : null;
+        $siteId = $this->resolveSiteId();
+        $userId = (int) Auth::id();
+        $session = null;
+
+        if ($sessionId) {
+            $sessionQuery = AiCreatorSession::query()
+                ->whereKey((int) $sessionId)
+                ->where('user_id', $userId)
+                ->where('status', 'review');
+
+            if ($siteId !== null) {
+                $sessionQuery->where('site_id', $siteId);
+            }
+
+            $session = $sessionQuery->first();
+        }
 
         if (! $session) {
             Notification::make()
@@ -206,7 +221,7 @@ class AiCreatorAction extends Action
         }
 
         try {
-            resolve(SubmitAiCreatorDraftAction::class)->handle($session);
+            resolve(SubmitAiCreatorDraftAction::class)->handle($session, $userId, $siteId);
 
             Notification::make()
                 ->title('Layout submitted for review')

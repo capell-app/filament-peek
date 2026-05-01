@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Capell\Core\Exchanger\Enums\RelationOwnership;
-use Capell\Core\Exchanger\Policy\OwnershipMap;
+use Capell\Backup\Enums\RelationOwnership;
+use Capell\Backup\Policy\OwnershipMap;
 use Capell\Navigation\Models\Navigation;
 
 it('registers Navigation in OwnershipMap as shared when the package boots', function (): void {

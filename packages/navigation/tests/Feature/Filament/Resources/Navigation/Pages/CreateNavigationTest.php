@@ -95,9 +95,12 @@ it('can add items with link', function (): void {
 it('can add items with page', function (): void {
     $newData = Navigation::factory()->make();
     $type = NavigationItemType::Page;
+    $site = Site::factory()->withTranslations()->create();
+    $page = Page::factory()->site($site)->withTranslations()->create();
     $data = [
+        'site_id' => $site->getKey(),
         'pageable_type' => resolve(Page::class)->getMorphClass(),
-        'pageable_id' => Page::factory()->withTranslations()->create()->id,
+        'pageable_id' => $page->getKey(),
     ];
 
     livewire(CreateNavigation::class)
@@ -105,6 +108,7 @@ it('can add items with page', function (): void {
         ->fillForm([
             'name' => $newData->name,
             'key' => $newData->key,
+            'site_id' => $site->getKey(),
         ])
         ->mountAction(
             TestAction::make('add')

@@ -103,6 +103,52 @@ it('rejects rolling to a version that was never published', function (): void {
     (new Rollback)->rollbackTo($unpublishedVersion);
 })->throws(LogicException::class);
 
+it('rejects rolling back to an empty manifest without deleting live rows', function (): void {
+    $liveUuid = (string) Str::uuid();
+    publishWorkspaceWithFixture($liveUuid, 'live-release');
+
+    $targetVersion = Version::query()->create([
+        'uuid' => (string) Str::uuid(),
+        'number' => (Version::query()->max('number') ?? 0) + 1,
+        'name' => 'bad-empty-manifest',
+        'is_live' => false,
+        'manifest' => [],
+        'published_at' => now()->subDay(),
+    ]);
+
+    expect(fn (): Version => (new Rollback)->rollbackTo($targetVersion))
+        ->toThrow(LogicException::class, 'empty manifest');
+
+    expect(WorkspaceDraftableFixture::query()
+        ->withoutGlobalScopes()
+        ->where('workspace_id', 0)
+        ->where('uuid', $liveUuid)
+        ->exists())->toBeTrue();
+});
+
+it('rejects rolling back when the manifest is missing a registered draftable', function (): void {
+    $liveUuid = (string) Str::uuid();
+    publishWorkspaceWithFixture($liveUuid, 'live-release');
+
+    $targetVersion = Version::query()->create([
+        'uuid' => (string) Str::uuid(),
+        'number' => (Version::query()->max('number') ?? 0) + 1,
+        'name' => 'bad-incomplete-manifest',
+        'is_live' => false,
+        'manifest' => ['OtherModel' => [1]],
+        'published_at' => now()->subDay(),
+    ]);
+
+    expect(fn (): Version => (new Rollback)->rollbackTo($targetVersion))
+        ->toThrow(LogicException::class, 'missing manifest entries');
+
+    expect(WorkspaceDraftableFixture::query()
+        ->withoutGlobalScopes()
+        ->where('workspace_id', 0)
+        ->where('uuid', $liveUuid)
+        ->exists())->toBeTrue();
+});
+
 it('dispatches VersionRolledBack on success', function (): void {
     Event::fake([VersionRolledBack::class]);
 

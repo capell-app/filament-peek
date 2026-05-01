@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Capell\AuthenticationLog\Http\Middleware;
 
+use Capell\AuthenticationLog\Actions\ResolveAuthenticationLogIpAddressAction;
 use Capell\AuthenticationLog\Models\AuthenticationLog;
 use Closure;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 
@@ -30,9 +32,7 @@ class AdminActivityMiddleware
             return;
         }
 
-        $ip = config('authentication-log.behind_cdn') !== false
-            ? (string) $request->server(config('authentication-log.behind_cdn.http_header_field'))
-            : (string) $request->ip();
+        $ipAddress = app(ResolveAuthenticationLogIpAddressAction::class)->handle($request);
 
         $userAgent = (string) $request->userAgent();
 
@@ -41,7 +41,11 @@ class AdminActivityMiddleware
         $log = AuthenticationLog::query()
             ->where('authenticatable_type', $user->getMorphClass())
             ->where('authenticatable_id', method_exists($user, 'getKey') ? $user->getKey() : null)
-            ->where('ip_address', $ip)
+            ->when(
+                $ipAddress === null,
+                fn (Builder $query): Builder => $query->whereNull('ip_address'),
+                fn (Builder $query): Builder => $query->where('ip_address', $ipAddress),
+            )
             ->where('user_agent', $userAgent)
             ->where('login_at', '<', $now)
             ->latest('id')

@@ -1,9 +1,13 @@
 {
     "name": "capell-app/workspaces",
-    "description": "Workspace drafting system for Capell",
+    "description": "Editorial workflow package for Capell revisions, scheduling, approvals, and controlled publishing",
     "keywords": [
         "capell",
         "workspaces",
+        "revisions",
+        "scheduling",
+        "approvals",
+        "editorial-workflow",
         "laravel",
         "cms"
     ],
@@ -18,8 +22,9 @@
     ],
     "require": {
         "php": "^8.2",
-        "capell-app/core": "*",
         "capell-app/admin": "*",
+        "capell-app/backup": "*",
+        "capell-app/core": "*",
         "capell-app/navigation": "*",
         "jfcherng/php-diff": "^7.0"
     },

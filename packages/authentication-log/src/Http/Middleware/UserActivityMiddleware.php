@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\AuthenticationLog\Http\Middleware;
 
+use Capell\AuthenticationLog\Actions\ResolveAuthenticationLogIpAddressAction;
 use Capell\AuthenticationLog\Models\AuthenticationLog;
 use Closure;
 use Exception;
@@ -25,11 +26,7 @@ class UserActivityMiddleware
 
     private function updateUserActivity(Request $request): void
     {
-        if (config('authentication-log.behind_cdn') === true) {
-            $ip = $request->server(config('authentication-log.behind_cdn.http_header_field'));
-        } else {
-            $ip = $request->ip();
-        }
+        $ipAddress = app(ResolveAuthenticationLogIpAddressAction::class)->handle($request);
 
         $userAgent = $request->userAgent();
 
@@ -42,7 +39,11 @@ class UserActivityMiddleware
         $builder = $user->authentications();
 
         $log = $builder
-            ->where('ip_address', $ip)
+            ->when(
+                $ipAddress === null,
+                fn (MorphMany $query): MorphMany => $query->whereNull('ip_address'),
+                fn (MorphMany $query): MorphMany => $query->where('ip_address', $ipAddress),
+            )
             ->where('user_agent', $userAgent)
             ->first();
 

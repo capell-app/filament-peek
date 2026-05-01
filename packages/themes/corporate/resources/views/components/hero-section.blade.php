@@ -10,6 +10,22 @@
     'imageUrl' => null,
 ])
 
+@php
+    $safeImageUrl = null;
+
+    if (is_string($imageUrl)) {
+        $trimmedImageUrl = trim($imageUrl);
+        $imageUrlScheme = parse_url($trimmedImageUrl, PHP_URL_SCHEME);
+        $isHttpImageUrl = is_string($imageUrlScheme) && in_array($imageUrlScheme, ['http', 'https'], true);
+        $isRelativeImageUrl = str_starts_with($trimmedImageUrl, '/') && ! str_starts_with($trimmedImageUrl, '//');
+        $hasUnsafeCssCharacters = preg_match('/[\s\'"()\\\\<>]/', $trimmedImageUrl) === 1;
+
+        if (($isHttpImageUrl || $isRelativeImageUrl) && ! $hasUnsafeCssCharacters) {
+            $safeImageUrl = $trimmedImageUrl;
+        }
+    }
+@endphp
+
 <section
     aria-label="Hero"
     class="relative overflow-hidden"
@@ -22,12 +38,12 @@
             var(--color-primary)
             60%,
             var(--color-accent)));
-        @elseif ($backgroundStyle === 'image' && $imageUrl)
+        @elseif ($backgroundStyle === 'image' && $safeImageUrl)
             center
             /
             cover
             no-repeat
-            url('{{ $imageUrl }}');
+            url('{{ $safeImageUrl }}');
         @else
             var(--color-primary);
         @endif;

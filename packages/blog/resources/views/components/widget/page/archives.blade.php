@@ -79,7 +79,7 @@
 
     @if ($archives?->isEmpty())
         <x-capell::no-results>
-            {!! $widget->translation->getMeta('no_results', __('capell-blog::messages.no_archives_found')) !!}
+            {{ $widget->translation->getMeta('no_results', __('capell-blog::messages.no_archives_found')) }}
         </x-capell::no-results>
     @else
         <ul

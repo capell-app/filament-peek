@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Capell\Tags\Filament\Components\Forms;
 
+use Capell\Admin\Support\SiteScope;
 use Capell\Core\Models\Language;
 use Capell\Tags\Models\Tag;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Override;
 
 abstract class TagsInput extends SpatieTagsInput
@@ -25,11 +28,19 @@ abstract class TagsInput extends SpatieTagsInput
                 $model = Tag::class;
 
                 return $model::query()->where('type', $component->type)
-                    ->where(
-                        fn (Builder $query) => $query->whereNull('site_id')
-                            ->orWhere('site_id', $get('site_id')),
-                    )
-                    ->pluck('name')
+                    ->where(function (Builder $query) use ($get): void {
+                        $query->whereNull('site_id');
+
+                        $siteIds = $this->accessibleSuggestionSiteIds($get('site_id'));
+
+                        if ($siteIds->isNotEmpty()) {
+                            $query->orWhereIn('site_id', $siteIds);
+                        }
+                    })
+                    ->get()
+                    ->map(fn (Tag $tag): string => (string) $tag->name)
+                    ->filter(fn (string $name): bool => $name !== '')
+                    ->values()
                     ->all();
             })
             ->loadStateFromRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record): void {
@@ -67,5 +78,39 @@ abstract class TagsInput extends SpatieTagsInput
 
                 $component->syncTagsWithAnyType($record, $state);
             });
+    }
+
+    /**
+     * @return Collection<int, int>
+     */
+    private function accessibleSuggestionSiteIds(mixed $selectedSiteId): Collection
+    {
+        $actor = auth()->user();
+
+        if (! $actor instanceof Authenticatable) {
+            return collect();
+        }
+
+        if (SiteScope::isGlobalActor($actor)) {
+            return is_numeric($selectedSiteId) ? collect([(int) $selectedSiteId]) : collect();
+        }
+
+        if (! method_exists($actor, 'getAssignedSiteIds')) {
+            return collect();
+        }
+
+        $assignedSiteIds = $actor->getAssignedSiteIds()
+            ->map(fn (mixed $siteId): int => (int) $siteId)
+            ->values();
+
+        if (! is_numeric($selectedSiteId)) {
+            return $assignedSiteIds;
+        }
+
+        $selectedSiteId = (int) $selectedSiteId;
+
+        return $assignedSiteIds->contains($selectedSiteId)
+            ? collect([$selectedSiteId])
+            : collect();
     }
 }

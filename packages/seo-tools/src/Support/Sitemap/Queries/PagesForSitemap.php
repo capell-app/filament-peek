@@ -8,6 +8,7 @@ use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\SeoTools\Enums\RobotsDirectiveEnum;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -46,6 +47,10 @@ class PagesForSitemap
             ->where(
                 fn (Builder $query): Builder => $query->whereNull('pages.meta')
                     ->orWhereJsonDoesntContain('pages.meta->hidden', true),
+            )
+            ->where(
+                fn (Builder $query): Builder => $query->whereNull('pages.meta->robots')
+                    ->orWhereJsonDoesntContain('pages.meta->robots', RobotsDirectiveEnum::NoIndex->value),
             )
             ->publishedDate()
             ->ordered()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Filament\Resources\Workspaces\Actions;
 
+use Capell\Workspaces\Enums\WorkspaceApprovalActionEnum;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Models\Workspace;
 use Filament\Actions\Action;
@@ -42,9 +43,7 @@ class ApproveAction extends Action
                     return;
                 }
 
-                $requiredLevels = $record->settings?->requiredApprovalLevels ?? 2;
-
-                $record->approve($user, $requiredLevels, $data['notes'] ?? null);
+                $record->approve($user, $this->nextApprovalLevel($record), $data['notes'] ?? null);
 
                 Notification::make()
                     ->title(__('capell-admin::workspace.notifications.approved'))
@@ -56,5 +55,14 @@ class ApproveAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'approve';
+    }
+
+    private function nextApprovalLevel(Workspace $workspace): int
+    {
+        $highestApprovedLevel = $workspace->approvals()
+            ->where('action', WorkspaceApprovalActionEnum::Approved->value)
+            ->max('level');
+
+        return ((int) $highestApprovedLevel) + 1;
     }
 }

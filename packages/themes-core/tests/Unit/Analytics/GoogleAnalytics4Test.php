@@ -37,3 +37,20 @@ test('track helpers build gtag calls', function (): void {
         ->toContain('"currency":"USD"')
         ->toContain('"item_id":"sku1"');
 });
+
+test('track payload is encoded safely for script contexts', function (): void {
+    $ga = new GoogleAnalytics4('G-ABC123');
+
+    $script = $ga->track('dangerous</script>', [
+        'tag' => '</script><script>alert(1)</script>',
+        'quote' => '"double" and \'single\'',
+        'ampersand' => 'Tom & Jerry',
+    ]);
+
+    expect($script)
+        ->toContain('\\u003C\\/script\\u003E')
+        ->toContain('\\u0022double\\u0022 and \\u0027single\\u0027')
+        ->toContain('Tom \\u0026 Jerry')
+        ->not->toContain('</script>')
+        ->not->toContain('<script>');
+});

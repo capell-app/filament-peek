@@ -11,6 +11,9 @@ class AiUsageWidget extends Widget
 {
     protected string $view = 'capell-seo-tools::filament.widgets.ai-usage';
 
+    /** @var int|string|array<string, int|string|null> */
+    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+
     protected function getViewData(): array
     {
         $count = AIGenerationHistory::query()->count();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Blog\Livewire\Page;
 
 use Capell\Blog\Models\Article;
+use Capell\Blog\Support\Loader\TagLoader;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Livewire\Page\AbstractPage;
 use Capell\Frontend\Support\Loader\PageLoader;
@@ -36,12 +37,7 @@ class Tag extends AbstractPage
         $page = Frontend::page();
         $site = Frontend::site();
 
-        /** @var class-string<TagModel> $model */
-        $model = TagModel::class;
-
-        $tag = $model::query()->where('type', 'page')
-            ->where('slug->' . $language->code, $this->tagSlug)
-            ->first();
+        $tag = TagLoader::tagPage($this->tagSlug, $site, $language);
 
         abort_unless($tag, 404);
 

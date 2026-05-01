@@ -1,11 +1,11 @@
 ---
 name: workspaces
-description: Use when working on the Capell Workspaces package. Covers the Workspace/Version models, copy-on-write pattern, WorkspaceStatusEnum state machine, approval pipeline actions, rollback, PreviewLink, Filament resources, BelongsToWorkspace trait, and how to extend workspace lifecycle events.
+description: Use when working on the Capell Workspaces editorial workflow package. Covers revisions, scheduling, approvals, Workspace/Version models, copy-on-write pattern, WorkspaceStatusEnum state machine, rollback, PreviewLink, Filament resources, BelongsToWorkspace trait, and how to extend workspace lifecycle events.
 ---
 
 # Capell Workspaces
 
-Workspaces is a **draft/approval/versioning infrastructure** package — a meta-layer over the entire CMS. Any content model opts into draft workflows via the `BelongsToWorkspace` trait. Changes are isolated in a workspace, reviewed, approved, and published atomically as immutable `Version` snapshots.
+Workspaces is Capell's **editorial workflow** package for revisions, scheduling, approvals, and controlled publishing. Any content model opts into draft workflows via the `BelongsToWorkspace` trait. Changes are isolated in a workspace, reviewed, approved, scheduled when needed, and published atomically as immutable `Version` snapshots.
 
 ---
 
@@ -103,7 +103,7 @@ $table->foreignId('shadowed_by_workspace_id')->nullable()->constrained('workspac
 | `SubmitForApprovalAction` | Open → InReview                                     |
 | `ApproveAction`           | InReview → Approved                                 |
 | `RequestChangesAction`    | InReview → Open (with review comment)               |
-| `RejectAction`            | InReview → Abandoned                                |
+| `RejectAction`            | InReview → Open (with rejection notes)              |
 | `ScheduleAction`          | Approved → Scheduled (sets `publish_at`)            |
 | `UnscheduleAction`        | Scheduled → Approved                                |
 | `PublishAction`           | Approved → Published (creates new live Version)     |

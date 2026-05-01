@@ -14,6 +14,14 @@ it('TagsServiceProvider class exists', function (): void {
     expect(class_exists(TagsServiceProvider::class))->toBeTrue();
 });
 
+it('repairs stale published tag model config', function (): void {
+    config(['tags.tag_model' => 'Capell\\Blog\\Models\\Tag']);
+
+    (new TagsServiceProvider(app()))->registeringPackage();
+
+    expect(config('tags.tag_model'))->toBe(Tag::class);
+});
+
 it('TagTypeEnum is a backed enum with expected cases', function (): void {
     expect(enum_exists(TagTypeEnum::class))->toBeTrue();
 

@@ -176,3 +176,43 @@ it('runs the validate → approve → publish flow end to end via the Filament t
             && $event->transition === WorkspaceTransitionEnum::Published->value,
     );
 });
+
+it('records the next approval level instead of approving all levels at once', function (): void {
+    $workspace = Workspace::factory()->inReview()->create([
+        'settings' => ['requiredApprovalLevels' => 2],
+    ]);
+
+    $firstReviewer = User::factory()->create();
+    $firstReviewer->assignRole(InstallWorkspaceRolesAction::ROLE_REVIEWER);
+    $firstReviewer->givePermissionTo(['ViewAny:Workspace', 'View:Workspace']);
+
+    test()->actingAs($firstReviewer);
+
+    livewire(ManageWorkspaces::class)
+        ->callAction(
+            TestAction::make(ApproveAction::class)->table($workspace),
+            data: ['notes' => 'First approval'],
+        )
+        ->assertHasNoActionErrors();
+
+    $workspace->refresh();
+
+    expect($workspace->status)->toBe(WorkspaceStatusEnum::InReview)
+        ->and($workspace->approvals()->where('action', 'approved')->value('level'))->toBe(1);
+
+    $secondReviewer = User::factory()->create();
+    $secondReviewer->assignRole(InstallWorkspaceRolesAction::ROLE_REVIEWER);
+    $secondReviewer->givePermissionTo(['ViewAny:Workspace', 'View:Workspace']);
+
+    test()->actingAs($secondReviewer);
+
+    livewire(ManageWorkspaces::class)
+        ->callAction(
+            TestAction::make(ApproveAction::class)->table($workspace->fresh()),
+            data: ['notes' => 'Second approval'],
+        )
+        ->assertHasNoActionErrors();
+
+    expect($workspace->refresh()->status)->toBe(WorkspaceStatusEnum::Approved)
+        ->and($workspace->approvals()->where('action', 'approved')->max('level'))->toBe(2);
+});
