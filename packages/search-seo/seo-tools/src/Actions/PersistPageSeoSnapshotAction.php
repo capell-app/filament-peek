@@ -8,6 +8,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\SeoTools\Data\PageSeoReportData;
+use Capell\SeoTools\Data\SchemaTemplateReportData;
 use Capell\SeoTools\Data\SeoIssueData;
 use Capell\SeoTools\Enums\SeoCheckKeyEnum;
 use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
@@ -91,6 +92,12 @@ final class PersistPageSeoSnapshotAction
         foreach ($report->passedChecks as $passedCheck) {
             if ($passedCheck instanceof SeoCheckKeyEnum) {
                 $keys[$passedCheck->value] = $passedCheck->value;
+
+                continue;
+            }
+
+            if ($passedCheck instanceof SeoIssueData) {
+                $keys[$passedCheck->key->value] = $passedCheck->key->value;
             }
         }
 
@@ -119,7 +126,26 @@ final class PersistPageSeoSnapshotAction
             return SeoSnapshotStatusEnum::Missing;
         }
 
+        foreach ($report->schemaReports as $schemaReport) {
+            if ($this->schemaReportHasIssue($schemaReport)) {
+                return SeoSnapshotStatusEnum::Warning;
+            }
+        }
+
         return SeoSnapshotStatusEnum::Passed;
+    }
+
+    private function schemaReportHasIssue(mixed $schemaReport): bool
+    {
+        if (! $schemaReport instanceof SchemaTemplateReportData) {
+            return false;
+        }
+
+        if ($schemaReport->missingFields !== []) {
+            return true;
+        }
+
+        return $schemaReport->severity !== SeoIssueSeverityEnum::Passed;
     }
 
     /**

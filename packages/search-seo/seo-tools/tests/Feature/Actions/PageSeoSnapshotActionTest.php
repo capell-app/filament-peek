@@ -9,8 +9,10 @@ use Capell\SeoTools\Actions\PersistPageSeoSnapshotAction;
 use Capell\SeoTools\Data\InternalLinkSuggestionData;
 use Capell\SeoTools\Data\PageSeoReportData;
 use Capell\SeoTools\Data\RedirectOpportunityData;
+use Capell\SeoTools\Data\SchemaTemplateReportData;
 use Capell\SeoTools\Data\SeoIssueData;
 use Capell\SeoTools\Data\SeoPreviewData;
+use Capell\SeoTools\Enums\SchemaTemplateTypeEnum;
 use Capell\SeoTools\Enums\SeoCheckKeyEnum;
 use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
 use Capell\SeoTools\Models\PageSeoSnapshot;
@@ -88,4 +90,68 @@ it('upserts a compact page seo snapshot from a report', function (): void {
         ->and($secondSnapshot->passed_check_keys)->toBe(['meta_description'])
         ->and($secondSnapshot->redirect_opportunities_count)->toBe(2)
         ->and($secondSnapshot->computed_at)->not()->toBeNull();
+});
+
+it('records passed checks provided as seo issue data', function (): void {
+    $language = Language::factory()->create();
+    $site = Site::factory()->language($language)->withTranslations($language)->create();
+    $page = Page::factory()->site($site)->withTranslations($language)->create();
+
+    $report = new PageSeoReportData(
+        score: 100,
+        searchPreview: new SeoPreviewData(
+            title: 'About Capell',
+            description: 'A search preview description.',
+            url: 'https://example.com/about',
+        ),
+        socialPreview: new SeoPreviewData(
+            title: 'About Capell',
+            description: 'A social preview description.',
+            url: 'https://example.com/about',
+        ),
+        passedChecks: [
+            new SeoIssueData(
+                key: SeoCheckKeyEnum::MetaDescription,
+                severity: SeoIssueSeverityEnum::Passed,
+                message: 'Meta description is present.',
+            ),
+        ],
+    );
+
+    $snapshot = PersistPageSeoSnapshotAction::run($page, $site, $language, $report);
+
+    expect($snapshot->passed_count)->toBe(1)
+        ->and($snapshot->passed_check_keys)->toBe(['meta_description']);
+});
+
+it('marks schema status as warning when a schema report has missing fields', function (): void {
+    $language = Language::factory()->create();
+    $site = Site::factory()->language($language)->withTranslations($language)->create();
+    $page = Page::factory()->site($site)->withTranslations($language)->create();
+
+    $report = new PageSeoReportData(
+        score: 75,
+        searchPreview: new SeoPreviewData(
+            title: 'About Capell',
+            description: 'A search preview description.',
+            url: 'https://example.com/about',
+        ),
+        socialPreview: new SeoPreviewData(
+            title: 'About Capell',
+            description: 'A social preview description.',
+            url: 'https://example.com/about',
+        ),
+        schemaReports: [
+            new SchemaTemplateReportData(
+                templateType: SchemaTemplateTypeEnum::WebPage,
+                presentFields: ['name'],
+                missingFields: ['description'],
+                severity: SeoIssueSeverityEnum::Warning,
+            ),
+        ],
+    );
+
+    $snapshot = PersistPageSeoSnapshotAction::run($page, $site, $language, $report);
+
+    expect($snapshot->schema_status)->toBe('warning');
 });
