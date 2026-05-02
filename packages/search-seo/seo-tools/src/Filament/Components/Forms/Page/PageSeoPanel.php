@@ -9,6 +9,8 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\SeoTools\Actions\BuildPageSeoReportAction;
 use Capell\SeoTools\Data\PageSeoReportData;
+use Capell\SeoTools\Enums\SeoCheckKeyEnum;
+use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
 use Capell\SeoTools\Filament\Actions\AiContentBriefAction;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
@@ -81,10 +83,24 @@ class PageSeoPanel extends View
     private function reportViewData(null|int|string $languageId = null): array
     {
         $report = $this->buildReport($languageId);
+        $hasReport = $report instanceof PageSeoReportData;
 
         return [
             'report' => $report,
-            'hasReport' => $report instanceof PageSeoReportData,
+            'hasReport' => $hasReport,
+            'overviewIssues' => [
+                'critical' => $hasReport ? $report->issuesBySeverity(SeoIssueSeverityEnum::Critical) : [],
+                'warning' => $hasReport ? $report->issuesBySeverity(SeoIssueSeverityEnum::Warning) : [],
+                'notice' => $hasReport ? $report->issuesBySeverity(SeoIssueSeverityEnum::Notice) : [],
+            ],
+            'linkIssues' => $hasReport ? $report->issuesForKey(SeoCheckKeyEnum::InternalLinks) : [],
+            'schemaIssues' => $hasReport ? $report->issuesForKey(SeoCheckKeyEnum::Schema) : [],
+            'searchConsoleIssues' => $hasReport ? $report->issuesForKey(SeoCheckKeyEnum::SearchConsole) : [],
+            'robotsIssues' => $hasReport ? [
+                ...$report->issuesForKey(SeoCheckKeyEnum::Robots),
+                ...$report->issuesForKey(SeoCheckKeyEnum::Canonical),
+            ] : [],
+            'passedCheckValues' => $hasReport ? $report->passedCheckValues() : [],
         ];
     }
 

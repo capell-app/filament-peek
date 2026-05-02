@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Data;
 
+use Capell\SeoTools\Enums\SeoCheckKeyEnum;
 use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
 use Spatie\LaravelData\Data;
 
@@ -37,5 +38,60 @@ class PageSeoReportData extends Data
             $this->issues,
             fn (SeoIssueData $issue): bool => $issue->severity === SeoIssueSeverityEnum::Warning,
         ));
+    }
+
+    /**
+     * @return array<int, SeoIssueData>
+     */
+    public function issuesBySeverity(SeoIssueSeverityEnum $severity): array
+    {
+        return array_values(array_filter(
+            $this->issues,
+            fn (SeoIssueData $issue): bool => $issue->severity === $severity,
+        ));
+    }
+
+    /**
+     * @return array<int, SeoIssueData>
+     */
+    public function issuesForKey(SeoCheckKeyEnum $key): array
+    {
+        return array_values(array_filter(
+            $this->issues,
+            fn (SeoIssueData $issue): bool => $issue->key === $key,
+        ));
+    }
+
+    public function hasIssuesForKey(SeoCheckKeyEnum $key): bool
+    {
+        return $this->issuesForKey($key) !== [];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function passedCheckValues(): array
+    {
+        $values = [];
+
+        foreach ($this->passedChecks as $passedCheck) {
+            if ($passedCheck instanceof SeoCheckKeyEnum) {
+                $values[] = $passedCheck->value;
+
+                continue;
+            }
+
+            if ($passedCheck instanceof SeoIssueData) {
+                $values[] = $passedCheck->key->value;
+
+                continue;
+            }
+
+            if (is_string($passedCheck) && trim($passedCheck) !== '') {
+                $values[] = $passedCheck;
+            }
+        }
+
+        return array_values($values);
     }
 }
