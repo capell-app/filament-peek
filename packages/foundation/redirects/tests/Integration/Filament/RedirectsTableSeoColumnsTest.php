@@ -33,3 +33,9 @@ it('exposes the hit count bucket filter in the table configuration', function ()
     expect($filters->map(fn (BaseFilter $filter): string => $filter->getName())->all())
         ->toContain('hit_count_bucket');
 });
+
+it('does not run redirect validation from table row rendering', function (): void {
+    $reflection = new ReflectionClass(RedirectsTable::class);
+
+    expect($reflection->hasMethod('chainWarningState'))->toBeFalse();
+});

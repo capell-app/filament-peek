@@ -13,7 +13,7 @@ use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\Admin\Support\SiteScope;
 use Capell\Core\Enums\RedirectStatusCodeEnum;
 use Capell\Core\Models\PageUrl;
-use Capell\Redirects\Actions\ValidateRedirectAction;
+use Capell\Redirects\Models\RedirectHealthSnapshot;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -29,6 +29,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RedirectsTable implements TableConfigurator
 {
+    /** @var array<int, RedirectHealthSnapshot|null> */
+    private static array $redirectHealthCache = [];
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -153,7 +156,9 @@ class RedirectsTable implements TableConfigurator
                 ->toggleable(),
             TextColumn::make('chain_warning')
                 ->label(__('redirects::table.chain_warning'))
-                ->state(fn (PageUrl $record): string => self::chainWarningState($record))
+                ->state(fn (PageUrl $record): string => self::redirectHealthFor($record)?->has_chain === true
+                    ? __('redirects::table.chain_warning_detected')
+                    : __('redirects::table.chain_warning_none'))
                 ->badge()
                 ->color(fn (string $state): string => $state === __('redirects::table.chain_warning_detected') ? 'warning' : 'gray')
                 ->toggleable(),
@@ -165,24 +170,16 @@ class RedirectsTable implements TableConfigurator
         ];
     }
 
-    private static function chainWarningState(PageUrl $record): string
+    private static function redirectHealthFor(PageUrl $record): ?RedirectHealthSnapshot
     {
-        if ($record->target_url === null || $record->target_url === '') {
-            return __('redirects::table.chain_warning_none');
+        $pageUrlId = (int) $record->id;
+
+        if (! array_key_exists($pageUrlId, self::$redirectHealthCache)) {
+            self::$redirectHealthCache[$pageUrlId] = RedirectHealthSnapshot::query()
+                ->where('page_url_id', $pageUrlId)
+                ->first();
         }
 
-        $result = ValidateRedirectAction::run(
-            sourceUrl: $record->url,
-            targetUrl: $record->target_url,
-            siteId: $record->site_id,
-            languageId: $record->language_id,
-            excludeId: $record->id,
-            statusCode: $record->status_code?->value ?? null,
-            validateDuplicateSource: false,
-        );
-
-        return $result['warnings'] === []
-            ? __('redirects::table.chain_warning_none')
-            : __('redirects::table.chain_warning_detected');
+        return self::$redirectHealthCache[$pageUrlId];
     }
 }
