@@ -110,11 +110,13 @@ final class BuildPageSeoReportAction
             searchPreview: $searchPreview,
             socialPreview: $socialPreview,
             issues: $issues,
-            passedChecks: [],
+            passedChecks: $this->passedChecks($issues),
             internalLinkSuggestions: SuggestInternalLinksAction::run($page, $site, $language),
             schemaReports: BuildSchemaTemplateReportAction::run($page, $site, $language),
-            redirectOpportunities: [],
+            redirectOpportunities: BuildRedirectOpportunityReportAction::run($site->id, $language->id, (int) $page->getKey()),
             searchConsoleInsights: BuildPageSearchConsoleInsightsAction::run($page),
+            canonicalUrl: $this->metaValue($page, 'canonical_url') ?? $previewUrl,
+            robotsDirectives: $this->robotsDirectives($page),
         );
     }
 
@@ -192,6 +194,14 @@ final class BuildPageSeoReportAction
 
     private function hasNoIndexDirective(Page $page): bool
     {
+        return in_array(RobotsDirectiveEnum::NoIndex->value, $this->robotsDirectives($page), true);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function robotsDirectives(Page $page): array
+    {
         $directives = method_exists($page, 'getMeta')
             ? $page->getMeta('robots', [])
             : ($page->meta['robots'] ?? []);
@@ -201,10 +211,37 @@ final class BuildPageSeoReportAction
         }
 
         if (! is_array($directives)) {
-            return false;
+            return [];
         }
 
-        return in_array(RobotsDirectiveEnum::NoIndex->value, $directives, true);
+        return array_values(array_filter(
+            array_map($this->stringValue(...), $directives),
+            fn (?string $directive): bool => $directive !== null,
+        ));
+    }
+
+    /**
+     * @param  list<SeoIssueData>  $issues
+     * @return list<SeoIssueData>
+     */
+    private function passedChecks(array $issues): array
+    {
+        $issueKeys = collect($issues)->map(fn (SeoIssueData $issue): SeoCheckKeyEnum => $issue->key);
+        $passedChecks = [];
+
+        foreach ([SeoCheckKeyEnum::MetaTitle, SeoCheckKeyEnum::MetaDescription, SeoCheckKeyEnum::DuplicateTitle, SeoCheckKeyEnum::Robots] as $checkKey) {
+            if ($issueKeys->contains($checkKey)) {
+                continue;
+            }
+
+            $passedChecks[] = new SeoIssueData(
+                key: $checkKey,
+                severity: SeoIssueSeverityEnum::Passed,
+                message: __('capell-seo-tools::generic.seo_check_passed', ['check' => $checkKey->getLabel()]),
+            );
+        }
+
+        return $passedChecks;
     }
 
     private function previewUrl(Page $page): string

@@ -14,7 +14,7 @@ use Lorisleiva\Actions\Concerns\AsAction;
 use Throwable;
 
 /**
- * @method static list<RedirectOpportunityData> run(?int $siteId = null, ?int $languageId = null)
+ * @method static list<RedirectOpportunityData> run(?int $siteId = null, ?int $languageId = null, ?int $pageId = null)
  */
 final class BuildRedirectOpportunityReportAction
 {
@@ -23,10 +23,11 @@ final class BuildRedirectOpportunityReportAction
     /**
      * @return list<RedirectOpportunityData>
      */
-    public function handle(?int $siteId = null, ?int $languageId = null): array
+    public function handle(?int $siteId = null, ?int $languageId = null, ?int $pageId = null): array
     {
         return BrokenLink::query()
             ->where('http_status', '>=', 400)
+            ->when($pageId !== null, fn (Builder $query): Builder => $query->where('page_id', $pageId))
             ->whereHas('page', fn (Builder $query): Builder => $query
                 ->when($siteId !== null, fn (Builder $query): Builder => $query->where('site_id', $siteId))
                 ->when(

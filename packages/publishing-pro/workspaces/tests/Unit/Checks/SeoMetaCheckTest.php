@@ -70,3 +70,51 @@ it('returns an info result when the SEO provider has no issues', function (): vo
     expect($result->isClean())->toBeTrue()
         ->and($result->severity)->toBe(PublishCheckSeverity::Info);
 });
+
+it('can ignore a configured SEO publish check', function (): void {
+    config()->set('capell-seo-tools.publish_gates.checks.search_console', 'ignored');
+
+    app()->instance(SEO_PUBLISH_REPORT_PROVIDER, new class
+    {
+        public function forWorkspace(Workspace $workspace): array
+        {
+            return [
+                [
+                    'page' => ['id' => 12, 'label' => 'contact'],
+                    'issues' => [
+                        ['key' => 'search_console', 'severity' => 'warning', 'message' => 'Search Console setup missing.'],
+                    ],
+                ],
+            ];
+        }
+    });
+
+    $result = (new SeoMetaCheck)->run(Workspace::factory()->create());
+
+    expect($result->severity)->toBe(PublishCheckSeverity::Info)
+        ->and($result->messages)->toBe([]);
+});
+
+it('can downgrade critical SEO issues to warnings by check key', function (): void {
+    config()->set('capell-seo-tools.publish_gates.checks.meta_title', 'warning');
+
+    app()->instance(SEO_PUBLISH_REPORT_PROVIDER, new class
+    {
+        public function forWorkspace(Workspace $workspace): array
+        {
+            return [
+                [
+                    'page' => ['id' => 13, 'label' => 'services'],
+                    'issues' => [
+                        ['key' => 'meta_title', 'severity' => 'critical', 'message' => 'Missing meta title.'],
+                    ],
+                ],
+            ];
+        }
+    });
+
+    $result = (new SeoMetaCheck)->run(Workspace::factory()->create());
+
+    expect($result->severity)->toBe(PublishCheckSeverity::Warn)
+        ->and($result->messages)->toBe(["Page 'services': Missing meta title."]);
+});

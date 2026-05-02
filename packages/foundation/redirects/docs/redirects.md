@@ -54,7 +54,7 @@ Frontend page resolution delegates redirect decisions to `RedirectResolver`. The
 SEO Tools records broken-link events and groups repeated failures into redirect opportunities. The Redirects package remains the persistence boundary:
 
 - Editors review broken links and opportunity counts in SEO Tools.
-- The "create redirect" flow writes normal manual redirects into `page_urls`.
+- The "create redirect" flow opens a modal from the broken-link record, pre-fills the source URL, accepts a target URL and status code, and writes a normal manual redirect into `page_urls`.
 - Redirect validation still runs through `ValidateRedirectAction`, including duplicate, self-redirect, loop, and chain checks.
 - Hit count and `last_hit_at` continue to be owned by redirect resolution.
 

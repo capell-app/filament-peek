@@ -92,7 +92,53 @@ final class GoogleSearchConsoleClient implements SearchConsoleClientInterface
 
     public function decliningPages(int $siteId, int $limit = 10): array
     {
-        return [];
+        if (! $this->isConfigured()) {
+            return [];
+        }
+
+        $propertyUrl = $this->propertyUrl($this->config['property_url'] ?? '');
+
+        try {
+            $currentRows = $this->querySearchAnalytics($propertyUrl, [
+                'startDate' => now()->subDays(30)->toDateString(),
+                'endDate' => now()->subDay()->toDateString(),
+                'dimensions' => ['page'],
+                'rowLimit' => $limit * 3,
+            ]);
+            $previousRows = $this->querySearchAnalytics($propertyUrl, [
+                'startDate' => now()->subDays(60)->toDateString(),
+                'endDate' => now()->subDays(31)->toDateString(),
+                'dimensions' => ['page'],
+                'rowLimit' => $limit * 3,
+            ]);
+        } catch (Throwable) {
+            return [];
+        }
+
+        $previousClicksByPage = collect($previousRows)
+            ->mapWithKeys(fn (array $row): array => [$this->pageKey($row) => (int) ($row['clicks'] ?? 0)]);
+
+        return collect($currentRows)
+            ->map(function (array $row) use ($previousClicksByPage): array {
+                $page = $this->pageKey($row);
+                $clicks = (int) ($row['clicks'] ?? 0);
+                $previousClicks = $previousClicksByPage[$page] ?? 0;
+
+                return [
+                    'page' => $page,
+                    'clicks' => $clicks,
+                    'previous_clicks' => $previousClicks,
+                    'delta' => $clicks - $previousClicks,
+                    'impressions' => $row['impressions'] ?? 0,
+                    'ctr' => $row['ctr'] ?? null,
+                    'position' => $row['position'] ?? null,
+                ];
+            })
+            ->filter(fn (array $row): bool => $row['delta'] < 0)
+            ->sortBy('delta')
+            ->take($limit)
+            ->values()
+            ->all();
     }
 
     /**
@@ -211,5 +257,19 @@ final class GoogleSearchConsoleClient implements SearchConsoleClientInterface
         }
 
         return $scheme . '://' . $host . '/';
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     */
+    private function pageKey(array $row): string
+    {
+        $keys = $row['keys'] ?? [];
+
+        if (is_array($keys) && is_string($keys[0] ?? null)) {
+            return $keys[0];
+        }
+
+        return '';
     }
 }

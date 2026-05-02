@@ -21,15 +21,15 @@ The package registers through Laravel discovery. It depends on `capell-app/admin
 
 ## What appears in the admin
 
-| Area                 | What editors can do                                                                   |
-| -------------------- | ------------------------------------------------------------------------------------- |
-| Page SEO panel       | Review score, search preview, social preview, issues, links, schema, and brief ideas  |
-| Page SEO fields      | Improve titles, descriptions, social previews, robots directives, and canonical URLs  |
-| SEO audit            | Scan pages by score, critical issues, warnings, schema coverage, and setup state      |
-| Broken link handling | Review failing URLs and create redirect-manager entries from high-value opportunities |
-| Search Console       | Surface clicks, impressions, CTR, and position when the integration is configured     |
-| Settings             | Configure AI-assisted SEO prompts, limits, provider defaults, schema, and sitemaps    |
-| Dashboard/widgets    | Inspect AI usage and generation history when enabled                                  |
+| Area                 | What editors can do                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Page SEO panel       | Review score, previews, issues, passed checks, canonical, robots, links, schema, redirects, Search Console, and brief ideas |
+| Page SEO fields      | Improve titles, descriptions, social previews, robots directives, and canonical URLs                                        |
+| SEO audit            | Scan pages by score, critical issues, warnings, schema coverage, and setup state                                            |
+| Broken link handling | Review failing URLs and create redirect-manager entries from high-value opportunities                                       |
+| Search Console       | Surface clicks, impressions, CTR, and position when the integration is configured                                           |
+| Settings             | Configure AI-assisted SEO prompts, limits, provider defaults, schema, and sitemaps                                          |
+| Dashboard/widgets    | Inspect AI usage and generation history when enabled                                                                        |
 
 ## What developers get
 
@@ -43,7 +43,22 @@ The package registers through Laravel discovery. It depends on `capell-app/admin
 
 ## Configuration
 
-The main config file is `config/capell-seo-tools.php`. Configure model defaults, prompt templates, rate limits, sitemap behavior, schema templates, Search Console credentials, and provider settings there.
+The main config file is `config/capell-seo-tools.php`. Configure model defaults, prompt templates, rate limits, sitemap behavior, schema templates, Search Console credentials, provider settings, and publish-gate severity modes there.
+
+Publish gate modes live under `publish_gates`. Defaults map critical issues to blockers and warning/notice issues to warnings. Per-check overrides can set any SEO issue key to `blocker`, `warning`, or `ignored`:
+
+```php
+'publish_gates' => [
+    'default' => [
+        'critical' => 'blocker',
+        'warning' => 'warning',
+        'notice' => 'warning',
+    ],
+    'checks' => [
+        'search_console' => 'ignored',
+    ],
+],
+```
 
 ## Deeper docs
 

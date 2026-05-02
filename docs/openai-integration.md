@@ -7,7 +7,7 @@ This page is for developers wiring or extending the current SEO Tools implementa
 ## What you get
 
 - Suggested page titles and meta descriptions.
-- AI content briefs built from the live SEO report.
+- AI content briefs built from the live SEO report, including canonical, robots, schema, links, redirect, and Search Console context.
 - Long-form page content drafts when enabled.
 - AI image and layout draft helpers.
 - Generation history with token usage and timings.
@@ -24,14 +24,14 @@ This page is for developers wiring or extending the current SEO Tools implementa
 
 ## Current architecture
 
-| Layer              | Classes                                                                                                                                                            |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Layer              | Classes                                                                                                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Actions            | `Capell\SeoTools\Actions\SuggestPageTitlesAction`, `SuggestMetaDescriptionsAction`, `GenerateAiContentBriefAction`, `GeneratorPageContentAction`, `ApplyAiDraftAction`, `RecordAiGenerationAction` |
-| Provider           | `Capell\SeoTools\Support\PrismProvider`                                                                                                                            |
-| Settings           | `Capell\SeoTools\Settings\AssistantSettings`                                                                                                                       |
-| Parsing and limits | `AiResponseParser`, `AiRateLimiter`, `AiTokenCounter`, `AiFeatureRegistry`                                                                                         |
-| Persistence        | `Capell\SeoTools\Models\AIGenerationHistory`, `AiCreatorContext`, `AiCreatorSession`                                                                               |
-| Events             | `AiGenerationStarted`, `AiGenerationCompleted`, `AiGenerationFailed`                                                                                               |
+| Provider           | `Capell\SeoTools\Support\PrismProvider`                                                                                                                                                            |
+| Settings           | `Capell\SeoTools\Settings\AssistantSettings`                                                                                                                                                       |
+| Parsing and limits | `AiResponseParser`, `AiRateLimiter`, `AiTokenCounter`, `AiFeatureRegistry`                                                                                                                         |
+| Persistence        | `Capell\SeoTools\Models\AIGenerationHistory`, `AiCreatorContext`, `AiCreatorSession`                                                                                                               |
+| Events             | `AiGenerationStarted`, `AiGenerationCompleted`, `AiGenerationFailed`                                                                                                                               |
 
 ## Context contract
 
@@ -78,7 +78,7 @@ use Capell\SeoTools\Actions\GenerateAiContentBriefAction;
 $brief = GenerateAiContentBriefAction::run($page, $site, $language);
 ```
 
-The brief returns structured fields for content angle, missing topics, headings, FAQ ideas, schema opportunities, internal links, and meta alternatives.
+The brief returns structured fields for content angle, missing topics, headings, FAQ ideas, schema opportunities, internal links, and meta alternatives. The input report also includes passed checks, canonical URL, robots directives, redirect opportunities, and Search Console insights so the provider can suggest work that fits the actual page state.
 
 ## Configuration
 
@@ -86,13 +86,14 @@ Configuration lives in `config/capell-seo-tools.php`. Keep provider keys in envi
 
 Important areas:
 
-| Config area             | Purpose                                                 |
-| ----------------------- | ------------------------------------------------------- |
-| Provider/model defaults | Choose the AI provider and default model                |
-| Prompts                 | Control system and user prompt templates                |
-| Rate limits             | Prevent noisy editor actions from flooding the provider |
-| Cache                   | Reuse identical suggestions where appropriate           |
-| Features                | Map feature keys to handler actions                     |
+| Config area             | Purpose                                                              |
+| ----------------------- | -------------------------------------------------------------------- |
+| Provider/model defaults | Choose the AI provider and default model                             |
+| Prompts                 | Control system and user prompt templates                             |
+| Rate limits             | Prevent noisy editor actions from flooding the provider              |
+| Cache                   | Reuse identical suggestions where appropriate                        |
+| Features                | Map feature keys to handler actions                                  |
+| Publish gates           | Configure SEO check modes as blockers, warnings, or ignored findings |
 
 ## Filament integration
 
@@ -104,19 +105,19 @@ The settings schema is `Capell\SeoTools\Filament\Settings\AssistantSettingsSchem
 
 ## Safety model
 
-AI actions should receive bounded context and return structured data. `GenerateAiContentBriefAction` sends the page, site, language, SEO issues, schema reports, internal-link suggestions, and Search Console insights to the provider, then validates that the response is a JSON object before returning `AiContentBriefData`.
+AI actions should receive bounded context and return structured data. `GenerateAiContentBriefAction` sends the page, site, language, SEO issues, passed checks, canonical URL, robots directives, schema reports, internal-link suggestions, redirect opportunities, and Search Console insights to the provider, then validates that the response is a JSON object before returning `AiContentBriefData`.
 
 Keep generated output behind editor review. Use `ApplyAiDraftAction` only after a user has selected a draft, and keep any automatic publish decisions in deterministic checks such as SEO score, missing metadata, or schema coverage.
 
 ## Troubleshooting
 
-| Symptom               | Check                                                                                |
-| --------------------- | ------------------------------------------------------------------------------------ |
-| Suggestions are empty | The context content is empty or the parser could not find the requested output shape |
-| Brief generation fails | The provider returned non-JSON content or a required brief field was not parseable    |
-| Rate limit exceeded   | Lower request frequency or adjust SEO Tools rate limits                              |
-| Provider failures     | Check provider credentials, network access, and Capell logs                          |
-| Repeated suggestions  | Clear the AI result cache or change content/keywords                                 |
+| Symptom                | Check                                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| Suggestions are empty  | The context content is empty or the parser could not find the requested output shape |
+| Brief generation fails | The provider returned non-JSON content or a required brief field was not parseable   |
+| Rate limit exceeded    | Lower request frequency or adjust SEO Tools rate limits                              |
+| Provider failures      | Check provider credentials, network access, and Capell logs                          |
+| Repeated suggestions   | Clear the AI result cache or change content/keywords                                 |
 
 ## See also
 

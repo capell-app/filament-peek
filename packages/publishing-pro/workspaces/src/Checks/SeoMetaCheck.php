@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Workspaces\Checks;
 
 use Capell\SeoTools\Contracts\SeoPublishReportProvider;
+use Capell\SeoTools\Enums\SeoCheckModeEnum;
 use Capell\Workspaces\Models\Workspace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -81,8 +82,8 @@ class SeoMetaCheck implements PublishCheck
 
         $report = $provider->forWorkspace($workspace);
         $messages = [];
-        $hasCriticalIssue = false;
-        $hasWarnIssue = false;
+        $hasBlockingIssue = false;
+        $hasWarningIssue = false;
 
         foreach ($report as $pageReport) {
             if (! is_array($pageReport)) {
@@ -102,13 +103,16 @@ class SeoMetaCheck implements PublishCheck
                 }
 
                 $severity = $this->issueSeverity($issue['severity'] ?? null);
+                $mode = $this->modeForIssue($issue['key'] ?? null, $severity);
 
-                if ($severity === 'critical') {
-                    $hasCriticalIssue = true;
-                } elseif ($severity === 'warning' || $severity === 'notice') {
-                    $hasWarnIssue = true;
-                } else {
+                if ($mode === SeoCheckModeEnum::Ignored) {
                     continue;
+                }
+
+                if ($mode === SeoCheckModeEnum::Blocker) {
+                    $hasBlockingIssue = true;
+                } elseif ($mode === SeoCheckModeEnum::Warning) {
+                    $hasWarningIssue = true;
                 }
 
                 $message = is_string($issue['message'] ?? null)
@@ -120,8 +124,8 @@ class SeoMetaCheck implements PublishCheck
         }
 
         $severity = match (true) {
-            $hasCriticalIssue => PublishCheckSeverity::Error,
-            $hasWarnIssue => PublishCheckSeverity::Warn,
+            $hasBlockingIssue => PublishCheckSeverity::Error,
+            $hasWarningIssue => PublishCheckSeverity::Warn,
             default => PublishCheckSeverity::Info,
         };
 
@@ -169,5 +173,32 @@ class SeoMetaCheck implements PublishCheck
         }
 
         return strtolower((string) $severity);
+    }
+
+    private function modeForIssue(mixed $issueKey, ?string $severity): SeoCheckModeEnum
+    {
+        $key = is_scalar($issueKey) ? (string) $issueKey : null;
+        $configuredMode = $key === null
+            ? null
+            : config(sprintf('capell-seo-tools.publish_gates.checks.%s', $key));
+
+        if (is_string($configuredMode)) {
+            return SeoCheckModeEnum::tryFrom($configuredMode) ?? $this->defaultModeForSeverity($severity);
+        }
+
+        return $this->defaultModeForSeverity($severity);
+    }
+
+    private function defaultModeForSeverity(?string $severity): SeoCheckModeEnum
+    {
+        $configuredMode = config(sprintf('capell-seo-tools.publish_gates.default.%s', $severity ?? 'notice'));
+
+        if (is_string($configuredMode)) {
+            return SeoCheckModeEnum::tryFrom($configuredMode) ?? SeoCheckModeEnum::Warning;
+        }
+
+        return $severity === 'critical'
+            ? SeoCheckModeEnum::Blocker
+            : SeoCheckModeEnum::Warning;
     }
 }

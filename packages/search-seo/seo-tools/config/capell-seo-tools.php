@@ -23,6 +23,16 @@ return [
         'credentials_path' => env('CAPELL_SEO_TOOLS_SEARCH_CONSOLE_CREDENTIALS'),
         'property_url' => env('CAPELL_SEO_TOOLS_SEARCH_CONSOLE_PROPERTY_URL'),
     ],
+    'publish_gates' => [
+        'default' => [
+            'critical' => 'blocker',
+            'warning' => 'warning',
+            'notice' => 'warning',
+        ],
+        'checks' => [
+            // Example: 'search_console' => 'ignored',
+        ],
+    ],
     'prompts' => [
         'title_generation' => [
             'system' => 'You are a helpful assistant that writes concise, SEO-friendly page titles.',

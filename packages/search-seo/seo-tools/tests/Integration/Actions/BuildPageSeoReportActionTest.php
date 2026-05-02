@@ -5,9 +5,11 @@ declare(strict_types=1);
 use Capell\Core\Database\Factories\LanguageFactory;
 use Capell\Core\Database\Factories\PageFactory;
 use Capell\Core\Database\Factories\SiteFactory;
+use Capell\Core\Models\PageUrl;
 use Capell\SeoTools\Actions\BuildPageSeoReportAction;
 use Capell\SeoTools\Enums\SeoCheckKeyEnum;
 use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
+use Capell\SeoTools\Models\BrokenLink;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 it('reports critical issues for missing title and description', function (): void {
@@ -113,4 +115,38 @@ it('reloads language scoped relations for the requested language', function (): 
 
     expect($report->searchPreview->title)->toBe('French Search Title')
         ->and($report->searchPreview->description)->toBe('French search description for the page.');
+});
+
+it('includes passed checks, canonical, robots, and page redirect opportunities', function (): void {
+    $language = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
+    $site = SiteFactory::new()->recycle($language)->language($language)->withTranslations($language)->create();
+    $page = PageFactory::new()
+        ->site($site)
+        ->withTranslations($language, [
+            'meta' => [
+                'title' => 'A complete search title for this landing page',
+                'description' => 'A complete search description that gives editors enough useful context.',
+                'canonical_url' => 'https://example.com/canonical-page',
+            ],
+        ])
+        ->create([
+            'meta' => ['robots' => ['index', 'follow']],
+        ]);
+
+    PageUrl::factory()->page($page)->site($site)->language($language)->state(['url' => '/canonical-page'])->create();
+
+    BrokenLink::query()->create([
+        'page_id' => $page->id,
+        'target_url' => '/old-page',
+        'http_status' => 404,
+        'last_checked_at' => now(),
+    ]);
+
+    $report = BuildPageSeoReportAction::run($page, $site, $language);
+
+    expect($report->passedChecks)->not->toBeEmpty()
+        ->and($report->canonicalUrl)->toBe('https://example.com/canonical-page')
+        ->and($report->robotsDirectives)->toBe(['index', 'follow'])
+        ->and($report->redirectOpportunities)->toHaveCount(1)
+        ->and($report->redirectOpportunities[0]->sourceUrl)->toBe('/old-page');
 });

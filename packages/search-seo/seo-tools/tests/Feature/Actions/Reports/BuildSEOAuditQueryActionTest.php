@@ -8,7 +8,7 @@ use Capell\Core\Database\Factories\SiteFactory;
 use Capell\SeoTools\Actions\Reports\BuildSEOAuditQueryAction;
 use Capell\SeoTools\Filament\Pages\Tables\SEOAuditTable;
 
-it('includes pages with missing SEO metadata and excludes healthy metadata', function (): void {
+it('includes pages beyond missing metadata so report columns can evaluate every issue type', function (): void {
     $language = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
     $site = SiteFactory::new()->recycle($language)->language($language)->withTranslations($language)->create();
     $healthyPage = PageFactory::new()
@@ -29,7 +29,7 @@ it('includes pages with missing SEO metadata and excludes healthy metadata', fun
 
     expect($pageIds)
         ->toContain($unhealthyPage->getKey())
-        ->not->toContain($healthyPage->getKey());
+        ->toContain($healthyPage->getKey());
 });
 
 it('uses the unhealthy translation language for audit report columns', function (): void {

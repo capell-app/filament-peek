@@ -21,17 +21,8 @@ final class BuildSEOAuditQueryAction
                 'site.language',
                 'translation.language',
                 'translations.language',
-            ])
-            ->where(function (Builder $query): void {
-                $query->whereDoesntHave('translations')
-                    ->orWhereHas('translations', function (Builder $query): void {
-                        $query
-                            ->whereNull('meta->title')
-                            ->orWhere('meta->title', '')
-                            ->orWhereNull('meta->description')
-                            ->orWhere('meta->description', '');
-                    });
-            });
+                'type',
+            ]);
 
         return SiteScope::applyForCurrentActor($query);
     }

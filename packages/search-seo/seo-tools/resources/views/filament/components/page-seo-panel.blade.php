@@ -1,4 +1,8 @@
 @php
+    use Capell\SeoTools\Data\InternalLinkSuggestionData;
+    use Capell\SeoTools\Data\RedirectOpportunityData;
+    use Capell\SeoTools\Data\SchemaTemplateReportData;
+    use Capell\SeoTools\Data\SearchConsoleInsightData;
     use Capell\SeoTools\Data\SeoIssueData;
     use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
 
@@ -6,6 +10,10 @@
     $warningIssues = $hasReport ? collect($report->issues)->filter(fn (SeoIssueData $issue): bool => $issue->severity === SeoIssueSeverityEnum::Warning) : collect();
     $noticeIssues = $hasReport ? collect($report->issues)->filter(fn (SeoIssueData $issue): bool => $issue->severity === SeoIssueSeverityEnum::Notice) : collect();
     $passedChecks = $hasReport ? collect($report->passedChecks) : collect();
+    $internalLinkSuggestions = $hasReport ? collect($report->internalLinkSuggestions) : collect();
+    $schemaReports = $hasReport ? collect($report->schemaReports) : collect();
+    $redirectOpportunities = $hasReport ? collect($report->redirectOpportunities) : collect();
+    $searchConsoleInsights = $hasReport ? collect($report->searchConsoleInsights) : collect();
 @endphp
 
 <div
@@ -124,6 +132,191 @@
                     @endif
                 </div>
             @endforeach
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-2">
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_panel_canonical') }}
+                </div>
+                <div class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                    {{ $report->canonicalUrl ?? $report->searchPreview->url }}
+                </div>
+            </div>
+
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_panel_robots') }}
+                </div>
+                <div class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                    {{ collect($report->robotsDirectives)->implode(', ') ?: __('capell-seo-tools::generic.seo_panel_default_robots') }}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-2">
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_severity_passed') }}
+                    ({{ $passedChecks->count() }})
+                </div>
+                @if ($passedChecks->isEmpty())
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                        {{ __('capell-seo-tools::generic.seo_panel_no_suggestions') }}
+                    </div>
+                @else
+                    <ul
+                        class="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-300"
+                    >
+                        @foreach ($passedChecks as $passedCheck)
+                            <li>{{ $passedCheck->message }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_panel_internal_links') }}
+                    ({{ $internalLinkSuggestions->count() }})
+                </div>
+                @if ($internalLinkSuggestions->isEmpty())
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                        {{ __('capell-seo-tools::generic.seo_panel_no_suggestions') }}
+                    </div>
+                @else
+                    <ul
+                        class="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-300"
+                    >
+                        @foreach ($internalLinkSuggestions as $suggestion)
+                            <li>
+                                <span class="font-medium">
+                                    {{ $suggestion->title }}
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ $suggestion->url }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-3">
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_panel_schema') }}
+                    ({{ $schemaReports->count() }})
+                </div>
+                @if ($schemaReports->isEmpty())
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                        {{ __('capell-seo-tools::generic.seo_schema_status_missing') }}
+                    </div>
+                @else
+                    <ul
+                        class="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-300"
+                    >
+                        @foreach ($schemaReports as $schemaReport)
+                            <li>
+                                <span class="font-medium">
+                                    {{ $schemaReport->templateType->getLabel() }}
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ $schemaReport->severity->getLabel() }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_panel_redirects') }}
+                    ({{ $redirectOpportunities->count() }})
+                </div>
+                @if ($redirectOpportunities->isEmpty())
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                        {{ __('capell-seo-tools::generic.seo_panel_no_redirects') }}
+                    </div>
+                @else
+                    <ul
+                        class="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-300"
+                    >
+                        @foreach ($redirectOpportunities as $opportunity)
+                            <li>
+                                <span class="font-medium">
+                                    {{ $opportunity->sourceUrl }}
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ __('capell-seo-tools::generic.seo_panel_redirect_hits', ['count' => $opportunity->hits]) }}
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
+            <div
+                class="rounded-md border border-gray-200 p-3 dark:border-gray-700"
+            >
+                <div
+                    class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
+                    {{ __('capell-seo-tools::generic.seo_panel_search_console') }}
+                    ({{ $searchConsoleInsights->count() }})
+                </div>
+                @if ($searchConsoleInsights->isEmpty())
+                    <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                        {{ __('capell-seo-tools::generic.seo_panel_no_search_console_insights') }}
+                    </div>
+                @else
+                    <ul
+                        class="mt-2 space-y-2 text-sm text-gray-700 dark:text-gray-300"
+                    >
+                        @foreach ($searchConsoleInsights as $insight)
+                            <li>
+                                <span class="font-medium">
+                                    {{ $insight->metric->getLabel() }}
+                                </span>
+                                <span>{{ $insight->message }}</span>
+                                @if ($insight->value !== null)
+                                    <span
+                                        class="text-gray-500 dark:text-gray-400"
+                                    >
+                                        {{ $insight->value }}
+                                    </span>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
         </div>
     @endif
 </div>
