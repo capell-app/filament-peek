@@ -49,6 +49,19 @@ The redirects package registers this resource with Capell Admin from `RedirectsS
 
 Frontend page resolution delegates redirect decisions to `RedirectResolver`. The default `PageUrlRedirectResolver` resolves active `page_urls` rows of `type = redirect` and issues a `301` or `302` according to the row's `status_code`. Hit count and `last_hit_at` are updated on every match.
 
+## SEO Tools integration
+
+SEO Tools records broken-link events and groups repeated failures into redirect opportunities. The Redirects package remains the persistence boundary:
+
+- Editors review broken links and opportunity counts in SEO Tools.
+- The "create redirect" flow opens a modal from the broken-link record, pre-fills the source URL, accepts a target URL and status code, and writes a normal manual redirect into `page_urls`.
+- Redirect validation still runs through `ValidateRedirectAction`, including duplicate, self-redirect, loop, and chain checks.
+- Hit count and `last_hit_at` continue to be owned by redirect resolution.
+
+This keeps SEO analysis in SEO Tools while preserving the Redirect Manager as the single place that stores and validates redirects.
+
+Redirect chain and loop badges are read from `redirect_health_snapshots`. Run `RefreshRedirectHealthSnapshotAction` after changing one redirect or `RefreshRedirectHealthSnapshotsAction` after imports.
+
 ## Configuration
 
 ```php

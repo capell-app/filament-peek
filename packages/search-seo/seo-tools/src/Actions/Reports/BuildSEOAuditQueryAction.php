@@ -16,17 +16,12 @@ final class BuildSEOAuditQueryAction
     public function handle(): Builder
     {
         $query = Page::query()
-            ->with(['site', 'translations'])
-            ->where(function (Builder $query): void {
-                $query->whereDoesntHave('translations')
-                    ->orWhereHas('translations', function (Builder $query): void {
-                        $query
-                            ->whereNull('meta->title')
-                            ->orWhere('meta->title', '')
-                            ->orWhereNull('meta->description')
-                            ->orWhere('meta->description', '');
-                    });
-            });
+            ->with([
+                'pageUrl.siteDomain',
+                'site.language',
+                'translation.language',
+                'translations.language',
+            ]);
 
         return SiteScope::applyForCurrentActor($query);
     }
