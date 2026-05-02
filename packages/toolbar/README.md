@@ -1,28 +1,74 @@
-# Capell Frontend Toolbar
+# Toolbar
 
-**Product group:** Capell Foundation
-**Tier:** Free
+Status: **Available, no schema impact** · Kind: **package** · Tier: **free** · Bundle: **foundation** · Contexts: **frontend, console** · Product group: **Capell Foundation**
 
-Frontend Toolbar adds the bridge between the rendered site and the Capell admin. It gives authenticated editors a way to jump from frontend pages back into the admin workflow.
+## What This Plugin Adds
 
-## When to install it
+Toolbar adds a frontend admin toolbar beacon and pass-through activity middleware for Capell frontend pages.
 
-Install Frontend Toolbar when editors need a visible frontend editing affordance, preview beacon, or admin shortcut while reviewing public pages.
+- Frontend beacon route.
+- Beacon controller and request.
+- Pass-through activity middleware.
+- Config flag for enabling the admin toolbar.
 
-## Quick install
+## Why It Matters
 
-```bash
-composer require capell-app/frontend-toolbar
-php artisan optimize:clear
-php artisan capell:static-site
-```
+**For developers:** Provides a small frontend-to-admin signal that can be enabled without changing page models or layout data.
 
-## What appears in the admin
+**For teams:** Lets signed-in operators work from the frontend with admin context where the host app enables the toolbar.
 
-Nothing new appears as a standalone admin resource. The toolbar is frontend-facing and depends on a theme or render hook that outputs it.
+## Screens And Workflow
 
-## What developers get
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-- Toolbar service provider.
-- Beacon request and controller.
-- Frontend integration points for authenticated editor tooling.
+- Frontend page with toolbar visible.
+- Beacon network request.
+- Toolbar enabled/disabled configuration proof.
+
+## Technical Shape
+
+- ToolbarServiceProvider registers config and routes.
+- Config file: capell-frontend-toolbar.php.
+- Route: POST beacon, named capell-frontend.beacon.
+- Middleware: PassThroughActivityMiddleware.
+- Request: BeaconRequest.
+
+## Data Model
+
+- This package does not own data.
+- Beacon handling depends on request context and host-app activity tracking.
+
+## Install Impact
+
+- Adds frontend beacon route.
+- Adds toolbar config key CAPELL_ADMIN_TOOLBAR.
+- No database changes.
+- No admin navigation.
+
+## Commands
+
+- None proven in this package directory.
+
+## Admin And Access
+
+- None proven in this package directory.
+
+- None proven in this package directory.
+
+## Common Pitfalls
+
+- Disable the toolbar in environments where frontend admin controls should not appear.
+- Beacon route is throttled at 60 requests per minute.
+- CSRF is disabled for the beacon route; keep middleware and validation tight.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/frontend-toolbar`.
+2. Register the package provider through Composer discovery and clear cached config if the host app uses config caching.
+3. Open the new admin or frontend surface and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../authentication-log/README.md](../authentication-log/README.md)
+- [../html-minify/README.md](../html-minify/README.md)

@@ -1,32 +1,77 @@
-# Capell Authentication Log
+# Authentication Log
 
-**Product group:** Capell Operations
-**Tier:** Premium
+Status: **Available, schema-owning** · Kind: **package** · Tier: **premium** · Bundle: **operations** · Contexts: **admin** · Product group: **Capell Operations**
 
-Authentication Log adds login and activity visibility to Capell admin dashboards using the Tapp Filament Authentication Log package.
+## What This Plugin Adds
 
-## When to install it
+Authentication Log records login, failed login, logout, and admin/user activity metadata for Capell users.
 
-Install Authentication Log when administrators need to see recent admin logins, account activity, and security-relevant user events.
+- Filament resource for authentication logs.
+- Dashboard widget for recent authentication activity.
+- Settings schema for authentication log behaviour.
+- Middleware for admin and user activity tracking.
 
-## Quick install
+## Why It Matters
 
-```bash
-composer require capell-app/authentication-log
-php artisan migrate
-php artisan optimize:clear
-```
+**For developers:** Wraps Rappasoft Laravel Authentication Log with Capell settings, resources, widgets, query actions, and IP resolution policy.
 
-## What appears in the admin
+**For teams:** Helps site operators review access activity and spot account behaviour that needs follow-up.
 
-| Area                  | What administrators can see                     |
-| --------------------- | ----------------------------------------------- |
-| Dashboard             | Recent authentication activity widget           |
-| User/account activity | Login records, timestamps, and related metadata |
+## Screens And Workflow
 
-## What developers get
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-- `AuthenticationLog` model.
-- Dashboard widget for recent authentication events.
-- Admin and user activity middleware.
-- Query action and observer for consistent log handling.
+- Authentication logs admin index.
+- Authentication log table filters.
+- Dashboard widget.
+- Authentication log settings screen.
+
+## Technical Shape
+
+- AuthenticationLogServiceProvider and AdminServiceProvider register the package.
+- Config file: authentication-log.php.
+- Migration creates authentication_log.
+- Model: AuthenticationLog.
+- Filament resource: AuthenticationLogResource.
+- Middleware: AdminActivityMiddleware and UserActivityMiddleware.
+
+## Data Model
+
+- authentication_log stores authenticatable type/id, IP address, user agent, login time, and logout time.
+- Records belong polymorphically to authenticatable users.
+- Config purge value defaults to 365 days.
+
+## Install Impact
+
+- Adds authentication_log table.
+- Adds settings migration.
+- Adds authentication log admin resource and widget.
+- Listens to Laravel auth events configured in authentication-log.php.
+- May send new-device or failed-login notifications depending on config.
+
+## Commands
+
+- None proven in this package directory.
+
+## Admin And Access
+
+- AuthenticationLogResource (packages/authentication-log/src/Filament/Resources/AuthenticationLogs/AuthenticationLogResource.php)
+
+- Gate: AuthenticationLogsWidget: `admin`, `super_admin`
+
+## Common Pitfalls
+
+- Set CDN IP header config before trusting IP addresses behind a proxy.
+- Confirm notification settings before production rollout.
+- Run migrations before loading the resource.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/authentication-log`.
+2. Run the package migrations or the Capell package installer required by the host app.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../developer-tools/README.md](../developer-tools/README.md)

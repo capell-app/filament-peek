@@ -13,6 +13,7 @@ use Capell\Workspaces\Models\Workspace;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -122,9 +123,11 @@ final class BuildContentSchedulerEventsAction
             ->get()
             ->flatMap(function (Workspace $workspace) use ($schedulerColumns): array {
                 $events = [];
-                $recordUrl = WorkspaceResource::getUrl('index', [
-                    'tableSearch' => $workspace->name,
-                ]);
+                $recordUrl = Route::has('filament.admin.resources.workspaces.index')
+                    ? WorkspaceResource::getUrl('index', [
+                        'tableSearch' => $workspace->name,
+                    ])
+                    : '#';
 
                 if (in_array('publish_at', $schedulerColumns, true) && $workspace->publish_at !== null && $workspace->publish_at->isFuture()) {
                     $events[] = $this->workspaceEvent($workspace, SchedulerEventTypeEnum::Publish, $workspace->publish_at, 'workspace_publish', $recordUrl);

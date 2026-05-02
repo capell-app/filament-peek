@@ -41,16 +41,33 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->registerPackageMetadata()
-            ->registerModels()
-            ->registerSettings()
-            ->registerProtectedTables()
-            ->registerMiddlewareAliases();
+        $this->registerPackageMetadata();
+
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this
+                ->registerModels()
+                ->registerSettings()
+                ->registerProtectedTables()
+                ->registerMiddlewareAliases();
+        });
     }
 
     public function packageBooted(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         VendorAuthenticationLog::observe(AuthenticationLogObserver::class);
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(static::$packageName);
     }
 
     private function registerPackageMetadata(): self
@@ -78,13 +95,11 @@ class AuthenticationLogServiceProvider extends AbstractPackageServiceProvider
 
     private function registerSettings(): self
     {
-        $this->app->afterResolving(
-            SettingsSchemaRegistry::class,
-            function (SettingsSchemaRegistry $registry): void {
-                $registry->registerSettingsClass('authentication_log', AuthenticationLogSettings::class);
-                $registry->register('authentication_log', AuthenticationLogSettingsSchema::class);
-            },
-        );
+        /** @var SettingsSchemaRegistry $registry */
+        $registry = $this->app->make(SettingsSchemaRegistry::class);
+
+        $registry->registerSettingsClass('authentication_log', AuthenticationLogSettings::class);
+        $registry->register('authentication_log', AuthenticationLogSettingsSchema::class);
 
         return $this;
     }

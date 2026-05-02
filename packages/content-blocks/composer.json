@@ -34,9 +34,6 @@
             "providers": [
                 "Capell\\ContentBlocks\\Providers\\ContentBlocksServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     },
     "config": {

@@ -54,6 +54,8 @@ use Spatie\Activitylog\Models\Activity;
 
 class WorkspacesServiceProvider extends ServiceProvider
 {
+    public static string $packageName = 'capell-app/workspaces';
+
     /** @var array<class-string<Model>, true> */
     private array $workspaceBehaviorApplied = [];
 
@@ -61,37 +63,22 @@ class WorkspacesServiceProvider extends ServiceProvider
     {
         $this->app->register(AdminServiceProvider::class);
 
-        CapellCore::registerPackage('capell-app/workspaces', path: realpath(__DIR__ . '/../..'));
-        CapellCore::registerModels([
-            PreviewLink::class,
-            Version::class,
-            Workspace::class,
-            WorkspaceApproval::class,
-            WorkspaceFieldComment::class,
-            WorkspaceReviewAssignment::class,
-        ]);
-
-        $this->app->singleton(WorkspacesManager::class, fn (): WorkspacesManager => new WorkspacesManager);
-        $this->app->singleton(WorkspaceEventDispatcher::class);
-        $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
-        $this->app->tag([WorkspacesPageTableExtender::class], PageTableExtender::TAG);
-        $this->app->tag([WorkspacesPageEditExtender::class], PageEditExtender::TAG);
-        $this->app->tag([WorkspacesPageExportExtender::class], PageExportExtender::TAG);
-        $this->app->tag([WorkspacesPageResourcePageExtender::class], PageResourcePageExtender::TAG);
+        CapellCore::registerPackage(static::$packageName, path: realpath(__DIR__ . '/../..'));
     }
 
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-workspaces');
-
-        $this->registerMorphMap();
-
-        if (! CapellCore::isPackageInstalled('capell-app/workspaces')) {
+        if (! $this->isPackageInstalled()) {
             return;
         }
 
-        $this->registerWorkspaceDraftables()
+        $this
+            ->registerModels()
+            ->registerServices()
+            ->registerExtenders()
+            ->registerPackageAssets()
+            ->registerMorphMap()
+            ->registerWorkspaceDraftables()
             ->applyBehaviorToDraftableModels()
             ->registerBuilderMacros()
             ->registerMiddleware()
@@ -103,6 +90,52 @@ class WorkspacesServiceProvider extends ServiceProvider
                 ->registerPageTypeDraftables()
                 ->applyBehaviorToDraftableModels();
         });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(static::$packageName);
+    }
+
+    private function registerModels(): self
+    {
+        CapellCore::registerModels([
+            PreviewLink::class,
+            Version::class,
+            Workspace::class,
+            WorkspaceApproval::class,
+            WorkspaceFieldComment::class,
+            WorkspaceReviewAssignment::class,
+        ]);
+
+        return $this;
+    }
+
+    private function registerServices(): self
+    {
+        $this->app->singleton(WorkspacesManager::class, fn (): WorkspacesManager => new WorkspacesManager);
+        $this->app->singleton(WorkspaceEventDispatcher::class);
+        $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
+
+        return $this;
+    }
+
+    private function registerExtenders(): self
+    {
+        $this->app->tag([WorkspacesPageTableExtender::class], PageTableExtender::TAG);
+        $this->app->tag([WorkspacesPageEditExtender::class], PageEditExtender::TAG);
+        $this->app->tag([WorkspacesPageExportExtender::class], PageExportExtender::TAG);
+        $this->app->tag([WorkspacesPageResourcePageExtender::class], PageResourcePageExtender::TAG);
+
+        return $this;
+    }
+
+    private function registerPackageAssets(): self
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-workspaces');
+
+        return $this;
     }
 
     private function registerMorphMap(): self

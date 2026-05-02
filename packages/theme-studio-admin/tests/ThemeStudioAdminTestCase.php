@@ -19,7 +19,7 @@ class ThemeStudioAdminTestCase extends AbstractTestCase
 
         $this->registerAndMigrateSettings(
             ['create_theme_studio_settings'],
-            __DIR__ . '/../../core/database/settings',
+            __DIR__ . '/../../theme-studio-core/database/settings',
         );
     }
 

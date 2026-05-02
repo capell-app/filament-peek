@@ -13,8 +13,8 @@ it('uses the reset Theme Studio package names', function (string $path, string $
 })->with([
     'meta package' => [dirname(__DIR__, 3) . '/theme-studio', 'capell-app/theme-studio'],
     'core package' => [dirname(__DIR__, 2), 'capell-app/theme-studio-core'],
-    'admin package' => [dirname(__DIR__, 3) . '/admin', 'capell-app/theme-studio-admin'],
-    'corporate theme' => [dirname(__DIR__, 3) . '/themes/corporate', 'capell-app/theme-corporate'],
-    'agency theme' => [dirname(__DIR__, 3) . '/themes/agency', 'capell-app/theme-agency'],
-    'saas theme' => [dirname(__DIR__, 3) . '/themes/saas', 'capell-app/theme-saas'],
+    'admin package' => [dirname(__DIR__, 3) . '/theme-studio-admin', 'capell-app/theme-studio-admin'],
+    'corporate theme' => [dirname(__DIR__, 3) . '/theme-corporate', 'capell-app/theme-corporate'],
+    'agency theme' => [dirname(__DIR__, 3) . '/theme-agency', 'capell-app/theme-agency'],
+    'saas theme' => [dirname(__DIR__, 3) . '/theme-saas', 'capell-app/theme-saas'],
 ]);

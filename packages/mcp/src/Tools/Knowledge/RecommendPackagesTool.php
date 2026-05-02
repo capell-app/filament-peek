@@ -42,10 +42,13 @@ final class RecommendPackagesTool extends Tool
                     $package['productGroup'] ?? '',
                     $package['bundle'] ?? '',
                     implode(' ', $package['contexts'] ?? []),
-                ])));
+                ], static fn (string $value): bool => $value !== '')));
 
                 $score = 0;
-                foreach (preg_split('/\s+/', $query) ?: [] as $term) {
+                $terms = preg_split('/\s+/', $query);
+                $terms = $terms === false ? [] : $terms;
+
+                foreach ($terms as $term) {
                     if ($term !== '' && str_contains($haystack, $term)) {
                         $score++;
                     }

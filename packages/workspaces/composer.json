@@ -39,9 +39,6 @@
             "providers": [
                 "Capell\\Workspaces\\Providers\\WorkspacesServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     },
     "config": {

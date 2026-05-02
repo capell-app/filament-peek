@@ -6,6 +6,7 @@ namespace Capell\Mcp\Models;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -28,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 final class CapellMcpConfirmation extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'token',
         'mcp_token_id',

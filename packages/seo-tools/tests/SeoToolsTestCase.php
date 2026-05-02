@@ -65,7 +65,7 @@ class SeoToolsTestCase extends AbstractTestCase
         // discover and include navigation's migrations in the ordered workspace.
         CapellCore::registerPackage(
             NavigationServiceProvider::$packageName,
-            path: realpath(__DIR__ . '/../../../foundation/navigation'),
+            path: realpath(__DIR__ . '/../../navigation'),
         );
         CapellCore::forcePackageInstalled(NavigationServiceProvider::$packageName);
     }

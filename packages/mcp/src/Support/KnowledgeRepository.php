@@ -23,13 +23,13 @@ final class KnowledgeRepository
             }
 
             $packages[] = [
-                'name' => $decoded['name'] ?? basename(dirname($packageFile)),
+                'name' => $decoded['name'] ?? basename(dirname((string) $packageFile)),
                 'productGroup' => $decoded['productGroup'] ?? null,
                 'tier' => $decoded['tier'] ?? null,
                 'bundle' => $decoded['bundle'] ?? null,
                 'contexts' => $decoded['contexts'] ?? [],
                 'requires' => $decoded['requires'] ?? [],
-                'path' => dirname($packageFile),
+                'path' => dirname((string) $packageFile),
             ];
         }
 
@@ -41,8 +41,8 @@ final class KnowledgeRepository
     {
         $paths = [];
 
-        foreach ((array) config('capell-mcp.public_docs_paths', []) as $configuredPath) {
-            foreach (File::glob((string) $configuredPath) as $path) {
+        foreach (config('capell-mcp.public_docs_paths', []) as $configuredPath) {
+            foreach (File::glob($configuredPath) as $path) {
                 if (is_dir($path)) {
                     foreach (File::allFiles($path) as $file) {
                         $this->appendMarkdownDocument($paths, $file);

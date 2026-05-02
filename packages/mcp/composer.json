@@ -18,9 +18,6 @@
             "providers": [
                 "Capell\\Mcp\\Providers\\CapellMcpServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     },
     "require": {

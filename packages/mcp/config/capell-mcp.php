@@ -14,7 +14,7 @@ return [
 
     'token_prefix' => env('CAPELL_MCP_TOKEN_PREFIX', 'cmcp_'),
 
-    'confirmation_ttl_minutes' => (int) env('CAPELL_MCP_CONFIRMATION_TTL_MINUTES', 10),
+    'confirmation_ttl_minutes' => env('CAPELL_MCP_CONFIRMATION_TTL_MINUTES', 10),
 
     'public_docs_paths' => [
         base_path('README.md'),

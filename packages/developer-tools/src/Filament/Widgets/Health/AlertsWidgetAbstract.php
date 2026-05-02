@@ -16,7 +16,6 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
 use Capell\Core\Models\Type;
-use Capell\Installer\Actions\RemoveInstallerPackageAction;
 use Capell\Installer\Providers\InstallerServiceProvider;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -108,7 +107,7 @@ final class AlertsWidgetAbstract extends ResourceAlertsWidget
             ->size('sm')
             ->requiresConfirmation()
             ->action(function (): mixed {
-                $action = RemoveInstallerPackageAction::class;
+                $action = 'Capell\\Installer\\Actions\\RemoveInstallerPackageAction';
 
                 if (! class_exists($action)) {
                     Notification::make()

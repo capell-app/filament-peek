@@ -7,6 +7,8 @@ namespace Capell\FilamentPeek\Tests;
 use Capell\Core\Facades\CapellCore;
 use Capell\FilamentPeek\Providers\FilamentPeekServiceProvider;
 use Capell\Tests\AbstractTestCase;
+use Capell\Workspaces\Models\Workspace;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\LivewireServiceProvider;
 use Override;
 use Pboivin\FilamentPeek\FilamentPeekServiceProvider as BaseFilamentPeekServiceProvider;
@@ -43,5 +45,9 @@ abstract class FilamentPeekTestCase extends AbstractTestCase
         );
         CapellCore::forcePackageInstalled('capell-app/workspaces');
         CapellCore::forcePackageInstalled(FilamentPeekServiceProvider::$packageName);
+
+        Relation::morphMap([
+            'workspace' => Workspace::class,
+        ]);
     }
 }

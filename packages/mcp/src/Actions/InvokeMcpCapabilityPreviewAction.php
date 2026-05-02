@@ -46,8 +46,8 @@ final class InvokeMcpCapabilityPreviewAction
         $registry = resolve(CapellMcpCapabilityRegistry::class);
         $capability = $registry->get($capabilityKey);
 
-        $client ??= app()->bound(AuthenticatedMcpClientData::class) ? app(AuthenticatedMcpClientData::class) : null;
-        $token ??= app()->bound(CapellMcpToken::class) ? app(CapellMcpToken::class) : null;
+        $client ??= app()->bound(AuthenticatedMcpClientData::class) ? resolve(AuthenticatedMcpClientData::class) : null;
+        $token ??= app()->bound(CapellMcpToken::class) ? resolve(CapellMcpToken::class) : null;
         $user ??= request()->user();
 
         if ($client !== null && ! $client->can($capability->scope)) {
@@ -89,7 +89,7 @@ final class InvokeMcpCapabilityPreviewAction
             'payload_hash' => self::payloadHash($payload),
             'payload' => $payload,
             'preview' => $preview->toPayload(),
-            'expires_at' => now()->addMinutes((int) config('capell-mcp.confirmation_ttl_minutes', 10)),
+            'expires_at' => now()->addMinutes(config('capell-mcp.confirmation_ttl_minutes', 10)),
         ]);
 
         if ($user !== null) {

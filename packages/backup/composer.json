@@ -27,9 +27,6 @@
             "providers": [
                 "Capell\\Backup\\Providers\\BackupServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     },
     "config": {

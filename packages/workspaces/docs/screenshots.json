@@ -1,0 +1,79 @@
+{
+    "package": "workspaces",
+    "composerName": "capell-app/workspaces",
+    "generatedFor": "deployment-screenshot-runner",
+    "requiresInstalledPackage": true,
+    "outputDirectory": "public/docs/screenshots/packages/workspaces",
+    "entries": [
+        {
+            "id": "workspaces-admin-index",
+            "title": "Workspaces admin index.",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ActivityTrailPage",
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        },
+        {
+            "id": "workspace-compare-page",
+            "title": "Workspace compare page.",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ActivityTrailPage",
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        },
+        {
+            "id": "preview-links-manager",
+            "title": "Preview links manager.",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ActivityTrailPage",
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        },
+        {
+            "id": "scheduled-publishing-page",
+            "title": "Scheduled publishing page.",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ActivityTrailPage",
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        },
+        {
+            "id": "stale-drafts-page",
+            "title": "Stale drafts page.",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ActivityTrailPage",
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        },
+        {
+            "id": "activity-trail-page",
+            "title": "Activity trail page.",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ActivityTrailPage",
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        },
+        {
+            "id": "frontend-workspace-preview-banner",
+            "title": "Frontend workspace preview banner.",
+            "package": "workspaces",
+            "surface": "frontend",
+            "targetType": "frontend-url",
+            "target": null,
+            "required": true,
+            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+        }
+    ]
+}

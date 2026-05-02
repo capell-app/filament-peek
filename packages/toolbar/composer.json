@@ -23,9 +23,6 @@
             "providers": [
                 "Capell\\Toolbar\\Providers\\ToolbarServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     }
 }

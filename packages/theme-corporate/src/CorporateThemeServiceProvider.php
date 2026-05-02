@@ -90,11 +90,11 @@ class CorporateThemeServiceProvider extends ServiceProvider
 
     public function boot(ThemeRegistry $registry): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'capell-theme-corporate');
-
         if (! CapellCore::isPackageInstalled(self::$packageName)) {
             return;
         }
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'capell-theme-corporate');
 
         $sectionRenderers = $this->sectionRenderers();
 

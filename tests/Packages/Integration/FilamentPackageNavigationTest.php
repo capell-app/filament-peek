@@ -36,6 +36,7 @@ it('registers every installed package in the Capell package registry', function 
         'capell-app/backup',
         'capell-app/blog',
         'capell-app/campaigns',
+        'capell-app/core',
         'capell-app/developer-tools',
         'capell-app/filament-peek',
         'capell-app/forms',

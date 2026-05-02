@@ -14,6 +14,7 @@ use Capell\Analytics\Filament\Widgets\PopularPagesWidget;
 use Capell\Analytics\Filament\Widgets\RecentJourneysWidget;
 use Capell\Analytics\Filament\Widgets\TopActionsWidget;
 use Capell\Analytics\Filament\Widgets\TrendingPagesWidget;
+use Capell\Core\Facades\CapellCore;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,15 +22,32 @@ class AdminServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->tag([AnalyticsDashboardSettingsContributor::class], DashboardSettingsContributor::TAG);
+        //
     }
 
     public function boot(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         $this
+            ->registerDashboardSettingsContributor()
             ->registerCommands()
             ->registerDashboardWidgets()
             ->registerSchedule();
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(AnalyticsServiceProvider::$packageName);
+    }
+
+    private function registerDashboardSettingsContributor(): self
+    {
+        $this->app->tag([AnalyticsDashboardSettingsContributor::class], DashboardSettingsContributor::TAG);
+
+        return $this;
     }
 
     private function registerCommands(): self

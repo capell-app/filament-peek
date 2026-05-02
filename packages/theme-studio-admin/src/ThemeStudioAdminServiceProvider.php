@@ -35,12 +35,24 @@ final class ThemeStudioAdminServiceProvider extends AbstractPackageServiceProvid
 
     public function packageRegistered(): void
     {
-        $this
-            ->registerPackageMetadata()
-            ->registerSettings()
-            ->registerPublishing()
-            ->registerWorkspaceApprovalHandoff()
-            ->registerPages();
+        $this->registerPackageMetadata();
+
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this
+                ->registerSettings()
+                ->registerPublishing()
+                ->registerWorkspaceApprovalHandoff()
+                ->registerPages();
+        });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(self::$packageName);
     }
 
     private function registerPackageMetadata(): self
@@ -60,12 +72,15 @@ final class ThemeStudioAdminServiceProvider extends AbstractPackageServiceProvid
 
     private function registerSettings(): self
     {
-        $this->app->afterResolving(
-            SettingsSchemaRegistry::class,
-            function (SettingsSchemaRegistry $registry): void {
-                $registry->register(ThemeStudioSettings::group(), ThemeStudioSettingsSchema::class);
-            },
-        );
+        $registerSettingsSchema = function (SettingsSchemaRegistry $registry): void {
+            $registry->register(ThemeStudioSettings::group(), ThemeStudioSettingsSchema::class);
+        };
+
+        $this->app->afterResolving(SettingsSchemaRegistry::class, $registerSettingsSchema);
+
+        if ($this->app->resolved(SettingsSchemaRegistry::class)) {
+            $registerSettingsSchema($this->app->make(SettingsSchemaRegistry::class));
+        }
 
         return $this;
     }

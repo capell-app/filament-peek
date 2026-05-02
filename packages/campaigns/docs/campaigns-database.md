@@ -1,21 +1,7 @@
-# Campaigns Database
+# Campaigns
 
-## Tables
+This page has been consolidated into [Overview](overview.md).
 
-- `campaign_groups`: campaign identity, status, date window, budget notes, and default UTM values.
-- `campaign_landing_pages`: links a campaign group to a Core page and optional primary conversion goal.
-- `campaign_cta_blocks`: reusable CTA content and button definitions.
-- `campaign_conversion_goals`: page view, CTA click, form submission, and custom action goals.
-- `campaign_conversions`: immutable conversion records with attribution snapshots.
+The package README and overview now carry the current source-of-truth summary for what Campaigns adds, why it matters, technical shape, data model, install impact, pitfalls, and screenshot plan.
 
-## Attribution
-
-Campaigns reads UTM fields from Analytics visits when Analytics is installed. Conversion records store their own attribution snapshot so historical reports remain stable when a campaign group or landing page is edited later.
-
-## Layout Presets
-
-The layout installer creates three Mosaic layout presets:
-
-- Lead Generation
-- Product Launch
-- Webinar
+Restore this topic as a focused deep dive only when it has code references, screenshots, or workflow detail that does not belong in the overview.

@@ -18,9 +18,6 @@
             "providers": [
                 "Capell\\DeveloperTools\\Providers\\DeveloperToolsServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     },
     "require": {

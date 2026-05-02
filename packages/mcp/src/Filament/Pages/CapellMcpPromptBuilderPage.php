@@ -17,7 +17,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Override;
 
@@ -53,7 +52,7 @@ final class CapellMcpPromptBuilderPage extends Page implements HasForms
     }
 
     #[Override]
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string
     {
         return __('capell-mcp::admin.prompt_builder_title');
     }

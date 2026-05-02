@@ -15,6 +15,10 @@ class ToolbarServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'capell-frontend-toolbar');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell');
         $this->registerFallbackMiddlewareAliases();
@@ -25,6 +29,11 @@ class ToolbarServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/capell-frontend-toolbar.php', 'capell-frontend-toolbar');
         $this->registerPackageMetadata();
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(static::$packageName);
     }
 
     private function registerFallbackMiddlewareAliases(): void

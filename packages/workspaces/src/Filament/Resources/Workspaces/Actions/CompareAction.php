@@ -8,6 +8,7 @@ use Capell\Workspaces\Filament\Resources\Workspaces\WorkspaceResource;
 use Capell\Workspaces\Models\Workspace;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Route;
 use Override;
 
 class CompareAction extends Action
@@ -21,7 +22,9 @@ class CompareAction extends Action
             ->icon(Heroicon::OutlinedArrowsRightLeft)
             ->color('gray')
             ->authorize('view')
-            ->url(fn (Workspace $record): string => WorkspaceResource::getUrl('compare', ['record' => $record]));
+            ->url(fn (Workspace $record): string => Route::has('filament.admin.resources.workspaces.compare')
+                ? WorkspaceResource::getUrl('compare', ['record' => $record])
+                : '#');
     }
 
     public static function getDefaultName(): ?string

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Mcp\Support;
 
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Support\CapellCoreManager;
 use Capell\Mcp\Data\CapabilityData;
 use Capell\Mcp\Enums\CapabilityServerEnum;
 use Illuminate\Support\Collection;
@@ -69,16 +71,14 @@ final class CapellMcpCapabilityRegistry
             return true;
         }
 
-        if (! class_exists('Capell\\Core\\Facades\\CapellCore')) {
+        if (! class_exists(CapellCore::class)) {
             return false;
         }
 
         try {
-            $core = app()->make('Capell\\Core\\Support\\CapellCoreManager');
+            $core = app()->make(CapellCoreManager::class);
 
-            return is_object($core) && method_exists($core, 'isPackageInstalled')
-                ? (bool) $core->isPackageInstalled($capability->requiredPackage)
-                : false;
+            return is_object($core) && method_exists($core, 'isPackageInstalled') && $core->isPackageInstalled($capability->requiredPackage);
         } catch (Throwable) {
             return false;
         }

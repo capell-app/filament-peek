@@ -58,12 +58,9 @@ class ContentBlocksServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        $this
-            ->registerPackageMetadata()
-            ->registerModels()
-            ->registerRelationships();
+        $this->registerPackageMetadata();
 
-        $this->booted(function (): void {
+        $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {
                 return;
             }
@@ -74,6 +71,10 @@ class ContentBlocksServiceProvider extends AbstractPackageServiceProvider
 
     public function packageBooted(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         Relation::morphMap([
             'content_block' => ContentBlock::class,
         ], merge: true);
@@ -82,6 +83,8 @@ class ContentBlocksServiceProvider extends AbstractPackageServiceProvider
     private function bootInstalledPackage(): self
     {
         return $this
+            ->registerModels()
+            ->registerRelationships()
             ->registerResources()
             ->registerConfigurators()
             ->registerTypes()

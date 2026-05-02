@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Capell\Installer\Support\InstallGuide\Patches\UserModelPatch;
-use Capell\Installer\Support\InstallGuide\PatchStatus;
+use Capell\Core\Support\InstallGuide\Patches\UserModelPatch;
+use Capell\Core\Support\InstallGuide\PatchStatus;
 
 function writeUserModelForProbeTest(string $content): string
 {

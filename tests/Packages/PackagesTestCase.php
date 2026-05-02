@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Capell\Tests\Packages;
 
 use Capell\Address\Providers\AddressServiceProvider;
+use Capell\Admin\Enums\ResourceEnum as AdminResourceEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
 use Capell\Analytics\Providers\AnalyticsServiceProvider;
 use Capell\AuthenticationLog\Providers\AuthenticationLogServiceProvider;
 use Capell\Backup\Providers\BackupServiceProvider;
+use Capell\Blog\Enums\ResourceEnum as BlogResourceEnum;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Blog\Providers\FrontendServiceProvider as BlogFrontendServiceProvider;
 use Capell\Campaigns\Providers\CampaignsServiceProvider;
@@ -47,6 +49,8 @@ class PackagesTestCase extends AbstractTestCase
     {
         parent::setUp();
 
+        $this->forcePackagesInstalled();
+        $this->registerBlogResourcesForBlaze();
         $this->registerBlazeOptimizedViews();
 
         $this->registerAndMigrateSettings(
@@ -115,6 +119,40 @@ class PackagesTestCase extends AbstractTestCase
     {
         parent::getEnvironmentSetUp($app);
 
+        $this->forcePackagesInstalled();
+        $this->registerBlogResourcesForBlaze();
+
+        CapellCore::registerPackage('capell-app/navigation', path: realpath(__DIR__ . '/../../packages/navigation'));
+        CapellCore::forcePackageInstalled('capell-app/navigation');
+
+        $app->make(Repository::class)->set('tags.tag_model', Tag::class);
+        $app->make(Repository::class)->set('media-library.media_model', Media::class);
+    }
+
+    private function registerBlazeOptimizedViews(): void
+    {
+        foreach ([
+            __DIR__ . '/../../packages/blog/resources/views/components',
+            __DIR__ . '/../../packages/mosaic/resources/views/components',
+            __DIR__ . '/../../packages/seo-tools/resources/views/components/schema',
+            __DIR__ . '/../../packages/default-theme/resources/views/components/button/index.blade.php',
+            __DIR__ . '/../../packages/theme-default/resources/views/components',
+        ] as $path) {
+            RegisterBlazeOptimizedViewsAction::run($path);
+        }
+    }
+
+    private function registerBlogResourcesForBlaze(): void
+    {
+        CapellAdmin::registerResource(
+            AdminResourceEnum::Page,
+            class: BlogResourceEnum::Article->value,
+            name: strtolower(BlogResourceEnum::Article->name),
+        );
+    }
+
+    private function forcePackagesInstalled(): void
+    {
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(MosaicServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(SeoToolsServiceProvider::$packageName);
@@ -136,24 +174,5 @@ class PackagesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled('capell-app/theme-studio-core');
         CapellCore::forcePackageInstalled(ToolbarServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/workspaces');
-
-        CapellCore::registerPackage('capell-app/navigation', path: realpath(__DIR__ . '/../../packages/navigation'));
-        CapellCore::forcePackageInstalled('capell-app/navigation');
-
-        $app->make(Repository::class)->set('tags.tag_model', Tag::class);
-        $app->make(Repository::class)->set('media-library.media_model', Media::class);
-    }
-
-    private function registerBlazeOptimizedViews(): void
-    {
-        foreach ([
-            __DIR__ . '/../../packages/blog/resources/views/components',
-            __DIR__ . '/../../packages/mosaic/resources/views/components',
-            __DIR__ . '/../../packages/seo-tools/resources/views/components/schema',
-            __DIR__ . '/../../packages/default-theme/resources/views/components/button/index.blade.php',
-            __DIR__ . '/../../packages/theme-default/resources/views/components',
-        ] as $path) {
-            RegisterBlazeOptimizedViewsAction::run($path);
-        }
     }
 }

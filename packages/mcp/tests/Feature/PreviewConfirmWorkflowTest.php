@@ -17,7 +17,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 
 function registerFakeCapability(string $scope = 'capell.fake.write'): void
 {
-    app(CapellMcpCapabilityRegistry::class)->register(new CapabilityData(
+    resolve(CapellMcpCapabilityRegistry::class)->register(new CapabilityData(
         key: 'capell.fake.write',
         name: 'Fake write',
         description: 'Fake mutating capability.',

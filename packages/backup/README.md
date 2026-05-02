@@ -1,59 +1,82 @@
-# Capell Backup
+# Backup
 
-**Product group:** Capell Operations
-**Tier:** Premium
+Status: **Available, schema-owning** · Kind: **package** · Tier: **premium** · Bundle: **operations** · Contexts: **admin, console** · Product group: **Capell Operations**
 
-Backup provides export, import, and restore foundations for Capell content packages.
+## What This Plugin Adds
 
-It is designed for moving pages and sites between environments without leaking package internals into core. The package writes deterministic ZIP archives with manifests, payload JSON, media binaries, and integrity checks, then imports them through a reviewable resolution flow.
+Backup provides package export, import, restore, WordPress import, dependency graph, and validation workflows for Capell content operations.
 
-## When to install it
+- Import session tracking.
+- Backup restore tracking.
+- Package reader/writer services.
+- Import validation and relation resolution actions.
+- Queued import jobs.
 
-Install Backup when a project needs content portability, recovery workflows, or a controlled path for importing content from another Capell environment.
+## Why It Matters
 
-## Quick install
+**For developers:** Separates export/import work into services, actions, DTOs, jobs, events, and resolver contracts so package data can be moved with explicit ownership rules.
 
-```bash
-composer require capell-app/backup
-php artisan migrate
-php artisan optimize:clear
-```
+**For teams:** Supports controlled migration and recovery workflows where content, media, and relationships need review before import.
 
-## What developers get
+## Screens And Workflow
 
-| Area    | Capability                                                                                           |
-| ------- | ---------------------------------------------------------------------------------------------------- |
-| Export  | Page and site package archives with manifests, relation descriptors, media references, and checksums |
-| Import  | Verified package reads, relation matching, URL collision checks, media ingest, and session tracking  |
-| Review  | Page review rows, relation resolution rows, validation summaries, and retry/cancel actions           |
-| Restore | Restore-session model and service placeholders for full-environment recovery                         |
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-## Import flow
+- Import session index or host admin surface.
+- Import validation summary.
+- Relation resolution review.
+- Restore status view.
+- Package export intent screen.
 
-1. `PackageReader` opens the archive, enforces configured size limits, and verifies every checksum from `integrity.json`.
-2. `ResolutionMapBuilder` matches shared relations such as layouts, types, sites, and media against local records.
-3. `BuildPageReviewRows` and `BuildRelationResolveRowsAction` prepare human-reviewable decisions.
-4. `ExecuteImportPlanJob` applies the reviewed plan through `PageImportService`.
+## Technical Shape
 
-## Configuration
+- BackupServiceProvider registers the package.
+- Config file: backup.php.
+- Migrations create backup_restores and import_sessions.
+- Jobs execute import plans and WordPress imports.
+- Events report import completed or failed.
+- Services cover package reading, writing, validation, relation resolution, media ingest, and restore.
 
-`config/backup.php` controls queue, disk, storage paths, size limits, and notification defaults.
+## Data Model
 
-| Key                                               | Purpose                                           |
-| ------------------------------------------------- | ------------------------------------------------- |
-| `queue.connection`, `queue.name`                  | Queue target for import and restore jobs          |
-| `disk`                                            | Filesystem disk used for working archives         |
-| `paths.imports`, `paths.exports`, `paths.working` | Package storage locations                         |
-| `limits.*`                                        | Metadata, payload, media, and archive size guards |
-| `notifications.*`                                 | Completion/failure notification defaults          |
+- backup_restores stores restore UUID, user, status, and source archive path.
+- import_sessions stores import kind, status, manifest, and result summary.
+- drop_workspace_id_from_import_sessions_table indicates workspace coupling has been reduced.
+- Retention and deletion rules should be verified against the host application policy.
 
-## Extension points
+## Install Impact
 
-- Bind `BackupContextResolver` to wrap export/import writes in workspace or tenant context.
-- Bind `BackupRowContributor` to add package-owned attributes to exported rows.
-- Bind `PageCollisionDetector` to customise URL conflict rules.
-- Extend `RelationMatchResolverRegistry` with package-specific relation matchers.
+- Adds backup_restores and import_sessions tables.
+- Adds backup queue configuration.
+- Uses disk and path config for imports, exports, and working files.
+- May require queue workers for long-running imports.
+- No public routes are registered by this package.
 
-## Reference
+## Commands
 
-See [Backup reference](docs/backup.md) for the package shape, models, services, and safety guarantees.
+- None proven in this package directory.
+
+## Admin And Access
+
+- None proven in this package directory.
+
+- Policy: OwnershipMap (packages/backup/src/Policy/OwnershipMap.php)
+
+## Common Pitfalls
+
+- Configure BACKUP_QUEUE and BACKUP_DISK before large imports.
+- Check upload and package size limits before importing client archives.
+- Run queue workers before testing async import jobs.
+- Review relation resolution before applying imported data.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/backup`.
+2. Run the package migrations or the Capell package installer required by the host app.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../workspaces/README.md](../workspaces/README.md)
+- [../mosaic/README.md](../mosaic/README.md)

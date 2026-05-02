@@ -8,6 +8,7 @@ use Capell\Admin\Contracts\DashboardSettingsContributor;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Events\PageSaved;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Workspaces\Events\WorkspaceStateChanged;
 use Capell\Workspaces\Filament\Pages\ActivityTrailPage;
@@ -42,12 +43,7 @@ class AdminServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->tag(
-            [DefaultDashboardSettingsContributor::class, SystemHealthSettingsContributor::class],
-            DashboardSettingsContributor::TAG,
-        );
-
-        $this->registerFilamentExtensions();
+        //
     }
 
     public function boot(): void
@@ -55,10 +51,31 @@ class AdminServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-workspaces');
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'capell-workspaces');
 
-        $this->registerLivewireComponents()
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
+        $this->registerDashboardSettingsContributors()
+            ->registerFilamentExtensions()
+            ->registerLivewireComponents()
             ->registerRenderHooks()
             ->registerEventListeners()
             ->registerPolicies();
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(WorkspacesServiceProvider::$packageName);
+    }
+
+    private function registerDashboardSettingsContributors(): self
+    {
+        $this->app->tag(
+            [DefaultDashboardSettingsContributor::class, SystemHealthSettingsContributor::class],
+            DashboardSettingsContributor::TAG,
+        );
+
+        return $this;
     }
 
     private function registerLivewireComponents(): self

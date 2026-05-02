@@ -9,6 +9,7 @@ on:
       - docs/**
       - packages/**/docs/**
       - packages/**/README.md
+      - packages/**/capell.json
       - '!docs/internal/**'
       - '!docs/specs/**'
       - '!docs/superpowers/**'
@@ -20,6 +21,7 @@ on:
       - docs/**
       - packages/**/docs/**
       - packages/**/README.md
+      - packages/**/capell.json
       - '!docs/internal/**'
       - '!docs/specs/**'
       - '!docs/superpowers/**'
@@ -46,6 +48,8 @@ jobs:
               source: context.repo.repo,
               ref: context.ref,
               sha: context.sha,
+              screenshot_manifest: 'docs/package-screenshot-manifest.json',
+              capture_package_screenshots: true,
             };
 
             if (context.eventName === 'release') {

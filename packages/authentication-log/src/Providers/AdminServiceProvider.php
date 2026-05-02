@@ -13,6 +13,7 @@ use Capell\AuthenticationLog\Filament\Extenders\AuthenticationLogAdminPanelExten
 use Capell\AuthenticationLog\Filament\Resources\AuthenticationLogs\AuthenticationLogResource;
 use Capell\AuthenticationLog\Filament\Settings\Contributors\AuthenticationLogDashboardSettingsContributor;
 use Capell\AuthenticationLog\Filament\Widgets\AuthenticationLogsWidget;
+use Capell\Core\Facades\CapellCore;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
@@ -26,15 +27,18 @@ class AdminServiceProvider extends ServiceProvider
             AuthenticationLogResource::class,
         );
         Config::set('filament-authentication-log.authenticatable.field-to-display', 'name');
+    }
+
+    public function boot(): void
+    {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
 
         $this->app->tag([AuthenticationLogAdminPanelExtender::class], AdminPanelExtender::TAG);
         $this->app->tag([AuthenticationLogDashboardSettingsContributor::class], DashboardSettingsContributor::TAG);
 
         CapellAdmin::registerExtraResource(AuthenticationLogResource::class);
-    }
-
-    public function boot(): void
-    {
         CapellAdmin::registerDashboardWidget(AuthenticationLogsWidget::class, DashboardEnum::SystemHealth);
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
@@ -47,5 +51,10 @@ class AdminServiceProvider extends ServiceProvider
                 })
                 ->monthly();
         });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(AuthenticationLogServiceProvider::$packageName);
     }
 }

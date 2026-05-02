@@ -47,14 +47,26 @@ class AnalyticsServiceProvider extends AbstractPackageServiceProvider
     {
         $this
             ->registerPackageMetadata()
-            ->registerModels()
-            ->registerSettings()
-            ->registerSettingsMigrations()
-            ->registerProtectedTables();
+            ->registerSettingsMigrations();
+
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this
+                ->registerModels()
+                ->registerSettings()
+                ->registerProtectedTables();
+        });
     }
 
     public function packageBooted(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         if (config('capell-analytics.enabled', true) === true && $this->app->bound(RenderHookRegistry::class)) {
             $this->app->make(RegisterAnalyticsTrackerHook::class)->register();
         }
@@ -83,6 +95,11 @@ class AnalyticsServiceProvider extends AbstractPackageServiceProvider
         );
 
         return $this;
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(static::$packageName);
     }
 
     private function registerModels(): self

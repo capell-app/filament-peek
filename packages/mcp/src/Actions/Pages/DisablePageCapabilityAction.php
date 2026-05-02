@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Mcp\Actions\Pages;
 
+use Capell\Core\Models\Page;
 use Capell\Mcp\Contracts\CapellMcpCapabilityAction;
 use Capell\Mcp\Data\CapabilityInvocationData;
 use Capell\Mcp\Data\CapabilityResultData;
@@ -63,7 +64,7 @@ final class DisablePageCapabilityAction implements CapellMcpCapabilityAction
     /** @return class-string<Model> */
     private function pageClass(): string
     {
-        $pageClass = 'Capell\\Core\\Models\\Page';
+        $pageClass = Page::class;
 
         if (! is_subclass_of($pageClass, Model::class)) {
             throw ValidationException::withMessages(['page' => 'Capell Page model is not available.']);

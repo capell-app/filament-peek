@@ -50,6 +50,14 @@ class CompareVersionPage extends Page
         return __('capell-admin::workspace.compare.title', ['workspace' => $this->getWorkspace()->name]);
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     public function getWorkspace(): Workspace
     {
         $workspace = $this->getRecord();

@@ -107,21 +107,9 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        $this
-            ->registerResources()
-            ->registerModels()
-            ->registerModelFillableAndCasts()
-            ->registerRelationships()
-            ->registerLayoutAssetBridgeRegistry()
-            ->registerLayoutPresetRegistry()
-            ->registerPackageMetadata()
-            ->registerBlazeComponents();
+        $this->registerPackageMetadata();
 
-        $this->callAfterResolving(MakerRegistryInterface::class, function (MakerRegistryInterface $registry): void {
-            $registry->register($this->app->make(MosaicWidgetMaker::class));
-        });
-
-        $this->booted(function (): void {
+        $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {
                 return;
             }
@@ -146,7 +134,17 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
 
     private function bootInstalledPackage(): self
     {
+        $this->callAfterResolving(MakerRegistryInterface::class, function (MakerRegistryInterface $registry): void {
+            $registry->register($this->app->make(MosaicWidgetMaker::class));
+        });
+
         return $this
+            ->registerModels()
+            ->registerModelFillableAndCasts()
+            ->registerRelationships()
+            ->registerLayoutAssetBridgeRegistry()
+            ->registerLayoutPresetRegistry()
+            ->registerResources()
             ->registerListeners()
             ->registerConfigurators()
             ->registerManager()
@@ -163,6 +161,7 @@ class MosaicServiceProvider extends AbstractPackageServiceProvider
             ->registerPublishCommands()
             ->registerLivewireComponents()
             ->registerBladeComponents()
+            ->registerBlazeComponents()
             ->registerVendorAssets()
             ->registerWorkspaces();
     }

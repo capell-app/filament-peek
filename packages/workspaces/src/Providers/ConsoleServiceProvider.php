@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Providers;
 
+use Capell\Core\Facades\CapellCore;
 use Capell\Workspaces\Console\Commands\InstallCommand;
 use Capell\Workspaces\Console\Commands\LoadTestWorkspacesCommand;
 use Capell\Workspaces\Console\Commands\PruneAbandonedWorkspacesCommand;
@@ -30,6 +31,10 @@ class ConsoleServiceProvider extends ServiceProvider
 
     private function registerSchedule(): void
     {
+        if (! CapellCore::isPackageInstalled(WorkspacesServiceProvider::$packageName)) {
+            return;
+        }
+
         if (! config('capell.workspaces.scheduled_publish_enabled', true)) {
             return;
         }

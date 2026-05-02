@@ -26,8 +26,20 @@ class AssistantServiceProvider extends AbstractPackageServiceProvider
     public function registeringPackage(): void
     {
         $this
-            ->registerServices()
             ->registerPackageMetadata();
+
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this->registerServices();
+        });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(static::$packageName);
     }
 
     private function registerServices(): self

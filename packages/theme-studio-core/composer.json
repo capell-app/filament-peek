@@ -30,9 +30,6 @@
             "providers": [
                 "Capell\\ThemeStudio\\Core\\ThemeStudioCoreServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     }
 }

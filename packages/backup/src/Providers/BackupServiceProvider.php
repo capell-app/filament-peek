@@ -61,6 +61,22 @@ class BackupServiceProvider extends AbstractPackageServiceProvider
             description: fn (): string => __('backup::package.description'),
         );
 
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this->registerInstalledPackage();
+        });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(static::$packageName);
+    }
+
+    private function registerInstalledPackage(): void
+    {
         CapellCore::registerModels([
             BackupRestore::class,
             ImportSession::class,

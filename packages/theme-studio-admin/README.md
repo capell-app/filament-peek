@@ -1,33 +1,80 @@
-# Capell Theme Studio Admin
+# Theme Studio Admin
 
-**Product group:** Capell Theme Studio
-**Tier:** Premium
+Status: **Available, no schema impact in this package** · Kind: **package** · Tier: **premium** · Bundle: **theme-studio** · Contexts: **admin** · Product group: **Capell Theme Studio**
 
-Theme Studio Admin adds the optional Filament Studio page for choosing, previewing, staging, and publishing premium themes on top of Theme Studio Core. It is intentionally more integrated than a settings schema: editors get a curated gallery, theme status, readiness checks, and compact brand controls.
+## What This Plugin Adds
 
-## Install
+Theme Studio Admin adds the Filament admin experience for staging, reviewing, previewing, approving, and publishing theme drafts.
 
-```bash
-composer require capell-app/theme-studio-admin
-```
+- Theme Studio Filament page.
+- Actions for staging, publishing, readiness checks, labels, previews, and activation.
+- Settings schema for Theme Studio.
+- Standalone and workspace draft publishers.
+- Safe CSS colour validation.
 
-Most projects install `capell-app/theme-studio`, which includes this package, Theme Studio Core, and the bundled commercial themes.
+## Why It Matters
 
-## Admin Surface
+**For developers:** Keeps theme publishing behind explicit actions and publisher contracts, with optional Workspaces integration for review flow.
 
-| Area          | Purpose                                                                                                              |
-| ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Theme gallery | Screenshot, tags, best-fit use cases, included section coverage, active/draft status, preview, and publish actions   |
-| Brand profile | Global controls for colours, typography, spacing, alignment, card style, navigation style, layout, motion, and media |
-| Draft/publish | Explicit staging, standalone publishing, and Workspaces approval when Workspaces is installed                        |
-| Readiness     | Basic checks for registered themes, brand profile, and preview availability                                          |
+**For teams:** Lets teams adjust theme presentation through an admin surface while keeping draft, approval, and publish status visible.
 
-## Workspaces
+## Screens And Workflow
 
-When `capell-app/workspaces` is installed, publishing a staged Theme Studio draft submits a Workspaces approval item instead of mutating the live theme immediately. Once that linked workspace reaches the approved transition, Theme Studio promotes the staged theme and preset to the active state and clears the draft marker. Without Workspaces, Theme Studio falls back to standalone draft/publish and clears the staged draft immediately after activation.
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-## Tests
+- Theme Studio admin page.
+- Theme draft form.
+- Theme preview URL.
+- Publishing readiness state.
+- Approval or publish action state.
 
-```bash
-php -d memory_limit=-1 vendor/bin/pest packages/theme-studio-admin/tests --no-coverage
-```
+## Technical Shape
+
+- ThemeStudioAdminServiceProvider registers admin services.
+- Filament page: ThemeStudioPage.
+- Actions stage, publish, preview, activate, and check readiness.
+- Contracts: ThemeDraftPublisher.
+- Listeners activate approved drafts.
+- Rules validate safe CSS colours.
+
+## Data Model
+
+- No migrations are present in this package.
+- It works with Theme Studio settings from Theme Studio Core and optional Workspaces state.
+- Deletion and retention for staged drafts should be verified against publishing policy.
+
+## Install Impact
+
+- Adds Theme Studio admin page.
+- Adds theme publishing actions.
+- No package-owned database tables.
+- May depend on Theme Studio Core settings migration.
+- No public routes are registered here.
+
+## Commands
+
+- None proven in this package directory.
+
+## Admin And Access
+
+- ThemeStudioPage (packages/theme-studio-admin/src/Filament/Pages/ThemeStudioPage.php, slug `theme-studio`)
+
+- None proven in this package directory.
+
+## Common Pitfalls
+
+- Install Theme Studio Core before the admin package.
+- Use Workspaces integration only where Workspaces is installed and configured.
+- Validate custom colours before publishing.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/theme-studio-admin`.
+2. Register the package provider through Composer discovery and clear cached config if the host app uses config caching.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../theme-studio-core/README.md](../theme-studio-core/README.md)
+- [../workspaces/README.md](../workspaces/README.md)

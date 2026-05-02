@@ -40,13 +40,9 @@ class FormsServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        $this
-            ->registerPackageMetadata()
-            ->registerModels()
-            ->registerPackageAssets()
-            ->registerBlazeComponents();
+        $this->registerPackageMetadata();
 
-        $this->booted(function (): void {
+        $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {
                 return;
             }
@@ -57,6 +53,10 @@ class FormsServiceProvider extends AbstractPackageServiceProvider
 
     public function packageBooted(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         Relation::morphMap([
             'form' => Form::class,
             'form_submission' => Submission::class,
@@ -66,6 +66,9 @@ class FormsServiceProvider extends AbstractPackageServiceProvider
     private function bootInstalledPackage(): self
     {
         return $this
+            ->registerModels()
+            ->registerPackageAssets()
+            ->registerBlazeComponents()
             ->registerResources()
             ->registerLivewireComponents()
             ->registerBladeComponents();

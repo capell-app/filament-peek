@@ -32,29 +32,21 @@ final class ConfirmMcpCapabilityAction
         ?CapellMcpToken $token = null,
         ?Authenticatable $user = null,
     ): array {
-        $client ??= app()->bound(AuthenticatedMcpClientData::class) ? app(AuthenticatedMcpClientData::class) : null;
-        $token ??= app()->bound(CapellMcpToken::class) ? app(CapellMcpToken::class) : null;
+        $client ??= app()->bound(AuthenticatedMcpClientData::class) ? resolve(AuthenticatedMcpClientData::class) : null;
+        $token ??= app()->bound(CapellMcpToken::class) ? resolve(CapellMcpToken::class) : null;
         $user ??= request()->user();
 
         $confirmation = CapellMcpConfirmation::query()
             ->where('token', $confirmationToken)
             ->first();
 
-        if (! $confirmation instanceof CapellMcpConfirmation || ! $confirmation->isUsable()) {
-            throw new AuthorizationException('The MCP confirmation token is invalid or expired.');
-        }
+        throw_if(! $confirmation instanceof CapellMcpConfirmation || ! $confirmation->isUsable(), AuthorizationException::class, 'The MCP confirmation token is invalid or expired.');
 
-        if ($token === null || (int) $confirmation->mcp_token_id !== (int) $token->getKey()) {
-            throw new AuthorizationException('The MCP confirmation token does not belong to this client.');
-        }
+        throw_if($token === null || $confirmation->mcp_token_id !== $token->getKey(), AuthorizationException::class, 'The MCP confirmation token does not belong to this client.');
 
-        if ($user === null || (string) $confirmation->user_type !== $user->getMorphClass() || (int) $confirmation->user_id !== (int) $user->getAuthIdentifier()) {
-            throw new AuthorizationException('The MCP confirmation token does not belong to this user.');
-        }
+        throw_if($user === null || (string) $confirmation->user_type !== $user->getMorphClass() || (int) $confirmation->user_id !== (int) $user->getAuthIdentifier(), AuthorizationException::class, 'The MCP confirmation token does not belong to this user.');
 
-        if ($confirmation->payload_hash !== InvokeMcpCapabilityPreviewAction::payloadHash($payload)) {
-            throw new AuthorizationException('The MCP confirmation payload has changed.');
-        }
+        throw_if($confirmation->payload_hash !== InvokeMcpCapabilityPreviewAction::payloadHash($payload), AuthorizationException::class, 'The MCP confirmation payload has changed.');
 
         $registry = resolve(CapellMcpCapabilityRegistry::class);
         $capability = $registry->get($confirmation->capability_key);

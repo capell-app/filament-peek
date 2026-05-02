@@ -39,9 +39,9 @@ final class AuthenticateCapellMcpToken
         }
 
         $guard = config('capell-mcp.site_auth_guard', 'web');
-        $authGuard = Auth::guard((string) $guard);
+        $authGuard = Auth::guard($guard);
         $authGuard->setUser($user);
-        Auth::shouldUse((string) $guard);
+        Auth::shouldUse($guard);
 
         $token->forceFill(['last_used_at' => now()])->save();
 

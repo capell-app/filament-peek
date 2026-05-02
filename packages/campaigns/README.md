@@ -1,60 +1,100 @@
-# Capell Campaigns
+# Campaigns
 
-**Product group:** Capell Growth
-**Tier:** Premium
+Status: **Available, schema-owning** · Kind: **package** · Tier: **premium** · Bundle: **growth** · Contexts: **admin, frontend** · Product group: **Capell Growth**
 
-Campaigns adds marketing-site tooling on top of Capell pages, Mosaic layouts, Forms, and Analytics.
+## What This Plugin Adds
 
-It provides campaign groups, landing-page records, reusable CTA blocks, conversion goals, conversion attribution, campaign Mosaic widgets, installable campaign layouts, and dashboard reporting.
+Campaigns adds campaign groups, landing pages, CTA blocks, conversion goals, UTM attribution, and conversion reporting to Capell.
 
-## When to install it
+- Campaign Filament resources for groups, landing pages, goals, and CTA blocks.
+- Campaign dashboard widgets.
+- Page schema extender for campaign fields.
+- Mosaic widget configurators for campaign hero, CTA, and lead form blocks.
+- Conversion recording actions for page views, CTA clicks, and form submissions.
 
-Install Campaigns when a Capell site needs editor-managed marketing campaigns, campaign-specific landing pages, reusable calls to action, conversion goals, and UTM attribution without moving those concerns into Core.
+## Why It Matters
 
-## Quick install
+**For developers:** Connects Capell pages, Forms, Analytics, and Mosaic through explicit actions and listener classes instead of inline resource logic.
 
-```bash
-composer require capell-app/campaigns
-php artisan migrate
-php artisan optimize:clear
-```
+**For teams:** Lets marketing and editorial teams connect landing pages to goals and see which campaigns convert.
 
-Campaigns depends on Core, Admin, Frontend, Mosaic, Forms, and Analytics.
+## Screens And Workflow
 
-## Install layout presets
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-```bash
-vendor/bin/testbench capell:campaigns-install-layouts
-```
+- Campaign groups index.
+- Campaign landing pages index.
+- Campaign conversion goals form.
+- CTA block form.
+- Campaign dashboard widgets.
+- Frontend landing page with campaign widgets.
 
-Use `--force` to update existing preset layouts.
+## Technical Shape
 
-## What appears in the admin
+- CampaignsServiceProvider, AdminServiceProvider, and FrontendServiceProvider register package surfaces.
+- Config file: capell-campaigns.php.
+- Migrations create campaign groups, goals, landing pages, CTA blocks, and conversions.
+- Filament resources cover each owned model.
+- Listeners sync landing pages and form submission conversions.
 
-| Area              | What editors can do                                                      |
-| ----------------- | ------------------------------------------------------------------------ |
-| Campaign groups   | Manage campaign identity, status, dates, budgets, and default UTM values |
-| Landing pages     | Link campaigns to Capell pages and choose primary conversion goals       |
-| CTA blocks        | Maintain reusable campaign calls to action                               |
-| Conversion goals  | Define page-view, CTA-click, form-submission, and custom goals           |
-| Dashboard widgets | Review campaign totals, top campaigns, and top landing pages             |
+## Data Model
 
-## What developers get
+- campaign_groups belong to sites.
+- campaign_landing_pages belong to groups and target pages.
+- campaign_conversion_goals define measurable outcomes.
+- campaign_cta_blocks store CTA content.
+- campaign_conversions connect goals, landing pages, analytics visits/events, and attribution JSON.
 
-- Actions for campaign URL building, URL resolution, conversion attribution, conversion recording, and layout installation.
-- Data objects for UTM values, CTA actions, attribution snapshots, and dashboard summaries.
-- Mosaic widget components for campaign heroes, CTA blocks, and lead forms.
-- A page schema extender that applies campaign defaults to Capell pages.
-- Listeners for page synchronisation and form-submission conversions.
+## Install Impact
 
-## Package boundaries
+- Adds campaign admin navigation and database tables.
+- Adds campaign dashboard widgets.
+- Adds config keys for conversion cookie, UTM keys, table names, and layout presets.
+- May use Analytics events and Forms submissions when those packages are installed.
+- No explicit public route is registered by this package.
 
-- Mosaic owns layout rendering and widget placement.
-- Forms owns form definitions and submissions.
-- Analytics owns visits and events when the Analytics package is installed.
-- Campaigns owns campaign metadata, conversion goals, conversion records, and campaign reports.
+## Commands
 
-## Reference
+- `capell:campaigns-install-layouts {--force : Update existing campaign layouts}` (packages/campaigns/src/Console/Commands/InstallCampaignLayoutsCommand.php)
 
-- [Campaigns API](docs/campaigns-api.md)
-- [Campaigns database](docs/campaigns-database.md)
+## Admin And Access
+
+- CampaignConversionGoalResource (packages/campaigns/src/Filament/Resources/CampaignConversionGoals/CampaignConversionGoalResource.php)
+- CreateCampaignConversionGoal (packages/campaigns/src/Filament/Resources/CampaignConversionGoals/Pages/CreateCampaignConversionGoal.php)
+- EditCampaignConversionGoal (packages/campaigns/src/Filament/Resources/CampaignConversionGoals/Pages/EditCampaignConversionGoal.php)
+- ListCampaignConversionGoals (packages/campaigns/src/Filament/Resources/CampaignConversionGoals/Pages/ListCampaignConversionGoals.php)
+- CampaignCtaBlockResource (packages/campaigns/src/Filament/Resources/CampaignCtaBlocks/CampaignCtaBlockResource.php)
+- CreateCampaignCtaBlock (packages/campaigns/src/Filament/Resources/CampaignCtaBlocks/Pages/CreateCampaignCtaBlock.php)
+- EditCampaignCtaBlock (packages/campaigns/src/Filament/Resources/CampaignCtaBlocks/Pages/EditCampaignCtaBlock.php)
+- ListCampaignCtaBlocks (packages/campaigns/src/Filament/Resources/CampaignCtaBlocks/Pages/ListCampaignCtaBlocks.php)
+- CampaignGroupResource (packages/campaigns/src/Filament/Resources/CampaignGroups/CampaignGroupResource.php)
+- CreateCampaignGroup (packages/campaigns/src/Filament/Resources/CampaignGroups/Pages/CreateCampaignGroup.php)
+- EditCampaignGroup (packages/campaigns/src/Filament/Resources/CampaignGroups/Pages/EditCampaignGroup.php)
+- ListCampaignGroups (packages/campaigns/src/Filament/Resources/CampaignGroups/Pages/ListCampaignGroups.php)
+- CampaignLandingPageResource (packages/campaigns/src/Filament/Resources/CampaignLandingPages/CampaignLandingPageResource.php)
+- CreateCampaignLandingPage (packages/campaigns/src/Filament/Resources/CampaignLandingPages/Pages/CreateCampaignLandingPage.php)
+- EditCampaignLandingPage (packages/campaigns/src/Filament/Resources/CampaignLandingPages/Pages/EditCampaignLandingPage.php)
+- ListCampaignLandingPages (packages/campaigns/src/Filament/Resources/CampaignLandingPages/Pages/ListCampaignLandingPages.php)
+
+- Gate: CampaignOverviewStatsWidget: `admin`, `super_admin`
+- Gate: TopCampaignsWidget: `admin`, `super_admin`
+- Gate: TopLandingPagesWidget: `admin`, `super_admin`
+
+## Common Pitfalls
+
+- Install dependent packages before expecting attribution from forms or analytics.
+- Check UTM keys before launch.
+- Create conversion goals before reporting on landing page success.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/campaigns`.
+2. Run the package migrations or the Capell package installer required by the host app.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../analytics/README.md](../analytics/README.md)
+- [../forms/README.md](../forms/README.md)
+- [../mosaic/README.md](../mosaic/README.md)

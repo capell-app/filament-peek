@@ -6,6 +6,7 @@ namespace Capell\DeveloperTools\Providers;
 
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Core\Facades\CapellCore;
 use Capell\DeveloperTools\Filament\Pages\DeveloperToolsPage;
 use Capell\DeveloperTools\Filament\Pages\PermissionAuditPage;
 use Capell\DeveloperTools\Filament\Pages\QueueHealthPage;
@@ -26,11 +27,37 @@ final class AdminServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        //
+    }
+
+    public function boot(): void
+    {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
+        $this
+            ->registerPages()
+            ->registerDashboardWidgets();
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(DeveloperToolsServiceProvider::$packageName);
+    }
+
+    private function registerPages(): self
+    {
         CapellAdmin::registerPage(DeveloperToolsPage::class);
         CapellAdmin::registerPage(SystemHealthPage::class);
         CapellAdmin::registerPage(QueueHealthPage::class);
         CapellAdmin::registerPage(PermissionAuditPage::class);
 
+        return $this;
+    }
+
+    private function registerDashboardWidgets(): self
+    {
         CapellAdmin::registerDashboardWidget(SiteHealthWidgetAbstract::class, DashboardEnum::Main);
 
         CapellAdmin::registerDashboardWidget(SetupHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
@@ -42,5 +69,7 @@ final class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(ConfigDriftWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(CacheHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(TailwindBuildStatusWidgetAbstract::class, DashboardEnum::SystemHealth);
+
+        return $this;
     }
 }

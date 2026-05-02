@@ -11,6 +11,7 @@ use Capell\Campaigns\Enums\ResourceEnum;
 use Capell\Campaigns\Filament\Widgets\CampaignOverviewStatsWidget;
 use Capell\Campaigns\Filament\Widgets\TopCampaignsWidget;
 use Capell\Campaigns\Filament\Widgets\TopLandingPagesWidget;
+use Capell\Core\Facades\CapellCore;
 use Capell\Mosaic\Enums\ConfiguratorTypeEnum as MosaicConfiguratorTypeEnum;
 use Illuminate\Support\ServiceProvider;
 
@@ -18,16 +19,50 @@ final class AdminServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        //
+    }
+
+    public function boot(): void
+    {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
+        $this
+            ->registerResources()
+            ->registerConfigurators()
+            ->registerDashboardWidgets();
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(CampaignsServiceProvider::$packageName);
+    }
+
+    private function registerResources(): self
+    {
         foreach (ResourceEnum::cases() as $resource) {
             CapellAdmin::registerResource($resource->name, class: $resource->value);
         }
 
+        return $this;
+    }
+
+    private function registerConfigurators(): self
+    {
         foreach (CampaignWidgetConfiguratorEnum::cases() as $configurator) {
             CapellAdmin::registerConfigurator(MosaicConfiguratorTypeEnum::Widget, $configurator->value);
         }
 
+        return $this;
+    }
+
+    private function registerDashboardWidgets(): self
+    {
         CapellAdmin::registerDashboardWidget(CampaignOverviewStatsWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(TopCampaignsWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(TopLandingPagesWidget::class, DashboardEnum::Main);
+
+        return $this;
     }
 }

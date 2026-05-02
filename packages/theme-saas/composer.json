@@ -28,9 +28,6 @@
             "providers": [
                 "Capell\\ThemeStudio\\Saas\\SaasThemeServiceProvider"
             ]
-        },
-        "branch-alias": {
-            "dev-main": "4.x-dev"
         }
     }
 }

@@ -49,6 +49,10 @@ final class DefaultThemeServiceProvider extends AbstractPackageServiceProvider
 
     public function packageBooted(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
         $this->registerAssets();
         $this->registerBladeDirectives();
         $this->registerBlazeComponents();
@@ -56,6 +60,7 @@ final class DefaultThemeServiceProvider extends AbstractPackageServiceProvider
         $this->registerVendorNpmDependencies();
         $this->registerVendorCssJsAssets();
         $this->registerMediaUrlGenerator();
+        $this->registerBladeComponents();
         $this->registerMediaBladeComponents();
         $this->registerSettingsSchemas();
     }
@@ -65,6 +70,11 @@ final class DefaultThemeServiceProvider extends AbstractPackageServiceProvider
         $this->app->singleton('capell.tailwind.generator', fn (): TailwindAssetsGenerator => new TailwindAssetsGenerator(
             $this->app->make(Filesystem::class),
         ));
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(self::$packageName);
     }
 
     private function registerAssets(): void
@@ -108,6 +118,11 @@ final class DefaultThemeServiceProvider extends AbstractPackageServiceProvider
     private function registerMediaBladeComponents(): void
     {
         Blade::component('capell::media.svg', Svg::class);
+    }
+
+    private function registerBladeComponents(): void
+    {
+        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell');
     }
 
     private function registerSettingsSchemas(): void

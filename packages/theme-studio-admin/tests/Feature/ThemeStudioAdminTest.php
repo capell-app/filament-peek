@@ -23,6 +23,7 @@ use Capell\Workspaces\Data\WorkspaceSettingsData;
 use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Models\Workspace;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
 
@@ -198,6 +199,10 @@ it('ignores approved workspaces that are not linked to the staged theme draft', 
 
 function ensureThemeStudioWorkspacesTablesExist(): void
 {
+    Relation::morphMap([
+        'workspace' => Workspace::class,
+    ]);
+
     if (! DatabaseSchema::hasTable('versions')) {
         DatabaseSchema::create('versions', function (Blueprint $table): void {
             $table->id();

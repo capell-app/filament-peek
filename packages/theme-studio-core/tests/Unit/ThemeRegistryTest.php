@@ -195,7 +195,7 @@ it('renders pages through the preview theme and preset when preview context is p
 });
 
 it('renders shared hero media instead of forcing placeholder artwork', function (): void {
-    $template = (string) file_get_contents(__DIR__ . '/../../../themes/corporate/resources/views/sections/hero.blade.php');
+    $template = (string) file_get_contents(__DIR__ . '/../../../theme-corporate/resources/views/sections/hero.blade.php');
 
     $html = Blade::render($template, [
         'section' => new HeroSectionData(

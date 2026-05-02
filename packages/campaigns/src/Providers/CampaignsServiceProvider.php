@@ -49,7 +49,25 @@ final class CampaignsServiceProvider extends AbstractPackageServiceProvider
     public function registeringPackage(): void
     {
         $this
-            ->registerPackageMetadata()
+            ->registerPackageMetadata();
+
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this->bootInstalledPackage();
+        });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(self::$packageName);
+    }
+
+    private function bootInstalledPackage(): self
+    {
+        return $this
             ->registerModels()
             ->registerComponents()
             ->registerSchemaExtenders()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Mcp\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 final class CapellMcpAuditEntry extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'mcp_token_id',
         'event',

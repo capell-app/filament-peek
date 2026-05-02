@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\HtmlMinify\Providers;
 
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Frontend\Contracts\HtmlMinifier as HtmlMinifierContract;
 use Capell\HtmlMinify\Http\Middleware\HtmlMinifyMiddleware;
@@ -26,8 +27,19 @@ final class HtmlMinifyServiceProvider extends AbstractPackageServiceProvider
     {
         parent::registeringPackage();
 
-        $this->app->singleton(HtmlMinifierContract::class, HtmlMinifier::class);
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
 
-        Route::aliasMiddleware('frontend.minify', HtmlMinifyMiddleware::class);
+            $this->app->singleton(HtmlMinifierContract::class, HtmlMinifier::class);
+
+            Route::aliasMiddleware('frontend.minify', HtmlMinifyMiddleware::class);
+        });
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(self::$packageName);
     }
 }

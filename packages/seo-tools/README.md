@@ -1,70 +1,100 @@
-# Capell SEO Tools
+# SEO Tools
 
-**Product group:** Capell Search & SEO
-**Tier:** Premium
+Status: **Available, schema-owning** · Kind: **package** · Tier: **premium** · Bundle: **search-seo** · Contexts: **admin, frontend, console** · Product group: **Capell Search & SEO**
 
-SEO Tools gives Capell sites the discoverability layer most CMS builds leave until too late: XML sitemaps, social metadata, JSON-LD, robots controls, `llms.txt`, editor SEO scoring, redirect opportunities, Search Console insights, and AI-assisted SEO briefs.
+## What This Plugin Adds
 
-## When to install it
+SEO Tools adds metadata panels, sitemap generation, structured data, broken link tracking, Search Console insights, AI-assisted content briefs, and publish checks.
 
-Install SEO Tools when editors need to manage how pages appear in search, social previews, AI discovery tools, and structured data outputs.
+- Page and site SEO schema extenders.
+- SEO audit, broken links, not-found URLs, sitemap, and translation coverage pages.
+- Sitemap Livewire page and tool component.
+- AI creator actions for briefs, images, layouts, metadata suggestions, and draft application.
+- Search Console sync and reports.
 
-## Quick install
+## Why It Matters
 
-```bash
-composer require capell-app/seo-tools
-php artisan capell:seo-tools-install
-php artisan capell:seo-tools-setup
-```
+**For developers:** Exposes SEO work as actions, contracts, data objects, settings schemas, and extenders that connect to core pages, sites, translations, routes, and optional AI providers.
 
-The package registers through Laravel discovery. It depends on `capell-app/admin` and `capell-app/frontend`.
+**For teams:** Gives editors and site operators practical checks before publishing and operational reports after launch.
 
-## What appears in the admin
+## Screens And Workflow
 
-| Area                 | What editors can do                                                                                                         |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Page SEO panel       | Review score, previews, issues, passed checks, canonical, robots, links, schema, redirects, Search Console, and brief ideas |
-| Page SEO fields      | Improve titles, descriptions, social previews, robots directives, and canonical URLs                                        |
-| SEO audit            | Scan pages by score, critical issues, warnings, schema coverage, and setup state                                            |
-| Broken link handling | Review failing URLs and create redirect-manager entries from high-value opportunities                                       |
-| Search Console       | Surface clicks, impressions, CTR, and position when the integration is configured                                           |
-| Settings             | Configure AI-assisted SEO prompts, limits, provider defaults, schema, and sitemaps                                          |
-| Dashboard/widgets    | Inspect AI usage and generation history when enabled                                                                        |
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-## What developers get
+- Page SEO panel.
+- SEO audit page.
+- Broken links page.
+- Sitemap page.
+- Translation coverage page.
+- AI creator action modal.
+- Search Console insights panel.
 
-- Actions for page SEO reports, scoring, social metadata, page/site schema, breadcrumbs, sitemaps, and `llms.txt`.
-- `StructuredDataBuilder`, `CanonicalUrl`, `SocialCards`, and sitemap support classes.
-- A schema template registry for default or project-specific JSON-LD requirements.
-- Search Console and publish-check contracts that keep integrations behind package boundaries.
-- Redirect-opportunity and internal-link suggestion builders for editor workflows.
-- AI generation history models, settings, rate limiting, and event hooks.
-- Extenders that add SEO reports, publish guidance, and AI-assist controls to Capell admin forms.
+## Technical Shape
 
-## Configuration
+- SeoToolsServiceProvider registers settings, pages, extenders, commands, routes, and views.
+- Config files: capell-seo-tools.php and exchanger.php.
+- Migrations create broken links, page SEO snapshots, Search Console metrics, AI creator contexts, AI histories, and AI sessions.
+- Commands cover install, setup, sitemap, AI cache, AI usage, and OpenAI connection testing.
+- Controller: LlmsTxtController.
 
-The main config file is `config/capell-seo-tools.php`. Configure model defaults, prompt templates, rate limits, sitemap behavior, schema templates, Search Console credentials, provider settings, and publish-gate severity modes there.
+## Data Model
 
-Publish gate modes live under `publish_gates`. Defaults map critical issues to blockers and warning/notice issues to warnings. Per-check overrides can set any SEO issue key to `blocker`, `warning`, or `ignored`:
+- broken_links stores page, target URL, HTTP status, and last check time.
+- page_seo_snapshots store page SEO report state.
+- search_console_url_metrics store imported Search Console values.
+- ai_creator_contexts, ai_generation_histories, and ai_creator_sessions store AI workflow state.
+- SEO data connects to sites, pages, languages, users, and workspaces.
 
-```php
-'publish_gates' => [
-    'default' => [
-        'critical' => 'blocker',
-        'warning' => 'warning',
-        'notice' => 'warning',
-    ],
-    'checks' => [
-        'search_console' => 'ignored',
-    ],
-],
-```
+## Install Impact
 
-## Deeper docs
+- Adds SEO and AI-related tables/settings.
+- Extends page and site admin forms.
+- Adds SEO admin pages and widgets.
+- Adds sitemap and llms.txt frontend output.
+- Adds config for AI provider/model, image model, Search Console, publish gates, and prompts.
 
-- [SEO metadata and discoverability](docs/seo-meta-and-discoverability.md)
-- [SEO intelligence](docs/seo-intelligence.md)
-- [Schema templates](docs/schema-templates.md)
-- [Search Console](docs/search-console.md)
-- [Sitemaps](docs/sitemaps.md)
-- [OpenAI / AI-assisted SEO integration](../../docs/openai-integration.md)
+## Commands
+
+- `capell:admin-clear-ai-cache` (packages/seo-tools/src/Console/Commands/ClearAiCacheCommand.php)
+- `capell:seo-tools-install` (packages/seo-tools/src/Console/Commands/InstallCommand.php)
+- `capell:admin-monitor-ai-usage` (packages/seo-tools/src/Console/Commands/MonitorAiUsageCommand.php)
+- `capell:seo-tools-setup` (packages/seo-tools/src/Console/Commands/SetupCommand.php)
+- `capell:admin-test-openai` (packages/seo-tools/src/Console/Commands/TestOpenAiConnectionCommand.php)
+- `capell:xml-sitemap {--site= : Only regenerate sitemaps for this site ID} {--incremental : Skip domains whose pages have not changed since the last run}` (packages/seo-tools/src/Console/Commands/XmlSitemapCommand.php)
+
+## Admin And Access
+
+- BrokenLinksPage (packages/seo-tools/src/Filament/Pages/BrokenLinksPage.php, slug `broken-links`)
+- NotFoundUrlsPage (packages/seo-tools/src/Filament/Pages/NotFoundUrlsPage.php, slug `missing-pages`)
+- SEOAuditPage (packages/seo-tools/src/Filament/Pages/SEOAuditPage.php, slug `seo-audit`)
+- SitemapPage (packages/seo-tools/src/Filament/Pages/SitemapPage.php, slug `sitemap`)
+- TranslationCoveragePage (packages/seo-tools/src/Filament/Pages/TranslationCoveragePage.php, slug `translation-coverage`)
+
+- Policy: AiCreatorPolicy (packages/seo-tools/src/Policies/AiCreatorPolicy.php)
+- Gate: AiMetricsWidgetAbstract: `developer`, `admin`, `super_admin`
+- Gate: BrokenLinksPage: Filament Shield page permissions
+- Gate: NotFoundUrlsPage: Filament Shield page permissions
+- Gate: SEOAuditPage: Filament Shield page permissions
+- Gate: SitemapPage: Filament Shield page permissions
+- Gate: TranslationCoveragePage: Filament Shield page permissions
+
+## Common Pitfalls
+
+- Do not enable AI creator without checking provider credentials and review workflow.
+- Search Console requires credentials and property URL.
+- Publish gates can block publishing when required metadata is missing.
+- Regenerate sitemap output after route or content changes.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/seo-tools`.
+2. Run the package migrations or the Capell package installer required by the host app.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../redirects/README.md](../redirects/README.md)
+- [../blog/README.md](../blog/README.md)
+- [../workspaces/README.md](../workspaces/README.md)

@@ -18,6 +18,10 @@ class DefaultThemeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (! CapellCore::isPackageInstalled(self::$packageName)) {
+            return;
+        }
+
         $themeModel = Theme::class;
         CapellCore::registerModelInterceptor($themeModel, interceptorClass: DefaultThemeInterceptor::class);
 

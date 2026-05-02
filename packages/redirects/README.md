@@ -1,38 +1,82 @@
-# Capell Redirects
+# Redirects
 
-**Product group:** Capell Foundation
-**Tier:** Free
+Status: **Available, schema-owning** · Kind: **package** · Tier: **free** · Bundle: **foundation** · Contexts: **admin, frontend** · Product group: **Capell Foundation**
 
-Redirects manages manual 301/302 redirects, automatic page-slug redirects, and CSV import/export for Capell.
+## What This Plugin Adds
 
-The package keeps canonical storage in Core's `page_urls` table and adds package-owned behaviour around redirect validation, admin management, and frontend resolution.
+Redirects adds admin redirect management, automatic redirect creation from changed page URLs, import/export support, and redirect health snapshots.
 
-## When to install it
+- Redirect Filament resource.
+- Redirect importer and exporter.
+- Automatic redirect creation action.
+- Page URL redirect recorder and resolver support.
+- Redirect health snapshot actions and model.
 
-Install Redirects when editors need a redirect manager or when slug changes should create redirects automatically.
+## Why It Matters
 
-## Quick install
+**For developers:** Provides resolver and recorder contracts so admin and frontend code can create and resolve redirects without coupling to one implementation.
 
-```bash
-composer require capell-app/redirects
-php artisan migrate
-php artisan optimize:clear
-```
+**For teams:** Helps site operators preserve traffic and search value when URLs change.
 
-## What appears in the admin
+## Screens And Workflow
 
-| Area      | What editors can do                                       |
-| --------- | --------------------------------------------------------- |
-| Redirects | Create, edit, filter, import, and export manual redirects |
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-## What developers get
+- Redirects admin index.
+- Create/edit redirect form.
+- Redirect import workflow.
+- Redirect export workflow.
+- Redirect health snapshot output.
 
-- `RedirectResolver` and `RedirectRecorder` contracts.
-- Automatic redirect creation when page URLs change.
-- Validation for duplicates, self-redirects, loops, and redirect chains.
-- Filament importer/exporter classes for CSV workflows.
-- Config toggles for automatic redirects.
+## Technical Shape
 
-## Reference
+- RedirectsServiceProvider registers the package.
+- Config file: redirects.php.
+- Migration creates redirect_health_snapshots.
+- Filament resource: RedirectResource.
+- Importer/exporter handle bulk redirect data.
+- Listener creates redirects for changed page URLs.
 
-See [Redirect Manager reference](docs/redirects.md) for storage, validation, admin, frontend, and configuration details.
+## Data Model
+
+- redirect_health_snapshots stores redirect health results.
+- Redirect records appear to integrate with core page URL redirect behaviour rather than a package-owned redirects migration in this package.
+- Deletion and retention for health snapshots should be verified against site operations policy.
+
+## Install Impact
+
+- Adds redirect admin resource.
+- Adds redirect_health_snapshots table.
+- Adds config for automatic redirects and status code.
+- No package route file is present.
+- Can create redirects when page URLs change.
+
+## Commands
+
+- None proven in this package directory.
+
+## Admin And Access
+
+- ManageRedirects (packages/redirects/src/Filament/Resources/Redirects/Pages/ManageRedirects.php)
+- RedirectResource (packages/redirects/src/Filament/Resources/Redirects/RedirectResource.php)
+
+- Policy: RedirectPolicy (packages/redirects/src/Policies/RedirectPolicy.php)
+- Gate: ManageRedirects: Gate `import`, `export`
+
+## Common Pitfalls
+
+- Confirm where redirect records are stored in the host app before importing.
+- Keep automatic redirects enabled only when changed page URLs should produce 301s.
+- Validate redirect loops before publishing bulk imports.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/redirects`.
+2. Run the package migrations or the Capell package installer required by the host app.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../seo-tools/README.md](../seo-tools/README.md)
+- [../navigation/README.md](../navigation/README.md)

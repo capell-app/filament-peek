@@ -129,23 +129,21 @@ it('does not show resource alerts when all defaults exist', function (): void {
         ->assertDontSee(__('capell-admin::message.language_missing_warning'));
 });
 
-it('shows installer alert when installer is present and Capell is fully set up', function (): void {
+it('does not show installer alert when installer package is absent', function (): void {
     createAllTypes();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
     Theme::factory()->state(['type_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();
 
-    expect(AlertsWidget::canView())->toBeTrue();
-
     $livewire = livewire(AlertsWidget::class);
-    $livewire->assertSee(__('capell-admin::message.installer_present_warning'));
+    $livewire->assertDontSee(__('capell-admin::message.installer_present_warning'));
 
     $alerts = $livewire->get('alerts');
-    expect($alerts)->toHaveKey('installer');
+    expect($alerts)->not->toHaveKey('installer');
 });
 
-it('adds a delete installer action to the installer alert', function (): void {
+it('does not add installer actions when installer package is absent', function (): void {
     createAllTypes();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
     Theme::factory()->state(['type_id' => $themeType?->id, 'default' => true])->create();
@@ -153,10 +151,10 @@ it('adds a delete installer action to the installer alert', function (): void {
     Site::factory()->create();
 
     $alerts = livewire(AlertsWidget::class)->get('alerts');
-    $actionNames = collect(Arr::wrap($alerts['installer']->action))
+    $actionNames = collect(Arr::wrap($alerts['installer']->action ?? []))
         ->map(fn (mixed $action): ?string => method_exists($action, 'getName') ? $action->getName() : null)
         ->all();
 
     expect($actionNames)
-        ->toContain('viewInstaller', 'deleteInstaller');
+        ->not->toContain('viewInstaller', 'deleteInstaller');
 });

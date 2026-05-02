@@ -10,7 +10,6 @@ use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidgetAbstract;
 use Capell\Admin\Filament\Widgets\Dashboard\SiteStatsOverviewWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\SiteTrafficWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\TopPagesWidget;
-use Capell\Admin\Filament\Widgets\Health\TotalAccessLogsWidget;
 use Capell\AuthenticationLog\Filament\Widgets\AuthenticationLogsWidget;
 use Capell\Core\Models\SiteDomain;
 use Capell\DeveloperTools\Filament\Widgets\Health\SiteHealthWidgetAbstract;
@@ -47,7 +46,7 @@ it('getWidgets does not contain dropped widgets', function (): void {
 
     expect($widgets)
         ->not->toContain(AuthenticationLogsWidget::class)
-        ->not->toContain(TotalAccessLogsWidget::class)
+        ->not->toContain('Capell\\Admin\\Filament\\Widgets\\Health\\TotalAccessLogsWidget')
         ->not->toContain(ListPagesWidget::class);
 });
 

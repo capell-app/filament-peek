@@ -138,13 +138,8 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
     public function registeringPackage(): void
     {
         $this->registerPackageMetadata();
-        $this->registerExtenderResolvers();
-        $this->registerModels();
-        $this->registerBlazeComponents();
-        $this->bindSchemaTemplateRegistry();
-        $this->bindSearchConsoleClient();
 
-        $this->booted(function (): void {
+        $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {
                 return;
             }
@@ -449,6 +444,11 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
     private function bootInstalledPackage(): self
     {
         return $this
+            ->registerExtenderResolvers()
+            ->registerModels()
+            ->registerBlazeComponents()
+            ->bindSchemaTemplateRegistry()
+            ->bindSearchConsoleClient()
             ->bindSeoPublishReportProvider()
             ->registerAdminEvents()
             ->registerAdminExtenders()
@@ -477,20 +477,24 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         return $package instanceof PackageData && $package->isInstalled();
     }
 
-    private function registerExtenderResolvers(): void
+    private function registerExtenderResolvers(): self
     {
         $this->app->singleton(
             SearchMetaDataSectionExtenderResolverInterface::class,
             fn (): SearchMetaDataSectionExtenderResolver => new SearchMetaDataSectionExtenderResolver,
         );
+
+        return $this;
     }
 
-    private function bindSchemaTemplateRegistry(): void
+    private function bindSchemaTemplateRegistry(): self
     {
         $this->app->singleton(SchemaTemplateRegistry::class, fn (): SchemaTemplateRegistry => new SchemaTemplateRegistry);
+
+        return $this;
     }
 
-    private function bindSearchConsoleClient(): void
+    private function bindSearchConsoleClient(): self
     {
         $this->app->singleton(SearchConsoleClientInterface::class, function (): SearchConsoleClientInterface {
             $config = config('capell-seo-tools.search_console', []);
@@ -507,6 +511,8 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
 
             return new GoogleSearchConsoleClient($config);
         });
+
+        return $this;
     }
 
     private function bindSeoPublishReportProvider(): self
@@ -562,7 +568,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
         return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
     }
 
-    private function registerModels(): void
+    private function registerModels(): self
     {
         CapellCore::registerModels([
             AIGenerationHistory::class,
@@ -570,5 +576,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             AiCreatorSession::class,
             BrokenLink::class,
         ]);
+
+        return $this;
     }
 }

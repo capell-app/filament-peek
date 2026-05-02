@@ -1,27 +1,70 @@
-# Capell Corporate Theme
+# Theme Corporate
 
-**Composer package:** `capell-app/theme-corporate`
-**Product group:** Capell Theme Studio
-**Tier:** Premium
+Status: **Available, no schema impact** · Kind: **theme** · Tier: **premium** · Bundle: **theme-studio** · Contexts: **frontend** · Product group: **Capell Theme Studio**
 
-Corporate is the trust and clarity theme for professional services, institutions, and B2B sites. It renders the shared Theme Studio content model with restrained hierarchy, formal navigation, structured proof, and calm CTA treatment.
+## What This Plugin Adds
 
-## Install
+Theme Corporate registers a trust-led corporate renderer for Capell Theme Studio.
 
-```bash
-composer require capell-app/theme-corporate
-```
+- Corporate theme service provider.
+- Theme renderer/views for corporate Theme Studio output.
+- Dependency on Default Theme and Theme Studio Core.
 
-For the full commercial system, install `capell-app/theme-studio`.
+## Why It Matters
 
-## Includes
+**For developers:** Adds a renderer package that plugs into Theme Studio Core contracts and runtime settings.
 
-- Three presets: Boardroom, Civic, Advisory.
-- Renderers for navigation, hero, features, proof, content listings, CTA, and footer.
-- Fallback-friendly section rendering through `capell-app/theme-studio-core`.
+**For teams:** Provides a corporate visual option for sites that need restrained, trust-focused presentation.
 
-## Tests
+## Screens And Workflow
 
-```bash
-php -d memory_limit=-1 vendor/bin/pest packages/theme-corporate/tests --no-coverage
-```
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
+
+- Theme Studio preset selection showing Corporate.
+- Frontend page rendered with Corporate theme.
+- Theme preview URL output.
+
+## Technical Shape
+
+- CorporateThemeServiceProvider registers the renderer.
+- Requires capell-app/default-theme and capell-app/theme-studio-core.
+- No migrations, config, routes, resources, or models are present.
+
+## Data Model
+
+- This package does not own data.
+- It consumes Theme Studio runtime settings and core page content.
+
+## Install Impact
+
+- Adds a Corporate renderer to Theme Studio.
+- No database changes.
+- No admin navigation by itself.
+- No public routes by itself.
+
+## Commands
+
+- None proven in this package directory.
+
+## Admin And Access
+
+- None proven in this package directory.
+
+- None proven in this package directory.
+
+## Common Pitfalls
+
+- Install Theme Studio Core before using this renderer.
+- Verify Default Theme assets are generated.
+
+## Quick Start
+
+1. Install the package with `composer require capell-app/theme-corporate`.
+2. Register the package provider through Composer discovery and clear cached config if the host app uses config caching.
+3. Open the new admin surface or integration point and verify the result.
+
+## Next Steps
+
+- [docs/overview.md](docs/overview.md)
+- [../theme-studio-core/README.md](../theme-studio-core/README.md)
+- [../theme-studio-admin/README.md](../theme-studio-admin/README.md)

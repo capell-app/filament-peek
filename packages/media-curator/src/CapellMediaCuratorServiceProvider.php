@@ -26,9 +26,6 @@ final class CapellMediaCuratorServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        config()->set('capell.media.backend', 'curator');
-        config()->set('capell.media.model', CuratorMedia::class);
-
         CapellCore::registerPackage(
             self::$packageName,
             serviceProviderClass: self::class,
@@ -37,6 +34,30 @@ final class CapellMediaCuratorServiceProvider extends ServiceProvider
             description: fn (): string => __('capell-media-curator::package.description'),
         );
 
+        $this->app->booted(function (): void {
+            if (! $this->isPackageInstalled()) {
+                return;
+            }
+
+            $this->registerInstalledPackage();
+        });
+    }
+
+    public function boot(): void
+    {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([MigrateSpatieToCuratorCommand::class]);
+        }
+    }
+
+    private function registerInstalledPackage(): void
+    {
+        config()->set('capell.media.backend', 'curator');
+        config()->set('capell.media.model', CuratorMedia::class);
         CapellCore::registerModels([CuratorMedia::class]);
 
         $this->app->bind(MediaFieldFactory::class, CuratorMediaFieldFactory::class);
@@ -46,10 +67,8 @@ final class CapellMediaCuratorServiceProvider extends ServiceProvider
         }
     }
 
-    public function boot(): void
+    private function isPackageInstalled(): bool
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([MigrateSpatieToCuratorCommand::class]);
-        }
+        return CapellCore::isPackageInstalled(self::$packageName);
     }
 }

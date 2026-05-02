@@ -15,6 +15,7 @@ use Capell\Mosaic\Providers\MosaicServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
 use Livewire\LivewireServiceProvider;
 use Override;
 
@@ -23,6 +24,8 @@ class MosaicTestCase extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Blade::anonymousComponentPath(__DIR__ . '/../../default-theme/resources/views/components', 'capell');
 
         $this->registerAndMigrateSettings(
             CapellCore::getSettingMigrations(),
@@ -67,6 +70,7 @@ class MosaicTestCase extends AbstractTestCase
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled('capell-app/default-theme');
         CapellCore::forcePackageInstalled(MosaicServiceProvider::$packageName);
 
         CapellCore::registerPackage('capell-app/navigation', path: realpath(__DIR__ . '/../../navigation'));

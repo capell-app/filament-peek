@@ -23,37 +23,23 @@ use Illuminate\Support\ServiceProvider;
 
 final class ThemeStudioCoreServiceProvider extends ServiceProvider
 {
+    public static string $packageName = 'capell-app/theme-studio-core';
+
     private bool $previewMiddlewareRegistered = false;
 
     public function register(): void
     {
-        $this->app->singleton(ThemeRegistry::class);
-        $this->app->bind(ThemePageAdapter::class, CapellFrontendThemePageAdapter::class);
-        $this->app->bind(ThemeRuntimeSettings::class, ThemeStudioSettings::class);
-
-        $this->app->singleton(
-            ThemePreviewSigner::class,
-            fn (): ThemePreviewSigner => new ThemePreviewSigner(config('app.key', 'theme-studio')),
-        );
-
-        $this->app->singleton(ThemePreviewContext::class, fn (): ThemePreviewContext => ThemePreviewContext::none());
-
-        $this->app->afterResolving(
-            SettingsSchemaRegistry::class,
-            function (SettingsSchemaRegistry $registry): void {
-                $registry->registerSettingsClass(ThemeStudioSettings::group(), ThemeStudioSettings::class);
-            },
-        );
-
-        CapellCore::registerPackage(
-            name: 'capell-app/theme-studio-core',
-            path: realpath(__DIR__ . '/..'),
-            version: CapellCore::getInstalledPrettyVersion('capell-app/theme-studio-core'),
-        );
+        $this->registerPackageMetadata();
     }
 
     public function boot(): void
     {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
+        $this->registerInstalledPackage();
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../database/settings/create_theme_studio_settings.php' => database_path('settings/create_theme_studio_settings.php'),
@@ -69,6 +55,44 @@ final class ThemeStudioCoreServiceProvider extends ServiceProvider
         }
 
         $this->registerTokenRenderHook();
+    }
+
+    private function registerInstalledPackage(): void
+    {
+        $this->app->singleton(ThemeRegistry::class);
+        $this->app->bind(ThemePageAdapter::class, CapellFrontendThemePageAdapter::class);
+        $this->app->bind(ThemeRuntimeSettings::class, ThemeStudioSettings::class);
+
+        $this->app->singleton(
+            ThemePreviewSigner::class,
+            fn (): ThemePreviewSigner => new ThemePreviewSigner(config('app.key', 'theme-studio')),
+        );
+
+        $this->app->singleton(ThemePreviewContext::class, fn (): ThemePreviewContext => ThemePreviewContext::none());
+
+        $registerSettingsClass = function (SettingsSchemaRegistry $registry): void {
+            $registry->registerSettingsClass(ThemeStudioSettings::group(), ThemeStudioSettings::class);
+        };
+
+        $this->app->afterResolving(SettingsSchemaRegistry::class, $registerSettingsClass);
+
+        if ($this->app->resolved(SettingsSchemaRegistry::class)) {
+            $registerSettingsClass($this->app->make(SettingsSchemaRegistry::class));
+        }
+    }
+
+    private function registerPackageMetadata(): void
+    {
+        CapellCore::registerPackage(
+            name: self::$packageName,
+            path: realpath(__DIR__ . '/..'),
+            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
+        );
+    }
+
+    private function isPackageInstalled(): bool
+    {
+        return CapellCore::isPackageInstalled(self::$packageName);
     }
 
     private function registerPreviewMiddleware(Router $router): void
