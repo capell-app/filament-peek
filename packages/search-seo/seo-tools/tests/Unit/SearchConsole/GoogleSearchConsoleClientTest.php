@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Models\Site;
+use Capell\SeoTools\Actions\PersistSearchConsoleUrlMetricAction;
 use Capell\SeoTools\Enums\SearchConsoleMetricEnum;
 use Capell\SeoTools\Support\SearchConsole\GoogleSearchConsoleClient;
 use Illuminate\Support\Facades\Http;
@@ -58,41 +60,40 @@ it('maps search analytics rows into page insights', function (): void {
         ->and($insights[3]->value)->toBe(4.2);
 });
 
-it('returns top declining pages from current and previous search analytics windows', function (): void {
+it('returns top declining pages from stored search console metrics', function (): void {
     $credentialsPath = tempnam(sys_get_temp_dir(), 'search-console-credentials');
-    $privateKey = openssl_pkey_new([
-        'private_key_bits' => 1024,
-        'private_key_type' => OPENSSL_KEYTYPE_RSA,
-    ]);
-    $privateKeyContents = '';
+    $site = Site::factory()->create();
 
     expect($credentialsPath)->toBeString();
-    expect($privateKey)->not()->toBeFalse();
 
-    openssl_pkey_export($privateKey, $privateKeyContents);
-
-    file_put_contents($credentialsPath, json_encode([
-        'client_email' => 'seo-tools@example.iam.gserviceaccount.com',
-        'private_key' => $privateKeyContents,
-        'token_uri' => 'https://oauth2.googleapis.com/token',
-    ], JSON_THROW_ON_ERROR));
-
-    Http::fakeSequence('https://oauth2.googleapis.com/token')
-        ->push(['access_token' => 'test-token'], 200)
-        ->push(['access_token' => 'test-token'], 200);
-    Http::fakeSequence('https://searchconsole.googleapis.com/*')
-        ->push([
-            'rows' => [
-                ['keys' => ['https://example.com/about'], 'clicks' => 10, 'impressions' => 100],
-                ['keys' => ['https://example.com/contact'], 'clicks' => 40, 'impressions' => 120],
-            ],
-        ], 200)
-        ->push([
-            'rows' => [
-                ['keys' => ['https://example.com/about'], 'clicks' => 30, 'impressions' => 140],
-                ['keys' => ['https://example.com/contact'], 'clicks' => 30, 'impressions' => 110],
-            ],
-        ], 200);
+    PersistSearchConsoleUrlMetricAction::run(
+        siteId: (int) $site->getKey(),
+        url: 'https://example.com/about',
+        windowStart: now()->subDays(28),
+        windowEnd: now(),
+        clicks: 10,
+        impressions: 100,
+        ctr: 0.1,
+        averagePosition: 4.2,
+        previousClicks: 30,
+        previousImpressions: 140,
+        previousCtr: 0.2,
+        previousAveragePosition: 3.1,
+    );
+    PersistSearchConsoleUrlMetricAction::run(
+        siteId: (int) $site->getKey(),
+        url: 'https://example.com/contact',
+        windowStart: now()->subDays(28),
+        windowEnd: now(),
+        clicks: 40,
+        impressions: 120,
+        ctr: 0.3,
+        averagePosition: 2.2,
+        previousClicks: 30,
+        previousImpressions: 110,
+        previousCtr: 0.2,
+        previousAveragePosition: 2.5,
+    );
 
     $client = new GoogleSearchConsoleClient([
         'enabled' => true,
@@ -100,13 +101,13 @@ it('returns top declining pages from current and previous search analytics windo
         'property_url' => 'https://example.com/',
     ]);
 
-    $decliningPages = $client->decliningPages(siteId: 1, limit: 5);
+    $decliningPages = $client->decliningPages(siteId: (int) $site->getKey(), limit: 5);
 
     unlink($credentialsPath);
 
     expect($decliningPages)->toHaveCount(1)
-        ->and($decliningPages[0]['page'])->toBe('https://example.com/about')
+        ->and($decliningPages[0]['url'])->toBe('https://example.com/about')
         ->and($decliningPages[0]['clicks'])->toBe(10)
         ->and($decliningPages[0]['previous_clicks'])->toBe(30)
-        ->and($decliningPages[0]['delta'])->toBe(-20);
+        ->and($decliningPages[0]['click_delta'])->toBe(-20);
 });

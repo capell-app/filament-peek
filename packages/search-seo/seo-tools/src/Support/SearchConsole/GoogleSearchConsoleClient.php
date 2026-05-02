@@ -8,6 +8,7 @@ use Capell\SeoTools\Contracts\SearchConsoleClientInterface;
 use Capell\SeoTools\Data\SearchConsoleInsightData;
 use Capell\SeoTools\Enums\SearchConsoleMetricEnum;
 use Capell\SeoTools\Enums\SeoIssueSeverityEnum;
+use Capell\SeoTools\Models\SearchConsoleUrlMetric;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 use JsonException;
@@ -96,47 +97,15 @@ final class GoogleSearchConsoleClient implements SearchConsoleClientInterface
             return [];
         }
 
-        $propertyUrl = $this->propertyUrl($this->config['property_url'] ?? '');
-
-        try {
-            $currentRows = $this->querySearchAnalytics($propertyUrl, [
-                'startDate' => now()->subDays(30)->toDateString(),
-                'endDate' => now()->subDay()->toDateString(),
-                'dimensions' => ['page'],
-                'rowLimit' => $limit * 3,
-            ]);
-            $previousRows = $this->querySearchAnalytics($propertyUrl, [
-                'startDate' => now()->subDays(60)->toDateString(),
-                'endDate' => now()->subDays(31)->toDateString(),
-                'dimensions' => ['page'],
-                'rowLimit' => $limit * 3,
-            ]);
-        } catch (Throwable) {
-            return [];
-        }
-
-        $previousClicksByPage = collect($previousRows)
-            ->mapWithKeys(fn (array $row): array => [$this->pageKey($row) => (int) ($row['clicks'] ?? 0)]);
-
-        return collect($currentRows)
-            ->map(function (array $row) use ($previousClicksByPage): array {
-                $page = $this->pageKey($row);
-                $clicks = (int) ($row['clicks'] ?? 0);
-                $previousClicks = $previousClicksByPage[$page] ?? 0;
-
-                return [
-                    'page' => $page,
-                    'clicks' => $clicks,
-                    'previous_clicks' => $previousClicks,
-                    'delta' => $clicks - $previousClicks,
-                    'impressions' => $row['impressions'] ?? 0,
-                    'ctr' => $row['ctr'] ?? null,
-                    'position' => $row['position'] ?? null,
-                ];
-            })
-            ->filter(fn (array $row): bool => $row['delta'] < 0)
-            ->sortBy('delta')
-            ->take($limit)
+        return SearchConsoleUrlMetric::query()
+            ->decliningPages($siteId, $limit)
+            ->get(['url', 'clicks', 'previous_clicks', 'click_delta'])
+            ->map(fn (SearchConsoleUrlMetric $metric): array => [
+                'url' => $metric->url,
+                'clicks' => $metric->clicks,
+                'previous_clicks' => $metric->previous_clicks,
+                'click_delta' => $metric->click_delta,
+            ])
             ->values()
             ->all();
     }
@@ -257,19 +226,5 @@ final class GoogleSearchConsoleClient implements SearchConsoleClientInterface
         }
 
         return $scheme . '://' . $host . '/';
-    }
-
-    /**
-     * @param  array<string, mixed>  $row
-     */
-    private function pageKey(array $row): string
-    {
-        $keys = $row['keys'] ?? [];
-
-        if (is_array($keys) && is_string($keys[0] ?? null)) {
-            return $keys[0];
-        }
-
-        return '';
     }
 }
