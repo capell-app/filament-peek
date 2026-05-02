@@ -6,6 +6,8 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\SeoTools\Actions\PersistPageSeoSnapshotAction;
+use Capell\SeoTools\Actions\RefreshPageSeoSnapshotAction;
+use Capell\SeoTools\Actions\RefreshSiteSeoSnapshotsAction;
 use Capell\SeoTools\Data\InternalLinkSuggestionData;
 use Capell\SeoTools\Data\PageSeoReportData;
 use Capell\SeoTools\Data\RedirectOpportunityData;
@@ -154,4 +156,44 @@ it('marks schema status as warning when a schema report has missing fields', fun
     $snapshot = PersistPageSeoSnapshotAction::run($page, $site, $language, $report);
 
     expect($snapshot->schema_status)->toBe('warning');
+});
+
+it('refreshes a single page seo snapshot from the canonical report action', function (): void {
+    $language = Language::factory()->create();
+    $site = Site::factory()->language($language)->withTranslations($language)->create();
+    $page = Page::factory()
+        ->site($site)
+        ->withTranslations($language, [
+            'content' => '',
+            'meta' => [],
+            'title' => 'A',
+        ])
+        ->create();
+
+    $snapshot = RefreshPageSeoSnapshotAction::run($page, $site, $language);
+
+    expect($snapshot->page_id)->toBe($page->getKey())
+        ->and($snapshot->site_id)->toBe($site->getKey())
+        ->and($snapshot->language_id)->toBe($language->getKey())
+        ->and($snapshot->critical_count)->toBeGreaterThan(0);
+});
+
+it('refreshes seo snapshots for every page in a site', function (): void {
+    $language = Language::factory()->create();
+    $site = Site::factory()->language($language)->withTranslations($language)->create();
+
+    Page::factory()
+        ->count(3)
+        ->site($site)
+        ->withTranslations($language, [
+            'content' => '',
+            'meta' => [],
+            'title' => 'A',
+        ])
+        ->create();
+
+    $result = RefreshSiteSeoSnapshotsAction::run($site, $language, 2);
+
+    expect($result)->toBe(['refreshed' => 3])
+        ->and(PageSeoSnapshot::query()->where('site_id', $site->getKey())->count())->toBe(3);
 });
