@@ -143,7 +143,11 @@ class WorkspacesTestCase extends AbstractTestCase
         parent::getEnvironmentSetUp($app);
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
-        CapellCore::registerPackage(BackupServiceProvider::$packageName, path: realpath(__DIR__ . '/../../../vendor/capell-app/backup'));
+        $backupPackagePath = realpath(__DIR__ . '/../../../vendor/capell-app/backup')
+            ?: realpath(__DIR__ . '/../../backup')
+            ?: null;
+
+        CapellCore::registerPackage(BackupServiceProvider::$packageName, path: $backupPackagePath);
         CapellCore::forcePackageInstalled(BackupServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/workspaces');

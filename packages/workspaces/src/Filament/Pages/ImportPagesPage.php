@@ -8,26 +8,15 @@ use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Capell\Admin\Actions\InstallBackupPermissionsAction;
 use Capell\Admin\Filament\Resources\ImportSessions\ImportSessionResource;
-use Capell\Backup\Actions\BuildImportValidationSummaryAction;
-use Capell\Backup\Actions\BuildPageReviewRows;
-use Capell\Backup\Actions\BuildRelationResolveRowsAction;
-use Capell\Backup\Data\PageReviewRow;
-use Capell\Backup\Data\RelationResolveRow;
-use Capell\Backup\Enums\ImportSessionKind;
 use Capell\Backup\Enums\ImportSessionStatus;
-use Capell\Backup\Jobs\ExecuteImportPlanJob;
-use Capell\Backup\Models\ImportSession;
-use Capell\Backup\Services\Import\ManifestValidator;
-use Capell\Backup\Services\Import\PackageReader;
-use Capell\Backup\Services\Import\ResolutionMap;
-use Capell\Backup\Services\Import\ResolutionMapBuilder;
-use Capell\Backup\Services\Import\Resolvers\MatchResolution;
-use Capell\Backup\Services\Import\Resolvers\RelationMatchResolverRegistry;
-use Capell\Core\Models\Site;
-use Capell\Workspaces\Enums\WorkspaceKindEnum;
-use Capell\Workspaces\Enums\WorkspaceStatusEnum;
+use Capell\Workspaces\Actions\Imports\AdvancePageImportToValidationAction;
+use Capell\Workspaces\Actions\Imports\DispatchPageImportAction;
+use Capell\Workspaces\Actions\Imports\RefreshPageImportStatusAction;
+use Capell\Workspaces\Actions\Imports\StartPageImportAction;
+use Capell\Workspaces\Data\Imports\PageImportDecisionData;
+use Capell\Workspaces\Data\Imports\PageImportStatusData;
+use Capell\Workspaces\Data\Imports\PageImportWizardStateData;
 use Capell\Workspaces\Filament\Resources\Workspaces\WorkspaceResource;
-use Capell\Workspaces\Models\Workspace;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -39,10 +28,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Override;
-use RuntimeException;
 use Throwable;
 
 class ImportPagesPage extends Page implements HasForms
@@ -190,128 +176,19 @@ class ImportPagesPage extends Page implements HasForms
             return;
         }
 
-        if ($this->hasBlockingWorkspaceConflict()) {
-            return;
-        }
-
         $this->advanceToResolve();
     }
 
     public function parseAndAdvance(): void
     {
-        $state = $this->data;
-
-        $archiveDiskPath = is_array($state['archive'] ?? null)
-            ? (string) array_values($state['archive'])[0]
-            : (string) ($state['archive'] ?? '');
-
-        if ($archiveDiskPath === '') {
-            Notification::make()->danger()->title(__('capell-admin::exchanger.upload_required'))->send();
-
-            return;
-        }
-
-        $absolutePath = Storage::disk('local')->path($archiveDiskPath);
-
-        $sourceFilename = is_array($state['archive_filename'] ?? null)
-            ? (string) array_values($state['archive_filename'])[0]
-            : null;
-
-        $workspaceName = (string) ($state['workspace_name'] ?? '');
-        if ($workspaceName === '') {
-            $workspaceName = sprintf(
-                '%s — %s',
-                __('capell-admin::exchanger.import_workspace_default_name'),
-                now()->format('Y-m-d H:i'),
-            );
-        }
-
-        $workspace = Workspace::query()->create([
-            'name' => $workspaceName,
-            'status' => WorkspaceStatusEnum::Open->value,
-            'kind' => WorkspaceKindEnum::Import->value,
-        ]);
-
-        $session = ImportSession::query()->create([
-            'uuid' => (string) Str::uuid(),
-            'user_id' => auth()->id(),
-            'kind' => ImportSessionKind::PageImport,
-            'status' => ImportSessionStatus::Draft,
-            'source_filename' => $sourceFilename,
-            'source_package_path' => $archiveDiskPath,
-        ]);
-
-        // workspace_id is added by the workspaces migration but not in core's $fillable;
-        // use setAttribute to bypass mass-assignment guard.
-        $session->setAttribute('workspace_id', $workspace->getKey());
-        $session->save();
-
         try {
-            $package = (new PackageReader)->read($absolutePath);
-
-            $validation = (new ManifestValidator)->validate($package->manifest);
-            if (! $validation->isValid()) {
-                throw new RuntimeException(implode(' / ', $validation->errors));
-            }
-
-            $session->forceFill([
-                'manifest' => $package->manifest,
-                'status' => ImportSessionStatus::Parsed,
-            ])->save();
-
-            $resolutionMap = (new ResolutionMapBuilder(
-                resolve(RelationMatchResolverRegistry::class),
-            ))->build($package->payload);
-
-            $session->forceFill([
-                'resolution_map' => $resolutionMap->toArray(),
-                'status' => $resolutionMap->hasUnresolved() ? ImportSessionStatus::Mapped : ImportSessionStatus::Parsed,
-            ])->save();
-
-            if ($resolutionMap->hasUnresolved()) {
-                Notification::make()
-                    ->warning()
-                    ->title(__('capell-admin::exchanger.unresolved_references'))
-                    ->body(__('capell-admin::exchanger.unresolved_references_body', ['count' => count($resolutionMap->unresolved)]))
-                    ->send();
-            }
-
-            $reviewRows = (new BuildPageReviewRows)->run(
-                $package,
-                $resolutionMap,
-            );
-
-            $this->reviewRows = array_map(
-                static fn (PageReviewRow $row): array => $row->toArray(),
-                $reviewRows,
-            );
-
-            $this->pageDecisions = [];
-            foreach ($reviewRows as $row) {
-                $this->pageDecisions[$row->uuid] = ['action' => $row->suggestedAction];
-            }
-
-            $resolveRows = BuildRelationResolveRowsAction::run($resolutionMap);
-            $this->resolveRows = array_map(
-                static fn (RelationResolveRow $row): array => $row->toArray(),
-                $resolveRows,
-            );
-            $this->relationDecisions = [];
-            foreach ($resolveRows as $row) {
-                $targetId = $row->topMatch['local_id'] ?? null;
-                $this->relationDecisions[$row->ref] = [
-                    'action' => $row->suggestedAction,
-                    'target_id' => $targetId,
-                ];
-            }
-
-            $this->sessionId = (int) $session->getKey();
-            $this->step = self::STEP_REVIEW;
+            $this->applyWizardState(StartPageImportAction::run($this->data));
         } catch (Throwable $throwable) {
-            $session->forceFill([
-                'status' => ImportSessionStatus::Failed,
-                'failure_reason' => $throwable->getMessage(),
-            ])->save();
+            if ($throwable->getMessage() === StartPageImportAction::ERROR_UPLOAD_REQUIRED) {
+                Notification::make()->danger()->title(__('capell-admin::exchanger.upload_required'))->send();
+
+                return;
+            }
 
             Notification::make()
                 ->danger()
@@ -331,23 +208,17 @@ class ImportPagesPage extends Page implements HasForms
             return;
         }
 
-        if ($this->hasBlockingWorkspaceConflict()) {
+        try {
+            $this->applyWizardState(
+                AdvancePageImportToValidationAction::run($this->decisionData(), false),
+            );
+        } catch (Throwable $throwable) {
             Notification::make()
                 ->danger()
-                ->title(__('capell-admin::exchanger.blocked_by_workspace_conflict'))
-                ->body(__('capell-admin::exchanger.blocked_by_workspace_conflict_body'))
+                ->title(__('capell-admin::exchanger.import_failed'))
+                ->body($throwable->getMessage())
                 ->send();
-
-            return;
         }
-
-        if ($this->shouldSkipResolveStep()) {
-            $this->advanceToValidate();
-
-            return;
-        }
-
-        $this->step = self::STEP_RESOLVE;
     }
 
     public function backToReview(): void
@@ -357,7 +228,7 @@ class ImportPagesPage extends Page implements HasForms
 
     public function backToResolve(): void
     {
-        if ($this->shouldSkipResolveStep()) {
+        if ($this->decisionData()->shouldSkipResolveStep()) {
             $this->step = self::STEP_REVIEW;
 
             return;
@@ -376,70 +247,17 @@ class ImportPagesPage extends Page implements HasForms
             return;
         }
 
-        if ($this->hasBlockingWorkspaceConflict()) {
-            Notification::make()
-                ->danger()
-                ->title(__('capell-admin::exchanger.blocked_by_workspace_conflict'))
-                ->body(__('capell-admin::exchanger.blocked_by_workspace_conflict_body'))
-                ->send();
-
-            return;
-        }
-
-        if (! $this->shouldSkipResolveStep() && ! $this->hasValidRelationDecisions()) {
-            Notification::make()
-                ->danger()
-                ->title(__('capell-admin::exchanger.blocked_pending_decisions'))
-                ->send();
-
-            $this->step = self::STEP_RESOLVE;
-
-            return;
-        }
-
-        $session = ImportSession::query()->find($this->sessionId);
-        if (! $session instanceof ImportSession) {
-            return;
-        }
-
         try {
-            $archiveAbsolutePath = Storage::disk('local')->path((string) $session->source_package_path);
-            $package = (new PackageReader)->read($archiveAbsolutePath);
+            $this->applyWizardState(
+                AdvancePageImportToValidationAction::run($this->decisionData(), true),
+            );
         } catch (Throwable $throwable) {
             Notification::make()
                 ->danger()
                 ->title(__('capell-admin::exchanger.import_failed'))
                 ->body($throwable->getMessage())
                 ->send();
-
-            return;
         }
-
-        $resolutionMap = $this->hydrateResolutionMap(is_array($session->resolution_map) ? $session->resolution_map : []);
-
-        $workspace = Workspace::query()->find($session->workspace_id);
-        if ($workspace instanceof Workspace) {
-            $workspace->getKey();
-        }
-
-        $summary = (new BuildImportValidationSummaryAction)->run(
-            package: $package,
-            map: $resolutionMap,
-            pageDecisions: $this->sanitizedPageDecisions(),
-            relationDecisions: $this->sanitizedRelationDecisions(),
-        );
-
-        $session->forceFill([
-            'page_decisions' => $this->sanitizedPageDecisions(),
-            'relation_decisions' => $this->sanitizedRelationDecisions(),
-            'validation_results' => $summary->toArray(),
-            'status' => ImportSessionStatus::Validated,
-        ])->save();
-
-        $this->validationSummary = $summary->toArray();
-        $this->confirmationExpected = $this->deriveConfirmationTarget($resolutionMap, $workspace instanceof Workspace ? $workspace : null);
-        $this->confirmation = '';
-        $this->step = self::STEP_VALIDATE;
     }
 
     public function dispatchImport(): void
@@ -456,48 +274,14 @@ class ImportPagesPage extends Page implements HasForms
             }
         }
 
-        $blockingErrors = $this->validationSummary['blocking_errors'] ?? [];
-        if (is_array($blockingErrors) && $blockingErrors !== []) {
-            Notification::make()
-                ->danger()
-                ->title(__('capell-admin::exchanger.summary_blocking_errors'))
-                ->body(implode(' / ', array_filter($blockingErrors, is_string(...))))
-                ->send();
-
-            return;
-        }
-
-        if (! $this->confirmationMatches()) {
-            Notification::make()
-                ->danger()
-                ->title(__('capell-admin::exchanger.confirmation_mismatch'))
-                ->send();
-
-            return;
-        }
-
-        $session = ImportSession::query()->find($this->sessionId);
-        if (! $session instanceof ImportSession) {
-            return;
-        }
-
-        $session->forceFill([
-            'status' => ImportSessionStatus::Queued,
-        ])->save();
-
-        dispatch(new ExecuteImportPlanJob((int) $session->getKey()));
-
-        $this->sessionStatus = ImportSessionStatus::Queued->value;
-        $this->resultSummary = [];
-        $this->failureReason = null;
-        $this->targetWorkspaceId = $session->workspace_id;
-        $this->step = self::STEP_EXECUTING;
-
-        Notification::make()
-            ->success()
-            ->title(__('capell-admin::exchanger.import_queued'))
-            ->body(__('capell-admin::exchanger.import_queued_body'))
-            ->send();
+        $this->applyStatus(
+            DispatchPageImportAction::run(
+                sessionId: $this->sessionId,
+                validationSummary: $this->validationSummary,
+                confirmation: $this->confirmation,
+                confirmationExpected: $this->confirmationExpected,
+            ),
+        );
     }
 
     /**
@@ -514,26 +298,9 @@ class ImportPagesPage extends Page implements HasForms
             return;
         }
 
-        $session = ImportSession::query()->find($this->sessionId);
-        if (! $session instanceof ImportSession) {
-            return;
-        }
-
-        $status = $session->status;
-        $this->sessionStatus = $status->value;
-        $this->resultSummary = is_array($session->result_summary) ? $session->result_summary : [];
-        $this->targetWorkspaceId = $session->workspace_id ?? $this->targetWorkspaceId;
-
-        if ($status === ImportSessionStatus::Completed) {
-            $this->step = self::STEP_COMPLETED;
-
-            return;
-        }
-
-        if ($status === ImportSessionStatus::Failed) {
-            $this->failureReason = $session->failure_reason;
-            $this->step = self::STEP_FAILED;
-        }
+        $this->applyStatus(
+            RefreshPageImportStatusAction::run($this->sessionId, $this->targetWorkspaceId),
+        );
     }
 
     public function getProgressPercent(): int
@@ -606,232 +373,96 @@ class ImportPagesPage extends Page implements HasForms
         return auth()->user()?->can(InstallBackupPermissionsAction::PERMISSION_PAGE_IMPORT_PUBLISH_LIVE) ?? false;
     }
 
-    private function shouldSkipResolveStep(): bool
+    private function decisionData(): PageImportDecisionData
     {
-        if ($this->resolveRows === []) {
-            return true;
-        }
-
-        foreach ($this->resolveRows as $row) {
-            if (($row['top_match'] ?? null) === null) {
-                return false;
-            }
-
-            $alternatives = $row['alternatives'] ?? [];
-            if (is_array($alternatives) && $alternatives !== []) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function hasValidRelationDecisions(): bool
-    {
-        foreach ($this->resolveRows as $row) {
-            $ref = (string) ($row['ref'] ?? '');
-            $decision = $this->relationDecisions[$ref] ?? null;
-            if (! is_array($decision)) {
-                return false;
-            }
-
-            $action = $decision['action'] ?? '';
-
-            switch ($action) {
-                case RelationResolveRow::ACTION_USE_EXISTING:
-                    $targetId = $decision['target_id'] ?? null;
-                    if ($targetId === null || $targetId === '') {
-                        return false;
-                    }
-
-                    break;
-                case RelationResolveRow::ACTION_UPDATE_EXISTING:
-                    if (! $this->canUpdateSharedRelations()) {
-                        return false;
-                    }
-
-                    $targetId = $decision['target_id'] ?? null;
-                    if ($targetId === null || $targetId === '') {
-                        return false;
-                    }
-
-                    break;
-                case RelationResolveRow::ACTION_CREATE_NEW:
-                case RelationResolveRow::ACTION_CLONE_IMPORTED:
-                case RelationResolveRow::ACTION_SKIP:
-                    break;
-                default:
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @return array<string, array{action: string, notes?: string}>
-     */
-    private function sanitizedPageDecisions(): array
-    {
-        $sanitized = [];
-        foreach ($this->pageDecisions as $uuid => $decision) {
-            if (! is_string($uuid)) {
-                continue;
-            }
-
-            if (! is_array($decision)) {
-                continue;
-            }
-
-            $action = is_string($decision['action'] ?? null) ? $decision['action'] : PageReviewRow::ACTION_CREATE;
-            $entry = ['action' => $action];
-
-            if (isset($decision['notes']) && is_string($decision['notes']) && $decision['notes'] !== '') {
-                $entry['notes'] = $decision['notes'];
-            }
-
-            $sanitized[$uuid] = $entry;
-        }
-
-        return $sanitized;
-    }
-
-    /**
-     * @param  array<string, mixed>  $persisted
-     */
-    private function hydrateResolutionMap(array $persisted): ResolutionMap
-    {
-        $resolvedSource = is_array($persisted['resolved'] ?? null) ? $persisted['resolved'] : [];
-        $unresolvedSource = is_array($persisted['unresolved'] ?? null) ? $persisted['unresolved'] : [];
-
-        $resolved = [];
-        foreach ($resolvedSource as $ref => $entry) {
-            if (! is_string($ref)) {
-                continue;
-            }
-
-            if (! is_array($entry)) {
-                continue;
-            }
-
-            $resolved[$ref] = $this->matchResolutionFrom($entry);
-        }
-
-        $unresolved = array_values(array_filter(
-            $unresolvedSource,
-            is_string(...),
-        ));
-
-        return new ResolutionMap($resolved, $unresolved);
-    }
-
-    /**
-     * @param  array<string, mixed>  $entry
-     */
-    private function matchResolutionFrom(array $entry): MatchResolution
-    {
-        $localId = $entry['local_id'] ?? 0;
-        if (! is_int($localId) && ! is_string($localId)) {
-            $localId = 0;
-        }
-
-        $alternatives = [];
-        $alternativesSource = $entry['alternatives'] ?? [];
-        if (is_array($alternativesSource)) {
-            foreach ($alternativesSource as $alternative) {
-                if (is_array($alternative)) {
-                    $alternatives[] = $this->matchResolutionFrom($alternative);
-                }
-            }
-        }
-
-        return new MatchResolution(
-            localId: $localId,
-            strategy: is_string($entry['strategy'] ?? null) ? $entry['strategy'] : '',
-            confidence: is_numeric($entry['confidence'] ?? null) ? (float) $entry['confidence'] : 1.0,
-            reason: is_string($entry['reason'] ?? null) ? $entry['reason'] : '',
-            alternatives: $alternatives,
+        return new PageImportDecisionData(
+            sessionId: $this->sessionId,
+            reviewRows: $this->reviewRows,
+            pageDecisions: $this->pageDecisions,
+            resolveRows: $this->resolveRows,
+            relationDecisions: $this->relationDecisions,
+            canUpdateSharedRelations: $this->canUpdateSharedRelations(),
         );
     }
 
-    private function deriveConfirmationTarget(ResolutionMap $map, ?Workspace $workspace): string
+    private function applyWizardState(PageImportWizardStateData $state): void
     {
-        $siteIds = [];
-        foreach ($map->resolved as $ref => $resolution) {
-            if (! str_starts_with($ref, 'site:')) {
-                continue;
-            }
+        $this->step = $state->step;
+        $this->sessionId = $state->sessionId;
+        $this->reviewRows = $state->reviewRows;
+        $this->pageDecisions = $state->pageDecisions;
+        $this->resolveRows = $state->resolveRows;
+        $this->relationDecisions = $state->relationDecisions;
+        $this->validationSummary = $state->validationSummary;
 
-            $localId = $resolution->localId;
-            if (is_int($localId)) {
-                $siteIds[$localId] = true;
-            } elseif (is_string($localId) && ctype_digit($localId)) {
-                $siteIds[(int) $localId] = true;
-            }
+        if ($state->confirmationExpected !== '') {
+            $this->confirmationExpected = $state->confirmationExpected;
+            $this->confirmation = '';
         }
 
-        if (count($siteIds) === 1) {
-            $siteId = array_key_first($siteIds);
-            $site = Site::query()->find($siteId);
-            if ($site instanceof Site && is_string($site->name) && $site->name !== '') {
-                return $site->name;
-            }
-        }
-
-        if ($workspace instanceof Workspace && is_string($workspace->name) && $workspace->name !== '') {
-            return $workspace->name;
-        }
-
-        return '';
+        $this->sendWizardNotice($state);
     }
 
-    /**
-     * @return array<string, array{action: string, target_id?: int|string, notes?: string}>
-     */
-    private function sanitizedRelationDecisions(): array
+    private function applyStatus(PageImportStatusData $status): void
     {
-        $sanitized = [];
-        foreach ($this->relationDecisions as $ref => $decision) {
-            if (! is_string($ref)) {
-                continue;
-            }
+        $this->step = $status->step;
+        $this->sessionStatus = $status->sessionStatus;
+        $this->resultSummary = $status->resultSummary;
+        $this->failureReason = $status->failureReason;
+        $this->targetWorkspaceId = $status->targetWorkspaceId;
 
-            if (! is_array($decision)) {
-                continue;
-            }
-
-            $action = $decision['action'] ?? RelationResolveRow::ACTION_USE_EXISTING;
-            $entry = ['action' => $action];
-
-            $targetId = $decision['target_id'] ?? null;
-            if (is_int($targetId) || (is_string($targetId) && $targetId !== '')) {
-                $entry['target_id'] = $targetId;
-            }
-
-            if (isset($decision['notes']) && is_string($decision['notes']) && $decision['notes'] !== '') {
-                $entry['notes'] = $decision['notes'];
-            }
-
-            $sanitized[$ref] = $entry;
-        }
-
-        return $sanitized;
+        $this->sendStatusNotice($status);
     }
 
-    private function hasBlockingWorkspaceConflict(): bool
+    private function sendWizardNotice(PageImportWizardStateData $state): void
     {
-        foreach ($this->reviewRows as $row) {
-            if (($row['collision_state'] ?? null) !== PageReviewRow::COLLISION_URL_WORKSPACE) {
-                continue;
-            }
-
-            $uuid = (string) ($row['uuid'] ?? '');
-            $action = $this->pageDecisions[$uuid]['action'] ?? PageReviewRow::ACTION_SKIP;
-            if ($action !== PageReviewRow::ACTION_SKIP) {
-                return true;
-            }
+        if ($state->notice === PageImportWizardStateData::NOTICE_UNRESOLVED_REFERENCES) {
+            Notification::make()
+                ->warning()
+                ->title(__('capell-admin::exchanger.unresolved_references'))
+                ->body(__('capell-admin::exchanger.unresolved_references_body', ['count' => $state->noticeCount ?? 0]))
+                ->send();
         }
 
-        return false;
+        if ($state->notice === PageImportWizardStateData::NOTICE_BLOCKED_BY_WORKSPACE_CONFLICT) {
+            Notification::make()
+                ->danger()
+                ->title(__('capell-admin::exchanger.blocked_by_workspace_conflict'))
+                ->body(__('capell-admin::exchanger.blocked_by_workspace_conflict_body'))
+                ->send();
+        }
+
+        if ($state->notice === PageImportWizardStateData::NOTICE_BLOCKED_PENDING_DECISIONS) {
+            Notification::make()
+                ->danger()
+                ->title(__('capell-admin::exchanger.blocked_pending_decisions'))
+                ->send();
+        }
+    }
+
+    private function sendStatusNotice(PageImportStatusData $status): void
+    {
+        if ($status->notice === PageImportStatusData::NOTICE_SUMMARY_BLOCKING_ERRORS) {
+            Notification::make()
+                ->danger()
+                ->title(__('capell-admin::exchanger.summary_blocking_errors'))
+                ->body($status->noticeBody ?? '')
+                ->send();
+        }
+
+        if ($status->notice === PageImportStatusData::NOTICE_CONFIRMATION_MISMATCH) {
+            Notification::make()
+                ->danger()
+                ->title(__('capell-admin::exchanger.confirmation_mismatch'))
+                ->send();
+        }
+
+        if ($status->notice === PageImportStatusData::NOTICE_IMPORT_QUEUED) {
+            Notification::make()
+                ->success()
+                ->title(__('capell-admin::exchanger.import_queued'))
+                ->body(__('capell-admin::exchanger.import_queued_body'))
+                ->send();
+        }
     }
 }
