@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Actions;
 
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction;
 use Capell\SeoTools\DataObjects\AiImageData;
-use Capell\SeoTools\Models\AIGenerationHistory;
 use Capell\SeoTools\Support\AiRateLimiter;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Prism\Prism\Enums\Provider;
@@ -16,7 +16,10 @@ class GenerateAiImageAction
 {
     use AsAction;
 
-    public function __construct(private readonly AiRateLimiter $rateLimiter) {}
+    public function __construct(
+        private readonly AiRateLimiter $rateLimiter,
+        private readonly ?RecordAiGenerationAction $recordAiGenerationAction = null,
+    ) {}
 
     public function handle(AiImageData $data): string
     {
@@ -67,7 +70,7 @@ class GenerateAiImageAction
         float $duration,
         ?Throwable $throwable = null,
     ): void {
-        AIGenerationHistory::query()->create([
+        ($this->recordAiGenerationAction ?? app(RecordAiGenerationAction::class))->handle([
             'action' => self::class,
             'model' => $model,
             'input' => $data->prompt,

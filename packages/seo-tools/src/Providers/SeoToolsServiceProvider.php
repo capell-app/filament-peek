@@ -28,6 +28,7 @@ use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction;
 use Capell\SeoTools\Console\Commands\ClearAiCacheCommand;
 use Capell\SeoTools\Console\Commands\InstallCommand;
 use Capell\SeoTools\Console\Commands\MonitorAiUsageCommand;
@@ -204,6 +205,7 @@ class SeoToolsServiceProvider extends AbstractPackageServiceProvider
             $app->make(PrismProvider::class),
             $app->make(AiRateLimiter::class),
             $app->make(SectionRegistry::class),
+            $app->make(RecordAiGenerationAction::class),
         ));
 
         /** @var AiFeatureRegistry $registry */

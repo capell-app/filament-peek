@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\SeoTools\Actions;
 
 use Capell\SeoTools\Contracts\AiActionContextInterface;
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
 use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
 use Capell\SeoTools\Events\AiGenerationStarted;
@@ -32,12 +33,7 @@ class SuggestMetaDescriptionsAction
         try {
             throw_unless($context instanceof AiActionContextInterface, InvalidArgumentException::class, 'Invalid context');
 
-            $input = [
-                'context' => $context,
-                'options' => $options,
-                'action' => $this,
-            ];
-
+            $input = AiGenerationInputData::forContextAction('SuggestMetaDescriptionsAction', $context, $options);
             $result = $this->pipeline->execute($input);
 
             $duration = microtime(true) - $startTime;
@@ -45,9 +41,9 @@ class SuggestMetaDescriptionsAction
                 'action' => static::class,
                 'duration_ms' => round($duration * 1000, 2),
             ]);
-            Event::dispatch(new AiGenerationCompleted(static::class, $result, []));
+            Event::dispatch(new AiGenerationCompleted(static::class, $result->output, []));
 
-            return $result;
+            return (array) $result->output;
         } catch (Throwable $throwable) {
             Log::error('AI Action failed', [
                 'action' => static::class,

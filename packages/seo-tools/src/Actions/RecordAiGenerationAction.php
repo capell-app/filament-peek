@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Actions;
 
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction as PersistAiGenerationAction;
 use Capell\SeoTools\Contracts\AiActionContextInterface;
+use Capell\SeoTools\Data\Ai\AiGenerationResultData;
 use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
 use Capell\SeoTools\Events\AiGenerationStarted;
@@ -22,7 +24,7 @@ class RecordAiGenerationAction
     /**
      * Accepts a plain array payload and records a history entry. Falls back to context/options if not array.
      *
-     * @param  array|AiActionContextInterface  $input
+     * @param  array<string, mixed>|AiGenerationResultData|AiActionContextInterface  $input
      */
     public function handle($input, array $options = []): AIGenerationHistory
     {
@@ -30,10 +32,8 @@ class RecordAiGenerationAction
         Event::dispatch(new AiGenerationStarted(static::class, [$input, $options]));
 
         try {
-            if (is_array($input)) {
-                /** @var array{action:string,model:string,input:string,output:string,prompt_tokens:int,completion_tokens:int,total_tokens:int,duration:float,metadata:array} $data */
-                $data = $input;
-                $history = AIGenerationHistory::query()->create($data);
+            if (is_array($input) || $input instanceof AiGenerationResultData) {
+                $history = app(PersistAiGenerationAction::class)->handle($input);
                 $duration = microtime(true) - $startTime;
                 Log::info('AI Action completed', [
                     'action' => static::class,
@@ -46,8 +46,14 @@ class RecordAiGenerationAction
 
             throw_unless($input instanceof AiActionContextInterface, InvalidArgumentException::class, 'Invalid input for RecordAiGenerationAction');
 
-            // Fallback: create with minimal/default data
-            $history = AIGenerationHistory::query()->create([]);
+            $history = app(PersistAiGenerationAction::class)->handle([
+                'action' => static::class,
+                'input' => $input->getContent(),
+                'pageable_id' => $input->getPageId(),
+                'pageable_type' => $input->getPageType(),
+                'language_id' => $input->getLanguageId(),
+                'metadata' => $options,
+            ]);
             $duration = microtime(true) - $startTime;
             Log::info('AI Action completed', [
                 'action' => static::class,

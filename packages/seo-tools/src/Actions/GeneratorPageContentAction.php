@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\SeoTools\Actions;
 
 use Capell\SeoTools\Contracts\AiActionContextInterface;
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
 use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
 use Capell\SeoTools\Events\AiGenerationStarted;
@@ -33,19 +34,14 @@ class GeneratorPageContentAction
             throw_unless($context instanceof AiActionContextInterface, InvalidArgumentException::class, 'Invalid context');
             throw_unless(is_array($options), InvalidArgumentException::class, 'Options must be an array');
 
-            $input = [
-                'context' => $context,
-                'options' => $options,
-                'action' => $this,
-            ];
-
+            $input = AiGenerationInputData::forContextAction('GeneratorPageContentAction', $context, $options);
             $result = $this->pipeline->execute($input);
 
             $duration = microtime(true) - $startTime;
 
-            Event::dispatch(new AiGenerationCompleted(static::class, $result, []));
+            Event::dispatch(new AiGenerationCompleted(static::class, $result->output, []));
 
-            return $result;
+            return (string) $result->output;
         } catch (Throwable $throwable) {
             Log::error('AI Action failed', [
                 'action' => static::class,

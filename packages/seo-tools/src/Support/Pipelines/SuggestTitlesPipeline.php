@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Support\Pipelines;
 
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction;
 use Capell\SeoTools\Contracts\AiActionContextInterface;
-use Capell\SeoTools\Models\AIGenerationHistory;
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
+use Capell\SeoTools\Data\Ai\AiGenerationResultData;
 use Capell\SeoTools\Support\AiRateLimiter;
 use Capell\SeoTools\Support\AiResponse;
 use Capell\SeoTools\Support\AiResponseParser;
@@ -21,15 +23,22 @@ class SuggestTitlesPipeline
         private readonly PrismProvider $provider,
         private readonly AiResponseParser $parser,
         private readonly AiRateLimiter $rateLimiter,
+        private readonly RecordAiGenerationAction $recordAiGenerationAction,
     ) {}
 
     /**
      * @return array<int, string>
      */
-    public function execute(array $input): array
+    public function execute(AiGenerationInputData $input): AiGenerationResultData
     {
+        $initialPayload = [
+            'input' => $input,
+            'context' => $input->context,
+            'options' => $input->options,
+        ];
+
         $payload = resolve(Pipeline::class)
-            ->send($input)
+            ->send($initialPayload)
             ->through([
                 fn (array $payload, callable $next): array => $this->validateInput($payload, $next),
                 fn (array $payload, callable $next): array => $this->checkRateLimit($payload, $next),
@@ -39,7 +48,10 @@ class SuggestTitlesPipeline
             ])
             ->thenReturn();
 
-        return $payload['result'];
+        /** @var AiGenerationResultData $resultData */
+        $resultData = $payload['result_data'];
+
+        return $resultData;
     }
 
     private function validateInput(array $payload, callable $next): array
@@ -104,29 +116,28 @@ class SuggestTitlesPipeline
 
     private function recordGeneration(array $payload, callable $next): array
     {
+        /** @var AiGenerationInputData $input */
+        $input = $payload['input'];
         /** @var AiResponse $response */
-        $response = $payload['ai_response'] ?? null;
+        $response = $payload['ai_response'];
         /** @var AiActionContextInterface $context */
         $context = $payload['context'];
-        if ($response !== null) {
-            AIGenerationHistory::query()->create([
-                'action' => 'SuggestPageTitlesAction',
-                'model' => $response->model,
-                'input' => $context->getContent(),
-                'output' => implode("\n", (array) ($payload['result'] ?? [])),
-                'prompt_tokens' => (int) ($response->metadata['prompt_tokens'] ?? 0),
-                'completion_tokens' => (int) ($response->metadata['completion_tokens'] ?? 0),
-                'total_tokens' => $response->tokensUsed,
-                'duration' => $response->duration,
-                'pageable_id' => $context->getPageId(),
-                'pageable_type' => $context->getPageType(),
-                'language_id' => $context->getLanguageId(),
-                'metadata' => array_merge($response->metadata, [
-                    'ai_messages' => $payload['ai_messages'] ?? null,
-                    'ai_params' => $payload['ai_params'] ?? null,
-                ]),
-            ]);
-        }
+        $result = (array) ($payload['result'] ?? []);
+        $resultData = AiGenerationResultData::make(
+            actionKey: $input->actionKey,
+            output: $result,
+            inputText: $context->getContent(),
+            outputText: implode("\n", $result),
+            response: $response,
+            messages: $payload['ai_messages'] ?? null,
+            params: $payload['ai_params'] ?? null,
+            pageableId: $context->getPageId(),
+            pageableType: $context->getPageType(),
+            languageId: $context->getLanguageId(),
+        );
+
+        $resultData->history = $this->recordAiGenerationAction->handle($resultData);
+        $payload['result_data'] = $resultData;
 
         return $next($payload);
     }

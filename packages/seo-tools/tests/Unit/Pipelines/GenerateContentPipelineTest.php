@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction;
 use Capell\SeoTools\Contracts\AiActionContextInterface;
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
 use Capell\SeoTools\Support\AiRateLimiter;
 use Capell\SeoTools\Support\AiResponse;
 use Capell\SeoTools\Support\Cache\RateLimitCache;
@@ -39,39 +41,42 @@ function executeGenerateContentPipelineWithHtml(string $html): string
             }
         },
         new AiRateLimiter(resolve(RateLimitCache::class), ['enabled' => false]),
+        new RecordAiGenerationAction,
     );
 
-    return $pipeline->execute([
-        'context' => new class implements AiActionContextInterface
+    $context = new class implements AiActionContextInterface
+    {
+        public function getContent(): string
         {
-            public function getContent(): string
-            {
-                return 'Original content';
-            }
+            return 'Original content';
+        }
 
-            public function getKeywords(): string
-            {
-                return 'keyword';
-            }
+        public function getKeywords(): string
+        {
+            return 'keyword';
+        }
 
-            public function getPageId(): int
-            {
-                return 1;
-            }
+        public function getPageId(): int
+        {
+            return 1;
+        }
 
-            public function getPageType(): string
-            {
-                return 'page';
-            }
+        public function getPageType(): string
+        {
+            return 'page';
+        }
 
-            public function getLanguageId(): int
-            {
-                return 1;
-            }
-        },
-        'options' => ['user_id' => 123],
-        'action' => new stdClass,
-    ]);
+        public function getLanguageId(): int
+        {
+            return 1;
+        }
+    };
+
+    return (string) $pipeline->execute(AiGenerationInputData::forContextAction(
+        'GeneratorPageContentAction',
+        $context,
+        ['user_id' => 123],
+    ))->output;
 }
 
 it('sanitizes unsafe AI generated HTML attributes and schemes', function (string $html, array $missingFragments, array $expectedFragments): void {

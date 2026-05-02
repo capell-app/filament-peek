@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Support\Pipelines;
 
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction;
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
+use Capell\SeoTools\Data\Ai\AiGenerationResultData;
 use Capell\SeoTools\DataObjects\AiCreatorData;
 use Capell\SeoTools\Models\AiCreatorContext;
 use Capell\SeoTools\Models\AiCreatorSession;
-use Capell\SeoTools\Models\AIGenerationHistory;
 use Capell\SeoTools\Support\AiRateLimiter;
 use Capell\SeoTools\Support\AiResponse;
 use Capell\SeoTools\Support\PrismProvider;
@@ -23,14 +25,16 @@ class AiCreatorPipeline
         private readonly PrismProvider $provider,
         private readonly AiRateLimiter $rateLimiter,
         private readonly SectionRegistry $sectionRegistry,
+        private readonly RecordAiGenerationAction $recordAiGenerationAction,
     ) {}
 
-    /**
-     * @return array<int, array<string, mixed>> The proposed sections array
-     */
-    public function execute(AiCreatorData $data): array
+    public function execute(AiGenerationInputData $input): AiGenerationResultData
     {
+        $data = $input->creatorData;
+        throw_unless($data instanceof AiCreatorData, InvalidArgumentException::class, 'Missing AI creator data');
+
         $payload = ['data' => $data, 'sections' => [], 'session' => null, 'context' => null, 'response' => null];
+        $payload['input'] = $input;
 
         $result = resolve(Pipeline::class)
             ->send($payload)
@@ -44,7 +48,10 @@ class AiCreatorPipeline
             ])
             ->thenReturn();
 
-        return $result['sections'];
+        /** @var AiGenerationResultData $resultData */
+        $resultData = $result['result_data'];
+
+        return $resultData;
     }
 
     private function loadOrCreateSession(array $payload, callable $next): array
@@ -120,6 +127,14 @@ class AiCreatorPipeline
         ]);
 
         $payload['response'] = $response;
+        $payload['ai_messages'] = [
+            ['role' => 'system', 'content' => $prompt['system']],
+            ['role' => 'user', 'content' => $userMessage],
+        ];
+        $payload['ai_params'] = [
+            'model' => config('capell-seo-tools.features.ai_creator.model', 'gpt-4o'),
+            'messages' => $payload['ai_messages'],
+        ];
 
         return $next($payload);
     }
@@ -189,21 +204,32 @@ class AiCreatorPipeline
 
     private function persistResult(array $payload, callable $next): array
     {
+        /** @var AiGenerationInputData $input */
+        $input = $payload['input'];
         /** @var AiCreatorSession $session */
         $session = $payload['session'];
         /** @var AiResponse $response */
         $response = $payload['response'];
+        /** @var AiCreatorData $data */
+        $data = $payload['data'];
 
-        $history = AIGenerationHistory::query()->create([
-            'action' => 'ai_creator_layout',
-            'model' => $response->model,
-            'input' => $payload['data']->intent,
-            'output' => $response->content,
-            'prompt_tokens' => $response->metadata['prompt_tokens'] ?? 0,
-            'completion_tokens' => $response->metadata['completion_tokens'] ?? 0,
-            'total_tokens' => $response->tokensUsed,
-            'duration' => $response->duration,
-        ]);
+        $resultData = AiGenerationResultData::make(
+            actionKey: $input->actionKey,
+            output: $payload['sections'],
+            inputText: $data->intent,
+            outputText: $response->content,
+            response: $response,
+            messages: $payload['ai_messages'] ?? null,
+            params: $payload['ai_params'] ?? null,
+            metadata: [
+                'ai_creator_site_id' => $data->siteId,
+                'ai_creator_user_id' => $data->userId,
+            ],
+            aiCreatorSessionId: $session->getKey(),
+        );
+
+        $history = $this->recordAiGenerationAction->handle($resultData);
+        $resultData->history = $history;
 
         $session->update([
             'status' => 'review',
@@ -213,6 +239,7 @@ class AiCreatorPipeline
         ]);
 
         $payload['session'] = $session->fresh();
+        $payload['result_data'] = $resultData;
 
         return $next($payload);
     }

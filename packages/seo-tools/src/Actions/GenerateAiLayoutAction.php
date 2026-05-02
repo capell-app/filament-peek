@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\SeoTools\Actions;
 
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
 use Capell\SeoTools\DataObjects\AiCreatorData;
 use Capell\SeoTools\Events\AiGenerationCompleted;
 use Capell\SeoTools\Events\AiGenerationFailed;
@@ -28,7 +29,8 @@ class GenerateAiLayoutAction
         Event::dispatch(new AiGenerationStarted(static::class, [$data]));
 
         try {
-            $sections = $this->pipeline->execute($data);
+            $result = $this->pipeline->execute(AiGenerationInputData::forAiCreator('ai_creator_layout', $data));
+            $sections = (array) $result->output;
 
             Event::dispatch(new AiGenerationCompleted(
                 static::class,

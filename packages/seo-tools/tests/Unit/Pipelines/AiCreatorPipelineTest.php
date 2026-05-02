@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Capell\SeoTools\Actions\Ai\RecordAiGenerationAction;
+use Capell\SeoTools\Data\Ai\AiGenerationInputData;
+use Capell\SeoTools\Data\Ai\AiGenerationResultData;
 use Capell\SeoTools\DataObjects\AiCreatorData;
 use Capell\SeoTools\Support\AiRateLimiter;
 use Capell\SeoTools\Support\AiResponse;
@@ -53,17 +56,22 @@ function makeAiCreatorPipelineForJson(string $json): AiCreatorPipeline
         },
         new AiRateLimiter(resolve(RateLimitCache::class), ['enabled' => false]),
         $sectionRegistry,
+        new RecordAiGenerationAction,
     );
 }
 
 it('rejects AI creator sections with unregistered section types', function (): void {
     $pipeline = makeAiCreatorPipelineForJson('[{"section_type":"unknown","fields":{"heading":"Hello"}}]');
 
-    expect(fn (): array => $pipeline->execute(new AiCreatorData(
+    $creatorData = new AiCreatorData(
         siteId: 1,
         userId: 10,
         intent: 'Build a landing page',
-    )))->toThrow(InvalidArgumentException::class, 'not registered');
+    );
+
+    expect(fn (): AiGenerationResultData => $pipeline->execute(
+        AiGenerationInputData::forAiCreator('ai_creator_layout', $creatorData),
+    ))->toThrow(InvalidArgumentException::class, 'not registered');
 });
 
 it('rejects AI creator layouts with more than eight sections', function (): void {
@@ -76,23 +84,27 @@ it('rejects AI creator layouts with more than eight sections', function (): void
 
     $pipeline = makeAiCreatorPipelineForJson(json_encode($sections, JSON_THROW_ON_ERROR));
 
-    expect(fn (): array => $pipeline->execute(new AiCreatorData(
+    $creatorData = new AiCreatorData(
         siteId: 1,
         userId: 10,
         intent: 'Build a long landing page',
-    )))->toThrow(InvalidArgumentException::class, 'at most 8 sections');
+    );
+
+    expect(fn (): AiGenerationResultData => $pipeline->execute(
+        AiGenerationInputData::forAiCreator('ai_creator_layout', $creatorData),
+    ))->toThrow(InvalidArgumentException::class, 'at most 8 sections');
 });
 
 it('strips unknown top-level section fields from valid AI creator layouts', function (): void {
     $pipeline = makeAiCreatorPipelineForJson('[{"section_type":"hero","fields":{"heading":"Hello"},"unexpected":"remove me"}]');
 
-    $sections = $pipeline->execute(new AiCreatorData(
+    $result = $pipeline->execute(AiGenerationInputData::forAiCreator('ai_creator_layout', new AiCreatorData(
         siteId: 1,
         userId: 10,
         intent: Str::random(12),
-    ));
+    )));
 
-    expect($sections)->toBe([
+    expect($result->output)->toBe([
         [
             'section_type' => 'hero',
             'fields' => ['heading' => 'Hello'],
