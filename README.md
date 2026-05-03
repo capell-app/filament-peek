@@ -77,6 +77,7 @@ Then configure SEO Tools and Workspaces from the Capell admin.
 - Core docs: [docs.capell.app](https://docs.capell.app)
 - Package registry: [Capell-approved packages](https://docs.capell.app/packages/)
 - Per-package API and database references live beside each package under `packages/<name>/docs/`.
+- Screenshot generation is manifest-driven; see [Package Screenshot Automation](docs/package-screenshot-automation.md).
 
 ## License
 

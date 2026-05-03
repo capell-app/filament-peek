@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Contracts\Dashboard\ContentHealthDataProvider;
 use Capell\Core\Enums\TranslatableType;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
@@ -9,6 +10,12 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Workspaces\Actions\Dashboard\BuildContentHealthAction;
 use Capell\Workspaces\Models\Workspace;
+use Capell\Workspaces\Support\Dashboard\WorkspaceContentHealthDataProvider;
+
+it('binds workspace content health to the admin dashboard content health provider contract', function (): void {
+    expect(resolve(ContentHealthDataProvider::class))
+        ->toBeInstanceOf(WorkspaceContentHealthDataProvider::class);
+});
 
 it('counts pages with missing meta description', function (): void {
     $workspace = Workspace::factory()->published()->create();

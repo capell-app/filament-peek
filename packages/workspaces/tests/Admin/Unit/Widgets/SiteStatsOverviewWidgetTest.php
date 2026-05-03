@@ -2,15 +2,22 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Contracts\Dashboard\SiteStatsDataProvider;
 use Capell\Admin\Data\Dashboard\SiteStatsData;
 use Capell\Admin\Filament\Widgets\Dashboard\SiteStatsOverviewWidget;
 use Capell\Admin\Settings\AdminSettings;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Workspaces\Actions\Dashboard\BuildSiteStatsAction;
+use Capell\Workspaces\Support\Dashboard\WorkspaceSiteStatsDataProvider;
 
 it('returns a SiteStatsData instance', function (): void {
     $data = BuildSiteStatsAction::run('last_30_days');
     expect($data)->toBeInstanceOf(SiteStatsData::class);
+});
+
+it('binds workspace stats to the admin dashboard stats provider contract', function (): void {
+    expect(resolve(SiteStatsDataProvider::class))
+        ->toBeInstanceOf(WorkspaceSiteStatsDataProvider::class);
 });
 
 it('returns non-negative counts', function (): void {

@@ -6,7 +6,9 @@ namespace Capell\Workspaces\Actions\Dashboard;
 
 use Capell\Admin\Data\Dashboard\SiteStatsData;
 use Capell\Core\Models\Page;
+use Capell\Workspaces\Enums\WorkspaceStatusEnum;
 use Capell\Workspaces\Models\Version;
+use Capell\Workspaces\Models\Workspace;
 use Carbon\CarbonImmutable;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -27,10 +29,17 @@ final class BuildSiteStatsAction
             ->where('workspace_id', '>', 0)
             ->count();
 
+        $scheduledCount = Workspace::query()
+            ->where('status', WorkspaceStatusEnum::Scheduled->value)
+            ->count();
+
         return new SiteStatsData(
             workQueueCount: $workQueueCount,
             publishedCount: $publishedCount,
             sparklinePublished: $this->buildSparklinePublished($start, $end),
+            pendingCount: $scheduledCount,
+            expiredCount: 0,
+            totalPagesCount: Page::query()->where('workspace_id', 0)->count(),
         );
     }
 

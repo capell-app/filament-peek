@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Workspaces\Providers;
 
+use Capell\Admin\Contracts\Dashboard\ContentHealthDataProvider;
 use Capell\Admin\Contracts\Dashboard\MyWorkQueueDataProvider;
 use Capell\Admin\Contracts\Dashboard\RecentlyPublishedDataProvider;
+use Capell\Admin\Contracts\Dashboard\SiteStatsDataProvider;
 use Capell\Admin\Contracts\DashboardSettingsContributor;
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Enums\DashboardEnum;
@@ -34,8 +36,10 @@ use Capell\Workspaces\Livewire\WorkspaceContextBanner;
 use Capell\Workspaces\Livewire\WorkspaceSwitcher;
 use Capell\Workspaces\Models\Workspace;
 use Capell\Workspaces\Policies\WorkspacePolicy;
+use Capell\Workspaces\Support\Dashboard\WorkspaceContentHealthDataProvider;
 use Capell\Workspaces\Support\Dashboard\WorkspaceMyWorkQueueDataProvider;
 use Capell\Workspaces\Support\Dashboard\WorkspaceRecentlyPublishedDataProvider;
+use Capell\Workspaces\Support\Dashboard\WorkspaceSiteStatsDataProvider;
 use Capell\Workspaces\WorkspaceContext;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -88,8 +92,10 @@ class AdminServiceProvider extends ServiceProvider
 
     private function registerDashboardDataProviders(): self
     {
+        $this->app->singleton(ContentHealthDataProvider::class, WorkspaceContentHealthDataProvider::class);
         $this->app->singleton(MyWorkQueueDataProvider::class, WorkspaceMyWorkQueueDataProvider::class);
         $this->app->singleton(RecentlyPublishedDataProvider::class, WorkspaceRecentlyPublishedDataProvider::class);
+        $this->app->singleton(SiteStatsDataProvider::class, WorkspaceSiteStatsDataProvider::class);
 
         return $this;
     }

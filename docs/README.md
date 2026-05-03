@@ -40,3 +40,11 @@ For the commercial/free grouping, see [Package product groups](product-groups.md
 | Workspaces         | [`packages/workspaces/README.md`](../packages/workspaces/README.md)                 |
 
 For the full documentation site, see [docs.capell.app](https://docs.capell.app). For the package overview and dependency matrix, see the [repository README](../README.md).
+
+## Screenshot Automation
+
+Package screenshots are generated from committed manifests during deployment.
+See [Package Screenshot Automation](package-screenshot-automation.md) for the contract
+and expected output path.
+GitHub Actions provides a `Screenshot Manifests` workflow that validates the committed
+manifests stay in sync.
