@@ -8,6 +8,8 @@ use AmidEsfahani\FilamentTinyEditor\TinyeditorServiceProvider;
 use Awcodes\BadgeableColumn\BadgeableColumnServiceProvider;
 use BezhanSalleh\FilamentShield\FilamentShieldServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use Capell\Admin\Contracts\Extenders\PageEditExtender;
+use Capell\Admin\Contracts\Extenders\PageResourcePageExtender;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
@@ -19,6 +21,14 @@ use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
+use Capell\Workspaces\Extenders\WorkspacesPageEditExtender;
+use Capell\Workspaces\Extenders\WorkspacesPageResourcePageExtender;
+use Capell\Workspaces\Filament\Pages\ActivityTrailPage;
+use Capell\Workspaces\Filament\Pages\ImportPagesPage;
+use Capell\Workspaces\Filament\Pages\ScheduledPublishingPage;
+use Capell\Workspaces\Filament\Pages\StaleDraftsPage;
+use Capell\Workspaces\Filament\Resources\PreviewLinks\PreviewLinkResource;
+use Capell\Workspaces\Filament\Resources\Workspaces\WorkspaceResource;
 use Capell\Workspaces\Providers\AdminServiceProvider as WorkspacesAdminServiceProvider;
 use Capell\Workspaces\Providers\ConsoleServiceProvider as WorkspacesConsoleServiceProvider;
 use Capell\Workspaces\Providers\WorkspacesServiceProvider;
@@ -44,6 +54,7 @@ use Livewire\LivewireServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
 use Override;
 use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
+use Spatie\ImageOptimizer\Optimizers\Svgo;
 use STS\FilamentImpersonate\FilamentImpersonateServiceProvider;
 use Tanmuhittin\LaravelGoogleTranslate\LaravelGoogleTranslateServiceProvider;
 use Tapp\FilamentAuthenticationLog\FilamentAuthenticationLogServiceProvider;
@@ -126,13 +137,13 @@ class WorkspacesTestCase extends AbstractTestCase
             NotificationsServiceProvider::class,
             AdminServiceProvider::class,
             BackupServiceProvider::class,
-            AdminPanelProvider::class,
             FrontendServiceProvider::class,
             PaginateRouteServiceProvider::class,
             LivewireServiceProvider::class,
             WorkspacesServiceProvider::class,
             WorkspacesAdminServiceProvider::class,
             WorkspacesConsoleServiceProvider::class,
+            AdminPanelProvider::class,
             BlogServiceProvider::class,
         ];
     }
@@ -157,6 +168,14 @@ class WorkspacesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(BackupServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/workspaces');
+        $app->tag([WorkspacesPageEditExtender::class], PageEditExtender::TAG);
+        $app->tag([WorkspacesPageResourcePageExtender::class], PageResourcePageExtender::TAG);
+        CapellAdmin::registerResource('Workspace', WorkspaceResource::class);
+        CapellAdmin::registerResource('PreviewLink', PreviewLinkResource::class);
+        CapellAdmin::registerPage(ActivityTrailPage::class);
+        CapellAdmin::registerPage(ImportPagesPage::class);
+        CapellAdmin::registerPage(ScheduledPublishingPage::class);
+        CapellAdmin::registerPage(StaleDraftsPage::class);
 
         // Navigation and Tags have no capell.json so they're not auto-discovered;
         // register them explicitly so BuildsOrderedMigrationWorkspace loads their migrations.
@@ -170,6 +189,9 @@ class WorkspacesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);
 
         $app->make(Repository::class)->set('media-library.media_model', Media::class);
+        $app->make(Repository::class)->set('media-library.image_optimizers', [
+            Svgo::class => [],
+        ]);
 
         // Shield's super_admin Gate::before bypass is normally registered by FilamentShieldPlugin.
         // Since AdminPanelProvider does not include that plugin, we register the bypass here so

@@ -37,7 +37,7 @@ final class DispatchPageImportAction
                 notice: PageImportStatusData::NOTICE_SUMMARY_BLOCKING_ERRORS,
                 noticeBody: implode(' / ', array_filter(
                     $blockingErrors,
-                    static fn (mixed $blockingError): bool => is_string($blockingError),
+                    is_string(...),
                 )),
             );
         }

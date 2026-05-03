@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Capell\Admin\Data\Dashboard\SiteStatsData;
 use Capell\Admin\Filament\Widgets\Dashboard\SiteStatsOverviewWidget;
 use Capell\Admin\Settings\AdminSettings;
-use Capell\Core\Models\PageView;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Workspaces\Actions\Dashboard\BuildSiteStatsAction;
 
@@ -16,28 +15,13 @@ it('returns a SiteStatsData instance', function (): void {
 
 it('returns non-negative counts', function (): void {
     $data = BuildSiteStatsAction::run('last_30_days');
-    expect($data->totalViews)->toBeGreaterThanOrEqual(0)
-        ->and($data->totalVisitors)->toBeGreaterThanOrEqual(0)
-        ->and($data->workQueueCount)->toBeGreaterThanOrEqual(0)
+    expect($data->workQueueCount)->toBeGreaterThanOrEqual(0)
         ->and($data->publishedCount)->toBeGreaterThanOrEqual(0);
 });
 
 it('returns 7-point sparklines', function (): void {
     $data = BuildSiteStatsAction::run('last_30_days');
-    expect($data->sparklineViews)->toHaveCount(7)
-        ->and($data->sparklineVisitors)->toHaveCount(7)
-        ->and($data->sparklinePublished)->toHaveCount(7);
-});
-
-it('counts access log views for the period', function (): void {
-    PageView::factory()->create([
-        'visits' => 5,
-        'viewed_at' => now()->subDays(10),
-    ]);
-
-    $data = BuildSiteStatsAction::run('last_30_days');
-
-    expect($data->totalViews)->toBeGreaterThanOrEqual(5);
+    expect($data->sparklinePublished)->toHaveCount(7);
 });
 
 it('accepts all valid period keys', function (string $period): void {

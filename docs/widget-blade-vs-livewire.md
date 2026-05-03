@@ -149,4 +149,4 @@ it('renders my widget on page', function (): void {
 });
 ```
 
-Place tests in `tests/src/Mosaic/Feature/Widgets/`.
+Place tests in `tests/Mosaic/Feature/Widgets/`.

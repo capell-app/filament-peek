@@ -28,35 +28,35 @@ use Capell\ThemeStudio\Core\Tests\ThemeStudioCoreTestCase;
 use Capell\Toolbar\Tests\ToolbarTestCase;
 use Capell\Workspaces\Tests\WorkspacesTestCase;
 
-pest()->extend(AddressTestCase::class)->in('../packages/address/tests');
-pest()->extend(AnalyticsTestCase::class)->in('../packages/analytics/tests');
-pest()->extend(AssistantTestCase::class)->in('../packages/assistant/tests');
+pest()->extend(AddressTestCase::class)->group('address')->in('../packages/address/tests');
+pest()->extend(AnalyticsTestCase::class)->group('analytics')->in('../packages/analytics/tests');
+pest()->extend(AssistantTestCase::class)->group('assistant')->in('../packages/assistant/tests');
 pest()->extend(BackupTestCase::class)->group('backup')->in('../packages/backup/tests');
-pest()->extend(PackagesTestCase::class)->in('../packages/authentication-log/tests');
-pest()->extend(BlogTestCase::class)->in('../packages/blog/tests');
-pest()->extend(CampaignsTestCase::class)->in('../packages/campaigns/tests');
-pest()->extend(DeploymentsTestCase::class)->in('../packages/deployments/tests');
-pest()->extend(DeveloperToolsTestCase::class)->in('../packages/developer-tools/tests');
-pest()->extend(FilamentPeekTestCase::class)->in('../packages/filament-peek/tests');
-pest()->extend(FormsTestCase::class)->in('../packages/forms/tests');
-pest()->extend(HtmlMinifyTestCase::class)->in('../packages/html-minify/tests');
-pest()->extend(MediaCuratorTestCase::class)->in('../packages/media-curator/tests');
-pest()->extend(McpTestCase::class)->in('../packages/mcp/tests');
-pest()->extend(MosaicTestCase::class)->in('../packages/mosaic/tests');
-pest()->extend(NavigationTestCase::class)->in('../packages/navigation/tests');
+pest()->extend(PackagesTestCase::class)->group('authentication-log')->in('../packages/authentication-log/tests');
+pest()->extend(BlogTestCase::class)->group('blog')->in('../packages/blog/tests');
+pest()->extend(CampaignsTestCase::class)->group('campaigns')->in('../packages/campaigns/tests');
+pest()->extend(PackagesTestCase::class)->group('content-blocks')->in('../packages/content-blocks/tests');
+pest()->extend(PackagesTestCase::class)->group('default-theme')->in('../packages/default-theme/tests');
+pest()->extend(DeploymentsTestCase::class)->group('deployments')->in('../packages/deployments/tests');
+pest()->extend(DeveloperToolsTestCase::class)->group('developer-tools')->in('../packages/developer-tools/tests');
+pest()->extend(FilamentPeekTestCase::class)->group('filament-peek')->in('../packages/filament-peek/tests');
+pest()->extend(FormsTestCase::class)->group('forms')->in('../packages/forms/tests');
+pest()->extend(HtmlMinifyTestCase::class)->group('html-minify')->in('../packages/html-minify/tests');
+pest()->extend(MediaCuratorTestCase::class)->group('media-curator')->in('../packages/media-curator/tests');
+pest()->extend(McpTestCase::class)->group('mcp')->in('../packages/mcp/tests');
+pest()->extend(MosaicTestCase::class)->group('mosaic')->in('../packages/mosaic/tests');
+pest()->extend(NavigationTestCase::class)->group('navigation')->in('../packages/navigation/tests');
 pest()->extend(PackagesTestCase::class)->in('Packages');
 pest()->extend(UninstalledPackagesTestCase::class)->in('UninstalledPackages');
 pest()->extend(RedirectsTestCase::class)->group('redirects')->in('../packages/redirects/tests');
-pest()->extend(SeoToolsTestCase::class)->in('../packages/seo-tools/tests');
-pest()->extend(SiteSearchTestCase::class)->in('../packages/site-search/tests');
-pest()->extend(TagsTestCase::class)->in('../packages/tags/tests');
-pest()->extend(ThemeStudioAdminTestCase::class)->in('../packages/theme-studio-admin/tests');
-pest()->extend(ThemeStudioCoreTestCase::class)->in('../packages/theme-studio-core/tests');
-pest()->extend(ToolbarTestCase::class)->in('../packages/toolbar/tests');
-pest()->extend(WorkspacesTestCase::class)->in('../packages/workspaces/tests');
-
-uses()->in(
-    '../packages/theme-agency/tests/Unit',
-    '../packages/theme-corporate/tests/Unit',
-    '../packages/theme-saas/tests/Unit',
-);
+pest()->extend(SeoToolsTestCase::class)->group('seo-tools')->in('../packages/seo-tools/tests');
+pest()->extend(SiteSearchTestCase::class)->group('site-search')->in('../packages/site-search/tests');
+pest()->extend(TagsTestCase::class)->group('tags')->in('../packages/tags/tests');
+pest()->extend(PackagesTestCase::class)->group('theme-agency')->in('../packages/theme-agency/tests');
+pest()->extend(PackagesTestCase::class)->group('theme-corporate')->in('../packages/theme-corporate/tests');
+pest()->extend(PackagesTestCase::class)->group('theme-default')->in('../packages/theme-default/tests');
+pest()->extend(PackagesTestCase::class)->group('theme-saas')->in('../packages/theme-saas/tests');
+pest()->extend(ThemeStudioAdminTestCase::class)->group('theme-studio-admin')->in('../packages/theme-studio-admin/tests');
+pest()->extend(ThemeStudioCoreTestCase::class)->group('theme-studio-core')->in('../packages/theme-studio-core/tests');
+pest()->extend(ToolbarTestCase::class)->group('toolbar')->in('../packages/toolbar/tests');
+pest()->extend(WorkspacesTestCase::class)->group('workspaces')->in('../packages/workspaces/tests');

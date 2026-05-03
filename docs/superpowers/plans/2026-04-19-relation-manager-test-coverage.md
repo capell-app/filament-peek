@@ -13,6 +13,7 @@
 ## Reference patterns (use these in every task)
 
 **List test:**
+
 ```php
 livewire(TheRelationManager::class, ['ownerRecord' => $owner, 'pageClass' => EditOwner::class])
     ->assertSuccessful()
@@ -22,6 +23,7 @@ livewire(TheRelationManager::class, ['ownerRecord' => $owner, 'pageClass' => Edi
 ```
 
 **Search test:**
+
 ```php
 ->searchTable($term)
 ->assertCountTableRecords(N)
@@ -30,12 +32,14 @@ livewire(TheRelationManager::class, ['ownerRecord' => $owner, 'pageClass' => Edi
 ```
 
 **Empty search:**
+
 ```php
 ->searchTable('zzz-no-match')
 ->assertCountTableRecords(0);
 ```
 
 **Filter test:**
+
 ```php
 ->filterTable('filter_name', $value)
 ->assertCountTableRecords(N)
@@ -43,6 +47,7 @@ livewire(TheRelationManager::class, ['ownerRecord' => $owner, 'pageClass' => Edi
 ```
 
 **Bulk delete:**
+
 ```php
 ->selectTableRecords($ids)
 ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk())
@@ -51,6 +56,7 @@ livewire(TheRelationManager::class, ['ownerRecord' => $owner, 'pageClass' => Edi
 ```
 
 **Create (via header action):**
+
 ```php
 ->mountAction(TestAction::make(CreateAction::class)->table())
 ->fillForm(['asset_type' => $asset->getMorphClass(), 'asset_id' => [$asset->getKey()]])
@@ -64,7 +70,8 @@ livewire(TheRelationManager::class, ['ownerRecord' => $owner, 'pageClass' => Edi
 ## Task 1: Improve PagesRelationManagerTest
 
 **Files:**
-- Modify: `tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/PagesRelationManagerTest.php`
+
+- Modify: `tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/PagesRelationManagerTest.php`
 
 **Context:**
 `PagesRelationManager` is read-only (no create/delete). It shows pages a section appears on via `WidgetAsset` records. The table searches by `pageable_id` (the integer ID). Its columns include `pageable.id`, `pageable.name`, `pageable.site.name`.
@@ -139,7 +146,7 @@ it('can list pages for a content model', function (): void {
 - [ ] **Step 3: Run tests**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/PagesRelationManagerTest.php
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/PagesRelationManagerTest.php
 ```
 
 Expected: all 3 tests pass.
@@ -147,7 +154,7 @@ Expected: all 3 tests pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/PagesRelationManagerTest.php
+git add tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/PagesRelationManagerTest.php
 git commit -m "test(mosaic): improve PagesRelationManager test coverage"
 ```
 
@@ -156,7 +163,8 @@ git commit -m "test(mosaic): improve PagesRelationManager test coverage"
 ## Task 2: Improve WidgetsRelationManagerTest
 
 **Files:**
-- Modify: `tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/WidgetsRelationManagerTest.php`
+
+- Modify: `tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/WidgetsRelationManagerTest.php`
 
 **Context:**
 `WidgetsRelationManager` is read-only (no create/delete). Searches by `widget.key` (already tested). Has a sortable `widget.key` column.
@@ -213,7 +221,7 @@ it('can sort widgets by key', function (): void {
 - [ ] **Step 3: Run tests**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/WidgetsRelationManagerTest.php
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/WidgetsRelationManagerTest.php
 ```
 
 Expected: all 4 tests pass.
@@ -221,7 +229,7 @@ Expected: all 4 tests pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/WidgetsRelationManagerTest.php
+git add tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/WidgetsRelationManagerTest.php
 git commit -m "test(mosaic): improve WidgetsRelationManager test coverage"
 ```
 
@@ -230,7 +238,8 @@ git commit -m "test(mosaic): improve WidgetsRelationManager test coverage"
 ## Task 3: Improve LayoutsRelationManagerTest
 
 **Files:**
-- Modify: `tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/LayoutsRelationManagerTest.php`
+
+- Modify: `tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/LayoutsRelationManagerTest.php`
 
 **Context:**
 `LayoutsRelationManager` is read-only. Has a `site_id` SelectFilter (already tested). No searchable columns, so no search test. Add: empty filter result and column state assertion for `site.name`.
@@ -306,7 +315,7 @@ it('returns no results when site filter matches no layouts', function (): void {
 - [ ] **Step 3: Run tests**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/LayoutsRelationManagerTest.php
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/LayoutsRelationManagerTest.php
 ```
 
 Expected: all 3 tests pass.
@@ -314,7 +323,7 @@ Expected: all 3 tests pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/LayoutsRelationManagerTest.php
+git add tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/LayoutsRelationManagerTest.php
 git commit -m "test(mosaic): improve LayoutsRelationManager test coverage"
 ```
 
@@ -323,7 +332,8 @@ git commit -m "test(mosaic): improve LayoutsRelationManager test coverage"
 ## Task 4: Create WidgetAssetsRelationManagerTest
 
 **Files:**
-- Create: `tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php`
+
+- Create: `tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php`
 
 **Context:**
 `WidgetAssetsRelationManager` (relationship: `widgetAssets` on Widget) shows `WidgetAsset` records. Full CRUD: create via `HasAssetsRelationManager::createResourcesAction()`, delete per-row, bulk delete. Columns: `id`, `asset.name`, `asset_type` (sortable badge), `pageable.name`. Filters: page, asset type, type_id.
@@ -491,10 +501,11 @@ it('can bulk delete widget assets', function (): void {
 - [ ] **Step 2: Run the tests (expect failures to diagnose)**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php
 ```
 
 Fix any failures before continuing. Common issues:
+
 - `widgetAssets` relationship not found on Widget → check `Widget::widgetAssets()` or `resolveRelationUsing`
 - Column state mismatch → verify `WidgetAssetsTable::getTableColumns()` keys match what's tested
 
@@ -528,7 +539,7 @@ it('returns no results when search matches nothing', function (): void {
 - [ ] **Step 4: Run all tests again**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php
 ```
 
 Expected: all 4 tests pass.
@@ -536,7 +547,7 @@ Expected: all 4 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php
+git add tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/WidgetAssetsRelationManagerTest.php
 git commit -m "test(mosaic): add WidgetAssetsRelationManager test coverage"
 ```
 
@@ -547,7 +558,7 @@ git commit -m "test(mosaic): add WidgetAssetsRelationManager test coverage"
 - [ ] **Step 1: Run all Mosaic relation manager tests together**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Resources/Section/RelationManagers/ tests/src/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Resources/Section/RelationManagers/ tests/Mosaic/Feature/Filament/Resources/Widget/RelationManagers/
 ```
 
 Expected: all tests green.

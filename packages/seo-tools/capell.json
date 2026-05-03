@@ -6,7 +6,11 @@
     "tier": "premium",
     "bundle": "search-seo",
     "contexts": ["admin", "frontend", "console"],
-    "requires": ["capell-app/admin", "capell-app/frontend"],
+    "requires": [
+        "capell-app/admin",
+        "capell-app/analytics",
+        "capell-app/frontend"
+    ],
     "providers": {
         "shared": ["Capell\\SeoTools\\Providers\\SeoToolsServiceProvider"]
     }

@@ -216,7 +216,7 @@ final class AdvancePageImportToValidationAction
 
         $unresolved = array_values(array_filter(
             $unresolvedSource,
-            static fn (mixed $entry): bool => is_string($entry),
+            is_string(...),
         ));
 
         return new ResolutionMap($resolved, $unresolved);

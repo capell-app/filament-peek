@@ -22,19 +22,19 @@ These are listed so the next pass has a punch list, not as new work for this pla
 
 Skewed ratios are the first place to look for missing coverage:
 
-| Package       | tests | src | tests/src |
-| ------------- | ----: | --: | --------: |
-| seo-tools     |    14 | 127 |   0.11 ⚠️ |
-| forms         |     1 |   3 |      0.33 |
-| mosaic        |    85 | 207 |      0.41 |
-| plugins       |    18 |  44 |      0.41 |
-| media-curator |     4 |   8 |      0.50 |
-| tags          |     8 |  16 |      0.50 |
-| blog          |    40 |  71 |      0.56 |
-| navigation    |    27 |  42 |      0.64 |
-| toolbar       |     2 |   3 |      0.67 |
-| address       |    19 |  28 |      0.68 |
-| workspaces    |   100 | 142 |      0.70 |
+| Package       | tests | src |   tests |
+| ------------- | ----: | --: | ------: |
+| seo-tools     |    14 | 127 | 0.11 ⚠️ |
+| forms         |     1 |   3 |    0.33 |
+| mosaic        |    85 | 207 |    0.41 |
+| plugins       |    18 |  44 |    0.41 |
+| media-curator |     4 |   8 |    0.50 |
+| tags          |     8 |  16 |    0.50 |
+| blog          |    40 |  71 |    0.56 |
+| navigation    |    27 |  42 |    0.64 |
+| toolbar       |     2 |   3 |    0.67 |
+| address       |    19 |  28 |    0.68 |
+| workspaces    |   100 | 142 |    0.70 |
 
 `seo-tools` is the standout — almost an order of magnitude under the next-lowest package.
 

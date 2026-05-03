@@ -26,7 +26,7 @@ final class LiveAnalyticsStatsWidget extends BaseWidget implements CapellWidgetC
 
     protected static ?int $sort = 4;
 
-    protected ?string $pollingInterval = '30s';
+    private ?string $pollingInterval = '30s';
 
     public function table(Table $table): Table
     {

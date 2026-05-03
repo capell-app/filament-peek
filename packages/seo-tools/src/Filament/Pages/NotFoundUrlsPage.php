@@ -10,7 +10,8 @@ use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
 use Capell\Admin\Support\SafeAdminUrl;
 use Capell\Admin\Support\SiteScope;
-use Capell\Core\Models\PageView;
+use Capell\Analytics\Enums\AnalyticsEventType;
+use Capell\Analytics\Models\AnalyticsEvent;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\DeleteBulkAction;
@@ -43,19 +44,19 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
     protected static ?string $slug = 'missing-pages';
 
     /**
-     * @return class-string<PageView>
+     * @return class-string<AnalyticsEvent>
      */
     public static function getModel(): string
     {
-        return PageView::class;
+        return AnalyticsEvent::class;
     }
 
     public static function getEloquentQuery(): Builder
     {
-        /** @var Builder<PageView> $query */
-        $query = SiteScope::applyForCurrentActor(PageView::query());
+        /** @var Builder<AnalyticsEvent> $query */
+        $query = SiteScope::applyForCurrentActor(AnalyticsEvent::query());
 
-        return $query->notFound();
+        return $query->where('type', AnalyticsEventType::PageView);
     }
 
     #[Override]
@@ -77,8 +78,8 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
                 static::getEloquentQuery()
                     ->select([
                         'url',
-                        DB::raw('MAX(viewed_at) as last_viewed_at'),
-                        DB::raw('COUNT(DISTINCT session_id) as total_visitors'),
+                        DB::raw('MAX(occurred_at) as last_viewed_at'),
+                        DB::raw('COUNT(DISTINCT visit_id) as total_visitors'),
                     ])
                     ->groupBy('url'),
             )
@@ -91,7 +92,7 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
                     ->disabledClick()
                     ->html()
                     ->formatStateUsing(
-                        fn (PageView $record): HtmlString => self::formatUrlLink($record),
+                        fn (AnalyticsEvent $record): HtmlString => self::formatUrlLink($record),
                     ),
                 DateColumn::make('last_viewed_at')
                     ->label(__('capell-admin::table.last_viewed_at'))
@@ -123,7 +124,7 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
     }
 
     /**
-     * @param  PageView  $record
+     * @param  AnalyticsEvent  $record
      */
     public function getTableRecordKey(Model|array $record): string
     {
@@ -136,7 +137,7 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
         return __('capell-admin::heading.page_not_found');
     }
 
-    private static function formatUrlLink(PageView $record): HtmlString
+    private static function formatUrlLink(AnalyticsEvent $record): HtmlString
     {
         $url = e($record->url);
         $href = SafeAdminUrl::href($record->url);

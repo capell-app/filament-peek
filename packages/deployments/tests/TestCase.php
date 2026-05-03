@@ -21,7 +21,7 @@ abstract class TestCase extends AbstractTestCase
     }
 
     #[Override]
-    protected function getPackageProviders($app): array
+    protected function getPackageProviders(mixed $app): array
     {
         return [
             ...parent::getPackageProviders($app),
@@ -34,7 +34,7 @@ abstract class TestCase extends AbstractTestCase
     }
 
     #[Override]
-    protected function getEnvironmentSetUp($app): void
+    protected function getEnvironmentSetUp(mixed $app): void
     {
         parent::getEnvironmentSetUp($app);
 

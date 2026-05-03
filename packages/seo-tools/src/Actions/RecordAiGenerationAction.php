@@ -33,7 +33,7 @@ class RecordAiGenerationAction
 
         try {
             if (is_array($input) || $input instanceof AiGenerationResultData) {
-                $history = app(PersistAiGenerationAction::class)->handle($input);
+                $history = resolve(PersistAiGenerationAction::class)->handle($input);
                 $duration = microtime(true) - $startTime;
                 Log::info('AI Action completed', [
                     'action' => static::class,
@@ -46,7 +46,7 @@ class RecordAiGenerationAction
 
             throw_unless($input instanceof AiActionContextInterface, InvalidArgumentException::class, 'Invalid input for RecordAiGenerationAction');
 
-            $history = app(PersistAiGenerationAction::class)->handle([
+            $history = resolve(PersistAiGenerationAction::class)->handle([
                 'action' => static::class,
                 'input' => $input->getContent(),
                 'pageable_id' => $input->getPageId(),

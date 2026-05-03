@@ -34,7 +34,7 @@ describe('BuildRegistryHealthAction', function (): void {
         }
 
         expect($sectionNames)->toContain('Page types');
-        expect($sectionNames)->toContain('Schemas');
+        expect($sectionNames)->toContain('Settings schemas');
     });
 });
 

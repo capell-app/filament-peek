@@ -33,7 +33,7 @@ final class ImportLegacyPageViewsAction
             ->orderBy('id')
             ->chunkById($chunkSize, function ($pageViews) use ($eventsTable, $visitsTable, &$imported): void {
                 foreach ($pageViews as $pageView) {
-                    if (! $pageView instanceof stdClass || $this->legacyEventExists($eventsTable, (int) $pageView->id)) {
+                    if ($this->legacyEventExists($eventsTable, (int) $pageView->id)) {
                         continue;
                     }
 

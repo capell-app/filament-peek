@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 use Capell\Campaigns\Tests\CampaignsTestCase;
 
-uses(CampaignsTestCase::class)->in(__DIR__);
+pest()->extend(CampaignsTestCase::class)->group('campaigns')->in(__DIR__);

@@ -136,16 +136,16 @@ Conventions:
 
 ## Test Directory Structure
 
-- tests/src/Admin/Unit/Actions/\*
-- tests/src/Admin/Integration/Actions/\*
-- tests/src/Admin/Unit/Services/\*
-- tests/src/Admin/Integration/Services/\*
-- tests/src/Admin/Feature/Commands/\*
-- tests/src/Core/Unit/Actions/\*
-- tests/src/Core/Integration/Actions/\*
-- tests/src/Core/Unit/Services/\*
-- tests/src/Core/Integration/Services/\*
-- tests/src/Core/Feature/Commands/\*
+- tests/Admin/Unit/Actions/\*
+- tests/Admin/Integration/Actions/\*
+- tests/Admin/Unit/Services/\*
+- tests/Admin/Integration/Services/\*
+- tests/Admin/Feature/Commands/\*
+- tests/Core/Unit/Actions/\*
+- tests/Core/Integration/Actions/\*
+- tests/Core/Unit/Services/\*
+- tests/Core/Integration/Services/\*
+- tests/Core/Feature/Commands/\*
 
 ## Shared Helpers & Setup
 

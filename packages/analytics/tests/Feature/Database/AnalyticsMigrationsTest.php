@@ -6,6 +6,7 @@ use Capell\Analytics\Actions\ImportLegacyPageViewsAction;
 use Capell\Analytics\Enums\AnalyticsEventType;
 use Capell\Analytics\Models\AnalyticsEvent;
 use Capell\Analytics\Models\AnalyticsVisit;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -17,10 +18,26 @@ it('loads analytics migrations', function (): void {
         ->and(Schema::hasColumn('analytics_visits', 'legacy_session_id'))->toBeTrue()
         ->and(Schema::hasColumn('analytics_consents', 'categories'))->toBeTrue()
         ->and(Schema::hasColumn('analytics_events', 'document_y'))->toBeTrue()
-        ->and(Schema::hasColumn('analytics_events', 'legacy_page_view_id'))->toBeTrue();
+        ->and(Schema::hasColumn('analytics_events', 'legacy_page_view_id'))->toBeTrue()
+        ->and(Schema::hasColumn('page_urls', 'hit_count'))->toBeTrue()
+        ->and(Schema::hasColumn('page_urls', 'last_hit_at'))->toBeTrue();
 });
 
 it('imports legacy page views idempotently into analytics events', function (): void {
+    Schema::create('page_views', function (Blueprint $table): void {
+        $table->id();
+        $table->string('url');
+        $table->string('session_id', 64);
+        $table->unsignedBigInteger('site_id')->nullable();
+        $table->unsignedBigInteger('language_id')->nullable();
+        $table->string('pageable_type')->nullable();
+        $table->unsignedBigInteger('pageable_id')->nullable();
+        $table->unsignedInteger('visits')->default(1);
+        $table->unsignedBigInteger('user_id')->nullable();
+        $table->timestamp('created_at')->nullable();
+        $table->timestamp('viewed_at')->nullable();
+    });
+
     DB::table('page_views')->insert([
         'id' => 1001,
         'url' => 'https://example.test/imported',

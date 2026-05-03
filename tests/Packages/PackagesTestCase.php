@@ -42,6 +42,7 @@ use Capell\Workspaces\Providers\WorkspacesServiceProvider;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
+use Spatie\ImageOptimizer\Optimizers\Svgo;
 
 class PackagesTestCase extends AbstractTestCase
 {
@@ -127,6 +128,9 @@ class PackagesTestCase extends AbstractTestCase
 
         $app->make(Repository::class)->set('tags.tag_model', Tag::class);
         $app->make(Repository::class)->set('media-library.media_model', Media::class);
+        $app->make(Repository::class)->set('media-library.image_optimizers', [
+            Svgo::class => [],
+        ]);
     }
 
     private function registerBlazeOptimizedViews(): void

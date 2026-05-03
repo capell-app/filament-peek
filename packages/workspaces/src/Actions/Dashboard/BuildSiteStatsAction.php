@@ -6,7 +6,6 @@ namespace Capell\Workspaces\Actions\Dashboard;
 
 use Capell\Admin\Data\Dashboard\SiteStatsData;
 use Capell\Core\Models\Page;
-use Capell\Core\Models\PageView;
 use Capell\Workspaces\Models\Version;
 use Carbon\CarbonImmutable;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -18,16 +17,6 @@ final class BuildSiteStatsAction
     public function handle(string $period = 'last_30_days'): SiteStatsData
     {
         [$start, $end] = $this->resolveDateRange($period);
-        [$prevStart, $prevEnd] = $this->resolvePriorPeriod($period);
-
-        $totalViews = (int) PageView::query()
-            ->whereBetween('viewed_at', [$start, $end])
-            ->sum('visits');
-
-        $totalVisitors = PageView::query()
-            ->whereBetween('viewed_at', [$start, $end])
-            ->distinct('session_id')
-            ->count('session_id');
 
         $publishedCount = Version::query()
             ->whereNotNull('published_at')
@@ -38,25 +27,10 @@ final class BuildSiteStatsAction
             ->where('workspace_id', '>', 0)
             ->count();
 
-        $prevViews = (int) PageView::query()
-            ->whereBetween('viewed_at', [$prevStart, $prevEnd])
-            ->sum('visits');
-
-        $prevVisitors = PageView::query()
-            ->whereBetween('viewed_at', [$prevStart, $prevEnd])
-            ->distinct('session_id')
-            ->count('session_id');
-
         return new SiteStatsData(
-            totalViews: $totalViews,
-            totalVisitors: $totalVisitors,
             workQueueCount: $workQueueCount,
             publishedCount: $publishedCount,
-            sparklineViews: $this->buildSparkline($start, $end, 'views'),
-            sparklineVisitors: $this->buildSparkline($start, $end, 'visitors'),
             sparklinePublished: $this->buildSparklinePublished($start, $end),
-            viewsTrendPercent: $this->trendPercent($totalViews, $prevViews),
-            visitorsTrendPercent: $this->trendPercent($totalVisitors, $prevVisitors),
         );
     }
 
@@ -72,44 +46,6 @@ final class BuildSiteStatsAction
             'this_year' => [$now->startOfYear(), $now],
             default => [$now->subDays(30)->startOfDay(), $now],
         };
-    }
-
-    /** @return array{CarbonImmutable, CarbonImmutable} */
-    private function resolvePriorPeriod(string $period): array
-    {
-        $now = CarbonImmutable::now();
-
-        return match ($period) {
-            'today' => [$now->subDay()->startOfDay(), $now->subDay()->endOfDay()],
-            'this_week' => [$now->subWeek()->startOfWeek(), $now->subWeek()->endOfWeek()],
-            'this_month' => [$now->subMonth()->startOfMonth(), $now->subMonth()->endOfMonth()],
-            'this_year' => [$now->subYear()->startOfYear(), $now->subYear()->endOfYear()],
-            default => [$now->subDays(60)->startOfDay(), $now->subDays(30)],
-        };
-    }
-
-    /**
-     * Build a 7-point sparkline by splitting [$start, $end] into 7 equal buckets.
-     *
-     * @return list<int>
-     */
-    private function buildSparkline(CarbonImmutable $start, CarbonImmutable $end, string $type): array
-    {
-        $bucketSeconds = max(1, (int) ($start->diffInSeconds($end) / 7));
-        $points = [];
-
-        for ($bucket = 0; $bucket < 7; $bucket++) {
-            $bucketStart = $start->addSeconds($bucket * $bucketSeconds);
-            $bucketEnd = $start->addSeconds(($bucket + 1) * $bucketSeconds);
-
-            $query = PageView::query()->whereBetween('viewed_at', [$bucketStart, $bucketEnd]);
-
-            $points[] = $type === 'visitors'
-                ? $query->distinct('session_id')->count('session_id')
-                : (int) $query->sum('visits');
-        }
-
-        return $points;
     }
 
     /** @return list<int> */
@@ -129,14 +65,5 @@ final class BuildSiteStatsAction
         }
 
         return $points;
-    }
-
-    private function trendPercent(int $current, int $previous): float
-    {
-        if ($previous === 0) {
-            return $current > 0 ? 100.0 : 0.0;
-        }
-
-        return round((($current - $previous) / $previous) * 100, 1);
     }
 }

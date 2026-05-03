@@ -14,7 +14,6 @@ use Capell\Analytics\Filament\Widgets\TopActionsWidget;
 use Capell\Analytics\Filament\Widgets\TrendingPagesWidget;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
 use Override;
 
 final class AnalyticsPage extends Page
@@ -42,13 +41,13 @@ final class AnalyticsPage extends Page
     }
 
     #[Override]
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string
     {
         return __('capell-analytics::widgets.analytics');
     }
 
     #[Override]
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): ?string
     {
         return __('capell-analytics::widgets.analytics_hint');
     }

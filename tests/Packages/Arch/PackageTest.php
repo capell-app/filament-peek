@@ -163,8 +163,11 @@ function forbiddenGlobalFunctionCalls(array $functionNames, array $ignoredFiles)
 
     foreach ($files as $file) {
         $path = $file->getRealPath();
+        if (! is_string($path)) {
+            continue;
+        }
 
-        if (! is_string($path) || isset($ignoredLookup[$path])) {
+        if (isset($ignoredLookup[$path])) {
             continue;
         }
 
@@ -188,8 +191,11 @@ function forbiddenGlobalFunctionCalls(array $functionNames, array $ignoredFiles)
 
             $previousToken = previousMeaningfulToken($tokens, $index);
             $nextToken = nextMeaningfulToken($tokens, $index, $tokenCount);
+            if ($nextToken !== '(') {
+                continue;
+            }
 
-            if ($nextToken !== '(' || in_array($previousToken, ['->', '::', 'function', 'new'], true)) {
+            if (in_array($previousToken, ['->', '::', 'function', 'new'], true)) {
                 continue;
             }
 
@@ -215,7 +221,7 @@ function previousMeaningfulToken(array $tokens, int $currentIndex): ?string
         }
 
         if (is_array($token)) {
-            return strtolower($token[1]);
+            return strtolower((string) $token[1]);
         }
 
         return $token;
@@ -237,7 +243,7 @@ function nextMeaningfulToken(array $tokens, int $currentIndex, int $tokenCount):
         }
 
         if (is_array($token)) {
-            return strtolower($token[1]);
+            return strtolower((string) $token[1]);
         }
 
         return $token;

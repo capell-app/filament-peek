@@ -36,7 +36,7 @@ function aiWorkflowContext(): AiActionContextInterface
             return 'laravel cms, scalable content platform';
         }
 
-        public function getPageId(): int|string
+        public function getPageId(): int
         {
             return 321;
         }
@@ -146,7 +146,7 @@ it('generates sanitized page content through the action seam and records history
     $rateLimiter = bindAiWorkflowRateLimiter();
     $recorder = bindAiWorkflowRecorder();
 
-    $result = app(GeneratorPageContentAction::class)->handle(aiWorkflowContext(), [
+    $result = resolve(GeneratorPageContentAction::class)->handle(aiWorkflowContext(), [
         'user_id' => 44,
         'current_title' => 'Existing service page',
         'target_length' => 300,
@@ -195,7 +195,7 @@ it('suggests page titles with rendered prompt parameters and persisted parsed ou
     $rateLimiter = bindAiWorkflowRateLimiter();
     $recorder = bindAiWorkflowRecorder();
 
-    $titles = app(SuggestPageTitlesAction::class)->handle(aiWorkflowContext(), [
+    $titles = resolve(SuggestPageTitlesAction::class)->handle(aiWorkflowContext(), [
         'user_id' => 55,
         'current_title' => 'Current CMS title',
     ]);
@@ -234,7 +234,7 @@ it('suggests meta descriptions with rendered prompt parameters and persisted par
     $rateLimiter = bindAiWorkflowRateLimiter();
     $recorder = bindAiWorkflowRecorder();
 
-    $descriptions = app(SuggestMetaDescriptionsAction::class)->handle(aiWorkflowContext(), [
+    $descriptions = resolve(SuggestMetaDescriptionsAction::class)->handle(aiWorkflowContext(), [
         'user_id' => 66,
     ]);
 
@@ -281,7 +281,7 @@ it('stops meta description generation at the rate limiter before provider calls 
     $rateLimiter = bindAiWorkflowRateLimiter(new RuntimeException('AI rate limit exceeded for user:66'));
     bindAiWorkflowRecorder();
 
-    expect(fn (): array => app(SuggestMetaDescriptionsAction::class)->handle(aiWorkflowContext(), ['user_id' => 66]))
+    expect(fn (): array => resolve(SuggestMetaDescriptionsAction::class)->handle(aiWorkflowContext(), ['user_id' => 66]))
         ->toThrow(RuntimeException::class, 'AI rate limit exceeded');
 
     expect($rateLimiter->checks)->toBe([['identifier' => '66', 'feature' => 'meta_suggestions']])
@@ -329,7 +329,7 @@ it('generates an AI creator layout, updates the session, and stores history thro
     $rateLimiter = bindAiWorkflowRateLimiter();
     $recorder = bindAiWorkflowRecorder();
 
-    $sections = app(GenerateAiLayoutAction::class)->handle(new AiCreatorData(
+    $sections = resolve(GenerateAiLayoutAction::class)->handle(new AiCreatorData(
         siteId: 10,
         userId: 77,
         intent: 'Build a homepage for the new product',

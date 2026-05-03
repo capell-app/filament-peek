@@ -7,6 +7,7 @@ namespace Capell\SeoTools\Tests;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
+use Capell\Analytics\Providers\AnalyticsServiceProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Navigation\Providers\NavigationServiceProvider;
@@ -37,6 +38,7 @@ class SeoToolsTestCase extends AbstractTestCase
         return [
             ...parent::getPackageProviders($app),
             AdminServiceProvider::class,
+            AnalyticsServiceProvider::class,
             SeoToolsServiceProvider::class,
             AdminPanelProvider::class,
             FrontendServiceProvider::class,
@@ -52,6 +54,11 @@ class SeoToolsTestCase extends AbstractTestCase
         parent::getEnvironmentSetUp($app);
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
+        CapellCore::registerPackage(
+            AnalyticsServiceProvider::$packageName,
+            path: realpath(__DIR__ . '/../../analytics'),
+        );
+        CapellCore::forcePackageInstalled(AnalyticsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(SeoToolsServiceProvider::$packageName);
 

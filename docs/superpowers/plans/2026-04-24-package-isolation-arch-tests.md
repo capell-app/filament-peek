@@ -60,19 +60,19 @@ arch()->expect('Capell\X')->classes()->toUseStrictEquality();
 
 **New test files:**
 
-- `tests/src/Forms/Arch/FormsIsolationTest.php`
-- `tests/src/Media/Arch/MediaIsolationTest.php`
-- `tests/src/Navigation/Arch/NavigationBoundaryTest.php`
-- `tests/src/Plugins/Arch/PluginsIsolationTest.php`
-- `tests/src/SeoTools/Arch/SeoToolsBoundaryTest.php`
-- `tests/src/ThemesAdmin/Arch/ThemesAdminIsolationTest.php`
-- `tests/src/ThemesCore/Arch/ThemesCoreIsolationTest.php`
+- `tests/Forms/Arch/FormsIsolationTest.php`
+- `tests/Media/Arch/MediaIsolationTest.php`
+- `tests/Navigation/Arch/NavigationBoundaryTest.php`
+- `tests/Plugins/Arch/PluginsIsolationTest.php`
+- `tests/SeoTools/Arch/SeoToolsBoundaryTest.php`
+- `tests/ThemesAdmin/Arch/ThemesAdminIsolationTest.php`
+- `tests/ThemesCore/Arch/ThemesCoreIsolationTest.php`
 
 **Modified test files:**
 
-- `tests/src/Mosaic/Arch/LayoutPackageTest.php` — fix wrong namespace, add no-reverse-import
-- `tests/src/Tags/Arch/TagsBoundaryTest.php` — add arch() macro tests alongside existing smoke tests
-- `tests/src/Workspaces/Arch/WorkspacesIsolationTest.php` — add toOnlyBeUsedIn + not->toUse for blog/mosaic
+- `tests/Mosaic/Arch/LayoutPackageTest.php` — fix wrong namespace, add no-reverse-import
+- `tests/Tags/Arch/TagsBoundaryTest.php` — add arch() macro tests alongside existing smoke tests
+- `tests/Workspaces/Arch/WorkspacesIsolationTest.php` — add toOnlyBeUsedIn + not->toUse for blog/mosaic
 
 **Modified production files (fix violations):**
 
@@ -84,23 +84,23 @@ arch()->expect('Capell\X')->classes()->toUseStrictEquality();
 
 ## Task 1: Fix the broken Mosaic arch test
 
-The existing test in `tests/src/Mosaic/Arch/LayoutPackageTest.php` references `Capell\Layout` — a namespace that does not exist in the codebase. The Mosaic package uses `Capell\Mosaic`. The test also needs a no-reverse-import assertion because blog imports from mosaic (not the reverse).
+The existing test in `tests/Mosaic/Arch/LayoutPackageTest.php` references `Capell\Layout` — a namespace that does not exist in the codebase. The Mosaic package uses `Capell\Mosaic`. The test also needs a no-reverse-import assertion because blog imports from mosaic (not the reverse).
 
 **Files:**
 
-- Modify: `tests/src/Mosaic/Arch/LayoutPackageTest.php`
+- Modify: `tests/Mosaic/Arch/LayoutPackageTest.php`
 
 - [ ] **Step 1: Run the existing (broken) test to confirm it produces no useful signal**
 
 ```bash
-vendor/bin/pest tests/src/Mosaic/Arch/LayoutPackageTest.php --no-coverage
+vendor/bin/pest tests/Mosaic/Arch/LayoutPackageTest.php --no-coverage
 ```
 
 Expected: test passes trivially because `Capell\Layout` has zero classes — the test asserts nothing real.
 
 - [ ] **Step 2: Rewrite the test with the correct namespace and meaningful assertions**
 
-Replace the entire contents of `tests/src/Mosaic/Arch/LayoutPackageTest.php`:
+Replace the entire contents of `tests/Mosaic/Arch/LayoutPackageTest.php`:
 
 ```php
 <?php
@@ -126,7 +126,7 @@ arch()
 - [ ] **Step 3: Run the test to verify it passes**
 
 ```bash
-vendor/bin/pest tests/src/Mosaic/Arch/LayoutPackageTest.php --no-coverage
+vendor/bin/pest tests/Mosaic/Arch/LayoutPackageTest.php --no-coverage
 ```
 
 Expected: both `arch()` tests pass.
@@ -134,7 +134,7 @@ Expected: both `arch()` tests pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add tests/src/Mosaic/Arch/LayoutPackageTest.php
+git add tests/Mosaic/Arch/LayoutPackageTest.php
 git commit -m "fix(arch): correct Mosaic arch test namespace from Capell\\Layout to Capell\\Mosaic"
 ```
 
@@ -146,9 +146,9 @@ These three packages have no cross-imports to or from other packages — the tes
 
 **Files:**
 
-- Create: `tests/src/Forms/Arch/FormsIsolationTest.php`
-- Create: `tests/src/Media/Arch/MediaIsolationTest.php`
-- Create: `tests/src/Plugins/Arch/PluginsIsolationTest.php`
+- Create: `tests/Forms/Arch/FormsIsolationTest.php`
+- Create: `tests/Media/Arch/MediaIsolationTest.php`
+- Create: `tests/Plugins/Arch/PluginsIsolationTest.php`
 
 - [ ] **Step 1: Create Forms isolation test**
 
@@ -204,7 +204,7 @@ arch()
 - [ ] **Step 4: Run all three tests to verify they pass**
 
 ```bash
-vendor/bin/pest tests/src/Forms/Arch tests/src/Media/Arch tests/src/Plugins/Arch --no-coverage
+vendor/bin/pest tests/Forms/Arch tests/Media/Arch tests/Plugins/Arch --no-coverage
 ```
 
 Expected: all pass.
@@ -212,9 +212,9 @@ Expected: all pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tests/src/Forms/Arch/FormsIsolationTest.php \
-        tests/src/Media/Arch/MediaIsolationTest.php \
-        tests/src/Plugins/Arch/PluginsIsolationTest.php
+git add tests/Forms/Arch/FormsIsolationTest.php \
+        tests/Media/Arch/MediaIsolationTest.php \
+        tests/Plugins/Arch/PluginsIsolationTest.php
 git commit -m "test(arch): add isolation tests for Forms, Media, and Plugins packages"
 ```
 
@@ -226,8 +226,8 @@ Navigation and SeoTools are shared utilities — other packages legitimately imp
 
 **Files:**
 
-- Create: `tests/src/Navigation/Arch/NavigationBoundaryTest.php`
-- Create: `tests/src/SeoTools/Arch/SeoToolsBoundaryTest.php`
+- Create: `tests/Navigation/Arch/NavigationBoundaryTest.php`
+- Create: `tests/SeoTools/Arch/SeoToolsBoundaryTest.php`
 
 - [ ] **Step 1: Create Navigation boundary test**
 
@@ -292,7 +292,7 @@ arch()
 - [ ] **Step 3: Run both tests**
 
 ```bash
-vendor/bin/pest tests/src/Navigation/Arch tests/src/SeoTools/Arch --no-coverage
+vendor/bin/pest tests/Navigation/Arch tests/SeoTools/Arch --no-coverage
 ```
 
 Expected: all pass.
@@ -300,8 +300,8 @@ Expected: all pass.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add tests/src/Navigation/Arch/NavigationBoundaryTest.php \
-        tests/src/SeoTools/Arch/SeoToolsBoundaryTest.php
+git add tests/Navigation/Arch/NavigationBoundaryTest.php \
+        tests/SeoTools/Arch/SeoToolsBoundaryTest.php
 git commit -m "test(arch): add boundary tests for Navigation and SeoTools packages"
 ```
 
@@ -352,7 +352,7 @@ In `packages/theme-studio/themes-core/composer.json`, add `"capell-app/seo-tools
 - [ ] **Step 3: Run the full arch suite to confirm no regressions**
 
 ```bash
-vendor/bin/pest tests/src/Blog/Arch tests/src/SeoTools/Arch --no-coverage
+vendor/bin/pest tests/Blog/Arch tests/SeoTools/Arch --no-coverage
 ```
 
 Expected: all pass.
@@ -372,8 +372,8 @@ ThemesAdmin is a leaf package (nothing else imports from `Capell\Themes\Admin`).
 
 **Files:**
 
-- Create: `tests/src/ThemesAdmin/Arch/ThemesAdminIsolationTest.php`
-- Create: `tests/src/ThemesCore/Arch/ThemesCoreIsolationTest.php`
+- Create: `tests/ThemesAdmin/Arch/ThemesAdminIsolationTest.php`
+- Create: `tests/ThemesCore/Arch/ThemesCoreIsolationTest.php`
 
 - [ ] **Step 1: Create ThemesAdmin isolation test**
 
@@ -428,7 +428,7 @@ arch()
 - [ ] **Step 3: Run both tests**
 
 ```bash
-vendor/bin/pest tests/src/ThemesAdmin/Arch tests/src/ThemesCore/Arch --no-coverage
+vendor/bin/pest tests/ThemesAdmin/Arch tests/ThemesCore/Arch --no-coverage
 ```
 
 Expected: all pass. If `ThemesAdminIsolationTest` fails, examine the violation — it may indicate an admin command or another package importing themes-admin classes. Fix the violation before proceeding; only add `ignoring()` for exceptions that are truly justified.
@@ -436,8 +436,8 @@ Expected: all pass. If `ThemesAdminIsolationTest` fails, examine the violation �
 - [ ] **Step 4: Commit**
 
 ```bash
-git add tests/src/ThemesAdmin/Arch/ThemesAdminIsolationTest.php \
-        tests/src/ThemesCore/Arch/ThemesCoreIsolationTest.php
+git add tests/ThemesAdmin/Arch/ThemesAdminIsolationTest.php \
+        tests/ThemesCore/Arch/ThemesCoreIsolationTest.php
 git commit -m "test(arch): add isolation and boundary tests for ThemesAdmin and ThemesCore packages"
 ```
 
@@ -451,7 +451,7 @@ git commit -m "test(arch): add isolation and boundary tests for ThemesAdmin and 
 
 - Modify: `packages/blog/composer.json`
 - Modify: `packages/tags/composer.json`
-- Modify: `tests/src/Workspaces/Arch/WorkspacesIsolationTest.php`
+- Modify: `tests/Workspaces/Arch/WorkspacesIsolationTest.php`
 
 - [ ] **Step 1: Add workspaces to blog's composer.json**
 
@@ -491,12 +491,12 @@ The tags ServiceProvider calls `WorkspaceRegistry::register()` when workspaces i
 
 - [ ] **Step 3: Write the self-containment test for Workspaces**
 
-The existing test in `tests/src/Workspaces/Arch/WorkspacesIsolationTest.php` only checks the core→workspaces direction. Add two more assertions:
+The existing test in `tests/Workspaces/Arch/WorkspacesIsolationTest.php` only checks the core→workspaces direction. Add two more assertions:
 
 1. `toOnlyBeUsedIn` — nothing outside the approved list may import from workspaces.
 2. `not->toUse('Capell\Blog')` and `not->toUse('Capell\Mosaic')` — workspaces must not import from dependents (the ServiceProvider does this intentionally via `class_exists` guards; that file gets an `ignoring()` exception).
 
-Replace the full contents of `tests/src/Workspaces/Arch/WorkspacesIsolationTest.php`:
+Replace the full contents of `tests/Workspaces/Arch/WorkspacesIsolationTest.php`:
 
 ```php
 <?php
@@ -566,7 +566,7 @@ arch()
 - [ ] **Step 4: Run the Workspaces arch tests**
 
 ```bash
-vendor/bin/pest tests/src/Workspaces/Arch/WorkspacesIsolationTest.php --no-coverage
+vendor/bin/pest tests/Workspaces/Arch/WorkspacesIsolationTest.php --no-coverage
 ```
 
 Expected: all five assertions pass. If `toOnlyBeUsedIn` lists additional namespaces you did not include, examine each one: if the dependency is legitimate, declare it in that package's `composer.json` and add it to the `toOnlyBeUsedIn` array; if it is a violation, fix the import.
@@ -576,7 +576,7 @@ Expected: all five assertions pass. If `toOnlyBeUsedIn` lists additional namespa
 ```bash
 git add packages/blog/composer.json \
         packages/tags/composer.json \
-        tests/src/Workspaces/Arch/WorkspacesIsolationTest.php
+        tests/Workspaces/Arch/WorkspacesIsolationTest.php
 git commit -m "fix(deps): declare capell-app/workspaces in blog and tags; add workspaces self-containment arch test"
 ```
 
@@ -584,15 +584,15 @@ git commit -m "fix(deps): declare capell-app/workspaces in blog and tags; add wo
 
 ## Task 7: Upgrade Tags arch test from smoke tests to arch() macro
 
-`tests/src/Tags/Arch/TagsBoundaryTest.php` currently contains only `class_exists`/`trait_exists` assertions written during a namespace migration. These are still valid as regression guards, but they do not enforce architectural boundaries. Add proper `arch()` assertions.
+`tests/Tags/Arch/TagsBoundaryTest.php` currently contains only `class_exists`/`trait_exists` assertions written during a namespace migration. These are still valid as regression guards, but they do not enforce architectural boundaries. Add proper `arch()` assertions.
 
 **Files:**
 
-- Modify: `tests/src/Tags/Arch/TagsBoundaryTest.php`
+- Modify: `tests/Tags/Arch/TagsBoundaryTest.php`
 
 - [ ] **Step 1: Write the failing boundary test**
 
-Append the following arch assertions to the end of `tests/src/Tags/Arch/TagsBoundaryTest.php` (keep the existing smoke tests unchanged above):
+Append the following arch assertions to the end of `tests/Tags/Arch/TagsBoundaryTest.php` (keep the existing smoke tests unchanged above):
 
 ```php
 arch('tags does not import Capell\\Blog (blog depends on tags, not the reverse)')
@@ -608,7 +608,7 @@ arch()
 - [ ] **Step 2: Run the test to verify it passes**
 
 ```bash
-vendor/bin/pest tests/src/Tags/Arch/TagsBoundaryTest.php --no-coverage
+vendor/bin/pest tests/Tags/Arch/TagsBoundaryTest.php --no-coverage
 ```
 
 Expected: all assertions pass including the two new ones.
@@ -616,7 +616,7 @@ Expected: all assertions pass including the two new ones.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add tests/src/Tags/Arch/TagsBoundaryTest.php
+git add tests/Tags/Arch/TagsBoundaryTest.php
 git commit -m "test(arch): add arch() boundary assertions to Tags test alongside existing smoke tests"
 ```
 

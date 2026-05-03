@@ -18,6 +18,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Livewire\LivewireServiceProvider;
 use Override;
+use Spatie\ImageOptimizer\Optimizers\Svgo;
 
 class MosaicTestCase extends AbstractTestCase
 {
@@ -77,5 +78,8 @@ class MosaicTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled('capell-app/navigation');
 
         $app->make(Repository::class)->set('media-library.media_model', Media::class);
+        $app->make(Repository::class)->set('media-library.image_optimizers', [
+            Svgo::class => [],
+        ]);
     }
 }

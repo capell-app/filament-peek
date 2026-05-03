@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Capell\Analytics\Enums\AnalyticsEventType;
+use Capell\Analytics\Models\AnalyticsEvent;
+use Capell\Analytics\Models\AnalyticsVisit;
 use Capell\Core\Models\Page;
-use Capell\Core\Models\PageView;
 use Capell\Core\Models\Site;
 use Capell\SeoTools\Filament\Pages\NotFoundUrlsPage;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
@@ -11,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection as SupportCollection;
@@ -61,6 +64,32 @@ function createScopedUserForNotFoundUrlsPageTest(SupportCollection $assignedSite
     return $user;
 }
 
+/**
+ * @param  array<string, mixed>  $attributes
+ */
+function analyticsEventForNotFoundUrlsPageTest(array $attributes): AnalyticsEvent
+{
+    $visitUuid = (string) ($attributes['visit_uuid'] ?? fake()->uuid());
+    unset($attributes['visit_uuid'], $attributes['pageable_type'], $attributes['pageable_id']);
+
+    $visit = AnalyticsVisit::factory()->create(['uuid' => $visitUuid]);
+    $url = (string) ($attributes['url'] ?? '/missing');
+    $path = parse_url($url, PHP_URL_PATH);
+
+    return AnalyticsEvent::factory()->create([
+        'visit_id' => $visit->getKey(),
+        'type' => AnalyticsEventType::PageView,
+        'path' => is_string($path) && $path !== '' ? $path : $url,
+        ...$attributes,
+    ]);
+}
+
+function notFoundUrlsPageTestQuery(): Builder
+{
+    return AnalyticsEvent::query()
+        ->where('type', AnalyticsEventType::PageView);
+}
+
 beforeEach(function (): void {
     Permission::query()->firstOrCreate(['name' => 'View:NotFoundUrlsPage', 'guard_name' => 'web']);
 
@@ -72,14 +101,14 @@ test('query limits not found urls to assigned sites for non-global users', funct
     $hiddenSite = Site::factory()->withTranslations()->create();
     $missingPageType = resolve(Page::class)->getMorphClass();
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'site_id' => $assignedSite->id,
         'url' => '/assigned-missing',
         'pageable_type' => $missingPageType,
         'pageable_id' => 1001,
     ]);
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'site_id' => $hiddenSite->id,
         'url' => '/hidden-missing',
         'pageable_type' => $missingPageType,
@@ -93,7 +122,7 @@ test('query limits not found urls to assigned sites for non-global users', funct
 });
 
 test('query denies not found urls for non-global users without assigned sites', function (): void {
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/hidden-missing',
         'pageable_type' => resolve(Page::class)->getMorphClass(),
         'pageable_id' => 1001,
@@ -116,64 +145,63 @@ test('can sort not found urls by total visitors and last viewed at', function ()
 
     $missingPageType = resolve(Page::class)->getMorphClass();
 
-    $sortRecordC1 = PageView::factory()->create([
+    $sortRecordC1 = analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/sort-c',
-        'session_id' => 'visitor-1',
+        'visit_uuid' => 'visitor-1',
         'pageable_type' => $missingPageType,
         'pageable_id' => 11,
-        'viewed_at' => now(),
+        'occurred_at' => now(),
     ]);
 
-    $sortRecordC2 = PageView::factory()->create([
+    $sortRecordC2 = analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/sort-c',
-        'session_id' => 'visitor-2',
+        'visit_uuid' => 'visitor-2',
         'pageable_type' => $missingPageType,
         'pageable_id' => 11,
-        'viewed_at' => now(),
+        'occurred_at' => now(),
     ]);
 
-    $sortRecordC3 = PageView::factory()->create([
+    $sortRecordC3 = analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/sort-c',
-        'session_id' => 'visitor-3',
+        'visit_uuid' => 'visitor-3',
         'pageable_type' => $missingPageType,
         'pageable_id' => 11,
-        'viewed_at' => now(),
+        'occurred_at' => now(),
     ]);
 
-    $sortRecordB1 = PageView::factory()->create([
+    $sortRecordB1 = analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/sort-b',
-        'session_id' => 'visitor-4',
+        'visit_uuid' => 'visitor-4',
         'pageable_type' => $missingPageType,
         'pageable_id' => 22,
-        'viewed_at' => now(),
+        'occurred_at' => now(),
     ]);
 
-    $sortRecordB2 = PageView::factory()->create([
+    $sortRecordB2 = analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/sort-b',
-        'session_id' => 'visitor-5',
+        'visit_uuid' => 'visitor-5',
         'pageable_type' => $missingPageType,
         'pageable_id' => 22,
-        'viewed_at' => now(),
+        'occurred_at' => now(),
     ]);
 
-    $sortRecordA1 = PageView::factory()->create([
+    $sortRecordA1 = analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/sort-a',
-        'session_id' => 'visitor-6',
+        'visit_uuid' => 'visitor-6',
         'pageable_type' => $missingPageType,
         'pageable_id' => 33,
-        'viewed_at' => now(),
+        'occurred_at' => now(),
     ]);
 
-    $sortRecordC1->update(['viewed_at' => now()->subMinutes(30)]);
-    $sortRecordC2->update(['viewed_at' => now()->subMinutes(25)]);
-    $sortRecordC3->update(['viewed_at' => now()->subMinutes(5)]);
-    $sortRecordB1->update(['viewed_at' => now()->subMinutes(20)]);
-    $sortRecordB2->update(['viewed_at' => now()->subMinutes(10)]);
-    $sortRecordA1->update(['viewed_at' => now()->subMinutes(15)]);
+    $sortRecordC1->update(['occurred_at' => now()->subMinutes(30)]);
+    $sortRecordC2->update(['occurred_at' => now()->subMinutes(25)]);
+    $sortRecordC3->update(['occurred_at' => now()->subMinutes(5)]);
+    $sortRecordB1->update(['occurred_at' => now()->subMinutes(20)]);
+    $sortRecordB2->update(['occurred_at' => now()->subMinutes(10)]);
+    $sortRecordA1->update(['occurred_at' => now()->subMinutes(15)]);
 
-    $sortedByTotalVisitors = PageView::query()
-        ->notFound()
-        ->selectRaw('url, MAX(viewed_at) as last_viewed_at, COUNT(DISTINCT session_id) as total_visitors')
+    $sortedByTotalVisitors = notFoundUrlsPageTestQuery()
+        ->selectRaw('url, MAX(occurred_at) as last_viewed_at, COUNT(DISTINCT visit_id) as total_visitors')
         ->groupBy('url')
         ->orderBy('total_visitors')
         ->get();
@@ -183,9 +211,8 @@ test('can sort not found urls by total visitors and last viewed at', function ()
         ->sortTable('total_visitors')
         ->assertCanSeeTableRecords($sortedByTotalVisitors, inOrder: true);
 
-    $sortedByLastViewedAt = PageView::query()
-        ->notFound()
-        ->selectRaw('url, MAX(viewed_at) as last_viewed_at, COUNT(DISTINCT session_id) as total_visitors')
+    $sortedByLastViewedAt = notFoundUrlsPageTestQuery()
+        ->selectRaw('url, MAX(occurred_at) as last_viewed_at, COUNT(DISTINCT visit_id) as total_visitors')
         ->groupBy('url')
         ->oldest('last_viewed_at')
         ->get();
@@ -201,30 +228,28 @@ test('can search not found urls by url', function (): void {
 
     $missingPageType = resolve(Page::class)->getMorphClass();
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/search-target',
-        'session_id' => 'session-search-1',
+        'visit_uuid' => 'session-search-1',
         'pageable_type' => $missingPageType,
         'pageable_id' => 44,
     ]);
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/other-url',
-        'session_id' => 'session-search-2',
+        'visit_uuid' => 'session-search-2',
         'pageable_type' => $missingPageType,
         'pageable_id' => 55,
     ]);
 
-    $matchingRecord = PageView::query()
-        ->notFound()
-        ->selectRaw('url, MAX(viewed_at) as last_viewed_at, COUNT(DISTINCT session_id) as total_visitors')
+    $matchingRecord = notFoundUrlsPageTestQuery()
+        ->selectRaw('url, MAX(occurred_at) as last_viewed_at, COUNT(DISTINCT visit_id) as total_visitors')
         ->where('url', '/missing/search-target')
         ->groupBy('url')
         ->firstOrFail();
 
-    $otherRecord = PageView::query()
-        ->notFound()
-        ->selectRaw('url, MAX(viewed_at) as last_viewed_at, COUNT(DISTINCT session_id) as total_visitors')
+    $otherRecord = notFoundUrlsPageTestQuery()
+        ->selectRaw('url, MAX(occurred_at) as last_viewed_at, COUNT(DISTINCT visit_id) as total_visitors')
         ->where('url', '/missing/other-url')
         ->groupBy('url')
         ->firstOrFail();
@@ -241,9 +266,9 @@ test('can search not found urls by url', function (): void {
 test('escapes logged not found urls before rendering links', function (): void {
     auth()->user()->givePermissionTo('View:NotFoundUrlsPage');
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => "/missing/'><script>alert(1)</script>",
-        'session_id' => 'session-xss',
+        'visit_uuid' => 'session-xss',
         'pageable_type' => resolve(Page::class)->getMorphClass(),
         'pageable_id' => 99,
     ]);
@@ -257,9 +282,9 @@ test('escapes logged not found urls before rendering links', function (): void {
 test('does not render unsafe logged not found urls as links', function (): void {
     auth()->user()->givePermissionTo('View:NotFoundUrlsPage');
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => 'javascript:alert(1)',
-        'session_id' => 'session-unsafe-link',
+        'visit_uuid' => 'session-unsafe-link',
         'pageable_type' => resolve(Page::class)->getMorphClass(),
         'pageable_id' => 99,
     ]);
@@ -275,37 +300,37 @@ test('can bulk delete selected not found urls', function (): void {
 
     $missingPageType = resolve(Page::class)->getMorphClass();
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/delete-first',
-        'session_id' => 'session-delete-1-a',
+        'visit_uuid' => 'session-delete-1-a',
         'pageable_type' => $missingPageType,
         'pageable_id' => 66,
     ]);
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/delete-first',
-        'session_id' => 'session-delete-1-b',
+        'visit_uuid' => 'session-delete-1-b',
         'pageable_type' => $missingPageType,
         'pageable_id' => 66,
     ]);
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/delete-second',
-        'session_id' => 'session-delete-2-a',
+        'visit_uuid' => 'session-delete-2-a',
         'pageable_type' => $missingPageType,
         'pageable_id' => 77,
     ]);
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/delete-second',
-        'session_id' => 'session-delete-2-b',
+        'visit_uuid' => 'session-delete-2-b',
         'pageable_type' => $missingPageType,
         'pageable_id' => 77,
     ]);
 
-    PageView::factory()->create([
+    analyticsEventForNotFoundUrlsPageTest([
         'url' => '/missing/keep-me',
-        'session_id' => 'session-delete-3',
+        'visit_uuid' => 'session-delete-3',
         'pageable_type' => $missingPageType,
         'pageable_id' => 88,
     ]);
@@ -318,7 +343,7 @@ test('can bulk delete selected not found urls', function (): void {
         ->assertHasNoFormErrors()
         ->assertCountTableRecords(1);
 
-    expect(PageView::query()->where('url', '/missing/delete-first')->exists())->toBeFalse();
-    expect(PageView::query()->where('url', '/missing/delete-second')->exists())->toBeFalse();
-    expect(PageView::query()->where('url', '/missing/keep-me')->exists())->toBeTrue();
+    expect(AnalyticsEvent::query()->where('url', '/missing/delete-first')->exists())->toBeFalse();
+    expect(AnalyticsEvent::query()->where('url', '/missing/delete-second')->exists())->toBeFalse();
+    expect(AnalyticsEvent::query()->where('url', '/missing/keep-me')->exists())->toBeTrue();
 });

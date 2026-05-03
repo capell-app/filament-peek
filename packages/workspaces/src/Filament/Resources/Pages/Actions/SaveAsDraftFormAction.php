@@ -12,6 +12,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Model;
 use Override;
 
 class SaveAsDraftFormAction extends Action
@@ -27,6 +28,7 @@ class SaveAsDraftFormAction extends Action
             ->modalHeading(__('capell-admin::button.save_as_draft_modal_heading'))
             ->modalDescription(__('capell-admin::message.save_as_draft_description'))
             ->modalSubmitActionLabel(__('capell-admin::button.save_as_draft_modal_submit'))
+            ->hidden(fn (): bool => $this->isEditingDraft())
             ->form(fn (): array => $this->formSchema())
             ->fillForm(fn (): array => $this->defaults())
             ->action(function (array $data): void {
@@ -92,5 +94,16 @@ class SaveAsDraftFormAction extends Action
         return [
             'location' => WorkspaceContext::isInWorkspace() ? 'active' : 'new',
         ];
+    }
+
+    private function isEditingDraft(): bool
+    {
+        $record = $this->getLivewire()->getRecord();
+
+        if (! $record instanceof Model) {
+            return false;
+        }
+
+        return (int) $record->getAttribute('workspace_id') > 0;
     }
 }

@@ -41,9 +41,7 @@ final class StartPageImportAction
     public function handle(array $state): PageImportWizardStateData
     {
         $archiveDiskPath = $this->archiveDiskPathFrom($state);
-        if ($archiveDiskPath === '') {
-            throw new RuntimeException(self::ERROR_UPLOAD_REQUIRED);
-        }
+        throw_if($archiveDiskPath === '', RuntimeException::class, self::ERROR_UPLOAD_REQUIRED);
 
         $workspace = Workspace::query()->create([
             'name' => $this->workspaceNameFrom($state),

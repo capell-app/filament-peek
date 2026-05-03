@@ -57,6 +57,7 @@ use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
 use Silber\PageCache\LaravelServiceProvider;
 use Sinnbeck\DomAssertions\DomAssertionsServiceProvider;
 use Spatie\Activitylog\ActivitylogServiceProvider;
+use Spatie\ImageOptimizer\Optimizers\Svgo;
 use Spatie\LaravelData\LaravelDataServiceProvider;
 use Spatie\LaravelSettings\LaravelSettingsServiceProvider;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -89,6 +90,10 @@ abstract class AbstractTestCase extends TestCase
         if (! in_array(TestingFrontendWithVite::class, class_uses_recursive(static::class), true)) {
             $this->withoutVite();
         }
+
+        Config::set('media-library.image_optimizers', [
+            Svgo::class => [],
+        ]);
 
         $this->loadMigrationsFrom($this->orderedMigrationWorkspacePath());
 

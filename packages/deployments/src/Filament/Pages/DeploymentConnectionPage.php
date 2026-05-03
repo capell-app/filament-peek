@@ -9,7 +9,6 @@ use Capell\Deployments\Models\DeploymentConnection;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Schema;
 
 final class DeploymentConnectionPage extends Page
@@ -38,7 +37,7 @@ final class DeploymentConnectionPage extends Page
         return Heroicon::OutlinedServerStack;
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string
     {
         return __('capell-deployments::plugins.deployment_connection.title');
     }

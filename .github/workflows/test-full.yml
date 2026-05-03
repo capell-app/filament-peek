@@ -3,7 +3,6 @@ name: Tests (full)
 on:
   push:
     branches:
-      - master
       - 4.x
 
 concurrency:
@@ -25,11 +24,13 @@ jobs:
             testbench: 9.*
             stability: prefer-stable
             db: sqlite
+            mysql_port: 3308
           - php: 8.4
             laravel: 12.*
             testbench: 10.*
             stability: prefer-stable
             db: mysql
+            mysql_port: 3307
 
     services:
       mysql:
@@ -38,7 +39,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_cms_multi
         ports:
-          - '${{ vars.MYSQL_PORT || 3306 }}:3306'
+          - '${{ matrix.mysql_port }}:3306'
         options: >-
           --health-cmd "mysqladmin ping -h 127.0.0.1 -proot || exit 1"
           --health-interval 10s
@@ -109,7 +110,7 @@ jobs:
           if [ "${{ matrix.db }}" == "mysql" ]; then
             echo "DB_CONNECTION=mysql" >> .env
             echo "DB_HOST=127.0.0.1" >> .env
-            echo "DB_PORT=${{ vars.MYSQL_PORT || 3306 }}" >> .env
+            echo "DB_PORT=${{ matrix.mysql_port }}" >> .env
             echo "DB_DATABASE=test_cms_multi" >> .env
             echo "DB_USERNAME=root" >> .env
             echo "DB_PASSWORD=root" >> .env

@@ -37,6 +37,7 @@ class AnalyticsServiceProvider extends AbstractPackageServiceProvider
                 'create_analytics_events_table',
                 'add_analytics_reporting_indexes',
                 'import_legacy_page_views',
+                'add_page_url_hit_columns',
             ]);
     }
 

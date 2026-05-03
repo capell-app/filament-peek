@@ -47,9 +47,9 @@
 
 - `packages/blog/src/Providers/BlogServiceProvider.php` — register new widgets
 - `packages/mosaic/src/Providers/MosaicServiceProvider.php` — register RecentActivityWidget
-- `tests/src/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php` — new test
-- `tests/src/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php` — new test
-- `tests/src/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php` — new test
+- `tests/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php` — new test
+- `tests/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php` — new test
+- `tests/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php` — new test
 
 ---
 
@@ -121,7 +121,7 @@ git commit -m "feat(blog): add TrafficChartData and TrafficPointData"
 
 - Create: `packages/blog/src/Filament/Widgets/TrafficChartWidget.php`
 - Create: `packages/blog/resources/views/filament/widgets/traffic-chart.blade.php`
-- Create: `tests/src/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php`
+- Create: `tests/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -155,7 +155,7 @@ it('shows total views when access logs exist', function (): void {
 - [ ] **Step 2: Run test to verify it fails**
 
 ```bash
-php vendor/bin/pest tests/src/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php -v
+php vendor/bin/pest tests/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php -v
 ```
 
 Expected: FAIL — `TrafficChartWidget` not found.
@@ -296,7 +296,7 @@ final class TrafficChartWidget extends CapellWidget
 - [ ] **Step 5: Run tests**
 
 ```bash
-php vendor/bin/pest tests/src/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php -v
+php vendor/bin/pest tests/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php -v
 ```
 
 Expected: PASS.
@@ -311,7 +311,7 @@ Find the widget registration section in `packages/blog/src/Providers/BlogService
 git add packages/blog/src/Filament/Widgets/TrafficChartWidget.php \
         packages/blog/src/Data/Dashboard/ \
         packages/blog/resources/views/filament/widgets/traffic-chart.blade.php \
-        tests/src/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php \
+        tests/Blog/Feature/Filament/Widgets/TrafficChartWidgetTest.php \
         packages/blog/src/Providers/BlogServiceProvider.php
 git commit -m "feat(blog): add combined TrafficChartWidget"
 ```
@@ -385,7 +385,7 @@ git commit -m "feat(blog): add TopPageData and TopPagesData"
 
 - Create: `packages/blog/src/Filament/Widgets/TopPagesWidget.php`
 - Create: `packages/blog/resources/views/filament/widgets/top-pages.blade.php`
-- Create: `tests/src/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php`
+- Create: `tests/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -423,7 +423,7 @@ it('shows top pages when access logs exist', function (): void {
 - [ ] **Step 2: Run test to verify it fails**
 
 ```bash
-php vendor/bin/pest tests/src/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php -v
+php vendor/bin/pest tests/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php -v
 ```
 
 Expected: FAIL.
@@ -519,7 +519,7 @@ final class TopPagesWidget extends CapellWidget
 - [ ] **Step 5: Run tests**
 
 ```bash
-php vendor/bin/pest tests/src/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php -v
+php vendor/bin/pest tests/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php -v
 ```
 
 Expected: PASS.
@@ -534,7 +534,7 @@ Add `TopPagesWidget::class` to the widget registration alongside `TrafficChartWi
 git add packages/blog/src/Filament/Widgets/TopPagesWidget.php \
         packages/blog/src/Data/Dashboard/ \
         packages/blog/resources/views/filament/widgets/top-pages.blade.php \
-        tests/src/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php \
+        tests/Blog/Feature/Filament/Widgets/TopPagesWidgetTest.php \
         packages/blog/src/Providers/BlogServiceProvider.php
 git commit -m "feat(blog): add TopPagesWidget"
 ```
@@ -613,7 +613,7 @@ The widget queries the core `Page` model (and optionally `Article` from blog if 
 
 - Create: `packages/mosaic/src/Filament/Widgets/RecentActivityWidget.php`
 - Create: `packages/mosaic/resources/views/filament/widgets/recent-activity.blade.php`
-- Create: `tests/src/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php`
+- Create: `tests/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -645,7 +645,7 @@ it('shows recent activity heading', function (): void {
 - [ ] **Step 2: Run test to verify it fails**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php -v
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php -v
 ```
 
 Expected: FAIL.
@@ -773,7 +773,7 @@ final class RecentActivityWidget extends CapellWidget
 - [ ] **Step 5: Run tests**
 
 ```bash
-php vendor/bin/pest tests/src/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php -v
+php vendor/bin/pest tests/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php -v
 ```
 
 Expected: PASS.
@@ -788,7 +788,7 @@ Add `RecentActivityWidget::class` to the widget registration in `packages/mosaic
 git add packages/mosaic/src/Filament/Widgets/RecentActivityWidget.php \
         packages/mosaic/src/Data/Dashboard/ \
         packages/mosaic/resources/views/filament/widgets/recent-activity.blade.php \
-        tests/src/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php \
+        tests/Mosaic/Feature/Filament/Widgets/RecentActivityWidgetTest.php \
         packages/mosaic/src/Providers/MosaicServiceProvider.php
 git commit -m "feat(mosaic): add RecentActivityWidget"
 ```

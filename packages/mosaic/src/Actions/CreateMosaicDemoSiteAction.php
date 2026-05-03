@@ -53,7 +53,6 @@ class CreateMosaicDemoSiteAction
     {
         $languages = $site->languages;
 
-        /** @var Page|null $homePage */
         $homePage = $site->getHomePage();
 
         if (! $homePage instanceof Pageable) {
@@ -62,9 +61,7 @@ class CreateMosaicDemoSiteAction
 
         $this->setupHomepage($homePage, $languages);
 
-        if ($homePage instanceof Page) {
-            $this->setupSiteNavigations($site, $languages, $homePage);
-        }
+        $this->setupSiteNavigations($site, $languages, $homePage);
 
         return true;
     }

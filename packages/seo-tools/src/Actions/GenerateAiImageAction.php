@@ -70,7 +70,7 @@ class GenerateAiImageAction
         float $duration,
         ?Throwable $throwable = null,
     ): void {
-        ($this->recordAiGenerationAction ?? app(RecordAiGenerationAction::class))->handle([
+        ($this->recordAiGenerationAction ?? resolve(RecordAiGenerationAction::class))->handle([
             'action' => self::class,
             'model' => $model,
             'input' => $data->prompt,

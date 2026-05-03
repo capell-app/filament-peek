@@ -48,8 +48,8 @@ class AiGenerationInputData extends Data
     {
         return new self(
             actionKey: $actionKey,
-            creatorData: $data,
             options: ['user_id' => $data->userId],
+            creatorData: $data,
             aiCreatorSiteId: $data->siteId,
             aiCreatorUserId: $data->userId,
         );

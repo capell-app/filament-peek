@@ -35,12 +35,12 @@ php -d memory_limit=-1 vendor/bin/pest packages/theme-studio-core/tests/Unit
 
 Tests are collected from these directory patterns (configured in `phpunit.xml`):
 
-| Suite            | Directories                                       |
-| ---------------- | ------------------------------------------------- |
-| **Unit**         | `tests/src/*/Unit`, `packages/*/tests/Unit`       |
-| **Feature**      | `tests/src/*/Feature`, `packages/*/tests/Feature` |
-| **Architecture** | `tests/src/*/Arch`                                |
-| **Integration**  | `tests/src/*/Integration`                         |
+| Suite            | Directories                                   |
+| ---------------- | --------------------------------------------- |
+| **Unit**         | `tests/*/Unit`, `packages/*/tests/Unit`       |
+| **Feature**      | `tests/*/Feature`, `packages/*/tests/Feature` |
+| **Architecture** | `tests/*/Arch`                                |
+| **Integration**  | `tests/*/Integration`                         |
 
 ## Conventions
 
