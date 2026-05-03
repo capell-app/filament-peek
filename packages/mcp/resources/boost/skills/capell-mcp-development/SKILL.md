@@ -1,25 +1,21 @@
 ---
 name: capell-mcp-development
-description: Locate and work safely in capell-app/mcp. Use when changing mcp package behaviour and you need the package map, conventions, or where to read more.
+description: Use when editing Capell MCP servers, tokens, capabilities, previews, or Boost bridge tools.
 ---
 
-# Capell Mcp
+# Capell MCP
 
-MCP servers and capability adapters for Capell CMS.
+MCP servers and capability adapters with token auth, previews, confirmations, and audit records.
 
-## Where To Look
+## Look
 
-- Package root: `vendor/capell-app/mcp`
-- Source repo path: `packages/mcp`
-- Start with `README.md`; use `docs/` for deeper package notes when present.
-- Setup and Boost bridge notes: `vendor/capell-app/mcp/docs/boost-integration.md`
-- Namespace: `Capell\Mcp\`
-- Main code: `vendor/capell-app/mcp/src`
+- `packages/mcp/src`
+- `packages/mcp/docs/boost-integration.md`
+- `packages/mcp/README.md`
 
 ## Rules
 
-- Use Actions for behaviour and Data objects for structured state.
-- Keep UI/resource classes thin and translatable.
-- Respect package boundaries and existing Capell extension points.
-- Test focused changes with `vendor/bin/pest packages/mcp/tests` in the monorepo.
-- For MCP-facing work, register a Capell MCP capability provider instead of adding one-off Boost-only logic.
+- Register package operations through capability providers.
+- Mutating site operations need preview, confirmation, scopes, and audit.
+- Boost tools stay local-development bridges, not privileged bypasses.
+- Run `vendor/bin/pest packages/mcp/tests`.
