@@ -37,6 +37,12 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Models: CapellMcpToken, CapellMcpConfirmation, CapellMcpAuditEntry.
 - Servers: CapellKnowledgeServer and CapellSiteServer.
 
+## Laravel Boost Integration
+
+Capell MCP integrates with Laravel Boost when both packages are installed in the host app. Boost discovers lightweight package guidance from `vendor/capell-app/*/resources/boost/*`, while `capell-app/mcp` registers bridge tools into `boost.mcp.tools.include` so Boost can list and preview Capell MCP capabilities.
+
+See [docs/boost-integration.md](docs/boost-integration.md) for host-app setup, `capell-ruby` verification, and the difference between Boost's local MCP server and Capell's authenticated Site MCP server.
+
 ## Data Model
 
 - capell_mcp_tokens stores MCP client tokens.

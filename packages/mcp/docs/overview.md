@@ -24,6 +24,9 @@ Provides a typed capability contract so MCP tools can preview, confirm, run, and
 - Middleware: AuthenticateCapellMcpToken.
 - Models: CapellMcpToken, CapellMcpConfirmation, CapellMcpAuditEntry.
 - Servers: CapellKnowledgeServer and CapellSiteServer.
+- Laravel Boost discovers Capell package guidance from installed package `resources/boost` directories.
+- When Boost is installed, CapellMcpServiceProvider appends Capell bridge tools to `boost.mcp.tools.include`.
+- Boost bridge tools list and preview registered capabilities; authenticated confirmation remains on the Capell Site MCP server.
 
 ## Operational Notes
 
@@ -56,6 +59,7 @@ Lets trusted assistant clients inspect Capell and request controlled site operat
 - Protect site capabilities with token auth and confirmation flow.
 - Keep public_docs_paths scoped to documentation safe for MCP clients.
 - Run migrations before creating tokens.
+- Do not expect Boost to discover Capell MCP if the host app has not installed `capell-app/mcp`.
 
 ## Verification
 
