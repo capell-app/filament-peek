@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: vendor
-          key: dependencies-php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-testbench-${{ matrix.testbench }}-${{ matrix.db }}-${{ hashFiles('composer.lock', '.github/workflows/test-fast-pr.yml') }}
+          key: dependencies-php-${{ matrix.php }}-laravel-${{ matrix.laravel }}-testbench-${{ matrix.testbench }}-${{ matrix.db }}-${{ hashFiles('composer.json', 'composer.lock', '.github/workflows/test-fast-pr.yml') }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

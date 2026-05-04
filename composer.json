@@ -138,7 +138,8 @@
         "symplify/monorepo-builder": "^10.3.3",
         "tanmuhittin/laravel-google-translate": "^2.4",
         "tapp/filament-authentication-log": "^4.0|^5.0",
-        "torann/geoip": "^3.0"
+        "torann/geoip": "^3.0",
+        "voku/html-min": "^4.5"
     },
     "conflict": {
         "firebase/php-jwt": "<7.0.0"
