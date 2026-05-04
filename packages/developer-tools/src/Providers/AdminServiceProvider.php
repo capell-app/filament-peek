@@ -8,6 +8,7 @@ use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
+use Capell\DeveloperTools\Filament\Pages\CommandPalettePage;
 use Capell\DeveloperTools\Filament\Pages\DeveloperToolsPage;
 use Capell\DeveloperTools\Filament\Pages\PermissionAuditPage;
 use Capell\DeveloperTools\Filament\Pages\QueueHealthPage;
@@ -33,7 +34,7 @@ final class AdminServiceProvider extends ServiceProvider
         $this->app->tag([
             CapellArtisanPaletteCommandProvider::class,
             DeveloperToolsPaletteCommandProvider::class,
-        ], 'capell.palette-command-provider');
+        ], 'capell.developer-tools.command-palette-provider');
     }
 
     public function boot(): void
@@ -55,6 +56,7 @@ final class AdminServiceProvider extends ServiceProvider
     private function registerPages(): self
     {
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(DeveloperToolsPage::class));
+        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(CommandPalettePage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(SystemHealthPage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(QueueHealthPage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(PermissionAuditPage::class));

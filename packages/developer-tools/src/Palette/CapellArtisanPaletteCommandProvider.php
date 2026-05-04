@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Capell\DeveloperTools\Palette;
 
-use Capell\Admin\Contracts\Palette\PaletteCommandProvider;
-use Capell\Admin\Data\PaletteCommandData;
-use Capell\Admin\Data\PaletteCommandParameterData;
-use Capell\Admin\Enums\PaletteCommandDanger;
-use Capell\Admin\Enums\PaletteCommandParameterType;
-use Capell\Admin\Enums\PaletteCommandType;
+use Capell\DeveloperTools\Contracts\CommandPaletteProvider;
+use Capell\DeveloperTools\Data\CommandPaletteCommandData;
+use Capell\DeveloperTools\Data\CommandPaletteParameterData;
+use Capell\DeveloperTools\Enums\CommandPaletteDanger;
+use Capell\DeveloperTools\Enums\CommandPaletteParameterType;
+use Capell\DeveloperTools\Enums\CommandPaletteType;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 
-final class CapellArtisanPaletteCommandProvider implements PaletteCommandProvider
+final class CapellArtisanPaletteCommandProvider implements CommandPaletteProvider
 {
     /**
-     * @return array<string, PaletteCommandData>
+     * @return array<string, CommandPaletteCommandData>
      */
-    public function paletteCommands(): array
+    public function commandPaletteCommands(): array
     {
         $commands = [];
 
@@ -29,15 +29,15 @@ final class CapellArtisanPaletteCommandProvider implements PaletteCommandProvide
                 continue;
             }
 
-            $command = new PaletteCommandData(
+            $command = new CommandPaletteCommandData(
                 id: "artisan.{$name}",
                 label: Str::headline(str_replace(['capell:', '-'], ['', ' '], $name)),
                 description: $consoleCommand->getDescription() ?: null,
-                type: PaletteCommandType::Artisan,
+                type: CommandPaletteType::Artisan,
                 ability: 'palette.run.' . str_replace([':', '-'], '_', $name),
                 command: $name,
                 danger: $this->dangerForCommand($name),
-                requiresConfirmation: $this->dangerForCommand($name) !== PaletteCommandDanger::Safe,
+                requiresConfirmation: $this->dangerForCommand($name) !== CommandPaletteDanger::Safe,
                 parameters: $this->parametersForCommand($consoleCommand),
                 group: 'Developer tools',
                 sort: 80,
@@ -50,21 +50,21 @@ final class CapellArtisanPaletteCommandProvider implements PaletteCommandProvide
         return $commands;
     }
 
-    private function dangerForCommand(string $name): PaletteCommandDanger
+    private function dangerForCommand(string $name): CommandPaletteDanger
     {
         if (Str::contains($name, ['demo', 'install', 'setup', 'upgrade'])) {
-            return PaletteCommandDanger::Dangerous;
+            return CommandPaletteDanger::Dangerous;
         }
 
         if (Str::contains($name, ['clear', 'cache', 'publish'])) {
-            return PaletteCommandDanger::Confirm;
+            return CommandPaletteDanger::Confirm;
         }
 
-        return PaletteCommandDanger::Safe;
+        return CommandPaletteDanger::Safe;
     }
 
     /**
-     * @return array<int, PaletteCommandParameterData>
+     * @return array<int, CommandPaletteParameterData>
      */
     private function parametersForCommand(Command $command): array
     {
@@ -72,10 +72,10 @@ final class CapellArtisanPaletteCommandProvider implements PaletteCommandProvide
         $definition = $command->getDefinition();
 
         foreach ($definition->getArguments() as $argument) {
-            $parameters[] = new PaletteCommandParameterData(
+            $parameters[] = new CommandPaletteParameterData(
                 name: $argument->getName(),
                 label: Str::headline($argument->getName()),
-                type: PaletteCommandParameterType::String,
+                type: CommandPaletteParameterType::String,
                 required: $argument->isRequired(),
                 description: $argument->getDescription() ?: null,
                 default: $argument->getDefault(),
@@ -87,10 +87,10 @@ final class CapellArtisanPaletteCommandProvider implements PaletteCommandProvide
                 continue;
             }
 
-            $parameters[] = new PaletteCommandParameterData(
+            $parameters[] = new CommandPaletteParameterData(
                 name: '--' . $option->getName(),
                 label: Str::headline($option->getName()),
-                type: $option->acceptValue() ? PaletteCommandParameterType::String : PaletteCommandParameterType::Boolean,
+                type: $option->acceptValue() ? CommandPaletteParameterType::String : CommandPaletteParameterType::Boolean,
                 required: $option->isValueRequired(),
                 description: $option->getDescription() ?: null,
                 default: $this->defaultForOption($option),

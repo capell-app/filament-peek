@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\DeveloperTools\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+final class CommandPaletteRun extends Model
+{
+    /**
+     * @var array<int, string>
+     */
+    protected $guarded = [];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'parameters' => 'array',
+            'started_at' => 'datetime',
+            'finished_at' => 'datetime',
+        ];
+    }
+}

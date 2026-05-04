@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Capell\DeveloperTools\Palette;
 
-use Capell\Admin\Contracts\Palette\PaletteCommandProvider;
-use Capell\Admin\Data\PaletteCommandData;
-use Capell\Admin\Enums\PaletteCommandType;
+use Capell\DeveloperTools\Contracts\CommandPaletteProvider;
+use Capell\DeveloperTools\Data\CommandPaletteCommandData;
+use Capell\DeveloperTools\Enums\CommandPaletteType;
 use Capell\DeveloperTools\Filament\Pages\DeveloperToolsPage;
 use Capell\DeveloperTools\Filament\Pages\QueueHealthPage;
 use Capell\DeveloperTools\Filament\Pages\SystemHealthPage;
 use Throwable;
 
-final class DeveloperToolsPaletteCommandProvider implements PaletteCommandProvider
+final class DeveloperToolsPaletteCommandProvider implements CommandPaletteProvider
 {
     /**
-     * @return array<string, PaletteCommandData>
+     * @return array<string, CommandPaletteCommandData>
      */
-    public function paletteCommands(): array
+    public function commandPaletteCommands(): array
     {
         $commands = array_filter([
             $this->navigationCommand(
@@ -47,7 +47,7 @@ final class DeveloperToolsPaletteCommandProvider implements PaletteCommandProvid
         ]);
 
         return collect($commands)
-            ->mapWithKeys(fn (PaletteCommandData $command): array => [$command->id => $command])
+            ->mapWithKeys(fn (CommandPaletteCommandData $command): array => [$command->id => $command])
             ->all();
     }
 
@@ -62,14 +62,14 @@ final class DeveloperToolsPaletteCommandProvider implements PaletteCommandProvid
         string $page,
         array $keywords,
         int $sort,
-    ): ?PaletteCommandData {
+    ): ?CommandPaletteCommandData {
         try {
-            return new PaletteCommandData(
+            return new CommandPaletteCommandData(
                 id: $id,
                 label: $label,
                 description: $description,
                 url: $page::getUrl(panel: 'admin'),
-                type: PaletteCommandType::Navigation,
+                type: CommandPaletteType::Navigation,
                 group: 'Developer tools',
                 sort: $sort,
                 keywords: [$page, ...$keywords],
