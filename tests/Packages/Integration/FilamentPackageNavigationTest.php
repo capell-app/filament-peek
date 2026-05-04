@@ -22,6 +22,7 @@ use Capell\SeoTools\Filament\Pages\TranslationCoveragePage;
 use Capell\Tags\Filament\Resources\Tags\TagResource;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Capell\ThemeStudio\Admin\Filament\Pages\ThemeStudioPage;
+use Composer\InstalledVersions;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 
@@ -54,6 +55,12 @@ it('registers every installed package in the Capell package registry', function 
         'capell-app/theme-studio-core',
         'capell-app/workspaces',
     ];
+
+    foreach (['capell-app/installer', 'capell-app/marketplace'] as $optionalPackage) {
+        if (InstalledVersions::isInstalled($optionalPackage)) {
+            $expectedPackages[] = $optionalPackage;
+        }
+    }
 
     expect(CapellCore::getInstalledPackages()->keys()->all())
         ->toEqualCanonicalizing($expectedPackages);
