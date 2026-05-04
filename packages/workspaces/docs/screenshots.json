@@ -26,6 +26,16 @@
             "notes": "Show a signed preview URL rendering draft content before it reaches the live version."
         },
         {
+            "id": "preview-link-management",
+            "title": "Preview link management",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "PreviewLinkResource",
+            "required": true,
+            "notes": "Show issued preview links with expiry, revocation, last accessed time, and access count."
+        },
+        {
             "id": "compare-readiness",
             "title": "Compare and publish readiness",
             "package": "workspaces",
@@ -54,6 +64,36 @@
             "target": "ScheduledPublishingPage",
             "required": true,
             "notes": "Show release timing, scheduled workspaces, embargo-aware publishing windows, and queue state."
+        },
+        {
+            "id": "scheduler-metadata",
+            "title": "Scheduler metadata",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "WorkspaceResource",
+            "required": true,
+            "notes": "Show unpublish dates, embargo windows, and review reminders attached to a workspace."
+        },
+        {
+            "id": "stale-drafts",
+            "title": "Stale drafts",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "StaleDraftsPage",
+            "required": true,
+            "notes": "Show stale workspace detection, review nudges, and cleanup actions for unfinished draft work."
+        },
+        {
+            "id": "recovery-imports",
+            "title": "Recovery imports",
+            "package": "workspaces",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ImportPagesPage",
+            "required": true,
+            "notes": "Show recovery-center page import validation, relation resolution, execution state, and rollback reporting."
         },
         {
             "id": "activity-history",

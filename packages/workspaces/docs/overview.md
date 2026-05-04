@@ -9,11 +9,11 @@ This page is the consolidated implementation overview for the Workspaces package
 Workspaces is Capell's premium editorial timeline package. It brings the publishing loop into one workflow: preview, compare, approve, schedule, publish, and rollback content changes while preserving a readable history of what happened and why.
 
 - Draft workspaces for safe copy-on-write editing.
-- Signed live preview links and a frontend preview banner.
-- Compare, diff, comments, review assignments, and publish readiness checks.
-- Approval history for approve, reject, and request-changes decisions.
-- Scheduled publishing, immediate publishing, version history, rollback, and restore.
-- Activity timeline surfaces for editorial and operational audit trails.
+- Signed live preview links with expiry, revocation, access counts, and a frontend preview banner.
+- Compare, diff, dry-run validation, field comments, review assignments, publish readiness checks, URL-collision checks, and stale workspace warnings.
+- Approval history for submit, approve, reject, and request-changes decisions.
+- Scheduled publishing with release windows, unpublish dates, embargo windows, review reminders, immediate publishing, version history, rollback, and entity restore.
+- Activity timeline, stale drafts, recovery import screens, load-test fixtures, and prune commands for editorial and operational audit trails.
 
 ## Developer Notes
 
@@ -23,7 +23,7 @@ Adds copy-on-write, draftable model support, workspace events, review policies, 
 - Routes include capell/preview/exit.
 - Migrations create workspaces, versions, preview links, approvals, field comments, review assignments, and workspace columns on core/external tables.
 - Events track state changes and version rollback.
-- Publish checks include accessibility, broken links, missing alt text, and SEO meta.
+- Publish checks include accessibility, broken links, missing alt text, SEO meta, stale workspace state, URL collisions, and release-window rules.
 
 ## Operational Notes
 
@@ -34,31 +34,33 @@ Gives editorial teams a Statamic-style content history feel while remaining a se
 - Adds admin resources/pages/widgets and frontend preview route.
 - Adds middleware to resolve workspace context.
 - Adds commands for install, load testing, and pruning abandoned workspaces.
+- Adds recovery-center import screens for validation, relation resolution, execution, and rollback reporting when import workflows are enabled.
 
 ## Data And Retention
 
 - workspaces stores uuid, slug, status, base version, cloned-from workspace, submitted/approved/publish timestamps, and kind/status metadata.
 - versions stores uuid, number, live flag, manifest, source workspace, and rollback link.
-- preview_links, workspace_approvals, workspace_review_assignments, and workspace_field_comments support review workflow.
+- preview_links, workspace_approvals, workspace_review_assignments, and workspace_field_comments support preview, compare, comments, reviewer assignment, approval, and activity history.
 - Core tables receive workspace_id columns.
 
 ## Screenshot Plan
 
 - Editorial timeline dashboard.
-- Live preview and preview banner.
-- Compare and publish readiness panel.
-- Approval history and reviewer decisions.
-- Scheduled publishing queue.
-- Activity history and field comments.
-- Rollback and restore flow.
+- Live preview, preview link management, and preview banner.
+- Compare, dry-run validation, and publish readiness panel.
+- Approval history, reviewer assignments, and field comments.
+- Scheduled publishing queue with embargo, unpublish, and review-reminder metadata.
+- Stale drafts, recovery imports, activity history, and audit trail.
+- Rollback, entity restore, and version history flow.
 
 ## Pitfalls
 
 - Models participating in draft/publish must implement Draftable and be registered.
 - Run migrations in order before using copy-on-write.
-- Publish checks can block publishing.
-- Preview links need expiry and revocation review.
-- Schedule release windows and embargo rules must match site operations.
+- Publish checks, stale workspace analysis, URL collisions, and release windows can block publishing.
+- Preview links need expiry, revocation, and access-count review.
+- Schedule release windows, unpublish dates, embargo rules, and review reminders must match site operations.
+- Import recovery screens depend on the Migrator-backed import session tables when page import workflows are enabled.
 
 ## Verification
 
@@ -171,9 +173,9 @@ erDiagram
 Deployment should read [screenshots.json](screenshots.json), install the package with demo data, resolve each admin surface or frontend URL, and write images to `public/docs/screenshots/packages/workspaces`.
 
 - Editorial timeline dashboard.
-- Live preview and preview banner.
-- Compare and publish readiness panel.
-- Approval history and reviewer decisions.
-- Scheduled publishing queue.
-- Activity history and field comments.
-- Rollback and restore flow.
+- Live preview, preview link management, and preview banner.
+- Compare, dry-run validation, and publish readiness panel.
+- Approval history, reviewer assignments, and field comments.
+- Scheduled publishing queue with embargo, unpublish, and review-reminder metadata.
+- Stale drafts, recovery imports, activity history, and audit trail.
+- Rollback, entity restore, and version history flow.

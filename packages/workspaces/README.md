@@ -7,11 +7,11 @@ Status: **Available, schema-owning** · Kind: **package** · Tier: **premium** �
 Workspaces is Capell's flagship editorial timeline workflow. It gives content teams a premium, Statamic-style publishing experience for Capell: preview, compare, approve, schedule, publish, and rollback every meaningful content change without editing live records directly.
 
 - Draft workspaces with copy-on-write editing for Draftable content.
-- Signed live preview links and a frontend workspace preview banner.
-- Compare and readiness views with diff, comments, review assignments, and publish checks.
-- Approval history for approve, reject, and request-changes decisions.
-- Scheduled publishing, immediate publishing, version history, rollback, and restore.
-- Activity timeline widgets and pages for audit-friendly editorial history.
+- Signed live preview links, expiry/revocation management, access tracking, and a frontend workspace preview banner.
+- Compare and readiness views with diff, dry-run validation, field comments, review assignments, URL-collision checks, stale workspace warnings, and publish checks.
+- Approval history for submit, approve, reject, and request-changes decisions, including reviewer notes and required approval levels.
+- Scheduled publishing with release-window guards, unpublish dates, embargo windows, review reminders, immediate publishing, version history, rollback, and entity-level restore.
+- Activity timeline widgets, stale draft management, import recovery screens, load-test fixtures, and prune commands for audit-friendly editorial operations.
 
 ## Why It Matters
 
@@ -24,12 +24,12 @@ Workspaces is Capell's flagship editorial timeline workflow. It gives content te
 Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
 - Editorial timeline dashboard.
-- Live preview and preview banner.
-- Compare and publish readiness panel.
-- Approval history and reviewer decisions.
-- Scheduled publishing queue.
-- Activity history and field comments.
-- Rollback and restore flow.
+- Live preview, preview link management, and preview banner.
+- Compare, dry-run validation, and publish readiness panel.
+- Approval history, reviewer assignments, and field comments.
+- Scheduled publishing queue with embargo, unpublish, and review-reminder metadata.
+- Stale drafts, recovery imports, activity history, and audit trail.
+- Rollback, entity restore, and version history flow.
 
 ## Technical Shape
 
@@ -37,13 +37,13 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Routes include capell/preview/exit.
 - Migrations create workspaces, versions, preview links, approvals, field comments, review assignments, and workspace columns on core/external tables.
 - Events track state changes and version rollback.
-- Publish checks include accessibility, broken links, missing alt text, and SEO meta.
+- Publish checks include accessibility, broken links, missing alt text, SEO meta, stale workspace state, URL collisions, and release-window rules.
 
 ## Data Model
 
 - workspaces stores uuid, slug, status, base version, cloned-from workspace, submitted/approved/publish timestamps, and timeline status metadata.
 - versions stores uuid, number, live flag, manifest, source workspace, and rollback links.
-- preview_links, workspace_approvals, workspace_review_assignments, and workspace_field_comments support the preview, compare, approval, and activity workflow.
+- preview_links, workspace_approvals, workspace_review_assignments, and workspace_field_comments support preview, compare, approval, comments, assignments, and activity history.
 - Core tables receive workspace_id columns.
 
 ## Install Impact
@@ -53,6 +53,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Adds admin resources/pages/widgets and frontend preview route.
 - Adds middleware to resolve workspace context.
 - Adds commands for install, load testing, and pruning abandoned workspaces.
+- Adds recovery-center import screens for moving imported pages through validation, relation resolution, execution, and rollback reporting.
 
 ## Commands
 
@@ -85,9 +86,10 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 - Models participating in draft/publish must implement Draftable and be registered.
 - Run migrations in order before using copy-on-write.
-- Publish checks can block publishing.
-- Preview links need expiry and revocation review.
-- Schedule release windows and embargo rules must match site operations.
+- Publish checks, stale workspace analysis, URL collisions, and release windows can block publishing.
+- Preview links need expiry, revocation, and access-count review.
+- Schedule release windows, unpublish dates, embargo rules, and review reminders must match site operations.
+- Import recovery screens depend on the Migrator-backed import session tables when page import workflows are enabled.
 
 ## Quick Start
 

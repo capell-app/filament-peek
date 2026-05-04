@@ -4,17 +4,29 @@ This focused guide extends [Overview](overview.md) for the Workspaces package.
 
 ## Purpose
 
-Workspaces controls Capell's editorial timeline for Draftable records: preview, compare, approve, schedule, publish, and rollback. It is the premium workflow layer for teams that want content history, readiness checks, and safe publishing without editing live records directly.
+Workspaces controls Capell's editorial timeline for Draftable records: preview, compare, comment, assign reviewers, approve, validate, schedule, publish, restore, and rollback. It is the premium workflow layer for teams that want content history, readiness checks, and safe publishing without editing live records directly.
 
 ## Workflow
 
 1. Create a draft workspace or page draft.
-2. Preview the draft through signed preview links or the frontend preview banner.
+2. Preview the draft through signed preview links, managed preview-link records, or the frontend preview banner.
 3. Compare the draft against the live version and resolve field comments.
-4. Request review and collect approval decisions.
-5. Run readiness checks for accessibility, links, alt text, and SEO meta.
-6. Publish immediately, schedule the release, or request changes.
-7. Use version history, rollback, and restore when a published version needs to move back.
+4. Assign reviewers, request review, and collect submit, approve, reject, or request-changes decisions.
+5. Run dry-run validation and readiness checks for accessibility, links, alt text, SEO meta, stale workspace state, URL collisions, and release-window rules.
+6. Publish immediately, schedule the release, set unpublish dates, add embargo windows, add review reminders, or request changes.
+7. Watch stale drafts and activity history so unresolved work stays visible.
+8. Use version history, entity restore, rollback, and rollback reporting when a published version needs to move back.
+
+## Included Package Surfaces
+
+- WorkspaceResource for draft workspaces, status, compare, approve, schedule, validate, preview, publish, and rollback actions.
+- CompareVersionPage for field/media/URL/layout diff, comments, dry-run validation, and readiness context.
+- PreviewLinkResource for preview link expiry, revocation, access counts, and issued-by context.
+- ScheduledPublishingPage for scheduled releases, embargoes, unpublish dates, and review reminders.
+- StaleDraftsPage for old draft cleanup and review nudges.
+- ActivityTrailPage and widgets for audit-friendly workflow history.
+- PageVersionHistoryPage for revisions, published versions, rollback lineage, and restore context.
+- ImportPagesPage for recovery-center page import validation, relation resolution, execution, and rollback reporting.
 
 ## Gates
 
@@ -33,9 +45,9 @@ Workspaces controls Capell's editorial timeline for Draftable records: preview, 
 ## Screenshot Requirements
 
 - Editorial timeline dashboard.
-- Live preview and preview banner.
-- Compare and publish readiness panel.
-- Approval history and reviewer decisions.
-- Scheduled publishing queue.
-- Activity history and field comments.
-- Rollback and restore flow.
+- Live preview, preview link management, and preview banner.
+- Compare, dry-run validation, and publish readiness panel.
+- Approval history, reviewer assignments, and field comments.
+- Scheduled publishing queue with embargo, unpublish, and review-reminder metadata.
+- Stale drafts, recovery imports, activity history, and audit trail.
+- Rollback, entity restore, and version history flow.

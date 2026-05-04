@@ -4,30 +4,34 @@ Status: **Available, schema-owning** · Kind: **package** · Tier: **premium** �
 
 This page is the consolidated implementation overview for the Migrator package. It is extracted from the package README, service providers, migrations, config files, routes, resources, models, actions, and the shared Capell ERD notes where available.
 
-## What This Plugin Adds
+## What This Package Adds
 
-Migrator provides package export, import, dependency graph, and validation workflows for Capell content operations.
+Migrator provides the Capell Migration Assistant: package export/import, CSV/XML source reads, source contracts for add-on importers, field mapping, preview, validation, dependency graph review, relation resolution, media ingest, queued execution, and rollback reports.
 
-- Import session tracking.
-- Migrator rollback reporting.
+- Import source contracts expose rows, columns, metadata, and a suggested target.
+- Native CSV and XML readers cover common flat-file migrations without extra Composer dependencies.
+- Field mapping targets Capell pages and types. Collection-like imports resolve through the same target registry until another package registers a concrete collection target.
+- Preview output separates creates, skips, warnings, and blocking errors before execution.
+- Rollback reports capture created model class/id pairs, imported URL/media counts, source filename/checksum, executing user/time, and manual rollback instructions.
+- Import session tracking, retry/cancel flow, notifications, and queued execution.
 - Package reader/writer services.
-- Import validation and relation resolution actions.
-- Queued import jobs.
+- Import validation, relation resolution, dependency graph, and media ingest services.
 
 ## Developer Notes
 
-Separates export/import work into services, actions, DTOs, jobs, events, and resolver contracts so package data can be moved with explicit ownership rules.
+Separates migration work into services, actions, DTOs, jobs, events, source readers, target registries, and resolver contracts so package and flat-file data can be moved with explicit ownership rules.
 
 - MigratorServiceProvider registers the package.
 - Config file: migrator.php.
 - Migrations create import_rollback_reports and import_sessions.
 - Jobs execute import plans.
 - Events report import completed or failed.
-- Services cover package reading, writing, validation, relation resolution, media ingest, and rollback report.
+- Services cover package reading, writing, CSV/XML reading, mapping, preview, validation, relation resolution, media ingest, and rollback reports.
+- WordPress WXR support lives in `capell-app/wordpress-importer`, which depends on this package and registers its reader through the source registry.
 
 ## Operational Notes
 
-Supports controlled migration and recovery workflows where content, media, and relationships need review before import.
+Supports controlled migration workflows where content, media, source files, and relationships need review before import and operators need evidence after execution.
 
 - Adds import_rollback_reports and import_sessions tables.
 - Adds migrator queue configuration.
@@ -37,7 +41,7 @@ Supports controlled migration and recovery workflows where content, media, and r
 
 ## Data And Retention
 
-- import_rollback_reports stores import session, created model ids, source checksum, summary counts, and manual rollback instructions.
+- import_rollback_reports stores import session, created model ids, source filename/checksum, summary counts, executing user/time, and manual rollback instructions.
 - import_sessions stores import kind, status, manifest, and result summary.
 - Retention and deletion rules should be verified against the host application policy.
 
@@ -98,15 +102,21 @@ Supports controlled migration and recovery workflows where content, media, and r
 
 ```mermaid
 erDiagram
-    USERS ||--o{ BACKUP_RESTORES : starts
     USERS ||--o{ IMPORT_SESSIONS : starts
+    USERS ||--o{ IMPORT_ROLLBACK_REPORTS : executes
+    IMPORT_SESSIONS ||--o{ IMPORT_ROLLBACK_REPORTS : reports
 
-    BACKUP_RESTORES {
+    IMPORT_ROLLBACK_REPORTS {
         bigint id PK
         uuid uuid
+        bigint import_session_id FK
         bigint user_id FK
-        string status
-        string source_archive_path
+        string source_filename
+        string source_package_checksum
+        json created_models
+        json summary
+        text manual_instructions
+        timestamp executed_at
     }
 
     IMPORT_SESSIONS {
