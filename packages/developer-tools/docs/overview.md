@@ -13,12 +13,14 @@ Developer Tools adds operational diagnostics for cache, configuration drift, mig
 - Permission audit report.
 - Queue health report.
 - Health widgets for cache, content, migrations, registry, setup, packages, and Tailwind.
+- Command palette entries for developer tools, system health, queue health, and trusted `capell:*` Artisan operations.
 
 ## Developer Notes
 
 Keeps diagnostics in actions and data objects so admin pages can show health information without hard-coded checks in the UI.
 
 - DeveloperToolsServiceProvider and AdminServiceProvider register admin pages and widgets.
+- AdminServiceProvider registers `CapellArtisanPaletteCommandProvider` and `DeveloperToolsPaletteCommandProvider` through the `capell.palette-command-provider` tag.
 - Actions build each health report.
 - Data objects describe report rows and dashboard state.
 - FailedJob model supports queue reporting.
@@ -78,7 +80,18 @@ Helps operators and agencies see setup problems before they become publishing or
 
 ## Commands
 
-- None proven in this package directory.
+- Dynamic command palette metadata for trusted `capell:*` Artisan commands.
+- Confirmation is required for cache, clear, and publish commands.
+- Install, setup, upgrade, and demo commands are marked dangerous.
+
+## Command Palette
+
+- `developer-tools.open`: opens DeveloperToolsPage.
+- `developer-tools.system-health`: opens SystemHealthPage.
+- `developer-tools.queue-health`: opens QueueHealthPage.
+- `artisan.capell:*`: generated from available Capell Artisan commands, including command parameters.
+
+The package only contributes command metadata. Capell Admin owns the palette UI, server-side authorization, validation, execution, notifications, and audit log records.
 
 ## Routes And Config
 

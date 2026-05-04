@@ -22,13 +22,18 @@ use Capell\DeveloperTools\Filament\Widgets\Health\RegistryHealthWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\SetupHealthWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\SiteHealthWidgetAbstract;
 use Capell\DeveloperTools\Filament\Widgets\Health\TailwindBuildStatusWidgetAbstract;
+use Capell\DeveloperTools\Palette\CapellArtisanPaletteCommandProvider;
+use Capell\DeveloperTools\Palette\DeveloperToolsPaletteCommandProvider;
 use Illuminate\Support\ServiceProvider;
 
 final class AdminServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->tag([
+            CapellArtisanPaletteCommandProvider::class,
+            DeveloperToolsPaletteCommandProvider::class,
+        ], 'capell.palette-command-provider');
     }
 
     public function boot(): void
