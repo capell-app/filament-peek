@@ -71,6 +71,7 @@ jobs:
             pestphp/pest:^3.0 \
             pestphp/pest-plugin-arch:^3.0 \
             pestphp/pest-plugin-laravel:^3.0 \
+            pestphp/pest-plugin-livewire:^3.0 \
             pestphp/pest-plugin-type-coverage:^3.0 \
             phpstan/phpstan:^1.10.57 \
             phpstan/phpstan-mockery:^1.0 \
@@ -81,10 +82,10 @@ jobs:
             driftingly/rector-laravel:^1.0 \
             larastan/larastan:^2.0
           composer require --no-interaction --no-progress --ansi --no-update \
-            livewire/livewire:^4.1 \
-            filament/filament:^5.2 \
-            filament/support:^5.2 \
-            pboivin/filament-peek:^4.0 \
+            livewire/livewire:^3.7 \
+            filament/filament:^4.7 \
+            filament/support:^4.7 \
+            pboivin/filament-peek:^3.0 \
             symfony/html-sanitizer:^7.0 \
             openspout/openspout:^4.22
           composer update --no-interaction --no-progress --ansi --optimize-autoloader --with-all-dependencies -W
