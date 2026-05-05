@@ -23,6 +23,7 @@ final class ExampleSitesServiceProvider extends AbstractPackageServiceProvider
     {
         $package->name(self::$name)
             ->hasConfigFile('capell-example-sites')
+            ->hasTranslations()
             ->hasCommands([
                 DemoCommand::class,
                 AdminDemoCommand::class,

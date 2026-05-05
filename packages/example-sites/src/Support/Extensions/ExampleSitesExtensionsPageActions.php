@@ -25,7 +25,7 @@ final class ExampleSitesExtensionsPageActions
     private function installExampleSiteDataAction(): Action
     {
         return Action::make('installExampleSiteData')
-            ->label(__('capell-admin::button.demo_install'))
+            ->label(__('capell-example-sites::actions.install_example_site_data'))
             ->icon(Heroicon::OutlinedBugAnt)
             ->outlined()
             ->size('sm')
@@ -33,10 +33,10 @@ final class ExampleSitesExtensionsPageActions
             ->authorize(fn (): bool => ExtensionsPage::canManageExtensions())
             ->visible(fn (): bool => $this->canInstallExampleSiteData())
             ->schema(fn (): array => $this->getFormSchemaForParams($this->getExampleSiteCommandParams()))
-            ->modalHeading(__('capell-admin::generic.install_demo_data'))
-            ->modalDescription(__('capell-admin::generic.install_demo_data_description'))
-            ->successNotificationTitle(__('capell-admin::notification.plugin_demo_installed'))
-            ->failureNotificationTitle(__('capell-admin::notification.plugin_demo_installation_failed'))
+            ->modalHeading(__('capell-example-sites::actions.install_example_site_data_heading'))
+            ->modalDescription(__('capell-example-sites::actions.install_example_site_data_description'))
+            ->successNotificationTitle(__('capell-example-sites::actions.example_site_data_installed'))
+            ->failureNotificationTitle(__('capell-example-sites::actions.example_site_data_installation_failed'))
             ->action(function (ExtensionsPage $livewire, Action $action, array $data): void {
                 foreach (CapellCore::getInstalledPackages() as $package) {
                     if ($package->getDemoCommand() === null) {
@@ -65,11 +65,10 @@ final class ExampleSitesExtensionsPageActions
 
     private function canInstallExampleSiteData(): bool
     {
+        $enabled = config('capell-example-sites.extensions_page_action_enabled');
+
         return ExtensionsPage::canManageExtensions()
-            && config(
-                'capell-admin.enable_demo_installation',
-                app()->isLocal() && ! app()->isProduction(),
-            );
+            && (is_bool($enabled) ? $enabled : app()->isLocal() && ! app()->isProduction());
     }
 
     /** @return array<int, string> */
