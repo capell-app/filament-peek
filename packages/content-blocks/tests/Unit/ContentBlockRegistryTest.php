@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
+use Capell\ContentBlocks\Actions\RegisterContentBlockDefinitionProviderAction;
 use Capell\ContentBlocks\Actions\RegisterDefaultContentBlocksAction;
+use Capell\ContentBlocks\Actions\ResolveContentBlockComponentAction;
+use Capell\ContentBlocks\Contracts\ContentBlockDefinitionProvider;
 use Capell\ContentBlocks\Data\ContentBlockDefinitionData;
 use Capell\ContentBlocks\Enums\ContentBlockConfiguratorEnum;
+use Capell\ContentBlocks\Filament\Configurators\ContentBlocks\AccordionContentBlockConfigurator;
 use Capell\ContentBlocks\Support\ContentBlockRegistry;
 use Filament\Support\Icons\Heroicon;
 
@@ -46,3 +50,61 @@ it('guards against duplicate block keys', function (): void {
     $registry->register($definition);
     $registry->register($definition);
 })->throws(InvalidArgumentException::class);
+
+it('resolves block definitions from configurator classes and keys', function (): void {
+    $registry = new ContentBlockRegistry;
+
+    RegisterDefaultContentBlocksAction::run($registry);
+
+    expect($registry->getByConfigurator(AccordionContentBlockConfigurator::class)?->key)->toBe('accordion')
+        ->and($registry->getByConfigurator(AccordionContentBlockConfigurator::getKey())?->key)->toBe('accordion');
+});
+
+it('registers content block definitions from another package provider', function (): void {
+    $registry = new ContentBlockRegistry;
+    $provider = new class implements ContentBlockDefinitionProvider
+    {
+        /**
+         * @return iterable<ContentBlockDefinitionData>
+         */
+        public function definitions(): iterable
+        {
+            return [
+                new ContentBlockDefinitionData(
+                    key: 'package_accordion',
+                    label: 'Package accordion',
+                    description: 'A package-owned content block.',
+                    icon: Heroicon::OutlinedQueueList,
+                    group: 'package',
+                    configurator: AccordionContentBlockConfigurator::class,
+                    component: 'vendor-package::content-block.package-accordion',
+                ),
+            ];
+        }
+    };
+
+    RegisterContentBlockDefinitionProviderAction::run($registry, $provider);
+
+    expect($registry->get('package_accordion')?->component)->toBe('vendor-package::content-block.package-accordion')
+        ->and($registry->getByConfigurator(AccordionContentBlockConfigurator::getKey())?->key)->toBe('package_accordion');
+});
+
+it('resolves the frontend component without string matching configurator names', function (): void {
+    $registry = new ContentBlockRegistry;
+    $registry->register(new ContentBlockDefinitionData(
+        key: 'package_accordion',
+        label: 'Package accordion',
+        description: 'A package-owned content block.',
+        icon: Heroicon::OutlinedQueueList,
+        group: 'package',
+        configurator: AccordionContentBlockConfigurator::class,
+        component: 'vendor-package::content-block.package-accordion',
+    ));
+
+    app()->instance(ContentBlockRegistry::class, $registry);
+
+    expect(ResolveContentBlockComponentAction::run(
+        configurator: AccordionContentBlockConfigurator::getKey(),
+        fallbackComponent: 'capell-content-blocks::content-block.fallback',
+    ))->toBe('vendor-package::content-block.package-accordion');
+});
