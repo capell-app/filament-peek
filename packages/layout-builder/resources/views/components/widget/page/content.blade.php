@@ -27,10 +27,10 @@
 
 {{-- format-ignore-start --}}
 @php
-    $hasPrimaryHeading = Frontend::getFrontendData('has_primary_heading');
+    $hasPrimaryHeading = (bool) Frontend::getFrontendData('has_primary_heading');
 
     $hasContent = in_array('content', $pageContents, true) && ! empty($page->translation->content);
-    $hasTitle = in_array('title', $pageContents, true) && ! (empty($this->widgetData['meta']['show_page_title']) && $hasPrimaryHeading);
+    $hasTitle = in_array('title', $pageContents, true) && ! (empty($widgetData['meta']['show_page_title']) && $hasPrimaryHeading);
 
     if (! $headingTag) {
         $headingTag = ($hasPrimaryHeading ? 'h2' : 'h1');
