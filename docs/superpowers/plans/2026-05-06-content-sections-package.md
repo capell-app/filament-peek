@@ -419,6 +419,7 @@ git commit -m "feat: scaffold content sections package"
 - Move: `packages/layout-builder/src/Observers/SectionObserver.php` to `packages/content-sections/src/Observers/SectionObserver.php`
 - Move: `packages/layout-builder/database/factories/SectionFactory.php` to `packages/content-sections/database/factories/SectionFactory.php`
 - Move: `packages/layout-builder/database/migrations/create_sections_table.php` to `packages/content-sections/database/migrations/create_sections_table.php`
+- Create: `packages/content-sections/src/Enums/LayoutTypeEnum.php`
 - Create: `packages/content-sections/src/Support/ContentSectionsModelRegistrar.php`
 - Modify: `packages/content-sections/src/Providers/ContentSectionsServiceProvider.php`
 - Modify: `tests/AbstractTestCase.php`
@@ -470,6 +471,45 @@ Remove `use Capell\LayoutBuilder\Models\Widget;` and `use Capell\LayoutBuilder\M
 
 - [ ] **Step 4: Move observer default type lookup into Content Sections**
 
+Create the minimal enum required by the observer at `packages/content-sections/src/Enums/LayoutTypeEnum.php`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Capell\ContentSections\Enums;
+
+use Capell\ContentSections\Models\Section;
+use Filament\Support\Contracts\HasLabel;
+
+enum LayoutTypeEnum: string implements HasLabel
+{
+    case Section = 'section';
+
+    public function getModel(): string
+    {
+        return match ($this) {
+            self::Section => Section::class,
+        };
+    }
+
+    public function getTable(): string
+    {
+        return match ($this) {
+            self::Section => 'sections',
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Section => 'Section',
+        };
+    }
+}
+```
+
 Update `SectionObserver` imports:
 
 ```php
@@ -513,9 +553,38 @@ class ContentSectionsModelRegistrar
 
 Call it from `ContentSectionsServiceProvider::bootInstalledPackage()`.
 
+Update `registeringPackage()` so installed package boot happens after Capell package metadata is registered:
+
+```php
+public function registeringPackage(): void
+{
+    CapellCore::registerPackage(
+        static::$packageName,
+        type: static::getType(),
+        serviceProviderClass: static::class,
+        path: realpath(__DIR__ . '/../..'),
+        version: $this->getVersion(),
+        description: fn (): string => __('capell-content-sections::package.description'),
+    );
+
+    $this->app->booted(function (): void {
+        if (! $this->isPackageInstalled()) {
+            return;
+        }
+
+        $this->bootInstalledPackage();
+    });
+}
+```
+
 Add `bootInstalledPackage()` to `ContentSectionsServiceProvider`:
 
 ```php
+private function isPackageInstalled(): bool
+{
+    return CapellCore::getPackage(static::$packageName)->isInstalled();
+}
+
 private function bootInstalledPackage(): self
 {
     return $this
