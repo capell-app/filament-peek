@@ -38,7 +38,9 @@ Create:
 - `packages/content-sections/src/Enums/SectionConfiguratorEnum.php` - Section configurator enum.
 - `packages/content-sections/src/Enums/TypeEnum.php` - Section type enum value only.
 - `packages/content-sections/src/Filament/Configurators/Sections/*` - moved section configurators.
-- `packages/content-sections/src/Filament/Components/Forms/Content/*` - moved section type/settings form components.
+- `packages/content-sections/src/Filament/Components/Forms/Content/*` - moved section form components.
+- `packages/content-sections/src/Filament/Components/Forms/ContentSelect.php` - moved section selector component.
+- `packages/content-sections/src/Filament/Components/Tables/Columns/Content/ContentNameColumn.php` - moved section table name column.
 - `packages/content-sections/src/Filament/Resources/Sections/*` - moved Section resource, pages, tables, schemas, widgets, relation managers.
 - `packages/content-sections/src/Livewire/Assets/Table/SectionAssets.php` - moved Section asset picker table.
 - `packages/content-sections/src/Support/ContentSectionsModelRegistrar.php` - registers Section in Capell Core without LayoutBuilder.
@@ -70,7 +72,7 @@ Modify:
 - `packages/layout-builder/src/Filament/Components/Forms/Content/TypeSelect.php` - move to Content Sections.
 - `packages/layout-builder/src/Filament/Components/Forms/Content/SettingsSchema.php` - move to Content Sections.
 - `packages/layout-builder/src/Filament/Configurators/Types/ContentTypeConfigurator.php` - move to Content Sections.
-- `packages/layout-builder/src/Filament/Configurators/Widgets/SectionWidgetAssetForm.php` - move to Content Sections.
+- `packages/layout-builder/src/Filament/Configurators/Widgets/SectionWidgetAssetForm.php` - leave for Task 4 because it extends a LayoutBuilder widget configurator; Task 4 must remove or replace it with generic asset configurator lookup.
 - `packages/layout-builder/src/Filament/Resources/Pages/RelationManagers/SectionsRelationManager.php` - remove from LayoutBuilder.
 - `packages/blog/composer.json` - require `capell-app/content-sections` if Blog keeps section tag relations.
 - `packages/blog/capell.json` - add Content Sections to package requirements if Blog keeps section tag relations.
@@ -736,14 +738,16 @@ packages/layout-builder/src/Actions/MutateContentDataBeforeFillAction.php
 packages/layout-builder/src/Actions/ReplicateContentAction.php
 ```
 
-Move section-only form components:
+Move section-only form and table components:
 
 ```text
-packages/layout-builder/src/Filament/Components/Forms/Content/TypeSelect.php
-packages/layout-builder/src/Filament/Components/Forms/Content/SettingsSchema.php
+packages/layout-builder/src/Filament/Components/Forms/Content -> packages/content-sections/src/Filament/Components/Forms/Content
 packages/layout-builder/src/Filament/Components/Forms/ContentSelect.php
+packages/layout-builder/src/Filament/Components/Tables/Columns/Content/ContentNameColumn.php -> packages/content-sections/src/Filament/Components/Tables/Columns/Content/ContentNameColumn.php
 packages/layout-builder/src/Filament/Configurators/Types/ContentTypeConfigurator.php
 ```
+
+Do not move `packages/layout-builder/src/Filament/Configurators/Widgets/SectionWidgetAssetForm.php` into Content Sections because it extends `AbstractWidgetAssetConfigurator` from LayoutBuilder. Leave it for Task 4, where LayoutBuilder becomes generic and stops directly referencing Section configurators.
 
 Do not move these LayoutBuilder-backed Section relation managers into Content Sections:
 
