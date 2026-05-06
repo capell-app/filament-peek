@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\PasswordPolicy\Filament\Settings;
 
 use Capell\Admin\Filament\Contracts\HasSchema;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Components\Toggle;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 

@@ -16,7 +16,10 @@
     :$widget
 >
     <section
-        style="padding: 3rem 2rem; background-color: var(--layout-builder-surface)"
+        style="
+            padding: 3rem 2rem;
+            background-color: var(--layout-builder-surface);
+        "
     >
         @if ($widget->translation)
             <div style="margin-bottom: 2.5rem; max-width: 38rem">
@@ -65,7 +68,9 @@
                         style="
                             display: flex;
                             gap: 1rem;
-                            background-color: var(--layout-builder-surface-container);
+                            background-color: var(
+                                --layout-builder-surface-container
+                            );
                         "
                     >
                         @if ($widgetAsset->asset->getMeta('icon'))
@@ -80,7 +85,9 @@
                                     class="ap-feature-title"
                                     style="
                                         color: var(--layout-builder-on-surface);
-                                        font-size: var(--layout-builder-text-title-md);
+                                        font-size: var(
+                                            --layout-builder-text-title-md
+                                        );
                                         font-weight: 600;
                                         margin-bottom: 0.375rem;
                                     "
@@ -93,8 +100,12 @@
                                 <p
                                     class="ap-feature-description"
                                     style="
-                                        color: var(--layout-builder-on-surface-variant);
-                                        font-size: var(--layout-builder-text-body-sm);
+                                        color: var(
+                                            --layout-builder-on-surface-variant
+                                        );
+                                        font-size: var(
+                                            --layout-builder-text-body-sm
+                                        );
                                         line-height: 1.55;
                                     "
                                 >
@@ -122,7 +133,9 @@
                         class="ap-feature-item layout-builder-card"
                         style="
                             text-align: center;
-                            background-color: var(--layout-builder-surface-container);
+                            background-color: var(
+                                --layout-builder-surface-container
+                            );
                         "
                     >
                         @if ($widgetAsset->asset->getMeta('icon'))
@@ -141,7 +154,9 @@
                                 class="ap-feature-title"
                                 style="
                                     color: var(--layout-builder-on-surface);
-                                    font-size: var(--layout-builder-text-title-md);
+                                    font-size: var(
+                                        --layout-builder-text-title-md
+                                    );
                                     font-weight: 600;
                                     margin-bottom: 0.375rem;
                                 "
@@ -154,8 +169,12 @@
                             <p
                                 class="ap-feature-description"
                                 style="
-                                    color: var(--layout-builder-on-surface-variant);
-                                    font-size: var(--layout-builder-text-body-sm);
+                                    color: var(
+                                        --layout-builder-on-surface-variant
+                                    );
+                                    font-size: var(
+                                        --layout-builder-text-body-sm
+                                    );
                                     line-height: 1.55;
                                 "
                             >

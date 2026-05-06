@@ -17,7 +17,7 @@ return new class extends Migration
         if (! Schema::hasColumn('import_sessions', 'workspace_id')) {
             Schema::table('import_sessions', function (Blueprint $table): void {
                 $table->unsignedBigInteger('workspace_id')->nullable()->after('id');
-                $table->foreign('workspace_id')->references('id')->on('publishing-studio')->nullOnDelete();
+                $table->foreign('workspace_id')->references('id')->on('workspaces')->nullOnDelete();
             });
         }
     }

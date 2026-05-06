@@ -21,7 +21,7 @@ use Capell\LayoutBuilder\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\Tab\WidgetSettingsTab;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\TranslationsRepeater;
-use Filament\FormBuilder\Components\Checkbox;
+use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;

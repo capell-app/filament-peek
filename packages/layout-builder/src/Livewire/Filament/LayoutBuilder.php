@@ -20,8 +20,8 @@ use Capell\LayoutBuilder\Livewire\Filament\Concerns\ManagesWidgets;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Illuminate\Auth\AuthenticationException;
@@ -43,12 +43,12 @@ use Livewire\Component;
  * @property-read $addWidgetAction
  * @property-read $editWidgetAssetAction
  */
-class LayoutBuilder extends Component implements HasActions, HasFormBuilder, HasPageResource
+class LayoutBuilder extends Component implements HasActions, HasForms, HasPageResource
 {
     use HasLayoutActions;
     use HasPageCacheNotification;
     use InteractsWithActions;
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
     use ManagesAssets;
     use ManagesContainers;
     use ManagesWidgets;

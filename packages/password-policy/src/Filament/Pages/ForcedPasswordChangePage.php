@@ -7,9 +7,9 @@ namespace Capell\PasswordPolicy\Filament\Pages;
 use BackedEnum;
 use Capell\PasswordPolicy\Actions\UpdatePasswordAction;
 use Capell\PasswordPolicy\Data\PasswordChangeData;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
@@ -23,9 +23,9 @@ use Override;
 /**
  * @property Schema $form
  */
-class ForcedPasswordChangePage extends Page implements HasFormBuilder
+class ForcedPasswordChangePage extends Page implements HasForms
 {
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
 
     /** @var array<string, mixed>|null */
     public ?array $data = [];

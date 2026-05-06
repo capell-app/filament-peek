@@ -10,7 +10,7 @@ use Capell\PublishingStudio\Models\Workspace;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Override;
-use Pboivin\AdminPreview\Facades\Peek;
+use Pboivin\FilamentPeek\Facades\Peek;
 
 final class WorkspacePeekPreviewAction extends Action
 {

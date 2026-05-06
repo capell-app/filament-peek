@@ -24,10 +24,10 @@ class AdminServiceProvider extends ServiceProvider
     public function register(): void
     {
         Config::set(
-            'filament-login-audit.resources.LoginAuditResource',
+            'filament-authentication-log.resources.AuthenticationLogResource',
             LoginAuditResource::class,
         );
-        Config::set('filament-login-audit.authenticatable.field-to-display', 'name');
+        Config::set('filament-authentication-log.authenticatable.field-to-display', 'name');
     }
 
     public function boot(): void

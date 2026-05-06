@@ -8,7 +8,7 @@ use Capell\LayoutBuilder\Filament\Components\Forms\ColorSchemeComponent;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\ComponentSection;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\DisplaySection;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;

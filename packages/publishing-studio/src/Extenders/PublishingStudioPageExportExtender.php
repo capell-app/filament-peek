@@ -6,7 +6,7 @@ namespace Capell\PublishingStudio\Extenders;
 
 use Capell\Admin\Contracts\Extenders\PageExportExtender;
 use Capell\PublishingStudio\Models\Workspace;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Component;
 
 class PublishingStudioPageExportExtender implements PageExportExtender

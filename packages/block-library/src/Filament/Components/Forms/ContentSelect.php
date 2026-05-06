@@ -11,7 +11,7 @@ use Capell\BlockLibrary\Models\ContentBlock;
 use Capell\Core\Facades\CapellCore;
 use Closure;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;

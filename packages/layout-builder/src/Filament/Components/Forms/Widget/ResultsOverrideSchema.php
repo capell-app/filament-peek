@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\LayoutBuilder\Filament\Components\Forms\Widget;
 
-use Filament\FormBuilder\Components\Checkbox;
+use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Schema;
 
 class ResultsOverrideSchema

@@ -11,8 +11,8 @@ use Capell\MediaAI\Contracts\ImageDoctor;
 use Capell\MediaAI\Data\ImageDoctorRequest;
 use Capell\MediaAI\Support\NullImageDoctor;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 
 final class MediaAIEditActionExtender implements MediaEditActionExtender

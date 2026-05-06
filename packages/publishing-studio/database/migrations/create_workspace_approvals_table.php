@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('workspace_approvals', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('workspace_id')->constrained('publishing-studio')->cascadeOnDelete();
+            $table->foreignId('workspace_id')->constrained('workspaces')->cascadeOnDelete();
             $table->nullableMorphs('actionable');
             $table->unsignedTinyInteger('level');
             $table->string('action', 32);

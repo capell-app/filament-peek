@@ -38,9 +38,13 @@
     ],
     "screenshots": "docs/screenshots.json",
     "providers": {
-        "shared": ["Capell\\PublishingStudio\\Providers\\PublishingStudioServiceProvider"],
+        "shared": [
+            "Capell\\PublishingStudio\\Providers\\PublishingStudioServiceProvider"
+        ],
         "admin": ["Capell\\PublishingStudio\\Providers\\AdminServiceProvider"],
-        "console": ["Capell\\PublishingStudio\\Providers\\ConsoleServiceProvider"]
+        "console": [
+            "Capell\\PublishingStudio\\Providers\\ConsoleServiceProvider"
+        ]
     },
     "commands": {
         "install": "capell:publishing-studio-install"

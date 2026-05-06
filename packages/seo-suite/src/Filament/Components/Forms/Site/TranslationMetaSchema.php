@@ -6,8 +6,8 @@ namespace Capell\SeoSuite\Filament\Components\Forms\Site;
 
 use Capell\Core\Models\Translation;
 use Capell\SeoSuite\Filament\Components\Forms\SearchMetaDataSection;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Group;
 
 class TranslationMetaSchema

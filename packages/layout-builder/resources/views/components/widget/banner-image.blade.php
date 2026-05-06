@@ -108,7 +108,10 @@
                     @endif
 
                     @if ($actions)
-                        <x-capell-layout-builder::actions class="mt-4" :$actions />
+                        <x-capell-layout-builder::actions
+                            class="mt-4"
+                            :$actions
+                        />
                     @endif
                 </div>
             </div>

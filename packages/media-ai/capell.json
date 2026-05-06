@@ -9,11 +9,7 @@
     "contexts": ["admin", "console"],
     "requires": ["capell-app/admin", "capell-app/core"],
     "providers": {
-        "admin": [
-            "Capell\\MediaAI\\Providers\\MediaAIServiceProvider"
-        ],
-        "console": [
-            "Capell\\MediaAI\\Providers\\MediaAIServiceProvider"
-        ]
+        "admin": ["Capell\\MediaAI\\Providers\\MediaAIServiceProvider"],
+        "console": ["Capell\\MediaAI\\Providers\\MediaAIServiceProvider"]
     }
 }

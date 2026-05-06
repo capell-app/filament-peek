@@ -9,7 +9,7 @@ use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\LoginAudit\Models\LoginAudit;
 use Filament\Facades\Filament;
-use Filament\FormBuilder\Components\DatePicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -39,11 +39,11 @@ class LoginAuditsTable implements TableConfigurator
                 ->url(fn (LoginAudit $record): ?string => self::getAuthenticatableUrl($record))
                 ->sortable(),
             TextColumn::make('ip_address')
-                ->label(trans('filament-login-audit::filament-login-audit.column.ip_address'))
+                ->label(trans('filament-authentication-log::filament-authentication-log.column.ip_address'))
                 ->searchable()
                 ->sortable(),
             TextColumn::make('user_agent')
-                ->label(trans('filament-login-audit::filament-login-audit.column.user_agent'))
+                ->label(trans('filament-authentication-log::filament-authentication-log.column.user_agent'))
                 ->searchable()
                 ->sortable()
                 ->wrap()
@@ -59,10 +59,10 @@ class LoginAuditsTable implements TableConfigurator
                 })
                 ->toggleable(isToggledHiddenByDefault: true),
             DateColumn::make('login_at')
-                ->label(trans('filament-login-audit::filament-login-audit.column.login_at'))
+                ->label(trans('filament-authentication-log::filament-authentication-log.column.login_at'))
                 ->icon(fn (LoginAudit $record): string => $record->login_successful ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
             DateColumn::make('logout_at')
-                ->label(trans('filament-login-audit::filament-login-audit.column.logout_at'))
+                ->label(trans('filament-authentication-log::filament-authentication-log.column.logout_at'))
                 ->icon(fn (LoginAudit $record): string => $record->cleared_by_user ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle')
                 ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('location')

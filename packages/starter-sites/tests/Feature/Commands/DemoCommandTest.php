@@ -25,7 +25,7 @@ it('runs core demo command successfully', function (): void {
         '--sites' => 'Main Site,Sub Site',
         '--packages' => 'vendor/example-package',
     ])
-        ->expectsQuestion('Are you sure you want to install example site content?', true)
+        ->expectsQuestion('Are you sure you want to install demo content?', true)
         ->assertExitCode(0);
 
     expect(TrackingDemoCommand::$executionOrder)->toBe(['test:demo']);

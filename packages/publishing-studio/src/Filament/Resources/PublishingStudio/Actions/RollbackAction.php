@@ -8,7 +8,7 @@ use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Rollback;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Foundation\Auth\User as AuthenticatedUser;

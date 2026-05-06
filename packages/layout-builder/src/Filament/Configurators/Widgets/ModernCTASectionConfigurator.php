@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\LayoutBuilder\Filament\Configurators\Widgets;
 
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Components\Toggle;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 

@@ -8,7 +8,7 @@ use Capell\PublishingStudio\Enums\WorkspaceApprovalActionEnum;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Models\Workspace;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Textarea;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Foundation\Auth\User as AuthenticatedUser;

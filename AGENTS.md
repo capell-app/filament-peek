@@ -39,12 +39,9 @@ Nearly all new Capell packages should be added to this packages repo under `pack
 
 ## Packages
 
-| Package           | Namespace               | Depends on                                |
-| ----------------- | ----------------------- | ----------------------------------------- |
-| `layout-builder`  | `Capell\LayoutBuilder`  | core, admin, frontend                     |
-| `blog`            | `Capell\Blog`           | core, admin, frontend, **layout-builder** |
-| `address`         | `Capell\Address`        | core, admin                               |
-| `ai-orchestrator` | `Capell\AIOrchestrator` | core, admin                               |
+This repo now contains many Capell add-on packages, not just the original short list. Treat `composer.json` and `composer.local.json` PSR-4 autoload entries as the current source of truth for package namespaces and test namespaces.
+
+Common active packages include `layout-builder`, `blog`, `address`, `ai-orchestrator`, `block-library`, `campaign-studio`, `content-sections`, `frontend-authoring`, `login-audit`, `media-ai`, `publishing-studio`, `seo-suite`, `theme-studio-*`, `toolbar`, and others under `packages/`.
 
 **Blog requires LayoutBuilder — install LayoutBuilder first.**
 
@@ -79,24 +76,34 @@ Any model in draft/publish must implement `Capell\Core\Contracts\Draftable` and 
 ## Testing
 
 - Test actions directly: `MyAction::run($input)` — not through HTTP.
-- Run single package: `vendor/bin/pest packages/layout-builder/tests`
+- Start with the narrowest useful Pest command, usually one test file or one package: `vendor/bin/pest packages/{package}/tests --configuration=phpunit.xml`.
+- Run single package: `vendor/bin/pest packages/layout-builder/tests --configuration=phpunit.xml`
 - Minimum 80% coverage. Full suite: `composer test`.
 
 ## Composer local overlay
 
 - Common issue: if a package test case class is not found, check `composer.local.json` as well as `composer.json`. The local overlay often needs matching `autoload` and `autoload-dev` PSR-4 entries for package namespaces, then regenerate with `COMPOSER=composer.local.json composer dump-autoload --no-scripts`.
+- For local development, `composer.local.json` is often the faster daily-driver overlay because it path-links sibling Capell packages and may use fail-fast test settings.
 
 ## Commands
 
-| Command                                    | Purpose                      |
-| ------------------------------------------ | ---------------------------- |
-| `composer test`                            | Pest tests (parallel)        |
-| `composer preflight`                       | Rector + Pint + PHPStan      |
-| `composer lint`                            | Pint only                    |
-| `composer analyze`                         | PHPStan only                 |
-| `composer prepare`                         | Seed demo workbench          |
-| `composer serve`                           | Build + serve localhost:8000 |
-| `vendor/bin/pest packages/{package}/tests` | Single package tests         |
+| Command                                    | Purpose                                                                             |
+| ------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `composer test`                            | Pest tests (parallel)                                                               |
+| `composer preflight`                       | Changed-file formatting plus full PHPStan via `../capell-4/scripts/lint-changed.sh` |
+| `composer preflight:all`                   | Rector + full Pint + PHPStan + tests                                                |
+| `composer lint`                            | Pint only                                                                           |
+| `composer analyze`                         | PHPStan only                                                                        |
+| `composer prepare`                         | Seed demo workbench                                                                 |
+| `composer serve`                           | Build + serve localhost:8000                                                        |
+| `vendor/bin/pest packages/{package}/tests` | Single package tests                                                                |
+
+## Agent Speed
+
+- Keep task branches focused. This repo can accumulate very large dirty trees across many packages, and that slows agents because they must preserve unrelated user work.
+- Prefer package-level or file-level Pest runs during implementation; reserve `composer test`, `composer analyze`, and `composer preflight:all` for final verification.
+- Avoid broad repo exploration when the target package or failing command is known. Start from the package, test, or class named in the request.
+- Exclude heavy local paths from Spotlight/antivirus/indexing where practical: `vendor`, `node_modules`, `.git`, `storage`, `coverage`, `.phpunit.cache`, and framework/build caches.
 
 ## Git
 

@@ -6,7 +6,7 @@ namespace Capell\FoundationTheme\Filament\Settings;
 
 use Capell\Admin\Filament\Contracts\HasSchema;
 use Capell\Admin\Filament\Support\HelperText;
-use Filament\FormBuilder\Components\Checkbox;
+use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 

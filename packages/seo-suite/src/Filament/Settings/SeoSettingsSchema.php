@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\SeoSuite\Filament\Settings;
 
 use Capell\Admin\Filament\Contracts\HasSchema;
-use Filament\FormBuilder\Components\Checkbox;
+use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;

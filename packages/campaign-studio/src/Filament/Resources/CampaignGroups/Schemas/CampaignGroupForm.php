@@ -7,10 +7,10 @@ namespace Capell\CampaignStudio\Filament\Resources\CampaignGroups\Schemas;
 use Capell\Admin\Data\Configurators\ConfiguratorContextData;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
 use Capell\CampaignStudio\Enums\CampaignStatus;
-use Filament\FormBuilder\Components\DateTimePicker;
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 final class CampaignGroupForm implements FormConfigurator

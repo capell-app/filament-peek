@@ -18,7 +18,10 @@
     :$widget
 >
     <section
-        style="padding: 3rem 2rem; background-color: var(--layout-builder-surface)"
+        style="
+            padding: 3rem 2rem;
+            background-color: var(--layout-builder-surface);
+        "
     >
         @if ($title || $content)
             <div style="margin-bottom: 2rem; max-width: 38rem">
@@ -107,7 +110,9 @@
                     class="ap-gallery-item"
                     style="
                         overflow: hidden;
-                        background-color: var(--layout-builder-surface-container);
+                        background-color: var(
+                            --layout-builder-surface-container
+                        );
                     "
                 >
                     <img

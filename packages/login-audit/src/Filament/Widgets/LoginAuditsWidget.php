@@ -88,7 +88,7 @@ final class LoginAuditsWidget extends BaseWidget implements CapellWidgetContract
                             },
                         ),
                     TextColumn::make('ip_address')
-                        ->label(trans('filament-login-audit::filament-login-audit.column.ip_address')),
+                        ->label(trans('filament-authentication-log::filament-authentication-log.column.ip_address')),
                     TextColumn::make('location')
                         ->visible(fn (): bool => config('login-audit.notifications.new-device.location', false)),
                 ]),

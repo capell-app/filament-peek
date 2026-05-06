@@ -11,7 +11,7 @@ use Capell\Admin\Filament\Components\Forms\RequiredFields;
 use Capell\Admin\Filament\Configurators\Types\DefaultTypeConfigurator;
 use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum;
 use Capell\LayoutBuilder\Enums\SectionConfiguratorEnum;
-use Filament\FormBuilder\Components\Checkbox;
+use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;

@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('publishing-studio', function (Blueprint $table): void {
+        Schema::create('workspaces', function (Blueprint $table): void {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('name');
@@ -40,6 +40,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('publishing-studio');
+        Schema::dropIfExists('workspaces');
     }
 };

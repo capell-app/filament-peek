@@ -9,8 +9,8 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -23,10 +23,10 @@ use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use LogicException;
 
-class ModalTableSelect extends Component implements HasActions, HasFormBuilder, HasTable
+class ModalTableSelect extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
     use InteractsWithTable;
     use WithoutUrlPagination;
 

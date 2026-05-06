@@ -8,10 +8,10 @@ use Capell\Frontend\Contracts\AdminAccessCheckerInterface;
 use Capell\FrontendAuthoring\Actions\UpdateEditableRegionAction;
 use Capell\FrontendAuthoring\Data\EditableRegionPayloadData;
 use Capell\FrontendAuthoring\Support\EditableRegionSigner;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -23,9 +23,9 @@ use Livewire\Component as LivewireComponent;
 /**
  * @property Schema $form
  */
-class EditRegionField extends LivewireComponent implements HasFormBuilder
+class EditRegionField extends LivewireComponent implements HasForms
 {
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
 
     #[Locked]
     public string $payload;

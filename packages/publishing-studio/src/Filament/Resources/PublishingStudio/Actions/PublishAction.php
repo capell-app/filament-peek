@@ -15,7 +15,7 @@ use Capell\PublishingStudio\RebaseReport;
 use Capell\PublishingStudio\ReleaseWindowGuard;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Checkbox;
+use Filament\Forms\Components\Checkbox;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Foundation\Auth\User as AuthenticatedUser;

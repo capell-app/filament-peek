@@ -8,7 +8,7 @@ use Capell\Admin\Filament\Concerns\HasCustomSelectOption;
 use Capell\LayoutBuilder\Filament\Resources\Widgets\Schemas\WidgetForm;
 use Capell\LayoutBuilder\Models\Widget;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;

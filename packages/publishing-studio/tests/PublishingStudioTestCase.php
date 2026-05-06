@@ -38,7 +38,7 @@ use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
-use Filament\FormBuilder\FormBuilderServiceProvider;
+use Filament\Forms\FormsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
 use Filament\Support\SupportServiceProvider;
@@ -58,7 +58,7 @@ use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
 use Spatie\ImageOptimizer\Optimizers\Svgo;
 use STS\FilamentImpersonate\FilamentImpersonateServiceProvider;
 use Tanmuhittin\LaravelGoogleTranslate\LaravelGoogleTranslateServiceProvider;
-use Tapp\FilamentLoginAudit\FilamentLoginAuditServiceProvider;
+use Tapp\FilamentAuthenticationLog\FilamentAuthenticationLogServiceProvider;
 
 class PublishingStudioTestCase extends AbstractTestCase
 {
@@ -120,14 +120,14 @@ class PublishingStudioTestCase extends AbstractTestCase
             BadgeableColumnServiceProvider::class,
             SpatieTranslatableServiceProvider::class,
             TinyeditorServiceProvider::class,
-            FilamentLoginAuditServiceProvider::class,
+            FilamentAuthenticationLogServiceProvider::class,
             FilamentServiceProvider::class,
             FilamentAdjacencyListServiceProvider::class,
             FilamentShieldServiceProvider::class,
             FilamentSelectTreeServiceProvider::class,
             FilamentClearCacheServiceProvider::class,
             FilamentImpersonateServiceProvider::class,
-            FormBuilderServiceProvider::class,
+            FormsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
             IconPickerServiceProvider::class,
             LaravelGoogleTranslateServiceProvider::class,

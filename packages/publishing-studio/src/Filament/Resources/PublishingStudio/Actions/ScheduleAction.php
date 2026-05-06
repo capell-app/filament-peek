@@ -10,7 +10,7 @@ use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\SchedulePublishAction;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\DateTimePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Foundation\Auth\User as AuthenticatedUser;

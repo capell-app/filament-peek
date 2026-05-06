@@ -10,7 +10,7 @@ use Capell\Admin\Filament\Pages\ExtensionsPage;
 use Capell\Admin\Support\Extensions\ExtensionsPageActionRegistry;
 use Capell\Core\Facades\CapellCore;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Artisan;
 use Throwable;

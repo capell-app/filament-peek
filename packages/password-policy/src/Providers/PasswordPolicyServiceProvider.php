@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Capell\PasswordPolicy\Providers;
 
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
-use Capell\Admin\Contracts\Extenders\UserFormExtender;
-use Capell\Admin\Contracts\Extenders\UserTableExtender;
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
@@ -93,12 +91,21 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
 
     private function registerAdminSurface(): self
     {
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(PasswordPolicySettingsPage::class));
+        if (class_exists('Capell\\Admin\\Filament\\Pages\\AbstractPackageSettingsPage')) {
+            CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(PasswordPolicySettingsPage::class));
+        }
+
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ForcedPasswordChangePage::class));
 
         $this->app->tag(PasswordPolicyPanelExtender::class, AdminPanelExtender::TAG);
-        $this->app->tag(PasswordPolicyUserFormExtender::class, UserFormExtender::TAG);
-        $this->app->tag(PasswordPolicyUserTableExtender::class, UserTableExtender::TAG);
+
+        if (interface_exists('Capell\\Admin\\Contracts\\Extenders\\UserFormExtender')) {
+            $this->app->tag(PasswordPolicyUserFormExtender::class, 'capell-admin:user-form-extender');
+        }
+
+        if (interface_exists('Capell\\Admin\\Contracts\\Extenders\\UserTableExtender')) {
+            $this->app->tag(PasswordPolicyUserTableExtender::class, 'capell-admin:user-table-extender');
+        }
 
         return $this;
     }

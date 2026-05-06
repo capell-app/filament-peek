@@ -6,16 +6,16 @@ namespace Capell\AdminPreview\Filament\Extenders;
 
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Filament\Panel;
-use Pboivin\AdminPreview\AdminPreviewPlugin;
+use Pboivin\FilamentPeek\FilamentPeekPlugin;
 
 final class AdminPreviewAdminPanelExtender implements AdminPanelExtender
 {
     public function extend(Panel $panel): void
     {
-        if ($panel->hasPlugin(AdminPreviewPlugin::ID)) {
+        if ($panel->hasPlugin(FilamentPeekPlugin::ID)) {
             return;
         }
 
-        $panel->plugin(AdminPreviewPlugin::make());
+        $panel->plugin(FilamentPeekPlugin::make());
     }
 }

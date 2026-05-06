@@ -7,7 +7,7 @@ namespace Capell\SeoSuite\Filament\Extenders\Page;
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\Admin\Enums\PageTranslationSchemaHookEnum;
 use Capell\SeoSuite\Enums\RobotsDirectiveEnum;
-use Filament\FormBuilder\Components\CheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;

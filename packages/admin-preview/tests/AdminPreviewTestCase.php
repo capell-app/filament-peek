@@ -11,7 +11,7 @@ use Capell\Tests\AbstractTestCase;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\LivewireServiceProvider;
 use Override;
-use Pboivin\AdminPreview\AdminPreviewServiceProvider as BaseAdminPreviewServiceProvider;
+use Pboivin\FilamentPeek\FilamentPeekServiceProvider;
 
 abstract class AdminPreviewTestCase extends AbstractTestCase
 {
@@ -28,7 +28,7 @@ abstract class AdminPreviewTestCase extends AbstractTestCase
     {
         return [
             ...parent::getPackageProviders($app),
-            BaseAdminPreviewServiceProvider::class,
+            FilamentPeekServiceProvider::class,
             AdminPreviewServiceProvider::class,
             LivewireServiceProvider::class,
         ];

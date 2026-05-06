@@ -5,22 +5,22 @@ declare(strict_types=1);
 use Capell\LoginAudit\Actions\ApplyLoginAuditSettingsAction;
 use Capell\LoginAudit\Models\LoginAudit;
 use Capell\LoginAudit\Settings\LoginAuditSettings;
-use Rappasoft\LaravelLoginAudit\Models\LoginAudit as VendorLoginAudit;
-use Spatie\LaravelSettings\Migrations\SettingsMigrationAssistant;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog as VendorLoginAudit;
+use Spatie\LaravelSettings\Migrations\SettingsMigrator;
 
 function seedLoginAuditSetting(string $settingName, mixed $value): void
 {
-    /** @var SettingsMigrationAssistant $settingsMigrationAssistant */
-    $settingsMigrationAssistant = resolve(SettingsMigrationAssistant::class);
+    /** @var SettingsMigrator $settingsMigrator */
+    $settingsMigrator = resolve(SettingsMigrator::class);
     $settingKey = 'login_audit.' . $settingName;
 
-    if ($settingsMigrationAssistant->exists($settingKey)) {
-        $settingsMigrationAssistant->update($settingKey, $value);
+    if ($settingsMigrator->exists($settingKey)) {
+        $settingsMigrator->update($settingKey, fn (): mixed => $value);
 
         return;
     }
 
-    $settingsMigrationAssistant->add($settingKey, $value);
+    $settingsMigrator->add($settingKey, $value);
 }
 
 it('uses retention days settings for the purge command configuration', function (): void {

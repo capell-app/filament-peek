@@ -8,9 +8,7 @@
     "contexts": ["admin"],
     "requires": ["capell-app/admin"],
     "providers": {
-        "shared": [
-            "Capell\\LoginAudit\\Providers\\LoginAuditServiceProvider"
-        ],
+        "shared": ["Capell\\LoginAudit\\Providers\\LoginAuditServiceProvider"],
         "admin": ["Capell\\LoginAudit\\Providers\\AdminServiceProvider"]
     }
 }

@@ -6,11 +6,11 @@ namespace Capell\CampaignStudio\Filament\Resources\CampaignCtaBlocks\Schemas;
 
 use Capell\Admin\Data\Configurators\ConfiguratorContextData;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
-use Filament\FormBuilder\Components\Repeater;
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Components\Toggle;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\SeoSuite\Filament\Settings;
 
 use Capell\Admin\Filament\Contracts\HasSchema;
-use Filament\FormBuilder\Components\Checkbox;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;

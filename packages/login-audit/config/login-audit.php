@@ -6,12 +6,12 @@ use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\OtherDeviceLogout;
-use Rappasoft\LaravelLoginAudit\Listeners\FailedLoginListener;
-use Rappasoft\LaravelLoginAudit\Listeners\LoginListener;
-use Rappasoft\LaravelLoginAudit\Listeners\LogoutListener;
-use Rappasoft\LaravelLoginAudit\Listeners\OtherDeviceLogoutListener;
-use Rappasoft\LaravelLoginAudit\Notifications\FailedLogin;
-use Rappasoft\LaravelLoginAudit\Notifications\NewDevice;
+use Rappasoft\LaravelAuthenticationLog\Listeners\FailedLoginListener;
+use Rappasoft\LaravelAuthenticationLog\Listeners\LoginListener;
+use Rappasoft\LaravelAuthenticationLog\Listeners\LogoutListener;
+use Rappasoft\LaravelAuthenticationLog\Listeners\OtherDeviceLogoutListener;
+use Rappasoft\LaravelAuthenticationLog\Notifications\FailedLogin;
+use Rappasoft\LaravelAuthenticationLog\Notifications\NewDevice;
 
 return [
     // The database table name
@@ -26,14 +26,14 @@ return [
         'login' => Login::class,
         'failed' => Failed::class,
         'logout' => Logout::class,
-        'logout-other-devices' => OtherDeviceLogout::class,
+        'other-device-logout' => OtherDeviceLogout::class,
     ],
 
     'listeners' => [
         'login' => LoginListener::class,
         'failed' => FailedLoginListener::class,
         'logout' => LogoutListener::class,
-        'logout-other-devices' => OtherDeviceLogoutListener::class,
+        'other-device-logout' => OtherDeviceLogoutListener::class,
     ],
 
     'notifications' => [

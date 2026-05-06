@@ -5,11 +5,11 @@ These are embedded in [page-creation-and-approval-flow.md](../../page-creation-a
 
 ## Files
 
-| File                               | What it shows                                                                                  |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `01-pages-list.png`                | Pages list with SEO Overview summary and the table of pages                                    |
-| `04-create-page-save-as-draft.png` | `/admin/pages/create` form with `Create` + `Save as Draft` + `Create & create another` buttons |
-| `05-publishing-studio-list.png`           | PublishingStudio list with status badges + `Latest review note` column + action buttons per row      |
+| File                               | What it shows                                                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `01-pages-list.png`                | Pages list with SEO Overview summary and the table of pages                                     |
+| `04-create-page-save-as-draft.png` | `/admin/pages/create` form with `Create` + `Save as Draft` + `Create & create another` buttons  |
+| `05-publishing-studio-list.png`    | PublishingStudio list with status badges + `Latest review note` column + action buttons per row |
 
 ## Regenerating
 

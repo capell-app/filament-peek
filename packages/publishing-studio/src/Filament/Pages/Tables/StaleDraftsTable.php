@@ -10,7 +10,7 @@ use Capell\PublishingStudio\Actions\DashboardReports\BuildStaleDraftsQueryAction
 use Capell\PublishingStudio\Filament\Resources\Pages\Actions\DiscardDraftsBulkAction;
 use Capell\PublishingStudio\Filament\Resources\Pages\Actions\RequestReviewBulkAction;
 use Capell\PublishingStudio\Models\Workspace;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;

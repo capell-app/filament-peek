@@ -8,8 +8,9 @@ use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\LoginAudit\Filament\Resources\LoginAudits\Tables\LoginAuditsTable;
 use Filament\Tables\Table;
 use Override;
+use Tapp\FilamentAuthenticationLog\Resources\AuthenticationLogResource;
 
-class LoginAuditResource extends \Tapp\FilamentLoginAudit\Resources\LoginAuditResource
+class LoginAuditResource extends AuthenticationLogResource
 {
     use HasConfiguredTable;
 

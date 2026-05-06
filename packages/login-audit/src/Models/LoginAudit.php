@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog;
 
 /**
  * @property int $id
@@ -54,7 +55,7 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin Model
  */
 #[ObservedBy(LoginAuditObserver::class)]
-class LoginAudit extends \Rappasoft\LaravelLoginAudit\Models\LoginAudit
+class LoginAudit extends AuthenticationLog
 {
     /** @use HasFactory<LoginAuditFactory> */
     use HasFactory;

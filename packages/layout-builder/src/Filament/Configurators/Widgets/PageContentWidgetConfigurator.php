@@ -17,7 +17,7 @@ use Capell\LayoutBuilder\Filament\Components\Forms\Widget\DisplaySection;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\SettingsSchema;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\Tab\WidgetAdminTab;
 use Capell\LayoutBuilder\Filament\Components\Forms\Widget\Tab\WidgetDisplayTab;
-use Filament\FormBuilder\Components\CheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Utilities\Get;

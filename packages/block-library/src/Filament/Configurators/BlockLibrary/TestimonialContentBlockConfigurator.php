@@ -10,7 +10,7 @@ use Capell\Admin\Filament\Components\Forms\PublishSection;
 use Capell\BlockLibrary\Filament\Components\Forms\Content\DetailsSchema;
 use Capell\BlockLibrary\Filament\Components\Forms\Content\SettingsSchema;
 use Capell\BlockLibrary\Filament\Components\Forms\Content\TranslationsRepeater;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;

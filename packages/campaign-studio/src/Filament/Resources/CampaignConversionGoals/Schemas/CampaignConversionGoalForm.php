@@ -7,9 +7,9 @@ namespace Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\Schem
 use Capell\Admin\Data\Configurators\ConfiguratorContextData;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
 use Capell\CampaignStudio\Enums\ConversionGoalType;
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Components\Toggle;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 final class CampaignConversionGoalForm implements FormConfigurator

@@ -9,7 +9,7 @@ use Capell\Tests\Fixtures\FakeMigrationFileManager;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Migrations\MigrationAssistant;
+use Illuminate\Database\Migrations\Migrator;
 
 use function Pest\Laravel\artisan;
 
@@ -31,7 +31,7 @@ it('runs layout-builder install command successfully without publishing files', 
             ->shouldReceive('run')->once()->andReturn(0)->getMock(),
     );
 
-    $fakeMigrationAssistant = Mockery::mock(MigrationAssistant::class);
+    $fakeMigrationAssistant = Mockery::mock(Migrator::class);
     $fakeDispatcher = Mockery::mock(Dispatcher::class);
     test()->instance(
         MigrateCommand::class,

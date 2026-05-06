@@ -153,9 +153,10 @@ it('renders hero as a centered feature section', function (): void {
 
 it('keeps demo frame styling separate from block component styling', function (): void {
     $html = view('capell-block-library::content-block.demo', BuildContentBlockDemoDataAction::run('hero'))->render();
+    $normalizedHtml = preg_replace('/\s+/', ' ', $html) ?? $html;
 
-    expect($html)
-        ->toContain('<div class="rounded-lg bg-white p-8 shadow-sm ring-1 ring-slate-200">')
+    expect($normalizedHtml)
+        ->toMatch('/<div class="rounded-lg bg-white p-8 shadow-sm ring-1 ring-slate-200"\\s*>/')
         ->toContain('content-block content-block-hero rounded-lg bg-slate-950 p-10 text-white')
         ->not->toContain('content-block-hero rounded-lg bg-slate-950 p-10 text-white rounded-lg bg-white');
 });

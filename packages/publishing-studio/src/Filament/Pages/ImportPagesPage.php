@@ -17,10 +17,10 @@ use Capell\PublishingStudio\Data\Imports\PageImportDecisionData;
 use Capell\PublishingStudio\Data\Imports\PageImportStatusData;
 use Capell\PublishingStudio\Data\Imports\PageImportWizardStateData;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
-use Filament\FormBuilder\Components\FileUpload;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -31,10 +31,10 @@ use Illuminate\Contracts\Support\Htmlable;
 use Override;
 use Throwable;
 
-class ImportPagesPage extends Page implements HasFormBuilder
+class ImportPagesPage extends Page implements HasForms
 {
     use HasPageShield;
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
 
     /** @var string */
     public const STEP_UPLOAD = 'upload';

@@ -6,11 +6,11 @@ namespace Capell\AgentBridge\Filament\Pages;
 
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
@@ -20,9 +20,9 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
 use Override;
 
-final class CapellAgentBridgePromptBuilderPage extends Page implements HasFormBuilder
+final class CapellAgentBridgePromptBuilderPage extends Page implements HasForms
 {
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
 
     /** @var array<string, mixed> */
     public array $data = [

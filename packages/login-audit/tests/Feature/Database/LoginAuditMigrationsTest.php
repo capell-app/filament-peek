@@ -32,7 +32,11 @@ it('creates the final authentication log schema with a custom table name', funct
 
     expect(Schema::hasTable($tableName))->toBeTrue()
         ->and(Schema::hasColumn($tableName, 'last_seen_at'))->toBeTrue()
-        ->and(Schema::hasIndex($tableName, 'authenticatable_login_at_index'))->toBeTrue();
+        ->and(Schema::hasIndex($tableName, [
+            'authenticatable_type',
+            'authenticatable_id',
+            'login_at',
+        ]))->toBeTrue();
 
     Schema::dropIfExists($tableName);
 });

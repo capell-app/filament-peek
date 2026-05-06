@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\BlockLibrary\Filament\Components\Forms;
 
 use Closure;
-use Filament\FormBuilder\Components\ColorPicker;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;

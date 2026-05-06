@@ -59,6 +59,8 @@ class GenerateWorkspacePreviewUrlAction
 
     private function rootRouteName(): string
     {
+        Route::getRoutes()->refreshNameLookups();
+
         $configuredRouteName = config('capell.publishing-studio.preview.home_route', 'capell-frontend.home');
         $routeNames = array_filter([
             is_string($configuredRouteName) && $configuredRouteName !== '' ? $configuredRouteName : null,

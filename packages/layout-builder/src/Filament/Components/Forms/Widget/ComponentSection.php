@@ -6,9 +6,9 @@ namespace Capell\LayoutBuilder\Filament\Components\Forms\Widget;
 
 use Capell\Admin\Filament\Components\Forms\ComponentSelect;
 use Capell\LayoutBuilder\Enums\ComponentTypeEnum;
-use Filament\FormBuilder\Components\Checkbox;
-use Filament\FormBuilder\Components\Select;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;

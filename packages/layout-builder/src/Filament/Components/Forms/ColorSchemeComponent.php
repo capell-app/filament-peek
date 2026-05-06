@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\LayoutBuilder\Filament\Components\Forms;
 
-use Filament\FormBuilder\Components\ToggleButtons;
+use Filament\Forms\Components\ToggleButtons;
 
 class ColorSchemeComponent extends ToggleButtons
 {

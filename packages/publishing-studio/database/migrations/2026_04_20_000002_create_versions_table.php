@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->boolean('is_live')->default(false);
             $table->json('manifest');
-            $table->foreignId('source_workspace_id')->nullable()->constrained('publishing-studio')->nullOnDelete();
+            $table->foreignId('source_workspace_id')->nullable()->constrained('workspaces')->nullOnDelete();
             $table->foreignId('rollback_of_version_id')->nullable()->constrained('versions')->nullOnDelete();
             $table->nullableMorphs('published_by');
             $table->timestamp('published_at')->nullable();

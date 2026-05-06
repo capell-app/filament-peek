@@ -61,7 +61,7 @@ it('renders authenticatable names as safe text instead of raw html', function ()
 });
 
 it('configures the vendor authentication log table to display user names', function (): void {
-    expect(config('filament-login-audit.authenticatable.field-to-display'))->toBe('name');
+    expect(config('filament-authentication-log.authenticatable.field-to-display'))->toBe('name');
 });
 
 it('renders a placeholder for orphaned authentication logs', function (): void {

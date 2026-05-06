@@ -19,6 +19,10 @@ use Capell\Core\Providers\CapellServiceProvider;
 use Capell\LayoutBuilder\Models\Section;
 use Capell\LayoutBuilder\Models\Widget;
 use Capell\LayoutBuilder\Models\WidgetAsset;
+use Capell\LayoutBuilder\View\Components\Widget\Page\Children;
+use Capell\LayoutBuilder\View\Components\Widget\Page\Content;
+use Capell\LayoutBuilder\View\Components\Widget\Page\Latest;
+use Capell\LayoutBuilder\View\Components\Widget\Page\Siblings;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
 use Capell\Tests\Support\Concerns\BuildsOrderedMigrationWorkspace;
@@ -28,7 +32,7 @@ use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
-use Filament\FormBuilder\FormBuilderServiceProvider;
+use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
@@ -61,14 +65,14 @@ use Spatie\ImageOptimizer\Optimizers\Svgo;
 use Spatie\LaravelData\LaravelDataServiceProvider;
 use Spatie\LaravelSettings\LaravelSettingsServiceProvider;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
-use Spatie\LaravelSettings\Migrations\SettingsMigrationAssistant;
+use Spatie\LaravelSettings\Migrations\SettingsMigrator;
 use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionServiceProvider;
 use Spatie\Tags\TagsServiceProvider;
 use StijnVanouplines\BladeCountryFlags\BladeCountryFlagsServiceProvider;
 use STS\FilamentImpersonate\FilamentImpersonateServiceProvider;
-use Tapp\FilamentLoginAudit\FilamentLoginAuditServiceProvider;
+use Tapp\FilamentAuthenticationLog\FilamentAuthenticationLogServiceProvider;
 
 abstract class AbstractTestCase extends TestCase
 {
@@ -100,6 +104,10 @@ abstract class AbstractTestCase extends TestCase
         // Temp fix to ensure components are locatable when run in parallel
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
         Blade::componentNamespace('Capell\\LayoutBuilder\\View\\Components', 'capell-layout-builder');
+        Blade::component(Children::class, 'capell-layout-builder::widget.page.children');
+        Blade::component(Content::class, 'capell-layout-builder::widget.page.content');
+        Blade::component(Latest::class, 'capell-layout-builder::widget.page.latest');
+        Blade::component(Siblings::class, 'capell-layout-builder::widget.page.siblings');
 
         Http::preventStrayRequests();
 
@@ -171,14 +179,14 @@ abstract class AbstractTestCase extends TestCase
             FilamentServiceProvider::class,
             SupportServiceProvider::class,
             InfolistsServiceProvider::class,
-            FilamentLoginAuditServiceProvider::class,
+            FilamentAuthenticationLogServiceProvider::class,
             FilamentServiceProvider::class,
             FilamentAdjacencyListServiceProvider::class,
             FilamentImpersonateServiceProvider::class,
             FilamentShieldServiceProvider::class,
             FilamentSelectTreeServiceProvider::class,
             FilamentClearCacheServiceProvider::class,
-            FormBuilderServiceProvider::class,
+            FormsServiceProvider::class,
             PaginateRouteServiceProvider::class,
             ActivitylogServiceProvider::class,
             LaravelDataServiceProvider::class,
@@ -260,8 +268,8 @@ abstract class AbstractTestCase extends TestCase
             ],
             'login-audit' => [
                 'user' => 'rappasoft',
-                'name' => 'laravel-login-audit',
-                'file' => 'login-audit',
+                'name' => 'laravel-authentication-log',
+                'file' => 'authentication-log',
             ],
             'permission' => [
                 'user' => 'spatie',
@@ -301,13 +309,16 @@ abstract class AbstractTestCase extends TestCase
 
     protected function registerAndMigrateSettings(array $migrations, string $basePath): void
     {
-        $migrationAssistant = resolve(SettingsMigrationAssistant::class);
+        $settingsMigrator = resolve(SettingsMigrator::class);
         foreach ($migrations as $migrationFile) {
             $path = sprintf('%s/%s.php', $basePath, $migrationFile);
             /** @var SettingsMigration $migration */
             $migration = require $path;
             if (method_exists($migration, 'setMigrationAssistant')) {
-                $migration->setMigrationAssistant($migrationAssistant);
+                $migration->setMigrationAssistant($settingsMigrator);
+            }
+            if (! property_exists($migration, 'migration')) {
+                $migration->migration = $settingsMigrator;
             }
 
             $migration->up();

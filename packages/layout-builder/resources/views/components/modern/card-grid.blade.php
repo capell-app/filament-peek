@@ -16,7 +16,10 @@
     :$widget
 >
     <section
-        style="padding: 3rem 2rem; background-color: var(--layout-builder-surface)"
+        style="
+            padding: 3rem 2rem;
+            background-color: var(--layout-builder-surface);
+        "
     >
         @if ($widget->translation)
             <div style="margin-bottom: 2.5rem; max-width: 38rem">
@@ -62,7 +65,9 @@
                     <div
                         class="ap-card layout-builder-card"
                         style="
-                            background-color: var(--layout-builder-surface-container);
+                            background-color: var(
+                                --layout-builder-surface-container
+                            );
                         "
                     >
                         @if ($widgetAsset->asset->getMeta('icon'))
@@ -76,7 +81,9 @@
                                 class="ap-card-title"
                                 style="
                                     color: var(--layout-builder-on-surface);
-                                    font-size: var(--layout-builder-text-title-lg);
+                                    font-size: var(
+                                        --layout-builder-text-title-lg
+                                    );
                                     font-weight: 600;
                                     margin-bottom: 0.5rem;
                                 "
@@ -89,8 +96,12 @@
                             <p
                                 class="ap-card-description"
                                 style="
-                                    color: var(--layout-builder-on-surface-variant);
-                                    font-size: var(--layout-builder-text-body-md);
+                                    color: var(
+                                        --layout-builder-on-surface-variant
+                                    );
+                                    font-size: var(
+                                        --layout-builder-text-body-md
+                                    );
                                     line-height: 1.55;
                                 "
                             >
@@ -107,7 +118,9 @@
                                     align-items: center;
                                     gap: 0.375rem;
                                     margin-top: 1rem;
-                                    font-size: var(--layout-builder-text-body-sm);
+                                    font-size: var(
+                                        --layout-builder-text-body-sm
+                                    );
                                     font-weight: 600;
                                     color: var(--layout-builder-primary);
                                     text-decoration: none;
@@ -124,7 +137,9 @@
                     <div
                         class="ap-card layout-builder-card"
                         style="
-                            background-color: var(--layout-builder-surface-container);
+                            background-color: var(
+                                --layout-builder-surface-container
+                            );
                         "
                     >
                         @if (! empty($card['icon']))
@@ -138,7 +153,9 @@
                                 class="ap-card-title"
                                 style="
                                     color: var(--layout-builder-on-surface);
-                                    font-size: var(--layout-builder-text-title-lg);
+                                    font-size: var(
+                                        --layout-builder-text-title-lg
+                                    );
                                     font-weight: 600;
                                     margin-bottom: 0.5rem;
                                 "
@@ -151,8 +168,12 @@
                             <p
                                 class="ap-card-description"
                                 style="
-                                    color: var(--layout-builder-on-surface-variant);
-                                    font-size: var(--layout-builder-text-body-md);
+                                    color: var(
+                                        --layout-builder-on-surface-variant
+                                    );
+                                    font-size: var(
+                                        --layout-builder-text-body-md
+                                    );
                                     line-height: 1.55;
                                 "
                             >

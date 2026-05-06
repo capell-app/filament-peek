@@ -9,9 +9,7 @@
     "namespace": "Capell\\PasswordPolicy",
     "contexts": ["admin", "console"],
     "requires": ["capell-app/admin", "capell-app/core"],
-    "settings": [
-        "Capell\\PasswordPolicy\\Settings\\PasswordPolicySettings"
-    ],
+    "settings": ["Capell\\PasswordPolicy\\Settings\\PasswordPolicySettings"],
     "providers": {
         "admin": [
             "Capell\\PasswordPolicy\\Providers\\PasswordPolicyServiceProvider"

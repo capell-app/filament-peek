@@ -225,7 +225,9 @@
     }
 
     function goToSlide(dotButton, index) {
-        const carousel = dotButton.closest('.layout-builder-testimonials-carousel')
+        const carousel = dotButton.closest(
+            '.layout-builder-testimonials-carousel',
+        )
         const container = carousel.querySelector('.carousel-container')
         container.style.transform = `translateX(${-index * 100}%)`
         updateDots(carousel, index)

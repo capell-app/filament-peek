@@ -9,7 +9,7 @@ use Capell\BlockLibrary\Filament\Components\Forms\ContentSelect;
 use Capell\BlockLibrary\Models\ContentBlock;
 use Exception;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Repeater;
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 
 class RelatedRepeater

@@ -117,6 +117,6 @@ class WorkspaceSwitcher extends Component
 
     private function hasPublishingStudioTable(): bool
     {
-        return Schema::hasTable('publishing-studio');
+        return Schema::hasTable('workspaces');
     }
 }

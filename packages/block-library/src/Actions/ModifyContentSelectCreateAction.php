@@ -10,7 +10,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Filament\Actions\Action;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsObject;

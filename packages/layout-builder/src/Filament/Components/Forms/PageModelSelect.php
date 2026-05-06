@@ -6,7 +6,7 @@ namespace Capell\LayoutBuilder\Filament\Components\Forms;
 
 use Capell\Core\Data\PageTypeData;
 use Capell\Core\Facades\CapellCore;
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 
 class PageModelSelect extends Select
 {

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Capell\LoginAudit\Observers;
 
 use Capell\LoginAudit\Actions\ShouldTrackUserIpAddressesAction;
-use Rappasoft\LaravelLoginAudit\Models\LoginAudit;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog;
 
 class LoginAuditObserver
 {
-    public function saving(LoginAudit $authenticationLog): void
+    public function saving(AuthenticationLog $authenticationLog): void
     {
         if (resolve(ShouldTrackUserIpAddressesAction::class)->handle()) {
             return;
@@ -18,12 +18,12 @@ class LoginAuditObserver
         $authenticationLog->ip_address = null;
     }
 
-    public function creating(LoginAudit $authenticationLog): void
+    public function creating(AuthenticationLog $authenticationLog): void
     {
         $authenticationLog->last_seen_at = $authenticationLog->login_at;
     }
 
-    public function updating(LoginAudit $authenticationLog): void
+    public function updating(AuthenticationLog $authenticationLog): void
     {
         if ($authenticationLog->isDirty('logout_at')) {
             $authenticationLog->last_seen_at = $authenticationLog->logout_at;

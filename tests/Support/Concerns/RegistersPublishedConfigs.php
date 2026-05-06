@@ -16,8 +16,8 @@ trait RegistersPublishedConfigs
             ],
             'login-audit' => [
                 'user' => 'rappasoft',
-                'name' => 'laravel-login-audit',
-                'file' => 'login-audit',
+                'name' => 'laravel-authentication-log',
+                'file' => 'authentication-log',
             ],
             'permission' => [
                 'user' => 'spatie',

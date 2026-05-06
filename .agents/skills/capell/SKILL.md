@@ -45,12 +45,9 @@ description: Capell Packages coding standards, architecture rules, and package c
 
 ## Packages in this repo
 
-| Package           | Namespace               | Depends on                                |
-| ----------------- | ----------------------- | ----------------------------------------- |
-| `layout-builder`  | `Capell\LayoutBuilder`  | core, admin, frontend                     |
-| `blog`            | `Capell\Blog`           | core, admin, frontend, **layout-builder** |
-| `address`         | `Capell\Address`        | core, admin                               |
-| `ai-orchestrator` | `Capell\AIOrchestrator` | core, admin                               |
+This repo contains many Capell add-on packages. Treat `composer.json` and `composer.local.json` PSR-4 autoload entries as the current source of truth for package namespaces and test namespaces.
+
+Common active packages include `layout-builder`, `blog`, `address`, `ai-orchestrator`, `block-library`, `campaign-studio`, `content-sections`, `frontend-authoring`, `login-audit`, `media-ai`, `publishing-studio`, `seo-suite`, `theme-studio-*`, `toolbar`, and others under `packages/`.
 
 **Blog requires LayoutBuilder — install LayoutBuilder first.**
 
@@ -79,26 +76,34 @@ Any package model in draft/publish must implement `Capell\Core\Contracts\Draftab
 ## Testing
 
 - Test actions directly: `MyAction::run($input)` — not through HTTP.
-- Run a single package: `vendor/bin/pest packages/layout-builder/tests`
+- Start with the narrowest useful Pest command, usually one test file or one package: `vendor/bin/pest packages/{package}/tests --configuration=phpunit.xml`.
+- Run a single package: `vendor/bin/pest packages/layout-builder/tests --configuration=phpunit.xml`
 - Minimum 80% coverage. Full suite: `composer test`.
 - Arch tests enforce package boundaries — don't suppress them.
 
 ## Commit checklist
 
 1. `composer test` — 100% pass.
-2. `composer preflight` — Rector + Pint + PHPStan clean.
+2. `composer preflight:all` — Rector + Pint + PHPStan + tests clean.
 3. Verify in demo workbench (`composer serve`) before committing.
 4. No short variable names in the diff.
 5. Commit immediately after task completion.
 
 ## Key commands
 
-| Command                                    | Purpose                         |
-| ------------------------------------------ | ------------------------------- |
-| `composer test`                            | Pest tests (parallel)           |
-| `composer preflight`                       | Rector + Pint + PHPStan         |
-| `composer lint`                            | Pint only                       |
-| `composer analyze`                         | PHPStan only                    |
-| `composer prepare`                         | Seed demo workbench             |
-| `composer serve`                           | Build + serve at localhost:8000 |
-| `vendor/bin/pest packages/{package}/tests` | Run single package tests        |
+| Command                                    | Purpose                                   |
+| ------------------------------------------ | ----------------------------------------- |
+| `composer test`                            | Pest tests (parallel)                     |
+| `composer preflight`                       | Changed-file formatting plus full PHPStan |
+| `composer preflight:all`                   | Rector + full Pint + PHPStan + tests      |
+| `composer lint`                            | Pint only                                 |
+| `composer analyze`                         | PHPStan only                              |
+| `composer prepare`                         | Seed demo workbench                       |
+| `composer serve`                           | Build + serve at localhost:8000           |
+| `vendor/bin/pest packages/{package}/tests` | Run single package tests                  |
+
+## Agent speed notes
+
+- Keep task branches focused where possible. Large dirty trees across many packages slow agents down because unrelated user work must be preserved.
+- Use package-level or file-level Pest runs during implementation; save `composer test`, `composer analyze`, and `composer preflight:all` for final verification.
+- The local Composer overlay can be a faster daily-driver setup because it path-links sibling Capell packages and may use fail-fast test settings.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\SeoSuite\Filament\Components\Forms\Site;
 
 use Capell\SeoSuite\Enums\MetaSchemaEnum;
-use Filament\FormBuilder\Components\TagsInput;
+use Filament\Forms\Components\TagsInput;
 use Override;
 
 class MetaSchema extends TagsInput

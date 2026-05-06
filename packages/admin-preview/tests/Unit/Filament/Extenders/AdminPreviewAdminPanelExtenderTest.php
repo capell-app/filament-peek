@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\AdminPreview\Filament\Extenders\AdminPreviewAdminPanelExtender;
 use Filament\Panel;
-use Pboivin\AdminPreview\AdminPreviewPlugin;
+use Pboivin\FilamentPeek\FilamentPeekPlugin;
 
 it('implements the admin panel extender contract', function (): void {
     expect(AdminPreviewAdminPanelExtender::class)
@@ -27,6 +27,6 @@ it('registers the filament peek plugin once', function (): void {
     $extender->extend($panel);
     $extender->extend($panel);
 
-    expect($panel->hasPlugin(AdminPreviewPlugin::ID))->toBeTrue()
+    expect($panel->hasPlugin(FilamentPeekPlugin::ID))->toBeTrue()
         ->and($panel->getPlugins())->toHaveCount(1);
 });

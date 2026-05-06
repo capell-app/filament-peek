@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\SeoSuite\Filament\Components\Forms\Page;
 
 use Capell\Admin\Filament\Support\HelperText;
-use Filament\FormBuilder\Components\Textarea;
-use Filament\FormBuilder\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 

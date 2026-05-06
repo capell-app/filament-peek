@@ -14,7 +14,7 @@ use Capell\LoginAudit\Observers\LoginAuditObserver;
 use Capell\LoginAudit\Settings\LoginAuditSettings;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
-use Rappasoft\LaravelLoginAudit\Models\LoginAudit as VendorLoginAudit;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog as VendorLoginAudit;
 use Spatie\LaravelPackageTools\Package;
 
 class LoginAuditServiceProvider extends AbstractPackageServiceProvider
@@ -87,6 +87,8 @@ class LoginAuditServiceProvider extends AbstractPackageServiceProvider
     private function registerModels(): self
     {
         Config::set('login-audit.login_audit_model', LoginAudit::class);
+        Config::set('authentication-log.table_name', config('login-audit.table_name', 'login_audit'));
+        Config::set('authentication-log.db_connection', config('login-audit.db_connection'));
 
         CapellCore::registerModels([LoginAudit::class]);
 

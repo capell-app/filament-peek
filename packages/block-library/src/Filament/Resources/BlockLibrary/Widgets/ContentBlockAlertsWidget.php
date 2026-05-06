@@ -11,8 +11,8 @@ use Capell\BlockLibrary\Models\ContentBlock;
 use Capell\Core\Enums\PublishStatusEnum;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\FormBuilder\Concerns\InteractsWithFormBuilder;
-use Filament\FormBuilder\Contracts\HasFormBuilder;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -20,11 +20,11 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 
 #[On('refresh-alerts')]
-class ContentBlockAlertsWidget extends Widget implements HasActions, HasFormBuilder
+class ContentBlockAlertsWidget extends Widget implements HasActions, HasForms
 {
     use HasBlankPlaceholder;
     use InteractsWithActions;
-    use InteractsWithFormBuilder;
+    use InteractsWithForms;
 
     public ?ContentBlock $record = null;
 

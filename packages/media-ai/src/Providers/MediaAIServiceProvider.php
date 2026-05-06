@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\MediaAI\Providers;
 
-use Capell\Admin\Contracts\Extenders\MediaEditActionExtender;
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
@@ -43,8 +42,11 @@ final class MediaAIServiceProvider extends AbstractPackageServiceProvider
             description: fn (): string => 'Optional AI-assisted media actions for Capell.',
         );
 
-        if (config('capell-media-ai.enabled', true)) {
-            $this->app->tag(MediaAIEditActionExtender::class, MediaEditActionExtender::TAG);
+        if (
+            config('capell-media-ai.enabled', true)
+            && interface_exists('Capell\\Admin\\Contracts\\Extenders\\MediaEditActionExtender')
+        ) {
+            $this->app->tag(MediaAIEditActionExtender::class, 'capell-admin:media-edit-action-extender');
         }
     }
 

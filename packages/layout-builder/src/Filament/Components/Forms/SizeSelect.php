@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\LayoutBuilder\Filament\Components\Forms;
 
-use Filament\FormBuilder\Components\Select;
+use Filament\Forms\Components\Select;
 
 class SizeSelect extends Select
 {
