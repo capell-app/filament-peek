@@ -52,10 +52,10 @@ Create:
 Modify:
 
 - `composer.local.json` - add ContentSections PSR-4 autoload and test autoload.
-- `composer.json` - add ContentSections PSR-4 autoload if this branch keeps package namespace entries in the root Composer file.
+- `composer.json` - add ContentSections PSR-4 autoload and test autoload.
 - `phpunit.xml` - include `packages/content-sections/tests`.
 - `packages/layout-builder/src/Providers/LayoutBuilderServiceProvider.php` - remove Section imports/registration and keep only layout/widget ownership.
-- `packages/layout-builder/src/Enums/AssetEnum.php` - remove Section case or convert to generic widget-owned assets only.
+- `packages/layout-builder/src/Enums/AssetEnum.php` - delete when no cases remain, then remove imports that referenced it.
 - `packages/layout-builder/src/Enums/TypeEnum.php` - remove Section case.
 - `packages/layout-builder/src/Enums/LayoutTypeEnum.php` - remove Section case.
 - `packages/layout-builder/src/Enums/ResourceEnum.php` - remove Section resource case.
@@ -65,13 +65,13 @@ Modify:
 - `packages/layout-builder/src/View/Components/Widget/Hero.php` - remove direct `Section` import and load asset morph relations through registered asset metadata.
 - `packages/layout-builder/database/factories/WidgetAssetFactory.php` - avoid creating Section unless Content Sections exists; use page assets by default.
 - `packages/layout-builder/src/Support/Creator/TypeCreator.php` - remove Section type creation.
-- `packages/layout-builder/src/Support/Creator/ContentCreator.php` - move to Content Sections or delete from LayoutBuilder.
-- `packages/layout-builder/src/Filament/Components/Forms/ContentSelect.php` - move to Content Sections if it is Section-specific.
+- `packages/layout-builder/src/Support/Creator/ContentCreator.php` - move to Content Sections.
+- `packages/layout-builder/src/Filament/Components/Forms/ContentSelect.php` - move to Content Sections.
 - `packages/layout-builder/src/Filament/Components/Forms/Content/TypeSelect.php` - move to Content Sections.
 - `packages/layout-builder/src/Filament/Components/Forms/Content/SettingsSchema.php` - move to Content Sections.
 - `packages/layout-builder/src/Filament/Configurators/Types/ContentTypeConfigurator.php` - move to Content Sections.
-- `packages/layout-builder/src/Filament/Configurators/Widgets/SectionWidgetAssetForm.php` - move to Content Sections or replace with a registry lookup.
-- `packages/layout-builder/src/Filament/Resources/Pages/RelationManagers/SectionsRelationManager.php` - move to Content Sections as a page relation contribution or remove from LayoutBuilder.
+- `packages/layout-builder/src/Filament/Configurators/Widgets/SectionWidgetAssetForm.php` - move to Content Sections.
+- `packages/layout-builder/src/Filament/Resources/Pages/RelationManagers/SectionsRelationManager.php` - remove from LayoutBuilder.
 - `packages/blog/composer.json` - require `capell-app/content-sections` if Blog keeps section tag relations.
 - `packages/blog/capell.json` - add Content Sections to package requirements if Blog keeps section tag relations.
 - `packages/blog/src/Providers/BlogServiceProvider.php` - import `Capell\ContentSections\Models\Section`.
@@ -290,20 +290,92 @@ class ContentSectionsServiceProvider extends AbstractPackageServiceProvider
 }
 ```
 
-Create `packages/content-sections/tests/ContentSectionsTestCase.php` by copying `packages/layout-builder/tests/LayoutBuilderTestCase.php`, then change:
+Create `packages/content-sections/tests/ContentSectionsTestCase.php` with this shape:
 
 ```php
+<?php
+
+declare(strict_types=1);
+
 namespace Capell\ContentSections\Tests;
 
+use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Providers\AdminServiceProvider;
+use Capell\Admin\Providers\Filament\AdminPanelProvider;
 use Capell\ContentSections\Providers\ContentSectionsServiceProvider;
+use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Media;
+use Capell\FoundationTheme\Providers\FoundationThemeServiceProvider;
+use Capell\Frontend\Providers\FrontendServiceProvider;
+use Capell\Tests\AbstractTestCase;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
+use Livewire\LivewireServiceProvider;
+use Override;
+use Spatie\ImageOptimizer\Optimizers\Svgo;
 
-protected function getPackageServiceName(): string
+class ContentSectionsTestCase extends AbstractTestCase
 {
-    return 'capell-content-sections';
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Blade::anonymousComponentPath(__DIR__ . '/../../foundation-theme/resources/views/components', 'capell');
+
+        $this->registerAndMigrateSettings(
+            CapellCore::getSettingMigrations(),
+            __DIR__ . '/../../../vendor/capell-app/core/database/settings',
+        );
+
+        $this->registerAndMigrateSettings(
+            CapellAdmin::getSettingMigrations(),
+            __DIR__ . '/../../../vendor/capell-app/admin/database/settings',
+        );
+    }
+
+    protected function getPackageServiceName(): string
+    {
+        return 'capell-content-sections';
+    }
+
+    /**
+     * @param  Application  $app
+     * @return class-string[]
+     */
+    protected function getPackageProviders(mixed $app): array
+    {
+        return [
+            ...parent::getPackageProviders($app),
+            ContentSectionsServiceProvider::class,
+            AdminPanelProvider::class,
+            AdminServiceProvider::class,
+            FrontendServiceProvider::class,
+            FoundationThemeServiceProvider::class,
+            LivewireServiceProvider::class,
+        ];
+    }
+
+    /**
+     * @param  Application  $app
+     */
+    #[Override]
+    protected function getEnvironmentSetUp(mixed $app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled('capell-app/foundation-theme');
+        CapellCore::forcePackageInstalled(ContentSectionsServiceProvider::$packageName);
+
+        $app->make(Repository::class)->set('media-library.media_model', Media::class);
+        $app->make(Repository::class)->set('media-library.image_optimizers', [
+            Svgo::class => [],
+        ]);
+    }
 }
 ```
-
-Keep `AdminServiceProvider`, `FrontendServiceProvider`, `FoundationThemeServiceProvider`, `AdminPanelProvider`, and `LivewireServiceProvider` because the Section resource uses them.
 
 - [ ] **Step 5: Add autoload and suite entries**
 
@@ -390,16 +462,9 @@ use Capell\ContentSections\Models\Concerns\ComposhipsJsonRelationshipsTrait;
 use Capell\ContentSections\Observers\SectionObserver;
 ```
 
-Copy `packages/layout-builder/src/Models/Concerns/ComposhipsJsonRelationshipsTrait.php` to `packages/content-sections/src/Models/Concerns/ComposhipsJsonRelationshipsTrait.php` if Section still needs it and no shared Core trait exists.
+Move `packages/layout-builder/src/Models/Concerns/ComposhipsJsonRelationshipsTrait.php` to `packages/content-sections/src/Models/Concerns/ComposhipsJsonRelationshipsTrait.php` when the Section model still uses it.
 
-Keep LayoutBuilder model imports for relations that are genuinely widget relations:
-
-```php
-use Capell\LayoutBuilder\Models\Widget;
-use Capell\LayoutBuilder\Models\WidgetAsset;
-```
-
-If this creates a hard Content Sections dependency on LayoutBuilder, remove the `widgets()` and `widgetAssets()` typed relation methods from `Section` and move those relations into LayoutBuilder/Content Sections provider glue using `resolveRelationUsing()` guarded by `class_exists()`.
+Remove `use Capell\LayoutBuilder\Models\Widget;` and `use Capell\LayoutBuilder\Models\WidgetAsset;` from the moved `Section` model. Remove the `widgetAssets()`, `pages()`, and `widgets()` methods from `Section`; those relations are LayoutBuilder placement concerns, not Content Sections ownership.
 
 - [ ] **Step 4: Move observer default type lookup into Content Sections**
 
@@ -445,6 +510,23 @@ class ContentSectionsModelRegistrar
 ```
 
 Call it from `ContentSectionsServiceProvider::bootInstalledPackage()`.
+
+Add `bootInstalledPackage()` to `ContentSectionsServiceProvider`:
+
+```php
+private function bootInstalledPackage(): self
+{
+    return $this
+        ->registerModels();
+}
+
+private function registerModels(): self
+{
+    ContentSectionsModelRegistrar::register();
+
+    return $this;
+}
+```
 
 - [ ] **Step 6: Remove Section from LayoutBuilder model registration**
 
@@ -557,6 +639,15 @@ packages/layout-builder/src/Filament/Components/Forms/ContentSelect.php
 packages/layout-builder/src/Filament/Configurators/Types/ContentTypeConfigurator.php
 ```
 
+Do not move these LayoutBuilder-backed Section relation managers into Content Sections:
+
+```text
+packages/layout-builder/src/Filament/Resources/Sections/RelationManagers/PagesRelationManager.php
+packages/layout-builder/src/Filament/Resources/Sections/RelationManagers/WidgetsRelationManager.php
+```
+
+Delete those files from LayoutBuilder after removing them from the Section resource. Content Sections stays independent by exposing Section assets through Core `AssetRelation`; page/widget usage can be reintroduced later through a generic admin-surface extension point.
+
 - [ ] **Step 4: Create Content Sections enums**
 
 Use Content Sections namespace and package translations/config. The Section asset enum should keep value `section`:
@@ -616,6 +707,8 @@ CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(
 
 Register Core/Admin/Frontend assets with `AssetEnum::Section` and the same `AssetData`, `AdminAssetData`, and `FrontendAssetData` pattern currently in LayoutBuilder.
 
+Move `packages/layout-builder/src/Filament/Concerns/HasAssetsRelationManager.php` to `packages/content-sections/src/Filament/Concerns/HasAssetsRelationManager.php` because the Section resource uses Core asset relations. Update translations in that trait from `capell-layout-builder::...` to `capell-content-sections::...` or shared `capell-admin::...` keys.
+
 - [ ] **Step 6: Register Section relationships without LayoutBuilder imports**
 
 In Content Sections provider register only Core relationships:
@@ -633,6 +726,14 @@ Type::resolveRelationUsing(
 ```
 
 Do not import `Capell\LayoutBuilder\Models\Widget` or `WidgetAsset` in Content Sections.
+
+Update `SectionResource::getRelations()` to return only:
+
+```php
+return [
+    SectionAssetsRelationManager::class,
+];
+```
 
 - [ ] **Step 7: Remove Section ownership from LayoutBuilder enums/provider**
 
@@ -653,6 +754,8 @@ packages/layout-builder/src/Providers/LayoutBuilderServiceProvider.php
 `LayoutBuilderServiceProvider::registerTypes()` must register Widget only.
 
 `LayoutBuilderServiceProvider::registerAssets()` must not register Section.
+
+Delete `packages/layout-builder/src/Enums/AssetEnum.php` because Section is its only case. Update all references that used it. Widget definitions that previously stored `section` in `admin.asset_types` must store the string `'section'` directly; LayoutBuilder is allowed to support a configured asset type string without owning that asset.
 
 - [ ] **Step 8: Run moved resource tests**
 
@@ -719,6 +822,8 @@ Default state:
 'asset_type' => 'page',
 'asset_id' => fn (): string => (string) Page::factory()->create()->getKey(),
 ```
+
+Do not import `Capell\ContentSections\Models\Section` in LayoutBuilder tests or factories.
 
 - [ ] **Step 5: Update remaining LayoutBuilder tests**
 
@@ -826,14 +931,14 @@ git commit -m "chore: consume content sections from blog"
 
 **Files:**
 
-- Modify: docs and package readmes only if references are now wrong.
+- Modify: docs and package readmes that still describe LayoutBuilder as owning Sections.
 - Verify: all files touched by prior tasks.
 
 - [ ] **Step 1: Search for old Section namespace**
 
 Run: `rg -n "Capell\\\\LayoutBuilder\\\\Models\\\\Section|LayoutBuilder\\\\\\\\Filament\\\\\\\\Resources\\\\\\\\Sections|LayoutBuilder\\\\\\\\Filament\\\\\\\\Configurators\\\\\\\\Sections" packages tests composer.json composer.local.json phpunit.xml`
 
-Expected: no matches outside historical docs or migration notes. Any code match must be fixed.
+Expected: no code matches. Update docs that still describe LayoutBuilder as owning Sections.
 
 - [ ] **Step 2: Search for forbidden cross-package imports**
 
@@ -865,11 +970,11 @@ Expected: PASS.
 
 - [ ] **Step 6: Final commit**
 
-If cleanup changes were needed:
+When cleanup changes are needed:
 
 ```bash
 git add packages/content-sections packages/layout-builder packages/blog tests composer.json composer.local.json phpunit.xml
 git commit -m "test: verify content sections extraction"
 ```
 
-If there are no cleanup changes, do not create an empty commit.
+When there are no cleanup changes, do not create an empty commit.
