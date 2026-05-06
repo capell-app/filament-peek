@@ -133,6 +133,7 @@ it('renders every registered content block demo component', function (): void {
     RegisterDefaultContentBlocksAction::run($registry);
     app()->instance(ContentBlockRegistry::class, $registry);
     view()->addNamespace('capell-content-blocks', __DIR__ . '/../../resources/views');
+    Blade::anonymousComponentPath(__DIR__ . '/../Fixtures/components', 'capell');
 
     foreach (array_keys($registry->all()) as $key) {
         $data = BuildContentBlockDemoDataAction::run($key);

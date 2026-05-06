@@ -7,6 +7,7 @@ use Capell\Analytics\Tests\AnalyticsTestCase;
 use Capell\Assistant\Tests\AssistantTestCase;
 use Capell\Blog\Tests\BlogTestCase;
 use Capell\Campaigns\Tests\CampaignsTestCase;
+use Capell\ContentBlocks\Tests\ContentBlockRenderingTestCase;
 use Capell\Deployments\Tests\TestCase as DeploymentsTestCase;
 use Capell\DeveloperTools\Tests\DeveloperToolsTestCase;
 use Capell\ExampleSites\Tests\ExampleSitesTestCase;
@@ -39,7 +40,8 @@ pest()->extend(MigratorTestCase::class)->group('migrator')->in('../packages/migr
 pest()->extend(PackagesTestCase::class)->group('authentication-log')->in('../packages/authentication-log/tests');
 pest()->extend(BlogTestCase::class)->group('blog')->in('../packages/blog/tests');
 pest()->extend(CampaignsTestCase::class)->group('campaigns')->in('../packages/campaigns/tests');
-pest()->extend(PackagesTestCase::class)->group('content-blocks')->in('../packages/content-blocks/tests');
+pest()->extend(ContentBlockRenderingTestCase::class)->group('content-blocks')->in('../packages/content-blocks/tests/Unit');
+pest()->extend(ContentBlockRenderingTestCase::class)->group('content-blocks')->in('../packages/content-blocks/tests/Feature');
 pest()->extend(PackagesTestCase::class)->group('default-theme')->in('../packages/default-theme/tests');
 pest()->extend(DeploymentsTestCase::class)->group('deployments')->in('../packages/deployments/tests');
 pest()->extend(DeveloperToolsTestCase::class)->group('developer-tools')->in('../packages/developer-tools/tests');
