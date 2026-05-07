@@ -6,12 +6,7 @@ namespace Capell\LayoutBuilder\Database\Factories;
 
 use Capell\Core\Database\Factories\TypeFactory;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
-use Capell\LayoutBuilder\Models\Widget;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Widget>
- */
 class WidgetTypeFactory extends TypeFactory
 {
     public function definition(): array

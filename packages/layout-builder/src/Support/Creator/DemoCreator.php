@@ -265,7 +265,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', 'assets');
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -357,8 +357,8 @@ class DemoCreator
                 'type_id' => $contentType->id,
             ]);
 
-            $widget->assets()->firstOrcreate([
-                'asset_id' => $content->id,
+            $widget->assets()->firstOrCreate([
+                'asset_id' => $content->getKey(),
                 'asset_type' => resolve($this->contentModel)->getMorphClass(),
             ]);
 
@@ -433,7 +433,7 @@ class DemoCreator
         $widgetType = resolve(TypeCreator::class)->navigationWidgetType();
 
         $navigationType = $this->typeModel::query()->navigationType()->default()->first();
-        if (! $navigationType) {
+        if ($navigationType === null) {
             $navigationType = resolve(\Capell\Core\Support\Creator\TypeCreator::class)->createNavigationType();
         }
 
@@ -647,13 +647,13 @@ class DemoCreator
         $features = $this->createFeatures($site);
 
         $features->each(function (Model $content) use ($widget): void {
-            if ($widget->assets()->where('asset_id', $content->id)->exists()) {
+            if ($widget->assets()->where('asset_id', $content->getKey())->exists()) {
                 return;
             }
 
             $widget->assets()->create([
                 'asset_type' => resolve($this->contentModel)->getMorphClass(),
-                'asset_id' => $content->id,
+                'asset_id' => $content->getKey(),
             ]);
         });
 
@@ -670,13 +670,13 @@ class DemoCreator
         $features = $this->createFeatures($site);
 
         $features->each(function (Model $content) use ($widget): void {
-            if ($widget->assets()->where('asset_id', $content->id)->exists()) {
+            if ($widget->assets()->where('asset_id', $content->getKey())->exists()) {
                 return;
             }
 
             $widget->assets()->create([
                 'asset_type' => resolve($this->contentModel)->getMorphClass(),
-                'asset_id' => $content->id,
+                'asset_id' => $content->getKey(),
             ]);
         });
 
@@ -699,13 +699,13 @@ class DemoCreator
         $testimonials = $this->createTestimonials($languages);
 
         $testimonials->each(function (Model $content) use ($widget): void {
-            if ($widget->assets()->where('asset_id', $content->id)->exists()) {
+            if ($widget->assets()->where('asset_id', $content->getKey())->exists()) {
                 return;
             }
 
             $widget->assets()->create([
                 'asset_type' => resolve($this->contentModel)->getMorphClass(),
-                'asset_id' => $content->id,
+                'asset_id' => $content->getKey(),
             ]);
         });
 
@@ -799,7 +799,7 @@ class DemoCreator
             ])
             ->first();
 
-        if (! $type) {
+        if ($type === null) {
             $type = resolve(TypeCreator::class)->contentsWidgetType();
         }
 
@@ -833,13 +833,13 @@ class DemoCreator
         $teamMembers = $this->createTeamMembers($languages);
 
         $teamMembers->each(function (Model $content) use ($widget): void {
-            if ($widget->assets()->where('asset_id', $content->id)->exists()) {
+            if ($widget->assets()->where('asset_id', $content->getKey())->exists()) {
                 return;
             }
 
             $widget->assets()->create([
                 'asset_type' => resolve($this->contentModel)->getMorphClass(),
-                'asset_id' => $content->id,
+                'asset_id' => $content->getKey(),
             ]);
         });
 
@@ -851,7 +851,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -910,7 +910,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -993,7 +993,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -1085,7 +1085,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -1145,7 +1145,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -1203,7 +1203,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -1260,7 +1260,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -1316,7 +1316,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -1373,7 +1373,7 @@ class DemoCreator
         $widgetType = $this->typeModel::query()->where('type', LayoutTypeEnum::Widget)
             ->firstWhere('key', WidgetTypeEnum::Assets);
 
-        if (! $widgetType) {
+        if ($widgetType === null) {
             $widgetType = resolve(TypeCreator::class)->assetsWidgetType();
         }
 
@@ -2011,14 +2011,14 @@ class DemoCreator
             ];
         }
 
-        if ($model->hasMedia($collectionName, $filters)) {
+        if ($model->getMedia($collectionName, $filters)->isNotEmpty()) {
             return;
         }
 
         resolve(AdminDemoCreator::class)->createMedia($model, $name, $type, $collection);
     }
 
-    private function createWidgetMedia(HasMedia $model, ?string $name = null, string $type = 'image', BackedEnum|string $collection = MediaCollectionEnum::Image): Media
+    private function createWidgetMedia(Widget $model, ?string $name = null, string $type = 'image', BackedEnum|string $collection = MediaCollectionEnum::Image): Media
     {
         // Normalize input name and derive extension if provided
         $inputName = in_array($name, [null, '', '0'], true) ? null : $name;

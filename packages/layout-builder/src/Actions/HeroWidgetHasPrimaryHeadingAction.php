@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\LayoutBuilder\Actions;
 
 use Capell\Core\Contracts\Pageable;
+use Capell\Core\Models\Translation;
 use Capell\Frontend\Facades\Frontend;
 use Capell\LayoutBuilder\Models\Widget;
 use Lorisleiva\Actions\Concerns\AsObject;
@@ -23,12 +24,13 @@ class HeroWidgetHasPrimaryHeadingAction
         $content = null;
 
         if ($widget->assets->isNotEmpty()) {
-            $firstAssetTranslation = $widget->assets->first()?->asset->translation;
+            $firstAsset = $widget->assets->first()?->asset;
+            $firstAssetTranslation = $firstAsset?->getRelationValue('translation');
 
-            if ($firstAssetTranslation) {
-                if ($firstAssetTranslation->title) {
+            if ($firstAssetTranslation instanceof Translation) {
+                if ($firstAssetTranslation->title !== null && $firstAssetTranslation->title !== '') {
                     $hasPrimaryHeading = true;
-                } elseif ($firstAssetTranslation->content) {
+                } elseif ($firstAssetTranslation->content !== null && $firstAssetTranslation->content !== '') {
                     $content = $firstAssetTranslation->content;
                 }
             }

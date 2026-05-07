@@ -12,6 +12,7 @@ use Capell\BlockLibrary\Enums\ConfiguratorTypeEnum;
 use Capell\BlockLibrary\Filament\Configurators\BlockLibrary\DefaultContentBlockConfigurator;
 use Capell\Core\Models\Type;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class ContentBlockForm implements FormConfigurator
 {
@@ -21,12 +22,12 @@ class ContentBlockForm implements FormConfigurator
         $record = $configurator->getRecord();
         $type = null;
 
-        if ($record?->relationLoaded('type') && $record->type instanceof Type) {
-            $type = $record->type;
+        if ($record instanceof Model && $record->relationLoaded('type') && $record->getRelationValue('type') instanceof Type) {
+            $type = $record->getRelationValue('type');
         }
 
         $state = $configurator->getRawState();
-        $typeId = $state['type_id'] ?? $record?->type_id ?? null;
+        $typeId = $state['type_id'] ?? ($record instanceof Model ? $record->getAttribute('type_id') : null);
 
         if (! $type instanceof Type && $typeId !== null) {
             /** @var class-string<Type> $model */

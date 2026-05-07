@@ -4,9 +4,19 @@ declare(strict_types=1);
 
 namespace Capell\GA4Reports\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property CarbonImmutable $metric_date
+ * @property string $page_path
+ * @property string|null $page_title
+ * @property int $screen_page_views
+ * @property int $sessions
+ * @property int $total_users
+ * @property int $conversions
+ */
 final class GA4ReportsPageMetric extends Model
 {
     use HasFactory;

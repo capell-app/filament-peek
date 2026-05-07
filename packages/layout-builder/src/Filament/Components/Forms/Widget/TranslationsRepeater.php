@@ -8,10 +8,12 @@ use Capell\Admin\Filament\Components\Forms\ContentEditor;
 use Capell\Admin\Filament\Components\Forms\RepeaterTabs;
 use Capell\Admin\Filament\Components\Forms\TranslationLanguageSelect;
 use Capell\Admin\Filament\Components\Forms\TranslationsRepeater as BaseTranslationsRepeater;
+use Capell\Core\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class TranslationsRepeater
 {
@@ -20,7 +22,7 @@ class TranslationsRepeater
         return BaseTranslationsRepeater::make('translations')
             ->when(
                 $configurator->getOperation() === 'replicate',
-                fn (TranslationsRepeater $repeater): TranslationsRepeater => $repeater->withoutRelationship(),
+                fn (BaseTranslationsRepeater $repeater): BaseTranslationsRepeater => $repeater->withoutRelationship(),
             )
             ->schema([
                 Grid::make(3)
@@ -35,10 +37,23 @@ class TranslationsRepeater
                             ->hidden(fn (?int $state): bool => (bool) $state),
                     ]),
 
-                ContentEditor::make(structure: $configurator->getRecord()?->type->content_structure)
+                ContentEditor::make(structure: self::getContentStructure($configurator))
                     ->requiredBasedOnType(),
 
                 ...$components,
             ]);
+    }
+
+    private static function getContentStructure(Schema $configurator): ?array
+    {
+        $record = $configurator->getRecord();
+
+        if (! $record instanceof Model || ! $record->relationLoaded('type')) {
+            return null;
+        }
+
+        $type = $record->getRelationValue('type');
+
+        return $type instanceof Type ? $type->content_structure : null;
     }
 }

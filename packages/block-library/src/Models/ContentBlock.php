@@ -68,16 +68,16 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read EloquentCollection<int, Language> $languages
  * @property-read int|null $languages_count
  * @property-read Pageable|null $page
- * @property-read Collection<int, Pageable> $pages
+ * @property-read Collection<int, Model> $pages
  * @property-read int|null $pages_count
  * @property-read ContentBlock|null $parent
- * @property-write mixed $parent_id
+ * @property int|null $parent_id
  * @property-read Site|null $site
  * @property-read Translation|null $translation
  * @property-read EloquentCollection<int, Translation> $translations
  * @property-read int|null $translations_count
  * @property-read Type|null $type
- * @property-read EloquentCollection<int, Widget> $widgets
+ * @property-read EloquentCollection<int, Model> $widgets
  * @property-read int|null $widgets_count
  * @property-read EloquentCollection|Media[] $media
  * @property-read int|null $media_count
@@ -89,7 +89,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property-read EloquentCollection<int, Activity> $activities
  * @property-read int|null $activities_count
  * @property-read string|null $title
- * @property-read EloquentCollection<int, WidgetAsset> $widgetAssets
+ * @property-read EloquentCollection<int, Model> $widgetAssets
  * @property-read int|null $widget_assets_count
  * @property int $id
  * @property int $workspace_id
@@ -109,6 +109,10 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property CarbonImmutable|null $deleted_at
+ *
+ * @method static Builder<static>|ContentBlock publishedDate()
+ * @method static Builder<static>|ContentBlock pending()
+ * @method static Builder<static>|ContentBlock expired()
  *
  * @mixin Model
  * @mixin QueryBuilder

@@ -32,9 +32,9 @@ final class BuildGA4ReportsTrendAction
             ->get()
             ->map(fn (GA4ReportsDailyMetric $metric): GA4ReportsTrendPointData => new GA4ReportsTrendPointData(
                 label: $metric->metric_date->format('j M'),
-                screenPageViews: (int) $metric->screen_page_views,
-                sessions: (int) $metric->sessions,
-                totalUsers: (int) $metric->total_users,
+                screenPageViews: $metric->screen_page_views,
+                sessions: $metric->sessions,
+                totalUsers: $metric->total_users,
             ))
             ->all();
     }

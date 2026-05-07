@@ -463,7 +463,7 @@ class WidgetCreator
         $navigationModel = Navigation::class;
 
         $navigationType = $typeModel::query()->navigationType()->default()->first();
-        if (! $navigationType) {
+        if ($navigationType === null) {
             $navigationType = resolve(\Capell\Core\Support\Creator\TypeCreator::class)->createNavigationType();
         }
 

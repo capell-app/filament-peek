@@ -6,11 +6,7 @@ namespace Capell\LayoutBuilder\Database\Factories;
 
 use Capell\Core\Database\Factories\TypeFactory;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<Content>
- */
 class ContentTypeFactory extends TypeFactory
 {
     public function definition(): array

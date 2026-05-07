@@ -177,7 +177,7 @@ class BlockLibraryServiceProvider extends AbstractPackageServiceProvider
         foreach (resolve(ContentBlockRegistry::class)->all() as $definition) {
             CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::configurator(
                 class: $definition->configurator,
-                group: $definition->configuratorType->value,
+                group: $definition->configuratorType->getName(),
                 name: $definition->configurator::getKey(),
             ));
         }

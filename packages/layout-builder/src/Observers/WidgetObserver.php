@@ -14,17 +14,17 @@ class WidgetObserver
 {
     public function creating(Widget $widget): void
     {
-        if (! $widget->name && $widget->key) {
+        if ($widget->name === null && $widget->key !== '') {
             $widget->name = str($widget->key)->title();
         }
 
-        if (! $widget->key) {
+        if ($widget->key === '') {
             $widget->key = GenerateUniqueKeyAction::run($widget);
         }
 
-        if (! $widget->type_id) {
+        if ($widget->type_id === null) {
             $widget->type_id = Type::query()->where('type', LayoutTypeEnum::Widget)->default()->value('id');
-            throw_unless($widget->type_id, InvalidArgumentException::class, 'Unable to create widget without a type.');
+            throw_if($widget->type_id === null, InvalidArgumentException::class, 'Unable to create widget without a type.');
         }
     }
 }

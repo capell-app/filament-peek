@@ -6,10 +6,16 @@ namespace Capell\Events\Models;
 
 use Capell\Events\Database\Factories\EventRegistrationFactory;
 use Capell\Events\Enums\EventRegistrationStatusEnum;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $email
+ * @property CarbonImmutable|null $cancelled_at
+ * @property-read EventOccurrence $occurrence
+ */
 class EventRegistration extends Model
 {
     /** @use HasFactory<EventRegistrationFactory> */
@@ -21,6 +27,7 @@ class EventRegistration extends Model
 
     protected static string $factory = EventRegistrationFactory::class;
 
+    /** @return BelongsTo<EventOccurrence, self> */
     public function occurrence(): BelongsTo
     {
         return $this->belongsTo(EventOccurrence::class, 'event_occurrence_id');

@@ -108,7 +108,7 @@ class WidgetAssetsTable implements TableConfigurator
                                 ->groupBy(['pageable_type', 'pageable_id'])
                                 ->get()
                                 ->pluck(
-                                    fn (WidgetAsset $widgetAsset): array => [self::buildLookupKey($widgetAsset->pageable_type, $widgetAsset->pageable_id) => $widgetAsset->page->name],
+                                    fn (WidgetAsset $widgetAsset): array => [self::buildLookupKey($widgetAsset->pageable_type, $widgetAsset->pageable_id) => $widgetAsset->page?->getAttribute('name')],
                                 )
                                 ->all(),
                         ),
@@ -181,8 +181,10 @@ class WidgetAssetsTable implements TableConfigurator
                             ['name'],
                         );
 
-                        if ($pageableModel !== null && filled($pageableModel->name)) {
-                            $indicators['page'] = __('capell-admin::filter.page', ['search' => $pageableModel->name]);
+                        $pageableName = $pageableModel?->getAttribute('name');
+
+                        if (is_string($pageableName) && filled($pageableName)) {
+                            $indicators['page'] = __('capell-admin::filter.page', ['search' => $pageableName]);
                         }
                     }
 

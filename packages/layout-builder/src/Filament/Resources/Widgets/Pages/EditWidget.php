@@ -66,7 +66,7 @@ class EditWidget extends EditRecord implements PageCacheNotifiable
 
         $type = $this->record->type;
 
-        if ($type) {
+        if ($type !== null) {
             $subheading .= __('capell-layout-builder::heading.widget_type', [
                 'type' => $type->name,
             ]);

@@ -11,6 +11,7 @@ use Capell\Core\Models\Type;
 use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum;
 use Capell\LayoutBuilder\Filament\Configurators\Widgets\DefaultWidgetConfigurator;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class WidgetForm implements FormConfigurator
 {
@@ -20,11 +21,12 @@ class WidgetForm implements FormConfigurator
         $record = $configurator->getRecord();
         $type = null;
 
-        if ($record?->relationLoaded('type') && $record->type instanceof Type) {
-            $type = $record->type;
+        if ($record instanceof Model && $record->relationLoaded('type')) {
+            $loadedType = $record->getRelationValue('type');
+            $type = $loadedType instanceof Type ? $loadedType : null;
         }
 
-        $typeId = $configurator->getRawState()['type_id'] ?? $record?->type_id ?? null;
+        $typeId = $configurator->getRawState()['type_id'] ?? ($record instanceof Model ? $record->getAttribute('type_id') : null);
 
         if (! $type instanceof Type && $typeId !== null) {
             /** @var class-string<Type> $model */

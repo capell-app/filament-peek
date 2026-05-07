@@ -73,7 +73,8 @@ class CreateLayoutBuilderDemoSiteAction
 
         $page->update(['layout_id' => $layout->id]);
 
-        $containers = $layout->containers ?? [];
+        $containers = $layout->getAttribute('containers');
+        $containers = is_array($containers) ? $containers : [];
 
         $this->populateMainContainer($containers, $page);
         $this->populateFaqContainers($containers, $languages, $page);
@@ -260,13 +261,18 @@ class CreateLayoutBuilderDemoSiteAction
         ];
 
         if ($parent instanceof Model) {
-            $contentData['parent_id'] = $parent->id;
+            $contentData['parent_id'] = $parent->getKey();
         }
 
         foreach ($languages as $language) {
-            $name = $contentNode['name'][$language->code];
+            $code = $language->getAttribute('code');
+            $name = is_string($code) ? $contentNode['name'][$code] : null;
 
-            $contentData['translations'][$language->code] = [
+            if ($name === null) {
+                continue;
+            }
+
+            $contentData['translations'][$code] = [
                 'title' => $name,
                 'content' => $name,
             ];

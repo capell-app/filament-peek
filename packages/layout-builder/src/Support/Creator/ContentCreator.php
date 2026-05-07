@@ -6,6 +6,7 @@ namespace Capell\LayoutBuilder\Support\Creator;
 
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -51,14 +52,21 @@ class ContentCreator
             'parent_id' => $parentId,
         ];
 
-        /** @var Section $content */
         $content = $this->contentModel::query()->firstOrCreate($payload);
 
         foreach ($languages as $language) {
-            $translation_data = $data['translations'][$language->code];
+            $code = $language->getAttribute('code');
 
-            $content->translations()->firstOrCreate([
-                'language_id' => $language->id,
+            if (! is_string($code)) {
+                continue;
+            }
+
+            $translation_data = $data['translations'][$code];
+
+            Translation::query()->firstOrCreate([
+                'translationable_type' => $content->getMorphClass(),
+                'translationable_id' => $content->getKey(),
+                'language_id' => $language->getKey(),
             ], [
                 'title' => $translation_data['title'],
                 'content' => $translation_data['content'] ?? null,

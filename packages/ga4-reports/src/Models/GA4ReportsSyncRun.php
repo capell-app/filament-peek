@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Capell\GA4Reports\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $status
+ * @property CarbonImmutable|null $finished_at
+ * @property string|null $error_message
+ */
 final class GA4ReportsSyncRun extends Model
 {
     use HasFactory;

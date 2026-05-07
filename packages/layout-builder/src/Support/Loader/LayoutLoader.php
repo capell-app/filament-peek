@@ -174,7 +174,8 @@ class LayoutLoader
 
         // Build the final preloaded map per container/widget/occurrence
         $result = [];
-        $containers = is_array($layout->containers ?? null) ? $layout->containers : [];
+        $containers = $layout->getAttribute('containers');
+        $containers = is_array($containers) ? $containers : [];
         foreach ($containers as $containerKey => $container) {
             if (! isset($container['widgets'])) {
                 continue;

@@ -15,9 +15,9 @@ class ContentBlockObserver
 {
     public function creating(ContentBlock $content_block): void
     {
-        if (! $content_block->type_id) {
+        if ($content_block->type_id === null) {
             $content_block->type_id = Type::query()->where('type', LayoutTypeEnum::ContentBlock)->default()->value('id');
-            throw_unless($content_block->type_id, InvalidArgumentException::class, 'Unable to create content without a type.');
+            throw_if($content_block->type_id === null, InvalidArgumentException::class, 'Unable to create content without a type.');
         }
 
         // Normalize parent_id from loaded relation if needed (nested set).

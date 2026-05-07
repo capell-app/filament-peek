@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\CampaignStudio\Actions;
 
+use Capell\CampaignStudio\Models\CampaignConversionGoal;
 use Capell\CampaignStudio\Models\CampaignGroup;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -22,9 +23,9 @@ final class BuildCampaignConversionFunnelAction
             ->withCount('conversions')
             ->orderByDesc('conversions_count')
             ->get()
-            ->map(fn (object $goal): array => [
-                'goal' => (string) $goal->name,
-                'conversions' => (int) $goal->conversions_count,
+            ->map(fn (CampaignConversionGoal $goal): array => [
+                'goal' => $goal->name,
+                'conversions' => $goal->conversions_count,
             ])
             ->values();
     }

@@ -240,11 +240,13 @@ trait ManagesContainers
 
         $this->containers = [];
 
-        if (! $this->layout->containers) {
+        $containers = $this->layout->getAttribute('containers');
+
+        if (! is_array($containers) || $containers === []) {
             return;
         }
 
-        foreach ($this->layout->containers as $key => $container) {
+        foreach ($containers as $key => $container) {
             $this->containers[$key] = [
                 'widgets' => $container['widgets'] ?? [],
                 'meta' => $container['meta'] ?? [],

@@ -42,12 +42,12 @@ final class BuildTopGA4ReportsPagesAction
             ->limit($limit)
             ->get()
             ->map(fn (GA4ReportsPageMetric $metric): GA4ReportsTopPageData => new GA4ReportsTopPageData(
-                pagePath: (string) $metric->page_path,
+                pagePath: $metric->page_path,
                 pageTitle: is_string($metric->page_title) ? $metric->page_title : null,
-                screenPageViews: (int) $metric->screen_page_views,
-                sessions: (int) $metric->sessions,
-                totalUsers: (int) $metric->total_users,
-                conversions: (int) $metric->conversions,
+                screenPageViews: $metric->screen_page_views,
+                sessions: $metric->sessions,
+                totalUsers: $metric->total_users,
+                conversions: $metric->conversions,
             ))
             ->all();
     }

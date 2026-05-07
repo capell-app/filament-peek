@@ -19,7 +19,9 @@ class EventCalendar extends Component
 
     public function mount(?string $month = null): void
     {
-        $this->month = $month ?? CarbonImmutable::now($this->site()->timezone ?? 'UTC')->format('Y-m');
+        $timezone = $this->site()->getAttribute('timezone');
+
+        $this->month = $month ?? CarbonImmutable::now(is_string($timezone) ? $timezone : 'UTC')->format('Y-m');
     }
 
     public function previousMonth(): void

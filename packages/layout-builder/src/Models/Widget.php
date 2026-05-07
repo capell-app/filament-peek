@@ -52,7 +52,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 /**
  * @property-read \Illuminate\Database\Eloquent\Collection<int, WidgetAsset> $assets
  * @property-read int|null $assets_count
- * @property-read \Aimeos\Nestedset\Collection<int, Section> $sections
+ * @property-read \Aimeos\Nestedset\Collection<int, Model> $sections
  * @property-read int|null $sections_count
  * @property-read User|null $creator
  * @property-read User|null $destroyer

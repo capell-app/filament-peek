@@ -15,10 +15,13 @@ class LayoutSavingListener
             return;
         }
 
-        $layout->widgets = collect($layout->containers)
+        $containers = $layout->getAttribute('containers');
+        $containers = is_array($containers) ? $containers : [];
+
+        $layout->setAttribute('widgets', collect($containers)
             ->flatMap(fn (array $container): array => $container['widgets'] ?? [])
             ->unique('widget_key')
             ->pluck('widget_key')
-            ->all();
+            ->all());
     }
 }

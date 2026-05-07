@@ -29,7 +29,7 @@ abstract class AbstractPagesWidget extends AbstractWidget
         $title = $this->widget->translation?->title;
         $content = '';
 
-        if ($title) {
+        if ($title !== null && $title !== '') {
             $content .= '<div class="widget-content">' . e(__($title, GetPageVariablesAction::run($page))) . '</div>';
         }
 

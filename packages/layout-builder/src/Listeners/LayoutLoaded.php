@@ -41,7 +41,8 @@ class LayoutLoaded implements EventSubscriber
         $loader = new LayoutLoader;
         $loader->preloadLayoutWidgets($layout, $language, $page);
 
-        $containers = $layout->containers ?? [];
+        $containers = $layout->getAttribute('containers');
+        $containers = is_array($containers) ? $containers : [];
 
         foreach ($containers as $containerKey => $container) {
             if (! isset($container['widgets'])) {

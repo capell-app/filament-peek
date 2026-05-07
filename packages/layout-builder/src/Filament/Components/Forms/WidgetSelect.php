@@ -31,7 +31,15 @@ class WidgetSelect extends Select
             ->getOptionLabelFromRecordUsing(
                 fn (Widget $record): string => static::getSelectOption($record),
             )
-            ->getOptionLabelUsing(fn (Select $component, ?int $value): ?string => $component->getModel()::find($value)?->name)
+            ->getOptionLabelUsing(function (Select $component, ?int $value): ?string {
+                if ($value === null) {
+                    return null;
+                }
+
+                $name = $component->getModel()::query()->whereKey($value)->value('name');
+
+                return is_string($name) ? $name : null;
+            })
             ->getOptionLabelsUsing(
                 fn (Select $component, array $values): array => $component->getModel()::whereIn('id', $values)
                     ->pluck('name', 'id')
@@ -68,7 +76,7 @@ class WidgetSelect extends Select
                     ->slideOver()
                     ->closeModalByClickingAway(false)
                     ->closeModalByEscaping()
-                    ->hidden(fn (?int $state): bool => ! $this->isMultiple() && $state)
+                    ->hidden(fn (?int $state): bool => ! $this->isMultiple() && $state !== null)
                     ->successNotificationTitle(
                         fn (Action $action): string => __(
                             'capell-admin::notification.created_successfully',
@@ -84,7 +92,7 @@ class WidgetSelect extends Select
     public function withEditForm(): self
     {
         return $this->editOptionForm(
-            fn (?int $state, Schema $configurator): ?Schema => $state ? WidgetForm::configure($configurator) : null,
+            fn (?int $state, Schema $configurator): ?Schema => $state !== null ? WidgetForm::configure($configurator) : null,
         )
             ->editOptionAction(
                 fn (Action $action): Action => $action
@@ -93,9 +101,9 @@ class WidgetSelect extends Select
                             return null;
                         }
 
-                        $selectedRecord = $component->getSelectedRecord();
+                        $name = $component->getSelectedRecord()?->getAttribute('name');
 
-                        return new HtmlString(__('capell-layout-builder::heading.edit_widget_record', ['name' => $selectedRecord->name]));
+                        return new HtmlString(__('capell-layout-builder::heading.edit_widget_record', ['name' => $name]));
                     })
                     ->modalWidth(Width::ScreenLarge)
                     ->slideOver()

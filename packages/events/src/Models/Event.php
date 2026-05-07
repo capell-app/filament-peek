@@ -47,6 +47,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
+/**
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $starts_at
+ * @property CarbonImmutable|null $visible_from
+ * @property CarbonImmutable|null $visible_until
+ * @property EventVisibilityEnum $visibility
+ * @property int|null $site_id
+ * @property string $name
+ * @property string $timezone
+ * @property-read Site $site
+ * @property-read Type $type
+ */
 class Event extends Model implements HasMedia, Pageable, PageCacheable, Publishable, Translatable, Typeable, Userstampable
 {
     use BelongsToWorkspace;

@@ -11,6 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $page_id
+ * @property string|null $headline
+ * @property string|null $utm_term
+ * @property string|null $utm_content
+ * @property int $conversions_count
+ * @property-read CampaignGroup|null $campaignGroup
+ */
 class CampaignLandingPage extends Model
 {
     /** @use HasFactory<CampaignLandingPageFactory> */

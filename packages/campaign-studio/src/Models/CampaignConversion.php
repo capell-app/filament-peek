@@ -13,6 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property int $campaign_conversion_goal_id
+ * @property int $campaign_landing_page_id
+ * @property string|null $source_type
+ * @property int|null $source_id
+ * @property ConversionAttributionData|null $attribution
+ */
 class CampaignConversion extends Model
 {
     /** @use HasFactory<CampaignConversionFactory> */

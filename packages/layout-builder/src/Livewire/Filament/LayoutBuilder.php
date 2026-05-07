@@ -38,10 +38,10 @@ use Livewire\Component;
 
 /**
  * @property-read ?Pageable $page
- * @property-read $changeLayoutAction
- * @property-read $duplicateLayoutAction
- * @property-read $addWidgetAction
- * @property-read $editWidgetAssetAction
+ * @property-read mixed $changeLayoutAction
+ * @property-read mixed $duplicateLayoutAction
+ * @property-read mixed $addWidgetAction
+ * @property-read mixed $editWidgetAssetAction
  */
 class LayoutBuilder extends Component implements HasActions, HasForms, HasPageResource
 {
@@ -186,7 +186,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
             'containers' => $this->containers,
         ]);
 
-        if ($this->page && $this->page->layout_id !== $this->layout->getKey()) {
+        if ($this->page !== null && $this->page->layout_id !== $this->layout->getKey()) {
             $this->page->update([
                 'layout_id' => $this->layout->getKey(),
             ]);
@@ -270,7 +270,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
 
         $this->layoutUpdated();
 
-        if ($actionModalId) {
+        if ($actionModalId !== null && $actionModalId !== '') {
             $this->dispatch('close-modal', id: $actionModalId);
         }
     }
@@ -319,7 +319,7 @@ class LayoutBuilder extends Component implements HasActions, HasForms, HasPageRe
      */
     public function getPageResource(): string
     {
-        if ($this->page) {
+        if ($this->page !== null) {
             $resource = GetResourceFromTypeAction::run(ResourceEnum::Page, $this->page->type);
 
             if ($resource !== null) {

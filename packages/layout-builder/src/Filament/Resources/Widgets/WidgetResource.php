@@ -111,7 +111,7 @@ class WidgetResource extends Resource
     {
         $details = [];
 
-        if ($record->title) {
+        if ($record->title !== null && $record->title !== '') {
             $details[__('capell-admin::generic.title')] = $record->title;
         }
 

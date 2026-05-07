@@ -106,14 +106,16 @@ class WidgetAssetFactory extends Factory
                 ->withTranslations()
                 ->create();
 
-            $meta = $widgetAsset->asset->meta;
+            $asset = $widgetAsset->asset;
+            $meta = $asset->getAttribute('meta');
+            $meta = is_array($meta) ? $meta : [];
             $meta['related'] = collect($meta['related'] ?? [])
                 ->merge($related->pluck('id'))
                 ->unique()
                 ->values()
                 ->all();
-            $widgetAsset->asset->meta = $meta;
-            $widgetAsset->asset->save();
+            $asset->setAttribute('meta', $meta);
+            $asset->save();
         });
     }
 
@@ -129,12 +131,14 @@ class WidgetAssetFactory extends Factory
                 ];
             }
 
-            $meta = $widgetAsset->asset->meta;
+            $asset = $widgetAsset->asset;
+            $meta = $asset->getAttribute('meta');
+            $meta = is_array($meta) ? $meta : [];
             $meta['actions'] = collect($meta['actions'] ?? [])
                 ->merge($actions)
                 ->all();
-            $widgetAsset->asset->meta = $meta;
-            $widgetAsset->asset->save();
+            $asset->setAttribute('meta', $meta);
+            $asset->save();
         });
     }
 

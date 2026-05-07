@@ -31,7 +31,6 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Resource;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -149,7 +148,7 @@ class BlockLibraryTable implements TableConfigurator
                         return null;
                     }
 
-                    /** @var resource $resource */
+                    /** @var class-string<\Filament\Resources\Resource> $resource */
                     $resource = AdminSurfaceLookup::resource(ResourceEnum::Page);
 
                     return $resource::getUrl(
@@ -167,7 +166,7 @@ class BlockLibraryTable implements TableConfigurator
                 ->formatStateUsing(fn (ContentBlock $record): int => $record->assets_count),
             SiteColumn::make('site.name')
                 ->hidden(
-                    fn (HasTable $livewire): bool => ($livewire instanceof ListRecords && $livewire->activeTab)
+                    fn (HasTable $livewire): bool => ($livewire instanceof ListRecords && $livewire->activeTab !== null && $livewire->activeTab !== '')
                         || ($livewire->getTableFilterState('filter')['site_id'] ?? null) !== null && $livewire->getTableFilterState('filter')['site_id'] !== '',
                 ),
             DateColumn::make('visible_from')
@@ -272,7 +271,7 @@ class BlockLibraryTable implements TableConfigurator
                             return $block_library->mapWithKeys(function (ContentBlock $content_block) use ($siteId): array {
                                 $label = '';
 
-                                if (! $siteId && $content_block->site) {
+                                if (($siteId === null || $siteId === 0) && $content_block->site !== null) {
                                     $label .= $content_block->site->name . ' &raquo; ';
                                 }
 

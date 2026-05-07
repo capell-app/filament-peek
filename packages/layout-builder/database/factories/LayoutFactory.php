@@ -6,12 +6,8 @@ namespace Capell\LayoutBuilder\Database\Factories;
 
 use Capell\Core\Models\Layout;
 use Capell\LayoutBuilder\Models\Widget;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Collection;
 
-/**
- * @extends Factory<Layout>
- */
 class LayoutFactory extends \Capell\Core\Database\Factories\LayoutFactory
 {
     public function containers(): self

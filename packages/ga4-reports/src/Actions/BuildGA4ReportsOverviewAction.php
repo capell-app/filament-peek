@@ -50,7 +50,7 @@ final class BuildGA4ReportsOverviewAction
         }
 
         $weightedDuration = (clone $query)->get()
-            ->sum(fn (GA4ReportsDailyMetric $metric): float => (float) $metric->average_session_duration * (int) $metric->sessions);
+            ->sum(fn (GA4ReportsDailyMetric $metric): float => $metric->average_session_duration * $metric->sessions);
 
         return round($weightedDuration / $sessions, 2);
     }

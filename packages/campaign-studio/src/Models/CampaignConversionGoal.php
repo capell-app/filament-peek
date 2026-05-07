@@ -13,6 +13,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int|null $site_id
+ * @property string $name
+ * @property ConversionGoalType $type
+ * @property bool $is_active
+ * @property int $conversions_count
+ */
 class CampaignConversionGoal extends Model
 {
     /** @use HasFactory<CampaignConversionGoalFactory> */

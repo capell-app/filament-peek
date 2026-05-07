@@ -19,7 +19,8 @@ class AddHeroWidgetToLayoutAction
 
     public function handle(Widget $widget, Layout $layout, string $container = 'hero'): void
     {
-        $containers = $layout->containers ?? [];
+        $containers = $layout->getAttribute('containers');
+        $containers = is_array($containers) ? $containers : [];
 
         if (! array_key_exists($container, $containers)) {
             $containers = array_merge([$container => $this->heroContainer($widget)], $containers);

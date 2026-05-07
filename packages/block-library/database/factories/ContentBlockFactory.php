@@ -87,13 +87,13 @@ class ContentBlockFactory extends Factory
                 $languages = collect([$languages]);
             } elseif (is_array($languages)) {
                 $languages = collect($languages);
-            } elseif ($contentBlock->site) {
+            } elseif ($contentBlock->site !== null) {
                 $languages = $contentBlock->site->languages;
             } else {
                 $languages = Language::all();
             }
 
-            if ($contentBlock->site && $languages->doesntContain('id', $contentBlock->site->language->id)) {
+            if ($contentBlock->site !== null && $languages->doesntContain('id', $contentBlock->site->language->id)) {
                 $languages = $languages->prepend($contentBlock->site->language);
             }
 

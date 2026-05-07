@@ -23,7 +23,7 @@ class Siblings extends AbstractPagesWidget
             return;
         }
 
-        if (! $page->parent_id) {
+        if ($page->parent_id === null) {
             $this->skipRender = true;
 
             return;

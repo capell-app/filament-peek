@@ -42,7 +42,7 @@ class LayoutsTable extends \Capell\Admin\Filament\Resources\Layouts\Tables\Layou
                     ->view(
                         'capell-layout-builder::components.infolists.entries.layout-widgets',
                         [
-                            'widgets' => $record->layoutWidgets,
+                            'widgets' => $record->getRelationValue('layoutWidgets'),
                         ],
                     ),
             ]);

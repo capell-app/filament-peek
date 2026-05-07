@@ -74,7 +74,7 @@ final class GA4ReportsSetupStatusWidget extends BaseWidget implements CapellWidg
             [
                 'id' => 'last-status',
                 'label' => __('capell-ga4-reports::widgets.last_status'),
-                'value' => $latestRun instanceof GA4ReportsSyncRun ? (string) $latestRun->status : __('capell-ga4-reports::widgets.not_available'),
+                'value' => $latestRun instanceof GA4ReportsSyncRun ? $latestRun->status : __('capell-ga4-reports::widgets.not_available'),
             ],
         ]);
     }

@@ -177,13 +177,13 @@ trait ManagesAssets
                     'occurrence' => $widgetAsset->occurrence,
                 ];
 
-                if ($widgetAsset->pageable_id && $widgetAsset->pageable_type) {
+                if ($widgetAsset->pageable_id !== null && $widgetAsset->pageable_type !== null) {
                     $asset['pageable_id'] = $widgetAsset->pageable_id;
                     $asset['pageable_type'] = $widgetAsset->pageable_type;
                     $asset['container'] = $containerKey;
                 }
 
-                if ($oldContainerKey) {
+                if ($oldContainerKey !== null && $oldContainerKey !== '') {
                     $asset['old_container'] = $oldContainerKey;
                 }
 
@@ -391,7 +391,7 @@ trait ManagesAssets
             return [];
         }
 
-        /** @var EloquentBuilder $query */
+        /** @var EloquentBuilder<Model> $query */
         $query = $model::query()->whereKey($requestedAssetIds->all());
 
         $this->constrainAssetQueryToCurrentContext($query, new $model);
@@ -560,7 +560,7 @@ trait ManagesAssets
 
                 $existingAsset = $existingAssets->get($key);
 
-                if ($existingAsset) {
+                if ($existingAsset instanceof WidgetAsset) {
                     $existingAsset->order = $order;
                     $existingAsset->meta = $widgetAsset['meta'] ?? [];
                     $existingAsset->occurrence = $occurrence;
@@ -620,7 +620,7 @@ trait ManagesAssets
             )
             ->first();
 
-        if (! $widgetAsset) {
+        if (! $widgetAsset instanceof WidgetAsset) {
             /** @var WidgetAsset $widgetAsset */
             $widgetAsset = $widget->assets()->newModelInstance([
                 'meta' => $meta,
@@ -671,7 +671,7 @@ trait ManagesAssets
             ->where($attributes)
             ->first();
 
-        if ($existing) {
+        if ($existing instanceof WidgetAsset) {
             $existing->order = $order;
             $existing->meta = $asset['meta'] ?? [];
             $existing->save();
@@ -847,7 +847,7 @@ trait ManagesAssets
         $assets = $this->buildPreloadedWidgetAssets($existingIds, $newAssets);
 
         return $this->filterContainerWidgetAssets($assets, $containerKey, $occurrence)
-            ->each->setRelation('widget', $widget);
+            ->each(fn (WidgetAsset $asset): WidgetAsset => $asset->setRelation('widget', $widget));
     }
 
     protected function preloadAllWidgetAssets(): ?Collection
@@ -972,7 +972,9 @@ trait ManagesAssets
     {
         $widget = $this->getContainerWidget($containerKey, $widgetIndex);
 
-        $widget->assets[$index] = $widget->assets[$index]->fresh();
+        $assets = $widget->assets;
+        $assets[$index] = $assets[$index]->fresh();
+        $widget->setRelation('assets', $assets);
     }
 
     protected function deleteRemovedWidgetAssets(): void
