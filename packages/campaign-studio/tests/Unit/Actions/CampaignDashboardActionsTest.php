@@ -2,15 +2,21 @@
 
 declare(strict_types=1);
 
+use Capell\CampaignStudio\Actions\ApplyCampaignPageDefaultsAction;
+use Capell\CampaignStudio\Actions\BuildCampaignConversionFunnelAction;
 use Capell\CampaignStudio\Actions\BuildCampaignOverviewStatsAction;
 use Capell\CampaignStudio\Actions\BuildTopCampaignStudioQueryAction;
 use Capell\CampaignStudio\Actions\BuildTopLandingPagesQueryAction;
+use Capell\CampaignStudio\Actions\RecordCtaClickConversionAction;
+use Capell\CampaignStudio\Actions\RecordPageViewConversionAction;
 use Capell\CampaignStudio\Actions\ResolveCampaignFromUrlAction;
 use Capell\CampaignStudio\Enums\CampaignStatus;
+use Capell\CampaignStudio\Enums\ConversionGoalType;
 use Capell\CampaignStudio\Models\CampaignConversion;
 use Capell\CampaignStudio\Models\CampaignConversionGoal;
 use Capell\CampaignStudio\Models\CampaignGroup;
 use Capell\CampaignStudio\Models\CampaignLandingPage;
+use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageUrl;
 use Capell\Insights\Models\InsightsVisit;
@@ -183,4 +189,101 @@ it('ranks landing pages by in-window conversions with their campaign names', fun
         ->and($rows[0]->conversions)->toBe(2)
         ->and($rows[1]->landingPageId)->toBe($secondLandingPage->getKey())
         ->and($rows[1]->conversions)->toBe(1);
+});
+
+it('builds a conversion funnel ordered by goal conversion volume', function (): void {
+    $campaign = CampaignGroup::factory()->create();
+    $firstGoal = CampaignConversionGoal::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create(['name' => 'Lead form']);
+    $secondGoal = CampaignConversionGoal::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create(['name' => 'Book demo']);
+
+    CampaignConversion::factory()
+        ->count(2)
+        ->for($campaign, 'campaignGroup')
+        ->for($secondGoal, 'goal')
+        ->create();
+    CampaignConversion::factory()
+        ->for($campaign, 'campaignGroup')
+        ->for($firstGoal, 'goal')
+        ->create();
+
+    $funnel = BuildCampaignConversionFunnelAction::run($campaign);
+
+    expect($funnel->all())->toBe([
+        ['goal' => 'Book demo', 'conversions' => 2],
+        ['goal' => 'Lead form', 'conversions' => 1],
+    ]);
+});
+
+it('records cta click conversions only for active cta click goals', function (): void {
+    $campaign = CampaignGroup::factory()->create();
+    $goal = CampaignConversionGoal::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create([
+            'key' => 'primary-cta',
+            'type' => ConversionGoalType::CtaClick,
+            'is_active' => true,
+        ]);
+    CampaignConversionGoal::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create([
+            'key' => 'inactive-cta',
+            'type' => ConversionGoalType::CtaClick,
+            'is_active' => false,
+        ]);
+
+    $conversion = RecordCtaClickConversionAction::run('primary-cta');
+
+    expect($conversion)->toBeInstanceOf(CampaignConversion::class)
+        ->and($conversion->campaign_conversion_goal_id)->toBe($goal->getKey())
+        ->and(RecordCtaClickConversionAction::run('inactive-cta'))->toBeNull()
+        ->and(RecordCtaClickConversionAction::run('missing-cta'))->toBeNull();
+});
+
+it('records page view conversions from landing pages with page view primary goals', function (): void {
+    $campaign = CampaignGroup::factory()->create();
+    $goal = CampaignConversionGoal::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create(['type' => ConversionGoalType::PageView]);
+    $landingPage = CampaignLandingPage::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create(['primary_goal_id' => $goal->getKey()]);
+    $landingPageWithoutPageViewGoal = CampaignLandingPage::factory()
+        ->for($campaign, 'campaignGroup')
+        ->create();
+
+    $conversion = RecordPageViewConversionAction::run($landingPage);
+
+    expect($conversion)->toBeInstanceOf(CampaignConversion::class)
+        ->and($conversion->campaign_conversion_goal_id)->toBe($goal->getKey())
+        ->and($conversion->campaign_landing_page_id)->toBe($landingPage->getKey())
+        ->and(RecordPageViewConversionAction::run($landingPageWithoutPageViewGoal))->toBeNull();
+});
+
+it('applies campaign defaults without replacing explicit page utm values', function (): void {
+    $campaign = CampaignGroup::factory()->create([
+        'slug' => 'fallback-campaign',
+        'utm_source' => 'newsletter',
+        'utm_medium' => 'email',
+        'utm_campaign' => null,
+    ]);
+
+    $defaults = ApplyCampaignPageDefaultsAction::run(['utm_source' => 'paid'], $campaign);
+
+    expect($defaults)->toBe([
+        'utm_source' => 'paid',
+        'utm_medium' => 'email',
+        'utm_campaign' => 'fallback-campaign',
+    ]);
+});
+
+it('installs campaign layouts through the console command', function (): void {
+    $this->artisan('capell:campaign-studio-install-layouts')
+        ->expectsOutputToContain('Campaign layouts installed. Created: 3, updated: 0, skipped: 0.')
+        ->assertSuccessful();
+
+    expect(Layout::query()->where('key', 'campaign-product-launch')->exists())->toBeTrue();
 });
