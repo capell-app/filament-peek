@@ -26,7 +26,7 @@ class EventForm implements FormConfigurator
     {
         return $schema
             ->components([
-                SiteSelect::make(),
+                SiteSelect::make('site_id'),
                 TypeSelect::make('type_id')->required(),
                 LayoutSelect::make('layout_id')->required(),
                 TextInput::make('name')

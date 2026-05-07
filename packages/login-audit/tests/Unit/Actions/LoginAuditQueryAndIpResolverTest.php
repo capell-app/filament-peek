@@ -6,6 +6,7 @@ use Capell\LoginAudit\Actions\BuildLoginAuditsQueryAction;
 use Capell\LoginAudit\Actions\ResolveLoginAuditIpAddressAction;
 use Capell\LoginAudit\Models\LoginAudit;
 use Capell\LoginAudit\Settings\LoginAuditSettings;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Spatie\LaravelSettings\Migrations\SettingsMigrator;
 
@@ -25,27 +26,27 @@ function seedLoginAuditQueryAndResolverSetting(string $settingName, mixed $value
 }
 
 it('builds login audit queries filtered by time window ordered newest first and limited', function (): void {
-    $trackedAt = now()->setMicrosecond(0);
+    $trackedAt = CarbonImmutable::parse('2026-05-07 10:00:00');
     $this->travelTo($trackedAt);
 
     $newestAudit = LoginAudit::factory()->create([
-        'login_at' => $trackedAt->copy()->subMinutes(5),
+        'login_at' => $trackedAt->subMinutes(5),
     ]);
 
     $middleAudit = LoginAudit::factory()->create([
-        'login_at' => $trackedAt->copy()->subHours(2),
+        'login_at' => $trackedAt->subHours(2),
     ]);
 
     $thirdNewestAudit = LoginAudit::factory()->create([
-        'login_at' => $trackedAt->copy()->subHours(5),
+        'login_at' => $trackedAt->subHours(5),
     ]);
 
     $limitedOutAudit = LoginAudit::factory()->create([
-        'login_at' => $trackedAt->copy()->subHours(5)->subMinute(),
+        'login_at' => $trackedAt->subHours(5)->subMinute(),
     ]);
 
     $outsideWindowAudit = LoginAudit::factory()->create([
-        'login_at' => $trackedAt->copy()->subHours(8),
+        'login_at' => $trackedAt->subHours(8),
     ]);
 
     $records = BuildLoginAuditsQueryAction::run(hours: 6, limit: 3)->get();

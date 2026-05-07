@@ -14,11 +14,11 @@ class WidgetObserver
 {
     public function creating(Widget $widget): void
     {
-        if ($widget->name === null && $widget->key !== '') {
+        if ($widget->name === null && $widget->key !== null && $widget->key !== '') {
             $widget->name = str($widget->key)->title();
         }
 
-        if ($widget->key === '') {
+        if ($widget->key === null || $widget->key === '') {
             $widget->key = GenerateUniqueKeyAction::run($widget);
         }
 

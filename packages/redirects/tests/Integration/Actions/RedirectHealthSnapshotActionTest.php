@@ -10,6 +10,7 @@ use Capell\Core\Models\PageUrl;
 use Capell\Redirects\Actions\RefreshRedirectHealthSnapshotAction;
 use Capell\Redirects\Actions\RefreshRedirectHealthSnapshotsAction;
 use Capell\Redirects\Models\RedirectHealthSnapshot;
+use Carbon\CarbonInterface;
 
 it('stores redirect health for a redirect chain', function (): void {
     $language = LanguageFactory::new()->create();
@@ -146,13 +147,18 @@ it('refreshes stale health snapshots for active broken redirects only', function
     $inactiveSnapshot = RedirectHealthSnapshot::query()
         ->where('page_url_id', $inactiveRedirect->getKey())
         ->firstOrFail();
+    $refreshedComputedAt = $refreshedSnapshot->getAttribute('computed_at');
+    $inactiveComputedAt = $inactiveSnapshot->getAttribute('computed_at');
+
+    assert($refreshedComputedAt instanceof CarbonInterface);
+    assert($inactiveComputedAt instanceof CarbonInterface);
 
     expect($result)->toBe(['refreshed' => 1])
-        ->and($refreshedSnapshot->source_url)->toBe('/broken')
-        ->and($refreshedSnapshot->target_url)->toBe('/broken')
-        ->and($refreshedSnapshot->has_loop)->toBeTrue()
-        ->and($refreshedSnapshot->error_count)->toBeGreaterThan(0)
-        ->and($refreshedSnapshot->computed_at->greaterThan($staleComputedAt))->toBeTrue()
-        ->and($inactiveSnapshot->computed_at->equalTo($staleComputedAt))->toBeTrue()
+        ->and($refreshedSnapshot->getAttribute('source_url'))->toBe('/broken')
+        ->and($refreshedSnapshot->getAttribute('target_url'))->toBe('/broken')
+        ->and($refreshedSnapshot->getAttribute('has_loop'))->toBeTrue()
+        ->and($refreshedSnapshot->getAttribute('error_count'))->toBeGreaterThan(0)
+        ->and($refreshedComputedAt->greaterThan($staleComputedAt))->toBeTrue()
+        ->and($inactiveComputedAt->equalTo($staleComputedAt))->toBeTrue()
         ->and(RedirectHealthSnapshot::query()->count())->toBe(2);
 });

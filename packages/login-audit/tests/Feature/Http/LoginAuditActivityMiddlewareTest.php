@@ -6,6 +6,7 @@ use Capell\LoginAudit\Http\Middleware\AdminActivityMiddleware;
 use Capell\LoginAudit\Http\Middleware\UserActivityMiddleware;
 use Capell\LoginAudit\Models\LoginAudit;
 use Capell\Tests\Fixtures\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -27,11 +28,11 @@ function loginAuditActivityRequest(string $path, User $user, string $ipAddress, 
 
 function loginAuditActivityTimestamp(?DateTimeInterface $timestamp): ?string
 {
-    return $timestamp?->toDateTimeString();
+    return $timestamp?->format('Y-m-d H:i:s');
 }
 
 it('updates matching admin activity for the authenticated actor ip path and user agent', function (): void {
-    $trackedAt = now()->setMicrosecond(0);
+    $trackedAt = CarbonImmutable::parse('2026-05-07 10:00:00');
     $this->travelTo($trackedAt);
 
     $adminUser = User::factory()->create();
@@ -44,7 +45,7 @@ it('updates matching admin activity for the authenticated actor ip path and user
         'authenticatable_id' => $adminUser->getKey(),
         'ip_address' => $ipAddress,
         'user_agent' => $userAgent,
-        'login_at' => $trackedAt->copy()->subHour(),
+        'login_at' => $trackedAt->subHour(),
     ]);
 
     $wrongIpAudit = LoginAudit::factory()->create([
@@ -52,7 +53,7 @@ it('updates matching admin activity for the authenticated actor ip path and user
         'authenticatable_id' => $adminUser->getKey(),
         'ip_address' => '203.0.113.88',
         'user_agent' => $userAgent,
-        'login_at' => $trackedAt->copy()->subHour(),
+        'login_at' => $trackedAt->subHour(),
     ]);
 
     $wrongActorAudit = LoginAudit::factory()->create([
@@ -60,7 +61,7 @@ it('updates matching admin activity for the authenticated actor ip path and user
         'authenticatable_id' => $otherUser->getKey(),
         'ip_address' => $ipAddress,
         'user_agent' => $userAgent,
-        'login_at' => $trackedAt->copy()->subHour(),
+        'login_at' => $trackedAt->subHour(),
     ]);
 
     $futureLoginAudit = LoginAudit::factory()->create([
@@ -68,7 +69,7 @@ it('updates matching admin activity for the authenticated actor ip path and user
         'authenticatable_id' => $adminUser->getKey(),
         'ip_address' => $ipAddress,
         'user_agent' => $userAgent,
-        'login_at' => $trackedAt->copy()->addMinute(),
+        'login_at' => $trackedAt->addMinute(),
     ]);
 
     $wrongIpAuditLastSeenAt = loginAuditActivityTimestamp($wrongIpAudit->refresh()->last_seen_at);
@@ -97,7 +98,7 @@ it('updates matching admin activity for the authenticated actor ip path and user
 });
 
 it('skips admin activity for unauthenticated requests', function (): void {
-    $trackedAt = now()->setMicrosecond(0);
+    $trackedAt = CarbonImmutable::parse('2026-05-07 10:00:00');
     $this->travelTo($trackedAt);
 
     $adminUser = User::factory()->create();
@@ -106,7 +107,7 @@ it('skips admin activity for unauthenticated requests', function (): void {
         'authenticatable_id' => $adminUser->getKey(),
         'ip_address' => '198.51.100.23',
         'user_agent' => 'Capell Admin Browser/1.0',
-        'login_at' => $trackedAt->copy()->subHour(),
+        'login_at' => $trackedAt->subHour(),
     ]);
     $lastSeenAt = loginAuditActivityTimestamp($audit->refresh()->last_seen_at);
 
@@ -129,14 +130,14 @@ it('skips admin activity for unauthenticated requests', function (): void {
 });
 
 it('updates user middleware activity without overwriting unrelated audit state', function (): void {
-    $trackedAt = now()->setMicrosecond(0);
+    $trackedAt = CarbonImmutable::parse('2026-05-07 10:00:00');
     $this->travelTo($trackedAt);
 
     $user = User::factory()->create();
     $ipAddress = '203.0.113.45';
     $userAgent = 'Capell Frontend Browser/1.0';
-    $loginAt = $trackedAt->copy()->subHours(3);
-    $logoutAt = $trackedAt->copy()->subHour();
+    $loginAt = $trackedAt->subHours(3);
+    $logoutAt = $trackedAt->subHour();
     $location = ['country' => 'United Kingdom', 'city' => 'London'];
 
     $matchingAudit = LoginAudit::factory()->create([
@@ -185,7 +186,7 @@ it('updates user middleware activity without overwriting unrelated audit state',
 });
 
 it('skips user activity for guest requests', function (): void {
-    $trackedAt = now()->setMicrosecond(0);
+    $trackedAt = CarbonImmutable::parse('2026-05-07 10:00:00');
     $this->travelTo($trackedAt);
 
     $user = User::factory()->create();
@@ -194,7 +195,7 @@ it('skips user activity for guest requests', function (): void {
         'authenticatable_id' => $user->getKey(),
         'ip_address' => '203.0.113.45',
         'user_agent' => 'Capell Frontend Browser/1.0',
-        'login_at' => $trackedAt->copy()->subHour(),
+        'login_at' => $trackedAt->subHour(),
     ]);
     $lastSeenAt = loginAuditActivityTimestamp($audit->refresh()->last_seen_at);
 

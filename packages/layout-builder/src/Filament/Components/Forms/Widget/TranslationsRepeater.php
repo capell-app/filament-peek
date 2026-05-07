@@ -8,6 +8,7 @@ use Capell\Admin\Filament\Components\Forms\ContentEditor;
 use Capell\Admin\Filament\Components\Forms\RepeaterTabs;
 use Capell\Admin\Filament\Components\Forms\TranslationLanguageSelect;
 use Capell\Admin\Filament\Components\Forms\TranslationsRepeater as BaseTranslationsRepeater;
+use Capell\Core\Enums\ContentStructure;
 use Capell\Core\Models\Type;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -44,7 +45,7 @@ class TranslationsRepeater
             ]);
     }
 
-    private static function getContentStructure(Schema $configurator): ?array
+    private static function getContentStructure(Schema $configurator): ?ContentStructure
     {
         $record = $configurator->getRecord();
 
