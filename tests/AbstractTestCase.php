@@ -322,6 +322,7 @@ abstract class AbstractTestCase extends TestCase
             }
 
             if (! property_exists($migration, 'migration')) {
+                // @phpstan-ignore property.notFound
                 $migration->migration = $settingsMigrator;
             }
 

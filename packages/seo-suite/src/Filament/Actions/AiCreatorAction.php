@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use RuntimeException;
 use Throwable;
@@ -104,7 +105,7 @@ class AiCreatorAction extends Action
     private function buildBrandStep(): array
     {
         $siteId = $this->resolveSiteId();
-        $existingContext = $siteId ? AiCreatorContext::query()->where('site_id', $siteId)->first() : null;
+        $existingContext = $siteId !== null ? AiCreatorContext::query()->where('site_id', $siteId)->first() : null;
 
         return [
             Select::make('tone')
@@ -210,7 +211,7 @@ class AiCreatorAction extends Action
             $session = $sessionQuery->first();
         }
 
-        if (! $session) {
+        if ($session === null) {
             Notification::make()
                 ->title('AI Creator failed')
                 ->body('No AI session found. Please re-run the wizard.')
@@ -241,7 +242,7 @@ class AiCreatorAction extends Action
     {
         $record = $this->getRecord();
 
-        if ($record !== null && method_exists($record, 'getSite')) {
+        if (is_object($record) && method_exists($record, 'getSite')) {
             return $record->getSite();
         }
 
@@ -256,16 +257,21 @@ class AiCreatorAction extends Action
             return null;
         }
 
-        if (method_exists($record, 'getSiteId')) {
+        if (is_object($record) && method_exists($record, 'getSiteId')) {
             return $record->getSiteId();
         }
 
-        if (isset($record->site_id)) {
-            return (int) $record->site_id;
+        if (! $record instanceof Model) {
+            return null;
         }
 
-        if (isset($record->id) && str_contains($record::class, 'Site')) {
-            return (int) $record->id;
+        $recordSiteId = $record->getAttribute('site_id');
+        if ($recordSiteId !== null) {
+            return (int) $recordSiteId;
+        }
+
+        if ($record->getKey() !== null && str_contains($record::class, 'Site')) {
+            return (int) $record->getKey();
         }
 
         return null;
@@ -275,6 +281,6 @@ class AiCreatorAction extends Action
     {
         $record = $this->getRecord();
 
-        return $record !== null && str_contains($record::class, 'Site');
+        return $record instanceof Model && str_contains($record::class, 'Site');
     }
 }

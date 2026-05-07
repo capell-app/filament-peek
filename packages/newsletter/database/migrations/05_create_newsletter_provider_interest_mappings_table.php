@@ -12,14 +12,18 @@ return new class extends Migration
     {
         Schema::create('newsletter_provider_interest_mappings', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('provider_audience_id')->constrained('newsletter_provider_audiences')->cascadeOnDelete();
+            $table->foreignId('provider_audience_id');
             $table->foreignId('tag_id')->constrained('tags')->cascadeOnDelete();
             $table->string('remote_interest_id');
             $table->string('remote_interest_type')->nullable();
             $table->string('remote_name')->nullable();
             $table->timestamps();
 
-            $table->unique(['provider_audience_id', 'tag_id']);
+            $table->unique(['provider_audience_id', 'tag_id'], 'newsletter_interest_audience_tag_unique');
+            $table->foreign('provider_audience_id', 'newsletter_interest_audience_fk')
+                ->references('id')
+                ->on('newsletter_provider_audiences')
+                ->cascadeOnDelete();
         });
     }
 

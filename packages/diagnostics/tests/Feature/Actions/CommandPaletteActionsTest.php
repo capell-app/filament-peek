@@ -15,6 +15,7 @@ use Capell\Diagnostics\Palette\CapellArtisanPaletteCommandProvider;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\Console\Command\Command;
 
 it('discovers command palette commands from tagged providers in sort order', function (): void {
     app()->instance(TestCommandPaletteProvider::class, new TestCommandPaletteProvider);
@@ -64,6 +65,7 @@ it('executes navigation commands and records successful command palette runs', f
 
 it('executes artisan commands with validated parameters and stores command output', function (): void {
     Artisan::command('capell:test-output {name} {--loud}', function (): int {
+        // @phpstan-ignore variable.undefined
         $message = 'Hello ' . $this->argument('name');
 
         if ($this->option('loud') === true) {
@@ -72,7 +74,7 @@ it('executes artisan commands with validated parameters and stores command outpu
 
         $this->line($message);
 
-        return self::SUCCESS;
+        return Command::SUCCESS;
     });
     app()->instance(TestCommandPaletteProvider::class, new TestCommandPaletteProvider);
     app()->tag([TestCommandPaletteProvider::class], 'capell.diagnostics.command-palette-provider');
@@ -100,7 +102,7 @@ it('requires confirmation before executing commands marked for confirmation', fu
 })->throws(AuthorizationException::class);
 
 it('exposes capell artisan commands as palette commands with parameter metadata', function (): void {
-    Artisan::command('capell:test-provider {name} {--force}', fn (): int => self::SUCCESS)->describe('Run the test provider command.');
+    Artisan::command('capell:test-provider {name} {--force}', fn (): int => Command::SUCCESS)->describe('Run the test provider command.');
 
     $commands = (new CapellArtisanPaletteCommandProvider)->commandPaletteCommands();
     $command = $commands['artisan.capell:test-provider'];

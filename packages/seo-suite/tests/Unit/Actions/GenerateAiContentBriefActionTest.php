@@ -13,6 +13,9 @@ use Capell\SeoSuite\Support\AiResponseParser;
 use Capell\SeoSuite\Support\PrismProvider;
 use Capell\SeoSuite\Support\PromptRepository;
 
+/**
+ * @param  (PrismProvider&object{params: array<string, mixed>})|null  $provider
+ */
 function makeAiContentBriefActionForJson(string $json, ?PrismProvider &$provider): GenerateAiContentBriefAction
 {
     $provider = new class($json) extends PrismProvider

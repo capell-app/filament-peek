@@ -20,7 +20,7 @@ return new class extends Migration
             $table->boolean('sync_subscribed_only')->default(true);
             $table->timestamps();
 
-            $table->unique(['provider_connection_id', 'remote_id']);
+            $table->unique(['provider_connection_id', 'remote_id'], 'newsletter_audiences_connection_remote_unique');
         });
     }
 

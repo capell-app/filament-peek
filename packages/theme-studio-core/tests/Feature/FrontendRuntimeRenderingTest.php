@@ -283,13 +283,19 @@ it('maps loaded LayoutBuilder widgets and page-level assets into portable theme 
     );
 
     $themePage = (new CapellFrontendThemePageAdapter)->currentPage();
+    $heroSection = $themePage->sections[0] ?? null;
+    $featureSection = $themePage->sections[1] ?? null;
 
     expect($themePage->sections)->toHaveCount(2)
-        ->and($themePage->sections[0])->toBeInstanceOf(HeroSectionData::class)
-        ->and($themePage->sections[0]->heading)->toBe('Built around your content')
-        ->and($themePage->sections[1])->toBeInstanceOf(FeatureSectionData::class)
-        ->and($themePage->sections[1]->features[0]['title'])->toBe('Editorial workflow')
-        ->and($themePage->sections[1]->features[0]['url'])->toBe('/workflow');
+        ->and($heroSection)->toBeInstanceOf(HeroSectionData::class)
+        ->and($featureSection)->toBeInstanceOf(FeatureSectionData::class);
+
+    assert($heroSection instanceof HeroSectionData);
+    assert($featureSection instanceof FeatureSectionData);
+
+    expect($heroSection->heading)->toBe('Built around your content')
+        ->and($featureSection->features[0]['title'])->toBe('Editorial workflow')
+        ->and($featureSection->features[0]['url'])->toBe('/workflow');
 
     CapellLayoutManager::clearContainerWidgets();
 });

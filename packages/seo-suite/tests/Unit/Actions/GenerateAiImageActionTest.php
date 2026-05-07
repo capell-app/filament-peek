@@ -9,6 +9,9 @@ use Capell\SeoSuite\Support\AiRateLimiter;
 use Capell\SeoSuite\Support\Cache\RateLimitCache;
 use Prism\Prism\Enums\Provider;
 
+/**
+ * @return AiRateLimiter&object{checks: array<int, array{identifier: string, feature: string|null}>}
+ */
 function makeAiImageRateLimiter(?Throwable $exception = null): AiRateLimiter
 {
     return new class($exception) extends AiRateLimiter

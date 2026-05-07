@@ -10,6 +10,14 @@ use Illuminate\Console\Command;
 
 use function Pest\Laravel\artisan;
 
+/**
+ * @return XmlSitemapGenerator&object{
+ *     deletedSiteIds: list<int>,
+ *     processedSiteIds: list<int>,
+ *     incrementalSiteIds: list<int>,
+ *     incrementalDomains: list<array{site_id: int, domain: string, regenerated: bool}>
+ * }
+ */
 function seoSuiteCommandFakeXmlSitemapGenerator(): XmlSitemapGenerator
 {
     return new class extends XmlSitemapGenerator
@@ -28,7 +36,7 @@ function seoSuiteCommandFakeXmlSitemapGenerator(): XmlSitemapGenerator
 
         public function delete(Site $site): void
         {
-            $this->deletedSiteIds[] = (int) $site->id;
+            $this->deletedSiteIds[] = $site->id;
         }
 
         public function process(
@@ -38,7 +46,7 @@ function seoSuiteCommandFakeXmlSitemapGenerator(): XmlSitemapGenerator
             ?Closure $checkpoint = null,
             ?Closure $end = null,
         ): void {
-            $this->processedSiteIds[] = (int) $site->id;
+            $this->processedSiteIds[] = $site->id;
 
             $site->siteDomains->each(function (SiteDomain $domain) use ($start, $end): void {
                 $start?->__invoke($domain);
@@ -53,13 +61,13 @@ function seoSuiteCommandFakeXmlSitemapGenerator(): XmlSitemapGenerator
             ?Closure $checkpoint = null,
             ?Closure $end = null,
         ): void {
-            $this->incrementalSiteIds[] = (int) $site->id;
+            $this->incrementalSiteIds[] = $site->id;
 
             $site->siteDomains->values()->each(function (SiteDomain $domain, int $domainIndex) use ($site, $start, $end): void {
                 $regenerated = $domainIndex === 0;
 
                 $this->incrementalDomains[] = [
-                    'site_id' => (int) $site->id,
+                    'site_id' => $site->id,
                     'domain' => $domain->domain,
                     'regenerated' => $regenerated,
                 ];
@@ -83,10 +91,10 @@ it('generates full XML sitemaps for the selected enabled site', function (): voi
         ->expectsOutputToContain('1 sitemap generated successfully')
         ->assertExitCode(Command::SUCCESS);
 
-    expect($generator->deletedSiteIds)->toBe([(int) $selectedSite->id])
-        ->and($generator->processedSiteIds)->toBe([(int) $selectedSite->id])
-        ->and($generator->processedSiteIds)->not->toContain((int) $otherSite->id)
-        ->and($generator->processedSiteIds)->not->toContain((int) $disabledSite->id)
+    expect($generator->deletedSiteIds)->toBe([$selectedSite->id])
+        ->and($generator->processedSiteIds)->toBe([$selectedSite->id])
+        ->and($generator->processedSiteIds)->not->toContain($otherSite->id)
+        ->and($generator->processedSiteIds)->not->toContain($disabledSite->id)
         ->and($generator->incrementalSiteIds)->toBe([]);
 });
 
@@ -106,7 +114,7 @@ it('runs incremental sitemap generation without deleting existing files', functi
 
     expect($generator->deletedSiteIds)->toBe([])
         ->and($generator->processedSiteIds)->toBe([])
-        ->and($generator->incrementalSiteIds)->toBe([(int) $site->id])
+        ->and($generator->incrementalSiteIds)->toBe([$site->id])
         ->and($generator->incrementalDomains)->toHaveCount(2)
         ->and(collect($generator->incrementalDomains)->pluck('regenerated')->all())->toBe([true, false]);
 });

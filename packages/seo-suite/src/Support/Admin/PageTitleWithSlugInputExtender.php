@@ -96,7 +96,7 @@ class PageTitleWithSlugInputExtender implements PageTitleWithSlugInputExtenderCo
                     ->first();
 
                 $keywords = $get('meta')['keywords'] ?? null;
-                if (blank($keywords) && $site) {
+                if (blank($keywords) && $site instanceof Site) {
                     $keywords = $site->translation->meta_keywords !== '' ? $site->translation->meta_keywords : $site->translation->title;
                 }
 

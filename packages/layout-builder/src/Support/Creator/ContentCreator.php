@@ -61,16 +61,16 @@ class ContentCreator
                 continue;
             }
 
-            $translation_data = $data['translations'][$code];
+            $translationData = $data['translations'][$code];
 
             Translation::query()->firstOrCreate([
-                'translationable_type' => $content->getMorphClass(),
-                'translationable_id' => $content->getKey(),
+                'translatable_type' => $content->getMorphClass(),
+                'translatable_id' => $content->getKey(),
                 'language_id' => $language->getKey(),
             ], [
-                'title' => $translation_data['title'],
-                'content' => $translation_data['content'] ?? null,
-                'meta' => $translation_data['meta'] ?? [],
+                'title' => $translationData['title'],
+                'content' => $translationData['content'] ?? null,
+                'meta' => $translationData['meta'] ?? [],
             ]);
         }
 

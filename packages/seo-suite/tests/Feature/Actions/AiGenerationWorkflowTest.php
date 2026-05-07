@@ -53,6 +53,9 @@ function aiWorkflowContext(): AiActionContextInterface
     };
 }
 
+/**
+ * @return PrismProvider&object{calls: array<int, array<string, mixed>>}
+ */
 function bindAiWorkflowProvider(AiResponse $response): PrismProvider
 {
     $provider = new class($response) extends PrismProvider
@@ -78,6 +81,9 @@ function bindAiWorkflowProvider(AiResponse $response): PrismProvider
     return $provider;
 }
 
+/**
+ * @return AiRateLimiter&object{checks: array<int, array{identifier: string, feature: string|null}>}
+ */
 function bindAiWorkflowRateLimiter(?Throwable $throwable = null): AiRateLimiter
 {
     $rateLimiter = new class($throwable) extends AiRateLimiter
@@ -105,6 +111,9 @@ function bindAiWorkflowRateLimiter(?Throwable $throwable = null): AiRateLimiter
     return $rateLimiter;
 }
 
+/**
+ * @return NamespacedRecordAiGenerationAction&object{records: array<int, AiGenerationResultData|array<string, mixed>>}
+ */
 function bindAiWorkflowRecorder(): NamespacedRecordAiGenerationAction
 {
     $recorder = new class extends NamespacedRecordAiGenerationAction

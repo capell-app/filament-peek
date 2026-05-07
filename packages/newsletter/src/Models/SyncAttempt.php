@@ -8,6 +8,12 @@ use Capell\Newsletter\Enums\SyncStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $attempts
+ * @property-read Subscriber|null $subscriber
+ * @property-read ProviderAudience|null $providerAudience
+ * @property-read ProviderConnection|null $providerConnection
+ */
 class SyncAttempt extends Model
 {
     /** @var array<string> */

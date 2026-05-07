@@ -19,8 +19,8 @@ return new class extends Migration
             $table->timestamp('synced_at')->nullable()->index();
             $table->timestamps();
 
-            $table->unique(['subscriber_id', 'provider_audience_id']);
-            $table->index(['provider_audience_id', 'remote_id']);
+            $table->unique(['subscriber_id', 'provider_audience_id'], 'newsletter_provider_subscriber_unique');
+            $table->index(['provider_audience_id', 'remote_id'], 'newsletter_provider_subscriber_remote_index');
         });
     }
 

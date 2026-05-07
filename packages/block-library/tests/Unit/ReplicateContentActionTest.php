@@ -47,6 +47,6 @@ it('replicates content block attributes and replacement translations', function 
         ->and($replica->type_id)->toBe($type->getKey())
         ->and($replica->meta)->toBe(['color' => 'secondary'])
         ->and($replica->translations)->toHaveCount(1)
-        ->and($replica->translations->first()->title)->toBe('Replicated public title')
-        ->and($content->fresh()->translations()->first()->title)->toBe('Original public title');
+        ->and($replica->translations->first()?->getAttribute('title'))->toBe('Replicated public title')
+        ->and($content->fresh()?->translations()->first()?->getAttribute('title'))->toBe('Original public title');
 });

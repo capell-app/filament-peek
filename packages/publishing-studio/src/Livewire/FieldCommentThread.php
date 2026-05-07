@@ -98,6 +98,9 @@ class FieldCommentThread extends Component
         Gate::authorize('update', Workspace::query()->findOrFail($this->workspaceId));
     }
 
+    /**
+     * @return Builder<WorkspaceFieldComment>
+     */
     private function threadCommentQuery(): Builder
     {
         return WorkspaceFieldComment::query()

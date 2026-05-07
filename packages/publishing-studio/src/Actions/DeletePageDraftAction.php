@@ -25,7 +25,7 @@ class DeletePageDraftAction
 
     public function handle(Page $draft): void
     {
-        if ($draft->isLive()) {
+        if ((int) $draft->getAttribute('workspace_id') === 0) {
             throw new LogicException(sprintf(
                 'DeletePageDraftAction expected a workspace draft row; got live row id=%s.',
                 (string) $draft->getKey(),

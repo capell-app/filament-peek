@@ -15,6 +15,8 @@ namespace Filament\Actions {
 namespace Filament\Schemas\Components {
     /**
      * @method self contained(bool|\Closure $contained = true)
+     * @method string getName()
+     * @method array<string, mixed> getOptions()
      */
     class Component {}
 }

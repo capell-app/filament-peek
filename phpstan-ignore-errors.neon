@@ -26,6 +26,33 @@ parameters:
               - packages/events/src/Models/Event.php
 
         # Dynamic package contracts that are runtime-valid but not expressible through the shared core interfaces.
+        - identifier: property.notFound
+          message: '#Access to an undefined property .*Model::.*#'
+          reportUnmatched: false
+        - message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder(?:<.*?>)?::morphWith\(\)#'
+          reportUnmatched: false
+        - message: '#Call to an undefined method Illuminate\\Contracts\\Database\\Query\\Builder::alphabetical\(\)#'
+          reportUnmatched: false
+        - message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder(?:<.*?>)?::(withTranslatedLocales|whereJsonContainsLocales)\(\)#'
+          reportUnmatched: false
+        - message: '#Call to an undefined method .*Model::(getComponent|getDomainKey|getMeta|getMetaComponentType)\(\)#'
+          reportUnmatched: false
+        - message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Collection<int, Capell\\Core\\Models\\Page>::toTree\(\)#'
+          paths:
+              - packages/seo-suite/src/Support/Sitemap/Pages/PagesSitemap.php
+        - message: '#Call to an undefined method Sinnbeck\\DomAssertions\\Asserts\\AssertElement::containsAttribute\(\)#'
+          paths:
+              - packages/layout-builder/tests/Feature/Widgets/ApHeroBannerWidgetTest.php
+        - message: '#Call to an undefined method Filament\\Schemas\\Components\\Component::(getName|getOptions)\(\)#'
+          paths:
+              - packages/seo-suite/tests/Feature/Filament/RobotsDirectiveSchemaExtenderTest.php
+        - identifier: variable.undefined
+          message: '#Undefined variable: \$this#'
+          paths:
+              - packages/diagnostics/tests/Feature/Actions/CommandPaletteActionsTest.php
+        - message: '#Call to an undefined method Capell\\StarterSites\\Support\\Creator\\DemoCreator::(setupMainNavigation|setupFooterNavigation|subFooterNavigation)\(\)#'
+          paths:
+              - packages/navigation/tests/Integration/Adapters/DemoNavigationCreatorAdapterTest.php
         - message: '#Call to an undefined method Capell\\Core\\Contracts\\Pageable::tags\(\)#'
           paths:
               - packages/blog/src/Support/Loader/TagLoader.php

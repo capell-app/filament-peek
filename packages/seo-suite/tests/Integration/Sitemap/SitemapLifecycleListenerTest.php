@@ -13,6 +13,9 @@ use Capell\SeoSuite\Listeners\Sitemap\RegenerateSitemapsOnPageDeleted;
 use Capell\SeoSuite\Listeners\Sitemap\RegenerateSitemapsOnPageSaved;
 use Capell\SeoSuite\Support\Sitemap\XmlSitemapGenerator;
 
+/**
+ * @return XmlSitemapGenerator&object{incrementalSiteIds: list<int>}
+ */
 function seoSuiteLifecycleFakeXmlSitemapGenerator(): XmlSitemapGenerator
 {
     return new class extends XmlSitemapGenerator
@@ -27,7 +30,7 @@ function seoSuiteLifecycleFakeXmlSitemapGenerator(): XmlSitemapGenerator
             ?Closure $checkpoint = null,
             ?Closure $end = null,
         ): void {
-            $this->incrementalSiteIds[] = (int) $site->id;
+            $this->incrementalSiteIds[] = $site->id;
         }
     };
 }
@@ -41,7 +44,7 @@ it('regenerates the owning site sitemap when a page is saved', function (): void
 
     PageSavedAction::run($page, ['title' => 'Updated title']);
 
-    expect($generator->incrementalSiteIds)->toBe([(int) $site->id]);
+    expect($generator->incrementalSiteIds)->toBe([$site->id]);
 });
 
 it('regenerates the owning site sitemap when a page is deleted', function (): void {
@@ -53,7 +56,7 @@ it('regenerates the owning site sitemap when a page is deleted', function (): vo
 
     event(new PageDeleted($page, ['reason' => 'admin cleanup']));
 
-    expect($generator->incrementalSiteIds)->toBe([(int) $site->id]);
+    expect($generator->incrementalSiteIds)->toBe([$site->id]);
 });
 
 it('regenerates the new site sitemap after site creation workflow runs', function (): void {
@@ -68,7 +71,7 @@ it('regenerates the new site sitemap after site creation workflow runs', functio
         'language_id' => $language->id,
     ]);
 
-    expect($generator->incrementalSiteIds)->toBe([(int) $site->id]);
+    expect($generator->incrementalSiteIds)->toBe([$site->id]);
 });
 
 it('ignores saved page events when the page has no owning site', function (): void {

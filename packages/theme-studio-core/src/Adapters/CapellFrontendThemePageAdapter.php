@@ -79,6 +79,8 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
                 continue;
             }
 
+            $containerKeyString = $containerKey;
+
             if (! is_array($container['widgets'] ?? null)) {
                 continue;
             }
@@ -97,7 +99,7 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
                     (string) $widgetData['widget_key'],
                     $language,
                     $page,
-                    (string) $containerKey,
+                    $containerKeyString,
                     (int) ($widgetData['occurrence'] ?? 1),
                 );
 
@@ -105,7 +107,7 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
                     continue;
                 }
 
-                $section = $this->sectionFromWidget($widget, (string) $containerKey, $translation);
+                $section = $this->sectionFromWidget($widget, $containerKeyString, $translation);
 
                 if ($section instanceof NavigationData) {
                     $navigation = $section;
@@ -160,7 +162,8 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     {
         $component = method_exists($widget, 'getComponent') ? (string) $widget->getComponent() : '';
         $widgetKey = (string) ($widget->getAttribute('key') ?? '');
-        $typeKey = (string) ($widget->type?->key ?? '');
+        $type = $widget->getRelationValue('type');
+        $typeKey = $type instanceof Model ? (string) ($type->getAttribute('key') ?? '') : '';
         $signature = implode(' ', [$component, $widgetKey, $typeKey, $containerKey]);
 
         if (str_contains($signature, 'navigation')) {
@@ -192,7 +195,7 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
 
     private function heroFromWidget(Model $widget, ?Translation $pageTranslation): HeroSectionData
     {
-        $translation = $widget->translation;
+        $translation = $this->translationFor($widget);
         $pageHero = is_array($pageTranslation?->meta ?? null) ? ($pageTranslation->meta['hero'] ?? null) : null;
 
         return HeroSectionData::from([
@@ -208,8 +211,8 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     private function ctaFromWidget(Model $widget): CtaSectionData
     {
         return CtaSectionData::from([
-            'heading' => $this->titleFrom($widget->translation, (string) $widget->getAttribute('name')),
-            'summary' => $this->summaryFrom($widget->translation?->content),
+            'heading' => $this->titleFrom($this->translationFor($widget), (string) $widget->getAttribute('name')),
+            'summary' => $this->summaryFrom($this->translationFor($widget)?->content),
             'actions' => $this->actionsFromWidget($widget),
         ]);
     }
@@ -217,8 +220,8 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     private function featuresFromWidget(Model $widget): FeatureSectionData
     {
         return FeatureSectionData::from([
-            'heading' => $this->titleFrom($widget->translation, (string) $widget->getAttribute('name')),
-            'summary' => $this->summaryFrom($widget->translation?->content),
+            'heading' => $this->titleFrom($this->translationFor($widget), (string) $widget->getAttribute('name')),
+            'summary' => $this->summaryFrom($this->translationFor($widget)?->content),
             'features' => $this->assetItems($widget, 'description'),
         ]);
     }
@@ -226,8 +229,8 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     private function proofFromWidget(Model $widget): ProofSectionData
     {
         return ProofSectionData::from([
-            'heading' => $this->titleFrom($widget->translation, (string) $widget->getAttribute('name')),
-            'summary' => $this->summaryFrom($widget->translation?->content),
+            'heading' => $this->titleFrom($this->translationFor($widget), (string) $widget->getAttribute('name')),
+            'summary' => $this->summaryFrom($this->translationFor($widget)?->content),
             'items' => $this->assetItems($widget, 'quote'),
         ]);
     }
@@ -235,8 +238,8 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     private function listingFromWidget(Model $widget): ContentListingSectionData
     {
         return ContentListingSectionData::from([
-            'heading' => $this->titleFrom($widget->translation, (string) $widget->getAttribute('name')),
-            'summary' => $this->summaryFrom($widget->translation?->content),
+            'heading' => $this->titleFrom($this->translationFor($widget), (string) $widget->getAttribute('name')),
+            'summary' => $this->summaryFrom($this->translationFor($widget)?->content),
             'items' => $this->assetItems($widget, 'summary'),
         ]);
     }
@@ -259,10 +262,10 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
 
         return FooterData::from([
             'brandName' => $site?->title ?? $site?->name ?? 'Capell',
-            'summary' => $this->summaryFrom($widget->translation?->content),
+            'summary' => $this->summaryFrom($this->translationFor($widget)?->content),
             'columns' => [
                 [
-                    'heading' => $this->titleFrom($widget->translation, 'Links'),
+                    'heading' => $this->titleFrom($this->translationFor($widget), 'Links'),
                     'links' => $this->linkItemsFromWidget($widget),
                 ],
             ],
@@ -276,13 +279,13 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     {
         return $this->assetsFor($widget)
             ->map(function (Model $widgetAsset) use ($summaryKey): ?array {
-                $asset = $widgetAsset->asset;
+                $asset = $this->assetFor($widgetAsset);
 
                 if (! $asset instanceof Model) {
                     return null;
                 }
 
-                $translation = $asset->translation;
+                $translation = $this->translationFor($asset);
                 $title = $this->titleFrom($translation, (string) ($asset->getAttribute('name') ?? ''));
 
                 if ($title === '') {
@@ -394,9 +397,23 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
     private function firstAssetMediaUrl(Model $widget): ?string
     {
         return $this->assetsFor($widget)
-            ->map(fn (Model $widgetAsset): ?string => $this->mediaUrl($widgetAsset) ?? ($widgetAsset->asset instanceof Model ? $this->mediaUrl($widgetAsset->asset) : null))
+            ->map(fn (Model $widgetAsset): ?string => $this->mediaUrl($widgetAsset) ?? ($this->assetFor($widgetAsset) instanceof Model ? $this->mediaUrl($this->assetFor($widgetAsset)) : null))
             ->filter()
             ->first();
+    }
+
+    private function translationFor(Model $model): ?Translation
+    {
+        $translation = $model->getRelationValue('translation');
+
+        return $translation instanceof Translation ? $translation : null;
+    }
+
+    private function assetFor(Model $model): ?Model
+    {
+        $asset = $model->getRelationValue('asset');
+
+        return $asset instanceof Model ? $asset : null;
     }
 
     private function pageUrl(Model $model): ?string

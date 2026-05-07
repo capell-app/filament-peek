@@ -101,7 +101,15 @@ class ListImportBatches extends ListRecords
         return Tag::query()
             ->where('type', config('capell-newsletter.newsletter_tag_type', 'newsletter'))
             ->get()
-            ->mapWithKeys(static fn (Tag $tag): array => [(string) $tag->getKey() => (string) $tag->name])
+            ->mapWithKeys(static function (Tag $tag): array {
+                $name = $tag->getAttribute('name');
+                $fallbackName = is_array($name) ? reset($name) : null;
+                $label = is_array($name)
+                    ? (string) ($name[app()->getLocale()] ?? (is_scalar($fallbackName) ? $fallbackName : ''))
+                    : (string) $name;
+
+                return [(string) $tag->getKey() => $label];
+            })
             ->all();
     }
 }

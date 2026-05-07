@@ -40,7 +40,7 @@ class SitemapGenerator
 
         foreach ($rows as $row) {
             $slug = (string) ($row->{$slugColumn} ?? '');
-            $rawDate = $updatedAtColumn ? (string) ($row->{$updatedAtColumn} ?? '') : null;
+            $rawDate = $updatedAtColumn !== null ? (string) ($row->{$updatedAtColumn} ?? '') : null;
             $lastmod = ($rawDate !== null && $rawDate !== '')
                 ? substr($rawDate, 0, 10)
                 : null;

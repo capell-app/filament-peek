@@ -21,7 +21,7 @@ class ApplyAiDraftAction
     /**
      * Apply the draft content from context to the provided target object.
      *
-     * @param  array{target:object}  $options
+     * @param  array{target?: object}  $options
      */
     public function handle(AiActionContextInterface $context, array $options = []): bool
     {

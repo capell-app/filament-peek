@@ -26,9 +26,6 @@ class SuggestMetaDescriptionsPipeline
         private readonly RecordAiGenerationAction $recordAiGenerationAction,
     ) {}
 
-    /**
-     * @return array<int, string>
-     */
     public function execute(AiGenerationInputData $input): AiGenerationResultData
     {
         $initialPayload = [

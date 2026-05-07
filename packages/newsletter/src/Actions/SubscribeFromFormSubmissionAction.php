@@ -28,7 +28,9 @@ class SubscribeFromFormSubmissionAction
 
         $submission = $event->submission ?? null;
 
-        if (! $submission instanceof Model || ! is_a($submission, $this->submissionModelClass()) || ! is_object($submission->payload)) {
+        $submissionPayload = $submission instanceof Model ? $submission->getAttribute('payload') : null;
+
+        if (! $submission instanceof Model || ! is_a($submission, $this->submissionModelClass()) || ! is_object($submissionPayload)) {
             return null;
         }
 
@@ -38,7 +40,7 @@ class SubscribeFromFormSubmissionAction
             return null;
         }
 
-        $payload = $submission->payload->values ?? null;
+        $payload = $submissionPayload->values ?? null;
 
         if (! is_array($payload)) {
             return null;
@@ -51,19 +53,19 @@ class SubscribeFromFormSubmissionAction
 
         $hasSubmittedConsent = $mapping->consent_field !== null
             && $this->payloadBoolean($payload, $mapping->consent_field);
-        $evidence = $hasSubmittedConsent ? $this->evidence($mapping, $submission->meta, (string) $submission->getKey()) : null;
+        $evidence = $hasSubmittedConsent ? $this->evidence($mapping, $submission->getAttribute('meta'), (string) $submission->getKey()) : null;
         $targetStatus = $evidence instanceof ConsentEvidenceData && ! $mapping->requires_double_opt_in
             ? SubscriberStatus::Subscribed
             : SubscriberStatus::Pending;
 
         $subscriber = UpsertSubscriberAction::run(new SubscriberData(
-            siteId: $form->site_id,
+            siteId: (int) $form->getAttribute('site_id'),
             email: $email,
             status: $targetStatus,
             firstName: $this->payloadString($payload, $mapping->first_name_field),
             lastName: $this->payloadString($payload, $mapping->last_name_field),
             sourceFormId: (int) $form->getKey(),
-            sourceFormHandle: $form->handle,
+            sourceFormHandle: (string) $form->getAttribute('handle'),
         ), $evidence);
 
         ApplyNewsletterTagsAction::run($subscriber, $this->resolvedTagIds($mapping, $payload));
@@ -89,7 +91,7 @@ class SubscribeFromFormSubmissionAction
     {
         return FormMapping::query()
             ->active()
-            ->where('site_id', $form->site_id)
+            ->where('site_id', $form->getAttribute('site_id'))
             ->where(function (Builder $query) use ($form): void {
                 $query->where('form_id', $form->getKey());
 

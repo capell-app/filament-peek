@@ -84,3 +84,4 @@ parameters:
         - phpstan/nestedset-querybuilder.stub
         - phpstan/nestedset-traits.stub
         - phpstan/core-layout.stub
+        - phpstan/capell-dynamic-surfaces.stub

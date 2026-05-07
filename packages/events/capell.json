@@ -1,8 +1,10 @@
 {
     "name": "capell-app/events",
+    "capell-version": "^4.0",
     "title": "Events",
     "description": "Event listings, recurring events, venues, RSVPs, calendar feeds, and Event schema.",
-    "type": "plugin",
+    "kind": "plugin",
+    "contexts": ["admin", "frontend", "console"],
     "requires": [
         "capell-app/admin",
         "capell-app/frontend",
@@ -15,5 +17,11 @@
         "capell-app/form-builder",
         "capell-app/seo-suite",
         "capell-app/tags"
-    ]
+    ],
+    "providers": {
+        "shared": ["Capell\\Events\\Providers\\EventsServiceProvider"]
+    },
+    "commands": {
+        "install": "capell:events-install"
+    }
 }

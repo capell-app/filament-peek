@@ -45,8 +45,8 @@ it('lists only draft rows when drafts exist', function (): void {
         ->get();
 
     expect($drafts)->toHaveCount(1);
-    expect($drafts->first()->isLive())->toBeFalse();
-    expect($drafts->first()->workspace->name)->toBe('Sprint 2');
+    expect($drafts->first()?->getAttribute('workspace_id'))->not->toBe(0);
+    expect($drafts->first()?->workspace->name)->toBe('Sprint 2');
 
     Livewire::test(EditPage::class, ['record' => $live->fresh()->getRouteKey()])
         ->assertActionExists('revisions');

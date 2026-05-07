@@ -114,10 +114,10 @@ final class GoogleSearchConsoleClient implements SearchConsoleClientInterface
             return [];
         }
 
-        $currentWindowEnd = Date::now()->subDay();
-        $currentWindowStart = $currentWindowEnd->copy()->subDays(27);
-        $previousWindowEnd = $currentWindowStart->copy()->subDay();
-        $previousWindowStart = $previousWindowEnd->copy()->subDays(27);
+        $currentWindowEnd = Date::now()->toImmutable()->subDay();
+        $currentWindowStart = $currentWindowEnd->subDays(27);
+        $previousWindowEnd = $currentWindowStart->subDay();
+        $previousWindowStart = $previousWindowEnd->subDays(27);
 
         try {
             $currentRows = $this->searchInsightsRowsByUrl($this->querySearchInsights($propertyUrl, [

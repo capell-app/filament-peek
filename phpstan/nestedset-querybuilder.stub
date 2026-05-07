@@ -11,6 +11,7 @@ namespace Aimeos\Nestedset;
  *
  * @method \Aimeos\Nestedset\QueryBuilder<TModel> ordered(string $dir = 'asc')
  * @method \Aimeos\Nestedset\QueryBuilder<TModel> whereAncestorOf(mixed $node, bool $andSelf = false, string $direction = 'asc')
+ * @method \Aimeos\Nestedset\QueryBuilder<TModel> withoutWorkspaceScope()
  */
 class QueryBuilder extends \Illuminate\Database\Eloquent\Builder
 {

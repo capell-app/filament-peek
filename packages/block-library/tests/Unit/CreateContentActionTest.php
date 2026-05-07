@@ -34,7 +34,7 @@ it('creates a content block using the first translation title as the fallback na
         ->and($content->name)->toBe('Reusable announcement')
         ->and($content->meta)->toBe(['color' => 'primary'])
         ->and($content->translations()->count())->toBe(1)
-        ->and($content->translations()->first()->title)->toBe('Reusable announcement');
+        ->and($content->translations()->first()?->getAttribute('title'))->toBe('Reusable announcement');
 });
 
 it('preserves an explicit content block name when translations are supplied', function (): void {
@@ -59,5 +59,5 @@ it('preserves an explicit content block name when translations are supplied', fu
     ]);
 
     expect($content->name)->toBe('Internal admin name')
-        ->and($content->translations()->first()->title)->toBe('Public title');
+        ->and($content->translations()->first()?->getAttribute('title'))->toBe('Public title');
 });
