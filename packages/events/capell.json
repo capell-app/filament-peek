@@ -1,0 +1,19 @@
+{
+    "name": "capell-app/events",
+    "title": "Events",
+    "description": "Event listings, recurring events, venues, RSVPs, calendar feeds, and Event schema.",
+    "type": "plugin",
+    "requires": [
+        "capell-app/admin",
+        "capell-app/frontend",
+        "capell-app/layout-builder",
+        "capell-app/navigation",
+        "capell-app/publishing-studio"
+    ],
+    "optional": [
+        "capell-app/address",
+        "capell-app/form-builder",
+        "capell-app/seo-suite",
+        "capell-app/tags"
+    ]
+}

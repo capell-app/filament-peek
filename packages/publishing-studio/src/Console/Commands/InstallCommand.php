@@ -43,10 +43,6 @@ class InstallCommand extends Command
             __DIR__ . '/../../../database/migrations/z_add_workspace_id_to_external_tables.php',
         ];
 
-        if ($this->call('capell:publish-migrations', ['--items' => $migrations]) !== self::SUCCESS) {
-            return false;
-        }
-
-        return true;
+        return $this->call('capell:publish-migrations', ['--items' => $migrations]) === self::SUCCESS;
     }
 }

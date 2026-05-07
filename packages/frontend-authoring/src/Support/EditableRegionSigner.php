@@ -28,15 +28,11 @@ final class EditableRegionSigner
     {
         $json = base64_decode(strtr($encodedPayload, '-_', '+/'), true);
 
-        if (! is_string($json)) {
-            abort(403);
-        }
+        abort_unless(is_string($json), 403);
 
         $payload = json_decode($json, true);
 
-        if (! is_array($payload) || ! isset($payload['data'], $payload['signature']) || ! is_array($payload['data'])) {
-            abort(403);
-        }
+        abort_if(! is_array($payload) || ! isset($payload['data'], $payload['signature']) || ! is_array($payload['data']), 403);
 
         $signature = (string) $payload['signature'];
 

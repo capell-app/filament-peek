@@ -17,7 +17,7 @@ final class ResolveGA4ReportsConfigAction
     {
         try {
             /** @var GA4ReportsSettings $settings */
-            $settings = app(GA4ReportsSettings::class);
+            $settings = resolve(GA4ReportsSettings::class);
             $settingsRouteSlug = trim($settings->route_slug);
 
             return new GA4ReportsConfigData(

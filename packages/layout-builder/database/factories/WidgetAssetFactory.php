@@ -6,8 +6,8 @@ namespace Capell\LayoutBuilder\Database\Factories;
 
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\AssetEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Enums\MediaCollectionEnum;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\LayoutBuilder\Enums\ActionLinkEnum;

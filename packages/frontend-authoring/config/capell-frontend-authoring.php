@@ -1,9 +1,10 @@
 <?php
 
 declare(strict_types=1);
+use Illuminate\Support\Env;
 
 return [
-    'enabled' => env('CAPELL_FRONTEND_AUTHORING', true),
+    'enabled' => Env::get('CAPELL_FRONTEND_AUTHORING', true),
 
     'selectors' => [
         'page_title' => '#main h1:first-of-type',

@@ -170,7 +170,7 @@ it('orders and paginates GA4 page report rows', function (): void {
     $credentialsPath = createGA4ReportsCredentialsFile();
     $insightsPayloads = [];
     $firstPageRows = array_map(
-        fn (int $index): array => createGA4ReportsPageReportRow($index),
+        createGA4ReportsPageReportRow(...),
         range(1, 250),
     );
 

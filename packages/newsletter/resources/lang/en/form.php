@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'name' => 'Name',
+    'handle' => 'Handle',
+    'site' => 'Site',
+    'email' => 'Email',
+    'first_name' => 'First name',
+    'last_name' => 'Last name',
+    'status' => 'Status',
+    'provider' => 'Provider',
+    'auth_type' => 'Authentication type',
+    'credentials' => 'Credentials',
+    'remote_id' => 'Remote ID',
+    'remote_interest_id' => 'Remote interest ID',
+    'remote_interest_type' => 'Remote interest type',
+    'remote_name' => 'Remote name',
+    'form_handle' => 'Form handle',
+    'email_field' => 'Email field',
+    'first_name_field' => 'First name field',
+    'last_name_field' => 'Last name field',
+    'consent_field' => 'Consent field',
+    'consent_text' => 'Consent text',
+    'consent_version' => 'Consent version',
+    'requires_double_opt_in' => 'Require double opt-in',
+    'confirmation_mode' => 'Confirmation mode',
+    'enabled' => 'Enabled',
+    'active' => 'Active',
+    'default_resubscribe_policy' => 'Default resubscribe policy',
+    'site_resubscribe_policies' => 'Site resubscribe policy overrides',
+    'csv_file' => 'CSV file',
+    'csv_contents' => 'CSV contents',
+    'consent_basis' => 'Consent basis',
+];

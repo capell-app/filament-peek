@@ -57,11 +57,11 @@ it('limits access to users with the deployment connection page permission', func
 
     expect(DeploymentConnectionPage::canAccess())->toBeFalse();
 
-    $this->actingAsUser();
+    test()->actingAsUser();
 
     expect(DeploymentConnectionPage::canAccess())->toBeFalse();
 
-    $this->actingAs($this->createUserWithPermission('View:DeploymentConnectionPage'));
+    test()->actingAs(test()->createUserWithPermission('View:DeploymentConnectionPage'));
 
     expect(DeploymentConnectionPage::canAccess())->toBeTrue();
 });

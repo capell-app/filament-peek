@@ -28,8 +28,11 @@ class ClearAffectedCachedUrlsAction
 
         foreach ($urls as $url) {
             $siteDomainAndPath = LoadSiteDomainFromUrlAction::run($url, sites: SiteLoader::getSites());
+            if (! is_array($siteDomainAndPath)) {
+                continue;
+            }
 
-            if (! is_array($siteDomainAndPath) || ! isset($siteDomainAndPath[0], $siteDomainAndPath[1])) {
+            if (! isset($siteDomainAndPath[0], $siteDomainAndPath[1])) {
                 continue;
             }
 

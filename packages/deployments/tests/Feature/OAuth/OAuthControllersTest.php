@@ -18,7 +18,7 @@ uses(CreatesAdminUser::class);
 beforeEach(function (): void {
     Permission::findOrCreate('View:DeploymentConnectionPage', 'web');
 
-    $this->actingAs($this->createUserWithPermission('View:DeploymentConnectionPage'));
+    test()->actingAs(test()->createUserWithPermission('View:DeploymentConnectionPage'));
 });
 
 it('ConnectDeploymentAction class exists', function (): void {

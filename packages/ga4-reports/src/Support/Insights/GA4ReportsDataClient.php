@@ -59,8 +59,11 @@ final class GA4ReportsDataClient implements GA4ReportsDataClientInterface
             $dimensionValues = $this->dimensionValues($row);
             $metricValues = $this->metricValues($row);
             $date = $dimensionValues[0] ?? null;
+            if (! is_string($date)) {
+                continue;
+            }
 
-            if (! is_string($date) || $date === '') {
+            if ($date === '') {
                 continue;
             }
 
@@ -98,8 +101,19 @@ final class GA4ReportsDataClient implements GA4ReportsDataClientInterface
             $metricValues = $this->metricValues($row);
             $date = $dimensionValues[0] ?? null;
             $pagePath = $dimensionValues[1] ?? null;
+            if (! is_string($date)) {
+                continue;
+            }
 
-            if (! is_string($date) || $date === '' || ! is_string($pagePath) || trim($pagePath) === '') {
+            if ($date === '') {
+                continue;
+            }
+
+            if (! is_string($pagePath)) {
+                continue;
+            }
+
+            if (trim($pagePath) === '') {
                 continue;
             }
 
@@ -160,9 +174,7 @@ final class GA4ReportsDataClient implements GA4ReportsDataClientInterface
 
         $accessToken = $this->accessToken();
 
-        if ($accessToken === '') {
-            throw new GA4ReportsApiException('Unable to obtain a GA4 Reports access token.');
-        }
+        throw_if($accessToken === '', GA4ReportsApiException::class, 'Unable to obtain a GA4 Reports access token.');
 
         $response = Http::withToken($accessToken)
             ->acceptJson()
@@ -287,16 +299,12 @@ final class GA4ReportsDataClient implements GA4ReportsDataClientInterface
             return ['client_email' => '', 'private_key' => ''];
         }
 
-        if (! is_readable($credentialsPath)) {
-            throw new GA4ReportsApiException('GA4 Reports credentials file is not readable.');
-        }
+        throw_unless(is_readable($credentialsPath), GA4ReportsApiException::class, 'GA4 Reports credentials file is not readable.');
 
         try {
             $contents = file_get_contents($credentialsPath);
 
-            if (! is_string($contents)) {
-                throw new GA4ReportsApiException('GA4 Reports credentials file could not be read.');
-            }
+            throw_unless(is_string($contents), GA4ReportsApiException::class, 'GA4 Reports credentials file could not be read.');
 
             /** @var array{client_email?:string,private_key?:string,token_uri?:string} $credentials */
             $credentials = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
@@ -307,9 +315,7 @@ final class GA4ReportsDataClient implements GA4ReportsDataClientInterface
         $clientEmail = is_string($credentials['client_email'] ?? null) ? $credentials['client_email'] : '';
         $privateKey = is_string($credentials['private_key'] ?? null) ? $credentials['private_key'] : '';
 
-        if ($clientEmail === '' || $privateKey === '') {
-            throw new GA4ReportsApiException('GA4 Reports credentials file is missing service account values.');
-        }
+        throw_if($clientEmail === '' || $privateKey === '', GA4ReportsApiException::class, 'GA4 Reports credentials file is missing service account values.');
 
         return [
             'client_email' => $clientEmail,

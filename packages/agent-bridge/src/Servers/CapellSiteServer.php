@@ -8,10 +8,10 @@ use Capell\AgentBridge\Tools\Site\ConfirmSiteCapabilityTool;
 use Capell\AgentBridge\Tools\Site\InspectSiteStateTool;
 use Capell\AgentBridge\Tools\Site\ListSiteCapabilitiesTool;
 use Capell\AgentBridge\Tools\Site\RunSiteCapabilityTool;
-use Laravel\AgentBridge\Server;
-use Laravel\AgentBridge\Server\Attributes\Instructions;
-use Laravel\AgentBridge\Server\Attributes\Name;
-use Laravel\AgentBridge\Server\Attributes\Version;
+use Laravel\Mcp\Server;
+use Laravel\Mcp\Server\Attributes\Instructions;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Version;
 
 #[Name('Capell Site Agent Bridge')]
 #[Version('0.1.0')]

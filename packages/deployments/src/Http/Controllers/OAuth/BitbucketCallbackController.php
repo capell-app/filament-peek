@@ -19,7 +19,7 @@ final class BitbucketCallbackController
     {
         abort_unless(DeploymentConnectionPage::canAccess(), 403);
 
-        if (! ValidateOAuthStateAction::run(GitProviderType::Bitbucket, $request->query('state'))) {
+        if (ValidateOAuthStateAction::run(GitProviderType::Bitbucket, $request->query('state')) !== true) {
             return back()->withErrors([__('capell-deployments::plugins.deployment_connection.oauth_invalid_state')]);
         }
 

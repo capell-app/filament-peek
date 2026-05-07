@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Capell\PasswordPolicy\Providers;
 
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
+use Capell\Admin\Contracts\Extenders\UserFormExtender;
+use Capell\Admin\Contracts\Extenders\UserTableExtender;
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Capell\Core\Support\Settings\SettingsGroupMetadata;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyPanelExtender;
 use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyUserFormExtender;
@@ -76,7 +79,7 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
     {
         $registry->registerSettingsClass('password_policy', PasswordPolicySettings::class);
         if (method_exists($registry, 'registerMetadata')) {
-            $metadataClass = 'Capell\\Core\\Support\\Settings\\SettingsGroupMetadata';
+            $metadataClass = SettingsGroupMetadata::class;
 
             if (class_exists($metadataClass)) {
                 $registry->registerMetadata(new $metadataClass(
@@ -89,6 +92,7 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
                 ));
             }
         }
+
         $registry->register('password_policy', PasswordPolicySettingsSchema::class);
 
         return $registry;
@@ -102,11 +106,11 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
 
         $this->app->tag(PasswordPolicyPanelExtender::class, AdminPanelExtender::TAG);
 
-        if (interface_exists('Capell\\Admin\\Contracts\\Extenders\\UserFormExtender')) {
-            $this->app->tag(PasswordPolicyUserFormExtender::class, 'capell-admin:user-form-extender');
+        if (interface_exists(UserFormExtender::class)) {
+            $this->app->tag(PasswordPolicyUserFormExtender::class, UserFormExtender::TAG);
         }
 
-        if (interface_exists('Capell\\Admin\\Contracts\\Extenders\\UserTableExtender')) {
+        if (interface_exists(UserTableExtender::class)) {
             $this->app->tag(PasswordPolicyUserTableExtender::class, 'capell-admin:user-table-extender');
         }
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Contracts\Extenders\UserFormExtender;
 use Capell\Admin\Filament\Pages\SettingsPage;
 use Capell\Admin\Filament\Resources\Users\Pages\CreateUser;
 use Capell\Admin\Filament\Resources\Users\Pages\EditUser;
@@ -79,7 +80,7 @@ it('redirects flagged admin users to the forced password change page', function 
 });
 
 it('uses the package policy when admin users are created with passwords', function (): void {
-    if (! interface_exists('Capell\\Admin\\Contracts\\Extenders\\UserFormExtender')) {
+    if (! interface_exists(UserFormExtender::class)) {
         test()->markTestSkipped('Capell Admin user form extension points are not available in this checkout.');
     }
 
@@ -105,7 +106,7 @@ it('uses the package policy when admin users are created with passwords', functi
 });
 
 it('uses the package history policy when admin users are edited with passwords', function (): void {
-    if (! interface_exists('Capell\\Admin\\Contracts\\Extenders\\UserFormExtender')) {
+    if (! interface_exists(UserFormExtender::class)) {
         test()->markTestSkipped('Capell Admin user form extension points are not available in this checkout.');
     }
 

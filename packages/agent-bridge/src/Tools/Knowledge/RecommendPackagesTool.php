@@ -6,14 +6,14 @@ namespace Capell\AgentBridge\Tools\Knowledge;
 
 use Capell\AgentBridge\Support\KnowledgeRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Laravel\AgentBridge\Request;
-use Laravel\AgentBridge\Response;
-use Laravel\AgentBridge\ResponseFactory;
-use Laravel\AgentBridge\Server\Attributes\Description;
-use Laravel\AgentBridge\Server\Attributes\Name;
-use Laravel\AgentBridge\Server\Attributes\Title;
-use Laravel\AgentBridge\Server\Tool;
-use Laravel\AgentBridge\Server\Tools\Annotations\IsReadOnly;
+use Laravel\Mcp\Request;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\ResponseFactory;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Title;
+use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[Name('capell-knowledge-recommend-packages')]
 #[Title('Recommend Capell Packages')]

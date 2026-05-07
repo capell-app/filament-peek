@@ -1,0 +1,20 @@
+{
+    "name": "capell-app/newsletter",
+    "kind": "package",
+    "capell-version": "^4.0",
+    "productGroup": "Capell Marketing",
+    "tier": "premium",
+    "bundle": "newsletter",
+    "contexts": ["admin", "frontend"],
+    "requires": [
+        "capell-app/core",
+        "capell-app/admin",
+        "capell-app/frontend",
+        "capell-app/form-builder",
+        "capell-app/tags"
+    ],
+    "providers": {
+        "shared": ["Capell\\Newsletter\\Providers\\NewsletterServiceProvider"],
+        "admin": ["Capell\\Newsletter\\Providers\\AdminServiceProvider"]
+    }
+}

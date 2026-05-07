@@ -17,7 +17,7 @@ class ContentTypeFactory extends TypeFactory
     {
         return [
             ...parent::definition(),
-            'type' => LayoutTypeEnum::Section->value,
+            'type' => LayoutTypeEnum::Widget->value,
         ];
     }
 }

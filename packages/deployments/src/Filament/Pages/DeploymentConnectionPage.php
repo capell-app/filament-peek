@@ -43,7 +43,11 @@ final class DeploymentConnectionPage extends Page
 
     public static function canAccess(): bool
     {
-        return Gate::allows(self::viewPermission()) || auth()->user()?->can(self::viewPermission()) === true;
+        if (Gate::allows(self::viewPermission())) {
+            return true;
+        }
+
+        return auth()->user()?->can(self::viewPermission()) === true;
     }
 
     public function getTitle(): string

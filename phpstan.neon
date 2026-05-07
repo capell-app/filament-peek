@@ -35,12 +35,15 @@ parameters:
         - packages/seo-suite/database/migrations
         - packages/tags/database/migrations
         - packages/publishing-studio/database/migrations
+        - packages/events/database/migrations
+        - packages/newsletter/database/migrations
     configDirectories:
         - packages/migration-assistant/config
         - packages/foundation-theme/config
         - packages/deployments/config
         - packages/layout-builder/config
         - packages/agent-bridge/config
+        - packages/newsletter/config
         - packages/redirects/config
         - packages/seo-suite/config
         - packages/search/config
@@ -49,7 +52,9 @@ parameters:
     translationDirectories:
         - packages/address/resources/lang
         - packages/blog/resources/lang
+        - packages/events/resources/lang
         - packages/layout-builder/resources/lang
+        - packages/newsletter/resources/lang
         - packages/seo-suite/resources/lang
         - packages/tags/resources/lang
         - packages/toolbar/resources/lang

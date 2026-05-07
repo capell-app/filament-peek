@@ -110,7 +110,7 @@ class SendWorkspaceStateNotification
             return [];
         }
 
-        $permissionRegistrar = app(PermissionRegistrar::class);
+        $permissionRegistrar = resolve(PermissionRegistrar::class);
         $modelMorphKey = config('permission.column_names.model_morph_key');
         $tableName = config('permission.table_names.model_has_roles');
 

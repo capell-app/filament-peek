@@ -84,7 +84,7 @@ use Capell\Search\Models\SearchLog;
 use Capell\Search\Providers\SearchServiceProvider;
 use Capell\SeoSuite\Filament\Pages\BrokenLinksPage;
 use Capell\SeoSuite\Filament\Pages\NotFoundUrlsPage;
-use Capell\SeoSuite\Filament\Pages\SEOAuditPage;
+use Capell\SeoSuite\Filament\Pages\SeoAuditPage;
 use Capell\SeoSuite\Models\AIGenerationHistory;
 use Capell\SeoSuite\Models\BrokenLink;
 use Capell\SeoSuite\Models\PageSeoSnapshot;
@@ -237,7 +237,7 @@ it('does not expose admin resources, pages, widgets, or routes for uninstalled p
         DiagnosticsPage::class,
         MediaHealthPage::class,
         NotFoundUrlsPage::class,
-        SEOAuditPage::class,
+        SeoAuditPage::class,
         ThemeStudioPage::class,
     );
 

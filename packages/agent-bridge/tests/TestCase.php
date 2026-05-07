@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
-use Laravel\AgentBridge\Server\AgentBridgeServiceProvider as LaravelAgentBridgeServiceProvider;
+use Laravel\Mcp\Server\McpServiceProvider as LaravelMcpServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -35,8 +35,8 @@ abstract class TestCase extends OrchestraTestCase
             AgentBridgeServiceProvider::class,
         ];
 
-        if (class_exists(LaravelAgentBridgeServiceProvider::class)) {
-            array_unshift($providers, LaravelAgentBridgeServiceProvider::class);
+        if (class_exists(LaravelMcpServiceProvider::class)) {
+            array_unshift($providers, LaravelMcpServiceProvider::class);
         }
 
         return $providers;

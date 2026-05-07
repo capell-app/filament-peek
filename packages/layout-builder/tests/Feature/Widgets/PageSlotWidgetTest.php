@@ -40,4 +40,4 @@ it('renders page slot widget on page', function (): void {
         ->assertElementExists('.widget-page-slot');
 });
 
-todo('test page slot content rendering');
+test('page slot content rendering')->skip('TODO: cover page slot content rendering.');

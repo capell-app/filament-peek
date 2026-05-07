@@ -7,6 +7,7 @@ namespace Capell\BlockLibrary\Tests;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use Capell\Core\Models\Type;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Schema;
@@ -65,7 +66,7 @@ class ContentBlockRenderingTestCase extends TestCase
      */
     protected function defineEnvironment(mixed $app): void
     {
-        $app->make('config')->set('view.paths', [
+        $app->make(Repository::class)->set('view.paths', [
             __DIR__ . '/../resources/views',
         ]);
     }

@@ -1,6 +1,9 @@
 @php
     use Capell\Core\Enums\ContentStructure;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\LayoutBuilder\View\Components\Widget\Page\Children as PageChildrenComponent;
+    use Capell\LayoutBuilder\View\Components\Widget\Page\Latest as PageLatestComponent;
+    use Capell\LayoutBuilder\View\Components\Widget\Page\Siblings as PageSiblingsComponent;
 @endphp
 
 @props([
@@ -80,20 +83,44 @@
             </x-capell-layout-builder::widget.wrapper>
         @endif
     @else
-        <x-dynamic-component
-            :component="$component"
-            :$container
-            :$containerColspan
-            :$containerKey
-            :$containerIndex
-            :$containerWidth
-            :$loop
-            :$pageSlot
-            :$occurrence
-            :$widget
-            :$widgetData
-            :$widgetIndex
-        />
+        @php
+            $pageWidgetComponent = match ($component) {
+                'capell-layout-builder::widget.page.children' => PageChildrenComponent::class,
+                'capell-layout-builder::widget.page.latest' => PageLatestComponent::class,
+                'capell-layout-builder::widget.page.siblings' => PageSiblingsComponent::class,
+                default => null,
+            };
+        @endphp
+
+        @if ($pageWidgetComponent !== null)
+            @php
+                $pageWidget = new $pageWidgetComponent(
+                    container: $container,
+                    containerKey: $containerKey,
+                    widgetIndex: $widgetIndex,
+                    loop: $loop,
+                    widget: $widget,
+                    widgetData: $widgetData,
+                );
+            @endphp
+
+            {!! $pageWidget->render() !!}
+        @else
+            <x-dynamic-component
+                :component="$component"
+                :$container
+                :$containerColspan
+                :$containerKey
+                :$containerIndex
+                :$containerWidth
+                :$loop
+                :$pageSlot
+                :$occurrence
+                :$widget
+                :$widgetData
+                :$widgetIndex
+            />
+        @endif
     @endif
 @elseif ($type === 'livewire')
     @livewire($component,

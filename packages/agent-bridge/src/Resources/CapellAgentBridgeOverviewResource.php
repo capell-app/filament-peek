@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\AgentBridge\Resources;
 
-use Laravel\AgentBridge\Response;
-use Laravel\AgentBridge\Server\Attributes\Description;
-use Laravel\AgentBridge\Server\Attributes\MimeType;
-use Laravel\AgentBridge\Server\Attributes\Name;
-use Laravel\AgentBridge\Server\Attributes\Title;
-use Laravel\AgentBridge\Server\Attributes\Uri;
-use Laravel\AgentBridge\Server\Resource;
+use Laravel\Mcp\Response;
+use Laravel\Mcp\Server\Attributes\Description;
+use Laravel\Mcp\Server\Attributes\MimeType;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Title;
+use Laravel\Mcp\Server\Attributes\Uri;
+use Laravel\Mcp\Server\Resource;
 
 #[Name('capell-agent-bridge-overview')]
 #[Title('Capell Agent Bridge Overview')]

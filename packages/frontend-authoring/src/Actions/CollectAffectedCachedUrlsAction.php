@@ -30,7 +30,11 @@ class CollectAffectedCachedUrlsAction
         $urls = [];
 
         foreach ($cacheIndex as $url => $models) {
-            if (! is_string($url) || ! is_array($models)) {
+            if (! is_string($url)) {
+                continue;
+            }
+
+            if (! is_array($models)) {
                 continue;
             }
 
@@ -40,7 +44,7 @@ class CollectAffectedCachedUrlsAction
                 continue;
             }
 
-            if (in_array($recordKey, array_map('intval', $ids), true)) {
+            if (in_array($recordKey, array_map(intval(...), $ids), true)) {
                 $urls[] = $url;
             }
         }

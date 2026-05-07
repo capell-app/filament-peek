@@ -24,7 +24,7 @@ final class SyncGA4ReportsMetricsAction
         }
 
         /** @var GA4ReportsDataClientInterface $client */
-        $client = app(GA4ReportsDataClientInterface::class);
+        $client = resolve(GA4ReportsDataClientInterface::class);
 
         if (! $client->isConfigured()) {
             return new GA4ReportsSyncResultData(false, __('capell-ga4-reports::sync.not_configured'));
@@ -63,10 +63,10 @@ final class SyncGA4ReportsMetricsAction
                 dailyRows: count($dailyMetrics),
                 pageRows: count($pageMetrics),
             );
-        } catch (Throwable $exception) {
+        } catch (Throwable $throwable) {
             $syncRun->update([
                 'status' => 'failed',
-                'error_message' => $exception->getMessage(),
+                'error_message' => $throwable->getMessage(),
                 'finished_at' => Date::now(),
             ]);
 

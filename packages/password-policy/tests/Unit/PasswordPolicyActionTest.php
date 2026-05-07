@@ -99,7 +99,7 @@ it('blocks recently used passwords when password history is enabled', function (
 
     $user->refresh();
 
-    expect(fn () => UpdatePasswordAction::run(
+    expect(fn (): mixed => UpdatePasswordAction::run(
         $user,
         new PasswordChangeData(
             password: 'old-password',

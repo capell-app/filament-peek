@@ -10,13 +10,13 @@ use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\MediaConversionEnum;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
-use Capell\Core\Facades\CapellCore;
 use Capell\LayoutBuilder\Enums\ActionLinkEnum;
 use Capell\LayoutBuilder\Enums\ContentTypeEnum;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
@@ -31,9 +31,9 @@ use Capell\StarterSites\Support\Creator\DemoCreator as AdminDemoCreator;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Model;
-use RuntimeException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Spatie\Image\Image;
 use Spatie\MediaLibrary\HasMedia;
 
@@ -297,7 +297,7 @@ class DemoCreator
         }
 
         $contentType = $this->typeModel::query()
-            ->where('type', "section")
+            ->where('type', 'section')
             ->where('key', ContentTypeEnum::Builder)
             ->first();
 
@@ -484,7 +484,7 @@ class DemoCreator
 
         if (! $type instanceof Type) {
             $type = $this->typeModel::query()
-                ->where('type', "section")
+                ->where('type', 'section')
                 ->default()
                 ->first();
         }
@@ -1833,12 +1833,12 @@ class DemoCreator
 
         $testimonialType = Type::query()->updateOrCreate([
             'key' => 'testimonial',
-            'type' => "section",
+            'type' => 'section',
         ], [
             'name' => 'Testimonial',
             'admin' => [
                 'icon' => 'heroicon-o-chat-bubble-left-right',
-                'configurator' => "testimonial-section",
+                'configurator' => 'testimonial-section',
             ],
         ]);
 

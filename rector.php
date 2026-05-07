@@ -39,7 +39,11 @@ return RectorConfig::configure()
         __DIR__ . '/packages',
         __DIR__ . '/tests',
     ])
-    ->withParallel()
+    ->withParallel(
+        timeoutSeconds: 600,
+        maxNumberOfProcess: 8,
+        jobSize: 8,
+    )
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,

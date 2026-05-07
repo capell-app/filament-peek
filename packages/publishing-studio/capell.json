@@ -45,8 +45,5 @@
         "console": [
             "Capell\\PublishingStudio\\Providers\\ConsoleServiceProvider"
         ]
-    },
-    "commands": {
-        "install": "capell:publishing-studio-install"
     }
 }

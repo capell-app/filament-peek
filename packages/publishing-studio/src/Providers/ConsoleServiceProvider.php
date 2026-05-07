@@ -18,13 +18,13 @@ class ConsoleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                InstallCommand::class,
-                LoadTestPublishingStudioCommand::class,
-                PruneAbandonedPublishingStudioCommand::class,
-            ]);
+        $this->commands([
+            InstallCommand::class,
+            LoadTestPublishingStudioCommand::class,
+            PruneAbandonedPublishingStudioCommand::class,
+        ]);
 
+        if ($this->app->runningInConsole()) {
             $this->registerSchedule();
         }
     }

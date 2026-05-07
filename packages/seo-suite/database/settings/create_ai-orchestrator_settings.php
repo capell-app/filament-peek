@@ -7,20 +7,20 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-        if (! $this->migration->exists('ai-orchestrator.page_content_generator')) {
-            $this->migration->add('ai-orchestrator.page_content_generator', true);
+        if (! $this->migrator->exists('ai-orchestrator.page_content_generator')) {
+            $this->migrator->add('ai-orchestrator.page_content_generator', true);
         }
 
-        if (! $this->migration->exists('ai-orchestrator.page_title_suggestions')) {
-            $this->migration->add('ai-orchestrator.page_title_suggestions', true);
+        if (! $this->migrator->exists('ai-orchestrator.page_title_suggestions')) {
+            $this->migrator->add('ai-orchestrator.page_title_suggestions', true);
         }
 
-        if (! $this->migration->exists('ai-orchestrator.meta_description_suggestions')) {
-            $this->migration->add('ai-orchestrator.meta_description_suggestions', true);
+        if (! $this->migrator->exists('ai-orchestrator.meta_description_suggestions')) {
+            $this->migrator->add('ai-orchestrator.meta_description_suggestions', true);
         }
 
-        if (! $this->migration->exists('ai-orchestrator.prompts')) {
-            $this->migration->add('ai-orchestrator.prompts', [
+        if (! $this->migrator->exists('ai-orchestrator.prompts')) {
+            $this->migrator->add('ai-orchestrator.prompts', [
                 'title_generation' => true,
                 'rate_limiting_requests_per_minute' => 60,
                 'title_generation_system' => 'You are a helpful ai-orchestrator that writes concise, SEO-friendly page titles.',

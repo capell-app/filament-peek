@@ -77,10 +77,12 @@ final class StarterSitesExtensionsPageActions
         $exampleSiteParams = [];
 
         foreach (CapellCore::getInstalledPackages() as $package) {
-            if ($package->getDemoCommand() === null || $package->getDemoParams() === []) {
+            if ($package->getDemoCommand() === null) {
                 continue;
             }
-
+            if ($package->getDemoParams() === []) {
+                continue;
+            }
             foreach ($package->getDemoParams() as $param) {
                 if (is_string($param) && $param !== '' && ! in_array($param, $exampleSiteParams, true)) {
                     $exampleSiteParams[] = $param;

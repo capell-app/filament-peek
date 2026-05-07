@@ -8,10 +8,10 @@ use Capell\AgentBridge\Resources\CapellAgentBridgeOverviewResource;
 use Capell\AgentBridge\Tools\Knowledge\ListKnowledgePackagesTool;
 use Capell\AgentBridge\Tools\Knowledge\ReadKnowledgeDocumentTool;
 use Capell\AgentBridge\Tools\Knowledge\RecommendPackagesTool;
-use Laravel\AgentBridge\Server;
-use Laravel\AgentBridge\Server\Attributes\Instructions;
-use Laravel\AgentBridge\Server\Attributes\Name;
-use Laravel\AgentBridge\Server\Attributes\Version;
+use Laravel\Mcp\Server;
+use Laravel\Mcp\Server\Attributes\Instructions;
+use Laravel\Mcp\Server\Attributes\Name;
+use Laravel\Mcp\Server\Attributes\Version;
 
 #[Name('Capell Knowledge Agent Bridge')]
 #[Version('0.1.0')]

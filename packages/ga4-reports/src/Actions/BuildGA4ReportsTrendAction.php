@@ -28,7 +28,7 @@ final class BuildGA4ReportsTrendAction
             ->where('property_id', $resolvedWindow->propertyId)
             ->whereDate('metric_date', '>=', $resolvedWindow->startsAt->toDateString())
             ->whereDate('metric_date', '<=', $resolvedWindow->endsAt->toDateString())
-            ->orderBy('metric_date')
+            ->oldest('metric_date')
             ->get()
             ->map(fn (GA4ReportsDailyMetric $metric): GA4ReportsTrendPointData => new GA4ReportsTrendPointData(
                 label: $metric->metric_date->format('j M'),

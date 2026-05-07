@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Page;
-use Capell\Core\Support\Creator\DemoResourceResolver as CoreDemoResourceResolver;
+use Capell\Core\Support\Creator\PageCreator;
 use Capell\StarterSites\Support\Creator\DemoCreator;
 use Capell\StarterSites\Support\Creator\DemoResourceResolver;
 use Capell\Tests\Fixtures\Models\User;
@@ -54,23 +54,12 @@ it('runs demo command successfully', function (): void {
         public function assertSafeDemoZipEntries(ZipArchive $zip): void {}
     });
 
-    app()->instance(CoreDemoResourceResolver::class, new class($demoDirectory)
-    {
-        public function __construct(private readonly string $demoDirectory) {}
+    app()->bind(PageCreator::class, function (): PageCreator {
+        $mock = Mockery::mock(PageCreator::class . '[createHomePage,createErrorPage]');
+        $mock->shouldReceive('createHomePage')->andReturnUsing(fn (): Page => new Page);
+        $mock->shouldReceive('createErrorPage')->andReturnUsing(fn (): Page => new Page);
 
-        public function resolve(?string $folder): string
-        {
-            $folder = in_array($folder, [null, '', '0'], true) ? null : ltrim($folder, '/');
-
-            return $this->demoDirectory . ($folder === null ? '' : '/' . $folder);
-        }
-
-        public function ensureStorageDemoResources(): string
-        {
-            return $this->demoDirectory;
-        }
-
-        public function assertSafeDemoZipEntries(ZipArchive $zip): void {}
+        return $mock;
     });
 
     app()->bind(DemoCreator::class, function (Application $app, array $params): DemoCreator {

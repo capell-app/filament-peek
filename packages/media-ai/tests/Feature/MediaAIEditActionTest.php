@@ -23,8 +23,8 @@ use Livewire\Livewire;
 
 beforeEach(function (): void {
     if (
-        ! interface_exists('Capell\\Admin\\Contracts\\Extenders\\MediaEditActionExtender')
-        || ! class_exists('Capell\\Admin\\Filament\\Resources\\Media\\Pages\\EditMedia')
+        ! interface_exists(MediaEditActionExtender::class)
+        || ! class_exists(EditMedia::class)
     ) {
         test()->markTestSkipped('Capell Admin media edit extension points are not available in this checkout.');
     }

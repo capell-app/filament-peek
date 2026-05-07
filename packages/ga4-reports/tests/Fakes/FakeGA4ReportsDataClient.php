@@ -30,9 +30,7 @@ final class FakeGA4ReportsDataClient implements GA4ReportsDataClientInterface
 
     public function dailyMetrics(GA4ReportsWindowData $window): array
     {
-        if ($this->shouldFail) {
-            throw new RuntimeException('GA4 client failed.');
-        }
+        throw_if($this->shouldFail, RuntimeException::class, 'GA4 client failed.');
 
         return $this->dailyMetrics;
     }

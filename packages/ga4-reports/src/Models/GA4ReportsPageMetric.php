@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\GA4Reports\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 final class GA4ReportsPageMetric extends Model
 {
+    use HasFactory;
+
     protected $guarded = [];
 
     public function getTable(): string

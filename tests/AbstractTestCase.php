@@ -320,6 +320,7 @@ abstract class AbstractTestCase extends TestCase
             if (method_exists($migration, 'setMigrationAssistant')) {
                 $migration->setMigrationAssistant($settingsMigrator);
             }
+
             if (! property_exists($migration, 'migration')) {
                 $migration->migration = $settingsMigrator;
             }

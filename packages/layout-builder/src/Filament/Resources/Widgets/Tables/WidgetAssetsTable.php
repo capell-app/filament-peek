@@ -19,23 +19,26 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Type;
 use Capell\LayoutBuilder\Filament\Components\Forms\AssetTypeSelect;
-use Capell\LayoutBuilder\Filament\Concerns\HasAssetsRelationManager;
+use Capell\LayoutBuilder\Models\Widget;
 use Capell\LayoutBuilder\Models\WidgetAsset;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Select;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use RuntimeException;
 
 class WidgetAssetsTable implements TableConfigurator
 {
-    use HasAssetsRelationManager;
-
     public static function configure(Table $table): Table
     {
         return $table
@@ -186,6 +189,40 @@ class WidgetAssetsTable implements TableConfigurator
                     return $indicators;
                 }),
         ];
+    }
+
+    private static function createResourcesAction(): Action
+    {
+        return CreateAction::make()
+            ->label(__('capell-layout-builder::button.add_asset'))
+            ->color('primary')
+            ->successNotificationTitle(__('capell-layout-builder::message.asset_added'))
+            ->using(function (array $data, RelationManager $livewire): Model {
+                $assetIds = $data['asset_id'] ?? null;
+                $assetType = $data['asset_type'] ?? null;
+
+                throw_if(! is_array($assetIds) || $assetIds === [], RuntimeException::class, 'No asset selected');
+                throw_if(! is_string($assetType) || $assetType === '', RuntimeException::class, 'No asset type selected');
+
+                $ownerRecord = $livewire->getOwnerRecord();
+
+                throw_if(! $ownerRecord instanceof Widget, RuntimeException::class, 'Widget assets can only be attached to widgets.');
+
+                $createdAsset = null;
+
+                foreach ($assetIds as $assetId) {
+                    $createdAsset = $ownerRecord->assets()->create([
+                        'asset_id' => $assetId,
+                        'asset_type' => $assetType,
+                        'related_type' => $ownerRecord->getMorphClass(),
+                        'related_id' => $ownerRecord->getKey(),
+                    ]);
+                }
+
+                throw_if(! $createdAsset instanceof Model, RuntimeException::class, 'No asset was created.');
+
+                return $createdAsset;
+            });
     }
 
     private static function buildLookupKey(string $pageableType, int $pageableId): string

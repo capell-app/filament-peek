@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Filament\Pages\Tables;
 
-use Capell\Admin\Contracts\DashboardReports\ActivityTrailQueryProvider;
+use Capell\Admin\Contracts\Reports\ActivityTrailQueryProvider;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

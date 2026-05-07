@@ -30,7 +30,10 @@ class EnsurePasswordPolicyCompliance
 
     private function isAllowedRoute(Request $request): bool
     {
-        return $request->is('admin/password-policy/change-password')
-            || $request->routeIs('filament.admin.auth.logout');
+        if ($request->is('admin/password-policy/change-password')) {
+            return true;
+        }
+
+        return $request->routeIs('filament.admin.auth.logout');
     }
 }

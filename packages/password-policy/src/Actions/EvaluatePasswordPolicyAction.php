@@ -20,14 +20,12 @@ class EvaluatePasswordPolicyAction
     {
         $settings = resolve(PasswordPolicySettingsResolver::class)->settings();
 
-        if ($settings->forceChangeEnabled && Schema::hasColumn($user->getTable(), 'must_change_password')) {
-            if ((bool) $user->getAttribute('must_change_password')) {
-                return new PasswordPolicyStatusData(
-                    mustChangePassword: true,
-                    passwordExpired: false,
-                    reason: 'forced',
-                );
-            }
+        if ($settings->forceChangeEnabled && Schema::hasColumn($user->getTable(), 'must_change_password') && (bool) $user->getAttribute('must_change_password')) {
+            return new PasswordPolicyStatusData(
+                mustChangePassword: true,
+                passwordExpired: false,
+                reason: 'forced',
+            );
         }
 
         if (! $settings->passwordExpiryEnabled || ! Schema::hasColumn($user->getTable(), 'password_changed_at')) {

@@ -6,7 +6,7 @@ use Capell\AgentBridge\Http\Middleware\AuthenticateCapellAgentBridgeToken;
 use Capell\AgentBridge\Servers\CapellKnowledgeServer;
 use Capell\AgentBridge\Servers\CapellSiteServer;
 use Illuminate\Support\Facades\Route;
-use Laravel\AgentBridge\Facades\AgentBridge;
+use Laravel\Mcp\Facades\Mcp;
 
 $homeRoute = config('capell-agent-bridge.routes.home', '/');
 $knowledgeRoute = config('capell-agent-bridge.routes.knowledge', 'agent-bridge/capell/knowledge');
@@ -30,13 +30,13 @@ if (is_string($homeRoute) && $homeRoute !== '') {
     ])->name('capell-agent-bridge.home');
 }
 
-if (class_exists(AgentBridge::class)) {
+if (class_exists(Mcp::class)) {
     if (is_string($knowledgeRoute) && $knowledgeRoute !== '') {
-        AgentBridge::web($knowledgeRoute, CapellKnowledgeServer::class);
+        Mcp::web($knowledgeRoute, CapellKnowledgeServer::class);
     }
 
     if (is_string($siteRoute) && $siteRoute !== '') {
-        AgentBridge::web($siteRoute, CapellSiteServer::class)
+        Mcp::web($siteRoute, CapellSiteServer::class)
             ->middleware(AuthenticateCapellAgentBridgeToken::class);
     }
 }

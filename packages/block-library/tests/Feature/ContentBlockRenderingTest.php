@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Capell\BlockLibrary\Actions\BuildContentBlockDemoDataAction;
 use Capell\BlockLibrary\Actions\RegisterDefaultBlockLibraryAction;
 use Capell\BlockLibrary\Support\ContentBlockRegistry;
+use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Testing\TestResponse;
@@ -17,7 +18,7 @@ beforeEach(function (): void {
     $registry = new ContentBlockRegistry;
 
     view()->addNamespace('capell-block-library', __DIR__ . '/../../resources/views');
-    app('translator')->addNamespace('capell-block-library', __DIR__ . '/../../resources/lang');
+    resolve(Translator::class)->addNamespace('capell-block-library', __DIR__ . '/../../resources/lang');
     Blade::anonymousComponentPath(__DIR__ . '/../Fixtures/components', 'capell');
 
     RegisterDefaultBlockLibraryAction::run($registry);

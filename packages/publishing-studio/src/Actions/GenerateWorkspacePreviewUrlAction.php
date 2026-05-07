@@ -67,7 +67,7 @@ class GenerateWorkspacePreviewUrlAction
             'capell-frontend.home',
             'capell-frontend.index',
             'capell-frontend.index.php',
-        ]);
+        ], static fn (?string $routeName): bool => $routeName !== null);
 
         foreach (array_unique($routeNames) as $routeName) {
             if (Route::has($routeName)) {

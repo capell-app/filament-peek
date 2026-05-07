@@ -37,7 +37,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Capell\\PublishingStudio\\Providers\\PublishingStudioServiceProvider"
+                "Capell\\PublishingStudio\\Providers\\PublishingStudioServiceProvider",
+                "Capell\\PublishingStudio\\Providers\\ConsoleServiceProvider"
             ]
         }
     },

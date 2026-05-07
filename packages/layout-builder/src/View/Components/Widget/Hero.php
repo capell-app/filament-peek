@@ -21,7 +21,11 @@ class Hero extends AbstractWidget
             ->withWhereHas('translation', fn (BuilderContract $query): BuilderContract => $query->with('language'));
 
         foreach (array_keys($morphRelations) as $assetModel) {
-            if ($assetModel === Page::class || ! is_a($assetModel, Model::class, true)) {
+            if ($assetModel === Page::class) {
+                continue;
+            }
+
+            if (! is_a($assetModel, Model::class, true)) {
                 continue;
             }
 
