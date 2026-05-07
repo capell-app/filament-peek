@@ -24,6 +24,7 @@ use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Composer\InstalledVersions;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 
 uses(CreatesAdminUser::class);
 
@@ -106,29 +107,40 @@ it('shows installed package admin surfaces in Filament navigation', function ():
     Filament::bootCurrentPanel();
     Filament::setServingStatus();
 
+    $navigationItems = static function (NavigationItem $navigationItem) use (&$navigationItems): array {
+        return [
+            $navigationItem,
+            ...collect($navigationItem->getChildItems())
+                ->flatMap(fn (NavigationItem $childNavigationItem): array => $navigationItems($childNavigationItem))
+                ->all(),
+        ];
+    };
+
     $navigationLabels = collect(Filament::getNavigation())
-        ->flatMap(fn (NavigationGroup $group): array => collect($group->getItems())->all())
-        ->map(fn ($item): string => $item->getLabel())
+        ->flatMap(fn (NavigationGroup $group): array => collect($group->getItems())
+            ->flatMap(fn (NavigationItem $navigationItem): array => $navigationItems($navigationItem))
+            ->all())
+        ->map(fn (NavigationItem $navigationItem): string => $navigationItem->getLabel())
         ->all();
 
     expect($navigationLabels)->toContain(
         'Articles',
-        'Broken Links',
+        (string) __('capell-admin::navigation.broken_links'),
         'Campaign groups',
         'CTA blocks',
         'Conversion goals',
         'Diagnostics',
         'Import Sessions',
         'Landing pages',
-        'Media Health',
-        'Missing Pages',
-        'Permission Audit',
-        'Queue Health',
-        'Redirects',
-        'SEO Audit',
-        'System Health',
+        (string) __('capell-admin::navigation.media_health'),
+        (string) __('capell-admin::navigation.not_found'),
+        (string) __('capell-admin::navigation.permission_audit'),
+        (string) __('capell-admin::navigation.queue_health'),
+        (string) __('capell-admin::navigation.redirects'),
+        (string) __('capell-admin::navigation.seo_audit'),
+        (string) __('capell-admin::navigation.system_health'),
         'Tags',
-        'Translation Coverage',
+        (string) __('capell-admin::navigation.translation_coverage'),
     );
 });
 

@@ -349,7 +349,7 @@ class CapellFrontendThemePageAdapter implements ThemePageAdapter
                     'url' => $this->pageUrl($asset),
                     'image' => $this->mediaUrl($asset) ?? $this->mediaUrl($widgetAsset),
                     'publishedAt' => $publishDate?->toW3cString(),
-                    'publishedDate' => $publishDate?->format((string) config('capell-frontend.date_format', 'j M Y')),
+                    'publishedDate' => $publishDate?->format(config('capell-frontend.date_format', 'j M Y')),
                     'author' => $this->authorName($asset),
                     'type' => $this->typeName($asset),
                     'meta' => $this->publicMetaLabels($asset, $widgetAsset),

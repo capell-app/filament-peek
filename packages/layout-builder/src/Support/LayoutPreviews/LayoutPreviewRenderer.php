@@ -40,7 +40,7 @@ class LayoutPreviewRenderer
         $background = imagecolorallocate($image, 248, 250, 252);
         imagefilledrectangle($image, 0, 0, self::CANVAS_SIZE, self::CANVAS_SIZE, $background);
 
-        $this->drawTitle($image, (string) $layout->name);
+        $this->drawTitle($image, $layout->name);
 
         $containers = is_array($payload['containers'] ?? null) ? $payload['containers'] : [];
         $this->drawContainers($image, $layout, $containers);

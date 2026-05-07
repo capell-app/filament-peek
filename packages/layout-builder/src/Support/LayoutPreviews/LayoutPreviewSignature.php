@@ -102,7 +102,7 @@ final class LayoutPreviewSignature
             }
 
             $normalizedContainers[] = [
-                'key' => (string) $containerKey,
+                'key' => $containerKey,
                 'colspan' => $this->colspan($container),
                 'widgets' => $this->normalizeWidgets($container['widgets'] ?? [], $widgets),
             ];

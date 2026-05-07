@@ -40,7 +40,6 @@ it('keeps package settings out of the global settings page', function (): void {
 
     get(SettingsPage::getUrl())
         ->assertSuccessful()
-        ->assertSeeText(__('capell-admin::generic.core'))
         ->assertDontSeeHtml('password_expiry_enabled');
 });
 

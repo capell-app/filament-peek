@@ -15,7 +15,7 @@ return [
     ],
 
     'playwright' => [
-        'node_binary' => env('CAPELL_FRONTEND_OPTIMIZER_NODE', 'node'),
+        'node_binary' => $_ENV['CAPELL_FRONTEND_OPTIMIZER_NODE'] ?? 'node',
         'script' => __DIR__ . '/../resources/js/generate-critical-css.mjs',
         'timeout' => 120,
         'viewports' => [

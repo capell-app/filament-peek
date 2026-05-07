@@ -50,6 +50,6 @@ class ActivityTrailTable implements TableConfigurator
             return ActivityTrailQueryProvider::class;
         }
 
-        return \Capell\Admin\Contracts\Reports\ActivityTrailQueryProvider::class;
+        return 'Capell\Admin\Contracts\Reports\ActivityTrailQueryProvider';
     }
 }
