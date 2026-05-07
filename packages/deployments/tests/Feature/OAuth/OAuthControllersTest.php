@@ -71,3 +71,55 @@ it('connects github only after oauth state validation passes', function (): void
         'repo_name' => 'app',
     ])->exists())->toBeTrue();
 });
+
+it('connects gitlab after oauth state validation passes', function (): void {
+    $state = CreateOAuthStateAction::run(GitProviderType::GitLab);
+
+    Http::fake([
+        'gitlab.com/oauth/token' => Http::response([
+            'access_token' => 'gitlab-access-token',
+            'refresh_token' => 'gitlab-refresh-token',
+        ]),
+        'gitlab.com/api/v4/user' => Http::response([
+            'username' => 'gitlab-owner',
+        ]),
+    ]);
+
+    $this->get(route('capell-deployments.oauth.gitlab', [
+        'code' => 'gitlab-code',
+        'state' => $state,
+    ]))
+        ->assertRedirect(route('filament.admin.pages.deployment-connection'));
+
+    expect(DeploymentConnection::query()->where([
+        'provider' => GitProviderType::GitLab->value,
+        'repo_owner' => 'gitlab-owner',
+        'repo_name' => 'app',
+    ])->exists())->toBeTrue();
+});
+
+it('connects bitbucket after oauth state validation passes', function (): void {
+    $state = CreateOAuthStateAction::run(GitProviderType::Bitbucket);
+
+    Http::fake([
+        'bitbucket.org/site/oauth2/access_token' => Http::response([
+            'access_token' => 'bitbucket-access-token',
+            'refresh_token' => 'bitbucket-refresh-token',
+        ]),
+        'api.bitbucket.org/2.0/user' => Http::response([
+            'username' => 'bitbucket-owner',
+        ]),
+    ]);
+
+    $this->get(route('capell-deployments.oauth.bitbucket', [
+        'code' => 'bitbucket-code',
+        'state' => $state,
+    ]))
+        ->assertRedirect(route('filament.admin.pages.deployment-connection'));
+
+    expect(DeploymentConnection::query()->where([
+        'provider' => GitProviderType::Bitbucket->value,
+        'repo_owner' => 'bitbucket-owner',
+        'repo_name' => 'app',
+    ])->exists())->toBeTrue();
+});
