@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\FoundationTheme\Support\Tailwind;
 
 use Capell\Core\Contracts\RegistersTailwindAssets;
-use Capell\Core\Data\PackageData;
 use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Enums\VendorAssetEnum;
 use Capell\Core\Facades\CapellCore;
@@ -25,14 +24,13 @@ use Throwable;
  * Sources of inputs:
  * - Default theme config (capell-foundation-theme.tailwind) for imports/plugins/sources.
  * - Registered vendor assets for tailwind imports/plugins/sources/theme_colors.
- * - Installed package fallback source globs for resources/views when no explicit source is registered.
  * - Service providers implementing RegistersTailwindAssets for runtime registration.
  * - Each enabled Theme model's meta->colors for dynamic CSS custom properties.
  *
  * Output:
- * - One CSS file per enabled Theme (e.g. resources/css/capell/frontend-default.css).
- * - If a Theme has meta->output_css set, that path is used instead of the derived theme-keyed path.
- * - Falls back to a single base file (no theme key) when no enabled Themes exist in the database.
+ * - One CSS file for the active/default frontend Theme (e.g. resources/css/capell/frontend.css).
+ * - Explicit per-theme generation remains available for targeted theme builds.
+ * - Falls back to a single base file when no enabled Themes exist in the database.
  *
  * Behavior:
  * - De-duplicates and sorts values via TailwindAssetsRegistry.
@@ -52,7 +50,7 @@ class TailwindAssetsGenerator
     }
 
     /**
-     * Generate one CSS file per enabled Theme (e.g. frontend-default.css, frontend-dark.css).
+     * Generate the active/default frontend Tailwind asset file.
      *
      * Falls back to a single base file when no enabled Themes exist in the database.
      *
@@ -62,42 +60,29 @@ class TailwindAssetsGenerator
     {
         $baseTargetPath = $this->targetPath($absoluteBaseTargetPath);
 
-        $themes = Theme::query()
+        $theme = Theme::query()
+            ->with('type')
+            ->enabled()
+            ->default()
+            ->first();
+
+        $theme ??= Theme::query()
             ->with('type')
             ->enabled()
             ->orderByDesc('default')
             ->orderBy('order')
             ->orderBy('name')
-            ->get();
+            ->first();
 
-        if ($themes->isEmpty()) {
+        if (! $theme instanceof Theme) {
             $this->generateFile($baseTargetPath, null);
 
             return [$baseTargetPath];
         }
 
-        $generatedPaths = [];
-        $seenPaths = [];
+        $this->generateFile($baseTargetPath, $theme);
 
-        foreach ($themes as $theme) {
-            $themePath = $this->themeOutputPath($theme, $baseTargetPath);
-
-            if (array_key_exists($themePath, $seenPaths)) {
-                Log::warning('Skipping theme due to output path collision.', [
-                    'skipped_theme' => $theme->key,
-                    'path' => $themePath,
-                    'existing_theme' => $seenPaths[$themePath],
-                ]);
-
-                continue;
-            }
-
-            $seenPaths[$themePath] = $theme->key;
-            $this->generateFile($themePath, $theme);
-            $generatedPaths[] = $themePath;
-        }
-
-        return $generatedPaths;
+        return [$baseTargetPath];
     }
 
     /**
@@ -139,7 +124,6 @@ class TailwindAssetsGenerator
 
         $this->registerDefaults($registry, $targetPath);
         $this->registerVendorAssets($registry, $targetPath);
-        $this->registerInstalledPackageFallbackSources($registry, $targetPath);
         $this->registerProviderAssets($registry);
 
         if ($theme instanceof Theme) {
@@ -276,23 +260,6 @@ class TailwindAssetsGenerator
                 }
 
                 $this->registerThemeColor($registry, $colorName, $colorValue, $this->originForAsset($asset));
-            });
-    }
-
-    private function registerInstalledPackageFallbackSources(TailwindAssetsRegistry $registry, string $targetPath): void
-    {
-        $packagesWithExplicitSources = CapellCore::getVendorAssetsForType(VendorAssetEnum::TailwindSource)
-            ->pluck('packageName')
-            ->filter(fn (mixed $name): bool => is_string($name) && $name !== '')
-            ->unique()
-            ->all();
-
-        CapellCore::getInstalledPackages()
-            ->reject(fn (PackageData $package): bool => in_array($package->name, $packagesWithExplicitSources, true))
-            ->each(function (PackageData $package) use ($registry, $targetPath): void {
-                $fallback = $this->resolveVendorPackageAbsolute($package->name, 'resources/views/**/*.blade.php');
-
-                $registry->registerSource($this->relativePath($fallback, $targetPath), 'package:' . $package->name);
             });
     }
 

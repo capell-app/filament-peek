@@ -4,9 +4,9 @@
 
 **Goal:** Move Admin Preview integration into an optional `capell-app/admin-preview` package that previews PublishingStudio draft websites in an iframe modal.
 
-**Architecture:** PublishingStudio owns draft preview URLs and exposes a small tagged table-action contributor contract. The new Admin Preview package owns `pboivin/admin-preview`, registers its panel plugin via `AdminPanelExtender`, and contributes a PublishingStudio modal preview action that opens Peek's iframe modal with the existing signed workspace preview URL.
+**Architecture:** PublishingStudio owns draft preview URLs and exposes a small tagged table-action contributor contract. The new Admin Preview package owns `pboivin/filamnt-peek`, registers its panel plugin via `AdminPanelExtender`, and contributes a PublishingStudio modal preview action that opens Peek's iframe modal with the existing signed workspace preview URL.
 
-**Tech Stack:** Laravel 11/12/13 package development, Filament 4/5 actions and panels, `pboivin/admin-preview:^4.1`, Capell package registry, Pest.
+**Tech Stack:** Laravel 11/12/13 package development, Filament 4/5 actions and panels, `pboivin/filamnt-peek:^4.1`, Capell package registry, Pest.
 
 ---
 
@@ -25,7 +25,7 @@
 - `packages/admin-preview/src/PublishingStudio/WorkspacePeekPreviewActionContributor.php` — returns the modal preview action when required packages are installed.
 - `packages/admin-preview/resources/lang/en/workspace.php` — labels for the modal preview action.
 - `packages/admin-preview/tests/...` — focused unit and feature tests for provider registration, action contribution, and URL generation.
-- `composer.json` — add package path autoload entries and move `pboivin/admin-preview` out of root/global require if possible.
+- `composer.json` — add package path autoload entries and move `pboivin/filamnt-peek` out of root/global require if possible.
 - Companion admin repo: `vendor/capell-app/admin/composer.json` and `vendor/capell-app/admin/src/Providers/Filament/AdminPanelProvider.php` — remove hard Admin Preview dependency and direct plugin registration.
 
 ## Task 1: Add PublishingStudio Table Action Extension Point
@@ -226,7 +226,7 @@ Create `packages/admin-preview/composer.json`:
         "capell-app/admin": "*",
         "capell-app/frontend": "*",
         "capell-app/publishing-studio": "*",
-        "pboivin/admin-preview": "^4.1"
+        "pboivin/filamnt-peek": "^4.1"
     },
     "autoload": {
         "psr-4": {
@@ -266,7 +266,7 @@ Add to `autoload-dev.psr-4`:
 "Capell\\AdminPreview\\Tests\\": "packages/admin-preview/tests",
 ```
 
-Keep `pboivin/admin-preview` in root `require` until Task 5 removes direct admin usage. This avoids breaking the current symlinked admin package mid-plan.
+Keep `pboivin/filamnt-peek` in root `require` until Task 5 removes direct admin usage. This avoids breaking the current symlinked admin package mid-plan.
 
 - [ ] **Step 4: Create package test case and Pest mapping**
 
@@ -766,16 +766,16 @@ The panel should still register:
 
 - [ ] **Step 3: Move Composer dependency**
 
-In root `composer.json`, keep `pboivin/admin-preview` only if the monorepo needs it to run package tests before Composer path resolution includes `packages/admin-preview`. If Composer accepts the local package dependency, remove this root require line:
+In root `composer.json`, keep `pboivin/filamnt-peek` only if the monorepo needs it to run package tests before Composer path resolution includes `packages/admin-preview`. If Composer accepts the local package dependency, remove this root require line:
 
 ```json
-"pboivin/admin-preview": "^4.0",
+"pboivin/filamnt-peek": "^4.0",
 ```
 
 In `vendor/capell-app/admin/composer.json`, remove:
 
 ```json
-"pboivin/admin-preview": "^4.0",
+"pboivin/filamnt-peek": "^4.0",
 ```
 
 Do not remove it from `packages/admin-preview/composer.json`.
@@ -850,7 +850,7 @@ Expected: pass. If unrelated existing worktree changes fail preflight, capture t
 Run:
 
 ```bash
-rg -n "Pboivin\\\\AdminPreview|AdminPreviewPlugin|AdminPreviewServiceProvider|pboivin/admin-preview" composer.json tests packages vendor/capell-app/admin/src vendor/capell-app/admin/composer.json --glob '!vendor/pboivin'
+rg -n "Pboivin\\\\AdminPreview|AdminPreviewPlugin|AdminPreviewServiceProvider|pboivin/filamnt-peek" composer.json tests packages vendor/capell-app/admin/src vendor/capell-app/admin/composer.json --glob '!vendor/pboivin'
 ```
 
 Expected:

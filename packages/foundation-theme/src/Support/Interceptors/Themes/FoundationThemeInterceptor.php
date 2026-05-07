@@ -17,6 +17,8 @@ final class FoundationThemeInterceptor implements ThemeInterceptorInterface
         }
 
         $data['meta'] = array_merge([
+            'assets' => ['resources/css/capell/frontend.css'],
+            'assets_path' => 'build',
             'header_border_color' => DefaultColorEnum::LightGray->getColor(),
             'sticky_header' => true,
             'dark_mode_toggle' => true,

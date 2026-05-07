@@ -2,13 +2,13 @@
 
 ## Goal
 
-Create an optional `capell-app/admin-preview` package that integrates Capell admin previews with `pboivin/admin-preview`, with first-class support for PublishingStudio draft previews loaded inside an iframe modal.
+Create an optional `capell-app/admin-preview` package that integrates Capell admin previews with `pboivin/filamnt-peek`, with first-class support for PublishingStudio draft previews loaded inside an iframe modal.
 
 ## Context
 
 Capell PublishingStudio already owns draft preview URL generation through `Capell\PublishingStudio\Actions\GenerateWorkspacePreviewUrlAction`. That action creates a temporary signed frontend URL carrying the workspace UUID and preview-link token, and `ResolveWorkspaceContext` resolves those values into draft context for the rendered website.
 
-The root monorepo currently requires `pboivin/admin-preview`, the shared test harness registers `AdminPreviewServiceProvider`, and `capell-app/admin` registers `AdminPreviewPlugin` directly in its panel provider. The existing PublishingStudio preview action opens the generated frontend URL in a new tab.
+The root monorepo currently requires `pboivin/filamnt-peek`, the shared test harness registers `AdminPreviewServiceProvider`, and `capell-app/admin` registers `AdminPreviewPlugin` directly in its panel provider. The existing PublishingStudio preview action opens the generated frontend URL in a new tab.
 
 The new package should move the Peek dependency and integration out of the global dependency surface. Installing it should enhance the PublishingStudio admin table with an iframe modal preview while keeping the existing PublishingStudio package independent and usable without Peek.
 
@@ -27,7 +27,7 @@ The package requires:
 - `capell-app/admin:*`
 - `capell-app/frontend:*`
 - `capell-app/publishing-studio:*`
-- `pboivin/admin-preview:^4.1`
+- `pboivin/filamnt-peek:^4.1`
 
 The package should be optional. No existing package should require it unless that package explicitly wants the modal preview integration.
 
@@ -78,7 +78,7 @@ The contract returns an array because Filament table actions are object instance
 
 ## Admin Package Companion Change
 
-The companion admin package currently imports `Pboivin\AdminPreview\AdminPreviewPlugin` in `Capell\Admin\Providers\Filament\AdminPanelProvider` and requires `pboivin/admin-preview` in `packages/admin/composer.json`.
+The companion admin package currently imports `Pboivin\AdminPreview\AdminPreviewPlugin` in `Capell\Admin\Providers\Filament\AdminPanelProvider` and requires `pboivin/filamnt-peek` in `packages/admin/composer.json`.
 
 That direct dependency should be removed in the admin package. `AdminPanelProvider` should only register `CapellAdminPlugin`; `CapellAdminPlugin` already applies tagged `AdminPanelExtender` instances, which gives this optional package a clean way to register Peek when installed.
 
@@ -113,7 +113,7 @@ The action should use `__('capell-admin-preview::workspace.actions.preview_modal
 
 ## Testing
 
-PublishingStudio tests should cover the extension point without loading `pboivin/admin-preview`.
+PublishingStudio tests should cover the extension point without loading `pboivin/filamnt-peek`.
 
 Admin Preview package tests should cover:
 

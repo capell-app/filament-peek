@@ -18,6 +18,45 @@ Every widget on a page is rendered through `resources/views/components/layout/wi
 
 The `$type` value comes from the widget's `meta['component_type']` field. If not set, it defaults to `'blade'`.
 
+## Stable frontend component keys
+
+Asset-backed widgets should store stable frontend component keys instead of package Blade namespaces. For example, store `section.block` or `section.team-member` in widget asset configuration, not `capell-layout-builder::section.block`.
+
+The frontend component registry resolves that stable key to the active Blade implementation at render time. Content Sections registers neutral defaults, and Layout Builder or a theme package can override the same keys with richer templates:
+
+```php
+use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
+
+$this->callAfterResolving(
+    FrontendComponentRegistryInterface::class,
+    fn (FrontendComponentRegistryInterface $registry): FrontendComponentRegistryInterface => $registry
+        ->register(
+            key: 'section.block',
+            component: 'capell-example-theme::section.block',
+            aliases: [
+                'capell-content-sections::section.block',
+                'capell-layout-builder::section.block',
+            ],
+            props: [
+                'asset',
+                'class',
+                'color',
+                'icon',
+                'image',
+                'linkText',
+                'loop',
+                'meta',
+                'size',
+                'summary',
+                'title',
+                'url',
+            ],
+        ),
+);
+```
+
+This keeps saved content portable. A theme can replace the template without requiring migrations, manual edits to existing widget assets, or duplicate enum values for each package namespace.
+
 ## When to use a Blade component (default)
 
 Use a Blade component for any widget that:
