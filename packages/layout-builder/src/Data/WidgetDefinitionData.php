@@ -6,6 +6,7 @@ namespace Capell\LayoutBuilder\Data;
 
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\DefaultColorEnum;
+use Capell\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Capell\LayoutBuilder\Enums\WidgetComponentEnum;
 use Capell\LayoutBuilder\Filament\Configurators\Widgets\CarouselWidgetConfigurator;
 use Spatie\LaravelData\Data;
@@ -245,7 +246,7 @@ class WidgetDefinitionData extends Data
                 typeCreatorMethod: 'assetsWidgetType',
                 meta: [
                     'component' => WidgetComponentEnum::AssetBlock,
-                    'component_item' => 'capell-layout-builder::section.block',
+                    'component_item' => FrontendComponentKeyEnum::SectionBlock->value,
                     'spacing' => 'none',
                     'columns' => 0,
                     'margin' => 'none',

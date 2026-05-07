@@ -8,7 +8,7 @@ use Capell\Admin\Filament\Contracts\HasSchema;
 use Capell\Newsletter\Enums\ResubscribePolicy;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class NewsletterSettingsSchema implements HasSchema
@@ -16,7 +16,7 @@ class NewsletterSettingsSchema implements HasSchema
     public static function make(Schema $configurator): array
     {
         return [
-            Fieldset::make(__('capell-newsletter::navigation.newsletter'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     Select::make('default_resubscribe_policy')

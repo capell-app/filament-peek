@@ -28,6 +28,12 @@ class EventRegistrationResource extends Resource
         return __('capell-events::generic.event_registrations');
     }
 
+    #[Override]
+    public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-events::generic.events');
+    }
+
     public static function table(Table $table): Table
     {
         return $table->columns([

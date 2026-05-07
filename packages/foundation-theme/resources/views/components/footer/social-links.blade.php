@@ -10,21 +10,36 @@
     }}
 >
     @foreach ($links as $link)
+        @php
+            use BladeUI\Icons\Exceptions\SvgNotFound;
+
+            $icon = null;
+            $iconClass = 'shrink-0 grow-0 opacity-50 group-hover/item:opacity-100' . match ($size) {
+                'sm' => ' h-5 w-5',
+                'md' => ' h-8 w-8',
+                'lg' => ' h-10 w-10',
+            };
+
+            if (! empty($link['icon'])) {
+                try {
+                    $icon = svg($link['icon'], [
+                        'class' => $iconClass,
+                        'title' => $link['title'] ?? $link['type'],
+                    ]);
+                } catch (SvgNotFound) {
+                    $icon = null;
+                }
+            }
+        @endphp
+
         <a
             class="hover:text-primary focus:text-primary group/item flex items-center gap-x-1"
             href="{{ $link['url'] }}"
             target="_blank"
             rel="nofollow"
         >
-            @if (! empty($link['icon']))
-                @svg($link['icon'], [
-                    'class' => 'shrink-0 grow-0 opacity-50 group-hover/item:opacity-100' . match ($size) {
-                        'sm' => ' h-5 w-5',
-                        'md' => ' h-8 w-8',
-                        'lg' => ' h-10 w-10',
-                    },
-                    'title' => $link['title'] ?? $link['type'],
-                ])
+            @if ($icon)
+                {!! $icon !!}
             @elseif (! empty($link['file']))
                 @php
                     $image = is_array($link['file']) ? collect($link['file'])->first() : $link['file'];

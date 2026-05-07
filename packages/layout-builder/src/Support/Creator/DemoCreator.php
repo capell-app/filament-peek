@@ -19,6 +19,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\LayoutBuilder\Enums\ActionLinkEnum;
 use Capell\LayoutBuilder\Enums\ContentTypeEnum;
+use Capell\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
 use Capell\LayoutBuilder\Enums\WidgetComponentEnum;
 use Capell\LayoutBuilder\Enums\WidgetTypeEnum;
@@ -718,7 +719,7 @@ class DemoCreator
             'name' => 'Statistic Blocks',
             'type_id' => $this->typeModel::query()->firstWhere(['key' => WidgetTypeEnum::Assets, 'type' => LayoutTypeEnum::Widget])->id,
             'meta' => [
-                'component_item' => 'capell-layout-builder::section.block',
+                'component_item' => FrontendComponentKeyEnum::SectionBlock->value,
                 'view_file' => 'capell-layout-builder::components.widget.asset.blocks',
                 'spacing' => 'none',
                 'columns' => 4,
@@ -819,7 +820,7 @@ class DemoCreator
                 'carousel_loop' => true,
                 'carousel_auto_play' => true,
                 'carousel_auto_delay' => 50000,
-                'component_item' => 'capell-layout-builder::section.team-member',
+                'component_item' => FrontendComponentKeyEnum::SectionTeamMember->value,
             ],
         ]);
 

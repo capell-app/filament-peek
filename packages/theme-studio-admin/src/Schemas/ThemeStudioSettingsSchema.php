@@ -16,7 +16,7 @@ use Capell\ThemeStudio\Admin\Rules\SafeCssColor;
 use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -49,7 +49,7 @@ class ThemeStudioSettingsSchema implements HasSchema
                     ]),
                 Tab::make(__('capell-theme-studio-admin::studio.tabs.brand'))
                     ->schema([
-                        Fieldset::make(__('capell-theme-studio-admin::studio.fields.colours'))
+                        Grid::make(2)
                             ->schema([
                                 ColorPicker::make('brandProfile.primaryColor')
                                     ->label(__('capell-theme-studio-admin::studio.primary_colour'))
@@ -60,7 +60,7 @@ class ThemeStudioSettingsSchema implements HasSchema
                                     ->rule(new SafeCssColor)
                                     ->required(),
                             ]),
-                        Fieldset::make(__('capell-theme-studio-admin::studio.fields.typography'))
+                        Grid::make(2)
                             ->schema([
                                 Select::make('brandProfile.headingFont')
                                     ->label(__('capell-theme-studio-admin::studio.heading_font'))
@@ -104,7 +104,7 @@ class ThemeStudioSettingsSchema implements HasSchema
                             ->required(),
                     ]),
                 Tab::make(__('capell-theme-studio-admin::studio.tabs.overrides'))
-                    ->schema(fn (): array => self::overrideFieldsets()),
+                    ->schema(fn (): array => self::overrideGrids()),
             ]);
     }
 
@@ -132,12 +132,12 @@ class ThemeStudioSettingsSchema implements HasSchema
     }
 
     /**
-     * @return array<int, Fieldset>
+     * @return array<int, Grid>
      */
-    private static function overrideFieldsets(): array
+    private static function overrideGrids(): array
     {
         return collect(resolve(ThemeRegistry::class)->definitions())
-            ->map(fn ($definition): Fieldset => Fieldset::make($definition->name)
+            ->map(fn ($definition): Grid => Grid::make(2)
                 ->schema(self::overrideFields($definition->key)))
             ->values()
             ->all();

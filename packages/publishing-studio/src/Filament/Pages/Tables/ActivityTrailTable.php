@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Filament\Pages\Tables;
 
-use Capell\Admin\Contracts\Reports\ActivityTrailQueryProvider;
+use Capell\Admin\Contracts\DashboardReports\ActivityTrailQueryProvider;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -15,7 +15,7 @@ class ActivityTrailTable implements TableConfigurator
     public static function configure(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => resolve(ActivityTrailQueryProvider::class)->build())
+            ->query(fn (): Builder => resolve(self::providerClass())->build())
             ->columns([
                 TextColumn::make('subject_type')
                     ->label('Model')
@@ -39,5 +39,17 @@ class ActivityTrailTable implements TableConfigurator
             ])
             ->striped()
             ->paginated();
+    }
+
+    /**
+     * @return class-string
+     */
+    private static function providerClass(): string
+    {
+        if (interface_exists(ActivityTrailQueryProvider::class)) {
+            return ActivityTrailQueryProvider::class;
+        }
+
+        return \Capell\Admin\Contracts\Reports\ActivityTrailQueryProvider::class;
     }
 }

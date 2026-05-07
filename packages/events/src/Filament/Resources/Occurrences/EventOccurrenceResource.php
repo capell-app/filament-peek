@@ -28,6 +28,12 @@ class EventOccurrenceResource extends Resource
         return __('capell-events::generic.event_occurrences');
     }
 
+    #[Override]
+    public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-events::generic.events');
+    }
+
     public static function table(Table $table): Table
     {
         return $table->columns([

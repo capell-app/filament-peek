@@ -75,7 +75,7 @@ class RedirectResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('redirects::navigation.group_website');
+        return (string) __('capell-admin::navigation.group_website');
     }
 
     public static function getNavigationLabel(): string

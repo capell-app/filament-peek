@@ -10,6 +10,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Type;
 use Capell\LayoutBuilder\Actions\InstallLayoutBuilderWidgetCatalogAction;
+use Capell\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Capell\LayoutBuilder\Enums\WidgetComponentEnum;
 use Capell\LayoutBuilder\Filament\Configurators\Widgets\CarouselWidgetConfigurator;
 use Capell\LayoutBuilder\Models\Widget;
@@ -387,7 +388,7 @@ class WidgetCreator
             'type_id' => $type->id,
             'meta' => [
                 'component' => WidgetComponentEnum::AssetBlock,
-                'component_item' => 'capell-layout-builder::section.block',
+                'component_item' => FrontendComponentKeyEnum::SectionBlock->value,
                 'spacing' => 'none',
                 'columns' => 0,
                 'margin' => 'none',

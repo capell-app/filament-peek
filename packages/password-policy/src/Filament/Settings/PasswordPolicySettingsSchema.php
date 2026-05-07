@@ -7,7 +7,7 @@ namespace Capell\PasswordPolicy\Filament\Settings;
 use Capell\Admin\Filament\Contracts\HasSchema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class PasswordPolicySettingsSchema implements HasSchema
@@ -15,7 +15,7 @@ class PasswordPolicySettingsSchema implements HasSchema
     public static function make(Schema $schema): array
     {
         return [
-            Fieldset::make(__('capell-password-policy::settings.password_expiry'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     Toggle::make('password_expiry_enabled')
@@ -27,13 +27,13 @@ class PasswordPolicySettingsSchema implements HasSchema
                         ->required()
                         ->visible(fn (callable $get): bool => (bool) $get('password_expiry_enabled')),
                 ]),
-            Fieldset::make(__('capell-password-policy::settings.force_change'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     Toggle::make('force_change_enabled')
                         ->label(__('capell-password-policy::settings.force_change_enabled')),
                 ]),
-            Fieldset::make(__('capell-password-policy::settings.password_safety'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     Toggle::make('compromised_password_checks_enabled')

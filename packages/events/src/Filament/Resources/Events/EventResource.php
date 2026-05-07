@@ -22,6 +22,7 @@ use Capell\Events\Providers\EventsServiceProvider;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Contracts\Support\Htmlable;
+use Override;
 
 class EventResource extends PageResource
 {
@@ -45,6 +46,12 @@ class EventResource extends PageResource
     public static function getModel(): string
     {
         return Event::class;
+    }
+
+    #[Override]
+    public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-events::generic.events');
     }
 
     public static function getResourceType(): ConfiguratorTypeEnum

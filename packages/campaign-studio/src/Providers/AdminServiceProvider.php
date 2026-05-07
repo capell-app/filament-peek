@@ -6,6 +6,7 @@ namespace Capell\CampaignStudio\Providers;
 
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Enums\DashboardEnum;
+use Capell\Admin\Enums\NavigationGroupPositionEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\CampaignStudio\Enums\CampaignWidgetConfiguratorEnum;
 use Capell\CampaignStudio\Enums\ResourceEnum;
@@ -14,6 +15,7 @@ use Capell\CampaignStudio\Filament\Widgets\TopCampaignStudioWidget;
 use Capell\CampaignStudio\Filament\Widgets\TopLandingPagesWidget;
 use Capell\Core\Facades\CapellCore;
 use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum as LayoutBuilderConfiguratorTypeEnum;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\ServiceProvider;
 
 final class AdminServiceProvider extends ServiceProvider
@@ -30,6 +32,7 @@ final class AdminServiceProvider extends ServiceProvider
         }
 
         $this
+            ->registerNavigationGroups()
             ->registerResources()
             ->registerConfigurators()
             ->registerDashboardWidgets();
@@ -38,6 +41,18 @@ final class AdminServiceProvider extends ServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(CampaignStudioServiceProvider::$packageName);
+    }
+
+    private function registerNavigationGroups(): self
+    {
+        CapellAdmin::registerNavigationGroup(
+            label: 'capell-campaign-studio::navigation.campaign-studio',
+            icon: Heroicon::OutlinedMegaphone,
+            position: NavigationGroupPositionEnum::After,
+            relativeTo: 'capell-events::generic.events',
+        );
+
+        return $this;
     }
 
     private function registerResources(): self

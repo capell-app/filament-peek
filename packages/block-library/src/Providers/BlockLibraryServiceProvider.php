@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\BlockLibrary\Providers;
 
+use BackedEnum;
 use Capell\Admin\Actions\CreatedModelAction;
 use Capell\Admin\Actions\DeletedModelAction;
 use Capell\Admin\Data\AdminAssetData;
@@ -177,7 +178,9 @@ class BlockLibraryServiceProvider extends AbstractPackageServiceProvider
         foreach (resolve(ContentBlockRegistry::class)->all() as $definition) {
             CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::configurator(
                 class: $definition->configurator,
-                group: $definition->configuratorType->getName(),
+                group: $definition->configuratorType instanceof BackedEnum
+                    ? (string) $definition->configuratorType->value
+                    : $definition->configuratorType->getName(),
                 name: $definition->configurator::getKey(),
             ));
         }

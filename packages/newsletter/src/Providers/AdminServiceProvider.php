@@ -6,11 +6,13 @@ namespace Capell\Newsletter\Providers;
 
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Enums\DashboardEnum;
+use Capell\Admin\Enums\NavigationGroupPositionEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Newsletter\Console\Commands\RequeueDueProviderSyncAttemptsCommand;
 use Capell\Newsletter\Enums\ResourceEnum;
 use Capell\Newsletter\Filament\Widgets\NewsletterOverviewStatsWidget;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,6 +33,8 @@ class AdminServiceProvider extends ServiceProvider
             $this->commands([RequeueDueProviderSyncAttemptsCommand::class]);
         }
 
+        $this->registerNavigationGroups();
+
         foreach (ResourceEnum::cases() as $resource) {
             CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(
                 class: $resource->value,
@@ -48,5 +52,17 @@ class AdminServiceProvider extends ServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(NewsletterServiceProvider::$packageName);
+    }
+
+    private function registerNavigationGroups(): self
+    {
+        CapellAdmin::registerNavigationGroup(
+            label: 'capell-newsletter::navigation.newsletter',
+            icon: Heroicon::OutlinedEnvelope,
+            position: NavigationGroupPositionEnum::After,
+            relativeTo: 'capell-campaign-studio::navigation.campaign-studio',
+        );
+
+        return $this;
     }
 }

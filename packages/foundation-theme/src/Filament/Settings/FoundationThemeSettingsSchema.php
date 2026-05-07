@@ -7,7 +7,7 @@ namespace Capell\FoundationTheme\Filament\Settings;
 use Capell\Admin\Filament\Contracts\HasSchema;
 use Capell\Admin\Filament\Support\HelperText;
 use Filament\Forms\Components\Checkbox;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class FoundationThemeSettingsSchema implements HasSchema
@@ -15,7 +15,7 @@ class FoundationThemeSettingsSchema implements HasSchema
     public static function make(Schema $configurator): array
     {
         return [
-            Fieldset::make(__('capell-frontend::form.performance'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     HelperText::apply(

@@ -319,7 +319,7 @@ class TailwindAssetsGenerator
 
     private function renderCss(TailwindAssetsRegistry $registry): string
     {
-        $lines = collect();
+        $lines = collect(['@import "tailwindcss";']);
 
         $lines = $lines->merge($registry->imports()->map(fn (string $import): string => sprintf('@import "%s";', $import)));
 
@@ -426,7 +426,7 @@ class TailwindAssetsGenerator
     private function targetPath(?string $overrideAbsolutePath = null): string
     {
         if (is_string($overrideAbsolutePath) && $overrideAbsolutePath !== '') {
-            return $overrideAbsolutePath;
+            return $this->normalizeTargetPath($overrideAbsolutePath);
         }
 
         $configPath = config('capell-foundation-theme.tailwind.output_css');
@@ -443,6 +443,17 @@ class TailwindAssetsGenerator
         }
 
         return rtrim(base_path(''), '/') . '/' . ltrim($configPath, '/');
+    }
+
+    private function normalizeTargetPath(string $path): string
+    {
+        $normalized = rtrim($path, '/');
+
+        if (strtolower(pathinfo($normalized, PATHINFO_EXTENSION)) === 'css') {
+            return $normalized;
+        }
+
+        return $normalized . '/frontend.css';
     }
 
     private function relativePath(string $path, string $targetPath): string

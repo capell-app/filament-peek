@@ -8,7 +8,7 @@ use Capell\Admin\Filament\Contracts\HasSchema;
 use Capell\Admin\Filament\Support\HelperText;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 final class GA4ReportsSettingsSchema implements HasSchema
@@ -16,7 +16,7 @@ final class GA4ReportsSettingsSchema implements HasSchema
     public static function make(Schema $configurator): array
     {
         return [
-            Fieldset::make(__('capell-ga4-reports::settings.fieldset'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     HelperText::apply(

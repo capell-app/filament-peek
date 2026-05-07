@@ -8,7 +8,6 @@ use Capell\Admin\Filament\Contracts\HasSchema;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -30,8 +29,7 @@ class AIOrchestratorSettingsSchema implements HasSchema
                         ->label(__('capell-seo-suite::form.rate_limiting'))
                         ->helperText(__('capell-seo-suite::generic.rate_limiting_info'))
                         ->placeholder((string) config('capell-seo-suite.rate_limiting.requests_per_minute')),
-                    Fieldset::make()
-                        ->label(__('capell-seo-suite::form.title_generation'))
+                    Grid::make(2)
                         ->columnSpanFull()
                         ->schema([
                             Checkbox::make('title_generation')
@@ -49,8 +47,7 @@ class AIOrchestratorSettingsSchema implements HasSchema
                                         ->rows(4),
                                 ]),
                         ]),
-                    Fieldset::make()
-                        ->label(__('capell-seo-suite::form.meta_description'))
+                    Grid::make(2)
                         ->columnSpanFull()
                         ->schema([
                             Checkbox::make('meta_description')
@@ -68,8 +65,7 @@ class AIOrchestratorSettingsSchema implements HasSchema
                                         ->rows(4),
                                 ]),
                         ]),
-                    Fieldset::make()
-                        ->label(__('capell-seo-suite::form.content_generation'))
+                    Grid::make(2)
                         ->columnSpanFull()
                         ->schema([
                             Checkbox::make('content_generation')

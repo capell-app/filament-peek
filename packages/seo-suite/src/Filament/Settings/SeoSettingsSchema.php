@@ -6,7 +6,7 @@ namespace Capell\SeoSuite\Filament\Settings;
 
 use Capell\Admin\Filament\Contracts\HasSchema;
 use Filament\Forms\Components\Checkbox;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -15,7 +15,7 @@ class SeoSettingsSchema implements HasSchema
     public static function make(Schema $configurator): array
     {
         return [
-            Fieldset::make(__('capell-admin::tab.seo_settings'))
+            Grid::make(2)
                 ->columnSpanFull()
                 ->schema([
                     Checkbox::make('seo_audit_enabled')
@@ -23,7 +23,7 @@ class SeoSettingsSchema implements HasSchema
                         ->helperText(__('capell-admin::form.seo_audit_enabled_helper'))
                         ->default(true)
                         ->reactive(),
-                    Fieldset::make(__('capell-admin::form.seo_audit_checks'))
+                    Grid::make(2)
                         ->columnSpanFull()
                         ->visible(fn (Get $get): bool => $get('seo_audit_enabled') === true)
                         ->schema([

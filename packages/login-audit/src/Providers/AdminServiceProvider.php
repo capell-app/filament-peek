@@ -27,6 +27,10 @@ class AdminServiceProvider extends ServiceProvider
             'filament-authentication-log.resources.AuthenticationLogResource',
             LoginAuditResource::class,
         );
+        Config::set(
+            'filament-authentication-log.resources.AutenticationLogResource',
+            LoginAuditResource::class,
+        );
         Config::set('filament-authentication-log.authenticatable.field-to-display', 'name');
     }
 

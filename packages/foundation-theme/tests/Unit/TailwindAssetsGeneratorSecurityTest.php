@@ -105,3 +105,30 @@ test('invalid provider-registered theme colors are skipped during render', funct
         ->not->toContain('injected')
         ->not->toContain('url(');
 });
+
+test('generated css is a standalone tailwind entrypoint', function (): void {
+    $generator = new TailwindAssetsGenerator(new Filesystem);
+    $registry = new TailwindAssetsRegistry;
+    $registry->registerImport('swiper/css');
+    $registry->registerPlugin('@tailwindcss/typography');
+    $registry->registerSource('../views/**/*.blade.php');
+
+    $css = invokeFoundationThemeTailwindGeneratorMethod($generator, 'renderCss', [$registry]);
+
+    expect($css)->toStartWith('@import "tailwindcss";' . PHP_EOL)
+        ->and($css)->toContain('@import "swiper/css";')
+        ->and($css)->toContain('@plugin "@tailwindcss/typography";')
+        ->and($css)->toContain('@source "../views/**/*.blade.php";');
+});
+
+test('directory output paths generate a frontend css entrypoint', function (): void {
+    $generator = new TailwindAssetsGenerator(new Filesystem);
+
+    $path = invokeFoundationThemeTailwindGeneratorMethod(
+        $generator,
+        'targetPath',
+        ['/var/www/app/resources/css/capell'],
+    );
+
+    expect($path)->toBe('/var/www/app/resources/css/capell/frontend.css');
+});

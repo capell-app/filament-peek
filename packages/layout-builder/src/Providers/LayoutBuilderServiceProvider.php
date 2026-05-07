@@ -24,6 +24,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Type;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
+use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
 use Capell\LayoutBuilder\AIOrchestrator\LayoutBuilderAIOrchestratorModule;
 use Capell\LayoutBuilder\Console\Commands\DemoCommand;
@@ -36,6 +37,7 @@ use Capell\LayoutBuilder\Console\Commands\SetupCommand;
 use Capell\LayoutBuilder\Console\Commands\UpgradeCommand;
 use Capell\LayoutBuilder\Enums\ComponentTypeEnum;
 use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum;
+use Capell\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
 use Capell\LayoutBuilder\Enums\LivewireComponentsEnum;
 use Capell\LayoutBuilder\Enums\ResourceEnum as LayoutResourceEnum;
@@ -157,6 +159,7 @@ class LayoutBuilderServiceProvider extends AbstractPackageServiceProvider
             ->registerSchemaExtenders()
             ->registerCloneableRelations()
             ->registerThemeViewPath()
+            ->registerFrontendComponents()
             ->registerFilamentAssets()
             ->registerFrontendAssets()
             ->registerPublishCommands()
@@ -331,6 +334,62 @@ class LayoutBuilderServiceProvider extends AbstractPackageServiceProvider
             $enumClass = $componentType->value;
             CapellCore::registerComponents($componentType->name, $enumClass::cases());
         }
+
+        CapellCore::registerComponents(ComponentTypeEnum::Asset, FrontendComponentKeyEnum::cases());
+
+        return $this;
+    }
+
+    private function registerFrontendComponents(): self
+    {
+        $this->callAfterResolving(FrontendComponentRegistryInterface::class, function (FrontendComponentRegistryInterface $registry): void {
+            $registry
+                ->register(
+                    key: FrontendComponentKeyEnum::SectionBlock->value,
+                    component: 'capell-layout-builder::section.block',
+                    aliases: [
+                        'capell-content-sections::section.block',
+                        'capell-layout-builder::section.block',
+                    ],
+                    props: [
+                        'asset',
+                        'class',
+                        'color',
+                        'icon',
+                        'image',
+                        'linkText',
+                        'loop',
+                        'meta',
+                        'size',
+                        'summary',
+                        'tags',
+                        'title',
+                        'url',
+                    ],
+                )
+                ->register(
+                    key: FrontendComponentKeyEnum::SectionTeamMember->value,
+                    component: 'capell-layout-builder::section.team-member',
+                    aliases: [
+                        'capell-content-sections::section.team-member',
+                        'capell-layout-builder::section.team-member',
+                    ],
+                    props: [
+                        'asset',
+                        'class',
+                        'color',
+                        'icon',
+                        'image',
+                        'linkText',
+                        'loop',
+                        'meta',
+                        'size',
+                        'summary',
+                        'title',
+                        'url',
+                    ],
+                );
+        });
 
         return $this;
     }

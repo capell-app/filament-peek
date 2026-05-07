@@ -18,7 +18,7 @@ class ListBlockLibrary extends ListRecords
     use ApplySearchRelationsTable;
     use HasSiteTableFilterTabs;
 
-    protected string $siteRelation = 'block_library';
+    protected string $siteRelation = 'contentBlocks';
 
     /** @return class-string<ContentBlockResource> */
     public static function getResource(): string
