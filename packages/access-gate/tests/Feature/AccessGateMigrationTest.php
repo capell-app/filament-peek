@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
-
-uses(TestCase::class);
 
 it('runs the access gate core migrations', function (): void {
     expect(Schema::hasTable('access_gate_areas'))->toBeTrue()

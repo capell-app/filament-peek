@@ -19,7 +19,12 @@
         "rector": "rector",
         "lint": "pint --parallel packages tests",
         "lint:changed": "zsh ../capell-4/scripts/lint-changed.sh",
-        "analyze": "phpstan analyse --memory-limit=-1 --configuration=phpstan.neon",
+        "analyze": "@analyze:fast",
+        "analyze:fast": "phpstan analyse --memory-limit=-1 --configuration=phpstan.fast.neon",
+        "analyze:source": "phpstan analyse --memory-limit=-1 --configuration=phpstan.source.neon",
+        "analyze:tests": "phpstan analyse --memory-limit=-1 --configuration=phpstan.tests.neon",
+        "analyze:full": "phpstan analyse --memory-limit=-1 --configuration=phpstan.neon",
+        "analyze:all": "@analyze:full",
         "prettier": "npx prettier --write \"packages/**/*.{css,js,yml,json,md,blade.php}\"",
         "eslint": "npx eslint 'packages/**/resources/js/**/*.js' --max-warnings=0",
         "preflight": [
@@ -28,7 +33,7 @@
         "preflight:all": [
             "@rector",
             "@lint",
-            "@analyze",
+            "@analyze:full",
             "@test"
         ],
         "coverage": "php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=. -d pcov.exclude='~vendor|tests|storage|bootstrap|.temp~' vendor/bin/pest --coverage --min=80 --colors=always --configuration=phpunit.xml",

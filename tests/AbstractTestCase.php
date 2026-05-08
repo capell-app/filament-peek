@@ -31,6 +31,7 @@ use Capell\Tests\Support\Concerns\RegistersPublishedConfigs;
 use Capell\Tests\Support\Concerns\TestingFrontendWithVite;
 use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
+use Faker\Provider\Miscellaneous;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
@@ -91,6 +92,8 @@ abstract class AbstractTestCase extends TestCase
         }
 
         parent::setUp();
+
+        $this->faker->addProvider(new Miscellaneous($this->faker));
 
         if (! in_array(TestingFrontendWithVite::class, class_uses_recursive(static::class), true)) {
             $this->withoutVite();

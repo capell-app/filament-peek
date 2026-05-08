@@ -14,11 +14,8 @@ use Capell\AccessGate\Frontend\Rules\HasActiveAccessGateGrantCondition;
 use Capell\AccessGate\Frontend\Rules\MissingActiveAccessGateGrantCondition;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\Registration;
-use Capell\AccessGate\Tests\TestCase;
 use Capell\Frontend\Data\FrontendRuleContextData;
 use Illuminate\Http\Request;
-
-uses(TestCase::class);
 
 it('evaluates access gate active grant conditions from browser tokens', function (): void {
     $area = Area::factory()->create([

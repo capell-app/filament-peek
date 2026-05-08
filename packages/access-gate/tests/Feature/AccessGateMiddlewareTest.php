@@ -22,7 +22,6 @@ use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\AccessRequestMethodRegistry;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\AccessGate\Tests\Support\FakePageCacheMiddleware;
-use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Auth\User as AuthenticatableUser;
@@ -31,8 +30,6 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
-
-uses(TestCase::class);
 
 it('blocks protected content before the route renders', function (): void {
     $rendered = false;

@@ -8,12 +8,9 @@ use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\ClaimToken;
 use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Support\AccessGateDatabase;
-use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-
-uses(TestCase::class);
 
 it('respects the configured access gate database connection on models', function (): void {
     Config::set('access-gate.connection', 'access_gate_testing');

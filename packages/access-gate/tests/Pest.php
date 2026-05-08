@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 use Capell\AccessGate\Tests\TestCase;
 
-uses(TestCase::class)->group('access-gate')->in('Feature', 'Unit');
+pest()->extend(TestCase::class)->group('access-gate')->in(__DIR__);

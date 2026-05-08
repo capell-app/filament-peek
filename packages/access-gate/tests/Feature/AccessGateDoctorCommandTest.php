@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Models\Area;
-use Capell\AccessGate\Tests\TestCase;
-
-uses(TestCase::class);
 
 afterEach(function (): void {
     $publishedMigrations = glob(base_path('database/migrations/*access_gate*.php'));

@@ -2,64 +2,58 @@
 
 declare(strict_types=1);
 
+use Capell\AccessGate\Tests\TestCase as AccessGateTestCase;
 use Capell\Address\Tests\AddressTestCase;
 use Capell\AgentBridge\Tests\TestCase as AgentBridgeTestCase;
 use Capell\AIOrchestrator\Tests\AIOrchestratorTestCase;
 use Capell\Blog\Tests\BlogTestCase;
-use Capell\CampaignStudio\Tests\CampaignStudioTestCase;
 use Capell\ContentSections\Tests\ContentSectionsTestCase;
 use Capell\DemoKit\Tests\DemoKitTestCase;
 use Capell\Deployments\Tests\TestCase as DeploymentsTestCase;
 use Capell\Diagnostics\Tests\DiagnosticsTestCase;
 use Capell\Events\Tests\EventsTestCase;
-use Capell\FormBuilder\Tests\FormBuilderTestCase;
-use Capell\FrontendAuthoring\Tests\FrontendAuthoringTestCase;
 use Capell\FrontendOptimizer\Tests\FrontendOptimizerTestCase;
 use Capell\Insights\Tests\InsightsTestCase;
 use Capell\MediaAI\Tests\MediaAITestCase;
 use Capell\MediaLibrary\Tests\MediaLibraryTestCase;
-use Capell\MigrationAssistant\Tests\MigrationAssistantTestCase;
-use Capell\Navigation\Tests\NavigationTestCase;
 use Capell\Newsletter\Tests\NewsletterTestCase;
 use Capell\PasswordPolicy\Tests\PasswordPolicyTestCase;
 use Capell\PublishingStudio\Tests\PublishingStudioTestCase;
 use Capell\Search\Tests\SearchTestCase;
-use Capell\SeoSuite\Tests\SeoSuiteTestCase;
-use Capell\Tags\Tests\TagsTestCase;
 use Capell\Tests\Packages\PackagesTestCase;
 use Capell\Tests\Packages\UninstalledPackagesTestCase;
 use Capell\WordPressImporter\Tests\WordPressImporterTestCase;
 
-pest()->extend(AddressTestCase::class)->group('address')->in('../packages/address/tests');
-pest()->extend(InsightsTestCase::class)->group('insights')->in('../packages/insights/tests');
-pest()->extend(AIOrchestratorTestCase::class)->group('ai-orchestrator')->in('../packages/ai-orchestrator/tests');
-pest()->extend(MigrationAssistantTestCase::class)->group('migration-assistant')->in('../packages/migration-assistant/tests');
-pest()->extend(PackagesTestCase::class)->group('login-audit')->in('../packages/login-audit/tests');
-pest()->extend(BlogTestCase::class)->group('blog')->in('../packages/blog/tests');
-pest()->extend(CampaignStudioTestCase::class)->group('campaign-studio')->in('../packages/campaign-studio/tests');
-pest()->extend(ContentSectionsTestCase::class)->group('content-sections')->in('../packages/content-sections/tests');
-pest()->extend(PackagesTestCase::class)->group('content-blocks')->in('../packages/block-library/tests');
-pest()->extend(PackagesTestCase::class)->group('foundation-theme')->in('../packages/foundation-theme/tests');
-pest()->extend(DeploymentsTestCase::class)->group('deployments')->in('../packages/deployments/tests');
-pest()->extend(DiagnosticsTestCase::class)->group('diagnostics')->in('../packages/diagnostics/tests');
-pest()->extend(EventsTestCase::class)->group('events')->in('../packages/events/tests');
-pest()->extend(DemoKitTestCase::class)->group('demo-kit')->in('../packages/demo-kit/tests');
-pest()->extend(FormBuilderTestCase::class)->group('form-builder')->in('../packages/form-builder/tests');
-pest()->extend(FrontendOptimizerTestCase::class)->group('frontend-optimizer')->in('../packages/frontend-optimizer/tests');
-pest()->extend(MediaAITestCase::class)->group('media-ai')->in('../packages/media-ai/tests');
-pest()->extend(MediaLibraryTestCase::class)->group('media-library')->in('../packages/media-library/tests');
-pest()->extend(AgentBridgeTestCase::class)->group('agent-bridge')->in('../packages/agent-bridge/tests');
-pest()->extend(NavigationTestCase::class)->group('navigation')->in('../packages/navigation/tests');
-pest()->extend(NewsletterTestCase::class)->group('newsletter')->in('../packages/newsletter/tests');
+/**
+ * @param  class-string  $testCase
+ */
+function extendCapellPackageTests(string $testCase, string $group, string $package): void
+{
+    pest()->extend($testCase)->group($group)->in("../packages/{$package}/tests", "../Packages/{$package}/tests");
+}
+
+extendCapellPackageTests(AddressTestCase::class, 'address', 'address');
+extendCapellPackageTests(AccessGateTestCase::class, 'access-gate', 'access-gate');
+extendCapellPackageTests(AgentBridgeTestCase::class, 'agent-bridge', 'agent-bridge');
+extendCapellPackageTests(AIOrchestratorTestCase::class, 'ai-orchestrator', 'ai-orchestrator');
+extendCapellPackageTests(BlogTestCase::class, 'blog', 'blog');
+extendCapellPackageTests(ContentSectionsTestCase::class, 'content-sections', 'content-sections');
+extendCapellPackageTests(DemoKitTestCase::class, 'demo-kit', 'demo-kit');
+extendCapellPackageTests(DeploymentsTestCase::class, 'deployments', 'deployments');
+extendCapellPackageTests(DiagnosticsTestCase::class, 'diagnostics', 'diagnostics');
+extendCapellPackageTests(EventsTestCase::class, 'events', 'events');
+extendCapellPackageTests(FrontendOptimizerTestCase::class, 'frontend-optimizer', 'frontend-optimizer');
+extendCapellPackageTests(InsightsTestCase::class, 'insights', 'insights');
+extendCapellPackageTests(PackagesTestCase::class, 'login-audit', 'login-audit');
+extendCapellPackageTests(MediaAITestCase::class, 'media-ai', 'media-ai');
+extendCapellPackageTests(MediaLibraryTestCase::class, 'media-library', 'media-library');
+extendCapellPackageTests(NewsletterTestCase::class, 'newsletter', 'newsletter');
 pest()->extend(PackagesTestCase::class)->in('Packages');
-pest()->extend(PasswordPolicyTestCase::class)->group('password-policy')->in('../packages/password-policy/tests');
+extendCapellPackageTests(PasswordPolicyTestCase::class, 'password-policy', 'password-policy');
+extendCapellPackageTests(PublishingStudioTestCase::class, 'publishing-studio', 'publishing-studio');
+extendCapellPackageTests(SearchTestCase::class, 'search', 'search');
+extendCapellPackageTests(PackagesTestCase::class, 'theme-agency', 'theme-agency');
+extendCapellPackageTests(PackagesTestCase::class, 'theme-corporate', 'theme-corporate');
+extendCapellPackageTests(PackagesTestCase::class, 'theme-saas', 'theme-saas');
 pest()->extend(UninstalledPackagesTestCase::class)->in('UninstalledPackages');
-pest()->extend(SeoSuiteTestCase::class)->group('seo-suite')->in('../packages/seo-suite/tests');
-pest()->extend(SearchTestCase::class)->group('search')->in('../packages/search/tests');
-pest()->extend(TagsTestCase::class)->group('tags')->in('../packages/tags/tests');
-pest()->extend(PackagesTestCase::class)->group('theme-agency')->in('../packages/theme-agency/tests');
-pest()->extend(PackagesTestCase::class)->group('theme-corporate')->in('../packages/theme-corporate/tests');
-pest()->extend(PackagesTestCase::class)->group('theme-saas')->in('../packages/theme-saas/tests');
-pest()->extend(FrontendAuthoringTestCase::class)->group('frontend-authoring')->in('../packages/frontend-authoring/tests');
-pest()->extend(PublishingStudioTestCase::class)->group('publishing-studio')->in('../packages/publishing-studio/tests');
-pest()->extend(WordPressImporterTestCase::class)->group('wordpress-importer')->in('../packages/wordpress-importer/tests');
+extendCapellPackageTests(WordPressImporterTestCase::class, 'wordpress-importer', 'wordpress-importer');

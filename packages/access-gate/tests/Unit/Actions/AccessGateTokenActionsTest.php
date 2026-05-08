@@ -16,9 +16,6 @@ use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\ClaimToken;
 use Capell\AccessGate\Models\Grant;
-use Capell\AccessGate\Tests\TestCase;
-
-uses(TestCase::class);
 
 it('issues hashed claim tokens and consumes them once into browser tokens', function (): void {
     $registration = app(CreateRegistrationAction::class)->handle(Area::factory()->create(), [

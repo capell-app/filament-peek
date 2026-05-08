@@ -22,13 +22,10 @@ use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Notifications\AccessApprovedNotification;
 use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
-use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Support\Facades\Event as EventFacade;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-
-uses(TestCase::class);
 
 it('stores host application registration field values', function (): void {
     Notification::fake();

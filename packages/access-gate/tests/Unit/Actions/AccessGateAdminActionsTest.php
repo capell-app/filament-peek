@@ -24,10 +24,7 @@ use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Notifications\AccessExpiredNotification;
 use Capell\AccessGate\Notifications\AccessRevokedNotification;
-use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
-
-uses(TestCase::class);
 
 it('rejects pending registrations and records an event', function (): void {
     $registration = Registration::factory()->create();
