@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\AccessGate\Providers;
 
+use Capell\AccessGate\Console\Commands\AccessGateDoctorCommand;
+use Capell\AccessGate\Console\Commands\AccessGateInstallCommand;
+use Capell\AccessGate\Console\Commands\AccessGateSetupCommand;
+use Capell\AccessGate\Http\Middleware\AccessGateMiddleware;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\ClaimToken;
@@ -14,6 +18,7 @@ use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\CapellCoreManager;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 
 class AccessGateServiceProvider extends AbstractPackageServiceProvider
@@ -28,6 +33,13 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
             ->name(self::$name)
             ->hasConfigFile('access-gate')
             ->hasTranslations()
+            ->hasViews(self::$name)
+            ->hasRoute('web')
+            ->hasCommands([
+                AccessGateDoctorCommand::class,
+                AccessGateInstallCommand::class,
+                AccessGateSetupCommand::class,
+            ])
             ->hasMigrations([
                 '2026_05_08_000001_create_access_gate_areas_table',
                 '2026_05_08_000002_create_access_gate_registrations_table',
@@ -41,6 +53,7 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->singleton(RegistrationFieldRegistry::class);
+        $this->registerMiddlewareAliases();
 
         $this->registerPackageMetadata();
 
@@ -78,6 +91,13 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
 
             $registry->register($field);
         }
+
+        return $this;
+    }
+
+    private function registerMiddlewareAliases(): self
+    {
+        Route::aliasMiddleware('access-gate', AccessGateMiddleware::class);
 
         return $this;
     }

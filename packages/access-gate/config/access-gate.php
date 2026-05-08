@@ -7,6 +7,8 @@ return [
 
     'route_prefix' => env('ACCESS_GATE_ROUTE_PREFIX', 'access'),
 
+    'claim_token_ttl_minutes' => (int) env('ACCESS_GATE_CLAIM_TOKEN_TTL', 60 * 24 * 7),
+
     'cookies' => [
         'browser_token' => [
             'name' => env('ACCESS_GATE_BROWSER_TOKEN_COOKIE', 'capell_access_gate_browser_token'),
@@ -26,6 +28,11 @@ return [
         ],
         'default' => [
             'web',
+        ],
+        'page_cache_aliases' => [
+            'page-cache',
+            'page_cache',
+            'cache.response',
         ],
     ],
 

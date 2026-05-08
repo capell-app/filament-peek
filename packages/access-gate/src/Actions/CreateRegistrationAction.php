@@ -11,18 +11,26 @@ use Capell\AccessGate\Enums\RegistrationPolicy;
 use Capell\AccessGate\Enums\RegistrationStatus;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\Registration;
+use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 final class CreateRegistrationAction
 {
+    use AsAction;
+
     public function __construct(
         private readonly RegistrationFieldRegistry $fields,
         private readonly RecordEventAction $recordEvent,
         private readonly ApproveRegistrationAction $approveRegistration,
+        private readonly ResendAccessGateClaimTokenAction $resendClaimToken,
     ) {}
 
     /**
@@ -44,39 +52,54 @@ final class CreateRegistrationAction
         $email = (string) $validated['email'];
         $emailNormalized = Str::lower($email);
         $fieldValues = $this->validatedFieldValues($input);
-        $singleRegistrationKey = $this->singleRegistrationKey($area, $emailNormalized);
 
-        $attributes = [
-            'access_area_id' => $area->getKey(),
-            'email' => $email,
-            'email_normalized' => $emailNormalized,
-            'single_registration_key' => $singleRegistrationKey,
-            'user_id' => $validated['user_id'] ?? null,
-            'status' => RegistrationStatus::Pending,
-            'requested_url' => $validated['requested_url'] ?? null,
-            'requested_host' => $validated['requested_host'] ?? parse_url((string) ($validated['requested_url'] ?? ''), PHP_URL_HOST) ?: null,
-            'position' => $this->nextPosition($area),
-            'field_values' => $fieldValues,
-            'metadata' => Arr::wrap($validated['metadata'] ?? []),
-            'requested_at' => now(),
-        ];
+        return DB::transaction(function () use ($area, $email, $emailNormalized, $fieldValues, $validated): Registration {
+            $lockedArea = Area::query()
+                ->whereKey($area->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $registration = $this->persistRegistration($singleRegistrationKey, $attributes);
+            $singleRegistrationKey = $this->singleRegistrationKey($lockedArea, $emailNormalized);
 
-        $this->recordEvent->handle(
-            type: EventType::RegistrationCreated,
-            registration: $registration,
-            userId: $registration->user_id,
-            payload: [
-                'field_keys' => array_keys($fieldValues),
-            ],
-        );
+            $attributes = [
+                'access_area_id' => $lockedArea->getKey(),
+                'email' => $email,
+                'email_normalized' => $emailNormalized,
+                'single_registration_key' => $singleRegistrationKey,
+                'user_id' => $validated['user_id'] ?? null,
+                'status' => RegistrationStatus::Pending,
+                'requested_url' => $validated['requested_url'] ?? null,
+                'requested_host' => $validated['requested_host'] ?? parse_url((string) ($validated['requested_url'] ?? ''), PHP_URL_HOST) ?: null,
+                'position' => $this->nextPosition($lockedArea),
+                'field_values' => $fieldValues,
+                'metadata' => Arr::wrap($validated['metadata'] ?? []),
+                'requested_at' => now(),
+            ];
 
-        if ($this->shouldApproveAutomatically($area)) {
-            return $this->approveRegistration->handle($registration);
-        }
+            $registration = $this->persistRegistration($singleRegistrationKey, $attributes);
 
-        return $registration;
+            $this->recordEvent->handle(
+                type: EventType::RegistrationCreated,
+                registration: $registration,
+                userId: $registration->user_id,
+                payload: [
+                    'field_keys' => array_keys($fieldValues),
+                ],
+            );
+
+            if ($registration->status === RegistrationStatus::Pending && $this->shouldApproveAutomatically($lockedArea)) {
+                return $this->approveRegistration->handle($registration);
+            }
+
+            if ($registration->status === RegistrationStatus::Approved || $registration->status === RegistrationStatus::Claimed) {
+                $this->resendClaimToken->handle($registration);
+            } else {
+                Notification::route('mail', $registration->email)
+                    ->notify(new AccessRequestReceivedNotification($lockedArea));
+            }
+
+            return $registration;
+        });
     }
 
     private function resolveArea(Area|string $area): Area
@@ -99,10 +122,18 @@ final class CreateRegistrationAction
 
         $registration = Registration::query()
             ->where('single_registration_key', $singleRegistrationKey)
+            ->lockForUpdate()
             ->first();
 
         if ($registration === null) {
-            return Registration::query()->create($attributes);
+            try {
+                return Registration::query()->create($attributes);
+            } catch (QueryException) {
+                $registration = Registration::query()
+                    ->where('single_registration_key', $singleRegistrationKey)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+            }
         }
 
         $registration->forceFill(Arr::except($attributes, [

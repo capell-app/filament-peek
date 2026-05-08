@@ -5,47 +5,65 @@ declare(strict_types=1);
 namespace Capell\AccessGate\Actions;
 
 use Capell\AccessGate\Enums\EventType;
-use Capell\AccessGate\Enums\GrantStatus;
 use Capell\AccessGate\Enums\GrantSubjectType;
 use Capell\AccessGate\Enums\RegistrationStatus;
 use Capell\AccessGate\Events\RegistrationApproved;
 use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Models\Registration;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\DB;
+use LogicException;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 final class ApproveRegistrationAction
 {
+    use AsAction;
+
     public function __construct(
+        private readonly CreateAccessGateGrantAction $createGrant,
+        private readonly SendAccessGateApprovedNotificationAction $sendApprovedNotification,
         private readonly RecordEventAction $recordEvent,
     ) {}
 
     public function handle(Registration $registration, ?int $approvedByUserId = null): Registration
     {
-        if ($registration->status === RegistrationStatus::Approved) {
-            return $registration;
-        }
+        return DB::transaction(function () use ($registration, $approvedByUserId): Registration {
+            $lockedRegistration = Registration::query()
+                ->whereKey($registration->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $registration->forceFill([
-            'status' => RegistrationStatus::Approved,
-            'approved_at' => now(),
-            'rejected_at' => null,
-        ])->save();
+            if ($lockedRegistration->status === RegistrationStatus::Approved) {
+                return $lockedRegistration;
+            }
 
-        $grant = $this->grantFor($registration);
+            if ($lockedRegistration->status !== RegistrationStatus::Pending) {
+                throw new LogicException('Only pending access gate registrations can be approved.');
+            }
 
-        $this->recordEvent->handle(
-            type: EventType::RegistrationApproved,
-            registration: $registration,
-            grant: $grant,
-            userId: $approvedByUserId,
-            payload: [
-                'approved_by_user_id' => $approvedByUserId,
-            ],
-        );
+            $lockedRegistration->forceFill([
+                'status' => RegistrationStatus::Approved,
+                'approved_at' => now(),
+                'rejected_at' => null,
+            ])->save();
 
-        RegistrationApproved::dispatch($registration->refresh());
+            $grant = $this->grantFor($lockedRegistration);
+            $this->sendApprovedNotification->handle($lockedRegistration, $grant);
 
-        return $registration;
+            $this->recordEvent->handle(
+                type: EventType::RegistrationApproved,
+                registration: $lockedRegistration,
+                grant: $grant,
+                userId: $approvedByUserId,
+                payload: [
+                    'approved_by_user_id' => $approvedByUserId,
+                ],
+            );
+
+            RegistrationApproved::dispatch($lockedRegistration->refresh());
+
+            return $lockedRegistration;
+        });
     }
 
     private function grantFor(Registration $registration): Grant
@@ -54,27 +72,14 @@ final class ApproveRegistrationAction
             ? GrantSubjectType::Email
             : GrantSubjectType::User;
 
-        $subjectId = $registration->user_id === null
-            ? $registration->email_normalized
-            : (string) $registration->user_id;
-
-        return Grant::query()->firstOrCreate([
-            'access_area_id' => $registration->access_area_id,
-            'registration_id' => $registration->getKey(),
-        ], [
-            'subject_type' => $subjectType,
-            'subject_id' => $subjectId,
-            'user_id' => $registration->user_id,
-            'email' => $registration->email,
-            'status' => GrantStatus::Active,
-            'starts_at' => now(),
-            'expires_at' => $this->expiresAt($registration),
-            'discount_label' => $registration->area?->discount_label,
-            'discount_code' => $registration->area?->discount_code,
-            'discount_expires_at' => $registration->area?->discount_expires_at,
-            'discount_metadata' => $registration->area?->discount_metadata ?? [],
-            'metadata' => [],
-        ]);
+        return $this->createGrant->handle(
+            area: $registration->area()->firstOrFail(),
+            subjectType: $subjectType,
+            registration: $registration,
+            userId: $registration->user_id,
+            email: $registration->email,
+            expiresAt: $this->expiresAt($registration),
+        );
     }
 
     private function expiresAt(Registration $registration): ?CarbonInterface

@@ -12,16 +12,23 @@ use Capell\AccessGate\Enums\GrantStatus;
 use Capell\AccessGate\Enums\RegistrationStatus;
 use Capell\AccessGate\Events\RegistrationApproved;
 use Capell\AccessGate\Models\Area;
+use Capell\AccessGate\Models\ClaimToken;
 use Capell\AccessGate\Models\Event;
 use Capell\AccessGate\Models\Grant;
+use Capell\AccessGate\Models\Registration;
+use Capell\AccessGate\Notifications\AccessApprovedNotification;
+use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Support\Facades\Event as EventFacade;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 uses(TestCase::class);
 
 it('stores host application registration field values', function (): void {
+    Notification::fake();
+
     $area = Area::factory()->create();
 
     app(RegistrationFieldRegistry::class)->register(new TestGithubUsernameRegistrationField);
@@ -39,9 +46,13 @@ it('stores host application registration field values', function (): void {
             ],
         ],
     ]);
+
+    Notification::assertSentOnDemand(AccessRequestReceivedNotification::class);
 });
 
 it('approves a registration, creates a grant, records the event, and dispatches the approval event', function (): void {
+    Notification::fake();
+
     $eventDispatched = false;
 
     EventFacade::listen(RegistrationApproved::class, function (RegistrationApproved $event) use (&$eventDispatched): void {
@@ -58,12 +69,16 @@ it('approves a registration, creates a grant, records the event, and dispatches 
         ->and($approved->approved_at)->not->toBeNull()
         ->and(Grant::query()->where('registration_id', $approved->getKey())->first())
         ->status->toBe(GrantStatus::Active)
+        ->and(ClaimToken::query()->where('registration_id', $approved->getKey())->exists())->toBeTrue()
         ->and(Event::query()->where('registration_id', $approved->getKey())->where('type', EventType::RegistrationApproved)->exists())->toBeTrue();
 
     expect($eventDispatched)->toBeTrue();
+    Notification::assertSentOnDemand(AccessApprovedNotification::class);
 });
 
 it('auto approves registrations when the area strategy allows it', function (): void {
+    Notification::fake();
+
     $area = Area::factory()->create([
         'approval_strategy' => ApprovalStrategy::FirstNAutoApprove,
         'approval_limit' => 1,
@@ -79,6 +94,41 @@ it('auto approves registrations when the area strategy allows it', function (): 
 
     expect($first->status)->toBe(RegistrationStatus::Approved)
         ->and($second->status)->toBe(RegistrationStatus::Pending);
+});
+
+it('refuses to approve rejected registrations', function (): void {
+    Notification::fake();
+
+    $registration = Registration::factory()->create([
+        'status' => RegistrationStatus::Rejected,
+        'rejected_at' => now(),
+    ]);
+
+    expect(fn (): mixed => app(ApproveRegistrationAction::class)->handle($registration))
+        ->toThrow(LogicException::class);
+
+    expect(Grant::query()->where('registration_id', $registration->getKey())->exists())->toBeFalse();
+});
+
+it('resends a claim link for duplicate requests from approved registrations', function (): void {
+    Notification::fake();
+
+    $area = Area::factory()->create();
+    $registration = app(CreateRegistrationAction::class)->handle($area, [
+        'email' => 'mona@example.test',
+    ]);
+
+    app(ApproveRegistrationAction::class)->handle($registration);
+    $claimTokenCount = ClaimToken::query()->count();
+
+    Notification::fake();
+
+    app(CreateRegistrationAction::class)->handle($area, [
+        'email' => 'mona@example.test',
+    ]);
+
+    expect(ClaimToken::query()->count())->toBe($claimTokenCount + 1);
+    Notification::assertSentOnDemand(AccessApprovedNotification::class);
 });
 
 final class TestGithubUsernameRegistrationField implements RegistrationField

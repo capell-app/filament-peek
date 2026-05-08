@@ -12,9 +12,12 @@ use Capell\AccessGate\Models\Event;
 use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Models\Registration;
 use Illuminate\Database\Eloquent\Model;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 final class RecordEventAction
 {
+    use AsAction;
+
     /**
      * @param  array<string, mixed>  $payload
      * @param  array<string, mixed>  $metadata

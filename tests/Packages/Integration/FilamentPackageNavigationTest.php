@@ -125,22 +125,14 @@ it('shows installed package admin surfaces in Filament navigation', function ():
 
     expect($navigationLabels)->toContain(
         'Articles',
-        (string) __('capell-admin::navigation.broken_links'),
         'Campaign groups',
         'CTA blocks',
         'Conversion goals',
-        'Diagnostics',
         'Import Sessions',
         'Landing pages',
-        (string) __('capell-admin::navigation.media_health'),
-        (string) __('capell-admin::navigation.not_found'),
-        (string) __('capell-admin::navigation.permission_audit'),
-        (string) __('capell-admin::navigation.queue_health'),
+        'Content & Site',
         (string) __('capell-admin::navigation.redirects'),
-        (string) __('capell-admin::navigation.seo_audit'),
-        (string) __('capell-admin::navigation.system_health'),
         'Tags',
-        (string) __('capell-admin::navigation.translation_coverage'),
     );
 });
 
@@ -164,7 +156,11 @@ it('places extension-owned package pages under extensions navigation', function 
     $extensionLabels = collect($extensionItems)->map(fn ($item): string => $item->getLabel())->all();
     $systemLabels = collect($systemItems)->map(fn ($item): string => $item->getLabel())->all();
 
-    $movedLabels = [
+    $extensionGroupLabels = [
+        'Content & Site',
+    ];
+
+    $extensionPageLabels = [
         'capell-admin::navigation.media_health',
         'capell-admin::navigation.permission_audit',
         'capell-admin::navigation.queue_health',
@@ -172,6 +168,7 @@ it('places extension-owned package pages under extensions navigation', function 
         'Diagnostics',
     ];
 
-    expect($extensionLabels)->toContain(...$movedLabels)
-        ->and($systemLabels)->not->toContain(...$movedLabels);
+    expect($extensionLabels)->toContain(...$extensionGroupLabels)
+        ->and($extensionLabels)->not->toContain(...$extensionPageLabels)
+        ->and($systemLabels)->not->toContain(...$extensionPageLabels);
 });
