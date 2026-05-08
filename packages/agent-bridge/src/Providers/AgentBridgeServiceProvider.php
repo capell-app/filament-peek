@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\AgentBridge\Providers;
 
-use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\AgentBridge\Actions\Cache\ClearCapellCacheCapabilityAction;
 use Capell\AgentBridge\Actions\Pages\CreateDraftPageCapabilityAction;
@@ -116,7 +115,7 @@ final class AgentBridgeServiceProvider extends ServiceProvider
             return;
         }
 
-        $adminFacade::contributeToAdminSurface(AdminSurfaceContributionData::page($promptBuilderPage));
+        $adminFacade::registerExtensionPage(self::$packageName, $promptBuilderPage);
 
         if (! class_exists(FilamentView::class) || ! class_exists(PanelsRenderHook::class)) {
             return;

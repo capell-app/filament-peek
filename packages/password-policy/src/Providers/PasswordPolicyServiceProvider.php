@@ -8,6 +8,7 @@ use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Contracts\Extenders\UserFormExtender;
 use Capell\Admin\Contracts\Extenders\UserTableExtender;
 use Capell\Admin\Data\AdminSurfaceContributionData;
+use Capell\Admin\Enums\ExtensionGroupEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
@@ -100,7 +101,11 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
 
     private function registerAdminSurface(): self
     {
-        CapellAdmin::registerExtensionPage(static::$packageName, PasswordPolicySettingsPage::class);
+        CapellAdmin::registerExtensionPage(
+            static::$packageName,
+            PasswordPolicySettingsPage::class,
+            ExtensionGroupEnum::Security,
+        );
 
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ForcedPasswordChangePage::class));
 

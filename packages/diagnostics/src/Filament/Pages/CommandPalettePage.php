@@ -53,6 +53,10 @@ final class CommandPalettePage extends Page
 
     public static function canAccess(): bool
     {
+        if (self::userHasSuperAdminRole()) {
+            return true;
+        }
+
         if (Gate::allows('accessDiagnostics')) {
             return true;
         }
@@ -155,6 +159,19 @@ final class CommandPalettePage extends Page
             CommandPaletteDanger::Confirm => 'This operational command requires confirmation before it runs.',
             CommandPaletteDanger::Dangerous => 'This command may make broad or destructive operational changes.',
         };
+    }
+
+    private static function userHasSuperAdminRole(): bool
+    {
+        $user = auth()->user();
+
+        if ($user === null || ! method_exists($user, 'hasRole')) {
+            return false;
+        }
+
+        $superAdminRole = config('capell.roles.super_admin', 'super_admin');
+
+        return is_string($superAdminRole) && $superAdminRole !== '' && $user->hasRole($superAdminRole);
     }
 
     /**

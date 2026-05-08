@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace Capell\Newsletter\Providers;
 
 use Capell\Admin\Data\AdminSurfaceContributionData;
-use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Enums\NavigationGroupPositionEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Support\SiteScope;
 use Capell\Core\Facades\CapellCore;
 use Capell\Newsletter\Console\Commands\RequeueDueProviderSyncAttemptsCommand;
 use Capell\Newsletter\Enums\ResourceEnum;
-use Capell\Newsletter\Filament\Widgets\NewsletterOverviewStatsWidget;
+use Capell\Newsletter\Enums\SubscriberStatus;
+use Capell\Newsletter\Enums\SyncStatus;
+use Capell\Newsletter\Models\Subscriber;
+use Capell\Newsletter\Models\SyncAttempt;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
 
 class AdminServiceProvider extends ServiceProvider
@@ -44,7 +48,7 @@ class AdminServiceProvider extends ServiceProvider
             ));
         }
 
-        CapellAdmin::registerDashboardWidget(NewsletterOverviewStatsWidget::class, DashboardEnum::Main);
+        $this->registerOverviewStats();
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
             $schedule->command('newsletter:sync-retry-due')->everyFiveMinutes();
@@ -54,6 +58,53 @@ class AdminServiceProvider extends ServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(NewsletterServiceProvider::$packageName);
+    }
+
+    private function registerOverviewStats(): self
+    {
+        CapellAdmin::registerOverviewStat(
+            key: 'newsletter_overview',
+            label: fn (): string => __('capell-newsletter::widgets.subscribed'),
+            value: fn (): int => SiteScope::applyForCurrentActor(Subscriber::query())
+                ->where('status', SubscriberStatus::Subscribed)
+                ->count(),
+            group: fn (): string => __('capell-newsletter::settings.fieldset'),
+            sort: 140,
+            settingsLabel: fn (): string => __('capell-newsletter::widgets.overview'),
+        );
+
+        CapellAdmin::registerOverviewStat(
+            key: 'newsletter_overview.pending',
+            label: fn (): string => __('capell-newsletter::widgets.pending'),
+            value: fn (): int => SiteScope::applyForCurrentActor(Subscriber::query())
+                ->where('status', SubscriberStatus::Pending)
+                ->count(),
+            group: fn (): string => __('capell-newsletter::settings.fieldset'),
+            sort: 141,
+            settingsKey: 'newsletter_overview',
+            settingsLabel: fn (): string => __('capell-newsletter::widgets.overview'),
+        );
+
+        CapellAdmin::registerOverviewStat(
+            key: 'newsletter_overview.sync_failures',
+            label: fn (): string => __('capell-newsletter::widgets.sync_failures'),
+            value: fn (): int => SyncAttempt::query()
+                ->whereIn('sync_status', [
+                    SyncStatus::Failed,
+                    SyncStatus::RetryScheduled,
+                ])
+                ->whereHas('subscriber', function (Builder $query): void {
+                    SiteScope::applyForCurrentActor($query);
+                })
+                ->count(),
+            group: fn (): string => __('capell-newsletter::settings.fieldset'),
+            color: 'danger',
+            sort: 142,
+            settingsKey: 'newsletter_overview',
+            settingsLabel: fn (): string => __('capell-newsletter::widgets.overview'),
+        );
+
+        return $this;
     }
 
     private function registerNavigationGroups(): self

@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Capell\GA4Reports\Providers;
 
 use Capell\Admin\Contracts\DashboardSettingsContributor;
-use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
+use Capell\GA4Reports\Actions\BuildGA4ReportsOverviewAction;
 use Capell\GA4Reports\Console\Commands\SyncGA4ReportsCommand;
+use Capell\GA4Reports\Data\GA4ReportsOverviewData;
 use Capell\GA4Reports\Filament\Pages\GA4ReportsPage;
 use Capell\GA4Reports\Filament\Settings\Contributors\GA4ReportsDashboardSettingsContributor;
-use Capell\GA4Reports\Filament\Widgets\GA4ReportsOverviewStatsWidget;
 use Capell\GA4Reports\Filament\Widgets\GA4ReportsSetupStatusWidget;
 use Capell\GA4Reports\Filament\Widgets\GA4ReportsTopPagesWidget;
 use Capell\GA4Reports\Filament\Widgets\GA4ReportsTrafficTrendWidget;
@@ -31,6 +31,7 @@ final class AdminServiceProvider extends ServiceProvider
             ->registerDashboardSettingsContributor()
             ->registerCommands()
             ->registerPages()
+            ->registerOverviewStats()
             ->registerDashboardWidgets()
             ->registerSchedule();
     }
@@ -60,19 +61,65 @@ final class AdminServiceProvider extends ServiceProvider
 
     private function registerPages(): self
     {
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(GA4ReportsPage::class));
+        CapellAdmin::registerExtensionPage(GA4ReportsServiceProvider::$packageName, GA4ReportsPage::class);
 
         return $this;
     }
 
     private function registerDashboardWidgets(): self
     {
-        CapellAdmin::registerDashboardWidget(GA4ReportsOverviewStatsWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(GA4ReportsTrafficTrendWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(GA4ReportsTopPagesWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(GA4ReportsSetupStatusWidget::class, DashboardEnum::Main);
 
         return $this;
+    }
+
+    private function registerOverviewStats(): self
+    {
+        CapellAdmin::registerOverviewStat(
+            key: 'ga4_reports_overview',
+            label: fn (): string => __('capell-ga4-reports::widgets.screen_page_views'),
+            value: fn (): int => $this->ga4Overview()->screenPageViews,
+            group: fn (): string => __('capell-ga4-reports::settings.fieldset'),
+            sort: 120,
+            settingsLabel: fn (): string => __('capell-ga4-reports::widgets.overview'),
+        );
+
+        CapellAdmin::registerOverviewStat(
+            key: 'ga4_reports_overview.sessions',
+            label: fn (): string => __('capell-ga4-reports::widgets.sessions'),
+            value: fn (): int => $this->ga4Overview()->sessions,
+            group: fn (): string => __('capell-ga4-reports::settings.fieldset'),
+            sort: 121,
+            settingsKey: 'ga4_reports_overview',
+            settingsLabel: fn (): string => __('capell-ga4-reports::widgets.overview'),
+        );
+
+        CapellAdmin::registerOverviewStat(
+            key: 'ga4_reports_overview.engagement_rate',
+            label: fn (): string => __('capell-ga4-reports::widgets.engagement_rate'),
+            value: fn (): string => number_format($this->ga4Overview()->engagementRate * 100, 1) . '%',
+            group: fn (): string => __('capell-ga4-reports::settings.fieldset'),
+            sort: 122,
+            settingsKey: 'ga4_reports_overview',
+            settingsLabel: fn (): string => __('capell-ga4-reports::widgets.overview'),
+        );
+
+        return $this;
+    }
+
+    private function ga4Overview(): GA4ReportsOverviewData
+    {
+        static $overview = null;
+
+        if ($overview instanceof GA4ReportsOverviewData) {
+            return $overview;
+        }
+
+        $overview = BuildGA4ReportsOverviewAction::run();
+
+        return $overview;
     }
 
     private function registerSchedule(): self

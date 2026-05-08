@@ -17,6 +17,9 @@ use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
+use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
+use Capell\PublishingStudio\Data\SchedulerEventData;
+use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Capell\PublishingStudio\Events\WorkspaceStateChanged;
 use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
 use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
@@ -26,7 +29,6 @@ use Capell\PublishingStudio\Filament\Resources\PreviewLinks\PreviewLinkResource;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
 use Capell\PublishingStudio\Filament\Settings\Contributors\DefaultDashboardSettingsContributor;
 use Capell\PublishingStudio\Filament\Settings\Contributors\SystemHealthSettingsContributor;
-use Capell\PublishingStudio\Filament\Widgets\ContentSchedulerOverviewWidget;
 use Capell\PublishingStudio\Filament\Widgets\WorkspaceActivityWidgetAbstract;
 use Capell\PublishingStudio\Listeners\SendWorkspaceStateNotification;
 use Capell\PublishingStudio\Livewire\DiffPanel;
@@ -69,6 +71,7 @@ class AdminServiceProvider extends ServiceProvider
         $this->registerDashboardSettingsContributors()
             ->registerDashboardDataProviders()
             ->registerFilamentExtensions()
+            ->registerOverviewStats()
             ->registerLivewireComponents()
             ->registerRenderHooks()
             ->registerEventListeners()
@@ -156,15 +159,49 @@ class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(MyWorkQueueWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(RecentlyPublishedWidget::class, DashboardEnum::Main);
         CapellAdmin::registerDashboardWidget(WorkspaceActivityWidgetAbstract::class, DashboardEnum::Main);
-        CapellAdmin::registerDashboardWidget(ContentSchedulerOverviewWidget::class, DashboardEnum::Main);
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(WorkspaceResource::class, group: 'Workspace'));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(PreviewLinkResource::class, group: 'PreviewLink'));
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ActivityTrailPage::class));
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ImportPagesPage::class));
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ScheduledPublishingPage::class));
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(StaleDraftsPage::class));
+        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, ActivityTrailPage::class);
+        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, ImportPagesPage::class);
+        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, ScheduledPublishingPage::class);
+        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, StaleDraftsPage::class);
 
         return $this;
+    }
+
+    private function registerOverviewStats(): self
+    {
+        foreach (SchedulerEventTypeEnum::cases() as $eventType) {
+            CapellAdmin::registerOverviewStat(
+                key: 'content_scheduler.' . $eventType->value,
+                label: fn (): string => $eventType->getLabel(),
+                value: fn (): int => $this->contentSchedulerCount($eventType),
+                group: fn (): string => __('capell-publishing-studio::scheduler.title'),
+                color: $eventType->getColor(),
+                sort: 160 + $this->contentSchedulerSort($eventType),
+                settingsKey: 'content_scheduler',
+                settingsLabel: fn (): string => __('capell-publishing-studio::scheduler.title'),
+            );
+        }
+
+        return $this;
+    }
+
+    private function contentSchedulerCount(SchedulerEventTypeEnum $eventType): int
+    {
+        return BuildContentSchedulerEventsAction::run()
+            ->filter(fn (SchedulerEventData $event): bool => $event->eventType === $eventType)
+            ->count();
+    }
+
+    private function contentSchedulerSort(SchedulerEventTypeEnum $eventType): int
+    {
+        return match ($eventType) {
+            SchedulerEventTypeEnum::Publish => 1,
+            SchedulerEventTypeEnum::Unpublish => 2,
+            SchedulerEventTypeEnum::Embargo => 3,
+            SchedulerEventTypeEnum::ReviewReminder => 4,
+        };
     }
 
     private function registerEventListeners(): self

@@ -7,7 +7,6 @@ use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\GA4Reports\Filament\Pages\GA4ReportsPage;
 use Capell\GA4Reports\Filament\Settings\Contributors\GA4ReportsDashboardSettingsContributor;
-use Capell\GA4Reports\Filament\Widgets\GA4ReportsOverviewStatsWidget;
 use Capell\GA4Reports\Filament\Widgets\GA4ReportsSetupStatusWidget;
 use Capell\GA4Reports\Filament\Widgets\GA4ReportsTopPagesTableWidget;
 use Capell\GA4Reports\Filament\Widgets\GA4ReportsTopPagesWidget;
@@ -55,10 +54,14 @@ it('registers GA4 dashboard widgets and settings contributor', function (): void
 
     expect($contributors)->toContain(GA4ReportsDashboardSettingsContributor::class)
         ->and(CapellAdmin::getDashboardWidgets(DashboardEnum::Main))
-        ->toContain(GA4ReportsOverviewStatsWidget::class)
         ->toContain(GA4ReportsTrafficTrendWidget::class)
         ->toContain(GA4ReportsTopPagesWidget::class)
         ->toContain(GA4ReportsSetupStatusWidget::class);
+
+    expect(collect(CapellAdmin::getOverviewStats(false))->pluck('key')->all())
+        ->toContain('ga4_reports_overview')
+        ->toContain('ga4_reports_overview.sessions')
+        ->toContain('ga4_reports_overview.engagement_rate');
 });
 
 it('uses translated page labels and configured slug', function (): void {
@@ -99,7 +102,6 @@ it('renders GA4 dashboard widgets with empty and seeded data', function (string 
 
     Livewire::test($widgetClass)->assertOk();
 })->with([
-    GA4ReportsOverviewStatsWidget::class,
     GA4ReportsTrafficTrendWidget::class,
     GA4ReportsTopPagesWidget::class,
     GA4ReportsTopPagesTableWidget::class,

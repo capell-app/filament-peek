@@ -48,7 +48,7 @@ class DiagnosticsPage extends Page implements HasActions
     public static function canAccess(): bool
     {
         return config('capell.dashboard.developer_page_enabled', true)
-            && (Gate::allows('accessDiagnostics') || Gate::allows('viewDiagnostics') || auth()->user()?->can('accessDiagnostics') === true);
+            && (self::userHasSuperAdminRole() || Gate::allows('accessDiagnostics') || Gate::allows('viewDiagnostics') || auth()->user()?->can('accessDiagnostics') === true);
     }
 
     public function getTitle(): string|Htmlable
@@ -91,5 +91,18 @@ class DiagnosticsPage extends Page implements HasActions
             ->map(fn (MakerDefinitionData $maker): Action => RunMakerFilamentAction::make($maker->key))
             ->values()
             ->all();
+    }
+
+    private static function userHasSuperAdminRole(): bool
+    {
+        $user = auth()->user();
+
+        if ($user === null || ! method_exists($user, 'hasRole')) {
+            return false;
+        }
+
+        $superAdminRole = config('capell.roles.super_admin', 'super_admin');
+
+        return is_string($superAdminRole) && $superAdminRole !== '' && $user->hasRole($superAdminRole);
     }
 }

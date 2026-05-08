@@ -159,7 +159,7 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
 
     private function registerAdminResources(): self
     {
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(EventCalendarPage::class));
+        CapellAdmin::registerExtensionPage(static::$packageName, EventCalendarPage::class);
 
         foreach (ResourceEnum::cases() as $resourceEnum) {
             CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(

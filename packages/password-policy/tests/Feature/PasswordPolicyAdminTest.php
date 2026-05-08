@@ -3,9 +3,11 @@
 declare(strict_types=1);
 
 use Capell\Admin\Contracts\Extenders\UserFormExtender;
+use Capell\Admin\Enums\ExtensionGroupEnum;
 use Capell\Admin\Filament\Pages\SettingsPage;
 use Capell\Admin\Filament\Resources\Users\Pages\CreateUser;
 use Capell\Admin\Filament\Resources\Users\Pages\EditUser;
+use Capell\Admin\Support\Extensions\ExtensionPageRegistry;
 use Capell\Core\Database\Factories\UserFactory;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\PasswordPolicy\Actions\MarkUserForPasswordChangeAction;
@@ -41,6 +43,13 @@ it('keeps package settings out of the global settings page', function (): void {
     get(SettingsPage::getUrl())
         ->assertSuccessful()
         ->assertDontSeeHtml('password_expiry_enabled');
+});
+
+it('registers password policy settings in the security extension group', function (): void {
+    $extensionPage = collect(resolve(ExtensionPageRegistry::class)->entries())
+        ->first(fn (array $extensionPage): bool => $extensionPage['page'] === PasswordPolicySettingsPage::class);
+
+    expect($extensionPage['extensionGroup'] ?? null)->toBe(ExtensionGroupEnum::Security);
 });
 
 it('saves password security settings from the package settings page', function (): void {

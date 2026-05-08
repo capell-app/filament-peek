@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Diagnostics\Providers;
 
 use Capell\Admin\Enums\DashboardEnum;
+use Capell\Admin\Enums\ExtensionGroupEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Diagnostics\Filament\Pages\CommandPalettePage;
@@ -54,11 +55,31 @@ final class AdminServiceProvider extends ServiceProvider
 
     private function registerPages(): self
     {
-        CapellAdmin::registerExtensionPage(DiagnosticsServiceProvider::$packageName, DiagnosticsPage::class);
-        CapellAdmin::registerExtensionPage(DiagnosticsServiceProvider::$packageName, CommandPalettePage::class);
-        CapellAdmin::registerExtensionPage(DiagnosticsServiceProvider::$packageName, SystemHealthPage::class);
-        CapellAdmin::registerExtensionPage(DiagnosticsServiceProvider::$packageName, QueueHealthPage::class);
-        CapellAdmin::registerExtensionPage(DiagnosticsServiceProvider::$packageName, PermissionAuditPage::class);
+        CapellAdmin::registerExtensionPage(
+            DiagnosticsServiceProvider::$packageName,
+            DiagnosticsPage::class,
+            ExtensionGroupEnum::DeveloperTools,
+        );
+        CapellAdmin::registerExtensionPage(
+            DiagnosticsServiceProvider::$packageName,
+            CommandPalettePage::class,
+            ExtensionGroupEnum::DeveloperTools,
+        );
+        CapellAdmin::registerExtensionPage(
+            DiagnosticsServiceProvider::$packageName,
+            SystemHealthPage::class,
+            ExtensionGroupEnum::Health,
+        );
+        CapellAdmin::registerExtensionPage(
+            DiagnosticsServiceProvider::$packageName,
+            QueueHealthPage::class,
+            ExtensionGroupEnum::Health,
+        );
+        CapellAdmin::registerExtensionPage(
+            DiagnosticsServiceProvider::$packageName,
+            PermissionAuditPage::class,
+            ExtensionGroupEnum::Health,
+        );
 
         return $this;
     }

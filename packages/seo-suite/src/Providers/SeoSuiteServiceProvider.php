@@ -11,7 +11,6 @@ use Capell\Admin\Contracts\Extenders\ResourceHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteRecordActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteSchemaExtender;
-use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Admin\Support\CapellAdminManager;
@@ -331,11 +330,11 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
         /** @var CapellAdminManager $adminManager */
         $adminManager = $this->app->make(CapellAdminManager::class);
 
-        $adminManager->contributeToAdminSurface(AdminSurfaceContributionData::page(NotFoundUrlsPage::class));
-        $adminManager->contributeToAdminSurface(AdminSurfaceContributionData::page(BrokenLinksPage::class));
-        $adminManager->contributeToAdminSurface(AdminSurfaceContributionData::page(SeoAuditPage::class));
-        $adminManager->contributeToAdminSurface(AdminSurfaceContributionData::page(TranslationCoveragePage::class));
-        $adminManager->contributeToAdminSurface(AdminSurfaceContributionData::page(SitemapPage::class));
+        $adminManager->registerExtensionPage(static::$packageName, NotFoundUrlsPage::class);
+        $adminManager->registerExtensionPage(static::$packageName, BrokenLinksPage::class);
+        $adminManager->registerExtensionPage(static::$packageName, SeoAuditPage::class);
+        $adminManager->registerExtensionPage(static::$packageName, TranslationCoveragePage::class);
+        $adminManager->registerExtensionPage(static::$packageName, SitemapPage::class);
 
         return $this;
     }
