@@ -18,14 +18,12 @@ site-search search
 seo-tools seo-suite
 authentication-log login-audit
 password-security password-policy
-html-minify html-optimizer
 default-theme foundation-theme
 example-sites demo-kit
 mcp agent-bridge
 assistant ai-orchestrator
 media-curator media-library
 media-assistant media-ai
-filament-peek admin-preview
 reports dashboard-reports
 RENAMES
 )

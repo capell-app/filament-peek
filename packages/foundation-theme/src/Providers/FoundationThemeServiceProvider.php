@@ -11,6 +11,7 @@ use Capell\Core\Events\PackageInstalled;
 use Capell\Core\Events\PackageUninstalled;
 use Capell\Core\Events\ThemeColorsUpdated;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Capell\Core\Models\Theme;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
@@ -19,14 +20,22 @@ use Capell\FoundationTheme\Enums\FoundationThemeAssetEnum;
 use Capell\FoundationTheme\Filament\Settings\FoundationThemeSettingsSchema;
 use Capell\FoundationTheme\Listeners\RegenerateTailwindAssetsOnThemeColorsUpdated;
 use Capell\FoundationTheme\Listeners\RunTailwindAssetsOnPackageChange;
+use Capell\FoundationTheme\Livewire\Assets\Table\PageAssets;
+use Capell\FoundationTheme\Livewire\Widget\Pages;
 use Capell\FoundationTheme\Settings\FoundationThemeSettings;
 use Capell\FoundationTheme\Support\Blade\BladeDirectives;
 use Capell\FoundationTheme\Support\Interceptors\Themes\FoundationThemeInterceptor;
 use Capell\FoundationTheme\Support\Media\CapellUrlGenerator;
 use Capell\FoundationTheme\Support\Tailwind\TailwindAssetsGenerator;
 use Capell\FoundationTheme\View\Components\Media\Svg;
+use Capell\FoundationTheme\View\Components\Widget\Page\Children as PageChildrenComponent;
+use Capell\FoundationTheme\View\Components\Widget\Page\Content as PageContentComponent;
+use Capell\FoundationTheme\View\Components\Widget\Page\Latest as PageLatestComponent;
+use Capell\FoundationTheme\View\Components\Widget\Page\Siblings as PageSiblingsComponent;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
+use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -63,6 +72,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         $this->registerVendorCssJsAssets();
         $this->registerMediaUrlGenerator();
         $this->registerBladeComponents();
+        $this->registerLayoutBuilderRendering();
         $this->registerMediaBladeComponents();
         $this->registerModelInterceptors();
         $this->registerSettingsSchemas();
@@ -188,5 +198,119 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         CapellCore::registerVendorAsset(
             VendorAssetData::tailwindSource('resources/views/**/*.blade.php', self::$packageName),
         );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::buildAsset(
+                path: 'vendor/capell-foundation-theme/layout-builder',
+                file: 'resources/js/layout-builder/capell-layout-builder.js',
+                packageName: self::$packageName,
+            ),
+        );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::tailwindImport('resources/css/layout-builder/capell-layout-builder.css', self::$packageName),
+        );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::tailwindImport('tippy.js/dist/tippy.css', self::$packageName),
+        );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::tailwindImport('swiper/css', self::$packageName),
+        );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::tailwindImport('swiper/css/autoplay', self::$packageName),
+        );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::tailwindImport('swiper/css/pagination', self::$packageName),
+        );
+
+        CapellCore::registerVendorAsset(
+            VendorAssetData::tailwindImport('swiper/css/navigation', self::$packageName),
+        );
+    }
+
+    private function registerLayoutBuilderRendering(): void
+    {
+        resolve(ViewFactory::class)->addNamespace(
+            'capell-layout-builder',
+            __DIR__ . '/../../resources/views/layout-builder',
+        );
+
+        Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
+        Blade::component('capell-layout-builder::components.widget.page.breadcrumbs', 'capell-layout-builder-widget-page-breadcrumbs');
+        Blade::component(PageContentComponent::class, 'capell-layout-builder-widget-page-content');
+        Blade::component('capell-layout-builder::components.widget.slot', 'capell-layout-builder-widget-slot');
+        Blade::component(PageChildrenComponent::class, 'capell-layout-builder::widget.page.children');
+        Blade::component(PageContentComponent::class, 'capell-layout-builder::widget.page.content');
+        Blade::component(PageLatestComponent::class, 'capell-layout-builder::widget.page.latest');
+        Blade::component(PageSiblingsComponent::class, 'capell-layout-builder::widget.page.siblings');
+
+        $registerLivewireComponents = function (): void {
+            app('livewire.factory')->resolveMissingComponent(
+                static fn (string $name): ?string => match ($name) {
+                    'capell-layout-builder::assets.table.page-assets' => PageAssets::class,
+                    'capell-layout-builder::widget.pages' => Pages::class,
+                    default => null,
+                },
+            );
+        };
+
+        if ($this->app->isBooted()) {
+            $registerLivewireComponents();
+        } else {
+            $this->app->booted($registerLivewireComponents);
+        }
+
+        $this->callAfterResolving(FrontendComponentRegistryInterface::class, function (FrontendComponentRegistryInterface $registry): void {
+            $registry
+                ->register(
+                    key: FrontendComponentKeyEnum::SectionBlock->value,
+                    component: 'capell-layout-builder::components.section.block',
+                    aliases: [
+                        'capell-content-sections::section.block',
+                        'capell-layout-builder::section.block',
+                    ],
+                    props: [
+                        'asset',
+                        'class',
+                        'color',
+                        'icon',
+                        'image',
+                        'linkText',
+                        'loop',
+                        'meta',
+                        'size',
+                        'summary',
+                        'tags',
+                        'title',
+                        'url',
+                    ],
+                )
+                ->register(
+                    key: FrontendComponentKeyEnum::SectionTeamMember->value,
+                    component: 'capell-layout-builder::components.section.team-member',
+                    aliases: [
+                        'capell-content-sections::section.team-member',
+                        'capell-layout-builder::section.team-member',
+                    ],
+                    props: [
+                        'asset',
+                        'class',
+                        'color',
+                        'icon',
+                        'image',
+                        'linkText',
+                        'loop',
+                        'meta',
+                        'size',
+                        'summary',
+                        'title',
+                        'url',
+                    ],
+                );
+        });
     }
 }

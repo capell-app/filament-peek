@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\AgentBridge\Tools\Site;
 
+use Capell\Core\Enums\UrlTypeEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageUrl;
@@ -67,7 +68,7 @@ final class InspectSiteStateTool extends Tool
             'pages' => $this->countOptionalModel(Page::class),
             'pageUrls' => $this->countOptionalModel(PageUrl::class),
             'types' => $this->countOptionalModel(Type::class),
-            'redirects' => $this->countOptionalModel('Capell\\Redirects\\Models\\Redirect'),
+            'redirects' => $this->countRedirects(),
             'navigations' => $this->countOptionalModel(Navigation::class),
         ];
     }
@@ -79,6 +80,15 @@ final class InspectSiteStateTool extends Tool
         }
 
         return $this->countModel($modelClass);
+    }
+
+    private function countRedirects(): ?int
+    {
+        try {
+            return PageUrl::query()->where('type', UrlTypeEnum::Redirect)->count();
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**

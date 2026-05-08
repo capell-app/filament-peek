@@ -115,7 +115,7 @@ Conventions:
 
 ### Services
 
-- HtmlMinifier (`capell-app/html-optimizer`) — Unit; minify while preserving pre/code; edge cases.
+- HtmlMinifier (`capell-app/frontend`) — Unit; minify while preserving pre/code; edge cases.
 - DatasetPublisher — Integration; writes files; File::spy; permission error.
 - LanguageFlagsService — Unit; ISO code → asset path; edge: unsupported code.
 - PageCacheService — Integration; exists, lastModified, path, delete, root, directories, allDirectories, files, allFiles, deleteDirectory; failure paths wrap exceptions with actionable messages.

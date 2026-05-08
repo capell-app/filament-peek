@@ -48,7 +48,7 @@ class PageSeoPanelSchemaExtender implements PageSchemaExtender
     /**
      * @return array<int, Component>
      */
-    public function extendSettingsTabComponents(): array
+    public function extendSidebarComponents(Schema $configurator): array
     {
         return [];
     }

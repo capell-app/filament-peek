@@ -36,7 +36,7 @@ class SeoAuditPage extends Page implements HasActions, HasTable
     #[Override]
     public static function getNavigationLabel(): string
     {
-        return (string) (__('capell-admin::navigation.seo_audit'));
+        return (string) (__('capell-seo-suite::generic.seo_audit'));
     }
 
     #[Override]
@@ -52,12 +52,12 @@ class SeoAuditPage extends Page implements HasActions, HasTable
 
     public function getSubheading(): string|Htmlable|null
     {
-        return __('capell-admin::generic.seo_audit_info');
+        return __('capell-seo-suite::generic.seo_audit_info');
     }
 
     #[Override]
     public function getTitle(): string|Htmlable
     {
-        return __('capell-admin::heading.seo_audit');
+        return __('capell-seo-suite::generic.seo_audit');
     }
 }

@@ -76,11 +76,9 @@ it('groups packages into the current product bundles', function (): void {
             'content-sections/capell.json',
             'foundation-theme/capell.json',
             'frontend-authoring/capell.json',
-            'html-optimizer/capell.json',
             'layout-builder/capell.json',
             'media-library/capell.json',
             'navigation/capell.json',
-            'redirects/capell.json',
             'tags/capell.json',
         ],
         'growth' => [
@@ -95,7 +93,6 @@ it('groups packages into the current product bundles', function (): void {
             'agent-bridge/capell.json',
         ],
         'publishing-pro' => [
-            'admin-preview/capell.json',
             'publishing-studio/capell.json',
         ],
         'search-seo' => [

@@ -73,7 +73,7 @@ namespace Vendor\ClientTheme;
 
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Facades\CapellCore;
-use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
+use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Illuminate\Support\ServiceProvider;
 
 final class ClientThemeServiceProvider extends ServiceProvider

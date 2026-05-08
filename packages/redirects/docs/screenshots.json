@@ -1,8 +1,0 @@
-{
-    "package": "redirects",
-    "composerName": "capell-app/redirects",
-    "generatedFor": "deployment-screenshot-runner",
-    "requiresInstalledPackage": true,
-    "outputDirectory": "public/docs/screenshots/packages/redirects",
-    "entries": []
-}

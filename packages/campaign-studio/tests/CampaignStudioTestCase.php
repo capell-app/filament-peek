@@ -12,7 +12,6 @@ use Capell\Core\Facades\CapellCore;
 use Capell\FormBuilder\Providers\FormBuilderServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Insights\Providers\InsightsServiceProvider;
-use Capell\LayoutBuilder\Providers\LayoutBuilderServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
@@ -36,7 +35,6 @@ class CampaignStudioTestCase extends AbstractTestCase
             ...parent::getPackageProviders($app),
             AdminServiceProvider::class,
             FrontendServiceProvider::class,
-            LayoutBuilderServiceProvider::class,
             FormBuilderServiceProvider::class,
             InsightsServiceProvider::class,
             CampaignStudioServiceProvider::class,
@@ -56,7 +54,6 @@ class CampaignStudioTestCase extends AbstractTestCase
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
-        CapellCore::forcePackageInstalled(LayoutBuilderServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FormBuilderServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(InsightsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(CampaignStudioServiceProvider::$packageName);

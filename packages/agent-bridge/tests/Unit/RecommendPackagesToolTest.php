@@ -25,8 +25,7 @@ it('recommends matching packages from the knowledge repository', function (): vo
     $recommendedNames = collect($structuredContent['recommendations'])->pluck('name');
 
     expect($recommendedNames)
-        ->toContain('capell-app/seo-suite')
-        ->toContain('capell-app/redirects');
+        ->toContain('capell-app/seo-suite');
 });
 
 it('requires a package recommendation query', function (): void {

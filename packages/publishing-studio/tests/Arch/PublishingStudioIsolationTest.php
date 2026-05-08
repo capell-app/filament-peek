@@ -30,7 +30,7 @@ arch('publishing-studio does not import unrelated packages')
         'Capell\AIOrchestrator',
         'Capell\Blog',
         'Capell\FormBuilder',
-        'Capell\LayoutBuilder',
+        'Capell\Core\LayoutBuilder',
         'Capell\Navigation',
         'Capell\SeoSuite',
         'Capell\Themes',

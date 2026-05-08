@@ -13,7 +13,6 @@ use Capell\Events\Providers\EventsServiceProvider;
 use Capell\FoundationTheme\Providers\FoundationThemeServiceProvider;
 use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
 use Capell\Frontend\Providers\FrontendServiceProvider;
-use Capell\LayoutBuilder\Providers\LayoutBuilderServiceProvider;
 use Capell\Navigation\Providers\NavigationServiceProvider;
 use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
 use Capell\Tests\AbstractTestCase;
@@ -60,7 +59,6 @@ class EventsTestCase extends AbstractTestCase
             ...parent::getPackageProviders($app),
             AdminServiceProvider::class,
             FrontendServiceProvider::class,
-            LayoutBuilderServiceProvider::class,
             NavigationServiceProvider::class,
             PublishingStudioServiceProvider::class,
             EventsServiceProvider::class,
@@ -80,7 +78,6 @@ class EventsTestCase extends AbstractTestCase
 
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
-        CapellCore::forcePackageInstalled(LayoutBuilderServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(NavigationServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(PublishingStudioServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(EventsServiceProvider::$packageName);

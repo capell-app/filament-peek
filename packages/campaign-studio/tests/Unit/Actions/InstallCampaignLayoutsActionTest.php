@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Capell\CampaignStudio\Actions\InstallCampaignLayoutsAction;
 use Capell\Core\Models\Layout;
-use Capell\LayoutBuilder\Models\Widget;
+use Capell\Core\Models\Widget;
 
 it('installs campaign layouts with layout-builder compatible widget references', function (): void {
     $result = InstallCampaignLayoutsAction::run();

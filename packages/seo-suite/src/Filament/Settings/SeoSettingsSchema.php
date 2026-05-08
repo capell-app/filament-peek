@@ -19,8 +19,8 @@ class SeoSettingsSchema implements HasSchema
                 ->columnSpanFull()
                 ->schema([
                     Checkbox::make('seo_audit_enabled')
-                        ->label(__('capell-admin::form.seo_audit_enabled'))
-                        ->helperText(__('capell-admin::form.seo_audit_enabled_helper'))
+                        ->label(__('capell-seo-suite::form.seo_audit_enabled'))
+                        ->helperText(__('capell-seo-suite::form.seo_audit_enabled_helper'))
                         ->default(true)
                         ->reactive(),
                     Grid::make(2)
@@ -28,19 +28,19 @@ class SeoSettingsSchema implements HasSchema
                         ->visible(fn (Get $get): bool => $get('seo_audit_enabled') === true)
                         ->schema([
                             Checkbox::make('seo_check_meta_description')
-                                ->label(__('capell-admin::form.seo_check_meta_description'))
+                                ->label(__('capell-seo-suite::form.seo_check_meta_description'))
                                 ->default(true),
                             Checkbox::make('seo_check_meta_title')
-                                ->label(__('capell-admin::form.seo_check_meta_title'))
+                                ->label(__('capell-seo-suite::form.seo_check_meta_title'))
                                 ->default(true),
                             Checkbox::make('seo_check_duplicate_title')
-                                ->label(__('capell-admin::form.seo_check_duplicate_title'))
+                                ->label(__('capell-seo-suite::form.seo_check_duplicate_title'))
                                 ->default(true),
                             Checkbox::make('seo_check_alt_text')
-                                ->label(__('capell-admin::form.seo_check_alt_text'))
+                                ->label(__('capell-seo-suite::form.seo_check_alt_text'))
                                 ->default(true),
                             Checkbox::make('seo_check_internal_links')
-                                ->label(__('capell-admin::form.seo_check_internal_links'))
+                                ->label(__('capell-seo-suite::form.seo_check_internal_links'))
                                 ->default(true),
                         ]),
                 ]),

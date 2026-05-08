@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\CampaignStudio\Actions;
 
+use Capell\Admin\LayoutBuilder\Filament\Configurators\Types\WidgetTypeConfigurator;
 use Capell\CampaignStudio\Enums\CampaignWidgetComponentEnum;
 use Capell\CampaignStudio\Filament\Configurators\Widgets\CampaignCtaBlockWidgetConfigurator;
 use Capell\CampaignStudio\Filament\Configurators\Widgets\CampaignHeroWidgetConfigurator;
@@ -12,11 +13,10 @@ use Capell\CampaignStudio\Support\LayoutPresets\CampaignLayoutPreset;
 use Capell\CampaignStudio\Support\LayoutPresets\LeadGenerationPreset;
 use Capell\CampaignStudio\Support\LayoutPresets\ProductLaunchPreset;
 use Capell\CampaignStudio\Support\LayoutPresets\WebinarPreset;
+use Capell\Core\LayoutBuilder\Enums\LayoutTypeEnum;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Type;
-use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
-use Capell\LayoutBuilder\Filament\Configurators\Types\WidgetTypeConfigurator;
-use Capell\LayoutBuilder\Models\Widget;
+use Capell\Core\Models\Widget;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 final class InstallCampaignLayoutsAction
@@ -72,6 +72,10 @@ final class InstallCampaignLayoutsAction
                     'group' => 'CampaignStudio',
                     'containers' => $this->containersForPreset($preset, $widgets),
                     'status' => true,
+                    'widgets' => collect($widgets)
+                        ->map(fn (Widget $widget): string => $widget->key)
+                        ->values()
+                        ->all(),
                 ],
             );
 

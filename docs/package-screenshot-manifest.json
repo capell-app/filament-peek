@@ -502,39 +502,6 @@
             "composerName": "capell-app/diagnostics"
         },
         {
-            "id": "page-or-workspace-edit-screen-with-preview-action",
-            "title": "Page or workspace edit screen with preview action.",
-            "package": "admin-preview",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": null,
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/admin-preview"
-        },
-        {
-            "id": "peek-iframe-preview-panel",
-            "title": "Peek iframe preview panel.",
-            "package": "admin-preview",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": null,
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/admin-preview"
-        },
-        {
-            "id": "workspace-draft-review-screen-with-preview-action",
-            "title": "Workspace draft review screen with preview action.",
-            "package": "admin-preview",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": null,
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/admin-preview"
-        },
-        {
             "id": "form-builder-admin-index",
             "title": "FormBuilder admin index.",
             "package": "form-builder",
@@ -588,28 +555,6 @@
             "required": true,
             "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
             "composerName": "capell-app/form-builder"
-        },
-        {
-            "id": "frontend-page-before-after-html-output-inspection",
-            "title": "Frontend page before/after HTML output inspection.",
-            "package": "html-optimizer",
-            "surface": "frontend",
-            "targetType": "frontend-url",
-            "target": null,
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/html-optimizer"
-        },
-        {
-            "id": "middleware-configuration-or-service-provider-registration-proof",
-            "title": "Middleware configuration or service provider registration proof.",
-            "package": "html-optimizer",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": null,
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/html-optimizer"
         },
         {
             "id": "agent-bridge-prompt-builder-page",
@@ -819,61 +764,6 @@
             "required": true,
             "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
             "composerName": "capell-app/navigation"
-        },
-        {
-            "id": "redirects-admin-index",
-            "title": "Redirects admin index.",
-            "package": "redirects",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "ManageRedirects",
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/redirects"
-        },
-        {
-            "id": "create-edit-redirect-form",
-            "title": "Create/edit redirect form.",
-            "package": "redirects",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "ManageRedirects",
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/redirects"
-        },
-        {
-            "id": "redirect-import-workflow",
-            "title": "Redirect import workflow.",
-            "package": "redirects",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "ManageRedirects",
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/redirects"
-        },
-        {
-            "id": "redirect-export-workflow",
-            "title": "Redirect export workflow.",
-            "package": "redirects",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "ManageRedirects",
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/redirects"
-        },
-        {
-            "id": "redirect-health-snapshot-output",
-            "title": "Redirect health snapshot output.",
-            "package": "redirects",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "ManageRedirects",
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared.",
-            "composerName": "capell-app/redirects"
         },
         {
             "id": "page-seo-panel",

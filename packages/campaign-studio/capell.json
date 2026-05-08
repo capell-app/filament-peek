@@ -20,7 +20,6 @@
         "capell-app/core",
         "capell-app/admin",
         "capell-app/frontend",
-        "capell-app/layout-builder",
         "capell-app/insights",
         "capell-app/form-builder"
     ],

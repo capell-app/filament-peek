@@ -9,7 +9,6 @@ use Capell\Admin\Enums\ConfiguratorTypeEnum;
 use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Core\Facades\CapellCore;
-use Capell\LayoutBuilder\Providers\LayoutBuilderServiceProvider;
 use Capell\SeoSuite\Providers\SeoSuiteServiceProvider;
 
 /**
@@ -27,7 +26,6 @@ it('boots all packages without throwing', function (): void {
     $providers = array_keys($this->app->getLoadedProviders());
 
     expect($providers)->toContain(AddressServiceProvider::class);
-    expect($providers)->toContain(LayoutBuilderServiceProvider::class);
     expect($providers)->toContain(BlogServiceProvider::class);
     expect($providers)->toContain(SeoSuiteServiceProvider::class);
 });

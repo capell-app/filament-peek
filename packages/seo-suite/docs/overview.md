@@ -8,7 +8,7 @@ This page is the consolidated implementation overview for the SEO Suite package.
 
 SEO Suite adds metadata panels, sitemap generation, structured data, broken link tracking, Search Console insights, AI-assisted content briefs, and publish checks.
 
-- Page and site SEO schema extenders.
+- Page and site SEO schema extenders, including the page editor SEO settings tab, report-backed edit audit widget, and Pages-list audit overview widget.
 - SEO audit, broken links, not-found URLs, sitemap, and translation coverage pages.
 - Sitemap Livewire page and tool component.
 - AI creator actions for briefs, images, layouts, metadata suggestions, and draft application.
@@ -29,8 +29,8 @@ Exposes SEO work as actions, contracts, data objects, settings schemas, and exte
 Gives editors and site operators practical checks before publishing and operational dashboard-dashboard_reports after launch.
 
 - Adds SEO and AI-related tables/settings.
-- Extends page and site admin form-builder.
-- Adds SEO admin pages and widgets.
+- Extends page and site admin form-builder; page-level SEO fields live in this package rather than the core admin sidebar settings.
+- Adds SEO admin pages and widgets, including the Pages-list overview widget through `PageResourceWidgetExtender`.
 - Adds sitemap and llms.txt frontend output.
 - Adds config for AI provider/model, image model, Search Console, publish gates, and prompts.
 
@@ -44,7 +44,7 @@ Gives editors and site operators practical checks before publishing and operatio
 
 ## Screenshot Plan
 
-- Page SEO panel.
+- Page SEO settings tab, Page SEO panel, edit audit widget, and Pages-list overview widget.
 - SEO audit page.
 - Broken links page.
 - Sitemap page.

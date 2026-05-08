@@ -10,7 +10,6 @@ use Capell\Admin\Enums\ResourceEnum as AdminResourceEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
-use Capell\AdminPreview\Providers\AdminPreviewServiceProvider;
 use Capell\Blog\Enums\ResourceEnum as BlogResourceEnum;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Blog\Providers\FrontendServiceProvider as BlogFrontendServiceProvider;
@@ -29,13 +28,11 @@ use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\FrontendAuthoring\Providers\FrontendAuthoringServiceProvider;
 use Capell\Insights\Providers\InsightsServiceProvider;
-use Capell\LayoutBuilder\Providers\LayoutBuilderServiceProvider;
 use Capell\LoginAudit\Providers\LoginAuditServiceProvider;
 use Capell\MediaLibrary\MediaLibraryServiceProvider;
 use Capell\MigrationAssistant\Providers\MigrationAssistantServiceProvider;
 use Capell\Navigation\Providers\NavigationServiceProvider;
 use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
-use Capell\Redirects\Providers\RedirectsServiceProvider;
 use Capell\Search\Providers\SearchServiceProvider;
 use Capell\SeoSuite\Providers\SeoSuiteServiceProvider;
 use Capell\Tags\Models\Tag;
@@ -92,7 +89,6 @@ class PackagesTestCase extends AbstractTestCase
             MigrationAssistantServiceProvider::class,
             ContentSectionsServiceProvider::class,
             ContentBlocksServiceProvider::class,
-            LayoutBuilderServiceProvider::class,
             NavigationServiceProvider::class,
             BlogServiceProvider::class,
             BlogFrontendServiceProvider::class,
@@ -104,9 +100,7 @@ class PackagesTestCase extends AbstractTestCase
             SearchServiceProvider::class,
             TagsServiceProvider::class,
             FrontendAuthoringServiceProvider::class,
-            AdminPreviewServiceProvider::class,
             PublishingStudioServiceProvider::class,
-            RedirectsServiceProvider::class,
             MediaLibraryServiceProvider::class,
             FrontendServiceProvider::class,
             CapellServiceProvider::class,
@@ -168,7 +162,6 @@ class PackagesTestCase extends AbstractTestCase
     {
         CapellCore::forcePackageInstalled(AdminServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(ContentSectionsServiceProvider::$packageName);
-        CapellCore::forcePackageInstalled(LayoutBuilderServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(SeoSuiteServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(TagsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
@@ -181,9 +174,7 @@ class PackagesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(DiagnosticsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(AddressServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LoginAuditServiceProvider::$packageName);
-        CapellCore::forcePackageInstalled(AdminPreviewServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/media-library');
-        CapellCore::forcePackageInstalled(RedirectsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(SearchServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendAuthoringServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/publishing-studio');

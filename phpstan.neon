@@ -49,7 +49,6 @@ parameters:
         - packages/layout-builder/config
         - packages/agent-bridge/config
         - packages/newsletter/config
-        - packages/redirects/config
         - packages/seo-suite/config
         - packages/search/config
         - packages/tags/publishes/config

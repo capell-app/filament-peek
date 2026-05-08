@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\Tests\Support\Concerns;
 
+use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\Tests\AbstractTestCase;
-use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
 use Illuminate\Support\Facades\App;
 
 /**

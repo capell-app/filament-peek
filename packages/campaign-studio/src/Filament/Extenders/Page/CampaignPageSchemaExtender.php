@@ -37,7 +37,7 @@ final class CampaignPageSchemaExtender implements PageSchemaExtender
     /**
      * @return array<int, Component>
      */
-    public function extendSettingsTabComponents(): array
+    public function extendSidebarComponents(Schema $schema): array
     {
         return [
             Fieldset::make(__('capell-campaign-studio::generic.campaign'))

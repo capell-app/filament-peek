@@ -55,6 +55,10 @@ final class AdminServiceProvider extends ServiceProvider
 
     private function registerPages(): self
     {
+        if (! class_exists(CapellAdmin::class) || ! class_exists(ExtensionGroupEnum::class)) {
+            return $this;
+        }
+
         CapellAdmin::registerExtensionPage(
             DiagnosticsServiceProvider::$packageName,
             DiagnosticsPage::class,
@@ -86,6 +90,10 @@ final class AdminServiceProvider extends ServiceProvider
 
     private function registerDashboardWidgets(): self
     {
+        if (! class_exists(CapellAdmin::class) || ! class_exists(DashboardEnum::class)) {
+            return $this;
+        }
+
         CapellAdmin::registerDashboardWidget(SiteHealthWidgetAbstract::class, DashboardEnum::Main);
 
         CapellAdmin::registerDashboardWidget(SetupHealthWidgetAbstract::class, DashboardEnum::SystemHealth);

@@ -12,14 +12,12 @@ Free baseline packages:
 | Blog               | `capell-app/blog`               |
 | Navigation         | `capell-app/navigation`         |
 | Tags               | `capell-app/tags`               |
-| Redirects          | `capell-app/redirects`          |
 | Address            | `capell-app/address`            |
 | Media Library      | `capell-app/media-library`      |
 | Frontend Authoring | `capell-app/frontend-authoring` |
-| HTML Optimizer     | `capell-app/html-optimizer`     |
 | Foundation Theme   | `capell-app/foundation-theme`   |
 
-Tags and Media Library are Foundation packages because taxonomy and media management are normal CMS expectations.
+Tags and Media Library are Foundation packages because taxonomy and media management are normal CMS expectations. Redirect management is built into Capell Core/Admin rather than shipped as an add-on package.
 
 ## Premium Groups
 
@@ -27,7 +25,7 @@ Tags and Media Library are Foundation packages because taxonomy and media manage
 | --------------------- | ---------------- | -------------------------------------------- |
 | Capell Commercial     | `commercial`     | AIOrchestrator                               |
 | Capell FormBuilder    | `form-builder`   | FormBuilder                                  |
-| Capell Publishing Pro | `publishing-pro` | PublishingStudio, Admin Preview              |
+| Capell Publishing Pro | `publishing-pro` | PublishingStudio                             |
 | Capell Operations     | `operations`     | MigrationAssistant, Diagnostics, Login Audit |
 | Capell Growth         | `growth`         | Insights, CampaignStudio                     |
 | Capell Search & SEO   | `search-seo`     | SEO Suite, Search                            |

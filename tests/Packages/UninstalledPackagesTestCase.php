@@ -7,7 +7,6 @@ namespace Capell\Tests\Packages;
 use Capell\Address\Providers\AddressServiceProvider;
 use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
-use Capell\AdminPreview\Providers\AdminPreviewServiceProvider;
 use Capell\AgentBridge\Providers\AgentBridgeServiceProvider;
 use Capell\AIOrchestrator\Providers\AIOrchestratorServiceProvider;
 use Capell\Blog\Providers\BlogServiceProvider;
@@ -19,15 +18,12 @@ use Capell\FormBuilder\Providers\FormBuilderServiceProvider as CapellFormBuilder
 use Capell\FoundationTheme\Providers\FoundationThemeServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\FrontendAuthoring\Providers\FrontendAuthoringServiceProvider;
-use Capell\HtmlOptimizer\Providers\HtmlOptimizerServiceProvider;
 use Capell\Insights\Providers\InsightsServiceProvider;
-use Capell\LayoutBuilder\Providers\LayoutBuilderServiceProvider;
 use Capell\LoginAudit\Providers\LoginAuditServiceProvider;
 use Capell\MediaLibrary\MediaLibraryServiceProvider;
 use Capell\MigrationAssistant\Providers\MigrationAssistantServiceProvider;
 use Capell\Navigation\Providers\NavigationServiceProvider;
 use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
-use Capell\Redirects\Providers\RedirectsServiceProvider;
 use Capell\Search\Providers\SearchServiceProvider;
 use Capell\SeoSuite\Providers\SeoSuiteServiceProvider;
 use Capell\Tags\Providers\TagsServiceProvider;
@@ -60,7 +56,6 @@ class UninstalledPackagesTestCase extends AbstractTestCase
             AIOrchestratorServiceProvider::class,
             LoginAuditServiceProvider::class,
             MigrationAssistantServiceProvider::class,
-            LayoutBuilderServiceProvider::class,
             NavigationServiceProvider::class,
             BlogServiceProvider::class,
             BlogFrontendServiceProvider::class,
@@ -71,11 +66,8 @@ class UninstalledPackagesTestCase extends AbstractTestCase
             SearchServiceProvider::class,
             TagsServiceProvider::class,
             FrontendAuthoringServiceProvider::class,
-            AdminPreviewServiceProvider::class,
             PublishingStudioServiceProvider::class,
-            RedirectsServiceProvider::class,
             MediaLibraryServiceProvider::class,
-            HtmlOptimizerServiceProvider::class,
             AgentBridgeServiceProvider::class,
             AgencyThemeServiceProvider::class,
             CorporateThemeServiceProvider::class,

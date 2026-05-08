@@ -21,7 +21,6 @@ it('collects css and js assets with loading strategies', function (): void {
             handle: 'carousel',
             path: 'vendor/layout/carousel.js',
             loadingStrategy: AssetLoadingStrategy::Lazy,
-            packageName: 'capell-app/layout-builder',
         )
         ->all();
 

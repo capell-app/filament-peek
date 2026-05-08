@@ -20,14 +20,11 @@ For theme package authoring, see [Creating a Capell theme](creating-a-theme.md).
 | Foundation Theme   | [`packages/foundation-theme/README.md`](../packages/foundation-theme/README.md)                                                                                  |
 | Deployments        | [`packages/deployments/README.md`](../packages/deployments/README.md)                                                                                            |
 | Diagnostics        | [`packages/diagnostics/README.md`](../packages/diagnostics/README.md)                                                                                            |
-| Admin Preview      | [`packages/admin-preview/README.md`](../packages/admin-preview/README.md)                                                                                        |
 | FormBuilder        | [`packages/form-builder/README.md`](../packages/form-builder/README.md)                                                                                          |
-| HTML Optimizer     | [`packages/html-optimizer/README.md`](../packages/html-optimizer/README.md)                                                                                      |
 | Agent Bridge       | [`packages/agent-bridge/README.md`](../packages/agent-bridge/README.md)                                                                                          |
 | Media Library      | [`packages/media-library/README.md`](../packages/media-library/README.md)                                                                                        |
 | LayoutBuilder      | [`packages/layout-builder/README.md`](../packages/layout-builder/README.md)                                                                                      |
 | Navigation         | [`packages/navigation/README.md`](../packages/navigation/README.md)                                                                                              |
-| Redirects          | [`packages/redirects/README.md`](../packages/redirects/README.md)                                                                                                |
 | SEO Suite          | [`packages/seo-suite/README.md`](../packages/seo-suite/README.md)                                                                                                |
 | Search             | [`packages/search/README.md`](../packages/search/README.md)                                                                                                      |
 | Tags               | [`packages/tags/README.md`](../packages/tags/README.md)                                                                                                          |

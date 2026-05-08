@@ -14,7 +14,7 @@ use Capell\CampaignStudio\Enums\ResourceEnum;
 use Capell\CampaignStudio\Filament\Widgets\TopCampaignStudioWidget;
 use Capell\CampaignStudio\Filament\Widgets\TopLandingPagesWidget;
 use Capell\Core\Facades\CapellCore;
-use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum as LayoutBuilderConfiguratorTypeEnum;
+use Capell\Core\LayoutBuilder\Enums\ConfiguratorTypeEnum as LayoutBuilderConfiguratorTypeEnum;
 use Carbon\CarbonImmutable;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\ServiceProvider;

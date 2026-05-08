@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Capell\SeoSuite\Providers;
 
 use Capell\Admin\Contracts\AdminTools\AdminToolItem;
+use Capell\Admin\Contracts\Extenders\PageEditExtender;
 use Capell\Admin\Contracts\Extenders\PageHeaderActionExtender;
+use Capell\Admin\Contracts\Extenders\PageResourceWidgetExtender;
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\Admin\Contracts\Extenders\ResourceHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteHeaderActionExtender;
@@ -42,7 +44,7 @@ use Capell\SeoSuite\Enums\SchemaTemplateTypeEnum;
 use Capell\SeoSuite\Events\AiGenerationCompleted;
 use Capell\SeoSuite\Events\AiGenerationFailed;
 use Capell\SeoSuite\Filament\Extenders\Page\PageSeoPanelSchemaExtender;
-use Capell\SeoSuite\Filament\Extenders\Page\RobotsDirectiveSchemaExtender;
+use Capell\SeoSuite\Filament\Extenders\Page\PageSeoSettingsTabExtender;
 use Capell\SeoSuite\Filament\Extenders\Page\SearchMetaSchemaExtender;
 use Capell\SeoSuite\Filament\Extenders\Page\SitemapResourceHeaderActionExtender;
 use Capell\SeoSuite\Filament\Extenders\Site\SiteDetailsMetaExtender;
@@ -76,6 +78,8 @@ use Capell\SeoSuite\Settings\AIOrchestratorSettings;
 use Capell\SeoSuite\Support\Admin\AiCreatorPageExtender;
 use Capell\SeoSuite\Support\Admin\AiCreatorSiteExtender;
 use Capell\SeoSuite\Support\Admin\PageContentEditorConfigurator;
+use Capell\SeoSuite\Support\Admin\PageSeoAuditPageEditExtender;
+use Capell\SeoSuite\Support\Admin\PageSeoAuditPageResourceWidgetExtender;
 use Capell\SeoSuite\Support\Admin\PageTitleWithSlugInputExtender;
 use Capell\SeoSuite\Support\AdminTools\SitemapAdminTool;
 use Capell\SeoSuite\Support\AiFeatureRegistry;
@@ -283,6 +287,14 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
             SitemapAdminTool::class,
         ], AdminToolItem::TAG);
 
+        $this->app->tag([
+            PageSeoAuditPageEditExtender::class,
+        ], PageEditExtender::TAG);
+
+        $this->app->tag([
+            PageSeoAuditPageResourceWidgetExtender::class,
+        ], PageResourceWidgetExtender::TAG);
+
         return $this;
     }
 
@@ -291,7 +303,7 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
         $this->app->tag(
             [
                 SearchMetaSchemaExtender::class,
-                RobotsDirectiveSchemaExtender::class,
+                PageSeoSettingsTabExtender::class,
                 PageSeoPanelSchemaExtender::class,
             ],
             PageSchemaExtender::TAG,

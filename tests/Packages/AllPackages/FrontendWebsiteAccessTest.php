@@ -28,7 +28,6 @@ function assertAllPackagesFrontendFixtureIsInstalled(): void
             'capell-app/frontend',
             'capell-app/frontend-authoring',
             'capell-app/insights',
-            'capell-app/layout-builder',
             'capell-app/navigation',
             'capell-app/publishing-studio',
             'capell-app/seo-suite',
