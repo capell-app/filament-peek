@@ -6,7 +6,6 @@
         <meta name="robots" content="noindex, nofollow" />
         <title>
             {{ __('capell-access-gate::public.request.title', ['area' => $area->name]) }}
-            
         </title>
         <style>
             :root {
