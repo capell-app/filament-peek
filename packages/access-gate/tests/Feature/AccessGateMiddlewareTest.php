@@ -7,6 +7,7 @@ use Capell\AccessGate\Actions\CreateAccessGateClaimTokenAction;
 use Capell\AccessGate\Actions\CreateAccessGateGrantAction;
 use Capell\AccessGate\Contracts\RegistrationField;
 use Capell\AccessGate\Data\RegistrationFieldValue;
+use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Enums\BrowserTokenStatus;
 use Capell\AccessGate\Enums\GrantSubjectType;
@@ -20,6 +21,7 @@ use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\AccessGate\Tests\Support\FakePageCacheMiddleware;
 use Capell\AccessGate\Tests\TestCase;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Auth\User as AuthenticatableUser;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +52,21 @@ it('blocks protected content before the route renders', function (): void {
         ]));
 
     expect($rendered)->toBeFalse();
+});
+
+it('allows protected content when a matching area is paused', function (): void {
+    Area::factory()->create([
+        'key' => 'preview',
+        'status' => AccessAreaStatus::Paused,
+        'identity_mode' => IdentityMode::Hybrid,
+    ]);
+
+    Route::middleware('access-gate:preview')->get('/access-gate-test/paused', fn (): string => 'secret');
+
+    $this
+        ->get('/access-gate-test/paused')
+        ->assertOk()
+        ->assertSee('secret');
 });
 
 it('allows guest browser tokens and marks protected responses private', function (): void {
@@ -245,11 +262,13 @@ it('runs access gate before route-level page cache middleware', function (): voi
 
     $router = app('router');
     $router->aliasMiddleware('page-cache', FakePageCacheMiddleware::class);
-    $router->middlewarePriority = collect([AccessGateMiddleware::class, 'access-gate', FakePageCacheMiddleware::class])
+    $middlewarePriority = collect([AccessGateMiddleware::class, 'access-gate', FakePageCacheMiddleware::class])
         ->merge($router->middlewarePriority)
         ->unique()
         ->values()
         ->all();
+    $router->middlewarePriority = $middlewarePriority;
+    app(HttpKernel::class)->setMiddlewarePriority($middlewarePriority);
 
     Area::factory()->create([
         'key' => 'preview',

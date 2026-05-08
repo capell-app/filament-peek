@@ -7,6 +7,7 @@ namespace Capell\AccessGate\Providers;
 use Capell\AccessGate\Console\Commands\AccessGateDoctorCommand;
 use Capell\AccessGate\Console\Commands\AccessGateInstallCommand;
 use Capell\AccessGate\Console\Commands\AccessGateSetupCommand;
+use Capell\AccessGate\Enums\ResourceEnum;
 use Capell\AccessGate\Http\Middleware\AccessGateMiddleware;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
@@ -15,6 +16,8 @@ use Capell\AccessGate\Models\Event;
 use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
+use Capell\Admin\Data\AdminSurfaceContributionData;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\CapellCoreManager;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
@@ -73,6 +76,7 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
 
             $this
                 ->registerModels()
+                ->registerAdminResources()
                 ->registerProtectedTables();
         });
     }
@@ -181,6 +185,22 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
             BrowserToken::class,
             Event::class,
         ]);
+
+        return $this;
+    }
+
+    private function registerAdminResources(): self
+    {
+        if (! class_exists(CapellAdmin::class) || ! class_exists(AdminSurfaceContributionData::class)) {
+            return $this;
+        }
+
+        foreach (ResourceEnum::cases() as $resource) {
+            CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(
+                class: $resource->value,
+                group: $resource->name,
+            ));
+        }
 
         return $this;
     }

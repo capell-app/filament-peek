@@ -29,10 +29,17 @@ final class ResolveAccessGateAccessAction
     {
         $areas = Area::query()
             ->whereIn('key', $areaKeys)
-            ->where('status', AccessAreaStatus::Active->value)
             ->get();
 
+        if ($areas->where('status', AccessAreaStatus::Active)->isEmpty()) {
+            return new AccessGateAccessResultData(true);
+        }
+
         foreach ($areas as $area) {
+            if ($area->status !== AccessAreaStatus::Active) {
+                continue;
+            }
+
             $result = $this->resolveArea($request, $area);
 
             if ($result->allowed) {
