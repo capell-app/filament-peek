@@ -19,7 +19,7 @@ final class LogoutAccessGateController
     public function __invoke(Request $request, string $area): RedirectResponse
     {
         $accessArea = Area::query()->where('key', $area)->firstOrFail();
-        $cookieName = (string) config('access-gate.cookies.browser_token.name', 'capell_access_gate_browser_token');
+        $cookieName = config('access-gate.cookies.browser_token.name', 'capell_access_gate_browser_token');
 
         $this->revokeBrowserToken->handle($accessArea, $request->cookies->get($cookieName));
 
@@ -28,7 +28,7 @@ final class LogoutAccessGateController
                 ->route('capell-access-gate.request', ['area' => $accessArea->key])
                 ->withCookie(Cookie::forget(
                     $cookieName,
-                    (string) config('access-gate.cookies.browser_token.path', '/'),
+                    config('access-gate.cookies.browser_token.path', '/'),
                     config('access-gate.cookies.browser_token.domain'),
                 )),
         );

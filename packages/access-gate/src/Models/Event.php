@@ -6,10 +6,26 @@ namespace Capell\AccessGate\Models;
 
 use Capell\AccessGate\Database\Factories\EventFactory;
 use Capell\AccessGate\Enums\EventType;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property int $id
+ * @property int|null $access_area_id
+ * @property int|null $registration_id
+ * @property int|null $grant_id
+ * @property int|null $claim_token_id
+ * @property int|null $browser_token_id
+ * @property int|null $user_id
+ * @property EventType $type
+ * @property string|null $subject_type
+ * @property int|string|null $subject_id
+ * @property array<string, mixed>|null $payload
+ * @property array<string, mixed>|null $metadata
+ * @property CarbonInterface $occurred_at
+ */
 class Event extends AccessGateModel
 {
     /** @use HasFactory<EventFactory> */

@@ -73,6 +73,6 @@ final class ApproveNextRegistrationsAction
             ])
             ->count();
 
-        return max(0, (int) $area->approval_limit - $approvedCount);
+        return max(0, $area->approval_limit - $approvedCount);
     }
 }

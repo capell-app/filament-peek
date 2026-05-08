@@ -47,7 +47,7 @@ final class CreateAccessGateBrowserTokenAction
                 'status' => BrowserTokenStatus::Active,
                 'ip_hash' => $metadata['ip_hash'] ?? null,
                 'user_agent' => $metadata['user_agent'] ?? null,
-                'expires_at' => $lockedGrant->expires_at ?? now()->addMinutes((int) config('access-gate.cookies.browser_token.ttl_minutes', 259200)),
+                'expires_at' => $lockedGrant->expires_at ?? now()->addMinutes(config('access-gate.cookies.browser_token.ttl_minutes', 259200)),
                 'last_used_at' => now(),
                 'revoked_at' => null,
                 'metadata' => $metadata,

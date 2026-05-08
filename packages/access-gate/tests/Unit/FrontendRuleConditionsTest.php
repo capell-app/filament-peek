@@ -32,7 +32,7 @@ it('evaluates access gate active grant conditions from browser tokens', function
     );
     $issuedToken = app(CreateAccessGateBrowserTokenAction::class)->handle($grant);
     $request = Request::create('/preview');
-    $request->cookies->set((string) config('access-gate.cookies.browser_token.name'), $issuedToken->plainTextToken);
+    $request->cookies->set(config('access-gate.cookies.browser_token.name'), $issuedToken->plainTextToken);
 
     expect(app(HasActiveAccessGateGrantCondition::class)->evaluate(
         ['area' => 'preview'],

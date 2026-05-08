@@ -68,11 +68,11 @@ it('approves a registration, creates a grant, records the event, and dispatches 
     ]);
 
     $approved = app(ApproveRegistrationAction::class)->handle($registration, approvedByUserId: 42);
+    $grant = Grant::query()->where('registration_id', $approved->getKey())->firstOrFail();
 
     expect($approved->status)->toBe(RegistrationStatus::Approved)
         ->and($approved->approved_at)->not->toBeNull()
-        ->and(Grant::query()->where('registration_id', $approved->getKey())->first())
-        ->status->toBe(GrantStatus::Active)
+        ->and($grant->status)->toBe(GrantStatus::Active)
         ->and(ClaimToken::query()->where('registration_id', $approved->getKey())->exists())->toBeTrue()
         ->and(Event::query()->where('registration_id', $approved->getKey())->where('type', EventType::RegistrationApproved)->exists())->toBeTrue();
 
@@ -98,7 +98,7 @@ it('uses the trusted requested host when sending claim links', function (): void
         function (AccessApprovedNotification $notification): bool {
             $mail = $notification->toMail(new class {});
 
-            return str_starts_with((string) $mail->actionUrl, 'https://demo.example.test/access/claim/');
+            return str_starts_with($mail->actionUrl, 'https://demo.example.test/access/claim/');
         },
     );
 });

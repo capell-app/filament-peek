@@ -73,7 +73,6 @@ use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
 use Capell\Redirects\Contracts\RedirectResolver;
-use Capell\Redirects\Filament\Resources\Redirects\RedirectResource;
 use Capell\Redirects\Providers\RedirectsServiceProvider;
 use Capell\Search\Contracts\Search;
 use Capell\Search\Filament\Widgets\SearchOverviewStatsWidget;
@@ -211,7 +210,6 @@ it('does not expose admin resources, pages, widgets, or routes for uninstalled p
         SectionResource::class,
         WidgetResource::class,
         NavigationResource::class,
-        RedirectResource::class,
         TagResource::class,
         WorkspaceResource::class,
         PreviewLinkResource::class,

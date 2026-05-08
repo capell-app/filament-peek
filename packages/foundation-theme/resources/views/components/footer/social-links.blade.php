@@ -11,8 +11,6 @@
 >
     @foreach ($links as $link)
         @php
-            use BladeUI\Icons\Exceptions\SvgNotFound;
-
             $icon = null;
             $iconClass = 'shrink-0 grow-0 opacity-50 group-hover/item:opacity-100' . match ($size) {
                 'sm' => ' h-5 w-5',
@@ -21,14 +19,14 @@
             };
 
             if (! empty($link['icon'])) {
-                try {
-                    $icon = svg($link['icon'], [
+                $icon = rescue(
+                    fn (): mixed => svg($link['icon'], [
                         'class' => $iconClass,
                         'title' => $link['title'] ?? $link['type'],
-                    ]);
-                } catch (SvgNotFound) {
-                    $icon = null;
-                }
+                    ]),
+                    rescue: null,
+                    report: false,
+                );
             }
         @endphp
 

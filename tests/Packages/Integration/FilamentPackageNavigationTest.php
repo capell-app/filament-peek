@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Filament\Resources\Redirects\RedirectResource;
 use Capell\Blog\Filament\Resources\Articles\ArticleResource;
 use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\CampaignConversionGoalResource;
 use Capell\CampaignStudio\Filament\Resources\CampaignCtaBlocks\CampaignCtaBlockResource;
@@ -14,7 +15,6 @@ use Capell\Diagnostics\Filament\Pages\QueueHealthPage;
 use Capell\Diagnostics\Filament\Pages\SystemHealthPage;
 use Capell\MediaLibrary\Filament\Pages\MediaHealthPage;
 use Capell\MigrationAssistant\Filament\Resources\ImportSessions\ImportSessionResource;
-use Capell\Redirects\Filament\Resources\Redirects\RedirectResource;
 use Capell\SeoSuite\Filament\Pages\BrokenLinksPage;
 use Capell\SeoSuite\Filament\Pages\NotFoundUrlsPage;
 use Capell\SeoSuite\Filament\Pages\SeoAuditPage;
@@ -37,6 +37,7 @@ it('registers every installed package in the Capell package registry', function 
         'capell-app/migration-assistant',
         'capell-app/blog',
         'capell-app/campaign-studio',
+        'capell-app/content-blocks',
         'capell-app/content-sections',
         'capell-app/core',
         'capell-app/diagnostics',

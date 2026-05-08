@@ -32,7 +32,7 @@ final class SendAccessGateApprovedNotificationAction
         if ($area->identity_mode === IdentityMode::GuestLink || $area->identity_mode === IdentityMode::Hybrid) {
             $issuedClaimToken = $this->createClaimToken->handle(
                 grant: $grant,
-                expiresAt: now()->addMinutes((int) config('access-gate.claim_token_ttl_minutes', 10080)),
+                expiresAt: now()->addMinutes(config('access-gate.claim_token_ttl_minutes', 10080)),
             );
 
             $claimUrl = $this->claimUrl($registration, $area, $issuedClaimToken->plainTextToken);

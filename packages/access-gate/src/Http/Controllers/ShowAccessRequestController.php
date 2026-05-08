@@ -21,20 +21,40 @@ final class ShowAccessRequestController
     {
         $accessArea = Area::query()->where('key', $area)->firstOrFail();
 
+        $requestedUrl = $this->requestedUrl($request, $accessArea);
+
         return $this->noStore(response()->view($accessArea->gate_view ?? 'capell-access-gate::request', [
             'area' => $accessArea,
             'fields' => $this->fields->all(),
-            'requestMethods' => $this->listAccessRequestMethods->handle($accessArea, $this->requestedUrl($request)),
-            'emailRequestEnabled' => (bool) config('access-gate.registration.methods.email.enabled', true),
-            'requestedUrl' => $this->requestedUrl($request),
+            'requestMethods' => $this->listAccessRequestMethods->handle($accessArea, $requestedUrl),
+            'emailRequestEnabled' => config('access-gate.registration.methods.email.enabled', true),
+            'requestedUrl' => $requestedUrl,
         ]));
     }
 
-    private function requestedUrl(Request $request): ?string
+    private function requestedUrl(Request $request, Area $area): ?string
     {
         $requestedUrl = $request->query('redirect');
 
-        return is_string($requestedUrl) && $requestedUrl !== '' ? $requestedUrl : null;
+        if (! is_string($requestedUrl) || $requestedUrl === '') {
+            return null;
+        }
+
+        $host = parse_url($requestedUrl, PHP_URL_HOST);
+
+        if (! is_string($host) || $host === '') {
+            return null;
+        }
+
+        if ($host === $request->getHost()) {
+            return $requestedUrl;
+        }
+
+        $allowedHosts = collect($area->claim_url_hosts ?? [])
+            ->filter(fn (mixed $allowedHost): bool => is_string($allowedHost) && $allowedHost !== '')
+            ->all();
+
+        return in_array($host, $allowedHosts, true) ? $requestedUrl : null;
     }
 
     private function noStore(Response $response): Response

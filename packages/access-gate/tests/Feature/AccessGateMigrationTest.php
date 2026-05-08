@@ -31,6 +31,7 @@ it('creates access gate tables on the configured database connection', function 
     foreach (accessGateMigrationFiles() as $migrationFile) {
         /** @var Migration $migration */
         $migration = require $migrationFile;
+        assert(method_exists($migration, 'up'));
         $migration->up();
     }
 

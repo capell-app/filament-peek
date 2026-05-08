@@ -30,6 +30,10 @@ final class ResolveAccessGateAccessAction
      */
     public function handle(Request $request, array $areaKeys): AccessGateAccessResultData
     {
+        if (! Schema::hasTable((new Area)->getTable())) {
+            return new AccessGateAccessResultData(true);
+        }
+
         $siteScopeEnabled = $this->siteScopeEnabled();
         $siteId = $siteScopeEnabled ? $this->siteId($request) : null;
 
@@ -40,16 +44,18 @@ final class ResolveAccessGateAccessAction
 
         $areas = $baseAreasQuery
             ->when($siteScopeEnabled, function (Builder $query) use ($siteId): void {
-                $query->whereNull('site_id');
+                $query->where(function (Builder $query) use ($siteId): void {
+                    $query->whereNull('site_id');
 
-                if ($siteId !== null) {
-                    $query->orWhere('site_id', $siteId);
-                }
+                    if ($siteId !== null) {
+                        $query->orWhere('site_id', $siteId);
+                    }
+                });
             })
             ->get();
 
         if ($areas->isEmpty()) {
-            return new AccessGateAccessResultData($areaExists);
+            return new AccessGateAccessResultData(! $areaExists);
         }
 
         if ($areas->where('status', AccessAreaStatus::Active)->isEmpty()) {

@@ -63,6 +63,17 @@ final class CreateRegistrationAction
             $this->assertAreaAcceptsPublicRegistrations($lockedArea);
 
             $singleRegistrationKey = $this->singleRegistrationKey($lockedArea, $emailNormalized);
+            $existingRegistration = $this->existingSingleRegistration($singleRegistrationKey);
+
+            if ($existingRegistration instanceof Registration) {
+                if ($existingRegistration->status === RegistrationStatus::Approved || $existingRegistration->status === RegistrationStatus::Claimed) {
+                    $this->resendClaimToken->handle($existingRegistration);
+                }
+
+                return $existingRegistration;
+            }
+
+            $parsedRequestedHost = parse_url((string) ($validated['requested_url'] ?? ''), PHP_URL_HOST);
 
             $attributes = [
                 'access_area_id' => $lockedArea->getKey(),
@@ -72,7 +83,7 @@ final class CreateRegistrationAction
                 'user_id' => $validated['user_id'] ?? null,
                 'status' => RegistrationStatus::Pending,
                 'requested_url' => $validated['requested_url'] ?? null,
-                'requested_host' => $validated['requested_host'] ?? parse_url((string) ($validated['requested_url'] ?? ''), PHP_URL_HOST) ?: null,
+                'requested_host' => $validated['requested_host'] ?? (is_string($parsedRequestedHost) ? $parsedRequestedHost : null),
                 'position' => $this->nextPosition($lockedArea),
                 'field_values' => $fieldValues,
                 'metadata' => Arr::wrap($validated['metadata'] ?? []),
@@ -103,6 +114,18 @@ final class CreateRegistrationAction
 
             return $registration;
         });
+    }
+
+    private function existingSingleRegistration(?string $singleRegistrationKey): ?Registration
+    {
+        if ($singleRegistrationKey === null) {
+            return null;
+        }
+
+        return Registration::query()
+            ->where('single_registration_key', $singleRegistrationKey)
+            ->lockForUpdate()
+            ->first();
     }
 
     private function resolveArea(Area|string $area): Area

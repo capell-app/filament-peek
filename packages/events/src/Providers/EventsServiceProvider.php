@@ -47,11 +47,11 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
                 InstallCommand::class,
             ])
             ->hasMigrations([
-                'create_event_venues_table',
-                'create_events_table',
-                'create_event_occurrences_table',
-                'create_event_registrations_table',
-                'create_event_notification_logs_table',
+                '01_create_event_venues_table',
+                '02_create_events_table',
+                '03_create_event_occurrences_table',
+                '04_create_event_registrations_table',
+                '05_create_event_notification_logs_table',
             ]);
     }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Capell\ThemeStudio\Core\Preview\ThemePreviewSigner;
+use Capell\Core\ThemeStudio\Preview\ThemePreviewSigner;
 
 it('creates a preview context from a signed theme token', function (): void {
     $signer = new ThemePreviewSigner(secretKey: 'theme-secret');

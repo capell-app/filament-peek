@@ -29,13 +29,17 @@ final class AccessGateMiddleware
             return $this->deny($request, $areaKeys[0]);
         }
 
-        $this->markProtectedRequest($request);
+        if ($result->area !== null) {
+            $this->markProtectedRequest($request);
+        }
 
         $response = $next($request);
 
-        $response->headers->set('Cache-Control', 'no-store, private');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', '0');
+        if ($result->area !== null) {
+            $response->headers->set('Cache-Control', 'no-store, private');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
 
         return $response;
     }

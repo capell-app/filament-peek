@@ -6,10 +6,22 @@ namespace Capell\AccessGate\Models;
 
 use Capell\AccessGate\Database\Factories\ClaimTokenFactory;
 use Capell\AccessGate\Enums\ClaimTokenStatus;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $access_area_id
+ * @property int|null $registration_id
+ * @property int|null $grant_id
+ * @property string $token_hash
+ * @property ClaimTokenStatus $status
+ * @property CarbonInterface|null $expires_at
+ * @property CarbonInterface|null $consumed_at
+ * @property array<string, mixed>|null $metadata
+ */
 class ClaimToken extends AccessGateModel
 {
     /** @use HasFactory<ClaimTokenFactory> */

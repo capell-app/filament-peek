@@ -121,5 +121,4 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - [docs/overview.md](docs/overview.md)
 - [../seo-suite/README.md](../seo-suite/README.md)
 - [../navigation/README.md](../navigation/README.md)
-- [../admin-preview/README.md](../admin-preview/README.md)
 - [docs/credits-and-acknowledgements.md](docs/credits-and-acknowledgements.md)

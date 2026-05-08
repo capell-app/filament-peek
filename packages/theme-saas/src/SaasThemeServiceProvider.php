@@ -6,11 +6,11 @@ namespace Capell\ThemeStudio\Saas;
 
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Facades\CapellCore;
-use Capell\ThemeStudio\Core\Data\ThemeDefinitionData;
-use Capell\ThemeStudio\Core\Data\ThemePresetData;
-use Capell\ThemeStudio\Core\Rendering\BladeThemeRenderer;
-use Capell\ThemeStudio\Core\Rendering\ViewSectionRenderer;
-use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
+use Capell\Core\ThemeStudio\Data\ThemeDefinitionData;
+use Capell\Core\ThemeStudio\Data\ThemePresetData;
+use Capell\Core\ThemeStudio\Rendering\BladeThemeRenderer;
+use Capell\Core\ThemeStudio\Rendering\ViewSectionRenderer;
+use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Illuminate\Support\ServiceProvider;
 
 class SaasThemeServiceProvider extends ServiceProvider

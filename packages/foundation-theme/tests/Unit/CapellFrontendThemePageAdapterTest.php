@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Translation;
-use Capell\ThemeStudio\Core\Adapters\CapellFrontendThemePageAdapter;
+use Capell\Frontend\ThemeStudio\Adapters\CapellFrontendThemePageAdapter;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

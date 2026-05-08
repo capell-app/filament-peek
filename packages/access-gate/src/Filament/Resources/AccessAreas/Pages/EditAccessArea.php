@@ -9,6 +9,7 @@ use Capell\AccessGate\Actions\UpdateAccessGateApprovalLimitAction;
 use Capell\AccessGate\Actions\UpdateAccessGateAreaStatusAction;
 use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Filament\Resources\AccessAreas\AccessAreaResource;
+use Capell\AccessGate\Models\Area;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
@@ -20,20 +21,23 @@ final class EditAccessArea extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $record = $this->getRecord();
+        assert($record instanceof Area);
+
         return [
             Action::make('pause')
                 ->label(__('capell-access-gate::filament.actions.pause'))
-                ->visible(fn (): bool => $this->record->status === AccessAreaStatus::Active)
+                ->visible(fn (): bool => $record->status === AccessAreaStatus::Active)
                 ->action(fn (): mixed => UpdateAccessGateAreaStatusAction::run(
-                    $this->record,
+                    $record,
                     AccessAreaStatus::Paused,
                     updatedByUserId: auth()->id(),
                 )),
             Action::make('resume')
                 ->label(__('capell-access-gate::filament.actions.resume'))
-                ->visible(fn (): bool => $this->record->status === AccessAreaStatus::Paused)
+                ->visible(fn (): bool => $record->status === AccessAreaStatus::Paused)
                 ->action(fn (): mixed => UpdateAccessGateAreaStatusAction::run(
-                    $this->record,
+                    $record,
                     AccessAreaStatus::Active,
                     updatedByUserId: auth()->id(),
                 )),
@@ -48,7 +52,7 @@ final class EditAccessArea extends EditRecord
                         ->required(),
                 ])
                 ->action(fn (array $data): mixed => ApproveNextRegistrationsAction::run(
-                    $this->record,
+                    $record,
                     (int) $data['count'],
                     approvedByUserId: auth()->id(),
                 )),
@@ -59,10 +63,10 @@ final class EditAccessArea extends EditRecord
                         ->label(__('capell-access-gate::filament.fields.approval_limit'))
                         ->numeric()
                         ->minValue(0)
-                        ->default($this->record->approval_limit),
+                        ->default($record->approval_limit),
                 ])
                 ->action(fn (array $data): mixed => UpdateAccessGateApprovalLimitAction::run(
-                    $this->record,
+                    $record,
                     isset($data['approval_limit']) && $data['approval_limit'] !== '' ? (int) $data['approval_limit'] : null,
                     updatedByUserId: auth()->id(),
                 )),

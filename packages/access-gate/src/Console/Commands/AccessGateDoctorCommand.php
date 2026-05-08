@@ -110,7 +110,7 @@ final class AccessGateDoctorCommand extends Command
 
     private function checkCookies(): int
     {
-        $sameSite = strtolower((string) config('access-gate.cookies.browser_token.same_site', 'lax'));
+        $sameSite = strtolower(config('access-gate.cookies.browser_token.same_site', 'lax'));
         $secure = config('access-gate.cookies.browser_token.secure');
 
         if (! in_array($sameSite, ['lax', 'strict', 'none'], true)) {
@@ -177,7 +177,7 @@ final class AccessGateDoctorCommand extends Command
             $middlewareAlias = str($middlewareName)->before(':')->toString();
 
             if (in_array($middlewareAlias, $aliases, true)) {
-                return (int) $position;
+                return $position;
             }
         }
 

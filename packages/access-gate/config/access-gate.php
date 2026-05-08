@@ -7,14 +7,14 @@ return [
 
     'route_prefix' => env('ACCESS_GATE_ROUTE_PREFIX', 'access'),
 
-    'status_endpoint_enabled' => (bool) env('ACCESS_GATE_STATUS_ENDPOINT_ENABLED', false),
+    'status_endpoint_enabled' => env('ACCESS_GATE_STATUS_ENDPOINT_ENABLED', false),
 
-    'claim_token_ttl_minutes' => (int) env('ACCESS_GATE_CLAIM_TOKEN_TTL', 60 * 24 * 7),
+    'claim_token_ttl_minutes' => env('ACCESS_GATE_CLAIM_TOKEN_TTL', 60 * 24 * 7),
 
     'cookies' => [
         'browser_token' => [
             'name' => env('ACCESS_GATE_BROWSER_TOKEN_COOKIE', 'capell_access_gate_browser_token'),
-            'ttl_minutes' => (int) env('ACCESS_GATE_BROWSER_TOKEN_TTL', 60 * 24 * 180),
+            'ttl_minutes' => env('ACCESS_GATE_BROWSER_TOKEN_TTL', 60 * 24 * 180),
             'path' => '/',
             'domain' => env('ACCESS_GATE_COOKIE_DOMAIN'),
             'secure' => env('ACCESS_GATE_COOKIE_SECURE'),

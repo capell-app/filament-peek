@@ -97,7 +97,7 @@ final class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerOverviewStat(
             key: 'campaign_overview',
             label: fn (): string => __('capell-campaign-studio::widgets.active_campaign-studio'),
-            value: fn (): int => (int) $this->campaignOverview()['active_campaign-studio'],
+            value: fn (): int => $this->campaignOverview()['active_campaign-studio'],
             group: fn (): string => __('capell-admin::navigation.group_marketing'),
             sort: 150,
             settingsLabel: fn (): string => __('capell-campaign-studio::widgets.campaign_overview'),
@@ -106,7 +106,7 @@ final class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerOverviewStat(
             key: 'campaign_overview.conversions',
             label: fn (): string => __('capell-campaign-studio::widgets.conversions'),
-            value: fn (): int => (int) $this->campaignOverview()['conversions'],
+            value: fn (): int => $this->campaignOverview()['conversions'],
             group: fn (): string => __('capell-admin::navigation.group_marketing'),
             sort: 151,
             settingsKey: 'campaign_overview',

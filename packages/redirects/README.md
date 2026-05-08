@@ -1,20 +1,18 @@
 # Redirects
 
-Status: **Available, schema-owning** · Kind: **package** · Tier: **free** · Bundle: **foundation** · Contexts: **admin, frontend** · Product group: **Capell Foundation**
+Status: **Available, schema-owning** · Kind: **package** · Tier: **free** · Bundle: **foundation** · Contexts: **frontend** · Product group: **Capell Foundation**
 
 ## What This Plugin Adds
 
-Redirects adds admin redirect management, automatic redirect creation from changed page URLs, import/export support, and redirect health snapshots.
+Redirects adds automatic redirect creation from changed page URLs, frontend redirect resolution, and redirect health snapshots.
 
-- Redirect Filament resource.
-- Redirect importer and exporter.
 - Automatic redirect creation action.
 - Page URL redirect recorder and resolver support.
 - Redirect health snapshot actions and model.
 
 ## Why It Matters
 
-**For developers:** Provides resolver and recorder contracts so admin and frontend code can create and resolve redirects without coupling to one implementation.
+**For developers:** Provides resolver and recorder contracts so frontend code can resolve redirects without coupling to one implementation.
 
 **For teams:** Helps site operators preserve traffic and search value when URLs change.
 
@@ -24,12 +22,11 @@ This package makes its Composer dependencies visible because they are part of th
 
 **Capell packages used here**
 
-- [Capell Admin](https://github.com/capell-app/admin)
 - [Capell Core](https://github.com/capell-app/core)
 
 **Open-source packages used here**
 
-- [Laravel Actions](https://github.com/lorisleiva/laravel-actions) - single-purpose action classes that keep package workflows out of controllers and Filament resources.
+- [Laravel Actions](https://github.com/lorisleiva/laravel-actions) - single-purpose action classes that keep package workflows out of controllers.
 - [Spatie Laravel Data](https://github.com/spatie/laravel-data) - typed data objects for package boundaries, form state, settings, and structured results.
 - [Spatie Laravel Package Tools](https://github.com/spatie/laravel-package-tools) - Laravel package bootstrapping for config, migrations, commands, translations, and service provider setup.
 
@@ -45,10 +42,6 @@ This package makes its Composer dependencies visible because they are part of th
 
 Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-- Redirects admin index.
-- Create/edit redirect form.
-- Redirect import workflow.
-- Redirect export workflow.
 - Redirect health snapshot output.
 
 ## Technical Shape
@@ -56,8 +49,6 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - RedirectsServiceProvider registers the package.
 - Config file: redirects.php.
 - Migration creates redirect_health_snapshots.
-- Filament resource: RedirectResource.
-- Importer/exporter handle bulk redirect data.
 - Listener creates redirects for changed page URLs.
 
 ## Data Model
@@ -68,7 +59,6 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 ## Install Impact
 
-- Adds redirect admin resource.
 - Adds redirect_health_snapshots table.
 - Adds config for automatic redirects and status code.
 - No package route file is present.
@@ -78,17 +68,9 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 - None proven in this package directory.
 
-## Admin And Access
-
-- ManageRedirects (packages/redirects/src/Filament/Resources/Redirects/Pages/ManageRedirects.php)
-- RedirectResource (packages/redirects/src/Filament/Resources/Redirects/RedirectResource.php)
-
-- Policy: RedirectPolicy (packages/redirects/src/Policies/RedirectPolicy.php)
-- Gate: ManageRedirects: Gate `import`, `export`
-
 ## Common Pitfalls
 
-- Confirm where redirect records are stored in the host app before importing.
+- Confirm where redirect records are stored in the host app before recording automatic redirects.
 - Keep automatic redirects enabled only when changed page URLs should produce 301s.
 - Validate redirect loops before publishing bulk imports.
 
@@ -96,7 +78,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 1. Install the package with `composer require capell-app/redirects`.
 2. Run the package migrations or the Capell package installer required by the host app.
-3. Open the new admin surface or integration point and verify the result.
+3. Open a frontend URL that should redirect and verify the result.
 
 ## Next Steps
 

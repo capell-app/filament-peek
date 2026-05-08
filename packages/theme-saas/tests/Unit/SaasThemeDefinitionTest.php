@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Capell\Core\Facades\CapellCore;
-use Capell\ThemeStudio\Core\Data\BrandProfileData;
-use Capell\ThemeStudio\Core\Data\NavigationData;
-use Capell\ThemeStudio\Core\Data\ThemePageData;
-use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
+use Capell\Core\ThemeStudio\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Data\NavigationData;
+use Capell\Core\ThemeStudio\Data\ThemePageData;
+use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\ThemeStudio\Saas\SaasThemeServiceProvider;
 use Illuminate\Support\Facades\View;
 

@@ -7,10 +7,30 @@ namespace Capell\AccessGate\Models;
 use Capell\AccessGate\Database\Factories\GrantFactory;
 use Capell\AccessGate\Enums\GrantStatus;
 use Capell\AccessGate\Enums\GrantSubjectType;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $access_area_id
+ * @property int|null $registration_id
+ * @property GrantSubjectType $subject_type
+ * @property int|string|null $subject_id
+ * @property int|null $user_id
+ * @property string|null $email
+ * @property GrantStatus $status
+ * @property CarbonInterface|null $starts_at
+ * @property CarbonInterface|null $expires_at
+ * @property CarbonInterface|null $revoked_at
+ * @property string|null $discount_label
+ * @property string|null $discount_code
+ * @property CarbonInterface|null $discount_expires_at
+ * @property array<string, mixed>|null $discount_metadata
+ * @property array<string, mixed>|null $metadata
+ * @property-read Area|null $area
+ */
 class Grant extends AccessGateModel
 {
     /** @use HasFactory<GrantFactory> */

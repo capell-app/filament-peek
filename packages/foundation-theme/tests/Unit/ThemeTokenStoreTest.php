@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Capell\ThemeStudio\Core\Assets\ThemeTokenStore;
-use Capell\ThemeStudio\Core\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Assets\ThemeTokenStore;
+use Capell\Core\ThemeStudio\Data\BrandProfileData;
 
 it('stores token css under isolated theme preset and brand keys', function (): void {
     $brand = new BrandProfileData(

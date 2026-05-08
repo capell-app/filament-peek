@@ -6,10 +6,31 @@ namespace Capell\AccessGate\Models;
 
 use Capell\AccessGate\Database\Factories\RegistrationFactory;
 use Capell\AccessGate\Enums\RegistrationStatus;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $access_area_id
+ * @property string $email
+ * @property string $email_normalized
+ * @property string|null $single_registration_key
+ * @property int|null $user_id
+ * @property RegistrationStatus $status
+ * @property string|null $requested_url
+ * @property string|null $requested_host
+ * @property int $position
+ * @property array<string, array{value: mixed, metadata: array<string, mixed>}>|null $field_values
+ * @property array<string, mixed>|null $metadata
+ * @property CarbonInterface|null $requested_at
+ * @property CarbonInterface|null $approved_at
+ * @property CarbonInterface|null $rejected_at
+ * @property CarbonInterface|null $claimed_at
+ * @property CarbonInterface|null $expired_at
+ * @property-read Area|null $area
+ */
 class Registration extends AccessGateModel
 {
     /** @use HasFactory<RegistrationFactory> */

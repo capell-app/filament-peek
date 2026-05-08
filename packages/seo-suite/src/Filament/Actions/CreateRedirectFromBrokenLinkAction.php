@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\SeoSuite\Filament\Actions;
 
+use Capell\Admin\Actions\Redirects\BuildRedirectCreateUrlAction;
+use Capell\Admin\Filament\Resources\Redirects\RedirectResource;
+use Capell\Core\Actions\Redirects\ValidateRedirectAction;
 use Capell\Core\Enums\RedirectStatusCodeEnum;
-use Capell\Redirects\Actions\BuildRedirectCreateUrlAction;
-use Capell\Redirects\Actions\ValidateRedirectAction;
-use Capell\Redirects\Filament\Resources\Redirects\RedirectResource;
 use Capell\SeoSuite\Models\BrokenLink;
 use Filament\Actions\Action;
 
@@ -24,7 +24,7 @@ class CreateRedirectFromBrokenLinkAction extends Action
         parent::setUp();
 
         $this->name('create_redirect')
-            ->label(__('redirects::generic.redirect'))
+            ->label(__('capell-admin::generic.redirect'))
             ->icon('heroicon-o-arrow-uturn-right')
             ->visible(fn (): bool => $this->redirectsAreInstalled())
             ->disabled(fn (): bool => ! $this->redirectsAreInstalled())

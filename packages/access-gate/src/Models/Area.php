@@ -11,10 +11,32 @@ use Capell\AccessGate\Enums\IdentityMode;
 use Capell\AccessGate\Enums\RegistrationPolicy;
 use Capell\AccessGate\Enums\TokenPolicy;
 use Capell\Core\Models\Site;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $key
+ * @property int|null $site_id
+ * @property string $name
+ * @property AccessAreaStatus $status
+ * @property IdentityMode $identity_mode
+ * @property ApprovalStrategy $approval_strategy
+ * @property int|null $approval_limit
+ * @property int|null $grant_duration_days
+ * @property RegistrationPolicy $registration_policy
+ * @property TokenPolicy $token_policy
+ * @property array<int, string>|null $public_allowlist
+ * @property array<int, string>|null $claim_url_hosts
+ * @property string|null $gate_view
+ * @property array<string, mixed>|null $metadata
+ * @property string|null $discount_label
+ * @property string|null $discount_code
+ * @property CarbonInterface|null $discount_expires_at
+ * @property array<string, mixed>|null $discount_metadata
+ */
 class Area extends AccessGateModel
 {
     /** @use HasFactory<AreaFactory> */

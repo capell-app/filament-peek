@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Manifest\CapellManifestData;
-use Capell\ThemeStudio\Core\Actions\ResolveThemeRuntimeAction;
-use Capell\ThemeStudio\Core\Assets\ThemeTokenStore;
-use Capell\ThemeStudio\Core\Data\BrandProfileData;
-use Capell\ThemeStudio\Core\Data\ThemeDefinitionData;
-use Capell\ThemeStudio\Core\Data\ThemePresetData;
-use Capell\ThemeStudio\Core\Rendering\BladeThemeRenderer;
-use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
+use Capell\Core\ThemeStudio\Actions\ResolveThemeRuntimeAction;
+use Capell\Core\ThemeStudio\Assets\ThemeTokenStore;
+use Capell\Core\ThemeStudio\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Data\ThemeDefinitionData;
+use Capell\Core\ThemeStudio\Data\ThemePresetData;
+use Capell\Core\ThemeStudio\Rendering\BladeThemeRenderer;
+use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 
 it('layers parent defaults before child defaults and applies database overrides last', function (): void {
     CapellCore::registerManifestPackage(new CapellManifestData(

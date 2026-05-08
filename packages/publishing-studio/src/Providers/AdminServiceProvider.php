@@ -18,6 +18,7 @@ use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
+use Capell\PublishingStudio\Contracts\WorkspaceTableActionContributor;
 use Capell\PublishingStudio\Data\SchedulerEventData;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Capell\PublishingStudio\Events\WorkspaceStateChanged;
@@ -43,6 +44,7 @@ use Capell\PublishingStudio\Support\Dashboard\WorkspaceMyWorkQueueDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceRecentlyPublishedDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceSiteStatsDataProvider;
 use Capell\PublishingStudio\WorkspaceContext;
+use Capell\PublishingStudio\WorkspacePeekPreviewActionContributor;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
@@ -56,7 +58,10 @@ class AdminServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->tag(
+            [WorkspacePeekPreviewActionContributor::class],
+            WorkspaceTableActionContributor::TAG,
+        );
     }
 
     public function boot(): void

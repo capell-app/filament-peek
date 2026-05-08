@@ -69,15 +69,15 @@ final class ClaimAccessGateTokenController
         $secure = config('access-gate.cookies.browser_token.secure');
 
         return Cookie::make(
-            (string) config('access-gate.cookies.browser_token.name', 'capell_access_gate_browser_token'),
+            config('access-gate.cookies.browser_token.name', 'capell_access_gate_browser_token'),
             $plainTextToken,
-            (int) config('access-gate.cookies.browser_token.ttl_minutes', 259200),
-            (string) config('access-gate.cookies.browser_token.path', '/'),
+            config('access-gate.cookies.browser_token.ttl_minutes', 259200),
+            config('access-gate.cookies.browser_token.path', '/'),
             config('access-gate.cookies.browser_token.domain'),
             is_bool($secure) ? $secure : $request->isSecure(),
-            (bool) config('access-gate.cookies.browser_token.http_only', true),
+            config('access-gate.cookies.browser_token.http_only', true),
             false,
-            (string) config('access-gate.cookies.browser_token.same_site', 'lax'),
+            config('access-gate.cookies.browser_token.same_site', 'lax'),
         );
     }
 

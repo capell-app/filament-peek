@@ -15,23 +15,31 @@
     $page = Frontend::page();
     $theme = Frontend::theme();
 
-    $menu = NavigationLoader::getNavigation(NavigationHandle::Main->value, $site, $language);
-    if (! $menu instanceof Navigation) {
-        $menu = NavigationLoader::getNavigation(NavigationHandle::Main->value, $site);
-    }
-
+    $navigationAvailable = class_exists(NavigationLoader::class)
+        && class_exists(NavigationHandle::class)
+        && class_exists(Navigation::class)
+        && class_exists(BuildNavigationRenderModelAction::class)
+        && class_exists(NavigationRenderContextData::class);
+    $menu = null;
     $items = null;
     $navigationRenderData = null;
 
-    if ($menu instanceof Navigation) {
-        $navigationRenderData = BuildNavigationRenderModelAction::run(new NavigationRenderContextData(
-            navigation: $menu,
-            page: $page,
-            site: $site,
-            language: $language,
-            siteDomain: $site->siteDomain,
-        ));
-        $items = $navigationRenderData->items;
+    if ($navigationAvailable) {
+        $menu = NavigationLoader::getNavigation(NavigationHandle::Main->value, $site, $language);
+        if (! $menu instanceof Navigation) {
+            $menu = NavigationLoader::getNavigation(NavigationHandle::Main->value, $site);
+        }
+
+        if ($menu instanceof Navigation) {
+            $navigationRenderData = BuildNavigationRenderModelAction::run(new NavigationRenderContextData(
+                navigation: $menu,
+                page: $page,
+                site: $site,
+                language: $language,
+                siteDomain: $site->siteDomain,
+            ));
+            $items = $navigationRenderData->items;
+        }
     }
 
     $headerBorderColor = $theme->getMeta('header_border_color');

@@ -23,7 +23,7 @@ final class StoreAccessRequestController
     {
         $accessArea = Area::query()->where('key', $area)->firstOrFail();
 
-        if (! (bool) config('access-gate.registration.methods.email.enabled', true)) {
+        if (! config('access-gate.registration.methods.email.enabled', true)) {
             throw ValidationException::withMessages([
                 'email' => __('capell-access-gate::public.request_unavailable'),
             ]);
@@ -40,6 +40,7 @@ final class StoreAccessRequestController
         return $this->noStore(
             redirect()
                 ->route('capell-access-gate.request', ['area' => $accessArea->key])
+                ->with('access_gate_request_submitted', $accessArea->key)
                 ->with('access_gate_status', __('capell-access-gate::public.request_submitted')),
         );
     }
@@ -64,8 +65,7 @@ final class StoreAccessRequestController
             'email' => $area->identity_mode === IdentityMode::Authenticated && $authenticatedEmail !== null
                 ? $authenticatedEmail
                 : $request->input('email'),
-            'requested_url' => $request->input('requested_url'),
-            'requested_host' => $request->input('requested_host'),
+            'requested_url' => $this->requestedUrl($request, $area),
         ];
 
         if ($area->identity_mode === IdentityMode::Authenticated && $request->user() !== null) {
@@ -84,5 +84,30 @@ final class StoreAccessRequestController
         $email = data_get($request->user(), 'email');
 
         return is_string($email) && $email !== '' ? $email : null;
+    }
+
+    private function requestedUrl(Request $request, Area $area): ?string
+    {
+        $requestedUrl = $request->input('requested_url');
+
+        if (! is_string($requestedUrl) || $requestedUrl === '') {
+            return null;
+        }
+
+        $host = parse_url($requestedUrl, PHP_URL_HOST);
+
+        if (! is_string($host) || $host === '') {
+            return null;
+        }
+
+        if ($host === $request->getHost()) {
+            return $requestedUrl;
+        }
+
+        $allowedHosts = collect($area->claim_url_hosts ?? [])
+            ->filter(fn (mixed $allowedHost): bool => is_string($allowedHost) && $allowedHost !== '')
+            ->all();
+
+        return in_array($host, $allowedHosts, true) ? $requestedUrl : null;
     }
 }

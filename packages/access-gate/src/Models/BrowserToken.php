@@ -6,10 +6,25 @@ namespace Capell\AccessGate\Models;
 
 use Capell\AccessGate\Database\Factories\BrowserTokenFactory;
 use Capell\AccessGate\Enums\BrowserTokenStatus;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property int $access_area_id
+ * @property int $grant_id
+ * @property string $token_hash
+ * @property BrowserTokenStatus $status
+ * @property string|null $ip_hash
+ * @property string|null $user_agent
+ * @property CarbonInterface|null $expires_at
+ * @property CarbonInterface|null $last_used_at
+ * @property CarbonInterface|null $revoked_at
+ * @property array<string, mixed>|null $metadata
+ * @property-read Grant|null $grant
+ */
 class BrowserToken extends AccessGateModel
 {
     /** @use HasFactory<BrowserTokenFactory> */

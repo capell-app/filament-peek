@@ -10,6 +10,8 @@ parameters:
     paths:
         - packages
         - tests
+    excludePaths:
+        - packages/block-library/src/Support/Mosaic
     checkAuthCallsWhenInRequestScope: true
     checkConfigTypes: true
     checkExplicitMixedMissingReturn: true
@@ -28,6 +30,7 @@ parameters:
         # See also: https://github.com/larastan/larastan/issues/1272
         dynamicCallOnStaticMethod: false
     databaseMigrationsPath:
+        - packages/access-gate/database/migrations
         - packages/address/database/migrations
         - packages/blog/database/migrations
         - packages/form-builder/database/migrations
@@ -39,6 +42,7 @@ parameters:
         - packages/events/database/migrations
         - packages/newsletter/database/migrations
     configDirectories:
+        - packages/access-gate/config
         - packages/migration-assistant/config
         - packages/foundation-theme/config
         - packages/deployments/config
@@ -51,6 +55,7 @@ parameters:
         - packages/tags/publishes/config
         - packages/toolbar/config
     translationDirectories:
+        - packages/access-gate/resources/lang
         - packages/address/resources/lang
         - packages/blog/resources/lang
         - packages/events/resources/lang

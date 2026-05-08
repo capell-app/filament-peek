@@ -3,6 +3,7 @@
     use Capell\Core\Models\Language;
     use Capell\Core\Models\Page;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
+    use Capell\Frontend\Actions\RenderHtmlContentAction;
     use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Support\Loader\SiteLoader;
@@ -19,7 +20,17 @@
     $theme = Frontend::theme();
     $layout = Frontend::layout();
 
-    $getMenu = function (string $key, ?Language $language) use ($page, $site): array {
+    $navigationAvailable = class_exists(NavigationLoader::class)
+        && class_exists(NavigationHandle::class)
+        && class_exists(Navigation::class)
+        && class_exists(BuildNavigationRenderModelAction::class)
+        && class_exists(NavigationRenderContextData::class);
+
+    $getMenu = function (string $key, ?Language $language) use ($navigationAvailable, $page, $site): array {
+        if (! $navigationAvailable) {
+            return [null, null];
+        }
+
         $menu = NavigationLoader::getNavigation($key, $site, $language);
 
         $items = null;
@@ -39,8 +50,12 @@
         return [$menu, $items];
     };
 
-    [$footerMenu, $footerMenuItems] = $getMenu(NavigationHandle::Footer->value, $language);
-    [$subFooterMenu, $subFooterMenuItems] = $getMenu(NavigationHandle::SubFooter->value, $language);
+    [$footerMenu, $footerMenuItems] = $navigationAvailable
+        ? $getMenu(NavigationHandle::Footer->value, $language)
+        : [null, null];
+    [$subFooterMenu, $subFooterMenuItems] = $navigationAvailable
+        ? $getMenu(NavigationHandle::SubFooter->value, $language)
+        : [null, null];
 
     $contactPage = Page::getFirstPageByTypeForSite('contact', $site, $language);
 
@@ -119,12 +134,12 @@
             :$siteLanguages
             class="sub-footer border-t border-white/5"
         >
-            {{
-                Lang::get($footerCopy, [
+            {!!
+                RenderHtmlContentAction::run(Lang::get($footerCopy, [
                     'name' => $site->name,
                     'year' => date('Y'),
-                ])
-            }}
+                ]))
+            !!}
         </x-capell::footer.sub-footer>
     @endif
 </footer>

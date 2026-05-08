@@ -15,6 +15,7 @@ use Capell\Blog\Enums\ResourceEnum as BlogResourceEnum;
 use Capell\Blog\Providers\BlogServiceProvider;
 use Capell\Blog\Providers\FrontendServiceProvider as BlogFrontendServiceProvider;
 use Capell\CampaignStudio\Providers\CampaignStudioServiceProvider;
+use Capell\ContentBlocks\Providers\ContentBlocksServiceProvider;
 use Capell\ContentSections\Providers\ContentSectionsServiceProvider;
 use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Facades\CapellCore;
@@ -90,6 +91,7 @@ class PackagesTestCase extends AbstractTestCase
             LoginAuditServiceProvider::class,
             MigrationAssistantServiceProvider::class,
             ContentSectionsServiceProvider::class,
+            ContentBlocksServiceProvider::class,
             LayoutBuilderServiceProvider::class,
             NavigationServiceProvider::class,
             BlogServiceProvider::class,
@@ -173,6 +175,7 @@ class PackagesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(InsightsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(MigrationAssistantServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(BlogServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(ContentBlocksServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(CampaignStudioServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(CapellFormBuilderServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(DiagnosticsServiceProvider::$packageName);

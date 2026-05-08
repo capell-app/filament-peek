@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-use Capell\ThemeStudio\Core\Contracts\ThemeSection;
-use Capell\ThemeStudio\Core\Data\BrandProfileData;
-use Capell\ThemeStudio\Core\Data\HeroSectionData;
-use Capell\ThemeStudio\Core\Data\ThemeDefinitionData;
-use Capell\ThemeStudio\Core\Data\ThemePageData;
-use Capell\ThemeStudio\Core\Exceptions\ThemeNotFoundException;
-use Capell\ThemeStudio\Core\Rendering\BladeThemeRenderer;
-use Capell\ThemeStudio\Core\Rendering\ViewSectionRenderer;
-use Capell\ThemeStudio\Core\Theme\ThemeRegistry;
+use Capell\Core\ThemeStudio\Contracts\ThemeSection;
+use Capell\Core\ThemeStudio\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Data\HeroSectionData;
+use Capell\Core\ThemeStudio\Data\ThemeDefinitionData;
+use Capell\Core\ThemeStudio\Data\ThemePageData;
+use Capell\Core\ThemeStudio\Exceptions\ThemeNotFoundException;
+use Capell\Core\ThemeStudio\Rendering\BladeThemeRenderer;
+use Capell\Core\ThemeStudio\Rendering\ViewSectionRenderer;
+use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 
 it('registers theme definitions renderers and section renderers by theme key', function (): void {
     $registry = new ThemeRegistry;

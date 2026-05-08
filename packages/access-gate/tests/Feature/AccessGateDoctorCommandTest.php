@@ -9,7 +9,9 @@ use Capell\AccessGate\Tests\TestCase;
 uses(TestCase::class);
 
 afterEach(function (): void {
-    foreach (glob(base_path('database/migrations/*access_gate*.php')) ?: [] as $publishedMigration) {
+    $publishedMigrations = glob(base_path('database/migrations/*access_gate*.php'));
+
+    foreach (is_array($publishedMigrations) ? $publishedMigrations : [] as $publishedMigration) {
         unlink($publishedMigration);
     }
 });

@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace Capell\Redirects\Providers;
 
-use Capell\Admin\Contracts\Redirects\RedirectUrlRecorder;
-use Capell\Admin\Data\AdminSurfaceContributionData;
-use Capell\Admin\Support\CapellAdminManager;
+use Capell\Core\Contracts\Redirects\RedirectUrlRecorder;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
-use Capell\Core\Models\PageUrl;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Redirects\Contracts\RedirectRecorder;
 use Capell\Redirects\Contracts\RedirectResolver;
-use Capell\Redirects\Filament\Resources\Redirects\RedirectResource;
 use Capell\Redirects\Listeners\CreateRedirectsForChangedPageUrls;
-use Capell\Redirects\Policies\RedirectPolicy;
-use Capell\Redirects\Support\AdminRedirectUrlRecorder;
 use Capell\Redirects\Support\FrontendRedirectResolver;
 use Capell\Redirects\Support\PageUrlRedirectRecorder;
 use Capell\Redirects\Support\PageUrlRedirectResolver;
+use Capell\Redirects\Support\RedirectsPackageUrlRecorder;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 
 class RedirectsServiceProvider extends AbstractPackageServiceProvider
@@ -68,7 +62,7 @@ class RedirectsServiceProvider extends AbstractPackageServiceProvider
         $this->app->singleton(RedirectRecorder::class, PageUrlRedirectRecorder::class);
 
         if (interface_exists(RedirectUrlRecorder::class)) {
-            $this->app->singleton(RedirectUrlRecorder::class, AdminRedirectUrlRecorder::class);
+            $this->app->singleton(RedirectUrlRecorder::class, RedirectsPackageUrlRecorder::class);
         }
 
         if (interface_exists(\Capell\Frontend\Contracts\RedirectResolver::class)) {
@@ -76,21 +70,5 @@ class RedirectsServiceProvider extends AbstractPackageServiceProvider
         }
 
         Event::listen(PageSaved::class, [CreateRedirectsForChangedPageUrls::class, 'handle']);
-
-        if (class_exists(CapellAdminManager::class)) {
-            Gate::policy(PageUrl::class, RedirectPolicy::class);
-
-            $registerRedirectResource = static function (CapellAdminManager $capellAdminManager): void {
-                $capellAdminManager->contributeToAdminSurface(
-                    AdminSurfaceContributionData::resource(RedirectResource::class, group: 'Redirect'),
-                );
-            };
-
-            $this->app->afterResolving(CapellAdminManager::class, $registerRedirectResource);
-
-            if ($this->app->resolved(CapellAdminManager::class)) {
-                $registerRedirectResource($this->app->make(CapellAdminManager::class));
-            }
-        }
     }
 }

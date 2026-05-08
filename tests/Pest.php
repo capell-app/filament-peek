@@ -42,6 +42,7 @@ pest()->extend(PackagesTestCase::class)->group('login-audit')->in('../packages/l
 pest()->extend(BlogTestCase::class)->group('blog')->in('../packages/blog/tests');
 pest()->extend(CampaignStudioTestCase::class)->group('campaign-studio')->in('../packages/campaign-studio/tests');
 pest()->extend(ContentSectionsTestCase::class)->group('content-sections')->in('../packages/content-sections/tests');
+pest()->extend(PackagesTestCase::class)->group('content-blocks')->in('../packages/block-library/tests');
 pest()->extend(PackagesTestCase::class)->group('foundation-theme')->in('../packages/foundation-theme/tests');
 pest()->extend(DeploymentsTestCase::class)->group('deployments')->in('../packages/deployments/tests');
 pest()->extend(DiagnosticsTestCase::class)->group('diagnostics')->in('../packages/diagnostics/tests');
