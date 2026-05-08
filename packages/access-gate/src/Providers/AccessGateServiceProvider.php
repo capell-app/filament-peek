@@ -18,6 +18,8 @@ use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\CapellCoreManager;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 
@@ -54,6 +56,7 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
     {
         $this->app->singleton(RegistrationFieldRegistry::class);
         $this->registerMiddlewareAliases();
+        $this->registerMiddlewarePriority();
 
         $this->registerPackageMetadata();
 
@@ -100,6 +103,44 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
         Route::aliasMiddleware('access-gate', AccessGateMiddleware::class);
 
         return $this;
+    }
+
+    private function registerMiddlewarePriority(): self
+    {
+        $this->applyMiddlewarePriority($this->app->make(Router::class));
+
+        $this->app->afterResolving(Router::class, function (Router $router): void {
+            $this->applyMiddlewarePriority($router);
+        });
+
+        return $this;
+    }
+
+    private function applyMiddlewarePriority(Router $router): void
+    {
+        $priority = [
+            AccessGateMiddleware::class,
+            'access-gate',
+            ...$this->pageCacheMiddlewarePriorityNames($router),
+        ];
+
+        $orderedPriority = collect($priority)
+            ->merge($this->existingMiddlewarePriority($router))
+            ->unique()
+            ->values()
+            ->all();
+
+        $router->middlewarePriority = $orderedPriority;
+
+        if (! $this->app->bound(HttpKernel::class)) {
+            return;
+        }
+
+        $kernel = $this->app->make(HttpKernel::class);
+
+        if (method_exists($kernel, 'setMiddlewarePriority')) {
+            $kernel->setMiddlewarePriority($orderedPriority);
+        }
     }
 
     private function isPackageInstalled(): bool
@@ -166,5 +207,56 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
             'access_gate_browser_tokens',
             'access_gate_events',
         ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function pageCacheAliases(): array
+    {
+        $aliases = config('access-gate.middleware.page_cache_aliases', []);
+
+        if (! is_array($aliases)) {
+            return [];
+        }
+
+        return collect($aliases)
+            ->filter(fn (mixed $alias): bool => is_string($alias) && $alias !== '')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function pageCacheMiddlewarePriorityNames(Router $router): array
+    {
+        $registeredMiddleware = $router->getMiddleware();
+
+        return collect($this->pageCacheAliases())
+            ->flatMap(fn (string $alias): array => array_values(array_filter([
+                $alias,
+                $registeredMiddleware[$alias] ?? null,
+            ], is_string(...))))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function existingMiddlewarePriority(Router $router): array
+    {
+        if (! $this->app->bound(HttpKernel::class)) {
+            return $router->middlewarePriority;
+        }
+
+        $kernel = $this->app->make(HttpKernel::class);
+
+        if (! method_exists($kernel, 'getMiddlewarePriority')) {
+            return $router->middlewarePriority;
+        }
+
+        return $kernel->getMiddlewarePriority();
     }
 }

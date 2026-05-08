@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\AccessGate\Console\Commands;
 
+use Capell\AccessGate\Http\Middleware\AccessGateMiddleware;
 use Capell\AccessGate\Models\Area;
 use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
@@ -83,6 +84,12 @@ final class AccessGateDoctorCommand extends Command
         $webMiddleware = $router->getMiddlewareGroups()['web'] ?? [];
         $accessGatePosition = $this->firstMiddlewarePosition($webMiddleware, ['access-gate']);
         $pageCachePosition = $this->firstMiddlewarePosition($webMiddleware, $this->pageCacheAliases());
+
+        if ($pageCachePosition !== null && $this->priorityRunsAccessGateBeforePageCache($router)) {
+            $this->info(__('capell-access-gate::doctor.middleware.ok'));
+
+            return 0;
+        }
 
         if ($pageCachePosition !== null && $accessGatePosition !== null && $accessGatePosition > $pageCachePosition) {
             $this->error(__('capell-access-gate::doctor.middleware.page_cache_before_gate'));
@@ -190,6 +197,38 @@ final class AccessGateDoctorCommand extends Command
 
         return collect($aliases)
             ->filter(fn (mixed $alias): bool => is_string($alias) && $alias !== '')
+            ->values()
+            ->all();
+    }
+
+    private function priorityRunsAccessGateBeforePageCache(Router $router): bool
+    {
+        $accessGatePriority = $this->firstMiddlewarePosition($router->middlewarePriority, [
+            AccessGateMiddleware::class,
+            'access-gate',
+        ]);
+        $pageCachePriority = $this->firstMiddlewarePosition(
+            $router->middlewarePriority,
+            $this->pageCacheMiddlewarePriorityNames($router),
+        );
+
+        return $accessGatePriority !== null
+            && $pageCachePriority !== null
+            && $accessGatePriority < $pageCachePriority;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function pageCacheMiddlewarePriorityNames(Router $router): array
+    {
+        $registeredMiddleware = $router->getMiddleware();
+
+        return collect($this->pageCacheAliases())
+            ->flatMap(fn (string $alias): array => array_values(array_filter([
+                $alias,
+                $registeredMiddleware[$alias] ?? null,
+            ], is_string(...))))
             ->values()
             ->all();
     }

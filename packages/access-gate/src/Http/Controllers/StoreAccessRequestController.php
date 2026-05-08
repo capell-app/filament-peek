@@ -51,8 +51,12 @@ final class StoreAccessRequestController
      */
     private function safePublicInput(Request $request, Area $area): array
     {
+        $authenticatedEmail = $this->authenticatedEmail($request);
+
         $input = [
-            'email' => $request->input('email'),
+            'email' => $area->identity_mode === IdentityMode::Authenticated && $authenticatedEmail !== null
+                ? $authenticatedEmail
+                : $request->input('email'),
             'requested_url' => $request->input('requested_url'),
             'requested_host' => $request->input('requested_host'),
         ];
@@ -66,5 +70,12 @@ final class StoreAccessRequestController
         }
 
         return $input;
+    }
+
+    private function authenticatedEmail(Request $request): ?string
+    {
+        $email = data_get($request->user(), 'email');
+
+        return is_string($email) && $email !== '' ? $email : null;
     }
 }

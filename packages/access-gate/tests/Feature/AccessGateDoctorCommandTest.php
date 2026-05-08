@@ -12,11 +12,11 @@ it('passes doctor checks for the default test installation', function (): void {
         ->assertSuccessful();
 });
 
-it('fails doctor checks when page cache can run before the access gate', function (): void {
+it('passes doctor checks when middleware priority forces the gate before page cache', function (): void {
     app('router')->pushMiddlewareToGroup('web', 'page-cache');
 
     $this->artisan('capell:access-gate-doctor')
-        ->assertFailed();
+        ->assertSuccessful();
 });
 
 it('sets up the configured default access area', function (): void {

@@ -11,12 +11,14 @@ use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Enums\BrowserTokenStatus;
 use Capell\AccessGate\Enums\GrantSubjectType;
 use Capell\AccessGate\Enums\IdentityMode;
+use Capell\AccessGate\Http\Middleware\AccessGateMiddleware;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
+use Capell\AccessGate\Tests\Support\FakePageCacheMiddleware;
 use Capell\AccessGate\Tests\TestCase;
 use Illuminate\Foundation\Auth\User as AuthenticatableUser;
 use Illuminate\Support\Facades\Notification;
@@ -27,6 +29,8 @@ uses(TestCase::class);
 
 it('blocks protected content before the route renders', function (): void {
     $rendered = false;
+
+    FakePageCacheMiddleware::$ran = false;
 
     Area::factory()->create([
         'key' => 'preview',
@@ -203,6 +207,72 @@ it('does not trust posted user ids on public access requests', function (): void
     expect(Registration::query()->firstOrFail()->user_id)->toBeNull()
         ->and(Grant::query()->where('subject_type', GrantSubjectType::User->value)->exists())->toBeFalse()
         ->and(Grant::query()->where('subject_type', GrantSubjectType::Email->value)->exists())->toBeTrue();
+});
+
+it('uses the authenticated email when creating authenticated-mode requests', function (): void {
+    Notification::fake();
+
+    $area = Area::factory()->create([
+        'key' => 'preview',
+        'identity_mode' => IdentityMode::Authenticated,
+        'approval_strategy' => ApprovalStrategy::AutoApprove,
+    ]);
+
+    $user = new AccessGateTestUser;
+    $user->forceFill([
+        'id' => 123,
+        'email' => 'real@example.test',
+    ]);
+
+    $this
+        ->actingAs($user)
+        ->post(route('capell-access-gate.request.store', ['area' => $area->key]), [
+            'email' => 'attacker@example.test',
+        ])
+        ->assertRedirect(route('capell-access-gate.request', ['area' => $area->key]));
+
+    $registration = Registration::query()->firstOrFail();
+
+    expect($registration->email)->toBe('real@example.test')
+        ->and($registration->user_id)->toBe(123)
+        ->and(Grant::query()->where('subject_type', GrantSubjectType::User->value)->where('subject_id', '123')->exists())->toBeTrue();
+});
+
+it('runs access gate before route-level page cache middleware', function (): void {
+    $rendered = false;
+
+    FakePageCacheMiddleware::$ran = false;
+
+    $router = app('router');
+    $router->aliasMiddleware('page-cache', FakePageCacheMiddleware::class);
+    $router->middlewarePriority = collect([AccessGateMiddleware::class, 'access-gate', FakePageCacheMiddleware::class])
+        ->merge($router->middlewarePriority)
+        ->unique()
+        ->values()
+        ->all();
+
+    Area::factory()->create([
+        'key' => 'preview',
+        'identity_mode' => IdentityMode::Hybrid,
+    ]);
+
+    Route::middleware(['web', 'page-cache', 'access-gate:preview'])
+        ->get('/access-gate-test/page-cache-priority', function () use (&$rendered): string {
+            $rendered = true;
+
+            return 'secret';
+        });
+
+    $this
+        ->get('/access-gate-test/page-cache-priority')
+        ->assertRedirect(route('capell-access-gate.request', [
+            'area' => 'preview',
+            'redirect' => 'http://localhost/access-gate-test/page-cache-priority',
+        ]))
+        ->assertDontSee('cached secret');
+
+    expect($rendered)->toBeFalse()
+        ->and(FakePageCacheMiddleware::$ran)->toBeFalse();
 });
 
 it('claims access with a one-time token and stores the browser token cookie', function (): void {

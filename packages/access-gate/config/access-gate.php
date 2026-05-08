@@ -33,6 +33,7 @@ return [
             'page-cache',
             'page_cache',
             'cache.response',
+            'Silber\\PageCache\\Middleware\\CacheResponse',
         ],
     ],
 
