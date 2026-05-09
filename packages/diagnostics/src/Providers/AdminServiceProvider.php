@@ -15,6 +15,7 @@ use Capell\Diagnostics\Filament\Pages\SystemHealthPage;
 use Capell\Diagnostics\Filament\Widgets\Health\AlertsWidgetAbstract;
 use Capell\Diagnostics\Filament\Widgets\Health\CacheHealthWidgetAbstract;
 use Capell\Diagnostics\Filament\Widgets\Health\ConfigDriftWidgetAbstract;
+use Capell\Diagnostics\Filament\Widgets\Health\ContentGraphHealthWidgetAbstract;
 use Capell\Diagnostics\Filament\Widgets\Health\ContentHealthWidgetAbstract;
 use Capell\Diagnostics\Filament\Widgets\Health\MigrationsHealthWidgetAbstract;
 use Capell\Diagnostics\Filament\Widgets\Health\PackagesInstalledWidgetAbstract;
@@ -93,6 +94,7 @@ final class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(SetupHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(AlertsWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(ContentHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
+        CapellAdmin::registerDashboardWidget(ContentGraphHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(RegistryHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(MigrationsHealthWidgetAbstract::class, DashboardEnum::SystemHealth);
         CapellAdmin::registerDashboardWidget(PackagesInstalledWidgetAbstract::class, DashboardEnum::SystemHealth);
