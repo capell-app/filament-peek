@@ -43,7 +43,14 @@
         "health": null
     },
     "settings": [],
-    "permissions": [],
+    "permissions": [
+        "submit_workspace_for_approval",
+        "approve_workspace",
+        "publish_workspace",
+        "rollback_workspace",
+        "publish_outside_release_window",
+        "View:ActivityTrailPage"
+    ],
     "capabilities": [
         "editorial-timeline",
         "live-preview",

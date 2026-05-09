@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Diagnostics\Filament\Pages;
 
 use BackedEnum;
+use Capell\Diagnostics\Enums\DiagnosticsPermission;
 use Capell\Diagnostics\Filament\Pages\Tables\PermissionAuditTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -36,7 +37,7 @@ class PermissionAuditPage extends Page implements HasActions, HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->can('View:' . class_basename(static::class)) ?? false;
+        return auth()->user()?->can(DiagnosticsPermission::ViewPermissionAuditPage->value) ?? false;
     }
 
     public static function getNavigationGroup(): ?string

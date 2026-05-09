@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Policies;
 
 use Capell\Admin\Policies\Concerns\ResolvesShieldPermission;
-use Capell\PublishingStudio\Actions\InstallWorkspaceRolesAction;
+use Capell\PublishingStudio\Enums\PublishingStudioPermission;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Models\Workspace;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -18,8 +18,7 @@ use Spatie\Permission\Exceptions\PermissionDoesNotExist;
  * CRUD permission names are built via ResolvesShieldPermission to match the
  * host app's filament-shield.php configuration (case + separator). Workflow
  * permissions (approve, publish, submit) use the custom names defined in
- * InstallWorkspaceRolesAction, which are registered in filament-shield.php
- * under `custom_permissions`.
+ * PublishingStudioPermission.
  */
 class WorkspacePolicy
 {
@@ -60,7 +59,7 @@ class WorkspacePolicy
     /** Submit a workspace for review (junior-level action). */
     public function submitForApproval(Authenticatable $user, Workspace $workspace): bool
     {
-        if (! $this->userHasPermission($user, InstallWorkspaceRolesAction::PERMISSION_SUBMIT)) {
+        if (! $this->userHasPermission($user, PublishingStudioPermission::SubmitWorkspaceForApproval->value)) {
             return false;
         }
 
@@ -70,7 +69,7 @@ class WorkspacePolicy
     /** Approve a workspace that is in review (senior-level action). */
     public function approve(Authenticatable $user, Workspace $workspace): bool
     {
-        if (! $this->userHasPermission($user, InstallWorkspaceRolesAction::PERMISSION_APPROVE)) {
+        if (! $this->userHasPermission($user, PublishingStudioPermission::ApproveWorkspace->value)) {
             return false;
         }
 
@@ -81,7 +80,7 @@ class WorkspacePolicy
     public function reject(Authenticatable $user, Workspace $workspace): bool
     {
         // Rejection requires the same approve permission — approvers can also reject.
-        if (! $this->userHasPermission($user, InstallWorkspaceRolesAction::PERMISSION_APPROVE)) {
+        if (! $this->userHasPermission($user, PublishingStudioPermission::ApproveWorkspace->value)) {
             return false;
         }
 
@@ -91,7 +90,7 @@ class WorkspacePolicy
     /** Publish an approved workspace onto live (release-level action). */
     public function publish(Authenticatable $user, Workspace $workspace): bool
     {
-        if (! $this->userHasPermission($user, InstallWorkspaceRolesAction::PERMISSION_PUBLISH)) {
+        if (! $this->userHasPermission($user, PublishingStudioPermission::PublishWorkspace->value)) {
             return false;
         }
 

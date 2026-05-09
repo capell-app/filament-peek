@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Capell\PublishingStudio\Actions\InstallWorkspaceRolesAction;
+use Capell\PublishingStudio\Enums\PublishingStudioPermission;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -53,16 +54,10 @@ it('is idempotent when invoked repeatedly — no duplicate roles, permissions, o
         InstallWorkspaceRolesAction::ROLE_RELEASE_MANAGER,
     ];
 
-    $permissionNames = [
-        InstallWorkspaceRolesAction::PERMISSION_SUBMIT,
-        InstallWorkspaceRolesAction::PERMISSION_APPROVE,
-        InstallWorkspaceRolesAction::PERMISSION_PUBLISH,
-        InstallWorkspaceRolesAction::PERMISSION_ROLLBACK,
-        InstallWorkspaceRolesAction::PERMISSION_PUBLISH_OUTSIDE_WINDOW,
-    ];
+    $permissionNames = PublishingStudioPermission::names();
 
     expect(Role::query()->whereIn('name', $roleNames)->count())->toBe(3)
-        ->and(Permission::query()->whereIn('name', $permissionNames)->count())->toBe(5);
+        ->and(Permission::query()->whereIn('name', $permissionNames)->count())->toBe(count($permissionNames));
 
     $editor = Role::query()->where('name', InstallWorkspaceRolesAction::ROLE_EDITOR)->firstOrFail();
     $reviewer = Role::query()->where('name', InstallWorkspaceRolesAction::ROLE_REVIEWER)->firstOrFail();
@@ -73,6 +68,26 @@ it('is idempotent when invoked repeatedly — no duplicate roles, permissions, o
     expect($editor->permissions()->count())->toBe(1)
         ->and($reviewer->permissions()->count())->toBe(2)
         ->and($releaseManager->permissions()->count())->toBe(5);
+});
+
+it('inserts every publishing-studio permission enum case', function (): void {
+    InstallWorkspaceRolesAction::run();
+
+    $installed = Permission::query()
+        ->whereIn('name', PublishingStudioPermission::names())
+        ->pluck('name')
+        ->all();
+
+    expect($installed)->toEqualCanonicalizing(PublishingStudioPermission::names());
+});
+
+it('keeps manifest permissions traceable to the enum', function (): void {
+    $manifest = json_decode(
+        file_get_contents(dirname(__DIR__, 3) . '/capell.json') ?: '{}',
+        true,
+    );
+
+    expect($manifest['permissions'] ?? [])->toEqualCanonicalizing(PublishingStudioPermission::names());
 });
 
 it('uses the configured guard name when none is provided', function (): void {

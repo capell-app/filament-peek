@@ -9,6 +9,9 @@ use Capell\Core\Models\Site;
 use Capell\SeoSuite\Data\AiDiscoveryRenderContextData;
 use Capell\SeoSuite\Enums\AiDiscoveryStatusEnum;
 use Capell\SeoSuite\Models\AiDiscoverySiteProfile;
+use Capell\SiteDiscovery\Actions\DiscoverPublicPagesAction;
+use Capell\SiteDiscovery\Data\DiscoverablePageData;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -16,13 +19,16 @@ use Lorisleiva\Actions\Concerns\AsAction;
 /**
  * Generate llms.txt content for a site.
  *
- * @method static string run(AiDiscoveryRenderContextData|Site $context, ?Language $language = null)
+ * @method static string run(AiDiscoveryRenderContextData|Site $context, ?Language $language = null, ?Collection $discoverablePages = null)
  */
 final class GenerateLlmsTxtAction
 {
     use AsAction;
 
-    public function handle(AiDiscoveryRenderContextData|Site $context, ?Language $language = null): string
+    /**
+     * @param  Collection<int, DiscoverablePageData>|null  $discoverablePages
+     */
+    public function handle(AiDiscoveryRenderContextData|Site $context, ?Language $language = null, ?Collection $discoverablePages = null): string
     {
         $renderContext = $this->renderContext($context, $language);
         $siteProfile = ResolveAiDiscoveryProfileAction::run($renderContext->site, $renderContext->language);
@@ -33,10 +39,17 @@ final class GenerateLlmsTxtAction
             return '';
         }
 
-        SyncAiDiscoveryPageProfilesAction::run($renderContext->site, $renderContext->language);
+        $pages = $discoverablePages ?? DiscoverPublicPagesAction::run($renderContext->site, $renderContext->language);
 
-        $entries = BuildAiDiscoveryPageEntriesAction::run($renderContext, $siteProfile);
+        SyncAiDiscoveryPageProfilesAction::run($renderContext->site, $renderContext->language, $pages);
 
+        $entries = BuildAiDiscoveryPageEntriesAction::run($renderContext, $siteProfile, $pages);
+
+        return $this->contentFromEntries($renderContext, $siteProfile, $entries);
+    }
+
+    public function contentFromEntries(AiDiscoveryRenderContextData $renderContext, AiDiscoverySiteProfile $siteProfile, Collection $entries): string
+    {
         $lines = ['# ' . $this->siteTitle($renderContext)];
 
         if (is_string($siteProfile->intro_markdown) && trim($siteProfile->intro_markdown) !== '') {

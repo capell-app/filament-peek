@@ -7,6 +7,7 @@ namespace Capell\Diagnostics\Providers;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
+use Capell\Diagnostics\Actions\EnsureDiagnosticsPermissionsAction;
 use Capell\Diagnostics\Filament\Pages\CommandPalettePage;
 use Capell\Diagnostics\Filament\Pages\DiagnosticsPage;
 use Capell\Diagnostics\Filament\Pages\PermissionAuditPage;
@@ -25,6 +26,7 @@ use Capell\Diagnostics\Filament\Widgets\Health\SiteHealthWidgetAbstract;
 use Capell\Diagnostics\Filament\Widgets\Health\TailwindBuildStatusWidgetAbstract;
 use Capell\Diagnostics\Palette\CapellArtisanPaletteCommandProvider;
 use Capell\Diagnostics\Palette\DiagnosticsPaletteCommandProvider;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 final class AdminServiceProvider extends ServiceProvider
@@ -44,6 +46,7 @@ final class AdminServiceProvider extends ServiceProvider
         }
 
         $this
+            ->ensurePermissions()
             ->registerPages()
             ->registerDashboardWidgets();
     }
@@ -79,6 +82,17 @@ final class AdminServiceProvider extends ServiceProvider
             DiagnosticsServiceProvider::$packageName,
             PermissionAuditPage::class,
         );
+
+        return $this;
+    }
+
+    private function ensurePermissions(): self
+    {
+        $table = config('permission.table_names.permissions', 'permissions');
+
+        if (is_string($table) && Schema::hasTable($table)) {
+            EnsureDiagnosticsPermissionsAction::run();
+        }
 
         return $this;
     }

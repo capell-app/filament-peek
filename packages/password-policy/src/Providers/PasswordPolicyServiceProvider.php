@@ -89,7 +89,7 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
                     group: 'password_policy',
                     label: 'capell-password-policy::settings.title',
                     icon: Heroicon::OutlinedKey,
-                    navigationGroup: 'capell-admin::navigation.group_administration',
+                    navigationGroup: 'capell-admin::navigation.group_system',
                     navigationSort: 93,
                     packageName: static::$packageName,
                 ));

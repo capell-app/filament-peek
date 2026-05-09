@@ -201,7 +201,7 @@ final class AgentBridgeServiceProvider extends ServiceProvider
                 group: AgentBridgeSettings::group(),
                 label: 'capell-agent-bridge::admin.settings_title',
                 icon: Heroicon::OutlinedSparkles,
-                navigationGroup: 'capell-admin::navigation.group_administration',
+                navigationGroup: 'capell-admin::navigation.group_system',
                 navigationSort: 94,
                 packageName: self::$packageName,
             ));

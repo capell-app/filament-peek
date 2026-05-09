@@ -10,6 +10,7 @@ use Capell\Diagnostics\Actions\CommandPalette\ExecuteCommandPaletteCommandAction
 use Capell\Diagnostics\Data\CommandPaletteCommandData;
 use Capell\Diagnostics\Data\CommandPaletteParameterData;
 use Capell\Diagnostics\Enums\CommandPaletteDanger;
+use Capell\Diagnostics\Enums\DiagnosticsPermission;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -57,19 +58,19 @@ final class CommandPalettePage extends Page
             return true;
         }
 
-        if (Gate::allows('accessDiagnostics')) {
+        if (Gate::allows(DiagnosticsPermission::AccessDiagnostics->value)) {
             return true;
         }
 
-        if (Gate::allows('viewDiagnostics')) {
+        if (Gate::allows(DiagnosticsPermission::ViewDiagnostics->value)) {
             return true;
         }
 
-        if (auth()->user()?->can('accessDiagnostics') === true) {
+        if (auth()->user()?->can(DiagnosticsPermission::AccessDiagnostics->value) === true) {
             return true;
         }
 
-        return auth()->user()?->can('viewDiagnostics') === true;
+        return auth()->user()?->can(DiagnosticsPermission::ViewDiagnostics->value) === true;
     }
 
     public function getTitle(): string

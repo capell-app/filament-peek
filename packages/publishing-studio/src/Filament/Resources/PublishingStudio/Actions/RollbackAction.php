@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Filament\Resources\PublishingStudio\Actions;
 
+use Capell\PublishingStudio\Enums\PublishingStudioPermission;
 use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Rollback;
@@ -19,7 +20,7 @@ use Throwable;
 
 /**
  * Emergency one-click rollback to the version immediately preceding this
- * workspace's published version. Gated by `rollback_workspace` permission
+ * workspace's published version. Gated by PublishingStudioPermission.
  * (release manager role). Requires a textual reason and explicit
  * confirmation.
  */
@@ -96,7 +97,7 @@ class RollbackAction extends Action
             return false;
         }
 
-        return $user->can('rollback_workspace');
+        return $user->can(PublishingStudioPermission::RollbackWorkspace->value);
     }
 
     private function rollbackTarget(Workspace $workspace): ?Version

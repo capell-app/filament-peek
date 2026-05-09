@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Filament\Pages;
 
 use BackedEnum;
+use Capell\PublishingStudio\Enums\PublishingStudioPermission;
 use Capell\PublishingStudio\Filament\Pages\Tables\ActivityTrailTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -36,12 +37,12 @@ class ActivityTrailPage extends Page implements HasActions, HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->can('View:' . class_basename(static::class)) ?? false;
+        return auth()->user()?->can(PublishingStudioPermission::ViewActivityTrailPage->value) ?? false;
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return (string) (__('capell-admin::navigation.group_administration'));
+        return (string) (__('capell-admin::navigation.group_system'));
     }
 
     public function table(Table $table): Table

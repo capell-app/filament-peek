@@ -6,6 +6,7 @@ namespace Capell\Diagnostics\Filament\Pages;
 
 use BackedEnum;
 use BadMethodCallException;
+use Capell\Diagnostics\Enums\DiagnosticsPermission;
 use Capell\Diagnostics\Filament\Pages\Tables\QueueHealthTable;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -54,19 +55,19 @@ class QueueHealthPage extends Page implements HasActions, HasTable
             // Role system not available; fall back to diagnostics permissions.
         }
 
-        if (Gate::allows('accessDiagnostics')) {
+        if (Gate::allows(DiagnosticsPermission::AccessDiagnostics->value)) {
             return true;
         }
 
-        if (Gate::allows('viewDiagnostics')) {
+        if (Gate::allows(DiagnosticsPermission::ViewDiagnostics->value)) {
             return true;
         }
 
-        if ($user->can('accessDiagnostics') === true) {
+        if ($user->can(DiagnosticsPermission::AccessDiagnostics->value) === true) {
             return true;
         }
 
-        return $user->can('viewDiagnostics') === true;
+        return $user->can(DiagnosticsPermission::ViewDiagnostics->value) === true;
     }
 
     public static function getNavigationGroup(): ?string

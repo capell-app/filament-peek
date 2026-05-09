@@ -11,6 +11,7 @@ use Capell\Core\Contracts\Makers\Maker;
 use Capell\Core\Contracts\Makers\MakerRegistryInterface;
 use Capell\Core\Data\Makers\MakerDefinitionData;
 use Capell\Core\Support\Makers\MakerSafety;
+use Capell\Diagnostics\Enums\DiagnosticsPermission;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -48,7 +49,12 @@ class DiagnosticsPage extends Page implements HasActions
     public static function canAccess(): bool
     {
         return config('capell.dashboard.developer_page_enabled', true) === true
-            && (self::userHasSuperAdminRole() || Gate::allows('accessDiagnostics') || Gate::allows('viewDiagnostics') || auth()->user()?->can('accessDiagnostics') === true);
+            && (
+                self::userHasSuperAdminRole()
+                || Gate::allows(DiagnosticsPermission::AccessDiagnostics->value)
+                || Gate::allows(DiagnosticsPermission::ViewDiagnostics->value)
+                || auth()->user()?->can(DiagnosticsPermission::AccessDiagnostics->value) === true
+            );
     }
 
     public function getTitle(): string|Htmlable

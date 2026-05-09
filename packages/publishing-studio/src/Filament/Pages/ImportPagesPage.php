@@ -6,8 +6,8 @@ namespace Capell\PublishingStudio\Filament\Pages;
 
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Capell\MigrationAssistant\Actions\InstallMigrationAssistantPermissionsAction;
 use Capell\MigrationAssistant\Enums\ImportSessionStatus;
+use Capell\MigrationAssistant\Enums\MigrationAssistantPermission;
 use Capell\MigrationAssistant\Filament\Resources\ImportSessions\ImportSessionResource;
 use Capell\PublishingStudio\Actions\Imports\AdvancePageImportToValidationAction;
 use Capell\PublishingStudio\Actions\Imports\DispatchPageImportAction;
@@ -356,7 +356,7 @@ class ImportPagesPage extends Page implements HasForms
 
     public function canUpdateSharedRelations(): bool
     {
-        return auth()->user()?->can(InstallMigrationAssistantPermissionsAction::PERMISSION_PAGE_IMPORT_UPDATE_SHARED) ?? false;
+        return auth()->user()?->can(MigrationAssistantPermission::PageImportUpdateSharedRelations->value) ?? false;
     }
 
     /**
@@ -370,7 +370,7 @@ class ImportPagesPage extends Page implements HasForms
      */
     public function canPublishLive(): bool
     {
-        return auth()->user()?->can(InstallMigrationAssistantPermissionsAction::PERMISSION_PAGE_IMPORT_PUBLISH_LIVE) ?? false;
+        return auth()->user()?->can(MigrationAssistantPermission::PageImportPublishLive->value) ?? false;
     }
 
     private function decisionData(): PageImportDecisionData

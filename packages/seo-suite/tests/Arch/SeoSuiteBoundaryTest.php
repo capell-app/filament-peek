@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 use Capell\SeoSuite\Contracts\SeoPublishReportProvider;
 use Capell\SeoSuite\Support\Publishing\SeoPublishReportProviderAdapter;
+use Capell\SiteDiscovery\Actions\DiscoverPublicPagesAction;
+use Capell\SiteDiscovery\Actions\DiscoverPublicUrlsAction;
+use Capell\SiteDiscovery\Contracts\DiscoverableUrlSource;
+use Capell\SiteDiscovery\Data\DiscoverablePageData;
+use Capell\SiteDiscovery\Data\DiscoverableUrlData;
+use Capell\SiteDiscovery\Providers\SiteDiscoveryServiceProvider;
 use Symfony\Component\Finder\Finder;
 
 arch('seo-suite does not import packages that depend on it')
@@ -92,13 +98,13 @@ it('keeps seo report builders independent of plugin internals', function (): voi
 
 it('uses only site discovery public discovery APIs', function (): void {
     $packagePath = dirname(__DIR__, 2);
-    $allowedPrefixes = [
-        'Capell\\SiteDiscovery\\Actions\\DiscoverPublicPagesAction',
-        'Capell\\SiteDiscovery\\Actions\\DiscoverPublicUrlsAction',
-        'Capell\\SiteDiscovery\\Contracts\\DiscoverableUrlSource',
-        'Capell\\SiteDiscovery\\Data\\DiscoverablePageData',
-        'Capell\\SiteDiscovery\\Data\\DiscoverableUrlData',
-        'Capell\\SiteDiscovery\\Providers\\SiteDiscoveryServiceProvider',
+    $allowedReferences = [
+        DiscoverPublicPagesAction::class,
+        DiscoverPublicUrlsAction::class,
+        DiscoverableUrlSource::class,
+        DiscoverablePageData::class,
+        DiscoverableUrlData::class,
+        SiteDiscoveryServiceProvider::class,
     ];
     $violations = [];
 
@@ -114,13 +120,13 @@ it('uses only site discovery public discovery APIs', function (): void {
             continue;
         }
 
-        foreach ($allowedPrefixes as $allowedPrefix) {
-            if (str_contains($contents, $allowedPrefix)) {
-                continue 2;
+        preg_match_all('/Capell\\\\SiteDiscovery\\\\[A-Za-z0-9_\\\\]+/', $contents, $matches);
+
+        foreach (array_unique($matches[0]) as $reference) {
+            if (! in_array($reference, $allowedReferences, true)) {
+                $violations[] = str_replace($packagePath . '/', '', $file->getPathname()) . ' imports ' . $reference;
             }
         }
-
-        $violations[] = str_replace($packagePath . '/', '', $file->getPathname());
     }
 
     expect($violations)->toBeEmpty();

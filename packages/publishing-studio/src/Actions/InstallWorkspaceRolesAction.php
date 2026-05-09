@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Actions;
 
+use Capell\PublishingStudio\Enums\PublishingStudioPermission;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -32,39 +33,33 @@ class InstallWorkspaceRolesAction
 {
     use AsAction;
 
-    /** @var string */
     public const ROLE_EDITOR = 'workspace_editor';
 
-    /** @var string */
     public const ROLE_REVIEWER = 'workspace_reviewer';
 
-    /** @var string */
     public const ROLE_RELEASE_MANAGER = 'workspace_release_manager';
 
-    /** @var string */
     public const PERMISSION_SUBMIT = 'submit_workspace_for_approval';
 
-    /** @var string */
     public const PERMISSION_APPROVE = 'approve_workspace';
 
-    /** @var string */
     public const PERMISSION_PUBLISH = 'publish_workspace';
 
-    /** @var string */
     public const PERMISSION_ROLLBACK = 'rollback_workspace';
 
-    /** @var string */
     public const PERMISSION_PUBLISH_OUTSIDE_WINDOW = 'publish_outside_release_window';
 
     public function handle(?string $guardName = null): void
     {
         $guard = $guardName ?? config('auth.defaults.guard', 'web');
 
-        $submitPermission = $this->permission(self::PERMISSION_SUBMIT, $guard);
-        $approvePermission = $this->permission(self::PERMISSION_APPROVE, $guard);
-        $publishPermission = $this->permission(self::PERMISSION_PUBLISH, $guard);
-        $rollbackPermission = $this->permission(self::PERMISSION_ROLLBACK, $guard);
-        $bypassWindowPermission = $this->permission(self::PERMISSION_PUBLISH_OUTSIDE_WINDOW, $guard);
+        EnsurePublishingStudioPermissionsAction::run($guard);
+
+        $submitPermission = $this->permission(PublishingStudioPermission::SubmitWorkspaceForApproval, $guard);
+        $approvePermission = $this->permission(PublishingStudioPermission::ApproveWorkspace, $guard);
+        $publishPermission = $this->permission(PublishingStudioPermission::PublishWorkspace, $guard);
+        $rollbackPermission = $this->permission(PublishingStudioPermission::RollbackWorkspace, $guard);
+        $bypassWindowPermission = $this->permission(PublishingStudioPermission::PublishOutsideReleaseWindow, $guard);
 
         $editorRole = $this->role(self::ROLE_EDITOR, $guard);
         $reviewerRole = $this->role(self::ROLE_REVIEWER, $guard);
@@ -86,15 +81,15 @@ class InstallWorkspaceRolesAction
         ]);
     }
 
-    private function permission(string $name, string $guardName): Permission
+    private function permission(PublishingStudioPermission $permission, string $guardName): Permission
     {
-        /** @var Permission $permission */
-        $permission = Permission::query()->firstOrCreate([
-            'name' => $name,
-            'guard_name' => $guardName,
-        ]);
+        /** @var Permission $model */
+        $model = Permission::query()
+            ->where('name', $permission->value)
+            ->where('guard_name', $guardName)
+            ->firstOrFail();
 
-        return $permission;
+        return $model;
     }
 
     private function role(string $name, string $guardName): Role

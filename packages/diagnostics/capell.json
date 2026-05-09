@@ -41,7 +41,13 @@
         "health": null
     },
     "settings": [],
-    "permissions": [],
+    "permissions": [
+        "accessDiagnostics",
+        "viewDiagnostics",
+        "View:PermissionAuditPage",
+        "View:CommandPalettePage",
+        "View:QueueHealthPage"
+    ],
     "capabilities": [],
     "assets": [],
     "healthChecks": []

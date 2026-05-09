@@ -23,6 +23,7 @@ use Capell\Core\Models\Type;
 use Capell\Frontend\Enums\RenderHookLocation;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\PublishingStudio\Actions\CopyOnWriteAction;
+use Capell\PublishingStudio\Actions\EnsurePublishingStudioPermissionsAction;
 use Capell\PublishingStudio\BelongsToWorkspace;
 use Capell\PublishingStudio\Events\WorkspaceEventDispatcher;
 use Capell\PublishingStudio\Extenders\PublishingStudioPageEditExtender;
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Activitylog\Models\Activity;
 
@@ -75,6 +77,7 @@ class PublishingStudioServiceProvider extends ServiceProvider
         $this
             ->registerModels()
             ->registerServices()
+            ->ensurePermissions()
             ->registerExtenders()
             ->registerPackageAssets()
             ->registerMorphMap()
@@ -116,6 +119,17 @@ class PublishingStudioServiceProvider extends ServiceProvider
         $this->app->singleton(PublishingStudioManager::class, fn (): PublishingStudioManager => new PublishingStudioManager);
         $this->app->singleton(WorkspaceEventDispatcher::class);
         $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
+
+        return $this;
+    }
+
+    private function ensurePermissions(): self
+    {
+        $table = config('permission.table_names.permissions', 'permissions');
+
+        if (is_string($table) && Schema::hasTable($table)) {
+            EnsurePublishingStudioPermissionsAction::run();
+        }
 
         return $this;
     }

@@ -55,7 +55,7 @@ it('keeps the approved top-level navigation groups in order on the booted admin 
         __('capell-admin::navigation.group_workflow'),
         __('capell-admin::navigation.group_monitoring'),
         __('capell-admin::navigation.group_website'),
-        __('capell-admin::navigation.group_administration'),
+        __('capell-admin::navigation.group_system'),
     ];
 
     $labels = collect(Filament::getCurrentPanel()->getNavigationGroups())

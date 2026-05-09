@@ -146,7 +146,7 @@ it('places extension-owned package pages under extensions navigation', function 
         ->flatMap(fn (NavigationGroup $group): array => collect($group->getItems())->all())
         ->all();
     $systemItems = $navigationGroups
-        ->filter(fn (NavigationGroup $group): bool => $group->getLabel() === __('capell-admin::navigation.group_administration'))
+        ->filter(fn (NavigationGroup $group): bool => $group->getLabel() === __('capell-admin::navigation.group_system'))
         ->flatMap(fn (NavigationGroup $group): array => collect($group->getItems())->all())
         ->all();
 

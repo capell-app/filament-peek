@@ -11,6 +11,7 @@ use Capell\SeoSuite\Data\AiDiscoveryPageEntryData;
 use Capell\SeoSuite\Data\AiDiscoveryRenderContextData;
 use Capell\SeoSuite\Enums\AiDiscoveryStatusEnum;
 use Capell\SeoSuite\Models\AiDiscoverySiteProfile;
+use Capell\SiteDiscovery\Actions\DiscoverPublicPagesAction;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use LogicException;
@@ -34,12 +35,14 @@ final class GenerateLlmsFullTxtAction
             return '';
         }
 
-        SyncAiDiscoveryPageProfilesAction::run($renderContext->site, $renderContext->language);
+        $pages = DiscoverPublicPagesAction::run($renderContext->site, $renderContext->language);
 
-        $content = GenerateLlmsTxtAction::run($renderContext);
+        SyncAiDiscoveryPageProfilesAction::run($renderContext->site, $renderContext->language, $pages);
+
+        $entries = BuildAiDiscoveryPageEntriesAction::run($renderContext, $siteProfile, $pages);
+        $content = resolve(GenerateLlmsTxtAction::class)->contentFromEntries($renderContext, $siteProfile, $entries);
         $byteLimit = $siteProfile->max_full_txt_bytes;
-        $entries = BuildAiDiscoveryPageEntriesAction::run($renderContext, $siteProfile)
-            ->take($siteProfile->max_full_txt_pages);
+        $entries = $entries->take($siteProfile->max_full_txt_pages);
         $pages = $this->pagesForEntries($entries);
 
         foreach ($entries as $entry) {
@@ -83,6 +86,7 @@ final class GenerateLlmsFullTxtAction
         }
 
         return Page::query()
+            ->with(['translation', 'pageUrl.siteDomain'])
             ->whereKey($pageIds->all())
             ->get()
             ->keyBy(fn (Page $page): int => (int) $page->getKey());

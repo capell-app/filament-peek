@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Console\Commands;
 
+use Capell\PublishingStudio\Actions\InstallWorkspaceRolesAction;
 use Illuminate\Console\Command;
 
 class InstallCommand extends Command
@@ -21,6 +22,8 @@ class InstallCommand extends Command
         }
 
         $this->call('migrate');
+
+        InstallWorkspaceRolesAction::run();
 
         $this->newLine();
         $this->info('Capell PublishingStudio installed successfully.');

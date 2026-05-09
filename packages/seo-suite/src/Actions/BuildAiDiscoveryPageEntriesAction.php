@@ -18,18 +18,19 @@ use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 /**
- * @method static Collection<int, AiDiscoveryPageEntryData> run(AiDiscoveryRenderContextData $context, AiDiscoverySiteProfile $siteProfile)
+ * @method static Collection<int, AiDiscoveryPageEntryData> run(AiDiscoveryRenderContextData $context, AiDiscoverySiteProfile $siteProfile, ?Collection $discoverablePages = null)
  */
 final class BuildAiDiscoveryPageEntriesAction
 {
     use AsAction;
 
     /**
+     * @param  Collection<int, DiscoverablePageData>|null  $discoverablePages
      * @return Collection<int, AiDiscoveryPageEntryData>
      */
-    public function handle(AiDiscoveryRenderContextData $context, AiDiscoverySiteProfile $siteProfile): Collection
+    public function handle(AiDiscoveryRenderContextData $context, AiDiscoverySiteProfile $siteProfile, ?Collection $discoverablePages = null): Collection
     {
-        $pages = $this->pagesForDiscovery($context);
+        $pages = $this->pagesForDiscovery($context, $discoverablePages);
         $profiles = $this->profilesForPages($context, $pages);
 
         return $pages
@@ -43,12 +44,15 @@ final class BuildAiDiscoveryPageEntriesAction
     }
 
     /**
+     * @param  Collection<int, DiscoverablePageData>|null  $discoverablePages
      * @return EloquentCollection<int, Page>
      */
-    private function pagesForDiscovery(AiDiscoveryRenderContextData $context): EloquentCollection
+    private function pagesForDiscovery(AiDiscoveryRenderContextData $context, ?Collection $discoverablePages): EloquentCollection
     {
+        $pages = $discoverablePages ?? DiscoverPublicPagesAction::run($context->site, $context->language);
+
         return new EloquentCollection(
-            DiscoverPublicPagesAction::run($context->site, $context->language)
+            $pages
                 ->map(fn (DiscoverablePageData $data): ?Page => $data->page)
                 ->filter(fn (?Page $page): bool => $page instanceof Page)
                 ->values()
@@ -90,7 +94,7 @@ final class BuildAiDiscoveryPageEntriesAction
         }
 
         $url = $page->pageUrl?->full_url ?? '';
-        $title = trim(strip_tags($page->translation?->title ?? $page->translation?->label ?? ''));
+        $title = trim(strip_tags($page->translation?->title ?? $page->translation?->label ?? $page->name ?? ''));
 
         if ($url === '' || $title === '') {
             return null;

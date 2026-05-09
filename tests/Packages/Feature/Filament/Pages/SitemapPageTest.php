@@ -5,18 +5,23 @@ declare(strict_types=1);
 use Capell\Blog\Models\Article;
 use Capell\Blog\Support\Creator\BlogCreator;
 use Capell\Core\Models\Site;
-use Capell\SeoSuite\Filament\Pages\SitemapPage;
-use Capell\SeoSuite\Support\Creator\SitemapPageCreator;
+use Capell\SiteDiscovery\Filament\Pages\SitemapPage;
+use Capell\SiteDiscovery\Support\Creator\SitemapPageCreator;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-
-use function Pest\Livewire\livewire;
-
 use Spatie\Permission\Models\Permission;
 
 uses(CreatesAdminUser::class)
     ->group('page');
 
 beforeEach(function (): void {
+    config()->set('view.paths', array_values(array_unique([
+        base_path('packages/site-discovery/resources/views'),
+        ...config('view.paths', []),
+    ])));
+    view()->getFinder()->prependLocation(base_path('packages/site-discovery/resources/views'));
+    view()->addNamespace('capell', base_path('packages/site-discovery/resources/views'));
+    view()->addNamespace('capell-site-discovery', base_path('packages/site-discovery/resources/views'));
+    view()->getFinder()->flush();
     test()->actingAsAdmin();
 });
 
@@ -40,6 +45,9 @@ test('can render page', function (): void {
 
     Article::factory()->count(5)->site($site)->withTranslations()->create();
 
-    livewire(SitemapPage::class)
-        ->assertSuccessful();
+    $page = new SitemapPage;
+    $page->mount();
+
+    expect($page->getView())->toBe('capell-site-discovery::components.pages.sitemap')
+        ->and($page->getSitemap())->not->toBeNull();
 });
