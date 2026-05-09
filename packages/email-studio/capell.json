@@ -1,0 +1,22 @@
+{
+    "name": "capell-app/email-studio",
+    "description": "Template-driven transactional email, delivery auditing, provider events, replies, and suppressions.",
+    "providers": {
+        "shared": [
+            "Capell\\EmailStudio\\Providers\\EmailStudioServiceProvider"
+        ],
+        "admin": [
+            "Capell\\EmailStudio\\Providers\\AdminServiceProvider"
+        ],
+        "frontend": [
+            "Capell\\EmailStudio\\Providers\\FrontendServiceProvider"
+        ]
+    },
+    "dependencies": [
+        "capell-app/admin",
+        "capell-app/core",
+        "capell-app/frontend"
+    ],
+    "tier": "premium",
+    "category": "operations"
+}

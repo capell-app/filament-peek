@@ -12,6 +12,7 @@ use Capell\ContentSections\Tests\ContentSectionsTestCase;
 use Capell\DemoKit\Tests\DemoKitTestCase;
 use Capell\Deployments\Tests\TestCase as DeploymentsTestCase;
 use Capell\Diagnostics\Tests\DiagnosticsTestCase;
+use Capell\EmailStudio\Tests\EmailStudioTestCase;
 use Capell\Events\Tests\EventsTestCase;
 use Capell\FormBuilder\Tests\FormBuilderTestCase;
 use Capell\FrontendAuthoring\Tests\FrontendAuthoringTestCase;
@@ -49,6 +50,7 @@ extendCapellPackageTests(ContentSectionsTestCase::class, 'content-sections', 'co
 extendCapellPackageTests(DemoKitTestCase::class, 'demo-kit', 'demo-kit');
 extendCapellPackageTests(DeploymentsTestCase::class, 'deployments', 'deployments');
 extendCapellPackageTests(DiagnosticsTestCase::class, 'diagnostics', 'diagnostics');
+extendCapellPackageTests(EmailStudioTestCase::class, 'email-studio', 'email-studio');
 extendCapellPackageTests(EventsTestCase::class, 'events', 'events');
 extendCapellPackageTests(FormBuilderTestCase::class, 'form-builder', 'form-builder');
 extendCapellPackageTests(FrontendAuthoringTestCase::class, 'frontend-authoring', 'frontend-authoring');
