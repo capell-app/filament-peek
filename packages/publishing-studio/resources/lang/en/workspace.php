@@ -11,6 +11,21 @@ return [
     'settings' => [
         'enable_user_resource_bridge' => 'Show Publishing Studio user details',
     ],
+    'kind' => [
+        'manual' => 'Manual',
+        'import' => 'Import',
+        'restore' => 'Restore',
+        'wordpress' => 'WordPress',
+        'single_page_draft' => 'Single page draft',
+        'release' => 'Release',
+    ],
+    'release' => [
+        'summary_title' => 'Release summary',
+        'readiness_title' => 'Release readiness',
+        'empty_summary' => 'No workspace changes have been staged for this release yet.',
+        'item_count' => '{0} No release items|{1} 1 release item|[2,*] :count release items',
+        'blocking_count' => '{0} No blocking checks|{1} 1 blocking check|[2,*] :count blocking checks',
+    ],
     'user_bridge' => [
         'action' => 'Action',
         'approvals' => 'Approvals & change requests',

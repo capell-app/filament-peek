@@ -26,6 +26,9 @@ enum WorkspaceKindEnum: string implements HasColor, HasIcon, HasLabel
     /** Auto-created single-page draft (the "simple" save-as-draft flow). */
     case SinglePageDraft = 'single_page_draft';
 
+    /** Editorial release workspace for coordinated publish campaigns. */
+    case Release = 'release';
+
     public function getColor(): string
     {
         return match ($this) {
@@ -34,6 +37,7 @@ enum WorkspaceKindEnum: string implements HasColor, HasIcon, HasLabel
             self::Restore => 'warning',
             self::WordPress => 'info',
             self::SinglePageDraft => 'info',
+            self::Release => 'success',
         };
     }
 
@@ -45,6 +49,7 @@ enum WorkspaceKindEnum: string implements HasColor, HasIcon, HasLabel
             self::Restore => Heroicon::OutlinedArrowUturnLeft,
             self::WordPress => Heroicon::OutlinedGlobeAlt,
             self::SinglePageDraft => Heroicon::OutlinedDocumentText,
+            self::Release => Heroicon::OutlinedRocketLaunch,
         };
     }
 
@@ -56,12 +61,13 @@ enum WorkspaceKindEnum: string implements HasColor, HasIcon, HasLabel
             self::Restore => __('capell-admin::workspace.kind.restore'),
             self::WordPress => __('capell-admin::workspace.kind.wordpress'),
             self::SinglePageDraft => __('capell-admin::workspace.kind.single_page_draft'),
+            self::Release => __('capell-admin::workspace.kind.release'),
         };
     }
 
     /** True when this workspace was produced by an automated Recovery Center flow. */
     public function isAutomated(): bool
     {
-        return ! in_array($this, [self::Manual, self::SinglePageDraft], true);
+        return ! in_array($this, [self::Manual, self::SinglePageDraft, self::Release], true);
     }
 }
