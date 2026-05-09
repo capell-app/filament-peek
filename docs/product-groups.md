@@ -28,6 +28,7 @@ Tags and Media Library are Foundation packages because taxonomy and media manage
 | Capell Publishing Pro | `publishing-pro` | PublishingStudio                             |
 | Capell Operations     | `operations`     | MigrationAssistant, Diagnostics, Login Audit |
 | Capell Growth         | `growth`         | Insights, CampaignStudio                     |
+| Capell Communications | `communications` | Email Studio                                 |
 | Capell Search & SEO   | `search-seo`     | SEO Suite, Search                            |
 | Capell Themes         | `themes`         | Agency Theme, Corporate Theme, SaaS Theme    |
 
@@ -48,3 +49,5 @@ Use stable bundle keys in code and marketplace syncs. Use product group names in
 ## Naming Rule
 
 Do not rename Composer packages simply because they sell together. For example, `capell-app/migration-assistant`, `capell-app/diagnostics`, and `capell-app/login-audit` stay separate packages but group together as **Capell Operations**.
+
+Email Studio uses **Capell Communications** because transactional email is a distinct operational surface. It supports Growth and FormBuilder workflows, but it should not be sold as a newsletter or campaign audience tool.

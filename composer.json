@@ -250,6 +250,7 @@
             "Capell\\ThemeStudio\\Agency\\": "packages/theme-agency/src",
             "Capell\\ThemeStudio\\Corporate\\": "packages/theme-corporate/src",
             "Capell\\ThemeStudio\\Saas\\": "packages/theme-saas/src",
+            "Capell\\TranslationManager\\": "packages/translation-manager/src",
             "Capell\\FrontendAuthoring\\": "packages/frontend-authoring/src",
             "Capell\\WordPressImporter\\": "packages/wordpress-importer/src",
             "Capell\\PublishingStudio\\": "packages/publishing-studio/src",
@@ -293,6 +294,7 @@
             "Capell\\ThemeStudio\\Agency\\Tests\\": "packages/theme-agency/tests",
             "Capell\\ThemeStudio\\Corporate\\Tests\\": "packages/theme-corporate/tests",
             "Capell\\ThemeStudio\\Saas\\Tests\\": "packages/theme-saas/tests",
+            "Capell\\TranslationManager\\Tests\\": "packages/translation-manager/tests",
             "Capell\\FrontendAuthoring\\Tests\\": "packages/frontend-authoring/tests",
             "Capell\\WordPressImporter\\Tests\\": "packages/wordpress-importer/tests",
             "Capell\\PublishingStudio\\Tests\\": "packages/publishing-studio/tests"

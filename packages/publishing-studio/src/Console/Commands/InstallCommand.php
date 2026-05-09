@@ -31,8 +31,8 @@ class InstallCommand extends Command
     private function publishMigrations(): bool
     {
         $migrations = [
-            __DIR__ . '/../../../database/migrations/2026_04_20_000001_create_publishing-studio_table.php',
-            __DIR__ . '/../../../database/migrations/2026_04_20_000002_create_versions_table.php',
+            __DIR__ . '/../../../database/migrations/create_publishing-studio_table.php',
+            __DIR__ . '/../../../database/migrations/create_versions_table.php',
             __DIR__ . '/../../../database/migrations/create_workspace_approvals_table.php',
             __DIR__ . '/../../../database/migrations/create_workspace_review_assignments_table.php',
             __DIR__ . '/../../../database/migrations/create_workspace_field_comments_table.php',

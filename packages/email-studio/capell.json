@@ -1,22 +1,62 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/email-studio",
-    "description": "Template-driven transactional email, delivery auditing, provider events, replies, and suppressions.",
+    "kind": "package",
+    "capell-version": "^4.0",
+    "productGroup": "Capell Communications",
+    "tier": "premium",
+    "bundle": "communications",
+    "description": "Email Studio gives Capell a transactional email centre for reusable templates, delivery profiles, send audit trails, suppressions, replies, and provider events.",
+    "surfaces": ["admin", "frontend", "queue"],
+    "dependencies": {
+        "requires": [
+            "capell-app/admin",
+            "capell-app/core",
+            "capell-app/frontend"
+        ],
+        "optional": [
+            "capell-app/form-builder",
+            "capell-app/campaign-studio",
+            "capell-app/insights"
+        ],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": [
+        "metadata": [],
+        "install": [],
+        "runtime": [
             "Capell\\EmailStudio\\Providers\\EmailStudioServiceProvider"
         ],
-        "admin": [
-            "Capell\\EmailStudio\\Providers\\AdminServiceProvider"
-        ],
-        "frontend": [
-            "Capell\\EmailStudio\\Providers\\FrontendServiceProvider"
-        ]
+        "admin": ["Capell\\EmailStudio\\Providers\\AdminServiceProvider"],
+        "frontend": ["Capell\\EmailStudio\\Providers\\FrontendServiceProvider"]
     },
-    "dependencies": [
-        "capell-app/admin",
-        "capell-app/core",
-        "capell-app/frontend"
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [
+        "transactional-email",
+        "template-rendering",
+        "delivery-audit",
+        "suppressions",
+        "provider-adapters"
     ],
-    "tier": "premium",
-    "category": "operations"
+    "assets": [],
+    "healthChecks": []
 }

@@ -11,6 +11,7 @@ First-party add-ons for [Capell CMS](https://github.com/capell-app/capell). Inst
 | Capell Publishing Pro | Premium | PublishingStudio                                                                                  |
 | Capell Operations     | Premium | Backup, Diagnostics, Login Audit                                                                  |
 | Capell Growth         | Premium | Insights, CampaignStudio                                                                          |
+| Capell Communications | Premium | Email Studio                                                                                      |
 | Capell Search & SEO   | Premium | SEO Suite, Search                                                                                 |
 | Capell Theme Studio   | Premium | Theme Studio, Theme Studio Core, Theme Studio Admin, SaaS Theme, Corporate Theme, Agency Theme    |
 
@@ -32,6 +33,7 @@ First-party add-ons for [Capell CMS](https://github.com/capell-app/capell). Inst
 | Login and activity visibility                          | Capell Operations     | `capell-app/login-audit`                                                         |
 | Campaign landing pages and conversion goals            | Capell Growth         | `capell-app/campaign-studio`                                                     |
 | First-party insights and visitor journeys              | Capell Growth         | `capell-app/insights`                                                            |
+| Transactional email templates, delivery audit, replies | Capell Communications | `capell-app/email-studio`                                                        |
 | SEO audits, sitemaps, structured data, AI-assisted SEO | Capell Search & SEO   | `capell-app/seo-suite`                                                           |
 | Public site keyword search and search insights         | Capell Search & SEO   | `capell-app/search`                                                              |
 | Premium frontend themes                                | Capell Theme Studio   | `capell-app/theme-saas`, `capell-app/theme-corporate`, `capell-app/theme-agency` |
@@ -69,6 +71,7 @@ Then configure SEO Suite and PublishingStudio from the Capell admin.
 | Capell Publishing Pro | Workspace switcher, approvals, preview links, publish checks, scheduled publishing, stale drafts, version comparison, Peek previews           |
 | Capell Operations     | Import sessions, package validation, recovery workflows, system health, queue health, permission audit, config drift, authentication activity |
 | Capell Growth         | Campaign records, CTA blocks, conversion goals, insights widgets, attribution dashboard-dashboard_reports                                     |
+| Capell Communications | Email templates, delivery profiles, message audit trails, suppressions, provider events, replies, and tracking diagnostics                    |
 | Capell Search & SEO   | SEO settings, AI-assist panels, sitemap tools, audits, broken links, 404 dashboard-dashboard_reports, search insights                         |
 | Capell Theme Studio   | Premium SaaS, Corporate, and Agency themes                                                                                                    |
 
