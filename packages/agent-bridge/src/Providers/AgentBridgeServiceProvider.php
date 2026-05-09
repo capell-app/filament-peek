@@ -6,6 +6,7 @@ namespace Capell\AgentBridge\Providers;
 
 use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\AgentBridge\Actions\Cache\ClearCapellCacheCapabilityAction;
 use Capell\AgentBridge\Actions\Pages\CreateDraftPageCapabilityAction;
 use Capell\AgentBridge\Actions\Pages\DisablePageCapabilityAction;
@@ -127,8 +128,13 @@ final class AgentBridgeServiceProvider extends ServiceProvider
             return;
         }
 
-        $adminFacade::registerExtensionPage(self::$packageName, $promptBuilderPage);
-        $this->registerUserResourceBridge();
+        if ($this->supportsAdminBridges()) {
+            CapellAdmin::registerAdminBridge(self::$packageName, AgentBridgeAdminBridge::class);
+            CapellAdmin::bootAdminBridges(self::$packageName);
+        } else {
+            $adminFacade::registerExtensionPage(self::$packageName, $promptBuilderPage);
+            $this->registerUserResourceBridgeFallback();
+        }
 
         if (! class_exists(FilamentView::class) || ! class_exists(PanelsRenderHook::class)) {
             return;
@@ -204,16 +210,9 @@ final class AgentBridgeServiceProvider extends ServiceProvider
         return $registry;
     }
 
-    private function registerUserResourceBridge(): void
+    private function registerUserResourceBridgeFallback(): void
     {
         if (! interface_exists(UserSchemaExtender::class)) {
-            return;
-        }
-
-        if ($this->supportsAdminBridges()) {
-            CapellAdmin::registerAdminBridge(self::$packageName, AgentBridgeAdminBridge::class);
-            CapellAdmin::bootAdminBridges(self::$packageName);
-
             return;
         }
 
@@ -232,7 +231,10 @@ final class AgentBridgeServiceProvider extends ServiceProvider
         return is_object($admin)
             && method_exists($admin, 'registerAdminBridge')
             && method_exists($admin, 'bootAdminBridges')
-            && class_exists(AgentBridgeAdminBridge::class);
+            && class_exists(AgentBridgeAdminBridge::class)
+            && class_exists(AdminBridgeRegistrar::class)
+            && method_exists(AdminBridgeRegistrar::class, 'extensionPage')
+            && method_exists(AdminBridgeRegistrar::class, 'schemaExtender');
     }
 
     private function registerBuiltInCapabilities(): void

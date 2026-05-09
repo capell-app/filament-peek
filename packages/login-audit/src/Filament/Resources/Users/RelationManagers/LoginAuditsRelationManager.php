@@ -40,10 +40,10 @@ final class LoginAuditsRelationManager extends RelationManager
                 TextColumn::make('login_successful')
                     ->label(__('capell-login-audit::settings.access_status'))
                     ->badge()
-                    ->formatStateUsing(fn (mixed $state): string => $state
+                    ->formatStateUsing(fn (mixed $state): string => $this->loginSuccessful($state)
                         ? __('capell-login-audit::settings.access_successful')
                         : __('capell-login-audit::settings.access_failed'))
-                    ->color(fn (mixed $state): string => $state ? 'success' : 'danger')
+                    ->color(fn (mixed $state): string => $this->loginSuccessful($state) ? 'success' : 'danger')
                     ->sortable(),
                 TextColumn::make('ip_address')
                     ->label(trans('filament-authentication-log::filament-authentication-log.column.ip_address'))
@@ -94,5 +94,10 @@ final class LoginAuditsRelationManager extends RelationManager
     protected function canDelete(Model $record): bool
     {
         return false;
+    }
+
+    private function loginSuccessful(mixed $state): bool
+    {
+        return $state === true || $state === 1 || $state === '1';
     }
 }

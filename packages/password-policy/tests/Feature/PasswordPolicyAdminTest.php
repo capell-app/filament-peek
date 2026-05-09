@@ -2,19 +2,27 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Contracts\Extenders\UserFormExtender;
+use Capell\Admin\Contracts\Extenders\UserTableExtender;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Pages\SettingsPage;
 use Capell\Admin\Filament\Resources\Users\Pages\CreateUser;
 use Capell\Admin\Filament\Resources\Users\Pages\EditUser;
+use Capell\Admin\Support\CapellAdminManager;
 use Capell\Admin\Support\Extensions\ExtensionPageRegistry;
 use Capell\Core\Database\Factories\UserFactory;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\PasswordPolicy\Actions\MarkUserForPasswordChangeAction;
+use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyPanelExtender;
+use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyUserFormExtender;
 use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyUserTableExtender;
 use Capell\PasswordPolicy\Filament\Pages\ForcedPasswordChangePage;
 use Capell\PasswordPolicy\Filament\Pages\PasswordPolicySettingsPage;
+use Capell\PasswordPolicy\Providers\PasswordPolicyServiceProvider;
 use Capell\PasswordPolicy\Settings\PasswordPolicySettings;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
+use Capell\Tests\Support\LegacyAdminBridgeFallbackHost;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
@@ -29,6 +37,13 @@ beforeEach(function (): void {
     test()->actingAsAdmin();
     auth()->user()->givePermissionTo('View:SettingsPage');
 });
+
+function invokePasswordPolicyProviderMethod(object $provider, string $method): void
+{
+    $reflection = new ReflectionMethod($provider, $method);
+    $reflection->setAccessible(true);
+    $reflection->invoke($provider);
+}
 
 it('keeps package settings out of the global settings page', function (): void {
     $registry = resolve(SettingsSchemaRegistry::class);
@@ -49,6 +64,32 @@ it('registers password policy settings as an extension page', function (): void 
         ->first(fn (array $extensionPage): bool => $extensionPage['page'] === PasswordPolicySettingsPage::class);
 
     expect($extensionPage['page'] ?? null)->toBe(PasswordPolicySettingsPage::class);
+});
+
+it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {
+    $host = new LegacyAdminBridgeFallbackHost;
+    CapellAdmin::swap($host);
+
+    try {
+        invokePasswordPolicyProviderMethod(new PasswordPolicyServiceProvider(app()), 'registerAdminSurface');
+
+        $adminPanelExtenders = collect(app()->tagged(AdminPanelExtender::TAG))
+            ->map(fn (object $extender): string => $extender::class);
+        $userFormExtenders = collect(app()->tagged(UserFormExtender::TAG))
+            ->map(fn (object $extender): string => $extender::class);
+        $userTableExtenders = collect(app()->tagged(UserTableExtender::TAG))
+            ->map(fn (object $extender): string => $extender::class);
+
+        expect($host->extensionPages[PasswordPolicyServiceProvider::$packageName] ?? [])
+            ->toContain(PasswordPolicySettingsPage::class)
+            ->and(collect($host->surfaceContributions)->pluck('class'))->toContain(ForcedPasswordChangePage::class)
+            ->and($adminPanelExtenders)->toContain(PasswordPolicyPanelExtender::class)
+            ->and($userFormExtenders)->toContain(PasswordPolicyUserFormExtender::class)
+            ->and($userTableExtenders)->toContain(PasswordPolicyUserTableExtender::class);
+    } finally {
+        app()->forgetInstance(CapellAdminManager::class);
+        CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    }
 });
 
 it('saves password security settings from the package settings page', function (): void {

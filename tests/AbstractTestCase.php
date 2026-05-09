@@ -47,7 +47,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
@@ -80,7 +80,9 @@ abstract class AbstractTestCase extends TestCase
 {
     use BuildsOrderedMigrationWorkspace;
     use InteractsWithSession;
-    use LazilyRefreshDatabase;
+
+    // Add-on bridge compatibility tests need fresh facade/container state between cases.
+    use RefreshDatabase;
     use RegistersPublishedConfigs;
     use WithFaker;
     use WithWorkbench;

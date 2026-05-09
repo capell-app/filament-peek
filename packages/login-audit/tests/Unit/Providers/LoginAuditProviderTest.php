@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use Capell\Admin\Contracts\DashboardSettingsContributor;
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
+use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Support\CapellAdminManager;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\LoginAudit\Extenders\LoginAuditUserSchemaExtender;
 use Capell\LoginAudit\Filament\Extenders\LoginAuditAdminPanelExtender;
 use Capell\LoginAudit\Filament\Resources\LoginAudits\LoginAuditResource;
 use Capell\LoginAudit\Filament\Settings\Contributors\LoginAuditDashboardSettingsContributor;
@@ -18,6 +20,14 @@ use Capell\LoginAudit\Models\LoginAudit;
 use Capell\LoginAudit\Providers\AdminServiceProvider;
 use Capell\LoginAudit\Providers\LoginAuditServiceProvider;
 use Capell\LoginAudit\Settings\LoginAuditSettings;
+use Capell\Tests\Support\LegacyAdminBridgeFallbackHost;
+
+function invokeLoginAuditProviderMethod(object $provider, string $method): void
+{
+    $reflection = new ReflectionMethod($provider, $method);
+    $reflection->setAccessible(true);
+    $reflection->invoke($provider);
+}
 
 it('registers login-audit bridges through package-neutral Capell extension points', function (): void {
     $adminPanelExtenders = collect(app()->tagged(AdminPanelExtender::TAG))
@@ -71,4 +81,29 @@ it('registers admin surfaces when login-audit is installed', function (): void {
         ->toContain(LoginAuditResource::class)
         ->and(CapellAdmin::getDashboardWidgets(DashboardEnum::SystemHealth))
         ->toContain(LoginAuditsWidget::class);
+});
+
+it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {
+    $host = new LegacyAdminBridgeFallbackHost;
+    CapellAdmin::swap($host);
+
+    try {
+        invokeLoginAuditProviderMethod(new AdminServiceProvider(app()), 'registerAdminIntegration');
+
+        $userSchemaExtenders = collect(app()->tagged(UserSchemaExtender::TAG))
+            ->map(fn (object $extender): string => $extender::class);
+        $adminPanelExtenders = collect(app()->tagged(AdminPanelExtender::TAG))
+            ->map(fn (object $extender): string => $extender::class);
+        $dashboardContributors = collect(app()->tagged(DashboardSettingsContributor::TAG))
+            ->map(fn (object $contributor): string => $contributor::class);
+
+        expect($userSchemaExtenders)->toContain(LoginAuditUserSchemaExtender::class)
+            ->and($adminPanelExtenders)->toContain(LoginAuditAdminPanelExtender::class)
+            ->and($dashboardContributors)->toContain(LoginAuditDashboardSettingsContributor::class)
+            ->and(collect($host->surfaceContributions)->pluck('class'))->toContain(LoginAuditResource::class)
+            ->and(array_keys($host->dashboardWidgets))->toContain(LoginAuditsWidget::class);
+    } finally {
+        app()->forgetInstance(CapellAdminManager::class);
+        CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    }
 });

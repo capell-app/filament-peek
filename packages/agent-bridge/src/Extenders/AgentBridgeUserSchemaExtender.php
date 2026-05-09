@@ -33,7 +33,7 @@ final class AgentBridgeUserSchemaExtender extends AbstractUserSchemaExtender
             return ShouldLoadUserResourceBridgeAction::run(
                 'enable_agent_bridge_user_bridge',
                 resolve(AgentBridgeSettings::class)->enable_user_resource_bridge,
-            );
+            ) === true;
         } catch (Throwable) {
             return false;
         }

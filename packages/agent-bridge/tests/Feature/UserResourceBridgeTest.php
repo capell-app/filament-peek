@@ -5,8 +5,11 @@ declare(strict_types=1);
 use Capell\Admin\Actions\Users\ShouldLoadUserResourceBridgeAction;
 use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Data\Schemas\UserSchemaContextData;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Settings\AdminSettings;
+use Capell\Admin\Support\CapellAdminManager;
 use Capell\AgentBridge\Extenders\AgentBridgeUserSchemaExtender;
+use Capell\AgentBridge\Filament\Pages\CapellAgentBridgePromptBuilderPage;
 use Capell\AgentBridge\Filament\Resources\Users\RelationManagers\AgentBridgeAuditEntriesRelationManager;
 use Capell\AgentBridge\Filament\Resources\Users\RelationManagers\AgentBridgeConfirmationsRelationManager;
 use Capell\AgentBridge\Filament\Resources\Users\RelationManagers\AgentBridgeTokensRelationManager;
@@ -14,9 +17,11 @@ use Capell\AgentBridge\Filament\Settings\AgentBridgeSettingsSchema;
 use Capell\AgentBridge\Models\CapellAgentBridgeAuditEntry;
 use Capell\AgentBridge\Models\CapellAgentBridgeConfirmation;
 use Capell\AgentBridge\Models\CapellAgentBridgeToken;
+use Capell\AgentBridge\Providers\AgentBridgeServiceProvider;
 use Capell\AgentBridge\Settings\AgentBridgeSettings;
 use Capell\AgentBridge\Tests\Fixtures\User;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\Tests\Support\LegacyAdminBridgeFallbackHost;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
@@ -41,6 +46,13 @@ function seedAdminSettings(): void
 {
     $settingsMigration = require dirname(__DIR__, 5) . '/capell-4/packages/admin/database/settings/add_admin_settings.php';
     $settingsMigration->up();
+}
+
+function invokeAgentBridgeProviderMethod(object $provider, string $method): void
+{
+    $reflection = new ReflectionMethod($provider, $method);
+    $reflection->setAccessible(true);
+    $reflection->invoke($provider);
 }
 
 function updateSetting(string $settingKey, mixed $value): void
@@ -130,6 +142,24 @@ it('tags the user schema extender when the admin bridge host exists', function (
 
     expect(class_exists(ShouldLoadUserResourceBridgeAction::class))->toBeTrue()
         ->and(collect($taggedExtenders)->contains(fn (object $extender): bool => $extender instanceof AgentBridgeUserSchemaExtender))->toBeTrue();
+});
+
+it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {
+    $host = new LegacyAdminBridgeFallbackHost;
+    CapellAdmin::swap($host);
+
+    try {
+        invokeAgentBridgeProviderMethod(new AgentBridgeServiceProvider(app()), 'registerAdminIntegration');
+
+        $taggedExtenders = iterator_to_array(app()->tagged(UserSchemaExtender::TAG));
+
+        expect($host->extensionPages[AgentBridgeServiceProvider::$packageName] ?? [])
+            ->toContain(CapellAgentBridgePromptBuilderPage::class)
+            ->and(collect($taggedExtenders)->contains(fn (object $extender): bool => $extender instanceof AgentBridgeUserSchemaExtender))->toBeTrue();
+    } finally {
+        app()->forgetInstance(CapellAdminManager::class);
+        CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    }
 });
 
 it('scopes tokens confirmations and audit entries to the edited user', function (): void {

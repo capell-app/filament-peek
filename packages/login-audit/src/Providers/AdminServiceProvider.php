@@ -10,6 +10,7 @@ use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Core\Facades\CapellCore;
 use Capell\LoginAudit\Actions\ApplyLoginAuditSettingsAction;
 use Capell\LoginAudit\Bridges\LoginAuditAdminBridge;
@@ -94,7 +95,13 @@ class AdminServiceProvider extends ServiceProvider
         return is_object($admin)
             && method_exists($admin, 'registerAdminBridge')
             && method_exists($admin, 'bootAdminBridges')
-            && class_exists(LoginAuditAdminBridge::class);
+            && class_exists(LoginAuditAdminBridge::class)
+            && class_exists(AdminBridgeRegistrar::class)
+            && method_exists(AdminBridgeRegistrar::class, 'schemaExtender')
+            && method_exists(AdminBridgeRegistrar::class, 'panelExtender')
+            && method_exists(AdminBridgeRegistrar::class, 'resource')
+            && method_exists(AdminBridgeRegistrar::class, 'dashboardWidget')
+            && method_exists(AdminBridgeRegistrar::class, 'dashboardSettingsContributor');
     }
 
     private function isPackageInstalled(): bool

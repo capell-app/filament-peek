@@ -9,6 +9,7 @@ use Capell\Admin\Contracts\Extenders\UserFormExtender;
 use Capell\Admin\Contracts\Extenders\UserTableExtender;
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsGroupMetadata;
@@ -140,7 +141,13 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
         return is_object($admin)
             && method_exists($admin, 'registerAdminBridge')
             && method_exists($admin, 'bootAdminBridges')
-            && class_exists(PasswordPolicyAdminBridge::class);
+            && class_exists(PasswordPolicyAdminBridge::class)
+            && class_exists(AdminBridgeRegistrar::class)
+            && method_exists(AdminBridgeRegistrar::class, 'extensionPage')
+            && method_exists(AdminBridgeRegistrar::class, 'page')
+            && method_exists(AdminBridgeRegistrar::class, 'panelExtender')
+            && method_exists(AdminBridgeRegistrar::class, 'userFormExtender')
+            && method_exists(AdminBridgeRegistrar::class, 'userTableExtender');
     }
 
     private function registerConfigSettings(): self

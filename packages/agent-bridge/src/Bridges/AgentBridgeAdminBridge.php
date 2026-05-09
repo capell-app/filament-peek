@@ -9,6 +9,7 @@ use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Data\Bridges\AdminBridgeContextData;
 use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\AgentBridge\Extenders\AgentBridgeUserSchemaExtender;
+use Capell\AgentBridge\Filament\Pages\CapellAgentBridgePromptBuilderPage;
 
 final class AgentBridgeAdminBridge implements AdminBridge
 {
@@ -19,6 +20,7 @@ final class AgentBridgeAdminBridge implements AdminBridge
 
     public function register(AdminBridgeRegistrar $registrar, AdminBridgeContextData $context): void
     {
+        $registrar->extensionPage($context->packageName, CapellAgentBridgePromptBuilderPage::class);
         $registrar->schemaExtender(AgentBridgeUserSchemaExtender::class, UserSchemaExtender::TAG);
     }
 }

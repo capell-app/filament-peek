@@ -24,14 +24,14 @@ final class LoginAuditUserSchemaExtender extends AbstractUserSchemaExtender
     #[Override]
     public function supports(UserSchemaContextData $context): bool
     {
-        if (! ShouldLoadUserResourceBridgeAction::run('enable_security_access_user_bridge', true)) {
+        if (ShouldLoadUserResourceBridgeAction::run('enable_security_access_user_bridge', true) !== true) {
             return false;
         }
 
         return ShouldLoadUserResourceBridgeAction::run(
             'enable_login_audit_user_bridge',
             resolve(LoginAuditSettings::class)->enable_user_resource_bridge,
-        );
+        ) === true;
     }
 
     #[Override]

@@ -1,0 +1,60 @@
+{
+    "manifest-version": 2,
+    "name": "capell-app/public-actions",
+    "kind": "package",
+    "capell-version": "^4.0",
+    "productGroup": "Capell Automation",
+    "tier": "premium",
+    "bundle": "automation",
+    "description": "Public Actions lets Capell sites run configured server-side actions and outbound automation from safe public submissions.",
+    "surfaces": ["admin", "frontend", "api", "queue"],
+    "dependencies": {
+        "requires": [
+            "capell-app/admin",
+            "capell-app/core",
+            "capell-app/frontend"
+        ],
+        "optional": [
+            "capell-app/access-gate",
+            "capell-app/form-builder"
+        ],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
+    "providers": {
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\PublicActions\\Providers\\PublicActionsServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [
+        "public-actions",
+        "submit-actions",
+        "automation-webhooks",
+        "zapier-integration"
+    ],
+    "assets": [],
+    "healthChecks": []
+}

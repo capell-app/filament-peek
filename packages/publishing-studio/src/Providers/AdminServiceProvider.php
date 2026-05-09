@@ -15,6 +15,7 @@ use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Admin\Support\Dashboard\DefaultSiteStatsDataProvider;
 use Capell\Admin\Support\Dashboard\NullContentHealthDataProvider;
 use Capell\Admin\Support\Dashboard\NullMyWorkQueueDataProvider;
@@ -254,7 +255,12 @@ class AdminServiceProvider extends ServiceProvider
         return is_object($admin)
             && method_exists($admin, 'registerAdminBridge')
             && method_exists($admin, 'bootAdminBridges')
-            && class_exists(PublishingStudioAdminBridge::class);
+            && class_exists(PublishingStudioAdminBridge::class)
+            && class_exists(AdminBridgeRegistrar::class)
+            && method_exists(AdminBridgeRegistrar::class, 'schemaExtender')
+            && method_exists(AdminBridgeRegistrar::class, 'dashboardWidget')
+            && method_exists(AdminBridgeRegistrar::class, 'resource')
+            && method_exists(AdminBridgeRegistrar::class, 'extensionPage');
     }
 
     private function registerOverviewStats(): self

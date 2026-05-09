@@ -8,7 +8,6 @@ use Capell\Admin\Contracts\Bridges\AdminBridge;
 use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Data\Bridges\AdminBridgeContextData;
 use Capell\Admin\Enums\DashboardEnum;
-use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
 use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
@@ -37,9 +36,9 @@ final class PublishingStudioAdminBridge implements AdminBridge
         $registrar->resource(WorkspaceResource::class, group: 'Workspace');
         $registrar->resource(PreviewLinkResource::class, group: 'PreviewLink');
 
-        CapellAdmin::registerExtensionPage($context->packageName, ActivityTrailPage::class);
-        CapellAdmin::registerExtensionPage($context->packageName, ImportPagesPage::class);
-        CapellAdmin::registerExtensionPage($context->packageName, ScheduledPublishingPage::class);
-        CapellAdmin::registerExtensionPage($context->packageName, StaleDraftsPage::class);
+        $registrar->extensionPage($context->packageName, ActivityTrailPage::class);
+        $registrar->extensionPage($context->packageName, ImportPagesPage::class);
+        $registrar->extensionPage($context->packageName, ScheduledPublishingPage::class);
+        $registrar->extensionPage($context->packageName, StaleDraftsPage::class);
     }
 }

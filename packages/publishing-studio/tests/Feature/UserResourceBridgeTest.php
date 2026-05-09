@@ -2,13 +2,25 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Data\Schemas\UserSchemaContextData;
+use Capell\Admin\Enums\DashboardEnum;
+use Capell\Admin\Facades\CapellAdmin;
+use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
+use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
 use Capell\Admin\Settings\AdminSettings;
+use Capell\Admin\Support\CapellAdminManager;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\PublishingStudio\Enums\ReviewDecisionEnum;
 use Capell\PublishingStudio\Enums\WorkspaceApprovalActionEnum;
 use Capell\PublishingStudio\Extenders\PublishingStudioUserSchemaExtender;
+use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
+use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
+use Capell\PublishingStudio\Filament\Pages\ScheduledPublishingPage;
+use Capell\PublishingStudio\Filament\Pages\StaleDraftsPage;
+use Capell\PublishingStudio\Filament\Resources\PreviewLinks\PreviewLinkResource;
+use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
 use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\PreviewLinksRelationManager;
 use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\VersionsRelationManager;
 use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\WorkspaceApprovalsRelationManager;
@@ -16,14 +28,18 @@ use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\WorkspaceF
 use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\WorkspaceReviewAssignmentsRelationManager;
 use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\WorkspacesRelationManager;
 use Capell\PublishingStudio\Filament\Settings\PublishingStudioSettingsSchema;
+use Capell\PublishingStudio\Filament\Widgets\WorkspaceActivityWidgetAbstract;
 use Capell\PublishingStudio\Models\PreviewLink;
 use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Models\WorkspaceApproval;
 use Capell\PublishingStudio\Models\WorkspaceFieldComment;
 use Capell\PublishingStudio\Models\WorkspaceReviewAssignment;
+use Capell\PublishingStudio\Providers\AdminServiceProvider;
+use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
 use Capell\PublishingStudio\Settings\PublishingStudioSettings;
 use Capell\Tests\Fixtures\Models\User;
+use Capell\Tests\Support\LegacyAdminBridgeFallbackHost;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -73,6 +89,13 @@ function seedPublishingStudioBridgeSettings(bool $adminEnabled = true, bool $pac
     app()->forgetInstance(PublishingStudioSettings::class);
 }
 
+function invokePublishingStudioProviderMethod(object $provider, string $method): void
+{
+    $reflection = new ReflectionMethod($provider, $method);
+    $reflection->setAccessible(true);
+    $reflection->invoke($provider);
+}
+
 function runPublishingStudioSettingsMigration(): void
 {
     /** @var SettingsMigration $migration */
@@ -117,6 +140,34 @@ it('registers and hydrates publishing studio settings', function (): void {
         ->and($registry->getSchema('publishing_studio', 'PublishingStudioSettingsSchema'))->toBe(PublishingStudioSettingsSchema::class)
         ->and($components[0])->toBeInstanceOf(Toggle::class)
         ->and($components[0]->getName())->toBe('enable_user_resource_bridge');
+});
+
+it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {
+    $host = new LegacyAdminBridgeFallbackHost;
+    CapellAdmin::swap($host);
+
+    try {
+        invokePublishingStudioProviderMethod(new AdminServiceProvider(app()), 'registerFilamentExtensions');
+
+        $taggedExtenders = collect(app()->tagged(UserSchemaExtender::TAG))
+            ->map(fn (object $extender): string => $extender::class);
+        $registeredSurfaceClasses = collect($host->surfaceContributions)->pluck('class');
+
+        expect($taggedExtenders)->toContain(PublishingStudioUserSchemaExtender::class)
+            ->and(array_keys($host->dashboardWidgets))->toContain(MyWorkQueueWidget::class)
+            ->and(array_keys($host->dashboardWidgets))->toContain(RecentlyPublishedWidget::class)
+            ->and(array_keys($host->dashboardWidgets))->toContain(WorkspaceActivityWidgetAbstract::class)
+            ->and($host->dashboardWidgets[MyWorkQueueWidget::class])->toContain(DashboardEnum::Main)
+            ->and($registeredSurfaceClasses)->toContain(WorkspaceResource::class)
+            ->and($registeredSurfaceClasses)->toContain(PreviewLinkResource::class)
+            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ActivityTrailPage::class)
+            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ImportPagesPage::class)
+            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ScheduledPublishingPage::class)
+            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(StaleDraftsPage::class);
+    } finally {
+        app()->forgetInstance(CapellAdminManager::class);
+        CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    }
 });
 
 it('keeps the publishing studio settings migration idempotent', function (): void {

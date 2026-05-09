@@ -92,7 +92,7 @@ class PublishingStudioUserSchemaExtender extends AbstractUserSchemaExtender
         $actionClass = 'Capell\\Admin\\Actions\\Users\\ShouldLoadUserResourceBridgeAction';
 
         if (class_exists($actionClass) && method_exists($actionClass, 'run')) {
-            if (! $actionClass::run('enable_content_ownership_user_bridge', true)) {
+            if ($actionClass::run('enable_content_ownership_user_bridge', true) !== true) {
                 return false;
             }
 
@@ -100,7 +100,7 @@ class PublishingStudioUserSchemaExtender extends AbstractUserSchemaExtender
                 'enable_publishing_studio_user_bridge',
                 $packageSettingEnabled,
                 PublishingStudioServiceProvider::$packageName,
-            );
+            ) === true;
         }
 
         return $packageSettingEnabled;
