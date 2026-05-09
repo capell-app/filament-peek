@@ -4,11 +4,19 @@ declare(strict_types=1);
 
 namespace Capell\SeoSuite\Http\Controllers;
 
+use Capell\Core\Models\Language;
+use Capell\Core\Models\Site;
 use Capell\Frontend\Facades\Frontend;
 use Capell\SeoSuite\Actions\GenerateLlmsTxtAction;
+use Capell\SeoSuite\Actions\PersistAiDiscoverySnapshotAction;
+use Capell\SeoSuite\Actions\ResolveAiDiscoveryProfileAction;
+use Capell\SeoSuite\Data\AiDiscoveryRenderContextData;
+use Capell\SeoSuite\Enums\AiDiscoverySnapshotKindEnum;
+use Capell\SeoSuite\Models\AiDiscoverySiteProfile;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Cache;
+use LogicException;
 
 class LlmsTxtController extends BaseController
 {
@@ -16,16 +24,43 @@ class LlmsTxtController extends BaseController
     {
         $site = Frontend::site();
         $language = Frontend::language();
+        $reader = Frontend::contextReader();
+        $siteDomain = method_exists($reader, 'domain') ? $reader->domain() : null;
 
-        abort_if($site->getMeta('llms_txt_enabled') === false, 404);
+        abort_unless($site instanceof Site && $language instanceof Language, 404);
 
-        $cacheKey = sprintf('llms_txt_%d_%d', $site->id, $language->id);
+        $siteProfile = ResolveAiDiscoveryProfileAction::run($site, $language);
 
-        $content = Cache::remember($cacheKey, 3600, fn (): string => GenerateLlmsTxtAction::run($site, $language));
+        throw_unless($siteProfile instanceof AiDiscoverySiteProfile, LogicException::class, 'Resolving an AI Discovery site profile returned an unexpected page profile.');
+
+        abort_if(! $siteProfile->llms_txt_enabled, 404);
+
+        $context = new AiDiscoveryRenderContextData($site, $language, $siteDomain);
+        $cacheKey = sprintf(
+            'capell-seo-suite:ai-discovery:%d:%s:%d:llms_txt',
+            $site->getKey(),
+            $context->domainKey(),
+            $language->getKey(),
+        );
+        $ttlSeconds = $siteProfile->cache_ttl_seconds;
+        $content = Cache::remember($cacheKey, $ttlSeconds, function () use ($cacheKey, $context, $ttlSeconds): string {
+            $generatedContent = GenerateLlmsTxtAction::run($context);
+
+            PersistAiDiscoverySnapshotAction::run(
+                context: $context,
+                kind: AiDiscoverySnapshotKindEnum::LlmsTxt,
+                content: $generatedContent,
+                cacheKey: $cacheKey,
+                ttlSeconds: $ttlSeconds,
+            );
+
+            return $generatedContent;
+        });
 
         return response($content, 200, [
-            'Content-Type' => 'text/plain; charset=utf-8',
-            'Cache-Control' => 'public, max-age=3600',
+            'Content-Type' => 'text/markdown; charset=utf-8',
+            'Cache-Control' => sprintf('public, max-age=%d', $ttlSeconds),
+            'ETag' => '"' . hash('sha256', $content) . '"',
         ]);
     }
 }

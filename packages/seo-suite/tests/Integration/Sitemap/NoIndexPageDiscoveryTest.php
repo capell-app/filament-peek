@@ -6,15 +6,40 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\SeoSuite\Actions\GenerateLlmsTxtAction;
+use Capell\SeoSuite\Data\AiDiscoveryRenderContextData;
 use Capell\SeoSuite\Support\Sitemap\Queries\PagesForSitemap;
+use Capell\SeoSuite\Tests\Support\AiDiscoveryIntegrationTestCase;
+use Composer\Autoload\ClassLoader;
 use Illuminate\Support\Facades\Cache;
+
+$composerAutoloader = require getcwd() . '/vendor/autoload.php';
+
+if ($composerAutoloader instanceof ClassLoader) {
+    $packageRoot = dirname(__DIR__, 3);
+
+    $composerAutoloader->addPsr4('Capell\\SeoSuite\\', $packageRoot . '/src');
+    $composerAutoloader->addPsr4('Capell\\SeoSuite\\Database\\Factories\\', $packageRoot . '/database/factories');
+    $composerAutoloader->addPsr4('Capell\\SeoSuite\\Tests\\', $packageRoot . '/tests');
+}
+
+require_once dirname(__DIR__, 2) . '/Support/AiDiscoveryIntegrationTestCase.php';
+
+uses(AiDiscoveryIntegrationTestCase::class);
 
 beforeEach(function (): void {
     Cache::flush();
 });
 
 it('excludes page meta noindex pages from sitemap page discovery and llms txt', function (): void {
-    $language = Language::factory()->state(['locale' => 'en'])->create();
+    $language = Language::query()->create([
+        'name' => 'English',
+        'locale' => 'en',
+        'code' => 'en',
+        'flag' => 'gb-eng',
+        'status' => true,
+        'default' => true,
+        'order' => 1,
+    ]);
     $site = Site::factory()->language($language)->withTranslations($language)->create();
 
     $publicPage = Page::factory()
@@ -30,8 +55,11 @@ it('excludes page meta noindex pages from sitemap page discovery and llms txt', 
 
     $pages = resolve(PagesForSitemap::class)->get($site, $language);
     $llmsTxt = GenerateLlmsTxtAction::run($site, $language);
+    $contextLlmsTxt = GenerateLlmsTxtAction::run(new AiDiscoveryRenderContextData($site, $language, $site->siteDomains()->first()));
 
     expect($pages->pluck('id')->all())->toBe([$publicPage->getKey()])
         ->and($llmsTxt)->toContain('Public Page')
-        ->and($llmsTxt)->not->toContain('Private Page');
+        ->and($llmsTxt)->not->toContain('Private Page')
+        ->and($contextLlmsTxt)->toContain('Public Page')
+        ->and($contextLlmsTxt)->not->toContain('Private Page');
 });
