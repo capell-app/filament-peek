@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\PublishingStudio\Actions\Dashboard\BuildWorkspaceActivityAction;
 use Capell\PublishingStudio\Data\Dashboard\WorkspaceActivityData;
 use Capell\PublishingStudio\Data\Dashboard\WorkspaceMergeData;
+use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Computed;
 use Spatie\LaravelData\DataCollection;
@@ -27,9 +28,22 @@ final class WorkspaceActivityWidgetAbstract extends Widget implements CapellWidg
     /** @var int|string|array<string, int|string|null> */
     protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
 
+    public static function canView(): bool
+    {
+        return WorkspaceSchema::isReady() && self::canViewCheck();
+    }
+
     #[Computed(persist: true, seconds: 60)]
     public function data(): WorkspaceActivityData
     {
+        if (! WorkspaceSchema::isReady()) {
+            return new WorkspaceActivityData(
+                pendingApprovalsCount: 0,
+                stuckCount: 0,
+                recentMerges: WorkspaceMergeData::collect([], DataCollection::class),
+            );
+        }
+
         $user = auth()->user();
 
         if ($user === null) {

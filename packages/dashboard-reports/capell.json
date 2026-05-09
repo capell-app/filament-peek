@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/dashboard-reports",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,12 +7,49 @@
     "tier": "core-addon",
     "bundle": "operations",
     "description": "Dashboard Reports provides generic CMS reporting widgets for Capell dashboards.",
-    "contexts": ["admin"],
-    "requires": ["capell-app/core", "capell-app/admin"],
+    "surfaces": [
+        "admin"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/admin"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": [
+        "metadata": [],
+        "install": [],
+        "runtime": [
             "Capell\\DashboardReports\\Providers\\DashboardReportsServiceProvider"
         ],
-        "admin": ["Capell\\DashboardReports\\Providers\\AdminServiceProvider"]
-    }
+        "admin": [
+            "Capell\\DashboardReports\\Providers\\AdminServiceProvider"
+        ],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

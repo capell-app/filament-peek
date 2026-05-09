@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/theme-corporate",
     "kind": "theme",
     "capell-version": "^4.0",
@@ -7,12 +8,47 @@
     "bundle": "themes",
     "description": "Theme Corporate registers the corporate theme key and restrained renderer views for B2B, public sector, and professional-service sites.",
     "themeKey": "corporate",
-    "contexts": ["frontend"],
     "extends": "capell-app/foundation-theme",
-    "requires": ["capell-app/foundation-theme"],
+    "surfaces": [
+        "frontend"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/foundation-theme"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": [
+        "metadata": [],
+        "install": [],
+        "runtime": [
             "Capell\\ThemeStudio\\Corporate\\CorporateThemeServiceProvider"
-        ]
-    }
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

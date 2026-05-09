@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/ga4-reports",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,10 +7,50 @@
     "tier": "premium",
     "bundle": "growth",
     "description": "GA4 Reports provides dashboard reporting for Capell.",
-    "contexts": ["admin", "console"],
-    "requires": ["capell-app/core", "capell-app/admin"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/admin"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": ["Capell\\GA4Reports\\Providers\\GA4ReportsServiceProvider"],
-        "admin": ["Capell\\GA4Reports\\Providers\\AdminServiceProvider"]
-    }
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\GA4Reports\\Providers\\GA4ReportsServiceProvider"
+        ],
+        "admin": [
+            "Capell\\GA4Reports\\Providers\\AdminServiceProvider"
+        ],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": true,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

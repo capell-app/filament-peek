@@ -10,6 +10,7 @@ use Capell\PublishingStudio\Data\SchedulerEventData;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
 use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -154,6 +155,10 @@ final class BuildContentSchedulerEventsAction
      */
     private function workspaceSchedulerColumns(): array
     {
+        if (! WorkspaceSchema::hasWorkspaceTable()) {
+            return [];
+        }
+
         $columns = Schema::getColumnListing((new Workspace)->getTable());
 
         return array_values(array_intersect([

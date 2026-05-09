@@ -1,27 +1,63 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/campaign-studio",
     "kind": "package",
     "capell-version": "^4.0",
     "productGroup": "Capell Growth",
     "tier": "premium",
     "bundle": "growth",
-    "contexts": ["admin", "frontend"],
     "description": "CampaignStudio adds campaign groups, landing pages, CTA blocks, conversion goals, UTM attribution, and conversion reporting to Capell.",
+    "surfaces": [
+        "admin",
+        "frontend"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/admin",
+            "capell-app/frontend",
+            "capell-app/insights",
+            "capell-app/form-builder"
+        ],
+        "optional": [
+            "capell-app/seo-suite"
+        ],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": [
+        "metadata": [],
+        "install": [],
+        "runtime": [
             "Capell\\CampaignStudio\\Providers\\CampaignStudioServiceProvider"
         ],
-        "admin": ["Capell\\CampaignStudio\\Providers\\AdminServiceProvider"],
+        "admin": [
+            "Capell\\CampaignStudio\\Providers\\AdminServiceProvider"
+        ],
         "frontend": [
             "Capell\\CampaignStudio\\Providers\\FrontendServiceProvider"
         ]
     },
-    "requires": [
-        "capell-app/core",
-        "capell-app/admin",
-        "capell-app/frontend",
-        "capell-app/insights",
-        "capell-app/form-builder"
-    ],
-    "optional": ["capell-app/seo-suite"]
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

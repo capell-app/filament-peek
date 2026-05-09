@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/diagnostics",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,12 +7,50 @@
     "tier": "premium",
     "bundle": "operations",
     "description": "Diagnostics adds operational diagnostics for cache, configuration drift, migrations, packages, registries, queues, permissions, setup health, and Tailwind build status.",
-    "contexts": ["admin", "console"],
-    "requires": ["capell-app/core", "capell-app/admin"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/admin"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": [
+        "metadata": [],
+        "install": [],
+        "runtime": [
             "Capell\\Diagnostics\\Providers\\DiagnosticsServiceProvider"
         ],
-        "admin": ["Capell\\Diagnostics\\Providers\\AdminServiceProvider"]
-    }
+        "admin": [
+            "Capell\\Diagnostics\\Providers\\AdminServiceProvider"
+        ],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

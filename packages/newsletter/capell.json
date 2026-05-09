@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/newsletter",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,16 +7,53 @@
     "tier": "premium",
     "bundle": "newsletter",
     "description": "Newsletter adds subscriber capture and audience workflows for Capell sites.",
-    "contexts": ["admin", "frontend"],
-    "requires": [
-        "capell-app/core",
-        "capell-app/admin",
-        "capell-app/frontend",
-        "capell-app/form-builder",
-        "capell-app/tags"
+    "surfaces": [
+        "admin",
+        "frontend"
     ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/admin",
+            "capell-app/frontend",
+            "capell-app/form-builder",
+            "capell-app/tags"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": ["Capell\\Newsletter\\Providers\\NewsletterServiceProvider"],
-        "admin": ["Capell\\Newsletter\\Providers\\AdminServiceProvider"]
-    }
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\Newsletter\\Providers\\NewsletterServiceProvider"
+        ],
+        "admin": [
+            "Capell\\Newsletter\\Providers\\AdminServiceProvider"
+        ],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

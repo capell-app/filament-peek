@@ -1,17 +1,53 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/foundation-theme",
     "kind": "theme",
-    "themeKey": "default",
     "capell-version": "^4.0",
     "productGroup": "Capell Foundation",
     "tier": "free",
     "bundle": "foundation",
     "description": "Foundation Theme provides the default Capell theme assets, Tailwind pipeline, Blade directives, and media handling.",
-    "contexts": ["frontend", "admin"],
+    "themeKey": "default",
     "extends": null,
+    "surfaces": [
+        "frontend",
+        "admin"
+    ],
+    "dependencies": {
+        "requires": [],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": [
+        "metadata": [],
+        "install": [],
+        "runtime": [
             "Capell\\FoundationTheme\\Providers\\FoundationThemeServiceProvider"
-        ]
-    }
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": true,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

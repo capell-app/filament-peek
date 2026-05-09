@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/frontend-authoring",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,12 +7,52 @@
     "tier": "free",
     "bundle": "foundation",
     "description": "Frontend Authoring owns the admin beacon, in-page edit manifest, signed edit routes, and cache-aware field saves.",
-    "contexts": ["frontend", "console"],
-    "requires": ["capell-app/core", "capell-app/admin", "capell-app/frontend"],
-    "providers": {
-        "shared": [
-            "Capell\\FrontendAuthoring\\Providers\\FrontendAuthoringServiceProvider"
-        ]
+    "surfaces": [
+        "frontend",
+        "console"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/admin",
+            "capell-app/frontend"
+        ],
+        "optional": [],
+        "conflicts": []
     },
-    "scopes": ["frontend"]
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
+    "providers": {
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\FrontendAuthoring\\Providers\\FrontendAuthoringServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": [],
+    "scopes": [
+        "frontend"
+    ]
 }

@@ -14,6 +14,7 @@ use Capell\PublishingStudio\Filament\Resources\PublishingStudio\Pages\ManagePubl
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\Schemas\WorkspaceForm;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\Tables\PublishingStudioTable;
 use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -21,14 +22,15 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Schema as SchemaFacade;
 use Override;
 
 class WorkspaceResource extends Resource
 {
     use HasConfiguredForm;
     use HasConfiguredTable;
-    use HasNavigationBadge;
+    use HasNavigationBadge {
+        getNavigationBadge as protected getConfiguredNavigationBadge;
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -77,9 +79,19 @@ class WorkspaceResource extends Resource
         return ['name', 'slug', 'description'];
     }
 
+    public static function canAccess(): bool
+    {
+        return WorkspaceSchema::isReady() && parent::canAccess();
+    }
+
     public static function canGloballySearch(): bool
     {
-        return SchemaFacade::hasTable('publishing-studio') && parent::canGloballySearch();
+        return WorkspaceSchema::isReady() && parent::canGloballySearch();
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return WorkspaceSchema::isReady() ? static::getConfiguredNavigationBadge() : null;
     }
 
     /**

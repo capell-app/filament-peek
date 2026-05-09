@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/theme-saas",
     "kind": "theme",
     "capell-version": "^4.0",
@@ -7,10 +8,47 @@
     "bundle": "themes",
     "description": "Theme SaaS registers the saas theme key and product-focused renderer views for software and subscription sites.",
     "themeKey": "saas",
-    "contexts": ["frontend"],
     "extends": "capell-app/foundation-theme",
-    "requires": ["capell-app/foundation-theme"],
+    "surfaces": [
+        "frontend"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/foundation-theme"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": ["Capell\\ThemeStudio\\Saas\\SaasThemeServiceProvider"]
-    }
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\ThemeStudio\\Saas\\SaasThemeServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

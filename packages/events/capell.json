@@ -1,26 +1,60 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/events",
+    "kind": "plugin",
     "capell-version": "^4.0",
     "title": "Events",
     "description": "Events adds listings, recurring events, venues, RSVPs, calendar feeds, and Event schema.",
-    "kind": "plugin",
-    "contexts": ["admin", "frontend", "console"],
-    "requires": [
-        "capell-app/admin",
-        "capell-app/frontend",
-        "capell-app/navigation",
-        "capell-app/publishing-studio"
+    "surfaces": [
+        "admin",
+        "frontend",
+        "console"
     ],
-    "optional": [
-        "capell-app/address",
-        "capell-app/form-builder",
-        "capell-app/seo-suite",
-        "capell-app/tags"
-    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/admin",
+            "capell-app/frontend",
+            "capell-app/navigation",
+            "capell-app/publishing-studio"
+        ],
+        "optional": [
+            "capell-app/address",
+            "capell-app/form-builder",
+            "capell-app/seo-suite",
+            "capell-app/tags"
+        ],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": true
+    },
     "providers": {
-        "shared": ["Capell\\Events\\Providers\\EventsServiceProvider"]
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\Events\\Providers\\EventsServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
     },
     "commands": {
-        "install": "capell:events-install"
-    }
+        "install": "capell:events-install",
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

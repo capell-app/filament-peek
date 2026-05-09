@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/seo-suite",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,13 +7,50 @@
     "tier": "premium",
     "bundle": "search-seo",
     "description": "SEO Suite adds metadata panels, sitemap generation, structured data, broken link tracking, Search Console insights, AI-assisted content briefs, and publish checks.",
-    "contexts": ["admin", "frontend", "console"],
-    "requires": [
-        "capell-app/admin",
-        "capell-app/insights",
-        "capell-app/frontend"
+    "surfaces": [
+        "admin",
+        "frontend",
+        "console"
     ],
+    "dependencies": {
+        "requires": [
+            "capell-app/admin",
+            "capell-app/insights",
+            "capell-app/frontend"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": ["Capell\\SeoSuite\\Providers\\SeoSuiteServiceProvider"]
-    }
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\SeoSuite\\Providers\\SeoSuiteServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": true,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

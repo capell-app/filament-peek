@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/theme-agency",
     "kind": "theme",
     "capell-version": "^4.0",
@@ -7,10 +8,47 @@
     "bundle": "themes",
     "description": "Theme Agency registers the agency theme key and expressive renderer views for studio, portfolio, and brand-led sites.",
     "themeKey": "agency",
-    "contexts": ["frontend"],
     "extends": "capell-app/foundation-theme",
-    "requires": ["capell-app/foundation-theme"],
+    "surfaces": [
+        "frontend"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/foundation-theme"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": ["Capell\\ThemeStudio\\Agency\\AgencyThemeServiceProvider"]
-    }
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\ThemeStudio\\Agency\\AgencyThemeServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

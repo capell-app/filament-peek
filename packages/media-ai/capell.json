@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/media-ai",
     "kind": "package",
     "capell-version": "^4.0",
@@ -7,10 +8,50 @@
     "bundle": "media",
     "description": "Media AI adds optional AI-assisted media actions for Capell.",
     "namespace": "Capell\\MediaAI",
-    "contexts": ["admin", "console"],
-    "requires": ["capell-app/admin", "capell-app/core"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/admin",
+            "capell-app/core"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "admin": ["Capell\\MediaAI\\Providers\\MediaAIServiceProvider"],
-        "console": ["Capell\\MediaAI\\Providers\\MediaAIServiceProvider"]
-    }
+        "metadata": [],
+        "install": [
+            "Capell\\MediaAI\\Providers\\MediaAIServiceProvider"
+        ],
+        "runtime": [],
+        "admin": [
+            "Capell\\MediaAI\\Providers\\MediaAIServiceProvider"
+        ],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

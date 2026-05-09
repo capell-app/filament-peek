@@ -1,4 +1,5 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/login-audit",
     "kind": "package",
     "capell-version": "^4.0",
@@ -6,10 +7,48 @@
     "tier": "premium",
     "bundle": "operations",
     "description": "Login Audit records login, failed login, logout, and admin/user activity metadata for Capell users.",
-    "contexts": ["admin"],
-    "requires": ["capell-app/admin"],
+    "surfaces": [
+        "admin"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/admin"
+        ],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
     "providers": {
-        "shared": ["Capell\\LoginAudit\\Providers\\LoginAuditServiceProvider"],
-        "admin": ["Capell\\LoginAudit\\Providers\\AdminServiceProvider"]
-    }
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\LoginAudit\\Providers\\LoginAuditServiceProvider"
+        ],
+        "admin": [
+            "Capell\\LoginAudit\\Providers\\AdminServiceProvider"
+        ],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": true,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
 }

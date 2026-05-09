@@ -8,9 +8,12 @@ use Capell\Admin\Concerns\CachesDashboardQuery;
 use Capell\Admin\Contracts\CapellWidgetContract;
 use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\PublishingStudio\Actions\Dashboard\BuildWorkspaceMergeHistoryAction;
+use Capell\PublishingStudio\Data\Dashboard\MergeHistoryEntryData;
 use Capell\PublishingStudio\Data\Dashboard\WorkspaceMergeHistoryData;
+use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Computed;
+use Spatie\LaravelData\DataCollection;
 
 final class WorkspaceMergeHistoryWidgetAbstract extends Widget implements CapellWidgetContract
 {
@@ -27,9 +30,20 @@ final class WorkspaceMergeHistoryWidgetAbstract extends Widget implements Capell
     /** @var int|string|array<string, int|string|null> */
     protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
 
+    public static function canView(): bool
+    {
+        return WorkspaceSchema::isReady() && self::canViewCheck();
+    }
+
     #[Computed(persist: true, seconds: 300)]
     public function data(): WorkspaceMergeHistoryData
     {
+        if (! WorkspaceSchema::isReady()) {
+            return new WorkspaceMergeHistoryData(
+                entries: MergeHistoryEntryData::collect([], DataCollection::class),
+            );
+        }
+
         return $this->cacheQueryResult(
             fn (): WorkspaceMergeHistoryData => BuildWorkspaceMergeHistoryAction::run(),
             'dashboard:workspace-merge-history',

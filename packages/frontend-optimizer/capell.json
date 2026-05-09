@@ -1,17 +1,56 @@
 {
+    "manifest-version": 2,
     "name": "capell-app/frontend-optimizer",
     "kind": "package",
     "capell-version": "^4.0",
     "productGroup": "Capell Foundation",
     "tier": "premium",
     "bundle": "foundation",
-    "contexts": ["frontend"],
     "description": "Frontend Optimizer provides profile-based CSS and JavaScript delivery for public Capell pages.",
-    "providers": {
-        "shared": [
-            "Capell\\FrontendOptimizer\\Providers\\FrontendOptimizerServiceProvider"
-        ]
+    "surfaces": [
+        "frontend"
+    ],
+    "dependencies": {
+        "requires": [
+            "capell-app/core",
+            "capell-app/frontend"
+        ],
+        "optional": [],
+        "conflicts": []
     },
-    "requires": ["capell-app/core", "capell-app/frontend"],
-    "scopes": ["frontend"]
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
+    "providers": {
+        "metadata": [],
+        "install": [],
+        "runtime": [
+            "Capell\\FrontendOptimizer\\Providers\\FrontendOptimizerServiceProvider"
+        ],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": true,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": null,
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": [],
+    "scopes": [
+        "frontend"
+    ]
 }

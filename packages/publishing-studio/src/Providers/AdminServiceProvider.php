@@ -14,6 +14,10 @@ use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
+use Capell\Admin\Support\Dashboard\DefaultSiteStatsDataProvider;
+use Capell\Admin\Support\Dashboard\NullContentHealthDataProvider;
+use Capell\Admin\Support\Dashboard\NullMyWorkQueueDataProvider;
+use Capell\Admin\Support\Dashboard\NullRecentlyPublishedDataProvider;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
@@ -43,6 +47,7 @@ use Capell\PublishingStudio\Support\Dashboard\WorkspaceContentHealthDataProvider
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceMyWorkQueueDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceRecentlyPublishedDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceSiteStatsDataProvider;
+use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Capell\PublishingStudio\WorkspaceContext;
 use Capell\PublishingStudio\WorkspacePeekPreviewActionContributor;
 use Filament\Support\Facades\FilamentView;
@@ -100,10 +105,33 @@ class AdminServiceProvider extends ServiceProvider
 
     private function registerDashboardDataProviders(): self
     {
-        $this->app->singleton(ContentHealthDataProvider::class, WorkspaceContentHealthDataProvider::class);
-        $this->app->singleton(MyWorkQueueDataProvider::class, WorkspaceMyWorkQueueDataProvider::class);
-        $this->app->singleton(RecentlyPublishedDataProvider::class, WorkspaceRecentlyPublishedDataProvider::class);
-        $this->app->singleton(SiteStatsDataProvider::class, WorkspaceSiteStatsDataProvider::class);
+        $this->app->bind(
+            ContentHealthDataProvider::class,
+            fn (): ContentHealthDataProvider => WorkspaceSchema::isReady()
+                ? $this->app->make(WorkspaceContentHealthDataProvider::class)
+                : $this->app->make(NullContentHealthDataProvider::class),
+        );
+
+        $this->app->bind(
+            MyWorkQueueDataProvider::class,
+            fn (): MyWorkQueueDataProvider => WorkspaceSchema::isReady()
+                ? $this->app->make(WorkspaceMyWorkQueueDataProvider::class)
+                : $this->app->make(NullMyWorkQueueDataProvider::class),
+        );
+
+        $this->app->bind(
+            RecentlyPublishedDataProvider::class,
+            fn (): RecentlyPublishedDataProvider => WorkspaceSchema::isReady()
+                ? $this->app->make(WorkspaceRecentlyPublishedDataProvider::class)
+                : $this->app->make(NullRecentlyPublishedDataProvider::class),
+        );
+
+        $this->app->bind(
+            SiteStatsDataProvider::class,
+            fn (): SiteStatsDataProvider => WorkspaceSchema::isReady()
+                ? $this->app->make(WorkspaceSiteStatsDataProvider::class)
+                : $this->app->make(DefaultSiteStatsDataProvider::class),
+        );
 
         return $this;
     }
