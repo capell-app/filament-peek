@@ -12,6 +12,7 @@ use Capell\Diagnostics\Actions\Dashboard\BuildContentGraphHealthAction;
 it('summarizes stale and high impact graph edges', function (): void {
     $layout = Layout::factory()->create();
     $page = Page::factory()->create();
+    ContentGraphEdge::query()->delete();
 
     ContentGraphEdge::query()->create([
         'source_type' => Page::class,
