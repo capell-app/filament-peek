@@ -133,6 +133,11 @@ final class FrontendPageViewData extends Data
 These objects are not Inertia-specific. Blade, Livewire, and Inertia should be
 able to consume the same public CMS data with runtime-specific responders.
 
+Runtime-specific delivery concerns should wrap these DTOs rather than change
+their core shape. Inertia can add metadata for deferred props, partial reload
+groups, and `only` boundaries in its presentation layer; Blade and Livewire
+should not need to understand those transport details.
+
 ### Page Type Contract
 
 Page type should express content meaning, not only render implementation.
@@ -197,6 +202,28 @@ For an Inertia page, the layout should become a structured component graph:
 
 It should not default to Blade-rendered HTML fragments in Inertia props.
 
+### Inertia Presentation Envelope
+
+Inertia presentations should convert canonical Capell data into an explicit
+delivery envelope:
+
+```php
+final class InertiaPagePresentationData extends Data
+{
+    public function __construct(
+        public string $component,
+        public FrontendPageViewData $page,
+        public array $props = [],
+        public array $deferred = [],
+        public array $partialReloadGroups = [],
+    ) {}
+}
+```
+
+The canonical DTOs stay portable. The Inertia envelope owns Inertia-only
+delivery choices such as deferred closures, partial reload names, and component
+selection.
+
 ## Inertia Runtime Package
 
 Create a shared `capell-app/inertia-runtime` package. It should own:
@@ -217,6 +244,21 @@ Create a shared `capell-app/inertia-runtime` package. It should own:
 - Starter Vue 3 and TypeScript application shell.
 
 The runtime package should not own theme-specific visual identity.
+
+### Component Resolution
+
+The Inertia runtime must resolve page, layout, and section components without
+copying the full app into every theme. Resolution order should be:
+
+1. Active theme component override.
+2. Parent theme component override.
+3. Shared `capell-app/inertia-runtime` component.
+4. Package-provided component registered for the active runtime.
+5. Explicit unsupported presentation exception.
+
+This lets `theme-inertia-corporate`, `theme-inertia-saas`, and future client
+themes override only the components they need while inheriting the common
+application shell, layout primitives, and fallback components.
 
 ## Inertia Theme Packages
 
@@ -306,6 +348,8 @@ Migration rules:
 - New Inertia components register as Inertia presentations.
 - Existing page type metadata is adapted into the new presentation registry.
 - Unsupported Inertia widgets fail loudly in development and tests.
+- A compatibility report lists pages, page types, layouts, widgets, and packages
+  that lack Inertia presentations before a theme is activated.
 - Production may optionally allow a legacy HTML fragment fallback, disabled by
   default.
 
@@ -352,6 +396,39 @@ The safety check must inspect serialized Inertia props as well as rendered HTML.
 Preview and authoring state should be exposed only through authenticated preview
 or beacon flows.
 
+Safety coverage must include:
+
+- Initial SSR HTML and hydration payloads.
+- `X-Inertia` JSON responses.
+- Partial reload responses.
+- Deferred prop responses.
+- Error-page payloads.
+- Legacy HTML fragment fallback payloads when enabled.
+
+The inspector should run against both full-page and partial Inertia responses so
+an authoring leak cannot bypass checks through a smaller reload path.
+
+## User Experience Requirements
+
+The first Inertia theme should prove the runtime by delivering a polished public
+website experience, not just a technically valid response.
+
+Required UX behaviours:
+
+- Persistent public layout with active navigation state.
+- Inertia progress indicator and sensible loading states for deferred content.
+- Accessible page transitions that respect reduced-motion preferences.
+- First-class error pages for 404 and server failures.
+- Form handling with validation errors, success state, disabled submitting
+  controls, and focus management.
+- Keyboard-accessible responsive navigation.
+- SEO/head updates on client-side navigation.
+- Preview/workspace state that is visible only to authorized editors and never
+  leaks to anonymous users.
+- Empty states for listings, search results, and optional widget content.
+- Mobile and desktop layouts that keep Capell sections readable without relying
+  on theme-specific one-off markup.
+
 ## Non-Goals
 
 - Replacing Filament admin with Inertia.
@@ -371,7 +448,8 @@ or beacon flows.
 | Page and widget prop shapes drift per theme | Define canonical public DTOs and extension hooks. |
 | Core becomes coupled to Inertia | Core owns `runtime: inertia` metadata only; Inertia classes live in the runtime package. |
 | SSR increases install complexity | Make SSR supported and documented from day one, with clear local/prod defaults. |
-| Public props leak authoring data | Add serialized prop safety inspection and tests for anonymous/non-admin responses. |
+| Public props leak authoring data | Add serialized prop safety inspection across full, partial, deferred, SSR, and error responses. |
+| Teams activate Inertia before packages are ready | Add a compatibility report and block activation when required presentations are missing unless explicitly overridden. |
 
 ## Implementation Phases
 
@@ -396,11 +474,12 @@ or beacon flows.
 - Add `FrontendResponseRenderer` contract.
 - Move existing Livewire page response path into a renderer.
 - Add Blade renderer where direct Blade responses are appropriate.
-- Add Inertia renderer in the new runtime package.
+- Add renderer registry and runtime selection tests.
 
 ### Phase 4: Inertia Runtime Package
 
 - Add shared Inertia app shell.
+- Add `InertiaFrontendResponseRenderer`.
 - Configure Vite, SSR, shared props, asset versioning, error handling, flash,
   forms, deferred props, and partial reload conventions.
 - Add root view and frontend middleware.
@@ -414,6 +493,8 @@ or beacon flows.
 - Add theme presets and Tailwind sources.
 - Verify it uses Capell layouts/widgets/pages/custom types without duplicating
   CMS resolution logic.
+- Verify UX behaviours: transitions, loading states, error pages, form states,
+  focus handling, accessible navigation, SEO/head updates, and preview state.
 
 ### Phase 6: Package Coverage
 
