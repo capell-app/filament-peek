@@ -25,6 +25,7 @@
         "capell-app/admin": "*",
         "capell-app/migration-assistant": "*",
         "capell-app/core": "*",
+        "capell-app/html-cache": "*",
         "capell-app/navigation": "*",
         "jfcherng/php-diff": "^7.0"
     },

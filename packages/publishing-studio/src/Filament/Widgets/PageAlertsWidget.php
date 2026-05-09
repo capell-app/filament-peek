@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Filament\Widgets;
 
-use Capell\Admin\Actions\DeletePageCacheAction;
 use Capell\Admin\Data\MessageData;
 use Capell\Admin\Enums\AlertTypeEnum;
 use Capell\Admin\Enums\ResourceEnum;
@@ -15,14 +14,14 @@ use Capell\Core\Actions\GetResourceFromTypeAction;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\PublishStatusEnum;
 use Capell\Core\Models\Page;
-use Capell\Core\Support\Cache\PageCacheService;
+use Capell\HtmlCache\Actions\ClearCachedUrlsForModelAction;
+use Capell\HtmlCache\Models\CachedModelUrl;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 use RuntimeException;
 
 class PageAlertsWidget extends ResourceAlertsWidget
@@ -48,7 +47,7 @@ class PageAlertsWidget extends ResourceAlertsWidget
             ->link()
             ->size(Size::Small)
             ->action(function (): void {
-                DeletePageCacheAction::dispatch($this->record);
+                ClearCachedUrlsForModelAction::dispatch($this->record);
 
                 Notification::make()
                     ->title(__('capell-admin::notification.page_cache_cleared'))
@@ -78,21 +77,13 @@ class PageAlertsWidget extends ResourceAlertsWidget
             );
     }
 
-    protected static function getCachedPage(Pageable $page): ?string
+    protected static function getCachedPage(Pageable $page): ?CachedModelUrl
     {
-        foreach ($page->pageUrls as $url) {
-            $url->loadMissing('siteDomain');
-
-            if ($url->siteDomain === null) {
-                continue;
-            }
-
-            if (isset($url->page_cache_file) && $url->page_cache_file !== '') {
-                return $url->page_cache_file;
-            }
-        }
-
-        return null;
+        return CachedModelUrl::query()
+            ->where('cacheable_type', $page->getMorphClass())
+            ->where('cacheable_id', $page->getKey())
+            ->latest('cached_at')
+            ->first();
     }
 
     /**
@@ -107,8 +98,6 @@ class PageAlertsWidget extends ResourceAlertsWidget
         if ($pageStatus instanceof MessageData) {
             $alerts->put('pageStatus', $pageStatus);
         }
-
-        $pageCache = resolve(PageCacheService::class);
 
         if ($this->record->trashed()) {
             $alerts->put('deleted', new MessageData(
@@ -174,14 +163,11 @@ class PageAlertsWidget extends ResourceAlertsWidget
         }
 
         $cachedPage = static::getCachedPage($this->record);
-        if ($cachedPage !== null && $pageCache->exists($cachedPage)) {
-            $lastModified = $pageCache->lastModified($cachedPage);
-            $time = $lastModified !== null ? Date::createFromTimestamp($lastModified) : null;
-
+        if ($cachedPage instanceof CachedModelUrl) {
             $alerts->put('cached', new MessageData(
                 message: __(
                     'capell-admin::message.page_cached_warning',
-                    ['diff_time' => $time?->diffForHumans()],
+                    ['diff_time' => $cachedPage->cached_at?->diffForHumans()],
                 ),
                 type: AlertTypeEnum::Info,
                 icon: 'heroicon-o-check-badge',

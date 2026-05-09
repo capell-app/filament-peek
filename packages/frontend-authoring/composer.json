@@ -7,6 +7,7 @@
         "php": "^8.2",
         "capell-app/admin": "*",
         "capell-app/frontend": "*",
+        "capell-app/html-cache": "*",
         "spatie/laravel-package-tools": "^1.14"
     },
     "autoload": {

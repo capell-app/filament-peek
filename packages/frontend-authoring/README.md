@@ -8,7 +8,7 @@ Frontend Authoring is Capell's admin bridge for rendered frontend pages. It owns
 - Returns authoring scripts and editable region metadata only after admin access is confirmed.
 - Opens signed single-field edit screens from hover controls.
 - Saves page title, page description, and page HTML content without exposing record metadata in cached HTML.
-- Clears every cached URL recorded against the edited model in `CacheEnum::modelUrlCacheKey()`.
+- Clears every cached URL recorded against the edited model in `cached_model_urls`.
 
 For the full workflow, screenshot contract, and browser-test checklist, see [In-page editing](docs/in-page-editing.md).
 
@@ -20,6 +20,7 @@ This package makes its Composer dependencies visible because they are part of th
 
 - [Capell Admin](https://github.com/capell-app/admin)
 - [Capell Frontend](https://github.com/capell-app/frontend)
+- [Capell HTML Cache](https://github.com/capell-app/html-cache)
 
 **Open-source packages used here**
 

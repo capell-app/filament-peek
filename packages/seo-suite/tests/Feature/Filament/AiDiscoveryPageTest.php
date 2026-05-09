@@ -21,7 +21,6 @@ use Capell\SeoSuite\Models\AiDiscoveryCrawlerRule;
 use Capell\SeoSuite\Models\AiDiscoveryPageProfile;
 use Capell\SeoSuite\Models\AiDiscoverySiteProfile;
 use Capell\SeoSuite\Settings\SeoSuiteSettings;
-use Capell\Tests\AbstractTestCase;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 uses(CreatesAdminUser::class);
@@ -192,7 +191,6 @@ it('hides markdown previews for pages excluded from ai discovery', function (): 
 });
 
 it('honors seo suite ai discovery default and audit settings', function (): void {
-    /** @var AbstractTestCase $this */
     $this->registerAndMigrateSettings(
         [
             'create_seo_suite_settings',

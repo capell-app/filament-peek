@@ -7,7 +7,6 @@ namespace Capell\Events\Models;
 use Bkwld\Cloner\Cloneable;
 use Capell\Core\Concerns\HasCapellMedia;
 use Capell\Core\Contracts\Pageable;
-use Capell\Core\Contracts\PageCacheable;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\PageOrderEnum;
 use Capell\Core\Models\Concerns\CloneableExcept;
@@ -62,7 +61,7 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
  * @property-read Translation|null $translation
  * @property-read Type $type
  */
-class Event extends Model implements HasMedia, Pageable, PageCacheable, Publishable, Translatable, Typeable, Userstampable
+class Event extends Model implements HasMedia, Pageable, Publishable, Translatable, Typeable, Userstampable
 {
     use BelongsToWorkspace;
     use Cloneable;

@@ -32,18 +32,7 @@ Package-owned regions should be registered through the `capell-frontend-authorin
 
 ## HTML Cache Invalidation
 
-Before saving, `UpdateEditableRegionAction` reads `CacheEnum::modelUrlCacheKey()` and collects every cached URL whose model map contains the edited model short name and record ID. After the Filament field save, `ClearAffectedCachedUrlsAction` removes each matching cached HTML file and queues warmups for affected URLs when auto-refresh is enabled.
-
-The cache map shape is:
-
-```php
-[
-    'https://example.com/about' => [
-        'Translation' => [42],
-        'Page' => [7],
-    ],
-]
-```
+Before saving, `UpdateEditableRegionAction` reads the `cached_model_urls` table and collects every cached URL linked to the edited model morph type and record ID. After the Filament field save, `ClearAffectedCachedUrlsAction` removes each matching cached HTML file, deletes the cache index rows for that URL, and queues warmups for affected URLs when auto-refresh is enabled.
 
 That gives authoring enough information to refresh every cached URL that used the edited record, while the public cache still contains ordinary HTML.
 

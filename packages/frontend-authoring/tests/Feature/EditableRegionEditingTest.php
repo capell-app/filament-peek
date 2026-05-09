@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Capell\Core\Actions\GetUrlCachePathAction;
-use Capell\Core\Enums\CacheEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -16,10 +14,11 @@ use Capell\FrontendAuthoring\Actions\UpdateEditableRegionAction;
 use Capell\FrontendAuthoring\Data\EditableRegionPayloadData;
 use Capell\FrontendAuthoring\Http\Controllers\EditRegionController;
 use Capell\FrontendAuthoring\Support\EditableRegionSigner;
+use Capell\HtmlCache\Models\CachedModelUrl;
+use Capell\HtmlCache\Support\Cache\HtmlCachePathResolver;
 use Capell\Tests\Fixtures\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
@@ -78,20 +77,26 @@ it('collects affected cached urls for the edited model record', function (): voi
     $translation = createEditableRegionTranslation();
     $otherTranslation = createEditableRegionTranslation();
 
-    Cache::put(CacheEnum::modelUrlCacheKey(), [
-        'https://example.test/current' => [
-            'Translation' => [(string) $translation->getKey(), 999],
-        ],
-        'https://example.test/duplicate' => [
-            'Translation' => [$translation->getKey()],
-        ],
-        'https://example.test/other' => [
-            'Translation' => [$otherTranslation->getKey()],
-        ],
-        123 => [
-            'Translation' => [$translation->getKey()],
-        ],
-        'https://example.test/malformed' => 'not-a-model-map',
+    CachedModelUrl::query()->create([
+        'url' => 'https://example.test/current',
+        'url_hash' => CachedModelUrl::hashUrl('https://example.test/current'),
+        'path' => '/current',
+        'cacheable_type' => $translation->getMorphClass(),
+        'cacheable_id' => $translation->getKey(),
+    ]);
+    CachedModelUrl::query()->create([
+        'url' => 'https://example.test/duplicate',
+        'url_hash' => CachedModelUrl::hashUrl('https://example.test/duplicate'),
+        'path' => '/duplicate',
+        'cacheable_type' => $translation->getMorphClass(),
+        'cacheable_id' => $translation->getKey(),
+    ]);
+    CachedModelUrl::query()->create([
+        'url' => 'https://example.test/other',
+        'url_hash' => CachedModelUrl::hashUrl('https://example.test/other'),
+        'path' => '/other',
+        'cacheable_type' => $otherTranslation->getMorphClass(),
+        'cacheable_id' => $otherTranslation->getKey(),
     ]);
 
     expect(CollectAffectedCachedUrlsAction::run($translation))->toBe([
@@ -102,7 +107,6 @@ it('collects affected cached urls for the edited model record', function (): voi
 
 it('clears affected cached urls and removes the edited model from the cache index', function (): void {
     Storage::fake('page_cache');
-    Cache::flush();
 
     $translation = createEditableRegionTranslation();
     $language = Language::factory()->create();
@@ -117,17 +121,31 @@ it('clears affected cached urls and removes the edited model from the cache inde
             'status' => true,
         ]);
     $url = 'https://example.test/edited';
-    $cachePath = GetUrlCachePathAction::run('/edited', $siteDomain);
+    $cachePath = resolve(HtmlCachePathResolver::class)->pathForUrl('/edited', $siteDomain);
 
     Storage::disk('page_cache')->put($cachePath, 'cached html');
-    Cache::put(CacheEnum::modelUrlCacheKey(), [
-        $url => [
-            'Translation' => [$translation->getKey()],
-            'Page' => [123],
-        ],
-        'https://missing.test/edited' => [
-            'Translation' => [$translation->getKey()],
-        ],
+    CachedModelUrl::query()->create([
+        'url' => $url,
+        'url_hash' => CachedModelUrl::hashUrl($url),
+        'path' => '/edited',
+        'site_domain_id' => $siteDomain->getKey(),
+        'cacheable_type' => $translation->getMorphClass(),
+        'cacheable_id' => $translation->getKey(),
+    ]);
+    CachedModelUrl::query()->create([
+        'url' => $url,
+        'url_hash' => CachedModelUrl::hashUrl($url),
+        'path' => '/edited',
+        'site_domain_id' => $siteDomain->getKey(),
+        'cacheable_type' => Page::factory()->create()->getMorphClass(),
+        'cacheable_id' => 123,
+    ]);
+    CachedModelUrl::query()->create([
+        'url' => 'https://missing.test/edited',
+        'url_hash' => CachedModelUrl::hashUrl('https://missing.test/edited'),
+        'path' => '/edited',
+        'cacheable_type' => $translation->getMorphClass(),
+        'cacheable_id' => $translation->getKey(),
     ]);
 
     $cleared = ClearAffectedCachedUrlsAction::run(
@@ -138,14 +156,8 @@ it('clears affected cached urls and removes the edited model from the cache inde
 
     expect($cleared)->toBe(1)
         ->and(Storage::disk('page_cache')->exists($cachePath))->toBeFalse()
-        ->and(Cache::get(CacheEnum::modelUrlCacheKey()))->toBe([
-            $url => [
-                'Page' => [123],
-            ],
-            'https://missing.test/edited' => [
-                'Translation' => [$translation->getKey()],
-            ],
-        ]);
+        ->and(CachedModelUrl::query()->where('url', $url)->exists())->toBeFalse()
+        ->and(CachedModelUrl::query()->where('url', 'https://missing.test/edited')->exists())->toBeTrue();
 });
 
 it('updates allowed editable region fields and rejects unknown fields', function (): void {

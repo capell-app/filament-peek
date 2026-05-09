@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Capell\FrontendAuthoring\Actions;
 
-use Capell\Core\Enums\CacheEnum;
+use Capell\HtmlCache\Models\CachedModelUrl;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 use Lorisleiva\Actions\Concerns\AsObject;
-use ReflectionClass;
 
 class CollectAffectedCachedUrlsAction
 {
@@ -19,36 +17,13 @@ class CollectAffectedCachedUrlsAction
      */
     public function handle(Model $model): array
     {
-        $cacheIndex = Cache::get(CacheEnum::modelUrlCacheKey());
-
-        if (! is_array($cacheIndex) || $cacheIndex === []) {
-            return [];
-        }
-
-        $modelCacheKey = (new ReflectionClass($model))->getShortName();
-        $recordKey = (int) $model->getKey();
-        $urls = [];
-
-        foreach ($cacheIndex as $url => $models) {
-            if (! is_string($url)) {
-                continue;
-            }
-
-            if (! is_array($models)) {
-                continue;
-            }
-
-            $ids = $models[$modelCacheKey] ?? null;
-
-            if (! is_array($ids)) {
-                continue;
-            }
-
-            if (in_array($recordKey, array_map(intval(...), $ids), true)) {
-                $urls[] = $url;
-            }
-        }
-
-        return array_values(array_unique($urls));
+        return CachedModelUrl::query()
+            ->where('cacheable_type', $model->getMorphClass())
+            ->where('cacheable_id', $model->getKey())
+            ->pluck('url')
+            ->filter(fn (mixed $url): bool => is_string($url) && $url !== '')
+            ->unique()
+            ->values()
+            ->all();
     }
 }

@@ -24,6 +24,7 @@
         "php": "^8.2",
         "capell-app/admin": "^4.0",
         "capell-app/core": "^4.0",
+        "capell-app/html-cache": "*",
         "lorisleiva/laravel-actions": "^2.8",
         "spatie/laravel-data": "^4.5"
     }

@@ -8,6 +8,7 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\FrontendAuthoring\Providers\FrontendAuthoringServiceProvider;
+use Capell\HtmlCache\Providers\HtmlCacheServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Livewire\LivewireServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
@@ -34,6 +35,7 @@ class FrontendAuthoringTestCase extends AbstractTestCase
         parent::getEnvironmentSetUp($app);
 
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(HtmlCacheServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendAuthoringServiceProvider::$packageName);
     }
 
@@ -47,6 +49,7 @@ class FrontendAuthoringTestCase extends AbstractTestCase
             FrontendServiceProvider::class,
             PaginateRouteServiceProvider::class,
             LivewireServiceProvider::class,
+            HtmlCacheServiceProvider::class,
             FrontendAuthoringServiceProvider::class,
         ];
     }

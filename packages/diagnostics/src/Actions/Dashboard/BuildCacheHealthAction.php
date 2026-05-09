@@ -7,8 +7,8 @@ namespace Capell\Diagnostics\Actions\Dashboard;
 use Capell\Core\Enums\UrlTypeEnum;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
-use Capell\Core\Support\Cache\PageCacheService;
 use Capell\Diagnostics\Data\Dashboard\CacheHealthData;
+use Capell\HtmlCache\Models\CachedModelUrl;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -24,8 +24,6 @@ final class BuildCacheHealthAction
     {
         /** @var class-string<PageUrl> $model */
         $model = PageUrl::class;
-
-        $service = resolve(PageCacheService::class);
 
         $query = $model::query()
             ->select(['id', 'site_id', 'language_id', 'url', 'type', 'status', 'updated_at'])
@@ -45,23 +43,26 @@ final class BuildCacheHealthAction
         $newestTimestamp = null;
 
         foreach ($query->lazyById(500) as $pageUrl) {
-            $cacheFile = $pageUrl->page_cache_file;
+            $cachedUrl = CachedModelUrl::query()
+                ->where('cacheable_type', $pageUrl->getMorphClass())
+                ->where('cacheable_id', $pageUrl->getKey())
+                ->latest('cached_at')
+                ->first();
 
-            if ($cacheFile === null || ! $service->exists($cacheFile)) {
+            if (! $cachedUrl instanceof CachedModelUrl || $cachedUrl->cached_at === null) {
                 $missingCount++;
 
                 continue;
             }
 
-            $lastModified = $service->lastModified($cacheFile);
-
-            if ($lastModified !== null && ($newestTimestamp === null || $lastModified > $newestTimestamp)) {
-                $newestTimestamp = $lastModified;
+            $cachedAtTimestamp = $cachedUrl->cached_at->getTimestamp();
+            if ($newestTimestamp === null || $cachedAtTimestamp > $newestTimestamp) {
+                $newestTimestamp = $cachedAtTimestamp;
             }
 
             $pageUpdatedAt = $pageUrl->updated_at;
 
-            if ($lastModified !== null && $pageUpdatedAt !== null && $lastModified < $pageUpdatedAt->getTimestamp()) {
+            if ($pageUpdatedAt !== null && $cachedAtTimestamp < $pageUpdatedAt->getTimestamp()) {
                 $staleCount++;
             } else {
                 $cachedCount++;
