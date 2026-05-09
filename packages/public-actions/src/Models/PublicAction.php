@@ -27,7 +27,7 @@ class PublicAction extends Model
         'key',
         'name',
         'status',
-        'handler_class',
+        'handler_key',
         'success_redirect_url',
         'failure_redirect_url',
         'success_message',

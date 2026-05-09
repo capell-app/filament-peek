@@ -14,7 +14,7 @@ it('runs the public actions migrations', function (): void {
 
 it('creates the columns needed for actions, dispatch, and integration tokens', function (): void {
     expect(Schema::hasColumn('public_actions', 'site_scope_key'))->toBeTrue()
-        ->and(Schema::hasColumn('public_actions', 'handler_class'))->toBeTrue()
+        ->and(Schema::hasColumn('public_actions', 'handler_key'))->toBeTrue()
         ->and(Schema::hasColumn('public_action_destinations', 'endpoint_url'))->toBeTrue()
         ->and(Schema::hasColumn('public_action_submissions', 'payload'))->toBeTrue()
         ->and(Schema::hasColumn('public_action_dispatch_attempts', 'request_hash'))->toBeTrue()

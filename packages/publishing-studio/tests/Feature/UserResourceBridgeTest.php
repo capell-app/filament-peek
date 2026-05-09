@@ -3,15 +3,19 @@
 declare(strict_types=1);
 
 use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
+use Capell\Admin\Data\Bridges\AdminBridgeContextData;
 use Capell\Admin\Data\Schemas\UserSchemaContextData;
 use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
 use Capell\Admin\Settings\AdminSettings;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Admin\Support\CapellAdminManager;
+use Capell\Admin\Support\Extensions\ExtensionPageRegistry;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\PublishingStudio\Bridges\PublishingStudioAdminBridge;
 use Capell\PublishingStudio\Enums\ReviewDecisionEnum;
 use Capell\PublishingStudio\Enums\WorkspaceApprovalActionEnum;
 use Capell\PublishingStudio\Extenders\PublishingStudioUserSchemaExtender;
@@ -96,6 +100,14 @@ function invokePublishingStudioProviderMethod(object $provider, string $method):
     $reflection->invoke($provider);
 }
 
+function resetPublishingStudioAdminBridgeState(): void
+{
+    app()->forgetInstance(CapellAdminManager::class);
+    app()->forgetInstance(ExtensionPageRegistry::class);
+    CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    CapellAdmin::clearAdminSurfaceContributions();
+}
+
 function runPublishingStudioSettingsMigration(): void
 {
     /** @var SettingsMigration $migration */
@@ -140,6 +152,41 @@ it('registers and hydrates publishing studio settings', function (): void {
         ->and($registry->getSchema('publishing_studio', 'PublishingStudioSettingsSchema'))->toBe(PublishingStudioSettingsSchema::class)
         ->and($components[0])->toBeInstanceOf(Toggle::class)
         ->and($components[0]->getName())->toBe('enable_user_resource_bridge');
+});
+
+it('registers the current publishing studio admin bridge surface', function (): void {
+    resetPublishingStudioAdminBridgeState();
+
+    (new PublishingStudioAdminBridge)->register(
+        new AdminBridgeRegistrar,
+        AdminBridgeContextData::forPackage(PublishingStudioServiceProvider::$packageName),
+    );
+
+    $surfaceRegistry = CapellAdmin::getAdminSurfaceRegistry();
+    $extensionPages = resolve(ExtensionPageRegistry::class)->entries();
+
+    expect($surfaceRegistry->schemaExtendersForTag(UserSchemaExtender::TAG))->toContain(PublishingStudioUserSchemaExtender::class)
+        ->and(CapellAdmin::getDashboardWidgets(DashboardEnum::Main))->toContain(MyWorkQueueWidget::class)
+        ->and(CapellAdmin::getDashboardWidgets(DashboardEnum::Main))->toContain(RecentlyPublishedWidget::class)
+        ->and(CapellAdmin::getDashboardWidgets(DashboardEnum::Main))->toContain(WorkspaceActivityWidgetAbstract::class)
+        ->and($surfaceRegistry->resources())->toContain(WorkspaceResource::class)
+        ->and($surfaceRegistry->resources())->toContain(PreviewLinkResource::class)
+        ->and($extensionPages)->toContain([
+            'packageName' => PublishingStudioServiceProvider::$packageName,
+            'page' => ActivityTrailPage::class,
+        ])
+        ->and($extensionPages)->toContain([
+            'packageName' => PublishingStudioServiceProvider::$packageName,
+            'page' => ImportPagesPage::class,
+        ])
+        ->and($extensionPages)->toContain([
+            'packageName' => PublishingStudioServiceProvider::$packageName,
+            'page' => ScheduledPublishingPage::class,
+        ])
+        ->and($extensionPages)->toContain([
+            'packageName' => PublishingStudioServiceProvider::$packageName,
+            'page' => StaleDraftsPage::class,
+        ]);
 });
 
 it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {

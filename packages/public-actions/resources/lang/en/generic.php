@@ -3,8 +3,14 @@
 declare(strict_types=1);
 
 return [
+    'title' => 'Submit request',
+    'heading' => 'Submit request',
     'submitted' => 'Your request has been submitted.',
     'unavailable' => 'This action is not available.',
+    'submit' => 'Submit',
+    'api' => [
+        'unauthorized' => 'Invalid public actions token.',
+    ],
     'statuses' => [
         'action' => [
             'active' => 'Active',

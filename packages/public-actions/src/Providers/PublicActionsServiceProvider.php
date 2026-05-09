@@ -4,13 +4,24 @@ declare(strict_types=1);
 
 namespace Capell\PublicActions\Providers;
 
+use Capell\Admin\Data\AdminSurfaceContributionData;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Capell\PublicActions\Enums\ResourceEnum;
 use Capell\PublicActions\Models\PublicAction;
 use Capell\PublicActions\Models\PublicActionDestination;
 use Capell\PublicActions\Models\PublicActionDispatchAttempt;
 use Capell\PublicActions\Models\PublicActionIntegrationToken;
 use Capell\PublicActions\Models\PublicActionSubmission;
+use Capell\PublicActions\Support\Providers\HttpWebhookPublicActionAdapter;
+use Capell\PublicActions\Support\PublicActionDestinationAdapterRegistry;
+use Capell\PublicActions\Support\PublicActionHandlerRegistry;
+use Capell\PublicActions\Support\PublicActionProviderPresetRegistry;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Package;
 
 class PublicActionsServiceProvider extends AbstractPackageServiceProvider
@@ -25,6 +36,7 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
             ->name(self::$name)
             ->hasConfigFile('capell-public-actions')
             ->hasTranslations()
+            ->hasViews(self::$name)
             ->hasRoute('web')
             ->hasMigrations([
                 '01_create_public_actions_table',
@@ -38,8 +50,18 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
     public function packageRegistered(): void
     {
         $this->registerPackageMetadata();
+        $this->app->singleton(PublicActionHandlerRegistry::class);
+        $this->app->singleton(PublicActionProviderPresetRegistry::class);
+        $this->app->singleton(PublicActionDestinationAdapterRegistry::class, static function (): PublicActionDestinationAdapterRegistry {
+            $registry = new PublicActionDestinationAdapterRegistry;
+            $registry->register('http_webhook', HttpWebhookPublicActionAdapter::class);
+
+            return $registry;
+        });
 
         $this->app->booted(function (): void {
+            $this->registerRateLimiters();
+
             if (! $this->isPackageInstalled()) {
                 return;
             }
@@ -85,6 +107,32 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
 
     private function registerAdminResources(): self
     {
+        if (! class_exists(CapellAdmin::class) || ! class_exists(AdminSurfaceContributionData::class)) {
+            return $this;
+        }
+
+        foreach (ResourceEnum::cases() as $resource) {
+            CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(
+                class: $resource->value,
+                group: $resource->name,
+            ));
+        }
+
+        return $this;
+    }
+
+    private function registerRateLimiters(): self
+    {
+        RateLimiter::for('public-actions-submit', function (Request $request): Limit {
+            $action = (string) $request->route('action', '');
+            $email = Str::lower((string) $request->input('email', ''));
+            $key = hash('sha256', $action . '|' . $email . '|' . $request->ip());
+
+            return Limit::perMinute(12)->by($key);
+        });
+
+        RateLimiter::for('public-actions-api', fn (Request $request): Limit => Limit::perMinute(120)->by((string) $request->ip()));
+
         return $this;
     }
 

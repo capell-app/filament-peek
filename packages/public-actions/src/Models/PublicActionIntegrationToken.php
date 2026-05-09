@@ -7,6 +7,7 @@ namespace Capell\PublicActions\Models;
 use Capell\Core\Models\Site;
 use Capell\PublicActions\Database\Factories\PublicActionIntegrationTokenFactory;
 use Capell\PublicActions\Enums\PublicActionIntegrationProvider;
+use Capell\PublicActions\Enums\PublicActionIntegrationTokenAbility;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +55,13 @@ class PublicActionIntegrationToken extends Model
     public function isRevoked(): bool
     {
         return $this->revoked_at !== null;
+    }
+
+    public function hasAbility(PublicActionIntegrationTokenAbility $ability): bool
+    {
+        $abilities = $this->abilities ?? [];
+
+        return in_array($ability->value, $abilities, true);
     }
 
     /**

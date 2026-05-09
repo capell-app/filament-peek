@@ -37,8 +37,40 @@
         @php
             $url = $action['url'] ?? '';
             $wireNavigation = false;
+            $rawType = $action['type'] ?? '';
 
-            $type = ActionLinkEnum::tryFrom($action['type'] ?? '');
+            if ($rawType === 'public_action' && \Illuminate\Support\Facades\Route::has('capell-public-actions.submit')) {
+                $publicActionKey = is_string($action['public_action_key'] ?? null) ? $action['public_action_key'] : null;
+                $label = $action['label'] ?? '';
+                $payload = array_filter([
+                    'area' => $action['access_gate_area'] ?? null,
+                    'requested_url' => url()->current(),
+                    'redirect' => $action['redirect'] ?? null,
+                    'source_type' => 'section_action',
+                    'source_id' => $action['source_id'] ?? null,
+                ], static fn (mixed $payloadValue): bool => $payloadValue !== null && $payloadValue !== '');
+            }
+        @endphp
+        {{-- format-ignore-end --}}
+
+        @if (($action['type'] ?? '') === 'public_action' && Route::has('capell-public-actions.submit'))
+            <x-capell-public-actions::action-button
+                :action-key="$publicActionKey"
+                :label="$label"
+                :payload="$payload"
+                :class="'action-item rounded-full px-3.5 py-2 text-xs font-semibold transition sm:px-5 sm:py-3 sm:text-sm ' . (($action['color'] ?? $buttonColor) === 'secondary' ? 'border border-slate-300 text-slate-800 hover:border-slate-950 dark:border-white/15 dark:text-slate-200 dark:hover:border-white' : 'bg-[var(--theme-accent)] text-slate-950 hover:bg-white') . ' ' . ($actionItemClass ?? '')"
+            />
+            @continue
+        @endif
+
+        @if (($action['type'] ?? '') === 'public_action')
+            @continue
+        @endif
+
+        {{-- format-ignore-start --}}
+        @php
+
+            $type = ActionLinkEnum::tryFrom($rawType);
 
             switch ($type) {
                 case ActionLinkEnum::Link:

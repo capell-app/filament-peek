@@ -5,15 +5,18 @@ declare(strict_types=1);
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Contracts\Extenders\UserFormExtender;
 use Capell\Admin\Contracts\Extenders\UserTableExtender;
+use Capell\Admin\Data\Bridges\AdminBridgeContextData;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Pages\SettingsPage;
 use Capell\Admin\Filament\Resources\Users\Pages\CreateUser;
 use Capell\Admin\Filament\Resources\Users\Pages\EditUser;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Admin\Support\CapellAdminManager;
 use Capell\Admin\Support\Extensions\ExtensionPageRegistry;
 use Capell\Core\Database\Factories\UserFactory;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\PasswordPolicy\Actions\MarkUserForPasswordChangeAction;
+use Capell\PasswordPolicy\Bridges\PasswordPolicyAdminBridge;
 use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyPanelExtender;
 use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyUserFormExtender;
 use Capell\PasswordPolicy\Filament\Extenders\PasswordPolicyUserTableExtender;
@@ -45,6 +48,14 @@ function invokePasswordPolicyProviderMethod(object $provider, string $method): v
     $reflection->invoke($provider);
 }
 
+function resetPasswordPolicyAdminBridgeState(): void
+{
+    app()->forgetInstance(CapellAdminManager::class);
+    app()->forgetInstance(ExtensionPageRegistry::class);
+    CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    CapellAdmin::clearAdminSurfaceContributions();
+}
+
 it('keeps package settings out of the global settings page', function (): void {
     $registry = resolve(SettingsSchemaRegistry::class);
 
@@ -64,6 +75,26 @@ it('registers password policy settings as an extension page', function (): void 
         ->first(fn (array $extensionPage): bool => $extensionPage['page'] === PasswordPolicySettingsPage::class);
 
     expect($extensionPage['page'] ?? null)->toBe(PasswordPolicySettingsPage::class);
+});
+
+it('registers the current password policy admin bridge surface', function (): void {
+    resetPasswordPolicyAdminBridgeState();
+
+    (new PasswordPolicyAdminBridge)->register(
+        new AdminBridgeRegistrar,
+        AdminBridgeContextData::forPackage(PasswordPolicyServiceProvider::$packageName),
+    );
+
+    expect(resolve(ExtensionPageRegistry::class)->get(PasswordPolicyServiceProvider::$packageName))
+        ->toBe(PasswordPolicySettingsPage::class)
+        ->and(CapellAdmin::getAdminSurfaceRegistry()->pages())->toContain(ForcedPasswordChangePage::class)
+        ->and(CapellAdmin::getAdminSurfaceRegistry()->panelExtenders())->toContain(PasswordPolicyPanelExtender::class)
+        ->and(collect(app()->tagged(UserFormExtender::TAG))->contains(
+            fn (object $extender): bool => $extender instanceof PasswordPolicyUserFormExtender,
+        ))->toBeTrue()
+        ->and(collect(app()->tagged(UserTableExtender::TAG))->contains(
+            fn (object $extender): bool => $extender instanceof PasswordPolicyUserTableExtender,
+        ))->toBeTrue();
 });
 
 it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {

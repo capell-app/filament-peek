@@ -7,6 +7,8 @@ return [
     'api_route_prefix' => env('CAPELL_PUBLIC_ACTIONS_API_ROUTE_PREFIX', 'api/public-actions'),
     'queue' => env('CAPELL_PUBLIC_ACTIONS_QUEUE', 'default'),
     'webhook_timeout_seconds' => env('CAPELL_PUBLIC_ACTIONS_WEBHOOK_TIMEOUT', 10),
+    'allow_insecure_webhook_urls' => env('CAPELL_PUBLIC_ACTIONS_ALLOW_INSECURE_WEBHOOK_URLS', false),
+    'allow_private_webhook_urls' => env('CAPELL_PUBLIC_ACTIONS_ALLOW_PRIVATE_WEBHOOK_URLS', false),
     'submit_rate_limit' => 'public-actions-submit',
     'api_rate_limit' => 'public-actions-api',
     'tables' => [

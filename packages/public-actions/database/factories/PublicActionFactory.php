@@ -28,7 +28,7 @@ class PublicActionFactory extends Factory
             'key' => $key,
             'name' => $this->faker->words(3, true),
             'status' => PublicActionStatus::Active,
-            'handler_class' => 'App\\Actions\\' . str_replace(' ', '', $this->faker->words(2, true)) . 'Action',
+            'handler_key' => 'test.handler',
             'success_redirect_url' => null,
             'failure_redirect_url' => null,
             'success_message' => null,

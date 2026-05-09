@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\AccessGate\Providers;
 
+use Capell\AccessGate\Actions\SubmitAccessGatePublicAction;
 use Capell\AccessGate\Console\Commands\AccessGateDoctorCommand;
 use Capell\AccessGate\Console\Commands\AccessGateInstallCommand;
 use Capell\AccessGate\Console\Commands\AccessGateSetupCommand;
@@ -26,6 +27,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Frontend\Support\Rules\FrontendRuleConditionRegistry;
+use Capell\PublicActions\Support\PublicActionHandlerRegistry;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -79,6 +81,7 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
             $this->registerRateLimiters();
             $this->registerConfiguredRegistrationFields();
             $this->registerConfiguredAccessRequestMethods();
+            $this->registerPublicActionHandler();
 
             if (! $this->hasCapellCore()) {
                 return;
@@ -170,6 +173,25 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
 
             $registry->register($field);
         }
+
+        return $this;
+    }
+
+    private function registerPublicActionHandler(): self
+    {
+        if (! class_exists(PublicActionHandlerRegistry::class)) {
+            return $this;
+        }
+
+        $registerHandler = function (PublicActionHandlerRegistry $registry): void {
+            $registry->register('access-gate.request', SubmitAccessGatePublicAction::class);
+        };
+
+        if ($this->app->bound(PublicActionHandlerRegistry::class)) {
+            $registerHandler($this->app->make(PublicActionHandlerRegistry::class));
+        }
+
+        $this->app->afterResolving(PublicActionHandlerRegistry::class, $registerHandler);
 
         return $this;
     }

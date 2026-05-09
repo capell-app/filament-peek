@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 use Capell\Admin\Actions\Users\ShouldLoadUserResourceBridgeAction;
 use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
+use Capell\Admin\Data\Bridges\AdminBridgeContextData;
 use Capell\Admin\Data\Schemas\UserSchemaContextData;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Settings\AdminSettings;
+use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Admin\Support\CapellAdminManager;
+use Capell\Admin\Support\Extensions\ExtensionPageRegistry;
+use Capell\AgentBridge\Bridges\AgentBridgeAdminBridge;
 use Capell\AgentBridge\Extenders\AgentBridgeUserSchemaExtender;
 use Capell\AgentBridge\Filament\Pages\CapellAgentBridgePromptBuilderPage;
 use Capell\AgentBridge\Filament\Resources\Users\RelationManagers\AgentBridgeAuditEntriesRelationManager;
@@ -53,6 +57,15 @@ function invokeAgentBridgeProviderMethod(object $provider, string $method): void
     $reflection = new ReflectionMethod($provider, $method);
     $reflection->setAccessible(true);
     $reflection->invoke($provider);
+}
+
+function resetAgentBridgeAdminBridgeState(): void
+{
+    app()->forgetInstance(CapellAdminManager::class);
+    app()->forgetInstance(ExtensionPageRegistry::class);
+    app()->singleton(ExtensionPageRegistry::class, fn (): ExtensionPageRegistry => new ExtensionPageRegistry);
+    CapellAdmin::clearResolvedInstance(CapellAdminManager::class);
+    CapellAdmin::clearAdminSurfaceContributions();
 }
 
 function updateSetting(string $settingKey, mixed $value): void
@@ -142,6 +155,20 @@ it('tags the user schema extender when the admin bridge host exists', function (
 
     expect(class_exists(ShouldLoadUserResourceBridgeAction::class))->toBeTrue()
         ->and(collect($taggedExtenders)->contains(fn (object $extender): bool => $extender instanceof AgentBridgeUserSchemaExtender))->toBeTrue();
+});
+
+it('registers the current agent bridge admin surface', function (): void {
+    resetAgentBridgeAdminBridgeState();
+
+    (new AgentBridgeAdminBridge)->register(
+        new AdminBridgeRegistrar,
+        AdminBridgeContextData::forPackage(AgentBridgeServiceProvider::$packageName),
+    );
+
+    expect(resolve(ExtensionPageRegistry::class)->get(AgentBridgeServiceProvider::$packageName))
+        ->toBe(CapellAgentBridgePromptBuilderPage::class)
+        ->and(CapellAdmin::getAdminSurfaceRegistry()->schemaExtendersForTag(UserSchemaExtender::TAG))
+        ->toContain(AgentBridgeUserSchemaExtender::class);
 });
 
 it('keeps the legacy admin fallback when the bridge host is unavailable', function (): void {

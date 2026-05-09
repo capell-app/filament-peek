@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('key');
             $table->string('name');
             $table->string('status')->index();
-            $table->string('handler_class');
+            $table->string('handler_key');
             $table->string('success_redirect_url', 2048)->nullable();
             $table->string('failure_redirect_url', 2048)->nullable();
             $table->string('success_message')->nullable();
