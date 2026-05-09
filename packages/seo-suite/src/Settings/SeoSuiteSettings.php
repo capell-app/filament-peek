@@ -19,6 +19,10 @@ class SeoSuiteSettings extends Settings implements SettingsContract, SettingsSch
 
     public bool $seo_check_duplicate_title = true;
 
+    public bool $ai_discovery_audit_enabled = true;
+
+    public bool $ai_discovery_default_enabled = true;
+
     public static function group(): string
     {
         return 'seo_suite';
