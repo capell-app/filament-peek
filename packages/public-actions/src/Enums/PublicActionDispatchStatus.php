@@ -15,6 +15,6 @@ enum PublicActionDispatchStatus: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-public-actions::generic.statuses.dispatch.{$this->value}");
+        return __('capell-public-actions::generic.statuses.dispatch.' . $this->value);
     }
 }

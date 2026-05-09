@@ -13,6 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property PublicActionDestinationStatus $status
+ * @property int $public_action_id
+ * @property string $adapter
+ * @property string $name
+ * @property string|null $endpoint_url
+ * @property string|null $secret
+ * @property array<string, mixed>|null $headers
+ * @property array<string, mixed>|null $settings
  */
 class PublicActionDestination extends Model
 {

@@ -7,14 +7,9 @@
     "tier": "core-addon",
     "bundle": "operations",
     "description": "Dashboard Reports provides generic CMS reporting widgets for Capell dashboards.",
-    "surfaces": [
-        "admin"
-    ],
+    "surfaces": ["admin"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/admin"
-        ],
+        "requires": ["capell-app/core", "capell-app/admin"],
         "optional": [],
         "conflicts": []
     },
@@ -29,9 +24,7 @@
         "runtime": [
             "Capell\\DashboardReports\\Providers\\DashboardReportsServiceProvider"
         ],
-        "admin": [
-            "Capell\\DashboardReports\\Providers\\AdminServiceProvider"
-        ],
+        "admin": ["Capell\\DashboardReports\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "database": {

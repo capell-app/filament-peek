@@ -7,14 +7,9 @@
     "tier": "premium",
     "bundle": "operations",
     "description": "Agent Bridge exposes Capell knowledge and site capabilities through Laravel Agent Bridge servers.",
-    "surfaces": [
-        "admin"
-    ],
+    "surfaces": ["admin"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/admin"
-        ],
+        "requires": ["capell-app/core", "capell-app/admin"],
         "optional": [],
         "conflicts": []
     },

@@ -7,15 +7,9 @@
     "tier": "premium",
     "bundle": "growth",
     "description": "GA4 Reports provides dashboard reporting for Capell.",
-    "surfaces": [
-        "admin",
-        "console"
-    ],
+    "surfaces": ["admin", "console"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/admin"
-        ],
+        "requires": ["capell-app/core", "capell-app/admin"],
         "optional": [],
         "conflicts": []
     },
@@ -27,12 +21,8 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\GA4Reports\\Providers\\GA4ReportsServiceProvider"
-        ],
-        "admin": [
-            "Capell\\GA4Reports\\Providers\\AdminServiceProvider"
-        ],
+        "runtime": ["Capell\\GA4Reports\\Providers\\GA4ReportsServiceProvider"],
+        "admin": ["Capell\\GA4Reports\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "database": {

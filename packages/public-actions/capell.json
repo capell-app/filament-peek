@@ -14,10 +14,7 @@
             "capell-app/core",
             "capell-app/frontend"
         ],
-        "optional": [
-            "capell-app/access-gate",
-            "capell-app/form-builder"
-        ],
+        "optional": ["capell-app/access-gate", "capell-app/form-builder"],
         "conflicts": []
     },
     "lifecycle": {

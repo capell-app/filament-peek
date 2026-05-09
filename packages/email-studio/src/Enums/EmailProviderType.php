@@ -17,6 +17,6 @@ enum EmailProviderType: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-email-studio::generic.providers.{$this->value}");
+        return __('capell-email-studio::generic.providers.' . $this->value);
     }
 }

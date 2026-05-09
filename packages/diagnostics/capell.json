@@ -7,15 +7,9 @@
     "tier": "premium",
     "bundle": "operations",
     "description": "Diagnostics adds operational diagnostics for cache, configuration drift, migrations, packages, registries, queues, permissions, setup health, and Tailwind build status.",
-    "surfaces": [
-        "admin",
-        "console"
-    ],
+    "surfaces": ["admin", "console"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/admin"
-        ],
+        "requires": ["capell-app/core", "capell-app/admin"],
         "optional": [],
         "conflicts": []
     },
@@ -30,9 +24,7 @@
         "runtime": [
             "Capell\\Diagnostics\\Providers\\DiagnosticsServiceProvider"
         ],
-        "admin": [
-            "Capell\\Diagnostics\\Providers\\AdminServiceProvider"
-        ],
+        "admin": ["Capell\\Diagnostics\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "database": {

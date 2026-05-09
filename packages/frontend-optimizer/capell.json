@@ -7,14 +7,9 @@
     "tier": "premium",
     "bundle": "foundation",
     "description": "Frontend Optimizer provides profile-based CSS and JavaScript delivery for public Capell pages.",
-    "surfaces": [
-        "frontend"
-    ],
+    "surfaces": ["frontend"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/frontend"
-        ],
+        "requires": ["capell-app/core", "capell-app/frontend"],
         "optional": [],
         "conflicts": []
     },
@@ -50,7 +45,5 @@
     "capabilities": [],
     "assets": [],
     "healthChecks": [],
-    "scopes": [
-        "frontend"
-    ]
+    "scopes": ["frontend"]
 }

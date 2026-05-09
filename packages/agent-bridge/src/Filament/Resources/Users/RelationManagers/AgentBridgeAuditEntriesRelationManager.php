@@ -12,7 +12,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Override;
 
 final class AgentBridgeAuditEntriesRelationManager extends RelationManager
@@ -50,7 +49,7 @@ final class AgentBridgeAuditEntriesRelationManager extends RelationManager
             });
     }
 
-    public function getRelationship(): Relation|Builder
+    public function getRelationship(): Builder
     {
         return self::scopedQueryForUser(CapellAgentBridgeAuditEntry::query(), $this->ownerRecord);
     }

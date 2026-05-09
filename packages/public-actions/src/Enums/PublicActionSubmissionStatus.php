@@ -14,6 +14,6 @@ enum PublicActionSubmissionStatus: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-public-actions::generic.statuses.submission.{$this->value}");
+        return __('capell-public-actions::generic.statuses.submission.' . $this->value);
     }
 }

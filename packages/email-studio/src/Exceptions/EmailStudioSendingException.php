@@ -10,26 +10,26 @@ class EmailStudioSendingException extends RuntimeException
 {
     public static function profileNotFound(string $siteScopeKey): self
     {
-        return new self("No email profile is available for site scope [{$siteScopeKey}].");
+        return new self(sprintf('No email profile is available for site scope [%s].', $siteScopeKey));
     }
 
     public static function templateNotFound(string $templateKey, string $siteScopeKey): self
     {
-        return new self("No approved email template [{$templateKey}] is available for site scope [{$siteScopeKey}].");
+        return new self(sprintf('No approved email template [%s] is available for site scope [%s].', $templateKey, $siteScopeKey));
     }
 
     public static function variantNotFound(string $templateKey, string $siteScopeKey): self
     {
-        return new self("No active email template variant [{$templateKey}] is available for site scope [{$siteScopeKey}].");
+        return new self(sprintf('No active email template variant [%s] is available for site scope [%s].', $templateKey, $siteScopeKey));
     }
 
     public static function noRecipients(string $templateKey): self
     {
-        return new self("No recipients were provided for email template [{$templateKey}].");
+        return new self(sprintf('No recipients were provided for email template [%s].', $templateKey));
     }
 
     public static function providerNotRegistered(string $provider): self
     {
-        return new self("No email provider adapter is registered for [{$provider}].");
+        return new self(sprintf('No email provider adapter is registered for [%s].', $provider));
     }
 }

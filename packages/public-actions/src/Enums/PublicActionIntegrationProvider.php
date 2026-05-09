@@ -13,6 +13,6 @@ enum PublicActionIntegrationProvider: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-public-actions::generic.statuses.integration_provider.{$this->value}");
+        return __('capell-public-actions::generic.statuses.integration_provider.' . $this->value);
     }
 }

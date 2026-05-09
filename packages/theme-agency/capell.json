@@ -9,13 +9,9 @@
     "description": "Theme Agency registers the agency theme key and expressive renderer views for studio, portfolio, and brand-led sites.",
     "themeKey": "agency",
     "extends": "capell-app/foundation-theme",
-    "surfaces": [
-        "frontend"
-    ],
+    "surfaces": ["frontend"],
     "dependencies": {
-        "requires": [
-            "capell-app/foundation-theme"
-        ],
+        "requires": ["capell-app/foundation-theme"],
         "optional": [],
         "conflicts": []
     },
@@ -27,9 +23,7 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\ThemeStudio\\Agency\\AgencyThemeServiceProvider"
-        ],
+        "runtime": ["Capell\\ThemeStudio\\Agency\\AgencyThemeServiceProvider"],
         "admin": [],
         "frontend": []
     },

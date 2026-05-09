@@ -7,10 +7,7 @@
     "tier": "premium",
     "bundle": "newsletter",
     "description": "Newsletter adds subscriber capture and audience workflows for Capell sites.",
-    "surfaces": [
-        "admin",
-        "frontend"
-    ],
+    "surfaces": ["admin", "frontend"],
     "dependencies": {
         "requires": [
             "capell-app/core",
@@ -30,12 +27,8 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\Newsletter\\Providers\\NewsletterServiceProvider"
-        ],
-        "admin": [
-            "Capell\\Newsletter\\Providers\\AdminServiceProvider"
-        ],
+        "runtime": ["Capell\\Newsletter\\Providers\\NewsletterServiceProvider"],
+        "admin": ["Capell\\Newsletter\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "database": {

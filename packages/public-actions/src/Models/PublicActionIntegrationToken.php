@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property PublicActionIntegrationProvider $provider
+ * @property int|null $site_id
+ * @property string $name
+ * @property array<int, string>|null $abilities
  * @property CarbonInterface|null $revoked_at
  */
 class PublicActionIntegrationToken extends Model

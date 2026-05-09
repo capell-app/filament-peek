@@ -74,6 +74,10 @@ use Capell\SeoSuite\Livewire\Page\Sitemap as SitemapLivewireComponent;
 use Capell\SeoSuite\Livewire\Tools\SitemapTool;
 use Capell\SeoSuite\Models\AiCreatorContext;
 use Capell\SeoSuite\Models\AiCreatorSession;
+use Capell\SeoSuite\Models\AiDiscoveryCrawlerRule;
+use Capell\SeoSuite\Models\AiDiscoveryPageProfile;
+use Capell\SeoSuite\Models\AiDiscoverySiteProfile;
+use Capell\SeoSuite\Models\AiDiscoverySnapshot;
 use Capell\SeoSuite\Models\AIGenerationHistory;
 use Capell\SeoSuite\Models\BrokenLink;
 use Capell\SeoSuite\Policies\AiCreatorPolicy;
@@ -620,6 +624,10 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
             AIGenerationHistory::class,
             AiCreatorContext::class,
             AiCreatorSession::class,
+            AiDiscoverySiteProfile::class,
+            AiDiscoveryPageProfile::class,
+            AiDiscoveryCrawlerRule::class,
+            AiDiscoverySnapshot::class,
             BrokenLink::class,
         ]);
 

@@ -17,23 +17,23 @@ it('layers parent defaults before child defaults and applies database overrides 
         name: 'vendor/base-theme',
         kind: 'theme',
         capellVersion: '^4.0',
-        contexts: ['frontend'],
         requires: [],
         providers: [],
         settings: [],
         extends: null,
         themeKey: 'base',
+        contexts: ['frontend'],
     ));
     CapellCore::registerManifestPackage(new CapellManifestData(
         name: 'vendor/child-theme',
         kind: 'theme',
         capellVersion: '^4.0',
-        contexts: ['frontend'],
         requires: ['vendor/base-theme'],
         providers: [],
         settings: [],
         extends: 'vendor/base-theme',
         themeKey: 'child',
+        contexts: ['frontend'],
     ));
 
     $registry = new ThemeRegistry;

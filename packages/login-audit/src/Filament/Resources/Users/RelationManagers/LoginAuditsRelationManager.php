@@ -98,6 +98,6 @@ final class LoginAuditsRelationManager extends RelationManager
 
     private function loginSuccessful(mixed $state): bool
     {
-        return $state === true || $state === 1 || $state === '1';
+        return in_array($state, [true, 1, '1'], true);
     }
 }

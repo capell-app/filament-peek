@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+use Capell\PublicActions\Enums\PublicActionDispatchStatus;
 use Capell\PublicActions\Enums\PublicActionStatus;
 use Capell\PublicActions\Enums\PublicActionSubmissionStatus;
 use Capell\PublicActions\Models\PublicAction;
+use Capell\PublicActions\Models\PublicActionDestination;
+use Capell\PublicActions\Models\PublicActionDispatchAttempt;
 use Capell\PublicActions\Models\PublicActionSubmission;
+use Illuminate\Support\Facades\Http;
 
 it('submits an active public action and redirects with no-store headers', function (): void {
     PublicAction::factory()->create([
@@ -57,6 +61,28 @@ it('returns json for json submissions', function (): void {
             'success' => true,
             'message' => 'download-access',
         ]);
+});
+
+it('dispatches active destinations after a successful submission', function (): void {
+    Http::fake([
+        'https://hooks.example.test/access' => Http::response('', 204),
+    ]);
+
+    $action = PublicAction::factory()->create([
+        'key' => 'destination-action',
+        'handler_key' => 'test.handler',
+    ]);
+
+    PublicActionDestination::factory()->for($action, 'action')->create([
+        'endpoint_url' => 'https://hooks.example.test/access',
+        'settings' => ['sync' => true],
+    ]);
+
+    $this->post('/actions/destination-action', [
+        'email' => 'person@example.test',
+    ])->assertRedirect();
+
+    expect(PublicActionDispatchAttempt::query()->firstOrFail()->status)->toBe(PublicActionDispatchStatus::Succeeded);
 });
 
 it('rejects inactive actions without creating a submission', function (): void {

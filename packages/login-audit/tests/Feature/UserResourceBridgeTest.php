@@ -56,7 +56,6 @@ function makeLoginAuditBridgeUser(): LoginAuditBridgeTestUser
 {
     Relation::morphMap(['login-audit-bridge-user' => LoginAuditBridgeTestUser::class]);
 
-    /** @var LoginAuditBridgeTestUser $user */
     $user = new LoginAuditBridgeTestUser;
     $user->forceFill([
         'name' => 'Bridge User',

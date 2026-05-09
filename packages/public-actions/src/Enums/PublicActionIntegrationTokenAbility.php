@@ -14,6 +14,6 @@ enum PublicActionIntegrationTokenAbility: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-public-actions::generic.statuses.integration_ability.{$this->value}");
+        return __('capell-public-actions::generic.statuses.integration_ability.' . $this->value);
     }
 }

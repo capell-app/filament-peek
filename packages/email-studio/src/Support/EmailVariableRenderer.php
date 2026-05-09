@@ -9,7 +9,7 @@ use Stringable;
 
 class EmailVariableRenderer
 {
-    private const VARIABLE_PATTERN = '/{{\s*([A-Za-z_][A-Za-z0-9_]*)\s*}}/';
+    private const VARIABLE_PATTERN = '/{{\s*([A-Za-z_]\w*)\s*}}/';
 
     /**
      * @param  array<string, mixed>  $variables

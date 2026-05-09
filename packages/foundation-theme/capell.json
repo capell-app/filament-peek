@@ -9,10 +9,7 @@
     "description": "Foundation Theme provides the default Capell theme assets, Tailwind pipeline, Blade directives, and media handling.",
     "themeKey": "default",
     "extends": null,
-    "surfaces": [
-        "frontend",
-        "admin"
-    ],
+    "surfaces": ["frontend", "admin"],
     "dependencies": {
         "requires": [],
         "optional": [],

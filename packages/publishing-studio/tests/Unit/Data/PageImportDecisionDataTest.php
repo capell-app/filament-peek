@@ -20,7 +20,7 @@ final class PageImportDecisionDataTest extends TestCase
             canUpdateSharedRelations: true,
         );
 
-        self::assertTrue($decision->shouldSkipResolveStep());
+        $this->assertTrue($decision->shouldSkipResolveStep());
     }
 
     public function test_it_skips_resolve_when_every_relation_row_has_one_unambiguous_match(): void
@@ -37,7 +37,7 @@ final class PageImportDecisionDataTest extends TestCase
             canUpdateSharedRelations: true,
         );
 
-        self::assertTrue($decision->shouldSkipResolveStep());
+        $this->assertTrue($decision->shouldSkipResolveStep());
     }
 
     public function test_it_requires_resolve_when_a_relation_row_has_no_top_match(): void
@@ -53,7 +53,7 @@ final class PageImportDecisionDataTest extends TestCase
             canUpdateSharedRelations: true,
         );
 
-        self::assertFalse($decision->shouldSkipResolveStep());
+        $this->assertFalse($decision->shouldSkipResolveStep());
     }
 
     public function test_it_requires_resolve_when_a_relation_row_has_alternatives(): void
@@ -73,6 +73,6 @@ final class PageImportDecisionDataTest extends TestCase
             canUpdateSharedRelations: true,
         );
 
-        self::assertFalse($decision->shouldSkipResolveStep());
+        $this->assertFalse($decision->shouldSkipResolveStep());
     }
 }

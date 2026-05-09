@@ -9,15 +9,9 @@
     "description": "Password Policy provides opt-in password rules and enforcement for Capell CMS.",
     "core": false,
     "namespace": "Capell\\PasswordPolicy",
-    "surfaces": [
-        "admin",
-        "console"
-    ],
+    "surfaces": ["admin", "console"],
     "dependencies": {
-        "requires": [
-            "capell-app/admin",
-            "capell-app/core"
-        ],
+        "requires": ["capell-app/admin", "capell-app/core"],
         "optional": [],
         "conflicts": []
     },
@@ -50,9 +44,7 @@
         "demoParams": [],
         "health": null
     },
-    "settings": [
-        "Capell\\PasswordPolicy\\Settings\\PasswordPolicySettings"
-    ],
+    "settings": ["Capell\\PasswordPolicy\\Settings\\PasswordPolicySettings"],
     "permissions": [],
     "capabilities": [],
     "assets": [],

@@ -13,6 +13,6 @@ enum PublicActionDestinationStatus: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-public-actions::generic.statuses.destination.{$this->value}");
+        return __('capell-public-actions::generic.statuses.destination.' . $this->value);
     }
 }

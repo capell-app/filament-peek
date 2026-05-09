@@ -9,6 +9,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\PublicActions\Enums\ResourceEnum;
+use Capell\PublicActions\Listeners\SubmitPublicActionFromFormSubmission;
 use Capell\PublicActions\Models\PublicAction;
 use Capell\PublicActions\Models\PublicActionDestination;
 use Capell\PublicActions\Models\PublicActionDispatchAttempt;
@@ -20,6 +21,7 @@ use Capell\PublicActions\Support\PublicActionHandlerRegistry;
 use Capell\PublicActions\Support\PublicActionProviderPresetRegistry;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Package;
@@ -69,6 +71,7 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
             $this
                 ->registerModels()
                 ->registerAdminResources()
+                ->registerListeners()
                 ->registerProtectedTables();
         });
     }
@@ -145,11 +148,24 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
         }
 
         foreach ($tables as $tableName) {
-            if (! is_string($tableName) || $tableName === '') {
+            if (! is_string($tableName)) {
                 continue;
             }
-
+            if ($tableName === '') {
+                continue;
+            }
             CapellCore::registerProtectedTable(static fn (): string => $tableName);
+        }
+
+        return $this;
+    }
+
+    private function registerListeners(): self
+    {
+        $formSubmittedEvent = implode('\\', ['Capell', 'FormBuilder', 'Events', 'FormSubmitted']);
+
+        if (class_exists($formSubmittedEvent)) {
+            Event::listen($formSubmittedEvent, SubmitPublicActionFromFormSubmission::class);
         }
 
         return $this;

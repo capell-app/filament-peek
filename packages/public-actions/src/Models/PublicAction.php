@@ -14,6 +14,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property PublicActionStatus $status
+ * @property int|null $site_id
+ * @property string $site_scope_key
+ * @property string $key
+ * @property string $name
+ * @property string $handler_key
+ * @property string|null $success_redirect_url
+ * @property string|null $failure_redirect_url
+ * @property string|null $success_message
+ * @property string|null $failure_message
+ * @property array<string, mixed>|null $payload_schema
+ * @property array<string, mixed>|null $settings
  */
 class PublicAction extends Model
 {

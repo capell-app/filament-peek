@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublicActions\Http\Middleware;
 
 use Capell\PublicActions\Actions\ResolvePublicActionIntegrationTokenAction;
+use Capell\PublicActions\Models\PublicActionIntegrationToken;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,10 +21,13 @@ final class PublicActionZapierAuthMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $plainTextToken = $request->bearerToken() ?: $request->headers->get('X-Capell-Public-Actions-Token');
+        $bearerToken = $request->bearerToken();
+        $plainTextToken = $bearerToken !== null && $bearerToken !== ''
+            ? $bearerToken
+            : $request->headers->get('X-Capell-Public-Actions-Token');
         $token = $this->resolveToken->handle(is_string($plainTextToken) ? $plainTextToken : null);
 
-        if ($token === null) {
+        if (! $token instanceof PublicActionIntegrationToken) {
             return response()->json(['message' => __('capell-public-actions::generic.api.unauthorized')], 401);
         }
 

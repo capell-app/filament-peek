@@ -55,7 +55,6 @@ function seedAdminSettings(): void
 function invokeAgentBridgeProviderMethod(object $provider, string $method): void
 {
     $reflection = new ReflectionMethod($provider, $method);
-    $reflection->setAccessible(true);
     $reflection->invoke($provider);
 }
 
@@ -110,7 +109,7 @@ it('hydrates agent bridge settings and registers the settings schema', function 
 });
 
 it('exposes a translated settings toggle', function (): void {
-    $components = AgentBridgeSettingsSchema::make(app(Filament\Schemas\Schema::class));
+    $components = AgentBridgeSettingsSchema::make(resolve(Filament\Schemas\Schema::class));
 
     expect($components)->toHaveCount(1)
         ->and($components[0])->toBeInstanceOf(Toggle::class)
@@ -251,7 +250,7 @@ it('summarizes token status without exposing token secrets', function (): void {
     $token->forceFill(['last_used_at' => now()->subHour()])->save();
 
     $summary = (new AgentBridgeUserSchemaExtender)->summarizeUserActivity($user);
-    $summaryText = implode(' ', array_map('strval', $summary));
+    $summaryText = implode(' ', array_map(strval(...), $summary));
 
     expect($summary)->toMatchArray([
         'tokens' => 1,

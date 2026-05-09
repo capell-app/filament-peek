@@ -8,6 +8,9 @@ use Capell\Admin\Providers\AdminServiceProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\PublicActions\Providers\PublicActionsServiceProvider;
+use Capell\PublicActions\Support\PublicActionHandlerRegistry;
+use Capell\PublicActions\Tests\Fakes\FakePublicActionHandler;
+use Capell\PublicActions\Tests\Fakes\FakeValidationPublicActionHandler;
 use Capell\Tests\AbstractTestCase;
 use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
@@ -15,6 +18,15 @@ use Override;
 
 abstract class PublicActionsTestCase extends AbstractTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $registry = resolve(PublicActionHandlerRegistry::class);
+        $registry->register('test.handler', FakePublicActionHandler::class);
+        $registry->register('test.validation-handler', FakeValidationPublicActionHandler::class);
+    }
+
     protected function getPackageServiceName(): string
     {
         return 'capell-public-actions';

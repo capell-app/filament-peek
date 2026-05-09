@@ -7,6 +7,7 @@ namespace Capell\PublicActions\Models;
 use Capell\Core\Models\Site;
 use Capell\PublicActions\Database\Factories\PublicActionSubmissionFactory;
 use Capell\PublicActions\Enums\PublicActionSubmissionStatus;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property PublicActionSubmissionStatus $status
+ * @property int $public_action_id
+ * @property int|null $site_id
+ * @property string|null $source_type
+ * @property string|null $source_id
+ * @property array<string, mixed>|null $payload
+ * @property array<string, mixed>|null $metadata
+ * @property CarbonInterface|null $submitted_at
  */
 class PublicActionSubmission extends Model
 {

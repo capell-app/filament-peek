@@ -7,15 +7,9 @@
     "tier": "premium",
     "bundle": "publishing-pro",
     "description": "PublishingStudio provides preview, compare, approve, schedule, publish, restore, and rollback workflows for Capell content.",
-    "surfaces": [
-        "admin",
-        "console"
-    ],
+    "surfaces": ["admin", "console"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/admin"
-        ],
+        "requires": ["capell-app/core", "capell-app/admin"],
         "optional": [],
         "conflicts": []
     },
@@ -32,17 +26,13 @@
         "runtime": [
             "Capell\\PublishingStudio\\Providers\\PublishingStudioServiceProvider"
         ],
-        "admin": [
-            "Capell\\PublishingStudio\\Providers\\AdminServiceProvider"
-        ],
+        "admin": ["Capell\\PublishingStudio\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "database": {
         "migrations": true,
         "settings": false,
-        "requiredTables": [
-            "workspaces"
-        ]
+        "requiredTables": ["workspaces"]
     },
     "commands": {
         "install": null,

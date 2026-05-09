@@ -98,7 +98,7 @@ final class AgentBridgeUserSchemaExtender extends AbstractUserSchemaExtender
             'confirmations' => $confirmations->count(),
             'approved' => $confirmations->whereNotNull('used_at')->count(),
             'audit_entries' => $auditEntries->count(),
-            'active' => $tokens->filter(fn (CapellAgentBridgeToken $token): bool => ! $token->isExpired())->count(),
+            'active' => $tokens->reject(fn (CapellAgentBridgeToken $token): bool => $token->isExpired())->count(),
             'expired' => $tokens->filter(fn (CapellAgentBridgeToken $token): bool => $token->isExpired())->count(),
             'last_used' => $this->formatDate($lastUsedAt),
             'next_expiry' => $this->formatDate($nextExpiryAt),

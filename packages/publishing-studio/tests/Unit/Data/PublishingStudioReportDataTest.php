@@ -64,15 +64,12 @@ final class PublishingStudioReportDataTest extends TestCase
             workspaceStatus: WorkspaceStatusEnum::Open,
         );
 
-        self::assertFalse($publishedState->hasActiveWorkspace());
-        self::assertTrue($publishedState->isPublished());
-        self::assertSame('capell-admin::publish_panel.status_published', $publishedState->statusLabel());
-        self::assertTrue($workspaceDraftState->hasActiveWorkspace());
-        self::assertFalse($workspaceDraftState->isPublished());
-        self::assertSame(
-            'capell-admin::publish_panel.status_draft_in_workspace:{"workspace":"Summer launch"}',
-            $workspaceDraftState->statusLabel(),
-        );
+        $this->assertFalse($publishedState->hasActiveWorkspace());
+        $this->assertTrue($publishedState->isPublished());
+        $this->assertSame('capell-admin::publish_panel.status_published', $publishedState->statusLabel());
+        $this->assertTrue($workspaceDraftState->hasActiveWorkspace());
+        $this->assertFalse($workspaceDraftState->isPublished());
+        $this->assertSame('capell-admin::publish_panel.status_draft_in_workspace:{"workspace":"Summer launch"}', $workspaceDraftState->statusLabel());
     }
 
     public function test_dry_run_report_summarises_rows_collisions_conflicts_and_blocking_checks(): void
@@ -110,10 +107,10 @@ final class PublishingStudioReportDataTest extends TestCase
             ],
         );
 
-        self::assertSame(5, $report->totalRows());
-        self::assertTrue($report->hasCollisions());
-        self::assertTrue($report->hasConflicts());
-        self::assertTrue($report->hasBlockingCheckErrors());
+        $this->assertSame(5, $report->totalRows());
+        $this->assertTrue($report->hasCollisions());
+        $this->assertTrue($report->hasConflicts());
+        $this->assertTrue($report->hasBlockingCheckErrors());
     }
 
     public function test_dry_run_report_treats_clean_error_checks_as_non_blocking(): void
@@ -133,10 +130,10 @@ final class PublishingStudioReportDataTest extends TestCase
             ],
         );
 
-        self::assertSame(0, $report->totalRows());
-        self::assertFalse($report->hasCollisions());
-        self::assertFalse($report->hasConflicts());
-        self::assertFalse($report->hasBlockingCheckErrors());
+        $this->assertSame(0, $report->totalRows());
+        $this->assertFalse($report->hasCollisions());
+        $this->assertFalse($report->hasConflicts());
+        $this->assertFalse($report->hasBlockingCheckErrors());
     }
 
     public function test_activity_reviewer_and_dashboard_rows_preserve_view_ready_values(): void
@@ -174,22 +171,22 @@ final class PublishingStudioReportDataTest extends TestCase
             publishedAt: '2026-06-03 12:00:00',
         );
 
-        self::assertSame(7, $activity->workspaceId);
-        self::assertSame('Summer launch', $activity->workspaceName);
-        self::assertSame('Workspace submitted', $activity->description);
-        self::assertSame('submitted', $activity->event);
-        self::assertSame(5, $activity->causerId);
-        self::assertSame('user', $activity->causerType);
-        self::assertSame($occurredAt, $activity->occurredAt);
-        self::assertSame('page:landing', $requiredReviewer->requiredFor);
-        self::assertSame('workspace_reviewer', $requiredReviewer->role);
-        self::assertSame('user', $requiredReviewer->reviewerType);
-        self::assertSame(5, $requiredReviewer->reviewerId);
-        self::assertSame($merge->workspaceId, $historyEntry->workspaceId);
-        self::assertSame($merge->name, $historyEntry->name);
-        self::assertSame($merge->actorName, $historyEntry->actorName);
-        self::assertSame($merge->pageCount, $historyEntry->pageCount);
-        self::assertSame($merge->durationOpenHours, $historyEntry->durationOpenHours);
-        self::assertSame($merge->publishedAt, $historyEntry->publishedAt);
+        $this->assertSame(7, $activity->workspaceId);
+        $this->assertSame('Summer launch', $activity->workspaceName);
+        $this->assertSame('Workspace submitted', $activity->description);
+        $this->assertSame('submitted', $activity->event);
+        $this->assertSame(5, $activity->causerId);
+        $this->assertSame('user', $activity->causerType);
+        $this->assertSame($occurredAt, $activity->occurredAt);
+        $this->assertSame('page:landing', $requiredReviewer->requiredFor);
+        $this->assertSame('workspace_reviewer', $requiredReviewer->role);
+        $this->assertSame('user', $requiredReviewer->reviewerType);
+        $this->assertSame(5, $requiredReviewer->reviewerId);
+        $this->assertSame($merge->workspaceId, $historyEntry->workspaceId);
+        $this->assertSame($merge->name, $historyEntry->name);
+        $this->assertSame($merge->actorName, $historyEntry->actorName);
+        $this->assertSame($merge->pageCount, $historyEntry->pageCount);
+        $this->assertSame($merge->durationOpenHours, $historyEntry->durationOpenHours);
+        $this->assertSame($merge->publishedAt, $historyEntry->publishedAt);
     }
 }

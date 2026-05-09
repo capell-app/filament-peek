@@ -20,6 +20,7 @@ class RenderEmailTemplateAction
 
         $declaredVariables = $variant->template?->variables;
         $declaredVariables = is_array($declaredVariables) ? array_values($declaredVariables) : [];
+
         $renderer = resolve(EmailVariableRenderer::class);
 
         return new RenderedEmailData(

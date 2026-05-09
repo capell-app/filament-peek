@@ -4,6 +4,22 @@ Reusable gated access areas for Capell and Laravel applications.
 
 The package owns areas, registrations, approvals, grants, claim links, browser tokens, middleware, notifications, audit events, install/setup/doctor commands, and Filament administration.
 
+## Targeted Public Action Buttons
+
+Access Gate can still protect whole routes with middleware, but it can also be triggered from a single button or standalone public action URL through `capell-app/public-actions`.
+
+Create a Public Action whose handler key is `access-gate.request`, then render:
+
+```blade
+<x-capell-access-gate::request-cta
+    area="preview"
+    public-action-key="preview-access"
+    requested-url="{{ url()->current() }}"
+/>
+```
+
+The button posts a normal public form. Access Gate receives the payload, creates the registration, and Public Actions can then dispatch configured webhook/API destinations. If `public-action-key` is omitted, the component falls back to the built-in `/access/request/{area}` submission route.
+
 ## Request Methods
 
 The package renders the plain email request flow by default. Host applications can register additional request methods without the package knowing about the provider.

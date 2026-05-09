@@ -16,38 +16,37 @@ use Capell\PublishingStudio\Rollback\EntityRollbackReport;
 use Capell\PublishingStudio\Services\MediaDiffResult;
 use Carbon\CarbonImmutable;
 use Illuminate\Container\Container;
+use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class PublishingStudioValueDataTest extends TestCase
 {
     /**
-     * @return array<string, array{0: ?string, 1: ?string, 2: bool}>
+     * @return Iterator<string, array{(string | null), (string | null), bool}>
      */
-    public static function mediaDiffProvider(): array
+    public static function mediaDiffProvider(): Iterator
     {
-        return [
-            'no media' => [null, null, false],
-            'before only' => ['https://example.test/before.jpg', null, true],
-            'after only' => [null, 'https://example.test/after.jpg', true],
-            'both sides' => ['https://example.test/before.jpg', 'https://example.test/after.jpg', true],
-        ];
+        yield 'no media' => [null, null, false];
+        yield 'before only' => ['https://example.test/before.jpg', null, true];
+        yield 'after only' => [null, 'https://example.test/after.jpg', true];
+        yield 'both sides' => ['https://example.test/before.jpg', 'https://example.test/after.jpg', true];
     }
 
     public function test_clone_options_default_to_copying_draft_content_and_settings(): void
     {
         $options = new CloneOptions;
 
-        self::assertTrue($options->copyDrafts);
-        self::assertTrue($options->copySettings);
-        self::assertNull($options->newName);
-        self::assertNull($options->newSlug);
-        self::assertNull($options->description);
+        $this->assertTrue($options->copyDrafts);
+        $this->assertTrue($options->copySettings);
+        $this->assertNull($options->newName);
+        $this->assertNull($options->newSlug);
+        $this->assertNull($options->description);
     }
 
     public function test_workspace_settings_default_to_two_approval_levels(): void
     {
-        self::assertSame(2, (new WorkspaceSettingsData)->requiredApprovalLevels);
+        $this->assertSame(2, (new WorkspaceSettingsData)->requiredApprovalLevels);
     }
 
     public function test_page_import_status_exposes_stable_notice_constants_and_payload_state(): void
@@ -62,15 +61,15 @@ final class PublishingStudioValueDataTest extends TestCase
             noticeBody: 'Fix validation errors before dispatching.',
         );
 
-        self::assertSame('confirmation_mismatch', PageImportStatusData::NOTICE_CONFIRMATION_MISMATCH);
-        self::assertSame('import_queued', PageImportStatusData::NOTICE_IMPORT_QUEUED);
-        self::assertSame('validate', $status->step);
-        self::assertSame('Failed', $status->sessionStatus);
-        self::assertSame(['blocking_errors' => 2], $status->resultSummary);
-        self::assertSame('Checksum mismatch', $status->failureReason);
-        self::assertSame(42, $status->targetWorkspaceId);
-        self::assertSame('summary_blocking_errors', $status->notice);
-        self::assertSame('Fix validation errors before dispatching.', $status->noticeBody);
+        $this->assertSame('confirmation_mismatch', PageImportStatusData::NOTICE_CONFIRMATION_MISMATCH);
+        $this->assertSame('import_queued', PageImportStatusData::NOTICE_IMPORT_QUEUED);
+        $this->assertSame('validate', $status->step);
+        $this->assertSame('Failed', $status->sessionStatus);
+        $this->assertSame(['blocking_errors' => 2], $status->resultSummary);
+        $this->assertSame('Checksum mismatch', $status->failureReason);
+        $this->assertSame(42, $status->targetWorkspaceId);
+        $this->assertSame('summary_blocking_errors', $status->notice);
+        $this->assertSame('Fix validation errors before dispatching.', $status->noticeBody);
     }
 
     public function test_page_import_wizard_state_carries_review_and_validation_state(): void
@@ -88,18 +87,18 @@ final class PublishingStudioValueDataTest extends TestCase
             noticeCount: 1,
         );
 
-        self::assertSame('blocked_by_workspace_conflict', PageImportWizardStateData::NOTICE_BLOCKED_BY_WORKSPACE_CONFLICT);
-        self::assertSame('blocked_pending_decisions', PageImportWizardStateData::NOTICE_BLOCKED_PENDING_DECISIONS);
-        self::assertSame('resolve', $state->step);
-        self::assertSame(7, $state->sessionId);
-        self::assertCount(1, $state->reviewRows);
-        self::assertSame('create', $state->pageDecisions['page-1']['action']);
-        self::assertCount(1, $state->resolveRows);
-        self::assertSame(9, $state->relationDecisions['author:ben']['target_id']);
-        self::assertSame(['warnings' => 1], $state->validationSummary);
-        self::assertSame('IMPORT 1 PAGE', $state->confirmationExpected);
-        self::assertSame('unresolved_references', $state->notice);
-        self::assertSame(1, $state->noticeCount);
+        $this->assertSame('blocked_by_workspace_conflict', PageImportWizardStateData::NOTICE_BLOCKED_BY_WORKSPACE_CONFLICT);
+        $this->assertSame('blocked_pending_decisions', PageImportWizardStateData::NOTICE_BLOCKED_PENDING_DECISIONS);
+        $this->assertSame('resolve', $state->step);
+        $this->assertSame(7, $state->sessionId);
+        $this->assertCount(1, $state->reviewRows);
+        $this->assertSame('create', $state->pageDecisions['page-1']['action']);
+        $this->assertCount(1, $state->resolveRows);
+        $this->assertSame(9, $state->relationDecisions['author:ben']['target_id']);
+        $this->assertSame(['warnings' => 1], $state->validationSummary);
+        $this->assertSame('IMPORT 1 PAGE', $state->confirmationExpected);
+        $this->assertSame('unresolved_references', $state->notice);
+        $this->assertSame(1, $state->noticeCount);
     }
 
     public function test_scheduler_event_table_record_includes_labels_colours_and_source_metadata(): void
@@ -128,7 +127,7 @@ final class PublishingStudioValueDataTest extends TestCase
             recordUrl: 'https://example.test/admin/workspaces/42',
         );
 
-        self::assertSame([
+        $this->assertSame([
             'id' => 'workspace:42:publish',
             'source_type' => 'workspace',
             'source_id' => 42,
@@ -158,10 +157,10 @@ final class PublishingStudioValueDataTest extends TestCase
             messages: ['Broken link found.'],
         );
 
-        self::assertTrue($cleanError->isError());
-        self::assertTrue($cleanError->isClean());
-        self::assertFalse($dirtyWarning->isError());
-        self::assertFalse($dirtyWarning->isClean());
+        $this->assertTrue($cleanError->isError());
+        $this->assertTrue($cleanError->isClean());
+        $this->assertFalse($dirtyWarning->isError());
+        $this->assertFalse($dirtyWarning->isClean());
     }
 
     public function test_entity_rollback_report_records_preview_and_execution_outcomes(): void
@@ -175,12 +174,12 @@ final class PublishingStudioValueDataTest extends TestCase
             noOp: false,
         );
 
-        self::assertSame('App\\Models\\Page', $report->modelClass);
-        self::assertSame('page-uuid', $report->entityUuid);
-        self::assertSame(15, $report->targetVersionId);
-        self::assertSame(22, $report->restoredId);
-        self::assertSame(24, $report->replacedId);
-        self::assertFalse($report->noOp);
+        $this->assertSame('App\\Models\\Page', $report->modelClass);
+        $this->assertSame('page-uuid', $report->entityUuid);
+        $this->assertSame(15, $report->targetVersionId);
+        $this->assertSame(22, $report->restoredId);
+        $this->assertSame(24, $report->replacedId);
+        $this->assertFalse($report->noOp);
     }
 
     #[DataProvider('mediaDiffProvider')]
@@ -196,6 +195,6 @@ final class PublishingStudioValueDataTest extends TestCase
             contentChanged: $expected,
         );
 
-        self::assertSame($expected, $result->hasVisualDiff());
+        $this->assertSame($expected, $result->hasVisualDiff());
     }
 }

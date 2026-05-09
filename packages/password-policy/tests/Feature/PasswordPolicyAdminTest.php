@@ -44,7 +44,6 @@ beforeEach(function (): void {
 function invokePasswordPolicyProviderMethod(object $provider, string $method): void
 {
     $reflection = new ReflectionMethod($provider, $method);
-    $reflection->setAccessible(true);
     $reflection->invoke($provider);
 }
 

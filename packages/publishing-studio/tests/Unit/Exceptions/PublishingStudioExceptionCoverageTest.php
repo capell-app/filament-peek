@@ -20,10 +20,7 @@ final class PublishingStudioExceptionCoverageTest extends TestCase
             versionId: 18,
         );
 
-        self::assertSame(
-            'Entity App\\Models\\Page(uuid=page-uuid) is not part of version #18 manifest.',
-            $exception->getMessage(),
-        );
+        $this->assertSame('Entity App\\Models\\Page(uuid=page-uuid) is not part of version #18 manifest.', $exception->getMessage());
     }
 
     public function test_publish_blocked_exception_lists_only_dirty_error_checks(): void
@@ -48,6 +45,6 @@ final class PublishingStudioExceptionCoverageTest extends TestCase
             ),
         ]);
 
-        self::assertSame('Publish blocked by failing checks: seo', $exception->getMessage());
+        $this->assertSame('Publish blocked by failing checks: seo', $exception->getMessage());
     }
 }

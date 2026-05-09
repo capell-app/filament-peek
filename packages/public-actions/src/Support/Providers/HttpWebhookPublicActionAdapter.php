@@ -147,27 +147,23 @@ final class HttpWebhookPublicActionAdapter implements PublicActionDestinationAda
             return (int) $timeout;
         }
 
-        return (int) config('capell-public-actions.webhook_timeout_seconds', 10);
+        $configuredTimeout = config('capell-public-actions.webhook_timeout_seconds', 10);
+
+        return is_int($configuredTimeout) && $configuredTimeout > 0 ? $configuredTimeout : 10;
     }
 
     private function endpointUrl(PublicActionDestination $destination): string
     {
         $endpointUrl = is_string($destination->endpoint_url) ? $destination->endpoint_url : '';
         $parts = parse_url($endpointUrl);
-        $scheme = is_string($parts['scheme'] ?? null) ? strtolower((string) $parts['scheme']) : null;
-        $host = is_string($parts['host'] ?? null) ? strtolower((string) $parts['host']) : null;
+        $scheme = is_string($parts['scheme'] ?? null) ? strtolower($parts['scheme']) : null;
+        $host = is_string($parts['host'] ?? null) ? strtolower($parts['host']) : null;
 
-        if (! in_array($scheme, ['https', 'http'], true) || $host === null || $host === '') {
-            throw new InvalidArgumentException('Webhook destination endpoint must be an absolute HTTP URL.');
-        }
+        throw_if(! in_array($scheme, ['https', 'http'], true) || $host === null || $host === '', InvalidArgumentException::class, 'Webhook destination endpoint must be an absolute HTTP URL.');
 
-        if ($scheme !== 'https' && ! (bool) config('capell-public-actions.allow_insecure_webhook_urls', false)) {
-            throw new InvalidArgumentException('Webhook destination endpoint must use HTTPS.');
-        }
+        throw_if($scheme !== 'https' && ! config('capell-public-actions.allow_insecure_webhook_urls', false), InvalidArgumentException::class, 'Webhook destination endpoint must use HTTPS.');
 
-        if (! (bool) config('capell-public-actions.allow_private_webhook_urls', false) && $this->isPrivateHost($host)) {
-            throw new InvalidArgumentException('Webhook destination endpoint host is not allowed.');
-        }
+        throw_if(! config('capell-public-actions.allow_private_webhook_urls', false) && $this->isPrivateHost($host), InvalidArgumentException::class, 'Webhook destination endpoint host is not allowed.');
 
         return $endpointUrl;
     }

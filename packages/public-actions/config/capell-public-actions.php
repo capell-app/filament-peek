@@ -3,14 +3,17 @@
 declare(strict_types=1);
 
 return [
-    'route_prefix' => env('CAPELL_PUBLIC_ACTIONS_ROUTE_PREFIX', 'actions'),
-    'api_route_prefix' => env('CAPELL_PUBLIC_ACTIONS_API_ROUTE_PREFIX', 'api/public-actions'),
-    'queue' => env('CAPELL_PUBLIC_ACTIONS_QUEUE', 'default'),
-    'webhook_timeout_seconds' => env('CAPELL_PUBLIC_ACTIONS_WEBHOOK_TIMEOUT', 10),
-    'allow_insecure_webhook_urls' => env('CAPELL_PUBLIC_ACTIONS_ALLOW_INSECURE_WEBHOOK_URLS', false),
-    'allow_private_webhook_urls' => env('CAPELL_PUBLIC_ACTIONS_ALLOW_PRIVATE_WEBHOOK_URLS', false),
+    'route_prefix' => 'actions',
+    'api_route_prefix' => 'api/public-actions',
+    'queue' => 'default',
+    'webhook_timeout_seconds' => 10,
+    'allow_insecure_webhook_urls' => false,
+    'allow_private_webhook_urls' => false,
     'submit_rate_limit' => 'public-actions-submit',
     'api_rate_limit' => 'public-actions-api',
+    'form_builder' => [
+        'mappings' => [],
+    ],
     'tables' => [
         'actions' => 'public_actions',
         'destinations' => 'public_action_destinations',

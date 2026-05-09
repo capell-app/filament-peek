@@ -5,11 +5,7 @@
     "capell-version": "^4.0",
     "title": "Events",
     "description": "Events adds listings, recurring events, venues, RSVPs, calendar feeds, and Event schema.",
-    "surfaces": [
-        "admin",
-        "frontend",
-        "console"
-    ],
+    "surfaces": ["admin", "frontend", "console"],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -33,9 +29,7 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\Events\\Providers\\EventsServiceProvider"
-        ],
+        "runtime": ["Capell\\Events\\Providers\\EventsServiceProvider"],
         "admin": [],
         "frontend": []
     },

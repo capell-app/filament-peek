@@ -54,12 +54,29 @@
         {{-- format-ignore-end --}}
 
         @if (($action['type'] ?? '') === 'public_action' && Route::has('capell-public-actions.submit'))
-            <x-capell-public-actions::action-button
-                :action-key="$publicActionKey"
-                :label="$label"
-                :payload="$payload"
-                :class="'action-item rounded-full px-3.5 py-2 text-xs font-semibold transition sm:px-5 sm:py-3 sm:text-sm ' . (($action['color'] ?? $buttonColor) === 'secondary' ? 'border border-slate-300 text-slate-800 hover:border-slate-950 dark:border-white/15 dark:text-slate-200 dark:hover:border-white' : 'bg-[var(--theme-accent)] text-slate-950 hover:bg-white') . ' ' . ($actionItemClass ?? '')"
-            />
+            <form
+                method="post"
+                action="{{ route('capell-public-actions.submit', ['action' => $publicActionKey]) }}"
+                class="inline-flex"
+            >
+                @csrf
+                @foreach ($payload as $payloadKey => $payloadValue)
+                    @if (is_string($payloadKey) && is_scalar($payloadValue))
+                        <input
+                            type="hidden"
+                            name="{{ $payloadKey }}"
+                            value="{{ (string) $payloadValue }}"
+                        />
+                    @endif
+                @endforeach
+
+                <button
+                    type="submit"
+                    class="{{ 'action-item rounded-full px-3.5 py-2 text-xs font-semibold transition sm:px-5 sm:py-3 sm:text-sm ' . (($action['color'] ?? $buttonColor) === 'secondary' ? 'border border-slate-300 text-slate-800 hover:border-slate-950 dark:border-white/15 dark:text-slate-200 dark:hover:border-white' : 'bg-[var(--theme-accent)] text-slate-950 hover:bg-white') . ' ' . ($actionItemClass ?? '') }}"
+                >
+                    {{ $label }}
+                </button>
+            </form>
             @continue
         @endif
 

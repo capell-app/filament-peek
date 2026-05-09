@@ -16,6 +16,6 @@ enum SuppressionReason: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-email-studio::generic.suppression_reasons.{$this->value}");
+        return __('capell-email-studio::generic.suppression_reasons.' . $this->value);
     }
 }

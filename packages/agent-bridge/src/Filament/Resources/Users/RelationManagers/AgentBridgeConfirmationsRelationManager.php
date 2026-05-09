@@ -12,7 +12,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Override;
 
 final class AgentBridgeConfirmationsRelationManager extends RelationManager
@@ -39,7 +38,7 @@ final class AgentBridgeConfirmationsRelationManager extends RelationManager
             ->where('user_id', $user->getKey());
     }
 
-    public function getRelationship(): Relation|Builder
+    public function getRelationship(): Builder
     {
         return self::scopedQueryForUser(CapellAgentBridgeConfirmation::query(), $this->ownerRecord);
     }

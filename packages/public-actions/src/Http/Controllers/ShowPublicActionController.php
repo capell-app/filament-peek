@@ -53,9 +53,9 @@ final class ShowPublicActionController
         return collect($fields)
             ->filter(fn (mixed $field): bool => is_array($field) && is_string($field['key'] ?? null))
             ->map(function (array $field): array {
-                $key = (string) $field['key'];
-                $type = is_string($field['type'] ?? null) ? (string) $field['type'] : 'text';
-                $label = is_string($field['label'] ?? null) ? (string) $field['label'] : str($key)->headline()->toString();
+                $key = $field['key'];
+                $type = is_string($field['type'] ?? null) ? $field['type'] : 'text';
+                $label = is_string($field['label'] ?? null) ? $field['label'] : str($key)->headline()->toString();
 
                 return [
                     'key' => $key,

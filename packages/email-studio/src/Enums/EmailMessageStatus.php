@@ -16,6 +16,6 @@ enum EmailMessageStatus: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __("capell-email-studio::generic.statuses.message.{$this->value}");
+        return __('capell-email-studio::generic.statuses.message.' . $this->value);
     }
 }

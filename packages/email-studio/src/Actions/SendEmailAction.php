@@ -64,7 +64,7 @@ class SendEmailAction
         $this->createRecipients($message, $data);
 
         if ($data->queue && $message->recipients()->where('status', EmailRecipientStatus::Queued->value)->exists()) {
-            SendEmailJob::dispatch((int) $message->getKey())->onQueue((string) config('capell-email-studio.queue'));
+            dispatch(new SendEmailJob((int) $message->getKey()))->onQueue((string) config('capell-email-studio.queue'));
         }
 
         if (! $data->queue) {

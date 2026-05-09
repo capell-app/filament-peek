@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Extenders;
 
+use Capell\Admin\Actions\Users\ShouldLoadUserResourceBridgeAction;
 use Capell\Admin\Data\Schemas\UserSchemaContextData;
 use Capell\Admin\Support\Schemas\AbstractUserSchemaExtender;
 use Capell\PublishingStudio\Filament\Resources\Users\RelationManagers\PreviewLinksRelationManager;
@@ -89,7 +90,7 @@ class PublishingStudioUserSchemaExtender extends AbstractUserSchemaExtender
             $packageSettingEnabled = true;
         }
 
-        $actionClass = 'Capell\\Admin\\Actions\\Users\\ShouldLoadUserResourceBridgeAction';
+        $actionClass = ShouldLoadUserResourceBridgeAction::class;
 
         if (class_exists($actionClass) && method_exists($actionClass, 'run')) {
             if ($actionClass::run('enable_content_ownership_user_bridge', true) !== true) {

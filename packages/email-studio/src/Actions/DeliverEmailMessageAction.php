@@ -36,8 +36,8 @@ class DeliverEmailMessageAction
             $providerResult = resolve(EmailProviderRegistry::class)
                 ->adapter($emailMessage->profile->provider)
                 ->send($emailMessage->fresh(['profile', 'recipients']) ?? $emailMessage);
-        } catch (Throwable $exception) {
-            $this->markProviderFailure($emailMessage, $exception->getMessage());
+        } catch (Throwable $throwable) {
+            $this->markProviderFailure($emailMessage, $throwable->getMessage());
 
             return $emailMessage->fresh(['profile', 'recipients']) ?? $emailMessage;
         }

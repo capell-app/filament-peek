@@ -16,13 +16,13 @@ final class PublishingStudioEnumCoverageTest extends TestCase
 {
     public function test_resource_enum_points_at_the_filament_resources_it_exposes(): void
     {
-        self::assertSame(PreviewLinkResource::class, ResourceEnum::PreviewLink->value);
-        self::assertSame(WorkspaceResource::class, ResourceEnum::Workspace->value);
+        $this->assertSame(PreviewLinkResource::class, ResourceEnum::PreviewLink->value);
+        $this->assertSame(WorkspaceResource::class, ResourceEnum::Workspace->value);
     }
 
     public function test_review_decision_enum_uses_persisted_decision_values(): void
     {
-        self::assertSame([
+        $this->assertSame([
             'approved',
             'rejected',
         ], array_map(
@@ -33,7 +33,7 @@ final class PublishingStudioEnumCoverageTest extends TestCase
 
     public function test_scheduler_event_type_enum_maps_every_case_to_a_filament_colour(): void
     {
-        self::assertSame([
+        $this->assertSame([
             'publish' => 'success',
             'unpublish' => 'danger',
             'embargo' => 'warning',
@@ -48,7 +48,7 @@ final class PublishingStudioEnumCoverageTest extends TestCase
 
     public function test_workspace_transition_enum_exposes_stable_audit_event_values(): void
     {
-        self::assertSame([
+        $this->assertSame([
             'submitted',
             'approved',
             'rejected',

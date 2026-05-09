@@ -9,13 +9,9 @@
     "description": "Theme Corporate registers the corporate theme key and restrained renderer views for B2B, public sector, and professional-service sites.",
     "themeKey": "corporate",
     "extends": "capell-app/foundation-theme",
-    "surfaces": [
-        "frontend"
-    ],
+    "surfaces": ["frontend"],
     "dependencies": {
-        "requires": [
-            "capell-app/foundation-theme"
-        ],
+        "requires": ["capell-app/foundation-theme"],
         "optional": [],
         "conflicts": []
     },

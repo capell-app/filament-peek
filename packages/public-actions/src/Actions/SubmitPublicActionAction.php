@@ -164,7 +164,7 @@ final class SubmitPublicActionAction
             return $handler;
         }
 
-        throw new InvalidArgumentException("Public action handler [{$action->handler_key}] is not registered.");
+        throw new InvalidArgumentException(sprintf('Public action handler [%s] is not registered.', $action->handler_key));
     }
 
     private function metadata(PublicAction $action, ?Request $request): PublicActionMetadataData
@@ -212,7 +212,7 @@ final class SubmitPublicActionAction
                 continue;
             }
 
-            DispatchPublicActionDestinationJob::dispatch($destination, $submission);
+            dispatch(new DispatchPublicActionDestinationJob($destination, $submission));
         }
     }
 
@@ -231,7 +231,7 @@ final class SubmitPublicActionAction
             return null;
         }
 
-        if (! $request->fullUrl()) {
+        if ($request->fullUrl() === '') {
             return null;
         }
 

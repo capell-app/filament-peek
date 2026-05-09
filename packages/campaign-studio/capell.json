@@ -7,10 +7,7 @@
     "tier": "premium",
     "bundle": "growth",
     "description": "CampaignStudio adds campaign groups, landing pages, CTA blocks, conversion goals, UTM attribution, and conversion reporting to Capell.",
-    "surfaces": [
-        "admin",
-        "frontend"
-    ],
+    "surfaces": ["admin", "frontend"],
     "dependencies": {
         "requires": [
             "capell-app/core",
@@ -19,9 +16,7 @@
             "capell-app/insights",
             "capell-app/form-builder"
         ],
-        "optional": [
-            "capell-app/seo-suite"
-        ],
+        "optional": ["capell-app/seo-suite"],
         "conflicts": []
     },
     "lifecycle": {
@@ -35,9 +30,7 @@
         "runtime": [
             "Capell\\CampaignStudio\\Providers\\CampaignStudioServiceProvider"
         ],
-        "admin": [
-            "Capell\\CampaignStudio\\Providers\\AdminServiceProvider"
-        ],
+        "admin": ["Capell\\CampaignStudio\\Providers\\AdminServiceProvider"],
         "frontend": [
             "Capell\\CampaignStudio\\Providers\\FrontendServiceProvider"
         ]

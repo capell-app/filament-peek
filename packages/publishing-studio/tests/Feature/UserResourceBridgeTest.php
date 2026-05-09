@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Actions\Users\ShouldLoadUserResourceBridgeAction;
 use Capell\Admin\Contracts\Extenders\UserSchemaExtender;
 use Capell\Admin\Data\Bridges\AdminBridgeContextData;
 use Capell\Admin\Data\Schemas\UserSchemaContextData;
@@ -50,7 +51,7 @@ use Filament\Schemas\Schema;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Spatie\LaravelSettings\Migrations\SettingsMigrator;
 
-if (! class_exists('Capell\Admin\Actions\Users\ShouldLoadUserResourceBridgeAction')) {
+if (! class_exists(ShouldLoadUserResourceBridgeAction::class)) {
     eval(<<<'PHP'
         namespace Capell\Admin\Actions\Users;
 
@@ -96,7 +97,6 @@ function seedPublishingStudioBridgeSettings(bool $adminEnabled = true, bool $pac
 function invokePublishingStudioProviderMethod(object $provider, string $method): void
 {
     $reflection = new ReflectionMethod($provider, $method);
-    $reflection->setAccessible(true);
     $reflection->invoke($provider);
 }
 
