@@ -6,6 +6,7 @@ namespace Capell\EmailStudio\Providers;
 
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Capell\EmailStudio\Enums\EmailProviderType;
 use Capell\EmailStudio\Models\EmailEvent;
 use Capell\EmailStudio\Models\EmailMessage;
 use Capell\EmailStudio\Models\EmailProfile;
@@ -16,7 +17,11 @@ use Capell\EmailStudio\Models\EmailTemplate;
 use Capell\EmailStudio\Models\EmailTemplateRegistration;
 use Capell\EmailStudio\Models\EmailTemplateVariant;
 use Capell\EmailStudio\Models\EmailTrackingToken;
+use Capell\EmailStudio\Support\EmailProviderRegistry;
 use Capell\EmailStudio\Support\EmailTemplateRegistry;
+use Capell\EmailStudio\Support\Providers\FakeEmailProviderAdapter;
+use Capell\EmailStudio\Support\Providers\PostmarkEmailProviderAdapter;
+use Capell\EmailStudio\Support\Providers\SmtpEmailProviderAdapter;
 use Spatie\LaravelPackageTools\Package;
 
 class EmailStudioServiceProvider extends AbstractPackageServiceProvider
@@ -56,6 +61,10 @@ class EmailStudioServiceProvider extends AbstractPackageServiceProvider
     {
         $this->registerPackageMetadata();
         $this->app->singleton(EmailTemplateRegistry::class);
+        $this->app->singleton(EmailProviderRegistry::class, static fn (): EmailProviderRegistry => (new EmailProviderRegistry)
+            ->register(EmailProviderType::Fake, new FakeEmailProviderAdapter)
+            ->register(EmailProviderType::Smtp, new SmtpEmailProviderAdapter)
+            ->register(EmailProviderType::Postmark, new PostmarkEmailProviderAdapter));
 
         $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {

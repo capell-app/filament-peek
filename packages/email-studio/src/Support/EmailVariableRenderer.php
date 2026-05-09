@@ -66,10 +66,10 @@ class EmailVariableRenderer
         return (string) preg_replace_callback(
             self::VARIABLE_PATTERN,
             function (array $matches) use ($variables, $declaredVariables, $escape): string {
-                $variableName = (string) $matches[1];
+                $variableName = $matches[1];
 
                 if (! in_array($variableName, $declaredVariables, true) || ! array_key_exists($variableName, $variables)) {
-                    return (string) $matches[0];
+                    return $matches[0];
                 }
 
                 $value = $this->stringValue($variables[$variableName]);

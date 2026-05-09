@@ -977,7 +977,10 @@ git commit -m "feat: add email template rendering"
 
 - Create: `packages/email-studio/src/Contracts/EmailProviderAdapter.php`
 - Create: `packages/email-studio/src/Data/ProviderSendResultData.php`
+- Create: `packages/email-studio/src/Data/ProviderWebhookEventData.php`
+- Create: `packages/email-studio/src/Data/InboundEmailReplyData.php`
 - Create: `packages/email-studio/src/Support/EmailProviderRegistry.php`
+- Create: `packages/email-studio/src/Support/EmailAddressNormalizer.php`
 - Create: `packages/email-studio/src/Support/EmailProfileResolver.php`
 - Create: `packages/email-studio/src/Support/Providers/FakeEmailProviderAdapter.php`
 - Create: `packages/email-studio/src/Support/Providers/SmtpEmailProviderAdapter.php`
@@ -992,7 +995,7 @@ git commit -m "feat: add email template rendering"
 - Create: `packages/email-studio/tests/Integration/Actions/DeliverEmailMessageActionTest.php`
 - Create: `packages/email-studio/tests/Integration/Actions/EmailSuppressionActionTest.php`
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 Tests must prove:
 
@@ -1007,7 +1010,7 @@ Tests must prove:
 - Immediate mode calls `DeliverEmailMessageAction`.
 - Fake provider marks recipients as sent and stores a deterministic provider message ID.
 
-- [ ] **Step 2: Implement provider contract**
+- [x] **Step 2: Implement provider contract**
 
 ```php
 interface EmailProviderAdapter
@@ -1020,7 +1023,7 @@ interface EmailProviderAdapter
 }
 ```
 
-- [ ] **Step 3: Implement `SendEmailAction`**
+- [x] **Step 3: Implement `SendEmailAction`**
 
 Flow:
 
@@ -1032,7 +1035,7 @@ Flow:
 6. Queue `SendEmailJob` or deliver immediately.
 7. Return the `EmailMessage`.
 
-- [ ] **Step 4: Implement `DeliverEmailMessageAction`**
+- [x] **Step 4: Implement `DeliverEmailMessageAction`**
 
 Flow:
 
@@ -1045,11 +1048,11 @@ Flow:
 7. Record failure reasons without throwing for provider-level soft failures.
 8. Throw for invalid configuration so jobs fail loudly.
 
-- [ ] **Step 5: Register adapters**
+- [x] **Step 5: Register adapters**
 
 In `EmailStudioServiceProvider`, bind `EmailProviderRegistry` and register fake, SMTP, and Postmark as supported v1 providers. Mailgun, SES, and Resend can be reserved enum cases, but should not appear as selectable production providers until their adapters can send, verify webhooks, normalize events, and pass integration tests.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run:
 
@@ -1059,7 +1062,7 @@ vendor/bin/pest packages/email-studio/tests/Integration/Actions/SendEmailActionT
 
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 Run:
 

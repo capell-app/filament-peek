@@ -11,6 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $subject
+ * @property string|null $preview_text
+ * @property string $html_body
+ * @property string|null $text_body
+ */
 class EmailTemplateVariant extends Model
 {
     /** @use HasFactory<EmailTemplateVariantFactory> */

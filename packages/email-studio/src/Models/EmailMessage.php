@@ -11,6 +11,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $site_scope_key
+ * @property string $subject
+ * @property string|null $rendered_html
+ * @property string|null $rendered_text
+ */
 class EmailMessage extends Model
 {
     /** @use HasFactory<EmailMessageFactory> */
