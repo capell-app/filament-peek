@@ -6,6 +6,7 @@ namespace Capell\PublishingStudio\Filament\Resources\PublishingStudio\Schemas;
 
 use Capell\Admin\Data\Configurators\ConfiguratorContextData;
 use Capell\Admin\Filament\Contracts\FormConfigurator;
+use Capell\PublishingStudio\Enums\WorkspaceKindEnum;
 use Capell\PublishingStudio\Models\Workspace;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Placeholder;
@@ -21,6 +22,12 @@ class WorkspaceForm implements FormConfigurator
     public static function configure(Schema $configurator, ?ConfiguratorContextData $context = null): Schema
     {
         return $configurator->components([
+            Section::make(__('capell-admin::workspace.release.summary_title'))
+                ->icon('heroicon-o-rocket-launch')
+                ->visible(fn (?Workspace $record): bool => $record instanceof Workspace && $record->kind === WorkspaceKindEnum::Release)
+                ->schema([
+                    Livewire::make('capell-publishing-studio::release-workspace-summary-panel'),
+                ]),
             Section::make(__('capell-admin::workspace.approval_history.title'))
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->collapsible()

@@ -10,6 +10,7 @@ use Capell\Admin\Filament\Components\Tables\Columns\IdentifierColumn;
 use Capell\Admin\Filament\Components\Tables\Columns\NameColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\PublishingStudio\Contracts\WorkspaceTableActionContributor;
+use Capell\PublishingStudio\Enums\WorkspaceKindEnum;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\Actions\ApproveAction;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\Actions\CompareAction;
@@ -50,6 +51,9 @@ class PublishingStudioTable implements TableConfigurator
                 SelectFilter::make('status')
                     ->label(__('capell-admin::table.status'))
                     ->options(WorkspaceStatusEnum::class),
+                SelectFilter::make('kind')
+                    ->label(__('capell-admin::workspace.kind_label'))
+                    ->options(WorkspaceKindEnum::class),
                 SelectFilter::make('created_by')
                     ->label(__('capell-admin::table.created_by'))
                     ->relationship('creator', 'name')
@@ -134,6 +138,12 @@ class PublishingStudioTable implements TableConfigurator
                 ->label(__('capell-admin::table.status'))
                 ->badge()
                 ->color(fn (Workspace $record): string => $record->status?->getColor() ?? 'gray')
+                ->sortable(),
+            TextColumn::make('kind')
+                ->label(__('capell-admin::workspace.kind_label'))
+                ->badge()
+                ->color(fn (Workspace $record): string => $record->kind?->getColor() ?? 'gray')
+                ->icon(fn (Workspace $record): string => (string) $record->kind?->getIcon())
                 ->sortable(),
             TextColumn::make('latestApproval.notes')
                 ->label(__('capell-admin::table.latest_review_note'))

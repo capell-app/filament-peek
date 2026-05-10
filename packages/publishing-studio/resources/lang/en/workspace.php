@@ -19,6 +19,7 @@ return [
         'single_page_draft' => 'Single page draft',
         'release' => 'Release',
     ],
+    'kind_label' => 'Workspace type',
     'release' => [
         'summary_title' => 'Release summary',
         'readiness_title' => 'Release readiness',
