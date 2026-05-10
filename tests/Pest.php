@@ -23,6 +23,7 @@ use Capell\MediaLibrary\Tests\MediaLibraryTestCase;
 use Capell\MigrationAssistant\Tests\MigrationAssistantTestCase;
 use Capell\Navigation\Tests\NavigationTestCase;
 use Capell\Newsletter\Tests\NewsletterTestCase;
+use Capell\Notes\Tests\NotesTestCase;
 use Capell\PasswordPolicy\Tests\PasswordPolicyTestCase;
 use Capell\PublicActions\Tests\PublicActionsTestCase;
 use Capell\PublishingStudio\Tests\PublishingStudioTestCase;
@@ -63,6 +64,7 @@ extendCapellPackageTests(MediaLibraryTestCase::class, 'media-library', 'media-li
 extendCapellPackageTests(MigrationAssistantTestCase::class, 'migration-assistant', 'migration-assistant');
 extendCapellPackageTests(NavigationTestCase::class, 'navigation', 'navigation');
 extendCapellPackageTests(NewsletterTestCase::class, 'newsletter', 'newsletter');
+extendCapellPackageTests(NotesTestCase::class, 'notes', 'notes');
 pest()->extend(PackagesTestCase::class)->in('Packages');
 extendCapellPackageTests(PackagesTestCase::class, 'foundation-theme', 'foundation-theme');
 extendCapellPackageTests(PasswordPolicyTestCase::class, 'password-policy', 'password-policy');

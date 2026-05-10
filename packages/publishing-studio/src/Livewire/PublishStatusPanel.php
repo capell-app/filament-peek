@@ -33,9 +33,6 @@ class PublishStatusPanel extends Component
                 isDraft: true,
                 publishedAt: null,
                 previewUrl: null,
-                contextId: null,
-                contextName: null,
-                contextStatus: null,
             );
         }
 

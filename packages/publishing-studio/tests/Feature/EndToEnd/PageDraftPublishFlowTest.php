@@ -8,6 +8,7 @@ use Capell\PublishingStudio\Actions\CopyOnWriteAction;
 use Capell\PublishingStudio\Enums\WorkspaceKindEnum;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\WorkspaceContext;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -49,10 +50,12 @@ it('runs the full live -> draft -> publish cycle', function (): void {
     $workspace->update(['status' => WorkspaceStatusEnum::Approved]);
 
     // Step 2: publish the draft
-    Livewire::test(EditPage::class, ['record' => $draft->getRouteKey()])
-        ->assertActionVisible('publish')
-        ->callAction('publish')
-        ->assertNotified();
+    $workspace->runInContext(function () use ($draft): void {
+        Livewire::test(EditPage::class, ['record' => $draft->getRouteKey()])
+            ->assertActionVisible('publish')
+            ->callAction('publish')
+            ->assertNotified();
+    });
 
     // Step 3: the page should now be live, the workspace published
     expect(Page::query()->where('uuid', $page->uuid)->where('workspace_id', 0)->exists())->toBeTrue()
@@ -67,12 +70,20 @@ it('disables publish while in review and enables after approval', function (): v
         $workspace,
     );
 
-    Livewire::test(EditPage::class, ['record' => $draft->getRouteKey()])
-        ->assertActionDisabled('publish');
+    $workspace->runInContext(function () use ($draft): void {
+        Livewire::test(EditPage::class, ['record' => $draft->getRouteKey()])
+            ->assertActionDisabled('publish');
+    });
 
     $workspace->update(['status' => WorkspaceStatusEnum::Approved]);
 
-    Livewire::test(EditPage::class, ['record' => $draft->fresh()->getRouteKey()])
-        ->assertActionVisible('publish')
-        ->assertActionEnabled('publish');
+    WorkspaceContext::set($workspace->fresh());
+
+    try {
+        Livewire::test(EditPage::class, ['record' => $draft->fresh()->getRouteKey()])
+            ->assertActionVisible('publish')
+            ->assertActionEnabled('publish');
+    } finally {
+        WorkspaceContext::set(null);
+    }
 });

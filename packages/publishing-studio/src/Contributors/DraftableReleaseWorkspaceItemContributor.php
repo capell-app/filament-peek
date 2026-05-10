@@ -34,8 +34,11 @@ final class DraftableReleaseWorkspaceItemContributor implements ReleaseWorkspace
             unset($registeredDraftable);
 
             $model = new $modelClass;
+            if (! $model instanceof Model) {
+                continue;
+            }
 
-            if (! $model instanceof Model || ! $model->getConnection()->getSchemaBuilder()->hasTable($model->getTable())) {
+            if (! $model->getConnection()->getSchemaBuilder()->hasTable($model->getTable())) {
                 continue;
             }
 
@@ -73,8 +76,11 @@ final class DraftableReleaseWorkspaceItemContributor implements ReleaseWorkspace
             unset($registeredDraftable);
 
             $model = new $modelClass;
+            if (! $model instanceof Model) {
+                continue;
+            }
 
-            if (! $model instanceof Model || ! $model->getConnection()->getSchemaBuilder()->hasTable($model->getTable())) {
+            if (! $model->getConnection()->getSchemaBuilder()->hasTable($model->getTable())) {
                 continue;
             }
 

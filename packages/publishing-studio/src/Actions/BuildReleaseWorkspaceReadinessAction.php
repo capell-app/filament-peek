@@ -53,7 +53,7 @@ final class BuildReleaseWorkspaceReadinessAction
             $blockingIssues[] = __('capell-admin::workspace.release.blocking.release_window_closed');
         }
 
-        $collisions = app(Publisher::class)->detectUrlCollisions($workspace);
+        $collisions = resolve(Publisher::class)->detectUrlCollisions($workspace);
 
         foreach ($collisions as $collision) {
             $blockingIssues[] = __('capell-admin::workspace.release.blocking.url_collision', [
@@ -61,7 +61,7 @@ final class BuildReleaseWorkspaceReadinessAction
             ]);
         }
 
-        $rebaseReport = app(Rebaser::class)->analyse($workspace);
+        $rebaseReport = resolve(Rebaser::class)->analyse($workspace);
 
         if ($rebaseReport->hasConflicts()) {
             $blockingIssues[] = __('capell-admin::workspace.release.blocking.stale_conflicts', [
@@ -69,8 +69,16 @@ final class BuildReleaseWorkspaceReadinessAction
             ]);
         }
 
-        foreach (app(PublishCheckPipeline::class)->run($workspace) as $checkResult) {
-            if (! $checkResult instanceof PublishCheckResult || ! $checkResult->isError() || $checkResult->isClean()) {
+        foreach (resolve(PublishCheckPipeline::class)->run($workspace) as $checkResult) {
+            if (! $checkResult instanceof PublishCheckResult) {
+                continue;
+            }
+
+            if (! $checkResult->isError()) {
+                continue;
+            }
+
+            if ($checkResult->isClean()) {
                 continue;
             }
 

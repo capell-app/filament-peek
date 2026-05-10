@@ -41,9 +41,7 @@ class PublishingStudioPageExportExtender implements PageExportExtender
 
         $workspace = Workspace::query()->findOrFail((int) $workspaceId);
 
-        if (auth()->user()?->can('view', $workspace) !== true) {
-            throw new AuthorizationException;
-        }
+        throw_if(auth()->user()?->can('view', $workspace) !== true, AuthorizationException::class);
 
         return [
             'source_workspace_id' => $workspace->getKey(),

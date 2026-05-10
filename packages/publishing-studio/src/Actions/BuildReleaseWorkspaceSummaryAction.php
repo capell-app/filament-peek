@@ -18,10 +18,10 @@ final class BuildReleaseWorkspaceSummaryAction
     {
         $items = [];
         $itemCount = 0;
-        $registry = app(ReleaseWorkspaceItemRegistry::class);
+        $registry = resolve(ReleaseWorkspaceItemRegistry::class);
 
         foreach ($registry->contributors() as $contributorClass) {
-            $contributor = app($contributorClass);
+            $contributor = resolve($contributorClass);
 
             $remainingLimit = max(0, $limit - count($items));
 

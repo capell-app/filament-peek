@@ -62,7 +62,6 @@ it('authorizes selected export workspace resolution', function (): void {
 function exportWorkspaceOptions(PublishingStudioPageExportExtender $extender, ?string $search = null): array
 {
     $method = new ReflectionMethod($extender, 'workspaceOptions');
-    $method->setAccessible(true);
 
     /** @var array<int|string, string> $options */
     $options = $method->invoke($extender, $search);

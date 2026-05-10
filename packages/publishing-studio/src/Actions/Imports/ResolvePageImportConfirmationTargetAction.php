@@ -44,7 +44,15 @@ final class ResolvePageImportConfirmationTargetAction
         $siteIds = [];
 
         foreach ($resolved as $ref => $resolution) {
-            if (! is_string($ref) || ! str_starts_with($ref, 'site:') || ! is_array($resolution)) {
+            if (! is_string($ref)) {
+                continue;
+            }
+
+            if (! str_starts_with($ref, 'site:')) {
+                continue;
+            }
+
+            if (! is_array($resolution)) {
                 continue;
             }
 

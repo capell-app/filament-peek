@@ -24,7 +24,6 @@ it('forces live context when no export source workspace is selected', function (
 
     $result = (new PublishingStudioMigrationAssistantContextResolver)->wrap(
         fn (): ?int => WorkspaceContext::currentId(),
-        null,
     );
 
     expect($result)->toBeNull()

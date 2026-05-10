@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
-use Capell\Frontend\Http\Middleware\HtmlCacheMiddleware;
 use Capell\Frontend\Support\Logging\FrontendLogger;
+use Capell\HtmlCache\Http\Middleware\HtmlCacheMiddleware;
 use Symfony\Component\Finder\Finder;
 
 it('does not allow unsafe PHP, debug, or forbidden global functions', function (): void {

@@ -49,9 +49,6 @@ final class PublishingStudioReportDataTest extends TestCase
             isDraft: false,
             publishedAt: CarbonImmutable::parse('2026-06-01 09:00:00', 'UTC'),
             previewUrl: null,
-            contextId: null,
-            contextName: null,
-            contextStatus: null,
         );
 
         $workspaceDraftState = new PagePublishStateData(

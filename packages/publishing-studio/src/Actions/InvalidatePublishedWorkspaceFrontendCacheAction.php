@@ -23,8 +23,11 @@ class InvalidatePublishedWorkspaceFrontendCacheAction
 
         foreach ($publishedModelIds as $modelClass => $modelIds) {
             $uniqueModelIds = array_values(array_unique(array_map(intval(...), $modelIds)));
+            if ($uniqueModelIds === []) {
+                continue;
+            }
 
-            if ($uniqueModelIds === [] || ! is_a($modelClass, Model::class, true)) {
+            if (! is_a($modelClass, Model::class, true)) {
                 continue;
             }
 

@@ -68,9 +68,11 @@ it('resolves the signed URL through the middleware and sets the workspace contex
 
     $request = Request::create($url);
 
-    (new ResolveWorkspaceContext)->handle($request, fn (): Response => new Response('ok'));
+    (new ResolveWorkspaceContext)->handle($request, function () use ($workspace): Response {
+        expect(WorkspaceContext::currentId())->toBe($workspace->id);
 
-    expect(WorkspaceContext::currentId())->toBe($workspace->id);
+        return new Response('ok');
+    });
 });
 
 it('persists a PreviewLink row and embeds its token in the signed URL', function (): void {
