@@ -53,7 +53,10 @@ final class BuildReleaseWorkspaceReadinessAction
             );
         }
 
-        $blockingIssues = array_values(array_filter($blockingIssues));
+        $blockingIssues = array_values(array_filter(
+            $blockingIssues,
+            static fn (string $blockingIssue): bool => $blockingIssue !== '',
+        ));
 
         return new ReleaseWorkspaceReadinessData(
             workspaceId: (int) $workspace->getKey(),

@@ -151,7 +151,7 @@ class PublishingStudioTable implements TableConfigurator
                         return 'heroicon-' . $icon->value;
                     }
 
-                    return $icon ?? '';
+                    return $icon;
                 })
                 ->sortable(),
             TextColumn::make('latestApproval.notes')

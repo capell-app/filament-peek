@@ -64,6 +64,6 @@ final class DraftableReleaseWorkspaceItemContributor implements ReleaseWorkspace
 
     private function changeTypeFor(Model $record): string
     {
-        return $record->getAttribute('shadowed_by_workspace_id') ? 'updated' : 'created';
+        return $record->getAttribute('shadowed_by_workspace_id') !== null ? 'updated' : 'created';
     }
 }
