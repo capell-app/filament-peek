@@ -1,5 +1,6 @@
 @php
     use Capell\Core\Actions\ColorConverterAction;
+    use Capell\FoundationTheme\Support\NavigationAvailability;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
@@ -15,11 +16,7 @@
     $page = Frontend::page();
     $theme = Frontend::theme();
 
-    $navigationAvailable = class_exists(NavigationLoader::class)
-        && class_exists(NavigationHandle::class)
-        && class_exists(Navigation::class)
-        && class_exists(BuildNavigationRenderModelAction::class)
-        && class_exists(NavigationRenderContextData::class);
+    $navigationAvailable = NavigationAvailability::check();
     $menu = null;
     $items = null;
     $navigationRenderData = null;

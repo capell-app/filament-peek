@@ -7,6 +7,7 @@ This directory holds **cross-cutting** documentation for the add-on packages. Pe
 For the commercial/free grouping, see [Package product groups](product-groups.md).
 For package-level upstream credits, services, and acknowledgements, see [Credits and acknowledgements](credits-and-acknowledgements.md).
 For theme package authoring, see [Creating a Capell theme](creating-a-theme.md).
+For optional package integration rules, see [Optional Package Boundaries](optional-package-boundaries.md).
 
 | Package            | Local reference                                                                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |

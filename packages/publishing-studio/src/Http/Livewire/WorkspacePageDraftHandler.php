@@ -13,6 +13,7 @@ use Capell\PublishingStudio\Actions\DeletePageDraftAction;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\WorkspaceContext;
 use Filament\Notifications\Notification;
+use Illuminate\Foundation\Auth\User as AuthenticatedUser;
 use InvalidArgumentException;
 
 class WorkspacePageDraftHandler
@@ -29,12 +30,24 @@ class WorkspacePageDraftHandler
     {
         $editPage->authorize('update', $editPage->record);
 
+        $user = auth()->user();
+
+        if (! $user instanceof AuthenticatedUser) {
+            return;
+        }
+
         $target = match ($data['location']) {
-            'new' => CreatePageDraftWorkspaceAction::run($editPage->record, auth()->user()),
+            'new' => $this->createDraftWorkspace($editPage, $user),
             'active' => WorkspaceContext::current(),
             'other' => Workspace::query()->findOrFail($data['workspace_id']),
             default => throw new InvalidArgumentException('Unknown draft location: ' . $data['location']),
         };
+
+        if (! $target instanceof Workspace) {
+            return;
+        }
+
+        $editPage->authorize('update', $target);
 
         $editPage->stripCountAttributes($editPage->record);
 
@@ -114,5 +127,12 @@ class WorkspacePageDraftHandler
         }
 
         (new CopyOnWriteAction)->cloneForEdit($live, $workspace);
+    }
+
+    private function createDraftWorkspace(EditPage $editPage, AuthenticatedUser $user): Workspace
+    {
+        $editPage->authorize('create', Workspace::class);
+
+        return CreatePageDraftWorkspaceAction::run($editPage->record, $user);
     }
 }

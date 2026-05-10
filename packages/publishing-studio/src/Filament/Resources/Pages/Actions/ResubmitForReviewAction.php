@@ -10,6 +10,7 @@ use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Models\WorkspaceApproval;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Gate;
 use Override;
 
 class ResubmitForReviewAction extends Action
@@ -22,7 +23,7 @@ class ResubmitForReviewAction extends Action
         $this->label(__('capell-admin::button.resubmit_for_review'))
             ->icon('heroicon-o-arrow-path')
             ->color('warning')
-            ->authorize(fn (Pageable $record): bool => auth()->user()?->can('update', $record) === true)
+            ->authorize(fn (Pageable $record): bool => $this->canResubmit($record))
             ->visible(fn (Pageable $record): bool => $this->shouldBeVisible($record))
             ->requiresConfirmation()
             ->action(function (Pageable $record): void {
@@ -31,6 +32,8 @@ class ResubmitForReviewAction extends Action
                 if (! $workspace instanceof Workspace) {
                     return;
                 }
+
+                Gate::authorize('submitForApproval', $workspace);
 
                 $workspace->submitForApproval(auth()->user());
 
@@ -73,6 +76,18 @@ class ResubmitForReviewAction extends Action
             WorkspaceApprovalActionEnum::ChangesRequested,
             WorkspaceApprovalActionEnum::Rejected,
         ], true);
+    }
+
+    private function canResubmit(Pageable $record): bool
+    {
+        if (auth()->user()?->can('update', $record) !== true) {
+            return false;
+        }
+
+        $workspace = $this->workspace($record);
+
+        return $workspace instanceof Workspace
+            && auth()->user()?->can('submitForApproval', $workspace) === true;
     }
 
     private function workspace(Pageable $record): ?Workspace

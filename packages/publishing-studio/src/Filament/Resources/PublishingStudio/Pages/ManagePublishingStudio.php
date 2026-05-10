@@ -7,9 +7,11 @@ namespace Capell\PublishingStudio\Filament\Resources\PublishingStudio\Pages;
 use Capell\Admin\Filament\Actions\CreateAction;
 use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\PublishingStudio\Enums\ResourceEnum;
+use Capell\PublishingStudio\Enums\WorkspaceKindEnum;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
 use Capell\PublishingStudio\Filament\Widgets\WorkspaceMergeHistoryWidgetAbstract as WorkspaceMergeHistoryWidget;
+use Capell\PublishingStudio\Models\Workspace;
 use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Widgets\Widget;
@@ -57,6 +59,19 @@ class ManagePublishingStudio extends ManageRecords
     {
         return [
             CreateAction::make(),
+            CreateAction::make('createReleaseWorkspace')
+                ->label(__('capell-admin::workspace.release.create_action'))
+                ->icon('heroicon-o-rocket-launch')
+                ->using(function (array $data): Workspace {
+                    $workspace = new Workspace;
+                    $workspace->fill([
+                        ...$data,
+                        'kind' => WorkspaceKindEnum::Release->value,
+                    ]);
+                    $workspace->save();
+
+                    return $workspace;
+                }),
         ];
     }
 

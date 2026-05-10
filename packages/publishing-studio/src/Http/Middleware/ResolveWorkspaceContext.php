@@ -51,10 +51,21 @@ final class ResolveWorkspaceContext
     {
         $viaToken = false;
         $workspace = $this->resolve($request, $viaToken);
+        $previousCacheDisabled = config('capell-core.disable_cache');
+        $previousWorkspace = WorkspaceContext::current();
 
         WorkspaceContext::set($workspace);
 
-        $response = $next($request);
+        if ($workspace instanceof Workspace) {
+            config(['capell-core.disable_cache' => true]);
+        }
+
+        try {
+            $response = $next($request);
+        } finally {
+            WorkspaceContext::set($previousWorkspace);
+            config(['capell-core.disable_cache' => $previousCacheDisabled]);
+        }
 
         if ($workspace instanceof Workspace
             && ! $viaToken
@@ -71,6 +82,12 @@ final class ResolveWorkspaceContext
                 false,
                 'lax',
             ));
+        }
+
+        if ($workspace instanceof Workspace) {
+            $response->headers->set('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
         }
 
         return $response;

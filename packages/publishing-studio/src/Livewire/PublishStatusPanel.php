@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Livewire;
 
 use Capell\Admin\Contracts\Extenders\PublishPanelExtender;
+use Capell\Admin\Data\PagePublishStateData;
 use Capell\Core\Models\Page;
 use Capell\PublishingStudio\Actions\GenerateWorkspacePreviewUrlAction;
-use Capell\PublishingStudio\Data\PagePublishStateData;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\WorkspaceContext;
 use Illuminate\Contracts\View\View;
@@ -33,9 +33,9 @@ class PublishStatusPanel extends Component
                 isDraft: true,
                 publishedAt: null,
                 previewUrl: null,
-                workspaceId: null,
-                workspaceName: null,
-                workspaceStatus: null,
+                contextId: null,
+                contextName: null,
+                contextStatus: null,
             );
         }
 
@@ -54,9 +54,9 @@ class PublishStatusPanel extends Component
             isDraft: $page->workspace_id !== 0,
             publishedAt: $page->getAttribute('published_at'),
             previewUrl: $previewUrl,
-            workspaceId: $workspace?->id,
-            workspaceName: $workspace?->name,
-            workspaceStatus: $workspace?->status,
+            contextId: $workspace?->id,
+            contextName: $workspace?->name,
+            contextStatus: $workspace?->status?->getLabel(),
         );
     }
 
@@ -84,6 +84,6 @@ class PublishStatusPanel extends Component
 
     public function render(): View
     {
-        return view('capell-admin::livewire.publish-status-panel');
+        return view('capell-publishing-studio::livewire.publish-status-panel');
     }
 }

@@ -24,8 +24,8 @@ test('default theme treats navigation as optional', function (): void {
     $header = file_get_contents($themePath . '/resources/views/components/header/index.blade.php');
     $footer = file_get_contents($themePath . '/resources/views/components/footer/index.blade.php');
 
-    expect($header)->toContain('class_exists(NavigationLoader::class)')
+    expect($header)->toContain('NavigationAvailability::check()')
         ->and($header)->toContain('if ($navigationAvailable)')
-        ->and($footer)->toContain('class_exists(NavigationLoader::class)')
+        ->and($footer)->toContain('NavigationAvailability::check()')
         ->and($footer)->toContain('if (! $navigationAvailable)');
 });

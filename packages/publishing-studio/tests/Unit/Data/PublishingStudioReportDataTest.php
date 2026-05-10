@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Tests\Unit\Data;
 
+use Capell\Admin\Data\PagePublishStateData;
 use Capell\PublishingStudio\Activity\WorkspaceActivityEntry;
 use Capell\PublishingStudio\Approvals\RequiredReviewer;
 use Capell\PublishingStudio\Checks\PublishCheckResult;
 use Capell\PublishingStudio\Checks\PublishCheckSeverity;
 use Capell\PublishingStudio\Data\Dashboard\MergeHistoryEntryData;
 use Capell\PublishingStudio\Data\Dashboard\WorkspaceMergeData;
-use Capell\PublishingStudio\Data\PagePublishStateData;
 use Capell\PublishingStudio\DryRunReport;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Models\Workspace;
@@ -49,9 +49,9 @@ final class PublishingStudioReportDataTest extends TestCase
             isDraft: false,
             publishedAt: CarbonImmutable::parse('2026-06-01 09:00:00', 'UTC'),
             previewUrl: null,
-            workspaceId: null,
-            workspaceName: null,
-            workspaceStatus: null,
+            contextId: null,
+            contextName: null,
+            contextStatus: null,
         );
 
         $workspaceDraftState = new PagePublishStateData(
@@ -59,15 +59,15 @@ final class PublishingStudioReportDataTest extends TestCase
             isDraft: true,
             publishedAt: null,
             previewUrl: 'https://example.test/preview',
-            workspaceId: 7,
-            workspaceName: 'Summer launch',
-            workspaceStatus: WorkspaceStatusEnum::Open,
+            contextId: 7,
+            contextName: 'Summer launch',
+            contextStatus: WorkspaceStatusEnum::Open->getLabel(),
         );
 
-        $this->assertFalse($publishedState->hasActiveWorkspace());
+        $this->assertFalse($publishedState->hasActiveContext());
         $this->assertTrue($publishedState->isPublished());
         $this->assertSame('capell-admin::publish_panel.status_published', $publishedState->statusLabel());
-        $this->assertTrue($workspaceDraftState->hasActiveWorkspace());
+        $this->assertTrue($workspaceDraftState->hasActiveContext());
         $this->assertFalse($workspaceDraftState->isPublished());
         $this->assertSame('capell-admin::publish_panel.status_draft_in_workspace:{"workspace":"Summer launch"}', $workspaceDraftState->statusLabel());
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio;
 
+use Capell\Core\Contracts\Pageable;
+use Capell\PublishingStudio\Actions\InvalidatePublishedWorkspaceFrontendCacheAction;
 use Capell\PublishingStudio\Checks\PublishCheckPipeline;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Enums\WorkspaceTransitionEnum;
@@ -20,6 +22,7 @@ use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LogicException;
@@ -97,7 +100,9 @@ class Publisher
 
         $previousStatus = $workspace->status;
 
-        $version = DB::transaction(function () use ($workspace, $publishedBy, $versionName, $notes, $makeLive, $currentLive): Version {
+        $publishedModelIds = [];
+
+        $version = DB::transaction(function () use ($workspace, $publishedBy, $versionName, $notes, $makeLive, $currentLive, &$publishedModelIds): Version {
             $lockedLiveId = $this->lockCurrentLiveVersionId();
 
             throw_if($lockedLiveId !== ($currentLive instanceof Version ? $currentLive->id : null), StaleWorkspaceException::class, $workspace, (int) $lockedLiveId);
@@ -128,6 +133,13 @@ class Publisher
                     ->withoutGlobalScopes()
                     ->where('workspace_id', $workspace->id)
                     ->get();
+
+                if ($modelInstance instanceof Pageable) {
+                    $publishedModelIds[$modelClass] = array_merge(
+                        $publishedModelIds[$modelClass] ?? [],
+                        array_map(intval(...), $workspaceRows->modelKeys()),
+                    );
+                }
 
                 foreach ($workspaceRows as $workspaceRow) {
                     $registeredDraftable->finalizeOnPublish($workspaceRow);
@@ -182,6 +194,8 @@ class Publisher
 
         // Dispatch afterPublish event
         $dispatcher->afterPublish($workspace);
+
+        (new InvalidatePublishedWorkspaceFrontendCacheAction)->handle($publishedModelIds);
 
         event(new WorkspaceStateChanged($workspace, $previousStatus, $workspace->status, WorkspaceTransitionEnum::Published->value, $publishedBy, $notes));
 
@@ -264,44 +278,30 @@ class Publisher
             return [];
         }
 
-        $workspaceUrls = DB::table('page_urls')
-            ->select(['site_id', 'language_id', 'url', 'pageable_type', 'pageable_id'])
-            ->where('workspace_id', $workspace->id)
-            ->whereNull('deleted_at')
-            ->get();
-
-        if ($workspaceUrls->isEmpty()) {
-            return [];
-        }
-
-        $collisions = [];
-
-        foreach ($workspaceUrls as $workspaceUrl) {
-            $liveExists = DB::table('page_urls')
-                ->where('workspace_id', 0)
-                ->where('site_id', $workspaceUrl->site_id)
-                ->where('language_id', $workspaceUrl->language_id)
-                ->where('url', $workspaceUrl->url)
-                ->whereNull('deleted_at')
-                ->when(
-                    $workspaceUrl->pageable_type !== null && $workspaceUrl->pageable_id !== null,
-                    fn (Builder $query): Builder => $query->where(function (Builder $inner) use ($workspaceUrl): void {
-                        $inner->where('pageable_type', '!=', $workspaceUrl->pageable_type)
-                            ->orWhere('pageable_id', '!=', $workspaceUrl->pageable_id);
-                    }),
-                )
-                ->exists();
-
-            if ($liveExists) {
-                $collisions[] = [
-                    'site_id' => (int) $workspaceUrl->site_id,
-                    'language_id' => (int) $workspaceUrl->language_id,
-                    'url' => (string) $workspaceUrl->url,
-                ];
-            }
-        }
-
-        return $collisions;
+        return DB::table('page_urls as workspace_urls')
+            ->join('page_urls as live_urls', function (JoinClause $join): void {
+                $join->on('live_urls.site_id', '=', 'workspace_urls.site_id')
+                    ->on('live_urls.language_id', '=', 'workspace_urls.language_id')
+                    ->on('live_urls.url', '=', 'workspace_urls.url')
+                    ->where('live_urls.workspace_id', 0)
+                    ->whereNull('live_urls.deleted_at');
+            })
+            ->where('workspace_urls.workspace_id', $workspace->id)
+            ->whereNull('workspace_urls.deleted_at')
+            ->where(function (Builder $query): void {
+                $query->whereNull('workspace_urls.pageable_type')
+                    ->orWhereNull('workspace_urls.pageable_id')
+                    ->orWhereColumn('live_urls.pageable_type', '!=', 'workspace_urls.pageable_type')
+                    ->orWhereColumn('live_urls.pageable_id', '!=', 'workspace_urls.pageable_id');
+            })
+            ->distinct()
+            ->get(['workspace_urls.site_id', 'workspace_urls.language_id', 'workspace_urls.url'])
+            ->map(static fn (object $collision): array => [
+                'site_id' => (int) $collision->site_id,
+                'language_id' => (int) $collision->language_id,
+                'url' => (string) $collision->url,
+            ])
+            ->all();
     }
 
     /**

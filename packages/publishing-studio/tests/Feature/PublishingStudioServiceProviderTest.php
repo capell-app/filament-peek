@@ -11,11 +11,13 @@ use Capell\Admin\Support\Dashboard\NullContentHealthDataProvider;
 use Capell\Admin\Support\Dashboard\NullMyWorkQueueDataProvider;
 use Capell\Admin\Support\Dashboard\NullRecentlyPublishedDataProvider;
 use Capell\Core\Models\Page;
+use Capell\MigrationAssistant\Contracts\MigrationAssistantContextResolver;
 use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceContentHealthDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceMyWorkQueueDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceRecentlyPublishedDataProvider;
 use Capell\PublishingStudio\Support\Dashboard\WorkspaceSiteStatsDataProvider;
+use Capell\PublishingStudio\Support\PublishingStudioMigrationAssistantContextResolver;
 use Capell\PublishingStudio\WorkspaceRegistry;
 use Illuminate\Support\Facades\Schema;
 
@@ -28,6 +30,11 @@ it('uses workspace dashboard providers when the workspace schema is ready', func
         ->and(resolve(MyWorkQueueDataProvider::class))->toBeInstanceOf(WorkspaceMyWorkQueueDataProvider::class)
         ->and(resolve(RecentlyPublishedDataProvider::class))->toBeInstanceOf(WorkspaceRecentlyPublishedDataProvider::class)
         ->and(resolve(SiteStatsDataProvider::class))->toBeInstanceOf(WorkspaceSiteStatsDataProvider::class);
+});
+
+it('uses the publishing-studio context resolver for migration assistant exports', function (): void {
+    expect(resolve(MigrationAssistantContextResolver::class))
+        ->toBeInstanceOf(PublishingStudioMigrationAssistantContextResolver::class);
 });
 
 it('falls back to core dashboard providers when the workspace schema is missing', function (): void {

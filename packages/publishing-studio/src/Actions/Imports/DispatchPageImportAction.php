@@ -30,7 +30,16 @@ final class DispatchPageImportAction
             return new PageImportStatusData(step: 'validate');
         }
 
-        $blockingErrors = $validationSummary['blocking_errors'] ?? [];
+        $session = ResolvePageImportSessionAction::run($sessionId);
+        if (! $session instanceof ImportSession) {
+            return new PageImportStatusData(step: 'validate');
+        }
+
+        $storedValidationSummary = is_array($session->validation_results)
+            ? $session->validation_results
+            : [];
+
+        $blockingErrors = $storedValidationSummary['blocking_errors'] ?? [];
         if (is_array($blockingErrors) && $blockingErrors !== []) {
             return new PageImportStatusData(
                 step: 'validate',
@@ -42,16 +51,13 @@ final class DispatchPageImportAction
             );
         }
 
-        if (! $this->confirmationMatches($confirmation, $confirmationExpected)) {
+        $expectedConfirmation = ResolvePageImportConfirmationTargetAction::run($session);
+
+        if (! $this->confirmationMatches($confirmation, $expectedConfirmation)) {
             return new PageImportStatusData(
                 step: 'validate',
                 notice: PageImportStatusData::NOTICE_CONFIRMATION_MISMATCH,
             );
-        }
-
-        $session = ImportSession::query()->find($sessionId);
-        if (! $session instanceof ImportSession) {
-            return new PageImportStatusData(step: 'validate');
         }
 
         $session->forceFill([

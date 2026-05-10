@@ -22,7 +22,7 @@ final class RefreshPageImportStatusAction
             return new PageImportStatusData(step: 'executing');
         }
 
-        $session = ImportSession::query()->find($sessionId);
+        $session = ResolvePageImportSessionAction::run($sessionId);
         if (! $session instanceof ImportSession) {
             return new PageImportStatusData(step: 'executing');
         }

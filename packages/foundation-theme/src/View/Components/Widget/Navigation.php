@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\FoundationTheme\View\Components\Widget;
 
+use Capell\FoundationTheme\Support\NavigationAvailability;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Navigation\Actions\BuildNavigationRenderModelAction;
 use Capell\Navigation\Data\NavigationRenderContextData;
@@ -24,6 +25,12 @@ class Navigation extends AbstractWidget
 
     protected function mountWidget(): void
     {
+        if (! NavigationAvailability::check()) {
+            $this->skipRender = true;
+
+            return;
+        }
+
         $menu = $this->getWidgetMenu();
 
         if (! $menu instanceof Models\Navigation) {

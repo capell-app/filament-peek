@@ -31,7 +31,12 @@ function invokeWorkspaceMiddleware(Request $request): Response
 {
     $middleware = new ResolveWorkspaceContext;
 
-    return $middleware->handle($request, fn (): Response => new Response('ok'));
+    return $middleware->handle($request, function (): Response {
+        $response = new Response('ok');
+        $response->headers->set('X-Workspace-Context-Id', (string) (WorkspaceContext::current()?->id ?? ''));
+
+        return $response;
+    });
 }
 
 it('resolves a workspace from a valid signed URL with preview token without dropping a persistent cookie', function (): void {
@@ -59,8 +64,8 @@ it('resolves a workspace from a valid signed URL with preview token without drop
         fn (Cookie $cookie): bool => $cookie->getName() === ResolveWorkspaceContext::COOKIE_NAME,
     );
 
-    expect(WorkspaceContext::current())->not->toBeNull()
-        ->and(WorkspaceContext::current()?->id)->toBe($workspace->id)
+    expect($response->headers->get('X-Workspace-Context-Id'))->toBe((string) $workspace->id)
+        ->and(WorkspaceContext::current())->toBeNull()
         ->and($responseCookies)->toBeEmpty();
 });
 
@@ -114,10 +119,10 @@ it('resolves a workspace from a cookie when no signed URL is present', function 
     $request = Request::create('/_workspace-preview-test');
     $request->cookies->set(ResolveWorkspaceContext::COOKIE_NAME, $workspace->uuid);
 
-    invokeWorkspaceMiddleware($request);
+    $response = invokeWorkspaceMiddleware($request);
 
-    expect(WorkspaceContext::current())->not->toBeNull()
-        ->and(WorkspaceContext::current()?->id)->toBe($workspace->id);
+    expect($response->headers->get('X-Workspace-Context-Id'))->toBe((string) $workspace->id)
+        ->and(WorkspaceContext::current())->toBeNull();
 });
 
 it('does not drop a cookie when resolution came from an existing cookie', function (): void {
@@ -145,10 +150,10 @@ it('resolves a workspace from the session when no signed URL or cookie is presen
     $request = Request::create('/_workspace-preview-test');
     $request->setLaravelSession($sessionStore);
 
-    invokeWorkspaceMiddleware($request);
+    $response = invokeWorkspaceMiddleware($request);
 
-    expect(WorkspaceContext::current())->not->toBeNull()
-        ->and(WorkspaceContext::current()?->id)->toBe($workspace->id);
+    expect($response->headers->get('X-Workspace-Context-Id'))->toBe((string) $workspace->id)
+        ->and(WorkspaceContext::current())->toBeNull();
 });
 
 it('falls back to null context when no hint is supplied', function (): void {
@@ -197,13 +202,80 @@ it('resolves workspace via valid preview link token and increments access metada
         ],
     );
 
-    invokeWorkspaceMiddleware(Request::create($signedUrl));
+    $response = invokeWorkspaceMiddleware(Request::create($signedUrl));
 
     $link->refresh();
 
-    expect(WorkspaceContext::current()?->id)->toBe($workspace->id)
+    expect($response->headers->get('X-Workspace-Context-Id'))->toBe((string) $workspace->id)
+        ->and(WorkspaceContext::current())->toBeNull()
         ->and($link->access_count)->toBe(1)
         ->and($link->last_accessed_at)->not->toBeNull();
+});
+
+it('marks preview workspace responses private and bypasses frontend cache only during the request', function (): void {
+    config(['capell-core.disable_cache' => false]);
+
+    $workspace = Workspace::factory()->create();
+    $link = PreviewLink::query()->create([
+        'workspace_id' => $workspace->id,
+        'token' => PreviewLink::generateToken(),
+        'issued_at' => CarbonImmutable::now(),
+        'expires_at' => CarbonImmutable::now()->addHour(),
+    ]);
+
+    $signedUrl = URL::temporarySignedRoute(
+        'workspace-preview-test',
+        now()->addHour(),
+        [
+            ResolveWorkspaceContext::QUERY_PARAM => $workspace->uuid,
+            ResolveWorkspaceContext::TOKEN_PARAM => $link->token,
+        ],
+    );
+
+    $middleware = new ResolveWorkspaceContext;
+    $response = $middleware->handle(
+        Request::create($signedUrl),
+        function (): Response {
+            expect(config('capell-core.disable_cache'))->toBeTrue();
+            expect(WorkspaceContext::current())->not->toBeNull();
+
+            return new Response('ok');
+        },
+    );
+
+    expect($response->headers->get('Cache-Control'))->toContain('private')
+        ->and($response->headers->get('Cache-Control'))->toContain('no-store')
+        ->and($response->headers->get('Pragma'))->toBe('no-cache')
+        ->and($response->headers->get('Expires'))->toBe('0')
+        ->and(WorkspaceContext::current())->toBeNull()
+        ->and(config('capell-core.disable_cache'))->toBeFalse();
+});
+
+it('restores an existing workspace context after handling a preview request', function (): void {
+    $previousWorkspace = Workspace::factory()->create();
+    $workspace = Workspace::factory()->create();
+    $link = PreviewLink::query()->create([
+        'workspace_id' => $workspace->id,
+        'token' => PreviewLink::generateToken(),
+        'issued_at' => CarbonImmutable::now(),
+        'expires_at' => CarbonImmutable::now()->addHour(),
+    ]);
+
+    WorkspaceContext::set($previousWorkspace);
+
+    $signedUrl = URL::temporarySignedRoute(
+        'workspace-preview-test',
+        now()->addHour(),
+        [
+            ResolveWorkspaceContext::QUERY_PARAM => $workspace->uuid,
+            ResolveWorkspaceContext::TOKEN_PARAM => $link->token,
+        ],
+    );
+
+    $response = invokeWorkspaceMiddleware(Request::create($signedUrl));
+
+    expect($response->headers->get('X-Workspace-Context-Id'))->toBe((string) $workspace->id)
+        ->and(WorkspaceContext::current()?->id)->toBe($previousWorkspace->id);
 });
 
 it('rejects a revoked preview link token', function (): void {

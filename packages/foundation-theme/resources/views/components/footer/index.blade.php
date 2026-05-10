@@ -2,6 +2,7 @@
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Models\Language;
     use Capell\Core\Models\Page;
+    use Capell\FoundationTheme\Support\NavigationAvailability;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\Frontend\Actions\RenderHtmlContentAction;
     use Capell\Frontend\Enums\RenderHookLocation;
@@ -20,11 +21,7 @@
     $theme = Frontend::theme();
     $layout = Frontend::layout();
 
-    $navigationAvailable = class_exists(NavigationLoader::class)
-        && class_exists(NavigationHandle::class)
-        && class_exists(Navigation::class)
-        && class_exists(BuildNavigationRenderModelAction::class)
-        && class_exists(NavigationRenderContextData::class);
+    $navigationAvailable = NavigationAvailability::check();
 
     $getMenu = function (string $key, ?Language $language) use ($navigationAvailable, $page, $site): array {
         if (! $navigationAvailable) {

@@ -14,16 +14,36 @@ final class BuildReleaseWorkspaceSummaryAction
 {
     use AsObject;
 
-    public function handle(Workspace $workspace): ReleaseWorkspaceSummaryData
+    public function handle(Workspace $workspace, int $limit = 25): ReleaseWorkspaceSummaryData
     {
         $items = [];
+        $itemCount = 0;
         $registry = app(ReleaseWorkspaceItemRegistry::class);
 
         foreach ($registry->contributors() as $contributorClass) {
             $contributor = app($contributorClass);
 
-            foreach ($contributor->itemsFor($workspace) as $item) {
-                if ($item instanceof ReleaseWorkspaceItemData) {
+            $remainingLimit = max(0, $limit - count($items));
+
+            if (method_exists($contributor, 'countFor')) {
+                $itemCount += (int) $contributor->countFor($workspace);
+                $contributorItems = method_exists($contributor, 'limitedItemsFor') && $remainingLimit > 0
+                    ? $contributor->limitedItemsFor($workspace, $remainingLimit)
+                    : [];
+            } else {
+                $contributorItems = $contributor->itemsFor($workspace);
+            }
+
+            foreach ($contributorItems as $item) {
+                if (! $item instanceof ReleaseWorkspaceItemData) {
+                    continue;
+                }
+
+                if (! method_exists($contributor, 'countFor')) {
+                    $itemCount++;
+                }
+
+                if (count($items) < $limit) {
                     $items[] = $item;
                 }
             }
@@ -32,7 +52,7 @@ final class BuildReleaseWorkspaceSummaryAction
         return new ReleaseWorkspaceSummaryData(
             workspaceId: (int) $workspace->getKey(),
             items: $items,
-            itemCount: count($items),
+            itemCount: $itemCount,
         );
     }
 }

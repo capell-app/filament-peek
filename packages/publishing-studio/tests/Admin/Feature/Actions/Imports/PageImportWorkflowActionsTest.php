@@ -13,6 +13,7 @@ use Capell\MigrationAssistant\Support\ChecksumGenerator;
 use Capell\PublishingStudio\Actions\Imports\AdvancePageImportToValidationAction;
 use Capell\PublishingStudio\Actions\Imports\DispatchPageImportAction;
 use Capell\PublishingStudio\Actions\Imports\RefreshPageImportStatusAction;
+use Capell\PublishingStudio\Actions\Imports\ResolvePageImportSessionAction;
 use Capell\PublishingStudio\Actions\Imports\StartPageImportAction;
 use Capell\PublishingStudio\Data\Imports\PageImportDecisionData;
 use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
@@ -159,6 +160,22 @@ it('moves upload state to review state after parsing a package', function (): vo
     Queue::assertNotPushed(ExecuteImportPlanJob::class);
 });
 
+it('resolves only page import sessions owned by the active user', function (): void {
+    [$state] = startActionImportWizard('action-owned-session.zip', 'Action Owned Session');
+
+    expect(ResolvePageImportSessionAction::run($state->sessionId))->toBeInstanceOf(ImportSession::class);
+
+    test()->actingAsAdmin(['email' => 'other-import-admin@example.test']);
+
+    expect(ResolvePageImportSessionAction::run($state->sessionId))->toBeNull()
+        ->and(AdvancePageImportToValidationAction::run(actionDecisionDataFromState($state), true)->step)
+        ->toBe(ImportPagesPage::STEP_UPLOAD)
+        ->and(DispatchPageImportAction::run($state->sessionId, [], '', '')->step)
+        ->toBe(ImportPagesPage::STEP_VALIDATE)
+        ->and(RefreshPageImportStatusAction::run($state->sessionId, null)->step)
+        ->toBe(ImportPagesPage::STEP_EXECUTING);
+});
+
 it('moves review state to resolve when shared relations need decisions', function (): void {
     [$state] = startActionImportWizard('action-resolve.zip', 'Action Resolve', 777);
 
@@ -223,6 +240,72 @@ it('moves validate state to executing and queues the import job', function (): v
         ->and($status->targetWorkspaceId)->toBeInt();
 
     Queue::assertPushed(ExecuteImportPlanJob::class, 1);
+});
+
+it('derives dispatch confirmation from stored session state', function (): void {
+    [$state] = startActionImportWizard('action-dispatch-confirmation.zip', 'Action Dispatch Confirmation');
+
+    $validatedState = AdvancePageImportToValidationAction::run(
+        actionDecisionDataFromState($state),
+        false,
+    );
+
+    $status = DispatchPageImportAction::run(
+        sessionId: $validatedState->sessionId,
+        validationSummary: $validatedState->validationSummary,
+        confirmation: '',
+        confirmationExpected: '',
+    );
+
+    expect($status->step)->toBe(ImportPagesPage::STEP_VALIDATE)
+        ->and($status->notice)->toBe($status::NOTICE_CONFIRMATION_MISMATCH);
+
+    Queue::assertNotPushed(ExecuteImportPlanJob::class);
+});
+
+it('stores the derived dispatch confirmation target with validation results', function (): void {
+    [$state] = startActionImportWizard('action-validation-confirmation.zip', 'Action Validation Confirmation');
+
+    $validatedState = AdvancePageImportToValidationAction::run(
+        actionDecisionDataFromState($state),
+        false,
+    );
+
+    $session = ImportSession::query()->findOrFail($validatedState->sessionId);
+
+    expect($session->validation_results['confirmation_expected'] ?? null)
+        ->toBe($validatedState->confirmationExpected);
+});
+
+it('uses stored validation blockers when dispatching an import', function (): void {
+    [$state] = startActionImportWizard('action-blocked-dispatch.zip', 'Action Blocked Dispatch');
+
+    $validatedState = AdvancePageImportToValidationAction::run(
+        actionDecisionDataFromState($state),
+        false,
+    );
+
+    ImportSession::query()
+        ->findOrFail($validatedState->sessionId)
+        ->forceFill([
+            'validation_results' => [
+                'blocking_errors' => ['Stored blocker'],
+            ],
+        ])
+        ->save();
+
+    $status = DispatchPageImportAction::run(
+        sessionId: $validatedState->sessionId,
+        validationSummary: ['blocking_errors' => []],
+        confirmation: $validatedState->confirmationExpected,
+        confirmationExpected: $validatedState->confirmationExpected,
+    );
+
+    expect($status->step)->toBe(ImportPagesPage::STEP_VALIDATE)
+        ->and($status->notice)->toBe($status::NOTICE_SUMMARY_BLOCKING_ERRORS)
+        ->and($status->noticeBody)->toBe('Stored blocker');
+
+    Queue::assertNotPushed(ExecuteImportPlanJob::class);
 });
 
 it('moves executing state to completed when the session completes', function (): void {

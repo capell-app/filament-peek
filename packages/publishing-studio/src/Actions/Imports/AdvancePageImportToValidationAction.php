@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Actions\Imports;
 
-use Capell\Core\Models\Site;
 use Capell\MigrationAssistant\Actions\BuildImportValidationSummaryAction;
 use Capell\MigrationAssistant\Data\PageReviewRow;
 use Capell\MigrationAssistant\Data\RelationResolveRow;
@@ -15,7 +14,6 @@ use Capell\MigrationAssistant\Services\Import\ResolutionMap;
 use Capell\MigrationAssistant\Services\Import\Resolvers\MatchResolution;
 use Capell\PublishingStudio\Data\Imports\PageImportDecisionData;
 use Capell\PublishingStudio\Data\Imports\PageImportWizardStateData;
-use Capell\PublishingStudio\Models\Workspace;
 use Illuminate\Support\Facades\Storage;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -60,7 +58,7 @@ final class AdvancePageImportToValidationAction
 
     private function validatedState(PageImportDecisionData $decisionData): PageImportWizardStateData
     {
-        $session = ImportSession::query()->find($decisionData->sessionId);
+        $session = ResolvePageImportSessionAction::run($decisionData->sessionId);
         if (! $session instanceof ImportSession) {
             return $this->state($decisionData, 'upload');
         }
@@ -80,12 +78,15 @@ final class AdvancePageImportToValidationAction
             relationDecisions: $relationDecisions,
         );
 
-        $workspace = Workspace::query()->find($session->workspace_id);
+        $confirmationExpected = ResolvePageImportConfirmationTargetAction::run($session);
 
         $session->forceFill([
             'page_decisions' => $pageDecisions,
             'relation_decisions' => $relationDecisions,
-            'validation_results' => $summary->toArray(),
+            'validation_results' => [
+                ...$summary->toArray(),
+                'confirmation_expected' => $confirmationExpected,
+            ],
             'status' => ImportSessionStatus::Validated,
         ])->save();
 
@@ -96,8 +97,11 @@ final class AdvancePageImportToValidationAction
             pageDecisions: $pageDecisions,
             resolveRows: $decisionData->resolveRows,
             relationDecisions: $relationDecisions,
-            validationSummary: $summary->toArray(),
-            confirmationExpected: $this->deriveConfirmationTarget($resolutionMap, $workspace instanceof Workspace ? $workspace : null),
+            validationSummary: [
+                ...$summary->toArray(),
+                'confirmation_expected' => $confirmationExpected,
+            ],
+            confirmationExpected: $confirmationExpected,
         );
     }
 
@@ -249,38 +253,6 @@ final class AdvancePageImportToValidationAction
             reason: is_string($entry['reason'] ?? null) ? $entry['reason'] : '',
             alternatives: $alternatives,
         );
-    }
-
-    private function deriveConfirmationTarget(ResolutionMap $map, ?Workspace $workspace): string
-    {
-        $siteIds = [];
-
-        foreach ($map->resolved as $ref => $resolution) {
-            if (! str_starts_with($ref, 'site:')) {
-                continue;
-            }
-
-            $localId = $resolution->localId;
-            if (is_int($localId)) {
-                $siteIds[$localId] = true;
-            } elseif (is_string($localId) && ctype_digit($localId)) {
-                $siteIds[(int) $localId] = true;
-            }
-        }
-
-        if (count($siteIds) === 1) {
-            $siteId = array_key_first($siteIds);
-            $site = Site::query()->find($siteId);
-            if ($site instanceof Site && is_string($site->name) && $site->name !== '') {
-                return $site->name;
-            }
-        }
-
-        if ($workspace instanceof Workspace && is_string($workspace->name) && $workspace->name !== '') {
-            return $workspace->name;
-        }
-
-        return '';
     }
 
     /**

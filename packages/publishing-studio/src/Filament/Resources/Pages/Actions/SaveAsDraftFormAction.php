@@ -70,7 +70,9 @@ class SaveAsDraftFormAction extends Action
             $options['active'] = __('capell-admin::message.save_as_draft_option_active', ['workspace' => $active->name]);
         }
 
-        $options['other'] = __('capell-admin::message.save_as_draft_option_other');
+        if ($this->workspaceOptions($active) !== []) {
+            $options['other'] = __('capell-admin::message.save_as_draft_option_other');
+        }
 
         return $options;
     }
@@ -84,6 +86,8 @@ class SaveAsDraftFormAction extends Action
                 $active,
                 fn ($query) => $query->where('id', '!=', $active->id),
             )
+            ->get()
+            ->filter(fn (Workspace $workspace): bool => auth()->user()?->can('update', $workspace) === true)
             ->pluck('name', 'id')
             ->all();
     }

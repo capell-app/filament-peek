@@ -22,6 +22,7 @@ use Capell\Core\Models\Translation;
 use Capell\Core\Models\Type;
 use Capell\Frontend\Enums\RenderHookLocation;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
+use Capell\MigrationAssistant\Contracts\MigrationAssistantContextResolver;
 use Capell\PublishingStudio\Actions\CopyOnWriteAction;
 use Capell\PublishingStudio\Actions\EnsurePublishingStudioPermissionsAction;
 use Capell\PublishingStudio\BelongsToWorkspace;
@@ -42,6 +43,7 @@ use Capell\PublishingStudio\Models\WorkspaceFieldComment;
 use Capell\PublishingStudio\Models\WorkspaceReviewAssignment;
 use Capell\PublishingStudio\ReleaseWorkspaceItemRegistry;
 use Capell\PublishingStudio\Support\PublishingStudioManager;
+use Capell\PublishingStudio\Support\PublishingStudioMigrationAssistantContextResolver;
 use Capell\PublishingStudio\WorkspaceContext;
 use Capell\PublishingStudio\WorkspaceContextScope;
 use Capell\PublishingStudio\WorkspaceRegistry;
@@ -123,6 +125,7 @@ class PublishingStudioServiceProvider extends ServiceProvider
         $this->app->singleton(PublishingStudioManager::class, fn (): PublishingStudioManager => new PublishingStudioManager);
         $this->app->singleton(WorkspaceEventDispatcher::class);
         $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
+        $this->app->singleton(MigrationAssistantContextResolver::class, PublishingStudioMigrationAssistantContextResolver::class);
 
         return $this;
     }

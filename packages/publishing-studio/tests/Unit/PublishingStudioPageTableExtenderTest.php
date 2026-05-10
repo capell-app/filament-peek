@@ -11,12 +11,10 @@ it('implements PageTableExtender', function (): void {
         ->toImplement(PageTableExtender::class);
 });
 
-it('modifyQuery removes WorkspaceContextScope', function (): void {
+it('modifyQuery preserves the ambient workspace context scope', function (): void {
     $extender = new PublishingStudioPageTableExtender;
     $query = Mockery::mock(Builder::class);
-    $query->shouldReceive('withoutGlobalScope')
-        ->once()
-        ->andReturnSelf();
+    $query->shouldNotReceive('withoutGlobalScope');
 
     $result = $extender->modifyQuery($query);
 

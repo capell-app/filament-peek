@@ -28,6 +28,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\Locked;
 use Override;
 use Throwable;
 
@@ -90,6 +91,7 @@ class ImportPagesPage extends Page implements HasForms
     /** @var array<string, array{action: string, target_id?: int|string|null, notes?: string}> */
     public array $relationDecisions = [];
 
+    #[Locked]
     public ?int $sessionId = null;
 
     /** @var array<string, mixed> */
@@ -335,6 +337,17 @@ class ImportPagesPage extends Page implements HasForms
         }
 
         return mb_strtolower(trim($this->confirmation)) === mb_strtolower(trim($this->confirmationExpected));
+    }
+
+    public function hasUpdateExistingRelationDecision(): bool
+    {
+        foreach ($this->relationDecisions as $decision) {
+            if (($decision['action'] ?? null) === 'update_existing') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function backToUpload(): void
