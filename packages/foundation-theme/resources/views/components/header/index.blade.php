@@ -134,19 +134,21 @@
                 class="flex items-center justify-end gap-x-2 md:gap-x-1 lg:absolute lg:right-4 lg:top-1/2 lg:w-16 lg:translate-y-[-50%]"
             >
                 <button
-                    for="toggleMenu"
+                    type="button"
                     x-ref="toggleMenu"
                     class="toggleMenu color-header hover:text-primary focus:text-primary relative z-40 flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg bg-gray-50 lg:hidden dark:bg-gray-600/75"
                     :title="isMenuOpen ? '{{ __('capell-frontend::generic.close_menu') }}' : '{{ __('capell-frontend::generic.open_menu') }}'"
+                    aria-controls="main-menu"
+                    x-bind:aria-expanded="isMenuOpen.toString()"
                     :class="isMenuOpen ? 'bg-primary text-white hover:text-white hover:opacity-80 focus:text-white' : ''"
                     x-on:click="toggleMenu"
                 >
                     <span
                         class="sr-only"
                         x-text="
-                            isDarkMode
-                                ? '{{ __('capell-frontend::generic.light_mode') }}'
-                                : '{{ __('capell-frontend::generic.dark_mode') }}'
+                            isMenuOpen
+                                ? '{{ __('capell-frontend::generic.close_menu') }}'
+                                : '{{ __('capell-frontend::generic.open_menu') }}'
                         "
                     ></span>
                     @svg('heroicon-m-bars-3', 'h-6 w-6', ['x-show' => '!isMenuOpen'])
@@ -301,7 +303,6 @@
                     if (this.isMenuOpen) return
 
                     this.$refs.toggleMenu.focus()
-                    this.$refs.toggleMenu.setAttribute('aria-expanded', 'true')
 
                     this.isMenuOpen = true
                 },

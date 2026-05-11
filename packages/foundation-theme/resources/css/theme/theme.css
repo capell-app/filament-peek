@@ -1,7 +1,7 @@
 @theme {
     --container-2xs: 18rem;
     --font-sans: var(
-        --font-fmaily,
+        --font-family,
         'Instrument Sans',
         ui-sans-serif,
         system-ui,
@@ -121,7 +121,8 @@
 
     .text-link {
         color: var(--color-link);
-        text-decoration: none;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
         transition: color 0.2s ease-in-out;
     }
 

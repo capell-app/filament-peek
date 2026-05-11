@@ -18,7 +18,10 @@ $layout = Frontend::layout();
 <div
     {{ $attributes->merge(['class' => 'flex flex-col min-h-screen bg-white dark:bg-gray-900']) }}
 >
-    <a class="sr-only" href="#main">
+    <a
+        class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-gray-900 focus:shadow"
+        href="#main"
+    >
         {{ __('capell-frontend::generic.skip_link') }}
     </a>
 

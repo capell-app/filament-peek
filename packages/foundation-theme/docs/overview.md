@@ -27,7 +27,8 @@ Provides the baseline Laravel view and asset pipeline that child themes and fron
 - Registers the `capell` Blade namespace and anonymous `capell::...` components.
 - Registers Layout Builder frontend rendering views and widget components.
 - Runtime theme data layers parent defaults, child defaults, and database edits in that order.
-- GenerateTailwindAssetsCommand writes the active/default frontend Tailwind directive file and optional per-theme files.
+- GenerateTailwindAssetsCommand writes one frontend Tailwind directive file; runtime theme colours are emitted as CSS variables by the theme head tokens.
+- Layout Builder JavaScript is registered as a conditional vendor build asset and only loads when the resolved frontend layout contains widgets.
 - BladeDirectives and CapellUrlGenerator support rendering.
 - The beacon client is generic. It must not ship authoring controls or authoring metadata in theme HTML; `capell-app/frontend-authoring` owns the admin-only response that decorates the page.
 
@@ -55,7 +56,7 @@ Gives each Capell installation a standard frontend foundation before a custom or
 
 ## Pitfalls
 
-- Regenerate assets after changing theme colours or source paths.
+- Regenerate assets after changing source paths, Tailwind plugins, or package CSS imports. Theme colour edits are runtime CSS variables and do not require a rebuild.
 - Match asset_build_tool to the host app.
 - Set media URL config before production media rendering.
 - Treat Foundation Theme as the shared runtime, not the place for client-specific branding.
@@ -87,7 +88,7 @@ Gives each Capell installation a standard frontend foundation before a custom or
 
 ## Commands
 
-- `capell:frontend-tailwind-assets {--report : Print the aggregated assets report instead of writing files} {--output-path= : Base absolute path for generated CSS files; theme key is appended per enabled Theme (e.g. frontend-default.css)} {--theme-key= : Only regenerate the CSS file for the Theme with this key}` (packages/foundation-theme/src/Console/Commands/GenerateTailwindAssetsCommand.php)
+- `capell:frontend-tailwind-assets {--report : Print the aggregated assets report instead of writing files} {--output-path= : Absolute path or directory for the generated frontend CSS entrypoint}` (packages/foundation-theme/src/Console/Commands/GenerateTailwindAssetsCommand.php)
 
 ## Routes And Config
 

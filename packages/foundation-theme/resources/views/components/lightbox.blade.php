@@ -9,6 +9,11 @@
         class="fixed left-0 top-0 z-[9999] flex h-screen w-screen items-center justify-center bg-[#000000c9] md:p-5 lg:p-10"
         x-show="currentUrl"
         x-cloak
+        x-ref="lightboxDialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="{{ __('capell-frontend::generic.image_gallery') }}"
+        tabindex="-1"
         @click="if($event.target == $el){ close() }"
     >
         <div
@@ -16,6 +21,8 @@
         >
             <button
                 class="hover:text-primary focus:text-primary fixed right-6 top-6 z-[8888] flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-black text-white md:absolute md:-right-6 md:-top-6"
+                aria-label="{{ __('capell-frontend::generic.close') }}"
+                type="button"
                 @click="close()"
             >
                 @svg('heroicon-s-x-mark', 'h-6 w-6 stroke-current')
@@ -78,6 +85,7 @@
                     <button
                         class="text-primary hover:bg-primary active:bg-primary rounded hover:text-white active:text-white"
                         type="button"
+                        aria-label="{{ __('capell-frontend::generic.previous') }}"
                         @click.prevent="loadPrevious"
                     >
                         @svg('heroicon-o-chevron-left', 'h-10 w-10 stroke-current')
@@ -89,6 +97,7 @@
                     <button
                         class="text-primary hover:bg-primary active:bg-primary ml-auto rounded hover:text-white active:text-white"
                         type="button"
+                        aria-label="{{ __('capell-frontend::generic.next') }}"
                         @click.prevent="loadNext"
                     >
                         @svg('heroicon-o-chevron-right', 'h-10 w-10 stroke-current')

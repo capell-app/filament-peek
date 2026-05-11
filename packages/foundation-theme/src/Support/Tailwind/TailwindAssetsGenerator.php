@@ -6,9 +6,9 @@ namespace Capell\FoundationTheme\Support\Tailwind;
 
 use Capell\Core\Contracts\RegistersTailwindAssets;
 use Capell\Core\Data\VendorAssetData;
+use Capell\Core\Enums\DefaultColorEnum;
 use Capell\Core\Enums\VendorAssetEnum;
 use Capell\Core\Facades\CapellCore;
-use Capell\Core\Models\Theme;
 use Capell\Core\Support\Tailwind\TailwindAssetsRegistry;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
@@ -19,22 +19,20 @@ use Symfony\Component\Filesystem\Path;
 use Throwable;
 
 /**
- * TailwindAssetsGenerator aggregates Tailwind asset declarations and writes per-theme CSS directive files.
+ * TailwindAssetsGenerator aggregates Tailwind asset declarations and writes a CSS directive file.
  *
  * Sources of inputs:
  * - Default theme config (capell-foundation-theme.tailwind) for imports/plugins/sources.
  * - Registered vendor assets for tailwind imports/plugins/sources/theme_colors.
  * - Service providers implementing RegistersTailwindAssets for runtime registration.
- * - Each enabled Theme model's meta->colors for dynamic CSS custom properties.
+ * - Default colour names for generated Tailwind utility availability.
  *
  * Output:
- * - One CSS file for the active/default frontend Theme (e.g. resources/css/capell/frontend.css).
- * - Explicit per-theme generation remains available for targeted theme builds.
- * - Falls back to a single base file when no enabled Themes exist in the database.
+ * - One CSS file for the frontend theme entrypoint (e.g. resources/css/capell/frontend.css).
  *
  * Behavior:
  * - De-duplicates and sorts values via TailwindAssetsRegistry.
- * - Theme colors use last-writer-wins; DB theme colors are registered last and always override package defaults.
+ * - Runtime Theme values are emitted by Foundation head tokens, not generated into this file.
  * - Optionally validates @source globs (capell-foundation-theme.tailwind.validate_sources).
  */
 class TailwindAssetsGenerator
@@ -50,9 +48,7 @@ class TailwindAssetsGenerator
     }
 
     /**
-     * Generate the active/default frontend Tailwind asset file.
-     *
-     * Falls back to a single base file when no enabled Themes exist in the database.
+     * Generate the frontend Tailwind asset file.
      *
      * @return array<string>
      */
@@ -60,53 +56,14 @@ class TailwindAssetsGenerator
     {
         $baseTargetPath = $this->targetPath($absoluteBaseTargetPath);
 
-        $theme = Theme::query()
-            ->with('type')
-            ->enabled()
-            ->default()
-            ->first();
-
-        $theme ??= Theme::query()
-            ->with('type')
-            ->enabled()
-            ->orderByDesc('default')
-            ->orderBy('order')
-            ->orderBy('name')
-            ->first();
-
-        if (! $theme instanceof Theme) {
-            $this->generateFile($baseTargetPath, null);
-
-            return [$baseTargetPath];
-        }
-
-        $this->generateFile($baseTargetPath, $theme);
+        $this->generateFile($baseTargetPath);
 
         return [$baseTargetPath];
     }
 
-    /**
-     * Generate the CSS file for a single enabled Theme and return its absolute path.
-     *
-     * Useful when only one theme's colors have changed and a full regeneration is unnecessary.
-     */
-    public function generateForTheme(Theme $theme, ?string $absoluteBaseTargetPath = null): string
+    private function generateFile(string $targetPath): void
     {
-        if (! $theme->relationLoaded('type')) {
-            $theme->load('type');
-        }
-
-        $baseTargetPath = $this->targetPath($absoluteBaseTargetPath);
-        $themePath = $this->themeOutputPath($theme, $baseTargetPath);
-
-        $this->generateFile($themePath, $theme);
-
-        return $themePath;
-    }
-
-    private function generateFile(string $targetPath, ?Theme $theme): void
-    {
-        $registry = $this->collectWithTarget($targetPath, $theme);
+        $registry = $this->collectWithTarget($targetPath);
 
         $content = $this->renderCss($registry);
 
@@ -118,68 +75,16 @@ class TailwindAssetsGenerator
         }
     }
 
-    private function collectWithTarget(string $targetPath, ?Theme $theme = null): TailwindAssetsRegistry
+    private function collectWithTarget(string $targetPath): TailwindAssetsRegistry
     {
         $registry = new TailwindAssetsRegistry;
 
         $this->registerDefaults($registry, $targetPath);
         $this->registerVendorAssets($registry, $targetPath);
         $this->registerProviderAssets($registry);
-
-        if ($theme instanceof Theme) {
-            $this->registerThemeColorsFromTheme($registry, $theme);
-        } else {
-            $this->registerThemeColorsFromFoundationTheme($registry);
-        }
+        $this->registerDefaultThemeColors($registry);
 
         return $registry;
-    }
-
-    private function themeOutputPath(Theme $theme, string $baseTargetPath): string
-    {
-        $metaOutputCss = $theme->getMeta('output_css');
-
-        if (is_string($metaOutputCss) && $metaOutputCss !== '') {
-            $themeOutputPath = $this->validatedThemeOutputPath($metaOutputCss, $baseTargetPath, $theme);
-
-            if ($themeOutputPath !== null) {
-                return $themeOutputPath;
-            }
-        }
-
-        return $this->derivedThemeOutputPath($theme, $baseTargetPath);
-    }
-
-    private function derivedThemeOutputPath(Theme $theme, string $baseTargetPath): string
-    {
-        $dir = dirname($baseTargetPath);
-        $stem = pathinfo($baseTargetPath, PATHINFO_FILENAME);
-        $extension = pathinfo($baseTargetPath, PATHINFO_EXTENSION);
-
-        return $dir . '/' . $stem . '-' . $theme->key . ($extension !== '' ? '.' . $extension : '');
-    }
-
-    private function validatedThemeOutputPath(string $path, string $baseTargetPath, Theme $theme): ?string
-    {
-        $approvedDirectory = $this->normalizeFilesystemPath(dirname($baseTargetPath));
-        $candidatePath = Path::isAbsolute($path)
-            ? $path
-            : $this->resolveAppRelativePath($path);
-        $candidatePath = $this->normalizeFilesystemPath($candidatePath);
-
-        if (strtolower(pathinfo($candidatePath, PATHINFO_EXTENSION)) !== 'css') {
-            $this->logInvalidThemeOutputPath($theme, $path, 'Output path must use a .css extension.');
-
-            return null;
-        }
-
-        if (! $this->isPathInsideDirectory($candidatePath, $approvedDirectory)) {
-            $this->logInvalidThemeOutputPath($theme, $path, 'Output path must stay inside the configured Tailwind CSS directory.');
-
-            return null;
-        }
-
-        return $candidatePath;
     }
 
     private function registerDefaults(TailwindAssetsRegistry $registry, string $targetPath): void
@@ -320,11 +225,11 @@ class TailwindAssetsGenerator
         return '@theme {' . PHP_EOL . $inner . PHP_EOL . '}';
     }
 
-    private function registerThemeColorsFromTheme(TailwindAssetsRegistry $registry, Theme $theme): void
+    private function registerDefaultThemeColors(TailwindAssetsRegistry $registry): void
     {
         $colors = [];
 
-        foreach ($theme->colors as $name => $value) {
+        foreach (DefaultColorEnum::getKeyValues() as $name => $value) {
             if (! is_string($name)) {
                 continue;
             }
@@ -338,7 +243,7 @@ class TailwindAssetsGenerator
             }
 
             if (! $this->isSafeThemeColor($name, $value)) {
-                $this->logInvalidThemeColor($name, $value, 'theme:' . $theme->key);
+                $this->logInvalidThemeColor($name, $value, 'default-colors');
 
                 continue;
             }
@@ -350,18 +255,7 @@ class TailwindAssetsGenerator
             return;
         }
 
-        $registry->registerThemeColors($colors, 'theme:' . $theme->key);
-    }
-
-    private function registerThemeColorsFromFoundationTheme(TailwindAssetsRegistry $registry): void
-    {
-        $theme = Theme::query()->where('default', true)->first();
-
-        if ($theme === null) {
-            return;
-        }
-
-        $this->registerThemeColorsFromTheme($registry, $theme);
+        $registry->registerThemeColors($colors, 'default-colors');
     }
 
     private function isNodeModuleImport(string $import): bool
@@ -556,31 +450,6 @@ class TailwindAssetsGenerator
         }
 
         return preg_match('/^(?:black|white|transparent|currentColor|red|green|blue|yellow|orange|purple|pink|gray|grey|indigo|violet|cyan|teal|lime|navy|silver|maroon|olive|aqua|fuchsia)$/i', $value) === 1;
-    }
-
-    private function normalizeFilesystemPath(string $path): string
-    {
-        return rtrim(Path::canonicalize(str_replace('\\', '/', $path)), '/');
-    }
-
-    private function isPathInsideDirectory(string $path, string $directory): bool
-    {
-        $normalizedDirectory = rtrim($directory, '/') . '/';
-
-        return str_starts_with($path, $normalizedDirectory);
-    }
-
-    private function logInvalidThemeOutputPath(Theme $theme, string $path, string $reason): void
-    {
-        if (! app()->bound('log')) {
-            return;
-        }
-
-        Log::warning('Ignoring invalid theme Tailwind output path.', [
-            'theme' => $theme->key,
-            'path' => $path,
-            'reason' => $reason,
-        ]);
     }
 
     private function logInvalidThemeColor(string $name, string $value, string $origin): void

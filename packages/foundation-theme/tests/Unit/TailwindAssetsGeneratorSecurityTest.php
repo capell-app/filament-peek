@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Capell\Core\Models\Theme;
 use Capell\Core\Support\Tailwind\TailwindAssetsRegistry;
 use Capell\FoundationTheme\Support\Tailwind\TailwindAssetsGenerator;
 use Illuminate\Filesystem\Filesystem;
@@ -19,72 +18,23 @@ function invokeFoundationThemeTailwindGeneratorMethod(
     return $reflectionMethod->invokeArgs($generator, $parameters);
 }
 
-test('theme output css paths outside the base target directory are ignored', function (): void {
-    $generator = new TailwindAssetsGenerator(new Filesystem);
-    $theme = new Theme;
-    $theme->key = 'dark';
-    $theme->meta = ['output_css' => '/tmp/pwn.css'];
+test('default color keys and values are validated before registration', function (): void {
+    config([
+        'capell.default_colors' => [
+            'primary' => '#123abc',
+            'secondary' => 'rgb(12 34 56 / 50%)',
+            'danger' => 'red; background: black',
+        ],
+    ]);
 
-    $path = invokeFoundationThemeTailwindGeneratorMethod(
-        $generator,
-        'themeOutputPath',
-        [$theme, '/var/www/app/resources/css/capell/frontend.css'],
-    );
-
-    expect($path)->toBe('/var/www/app/resources/css/capell/frontend-dark.css');
-});
-
-test('theme output css paths must keep a css extension', function (): void {
-    $generator = new TailwindAssetsGenerator(new Filesystem);
-    $theme = new Theme;
-    $theme->key = 'dark';
-    $theme->meta = ['output_css' => '/var/www/app/resources/css/capell/dark.txt'];
-
-    $path = invokeFoundationThemeTailwindGeneratorMethod(
-        $generator,
-        'themeOutputPath',
-        [$theme, '/var/www/app/resources/css/capell/frontend.css'],
-    );
-
-    expect($path)->toBe('/var/www/app/resources/css/capell/frontend-dark.css');
-});
-
-test('theme output css paths inside the base target directory are allowed', function (): void {
-    $generator = new TailwindAssetsGenerator(new Filesystem);
-    $theme = new Theme;
-    $theme->key = 'dark';
-    $theme->meta = ['output_css' => '/var/www/app/resources/css/capell/custom-dark.css'];
-
-    $path = invokeFoundationThemeTailwindGeneratorMethod(
-        $generator,
-        'themeOutputPath',
-        [$theme, '/var/www/app/resources/css/capell/frontend.css'],
-    );
-
-    expect($path)->toBe('/var/www/app/resources/css/capell/custom-dark.css');
-});
-
-test('theme color keys and values are validated before registration', function (): void {
     $generator = new TailwindAssetsGenerator(new Filesystem);
     $registry = new TailwindAssetsRegistry;
-    $theme = new Theme;
-    $theme->key = 'brand';
-    $theme->meta = [
-        'colors' => [
-            'primary' => '#123abc',
-            'accent-600' => 'rgb(12 34 56 / 50%)',
-            'bad;color' => '#ffffff',
-            'remote' => 'url(https://example.com/color.svg)',
-            'injected' => 'red; background: black',
-            'badHex' => '#12345',
-        ],
-    ];
 
-    invokeFoundationThemeTailwindGeneratorMethod($generator, 'registerThemeColorsFromTheme', [$registry, $theme]);
+    invokeFoundationThemeTailwindGeneratorMethod($generator, 'registerDefaultThemeColors', [$registry]);
 
     expect($registry->themeColors()->all())->toBe([
-        'accent-600' => 'rgb(12 34 56 / 50%)',
         'primary' => '#123abc',
+        'secondary' => 'rgb(12 34 56 / 50%)',
     ]);
 });
 

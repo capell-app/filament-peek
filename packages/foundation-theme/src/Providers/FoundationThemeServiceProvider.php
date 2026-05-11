@@ -9,16 +9,16 @@ use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Events\PackageInstalled;
 use Capell\Core\Events\PackageUninstalled;
-use Capell\Core\Events\ThemeColorsUpdated;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Capell\Core\Models\Theme;
+use Capell\Core\Support\Assets\VendorAssetConditionRegistry;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\Core\Support\Themes\ThemeChromeRegistry;
 use Capell\FoundationTheme\Console\Commands\GenerateTailwindAssetsCommand;
 use Capell\FoundationTheme\Enums\FoundationThemeAssetEnum;
 use Capell\FoundationTheme\Filament\Settings\FoundationThemeSettingsSchema;
-use Capell\FoundationTheme\Listeners\RegenerateTailwindAssetsOnThemeColorsUpdated;
 use Capell\FoundationTheme\Listeners\RunTailwindAssetsOnPackageChange;
 use Capell\FoundationTheme\Livewire\Assets\Table\PageAssets;
 use Capell\FoundationTheme\Livewire\Widget\Pages;
@@ -37,15 +37,19 @@ use Capell\FoundationTheme\View\Components\Widget\Slot as SlotComponent;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetData;
+use Capell\Frontend\Facades\Frontend;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
+use Throwable;
 
 final class FoundationThemeServiceProvider extends AbstractPackageServiceProvider
 {
+    private const LAYOUT_BUILDER_ASSETS_CONDITION = 'capell.foundation.layout-builder';
+
     public static string $name = 'capell-foundation-theme';
 
     public static string $packageName = 'capell-app/foundation-theme';
@@ -57,7 +61,6 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         $package
             ->name(self::$name)
             ->hasConfigFile()
-            ->hasViews('capell')
             ->hasCommands([GenerateTailwindAssetsCommand::class]);
     }
 
@@ -67,18 +70,20 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         $this->registerBladeComponents();
         $this->registerLayoutBuilderRendering();
         $this->registerMediaBladeComponents();
+        $this->registerBlazeComponents();
 
         if (! $this->isPackageInstalled()) {
             return;
         }
 
         $this->registerAssets();
-        $this->registerBlazeComponents();
         $this->registerTailwindEventListeners();
+        $this->registerVendorAssetConditions();
         $this->registerVendorCssJsAssets();
         $this->registerMediaUrlGenerator();
         $this->registerModelInterceptors();
         $this->registerSettingsSchemas();
+        $this->registerThemeChromeComponents();
     }
 
     public function packageRegistered(): void
@@ -123,7 +128,6 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
     private function registerTailwindEventListeners(): void
     {
-        Event::listen(ThemeColorsUpdated::class, [RegenerateTailwindAssetsOnThemeColorsUpdated::class, 'handle']);
         Event::listen(PackageInstalled::class, [RunTailwindAssetsOnPackageChange::class, 'handleInstalled']);
         Event::listen(PackageUninstalled::class, [RunTailwindAssetsOnPackageChange::class, 'handleUninstalled']);
     }
@@ -150,6 +154,20 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         $registry = resolve(SettingsSchemaRegistry::class);
         $registry->registerSettingsClass('foundation_theme', FoundationThemeSettings::class);
         $registry->register('foundation_theme', FoundationThemeSettingsSchema::class);
+    }
+
+    private function registerThemeChromeComponents(): void
+    {
+        $register = function (ThemeChromeRegistry $registry): void {
+            $registry->registerHeader('capell::header.index', __('capell-admin::form.foundation_header'));
+            $registry->registerFooter('capell::footer', __('capell-admin::form.foundation_footer'));
+        };
+
+        $this->app->afterResolving(ThemeChromeRegistry::class, $register);
+
+        if ($this->app->resolved(ThemeChromeRegistry::class)) {
+            $register($this->app->make(ThemeChromeRegistry::class));
+        }
     }
 
     private function registerModelInterceptors(): void
@@ -188,6 +206,49 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         }
     }
 
+    private function registerVendorAssetConditions(): void
+    {
+        $register = function (VendorAssetConditionRegistry $registry): void {
+            $registry->register(
+                self::LAYOUT_BUILDER_ASSETS_CONDITION,
+                fn (): bool => $this->currentLayoutHasWidgets(),
+            );
+        };
+
+        $this->app->afterResolving(VendorAssetConditionRegistry::class, $register);
+
+        if ($this->app->resolved(VendorAssetConditionRegistry::class)) {
+            $register($this->app->make(VendorAssetConditionRegistry::class));
+        }
+    }
+
+    private function currentLayoutHasWidgets(): bool
+    {
+        try {
+            $containers = Frontend::layout()->containers;
+        } catch (Throwable) {
+            return false;
+        }
+
+        if (! is_array($containers)) {
+            return false;
+        }
+
+        foreach ($containers as $container) {
+            if (! is_array($container)) {
+                continue;
+            }
+
+            $widgets = $container['widgets'] ?? [];
+
+            if (is_array($widgets) && $widgets !== []) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function registerVendorCssJsAssets(): void
     {
         CapellCore::registerVendorAsset(
@@ -211,6 +272,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
                 path: 'vendor/capell-foundation-theme/layout-builder',
                 file: 'resources/js/layout-builder/capell-layout-builder.js',
                 packageName: self::$packageName,
+                condition: self::LAYOUT_BUILDER_ASSETS_CONDITION,
             ),
         );
 
@@ -251,6 +313,8 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
             __DIR__ . '/../../resources/views/layout-builder',
         );
 
+        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/layout-builder/components', 'capell');
+        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/layout-builder/components', 'capell-layout-builder');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
         Blade::component(PageBreadcrumbsComponent::class, 'capell::widget.page.breadcrumbs');

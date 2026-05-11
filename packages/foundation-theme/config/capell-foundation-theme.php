@@ -10,6 +10,8 @@ return [
     'npm_dependencies' => [
         '@tailwindcss/typography' => '^0.5.9',
         '@tailwindcss/vite' => '^4.0.13',
+        '@awcodes/alpine-floating-ui' => '^3.5.0',
+        '@ryangjchandler/alpine-tooltip' => '^2.0.1',
         'autoprefixer' => '^10.4.13',
         'swiper' => '^11.1.14',
         'fontaine' => '^0.5.0',

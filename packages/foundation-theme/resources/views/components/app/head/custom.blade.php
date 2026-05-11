@@ -1,36 +1,10 @@
-<?php
-
-use Capell\Core\Actions\ColorConverterAction;
-use Capell\Frontend\Facades\Frontend;
-
-$theme = Frontend::theme();
-$site = Frontend::site();
-
-$linkColor = ColorConverterAction::run($theme->getMeta('link_color'));
-$linkColorActive = ColorConverterAction::run($theme->getMeta('link_color_active'));
-$brandColor = ColorConverterAction::run($site->getMeta('brand_color'));
-
-$dividerColor = $theme->getMeta('divider_color');
-$dividerColorValue = is_string($dividerColor) && $dividerColor !== ''
-    ? ColorConverterAction::run($dividerColor)
-    : 'rgb(229, 231, 235)';
-
-?>
-
 @props([
     'title' => '',
     'keywords' => '',
     'description' => '',
 ])
 
-<style>
-    :root {
-        --color-brand: {{ $brandColor }};
-        --color-link: {{ $linkColor }};
-        --color-link-active: {{ $linkColorActive }};
-        --color-divider: {{ $dividerColorValue }};
-    }
-</style>
+<x-capell::app.head.tokens />
 
 <script>
     ;(function () {

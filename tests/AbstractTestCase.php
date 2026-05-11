@@ -20,6 +20,7 @@ use Capell\ContentSections\Models\Section;
 use Capell\Core\Models\Widget;
 use Capell\Core\Models\WidgetAsset;
 use Capell\Core\Providers\CapellServiceProvider;
+use Capell\FoundationTheme\View\Components\Widget\Page\Breadcrumbs;
 use Capell\FoundationTheme\View\Components\Widget\Page\Children;
 use Capell\FoundationTheme\View\Components\Widget\Page\Content;
 use Capell\FoundationTheme\View\Components\Widget\Page\Latest;
@@ -110,9 +111,15 @@ abstract class AbstractTestCase extends TestCase
         // Temp fix to ensure components are locatable when run in parallel
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
+        Blade::component(Breadcrumbs::class, 'capell::widget.page.breadcrumbs');
         Blade::component('capell-layout-builder::components.widget.page.breadcrumbs', 'capell-layout-builder-widget-page-breadcrumbs');
         Blade::component(Content::class, 'capell-layout-builder-widget-page-content');
         Blade::component('capell-layout-builder::components.widget.slot', 'capell-layout-builder-widget-slot');
+        Blade::component('capell-layout-builder::components.widget.slot', 'capell::widget.slot');
+        Blade::component(Children::class, 'capell::widget.page.children');
+        Blade::component(Content::class, 'capell::widget.page.content');
+        Blade::component(Latest::class, 'capell::widget.page.latest');
+        Blade::component(Siblings::class, 'capell::widget.page.siblings');
         Blade::component(Children::class, 'capell-layout-builder::widget.page.children');
         Blade::component(Content::class, 'capell-layout-builder::widget.page.content');
         Blade::component(Latest::class, 'capell-layout-builder::widget.page.latest');

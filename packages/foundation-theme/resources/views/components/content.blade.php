@@ -82,6 +82,9 @@
                 data-group="gallery"
                 :data-title="$image->name"
                 :data-lightbox="$image->getFullUrl()"
+                role="button"
+                tabindex="0"
+                aria-label="{{ __('capell-frontend::generic.open_image') }}: {{ $title }}"
                 :alt="$title"
                 @class([
                     'h-auto object-cover object-center lightbox cursor-pointer md:float-right md:max-w-[40%] md:ml-10 md:mt-0',

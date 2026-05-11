@@ -11,52 +11,80 @@
     const altAttr = 'alt'
 
     document.addEventListener('livewire:init', () => {
-        const elms = document.querySelectorAll(querySelector)
-        var media = {}
+        let media = {}
 
-        if (elms.length > 0) {
-            elms.forEach((elm) => {
-                elm.addEventListener('click', function handleClick(e) {
-                    e.preventDefault()
+        function collectMedia() {
+            media = {}
 
-                    window.dispatchEvent(
-                        new CustomEvent('lightbox', {
-                            detail: {
-                                group:
-                                    e.currentTarget.getAttribute(groupAttr) ||
-                                    defaultGroup,
-                                type: e.currentTarget.getAttribute(typeAttr),
-                                url: e.currentTarget.getAttribute(lightboxAttr),
-                                title:
-                                    e.currentTarget.getAttribute(titleAttr) ||
-                                    e.currentTarget.getAttribute(altAttr),
-                            },
-                        }),
-                    )
-
-                    let carousels = document.getElementsByClassName('swiper')
-                    for (let i = 0; i < carousels.length; i++) {
-                        carousels[i].dispatchEvent(
-                            new Event('disable-carousel'),
-                        )
-                    }
-                })
-
-                let group = elm.getAttribute(groupAttr) || defaultGroup
+            document.querySelectorAll(querySelector).forEach((element) => {
+                const group = element.getAttribute(groupAttr) || defaultGroup
 
                 if (!media[group]) {
                     media[group] = []
                 }
 
                 media[group].push({
-                    type: elm.getAttribute(typeAttr),
-                    url: elm.getAttribute(lightboxAttr),
+                    type: element.getAttribute(typeAttr),
+                    url: element.getAttribute(lightboxAttr),
                     title:
-                        elm.getAttribute(titleAttr) ||
-                        elm.getAttribute(altAttr),
+                        element.getAttribute(titleAttr) ||
+                        element.getAttribute(altAttr),
                 })
             })
         }
+
+        function disableCarousels() {
+            const carousels = document.getElementsByClassName('swiper')
+
+            for (let index = 0; index < carousels.length; index++) {
+                carousels[index].dispatchEvent(new Event('disable-carousel'))
+            }
+        }
+
+        function openLightboxFromElement(element) {
+            collectMedia()
+
+            window.dispatchEvent(
+                new CustomEvent('lightbox', {
+                    detail: {
+                        group: element.getAttribute(groupAttr) || defaultGroup,
+                        type: element.getAttribute(typeAttr),
+                        url: element.getAttribute(lightboxAttr),
+                        title:
+                            element.getAttribute(titleAttr) ||
+                            element.getAttribute(altAttr),
+                    },
+                }),
+            )
+
+            disableCarousels()
+        }
+
+        document.addEventListener('click', (event) => {
+            const element = event.target.closest(querySelector)
+
+            if (!element) {
+                return
+            }
+
+            event.preventDefault()
+            openLightboxFromElement(element)
+        })
+
+        document.addEventListener('keydown', (event) => {
+            if (!['Enter', ' '].includes(event.key)) {
+                return
+            }
+
+            const element = event.target.closest(querySelector)
+
+            if (!element) {
+                return
+            }
+
+            event.preventDefault()
+            openLightboxFromElement(element)
+        })
 
         Alpine.data('lightbox', () => ({
             currentIndex: null,
@@ -64,6 +92,7 @@
             currentType: null,
             currentTitle: '',
             currentUrl: '',
+            previousFocus: null,
 
             load(group, index) {
                 if (!media[group] || !media[group][index]) {
@@ -75,6 +104,10 @@
                 this.currentTitle = media[group][index].title || ''
                 this.currentType = media[group][index].type || 'image'
                 this.currentUrl = media[group][index].url || ''
+
+                this.$nextTick(() => {
+                    this.$refs.lightboxDialog?.focus()
+                })
             },
 
             close: function () {
@@ -83,6 +116,9 @@
                 this.currentTitle = ''
                 this.currentType = null
                 this.currentUrl = ''
+
+                this.previousFocus?.focus?.()
+                this.previousFocus = null
 
                 let carousels = document.getElementsByClassName('swiper')
                 for (let i = 0; i < carousels.length; i++) {
@@ -113,6 +149,8 @@
             },
 
             lightbox(event) {
+                collectMedia()
+
                 if (!media[event.detail.group]) {
                     return false
                 }
@@ -122,6 +160,7 @@
                 )
 
                 if (index !== -1) {
+                    this.previousFocus = document.activeElement
                     this.load(event.detail.group, index)
                 }
             },
