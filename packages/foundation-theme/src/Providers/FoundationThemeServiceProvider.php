@@ -246,16 +246,30 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
             __DIR__ . '/../../resources/views/layout-builder',
         );
 
+        resolve(ViewFactory::class)->addNamespace(
+            'capell',
+            __DIR__ . '/../../resources/views/layout-builder',
+        );
+
+        Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
-        Blade::component(PageBreadcrumbsComponent::class, 'capell-layout-builder::widget.page.breadcrumbs');
-        Blade::component(PageContentComponent::class, 'capell-layout-builder-widget-page-content');
-        Blade::component(SlotComponent::class, 'capell-layout-builder::widget.slot');
-        Blade::component(PageChildrenComponent::class, 'capell-layout-builder::widget.page.children');
-        Blade::component(PageContentComponent::class, 'capell-layout-builder::widget.page.content');
-        Blade::component(PageLatestComponent::class, 'capell-layout-builder::widget.page.latest');
-        Blade::component(PageSiblingsComponent::class, 'capell-layout-builder::widget.page.siblings');
+        Blade::component(PageBreadcrumbsComponent::class, 'capell::widget.page.breadcrumbs');
+        Blade::component(PageContentComponent::class, 'capell-widget-page-content');
+        Blade::component(SlotComponent::class, 'capell::widget.slot');
+        Blade::component(PageChildrenComponent::class, 'capell::widget.page.children');
+        Blade::component(PageContentComponent::class, 'capell::widget.page.content');
+        Blade::component(PageLatestComponent::class, 'capell::widget.page.latest');
+        Blade::component(PageSiblingsComponent::class, 'capell::widget.page.siblings');
 
         $registerLivewireComponents = function (): void {
+            Livewire::addNamespace(
+                namespace: 'capell',
+                classNamespace: 'Capell\\FoundationTheme\\Livewire',
+                viewPath: __DIR__ . '/../../resources/views/layout-builder/livewire',
+                classPath: __DIR__ . '/../Livewire',
+                classViewPath: __DIR__ . '/../../resources/views/layout-builder/livewire',
+            );
+
             Livewire::addNamespace(
                 namespace: 'capell-layout-builder',
                 classNamespace: 'Capell\\FoundationTheme\\Livewire',
@@ -266,8 +280,8 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
             resolve('livewire.factory')->resolveMissingComponent(
                 static fn (string $name): ?string => match ($name) {
+                    'capell::widget.pages' => Pages::class,
                     'capell-layout-builder::assets.table.page-assets' => PageAssets::class,
-                    'capell-layout-builder::widget.pages' => Pages::class,
                     default => null,
                 },
             );
@@ -283,11 +297,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
             $registry
                 ->register(
                     key: FrontendComponentKeyEnum::SectionBlock->value,
-                    component: 'capell-layout-builder::components.section.block',
-                    aliases: [
-                        'capell-content-sections::section.block',
-                        'capell-layout-builder::section.block',
-                    ],
+                    component: 'capell::components.section.block',
                     props: [
                         'asset',
                         'class',
@@ -306,11 +316,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
                 )
                 ->register(
                     key: FrontendComponentKeyEnum::SectionTeamMember->value,
-                    component: 'capell-layout-builder::components.section.team-member',
-                    aliases: [
-                        'capell-content-sections::section.team-member',
-                        'capell-layout-builder::section.team-member',
-                    ],
+                    component: 'capell::components.section.team-member',
                     props: [
                         'asset',
                         'class',

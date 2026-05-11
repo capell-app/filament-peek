@@ -1,5 +1,7 @@
 @php
+    use Capell\Core\Actions\ResolveRenderableComponentAction;
     use Capell\Core\Enums\AssetComponentEnum;
+    use Capell\Core\Enums\RenderableTypeEnum;
     use Capell\Core\Facades\CapellCore;
     use Capell\Frontend\Facades\Frontend;
 
@@ -36,6 +38,8 @@
     if ($componentItem === 'capell::list.item') {
         $componentItem = AssetComponentEnum::Card->value;
     }
+
+    $componentItem = ResolveRenderableComponentAction::run(RenderableTypeEnum::Asset, $componentItem);
 @endphp
 
 <div class="contents">

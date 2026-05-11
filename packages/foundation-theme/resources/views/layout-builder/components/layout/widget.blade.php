@@ -23,7 +23,7 @@
 ])
 
 @if ($type === 'blade')
-    @if ($component === 'capell-layout-builder::widget.page.content')
+    @if ($component === 'capell::widget.page.content')
         @php
             $page = Frontend::page();
             $layout = Frontend::layout();
@@ -85,9 +85,9 @@
     @else
         @php
             $pageWidgetComponent = match ($component) {
-                'capell-layout-builder::widget.page.children' => PageChildrenComponent::class,
-                'capell-layout-builder::widget.page.latest' => PageLatestComponent::class,
-                'capell-layout-builder::widget.page.siblings' => PageSiblingsComponent::class,
+                'capell::widget.page.children' => PageChildrenComponent::class,
+                'capell::widget.page.latest' => PageLatestComponent::class,
+                'capell::widget.page.siblings' => PageSiblingsComponent::class,
                 default => null,
             };
         @endphp
