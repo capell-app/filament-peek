@@ -120,16 +120,16 @@ Gives editorial teams a Statamic-style content history feel while remaining a se
 
 ## Migrations
 
-- Migration: 2026_04_20_000001_create_publishing-studio_table.php
-- Migration: 2026_04_20_000002_create_versions_table.php
-- Migration: create_preview_links_table.php
-- Migration: create_workspace_approvals_table.php
-- Migration: create_workspace_field_comments_table.php
-- Migration: create_workspace_review_assignments_table.php
-- Migration: seed_bootstrap_workspace_version.php
-- Migration: z_add_workspace_columns_to_core_tables.php
-- Migration: z_add_workspace_id_to_external_tables.php
-- Migration: z_add_workspace_id_to_import_sessions_table.php
+- Migration: 2026_04_20_000001_2026_05_10_190866_02_create_publishing-studio_table.php
+- Migration: 2026_04_20_000002_2026_05_10_190866_03_create_versions_table.php
+- Migration: 2026_05_10_190866_01_create_preview_links_table.php
+- Migration: 2026_05_10_190866_04_create_workspace_approvals_table.php
+- Migration: 2026_05_10_190866_05_create_workspace_field_comments_table.php
+- Migration: 2026_05_10_190866_06_create_workspace_review_assignments_table.php
+- Migration: 2026_05_10_190866_07_seed_bootstrap_workspace_version.php
+- Migration: 2026_05_10_190866_08_z_add_workspace_columns_to_core_tables.php
+- Migration: 2026_05_10_190866_09_z_add_workspace_id_to_external_tables.php
+- Migration: 2026_05_10_190866_10_z_add_workspace_id_to_import_sessions_table.php
 
 ## ERD Excerpt
 

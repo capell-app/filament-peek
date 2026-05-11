@@ -11,7 +11,7 @@ final class GA4ReportsSettingsMigrationProvider
      */
     public function getSettingMigrations(): array
     {
-        return ['create_ga4_reports_settings'];
+        return ['2026_05_10_190853_01_create_ga4_reports_settings'];
     }
 
     /**

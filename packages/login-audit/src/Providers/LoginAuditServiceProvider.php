@@ -30,7 +30,7 @@ class LoginAuditServiceProvider extends AbstractPackageServiceProvider
             ->hasConfigFile('login-audit')
             ->hasTranslations()
             ->hasMigrations([
-                'create_login_audit_table',
+                '2026_05_10_190857_01_create_login_audit_table',
             ]);
     }
 

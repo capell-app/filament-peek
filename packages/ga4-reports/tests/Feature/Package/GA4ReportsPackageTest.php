@@ -36,5 +36,5 @@ it('exposes default settings and setting migrations', function (): void {
         ->and($settings->credentials_path)->toBe('')
         ->and($settings->sync_days)->toBe(30)
         ->and($settings->route_slug)->toBe('ga4-reports')
-        ->and($provider->getSettingMigrations())->toBe(['create_ga4_reports_settings']);
+        ->and($provider->getSettingMigrations())->toBe(['2026_05_10_190853_01_create_ga4_reports_settings']);
 });

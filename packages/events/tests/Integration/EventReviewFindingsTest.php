@@ -97,8 +97,8 @@ it('keeps events package migration registration order foreign-key safe', functio
     $package = new Package;
     (new EventsServiceProvider(app()))->configurePackage($package);
 
-    expect($package->migrationFileNames[0])->toBe('01_create_event_venues_table')
-        ->and($package->migrationFileNames[1])->toBe('02_create_events_table');
+    expect($package->migrationFileNames[0])->toBe('2026_05_10_190848_01_create_event_venues_table')
+        ->and($package->migrationFileNames[1])->toBe('2026_05_10_190848_02_create_events_table');
 });
 
 it('does not overbook capacity and rejects overflow when waitlist is disabled', function (): void {

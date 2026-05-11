@@ -114,6 +114,7 @@
         "capell-app/frontend": "4.x-dev",
         "capell-app/installer": "4.x-dev",
         "capell-app/marketplace": "4.x-dev",
+        "capell-app/welcome-tour": "4.x-dev",
         "cms-multi/filament-clear-cache": "^3.0",
         "codewithdennis/filament-select-tree": "^4.0",
         "croustibat/filament-jobs-monitor": "^4.4",
@@ -125,6 +126,7 @@
         "guzzlehttp/guzzle": "^7.5",
         "howdu/filament-record-switcher": "^2.0",
         "icamys/php-sitemap-generator": "^4.4.1",
+        "jibaymcs/filament-tour": "^5.0",
         "jfcherng/php-diff": "^7.0",
         "lara-zeus/spatie-translatable": "^1.0|^2.0",
         "laravel/framework": "^11.44.2|^12.0|^13.0",
@@ -248,6 +250,7 @@
             "Capell\\FrontendAuthoring\\": "packages/frontend-authoring/src",
             "Capell\\HtmlCache\\": "packages/html-cache/src",
             "Capell\\WordPressImporter\\": "packages/wordpress-importer/src",
+            "Capell\\WelcomeTour\\": "packages/welcome-tour/src",
             "Capell\\PublishingStudio\\": "packages/publishing-studio/src",
             "Capell\\PublishingStudio\\Database\\Factories\\": "packages/publishing-studio/database/factories"
         }
@@ -296,6 +299,7 @@
             "Capell\\FrontendAuthoring\\Tests\\": "packages/frontend-authoring/tests",
             "Capell\\HtmlCache\\Tests\\": "packages/html-cache/tests",
             "Capell\\WordPressImporter\\Tests\\": "packages/wordpress-importer/tests",
+            "Capell\\WelcomeTour\\Tests\\": "packages/welcome-tour/tests",
             "Capell\\PublishingStudio\\Tests\\": "packages/publishing-studio/tests"
         }
     },

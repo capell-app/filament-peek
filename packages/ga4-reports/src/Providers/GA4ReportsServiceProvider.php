@@ -33,9 +33,9 @@ final class GA4ReportsServiceProvider extends AbstractPackageServiceProvider
             ->hasTranslations()
             ->hasViews(self::$name)
             ->hasMigrations([
-                'create_ga4_reports_sync_runs_table',
-                'create_ga4_reports_daily_metrics_table',
-                'create_ga4_reports_page_metrics_table',
+                '2026_05_10_190852_03_create_ga4_reports_sync_runs_table',
+                '2026_05_10_190852_01_create_ga4_reports_daily_metrics_table',
+                '2026_05_10_190852_02_create_ga4_reports_page_metrics_table',
             ]);
     }
 
@@ -73,7 +73,7 @@ final class GA4ReportsServiceProvider extends AbstractPackageServiceProvider
         $provider = $this->app->make(GA4ReportsSettingsMigrationProvider::class);
 
         $this->publishes([
-            $provider->path() . '/create_ga4_reports_settings.php' => database_path('settings/create_ga4_reports_settings.php'),
+            $provider->path() . '/2026_05_10_190853_01_create_ga4_reports_settings.php' => database_path('settings/2026_05_10_190853_01_create_ga4_reports_settings.php'),
         ], 'capell-ga4-reports-settings');
     }
 

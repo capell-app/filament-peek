@@ -87,5 +87,8 @@ parameters:
         - packages/theme-agency/src
         - packages/theme-corporate/src
         - packages/theme-saas/src
+        - packages/welcome-tour/config
+        - packages/welcome-tour/database
+        - packages/welcome-tour/src
         - packages/wordpress-importer/src
     tmpDir: /tmp/phpstan/capell-packages-source

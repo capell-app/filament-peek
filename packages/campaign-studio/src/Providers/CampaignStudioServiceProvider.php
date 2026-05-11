@@ -38,11 +38,11 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
             ->hasViews(self::$name)
             ->hasCommand(InstallCampaignLayoutsCommand::class)
             ->hasMigrations([
-                'create_campaign_groups_table',
-                'create_campaign_landing_pages_table',
-                'create_campaign_cta_blocks_table',
-                'create_campaign_conversion_goals_table',
-                'create_campaign_conversions_table',
+                '2026_05_10_190843_01_create_campaign_groups_table',
+                '2026_05_10_190843_03_create_campaign_landing_pages_table',
+                '2026_05_10_190843_04_create_campaign_cta_blocks_table',
+                '2026_05_10_190843_02_create_campaign_conversion_goals_table',
+                '2026_05_10_190843_05_create_campaign_conversions_table',
             ]);
     }
 

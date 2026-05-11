@@ -212,7 +212,7 @@ it('adds ai discovery seo suite settings defaults', function (): void {
     runAiDiscoverySettingsMigrations(
         [
             'create_seo_suite_settings',
-            '2026_05_09_000001_update_seo_suite_settings_add_ai_discovery',
+            '2026_05_10_190871_04_update_seo_suite_settings_add_ai_discovery',
         ],
         dirname(__DIR__, 3) . '/database/settings',
     );
@@ -232,7 +232,7 @@ it('publishes the ai discovery settings migration during seo suite install', fun
         ->and($source)->toContain('create_ai_discovery_page_profiles_table')
         ->and($source)->toContain('create_ai_discovery_crawler_rules_table')
         ->and($source)->toContain('create_ai_discovery_snapshots_table')
-        ->and($source)->toContain('2026_05_09_000001_update_seo_suite_settings_add_ai_discovery');
+        ->and($source)->toContain('2026_05_10_190871_04_update_seo_suite_settings_add_ai_discovery');
 });
 
 /**

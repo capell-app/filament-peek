@@ -38,16 +38,16 @@ class EmailStudioServiceProvider extends AbstractPackageServiceProvider
             ->hasTranslations()
             ->hasRoute('web')
             ->hasMigrations([
-                '01_create_email_profiles_table',
-                '02_create_email_templates_table',
-                '03_create_email_template_variants_table',
-                '04_create_email_messages_table',
-                '05_create_email_recipients_table',
-                '06_create_email_events_table',
-                '07_create_email_replies_table',
-                '08_create_email_suppressions_table',
-                '09_create_email_template_registrations_table',
-                '10_create_email_tracking_tokens_table',
+                '2026_05_10_190847_01_create_email_profiles_table',
+                '2026_05_10_190847_02_create_email_templates_table',
+                '2026_05_10_190847_03_create_email_template_variants_table',
+                '2026_05_10_190847_04_create_email_messages_table',
+                '2026_05_10_190847_05_create_email_recipients_table',
+                '2026_05_10_190847_06_create_email_events_table',
+                '2026_05_10_190847_07_create_email_replies_table',
+                '2026_05_10_190847_08_create_email_suppressions_table',
+                '2026_05_10_190847_09_create_email_template_registrations_table',
+                '2026_05_10_190847_10_create_email_tracking_tokens_table',
             ]);
     }
 

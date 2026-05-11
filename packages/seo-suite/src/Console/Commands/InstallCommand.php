@@ -28,11 +28,11 @@ class InstallCommand extends Command
 
         $this->call('capell:publish-migrations', [
             '--items' => [
-                'create_ai_generation_histories_table',
-                'create_ai_discovery_site_profiles_table',
-                'create_ai_discovery_page_profiles_table',
-                'create_ai_discovery_crawler_rules_table',
-                'create_ai_discovery_snapshots_table',
+                '2026_05_10_190870_02_create_ai_generation_histories_table',
+                '2026_05_10_190870_06_create_ai_discovery_site_profiles_table',
+                '2026_05_10_190870_05_create_ai_discovery_page_profiles_table',
+                '2026_05_10_190870_04_create_ai_discovery_crawler_rules_table',
+                '2026_05_10_190870_07_create_ai_discovery_snapshots_table',
             ],
             '--path' => $migrations,
         ]);
@@ -47,10 +47,10 @@ class InstallCommand extends Command
         $this->call('capell:publish-migrations', [
             '--type' => 'settings',
             '--items' => [
-                'create_ai-orchestrator_settings',
-                '2026_04_18_000001_update_ai-orchestrator_settings_add_ai_creator',
-                'create_seo_suite_settings',
-                '2026_05_09_000001_update_seo_suite_settings_add_ai_discovery',
+                '2026_05_10_190871_01_create_ai-orchestrator_settings',
+                '2026_05_10_190871_02_update_ai-orchestrator_settings_add_ai_creator',
+                '2026_05_10_190871_03_create_seo_suite_settings',
+                '2026_05_10_190871_04_update_seo_suite_settings_add_ai_discovery',
             ],
             '--path' => $settings,
         ]);

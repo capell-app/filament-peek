@@ -10,7 +10,7 @@ class FoundationThemeSettingsMigrationProvider implements SettingsMigrationProvi
 {
     public function getSettingMigrations(): array
     {
-        return ['create_foundation_theme_settings'];
+        return ['2026_05_10_190850_01_create_foundation_theme_settings'];
     }
 
     public function migrations(): array

@@ -96,7 +96,7 @@ class PublishingStudioTestCase extends AbstractTestCase
         );
 
         $this->registerAndMigrateSettings(
-            ['add_publishing_studio_settings'],
+            ['2026_05_10_190867_01_add_publishing_studio_settings'],
             __DIR__ . '/../database/settings',
         );
     }

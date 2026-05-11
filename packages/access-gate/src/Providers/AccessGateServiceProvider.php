@@ -59,13 +59,13 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
                 AccessGateSetupCommand::class,
             ])
             ->hasMigrations([
-                '2026_05_08_000001_create_access_gate_areas_table',
-                '2026_05_08_000002_create_access_gate_registrations_table',
-                '2026_05_08_000003_create_access_gate_grants_table',
-                '2026_05_08_000004_create_access_gate_claim_tokens_table',
-                '2026_05_08_000005_create_access_gate_browser_tokens_table',
-                '2026_05_08_000006_create_access_gate_events_table',
-                '2026_05_08_000007_add_site_id_to_access_gate_areas_table',
+                '2026_05_10_190838_01_create_access_gate_areas_table',
+                '2026_05_10_190838_02_create_access_gate_registrations_table',
+                '2026_05_10_190838_03_create_access_gate_grants_table',
+                '2026_05_10_190838_04_create_access_gate_claim_tokens_table',
+                '2026_05_10_190838_05_create_access_gate_browser_tokens_table',
+                '2026_05_10_190838_06_create_access_gate_events_table',
+                '2026_05_10_190838_07_add_site_id_to_access_gate_areas_table',
             ]);
     }
 

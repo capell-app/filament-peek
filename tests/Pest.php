@@ -32,6 +32,7 @@ use Capell\SeoSuite\Tests\SeoSuiteTestCase;
 use Capell\Tags\Tests\TagsTestCase;
 use Capell\Tests\Packages\PackagesTestCase;
 use Capell\Tests\Packages\UninstalledPackagesTestCase;
+use Capell\WelcomeTour\Tests\WelcomeTourTestCase;
 use Capell\WordPressImporter\Tests\WordPressImporterTestCase;
 
 /**
@@ -77,4 +78,5 @@ extendCapellPackageTests(PackagesTestCase::class, 'theme-agency', 'theme-agency'
 extendCapellPackageTests(PackagesTestCase::class, 'theme-corporate', 'theme-corporate');
 extendCapellPackageTests(PackagesTestCase::class, 'theme-saas', 'theme-saas');
 pest()->extend(UninstalledPackagesTestCase::class)->in('UninstalledPackages');
+extendCapellPackageTests(WelcomeTourTestCase::class, 'welcome-tour', 'welcome-tour');
 extendCapellPackageTests(WordPressImporterTestCase::class, 'wordpress-importer', 'wordpress-importer');

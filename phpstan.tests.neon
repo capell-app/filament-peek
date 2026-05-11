@@ -35,6 +35,7 @@ parameters:
         - packages/theme-agency/tests
         - packages/theme-corporate/tests
         - packages/theme-saas/tests
+        - packages/welcome-tour/tests
         - packages/wordpress-importer/tests
         - tests
     tmpDir: /tmp/phpstan/capell-packages-tests

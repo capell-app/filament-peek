@@ -111,7 +111,7 @@ function resetPublishingStudioAdminBridgeState(): void
 function runPublishingStudioSettingsMigration(): void
 {
     /** @var SettingsMigration $settingsMigration */
-    $settingsMigration = require dirname(__DIR__, 2) . '/database/settings/add_publishing_studio_settings.php';
+    $settingsMigration = require dirname(__DIR__, 2) . '/database/settings/2026_05_10_190867_01_add_publishing_studio_settings.php';
 
     /** @var SettingsMigrator $settingsMigrator */
     $settingsMigrator = resolve(SettingsMigrator::class);

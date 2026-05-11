@@ -26,7 +26,7 @@ final class FrontendOptimizerServiceProvider extends AbstractPackageServiceProvi
         $package
             ->name(self::$name)
             ->hasConfigFile('capell-frontend-optimizer')
-            ->hasMigration('2026_05_07_000001_create_frontend_optimizer_tables');
+            ->hasMigration('2026_05_10_190851_01_create_frontend_optimizer_tables');
     }
 
     public function registeringPackage(): void

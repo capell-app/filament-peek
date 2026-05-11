@@ -42,11 +42,11 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
             ->hasViews(self::$name)
             ->hasRoute('web')
             ->hasMigrations([
-                '01_create_public_actions_table',
-                '02_create_public_action_destinations_table',
-                '03_create_public_action_submissions_table',
-                '04_create_public_action_dispatch_attempts_table',
-                '05_create_public_action_integration_tokens_table',
+                '2026_05_10_190865_01_create_public_actions_table',
+                '2026_05_10_190865_02_create_public_action_destinations_table',
+                '2026_05_10_190865_03_create_public_action_submissions_table',
+                '2026_05_10_190865_04_create_public_action_dispatch_attempts_table',
+                '2026_05_10_190865_05_create_public_action_integration_tokens_table',
             ]);
     }
 
