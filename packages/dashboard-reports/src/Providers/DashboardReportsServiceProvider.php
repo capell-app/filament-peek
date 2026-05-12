@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\DashboardReports\Providers;
 
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 
@@ -27,15 +26,5 @@ final class DashboardReportsServiceProvider extends AbstractPackageServiceProvid
         $this->app->register(AdminServiceProvider::class);
     }
 
-    public function packageRegistered(): void
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-            description: fn (): string => __('capell-dashboard-reports::package.description'),
-        );
-    }
+    public function packageRegistered(): void {}
 }

@@ -139,7 +139,6 @@ class PackagesTestCase extends AbstractTestCase
         $this->registerSeoSuitePagesForFilament();
         $this->registerDiagnosticsPagesForFilament();
 
-        CapellCore::registerPackage('capell-app/navigation', path: realpath(__DIR__ . '/../../packages/navigation'));
         CapellCore::forcePackageInstalled('capell-app/navigation');
 
         $app->make(Repository::class)->set('tags.tag_model', Tag::class);

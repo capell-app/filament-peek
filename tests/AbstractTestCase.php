@@ -30,6 +30,7 @@ use Capell\Tests\Fixtures\Policies\RolePolicy;
 use Capell\Tests\Support\Concerns\BuildsOrderedMigrationWorkspace;
 use Capell\Tests\Support\Concerns\RegistersPublishedConfigs;
 use Capell\Tests\Support\Concerns\TestingFrontendWithVite;
+use Capell\Tests\Support\RegisterLocalPackageManifestsServiceProvider;
 use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
 use Faker\Provider\Miscellaneous;
@@ -186,6 +187,7 @@ abstract class AbstractTestCase extends TestCase
     protected function getPackageProviders(mixed $app): array
     {
         return [
+            RegisterLocalPackageManifestsServiceProvider::class,
             WorkbenchServiceProvider::class,
             ActionServiceProvider::class,
             ActionsServiceProvider::class,

@@ -69,7 +69,6 @@ class NewsletterServiceProvider extends AbstractPackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->registerPackageMetadata();
         $this->registerAdapterRegistry();
         $this->registerSettingsSchemas();
         $this->app->singleton(NewsletterAudienceRegistry::class);
@@ -102,20 +101,6 @@ class NewsletterServiceProvider extends AbstractPackageServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(self::$packageName);
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-            description: fn (): string => __('capell-newsletter::package.description'),
-        );
-
-        return $this;
     }
 
     private function registerAdapterRegistry(): self

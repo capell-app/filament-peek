@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../scripts/audit-manifest-v3.php';
 
+use Symfony\Component\Finder\Finder;
+
 it('traces provider-discovered contribution types in each manifest', function (): void {
     $audit = capell_manifest_v3_audit(dirname(__DIR__, 2));
     $missing = [];
@@ -50,5 +52,29 @@ it('keeps manifest contribution rows structurally valid', function (): void {
         [],
         'Contribution rows must be typed and traceable: ' .
         json_encode($invalid, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+    );
+});
+
+it('keeps package metadata out of providers', function (): void {
+    $providers = (new Finder)
+        ->files()
+        ->in(__DIR__ . '/../../packages')
+        ->path('#/src/#')
+        ->name('*ServiceProvider.php');
+
+    $metadataRegistrations = [];
+
+    foreach ($providers as $provider) {
+        if (str_contains($provider->getContents(), 'CapellCore::registerPackage(')) {
+            $metadataRegistrations[] = $provider->getRelativePathname();
+        }
+    }
+
+    sort($metadataRegistrations);
+
+    expect($metadataRegistrations)->toBe(
+        [],
+        'Package metadata must live in capell.json manifests, not provider-side CapellCore::registerPackage() calls: ' .
+        json_encode($metadataRegistrations, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
     );
 });

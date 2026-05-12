@@ -139,7 +139,6 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        $this->registerPackageMetadata();
         $this->registerContentGraphExtractors();
 
         $this->app->booted(function (): void {
@@ -545,20 +544,6 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
         return array_map(
             static fn (string $path): string => pathinfo($path, PATHINFO_FILENAME),
             $files,
-        );
-    }
-
-    private function registerPackageMetadata(): void
-    {
-        CapellCore::registerPackage(
-            static::$packageName,
-            type: static::getType(),
-            serviceProviderClass: static::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: $this->getVersion(),
-            setting: AIOrchestratorSettings::class,
-            permissions: [],
-            description: fn (): string => __('capell-seo-suite::package.description'),
         );
     }
 

@@ -59,7 +59,6 @@ class EmailStudioServiceProvider extends AbstractPackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->registerPackageMetadata();
         $this->app->singleton(EmailTemplateRegistry::class);
         $this->app->singleton(EmailProviderRegistry::class, static fn (): EmailProviderRegistry => (new EmailProviderRegistry)
             ->register(EmailProviderType::Fake, new FakeEmailProviderAdapter)
@@ -80,20 +79,6 @@ class EmailStudioServiceProvider extends AbstractPackageServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(self::$packageName);
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-            description: fn (): string => __('capell-email-studio::package.description'),
-        );
-
-        return $this;
     }
 
     private function registerModels(): self

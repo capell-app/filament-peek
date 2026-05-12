@@ -50,9 +50,6 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
     {
         $this->app->register(AdminServiceProvider::class);
 
-        $this
-            ->registerPackageMetadata();
-
         $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {
                 return;
@@ -76,20 +73,6 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
             ->registerPackageAssets()
             ->registerProtectedTables()
             ->registerListeners();
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: $this->getVersion(),
-            description: fn (): string => __('capell-campaign-studio::package.description'),
-        );
-
-        return $this;
     }
 
     private function registerPackageAssets(): self

@@ -41,8 +41,6 @@ class LoginAuditServiceProvider extends AbstractPackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->registerPackageMetadata();
-
         $this->app->booted(function (): void {
             if (! $this->isPackageInstalled()) {
                 return;
@@ -68,20 +66,6 @@ class LoginAuditServiceProvider extends AbstractPackageServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(static::$packageName);
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-            description: fn (): string => __('capell-login-audit::package.description'),
-        );
-
-        return $this;
     }
 
     private function registerModels(): self

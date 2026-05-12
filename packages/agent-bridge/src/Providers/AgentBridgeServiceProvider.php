@@ -44,8 +44,6 @@ final class AgentBridgeServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/capell-agent-bridge.php', 'capell-agent-bridge');
-
-        $this->registerPackageMetadata();
         $this->registerSettingsIntegration();
     }
 
@@ -88,21 +86,6 @@ final class AgentBridgeServiceProvider extends ServiceProvider
                 PreviewBoostCapabilityTool::class,
             ])),
         ]);
-    }
-
-    private function registerPackageMetadata(): void
-    {
-        if (! class_exists(CapellCore::class)) {
-            return;
-        }
-
-        $packagePath = realpath(__DIR__ . '/../..');
-
-        CapellCore::registerPackage(
-            name: self::$packageName,
-            path: is_string($packagePath) ? $packagePath : null,
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-        );
     }
 
     private function isPackageInstalled(): bool

@@ -70,7 +70,6 @@ class PublishingStudioServiceProvider extends ServiceProvider
         $this->app->register(AdminServiceProvider::class);
         $this->app->singleton(ReleaseWorkspaceItemRegistry::class);
 
-        CapellCore::registerPackage(static::$packageName, path: realpath(__DIR__ . '/../..'));
     }
 
     public function boot(): void

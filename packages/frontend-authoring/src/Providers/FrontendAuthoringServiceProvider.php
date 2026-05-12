@@ -35,7 +35,6 @@ class FrontendAuthoringServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../../config/capell-frontend-authoring.php', 'capell-frontend-authoring');
         $this->app->singleton(EditableRegionRegistry::class, fn (): EditableRegionRegistry => new EditableRegionRegistry);
         $this->app->singleton(EditableRegionSigner::class, fn (): EditableRegionSigner => new EditableRegionSigner);
-        $this->registerPackageMetadata();
     }
 
     private function isPackageInstalled(): bool
@@ -50,16 +49,5 @@ class FrontendAuthoringServiceProvider extends ServiceProvider
         }
 
         Route::aliasMiddleware('frontend.activity', PassThroughActivityMiddleware::class);
-    }
-
-    private function registerPackageMetadata(): void
-    {
-        CapellCore::registerPackage(
-            static::$packageName,
-            serviceProviderClass: static::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(static::$packageName),
-            description: 'Frontend Authoring replaces the old frontend toolbar package. It keeps the beacon route and adds cache-safe in-page editing for rendered frontend pages.',
-        );
     }
 }

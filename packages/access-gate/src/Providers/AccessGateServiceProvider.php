@@ -77,9 +77,6 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
         $this->app->singleton(AccessRequestMethodRegistry::class);
         $this->registerMiddlewareAliases();
         $this->registerMiddlewarePriority();
-
-        $this->registerPackageMetadata();
-
         $this->app->booted(function (): void {
             $this->registerRateLimiters();
             $this->registerConfiguredRegistrationFields();
@@ -266,25 +263,6 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
     private function hasCapellCore(): bool
     {
         return class_exists(CapellCore::class);
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        if (! $this->hasCapellCore()) {
-            return $this;
-        }
-
-        CapellCore::registerPackage(
-            static::$packageName,
-            type: static::getType(),
-            serviceProviderClass: static::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(static::$packageName),
-            description: fn (): string => __('capell-access-gate::package.description'),
-            installCommand: 'capell:access-gate-install',
-        );
-
-        return $this;
     }
 
     private function registerModels(): self

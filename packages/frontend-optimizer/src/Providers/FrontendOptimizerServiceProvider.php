@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\FrontendOptimizer\Providers;
 
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\FrontendOptimizer\Actions\RenderProfileAssetsAction;
 use Capell\FrontendOptimizer\Contracts\CriticalCssGenerator;
@@ -39,14 +38,6 @@ final class FrontendOptimizerServiceProvider extends AbstractPackageServiceProvi
 
         Blade::directive('frontendOptimizerAssets', fn (string $expression): string => sprintf('<?php echo ' . RenderProfileAssetsAction::class . '::run(%s); ?>', $expression));
 
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: $this->getVersion(),
-            description: fn (): string => 'Profile-based CSS and JavaScript delivery for public Capell pages.',
-        );
     }
 
     private function getVersion(): string

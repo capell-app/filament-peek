@@ -10,7 +10,6 @@ use Capell\Admin\Contracts\Extenders\UserTableExtender;
 use Capell\Admin\Data\AdminSurfaceContributionData;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsGroupMetadata;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
@@ -44,16 +43,6 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        CapellCore::registerPackage(
-            static::$packageName,
-            type: static::getType(),
-            serviceProviderClass: static::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: $this->getVersion(),
-            setting: PasswordPolicySettings::class,
-            description: fn (): string => __('capell-password-policy::package.description'),
-        );
-
         if (config('capell-password-policy.enabled', true) !== true) {
             return;
         }

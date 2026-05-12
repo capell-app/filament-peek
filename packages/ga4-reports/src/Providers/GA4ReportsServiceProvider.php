@@ -47,7 +47,7 @@ final class GA4ReportsServiceProvider extends AbstractPackageServiceProvider
     public function packageRegistered(): void
     {
         $this
-            ->registerPackageMetadata()
+
             ->registerSettingsMigrations()
             ->bindGA4ReportsClient();
 
@@ -75,20 +75,6 @@ final class GA4ReportsServiceProvider extends AbstractPackageServiceProvider
         $this->publishes([
             $provider->path() . '/2026_05_10_190853_01_create_ga4_reports_settings.php' => database_path('settings/2026_05_10_190853_01_create_ga4_reports_settings.php'),
         ], 'capell-ga4-reports-settings');
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-            description: fn (): string => __('capell-ga4-reports::package.description'),
-        );
-
-        return $this;
     }
 
     private function isPackageInstalled(): bool

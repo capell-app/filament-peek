@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\Deployments\Providers;
 
 use Capell\Admin\Facades\CapellAdmin;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Deployments\Actions\PublishComposerRequirementAction;
 use Capell\Deployments\Contracts\PublishesComposerChanges;
@@ -34,15 +33,6 @@ class DeploymentsServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        CapellCore::registerPackage(
-            static::$packageName,
-            type: static::getType(),
-            serviceProviderClass: static::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: $this->getVersion(),
-            description: fn (): string => __('capell-deployments::package.description'),
-        );
-
         $this->app->bind(PublishesComposerChanges::class, fn (): object => new class implements PublishesComposerChanges
         {
             public function publish(ComposerRequirementData $requirement): PublishComposerChangeResultData

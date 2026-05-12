@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\ThemeStudio\Corporate;
 
 use Capell\Core\Enums\FrontendRuntime;
-use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\ThemeStudio\Data\ThemeDefinitionData;
 use Capell\Core\ThemeStudio\Data\ThemePresetData;
@@ -80,15 +79,7 @@ class CorporateThemeServiceProvider extends ServiceProvider
         );
     }
 
-    public function register(): void
-    {
-        CapellCore::registerPackage(
-            name: self::$packageName,
-            type: PackageTypeEnum::Theme,
-            path: realpath(__DIR__ . '/..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-        );
-    }
+    public function register(): void {}
 
     public function boot(ThemeRegistry $registry): void
     {

@@ -52,7 +52,6 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->registerPackageMetadata();
         $this->app->singleton(PublicActionHandlerRegistry::class);
         $this->app->singleton(PublicActionProviderPresetRegistry::class);
         $this->app->singleton(PublicActionDestinationAdapterRegistry::class, static function (): PublicActionDestinationAdapterRegistry {
@@ -81,20 +80,6 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
     private function isPackageInstalled(): bool
     {
         return CapellCore::isPackageInstalled(self::$packageName);
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            self::$packageName,
-            type: self::getType(),
-            serviceProviderClass: self::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-            description: fn (): string => __('capell-public-actions::package.description'),
-        );
-
-        return $this;
     }
 
     private function registerBladeComponents(): self

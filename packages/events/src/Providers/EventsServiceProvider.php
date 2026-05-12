@@ -57,8 +57,6 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
-        $this->registerPackageMetadata();
-
         $this->app->booting(function (): void {
             if ($this->isPackageInstalled()) {
                 $this->registerAdminResources();
@@ -89,21 +87,6 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
             ->registerSeoSchemaTemplate()
             ->registerPublishingStudio()
             ->registerAboutCommand();
-    }
-
-    private function registerPackageMetadata(): self
-    {
-        CapellCore::registerPackage(
-            static::$packageName,
-            type: static::getType(),
-            serviceProviderClass: static::class,
-            path: realpath(__DIR__ . '/../..'),
-            version: $this->getVersion(),
-            permissions: $this->getPackagePermissions(),
-            description: fn (): string => __('capell-events::package.description'),
-        );
-
-        return $this;
     }
 
     private function isPackageInstalled(): bool

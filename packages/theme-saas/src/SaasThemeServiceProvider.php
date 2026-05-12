@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\ThemeStudio\Saas;
 
-use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\ThemeStudio\Data\ThemeDefinitionData;
 use Capell\Core\ThemeStudio\Data\ThemePresetData;
@@ -79,15 +78,7 @@ class SaasThemeServiceProvider extends ServiceProvider
         );
     }
 
-    public function register(): void
-    {
-        CapellCore::registerPackage(
-            name: self::$packageName,
-            type: PackageTypeEnum::Theme,
-            path: realpath(__DIR__ . '/..'),
-            version: CapellCore::getInstalledPrettyVersion(self::$packageName),
-        );
-    }
+    public function register(): void {}
 
     public function boot(ThemeRegistry $registry): void
     {
