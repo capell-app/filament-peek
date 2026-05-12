@@ -1,0 +1,46 @@
+{
+    "manifest-version": 2,
+    "name": "capell-app/hero",
+    "kind": "package",
+    "capell-version": "^4.0",
+    "productGroup": "Capell Foundation",
+    "tier": "free",
+    "bundle": "foundation",
+    "description": "Hero provides the default Capell home hero widget, rendering, and layout setup.",
+    "surfaces": ["frontend", "console"],
+    "dependencies": {
+        "requires": ["capell-app/core", "capell-app/frontend"],
+        "optional": [],
+        "conflicts": []
+    },
+    "lifecycle": {
+        "activation": "manual",
+        "defaultStatus": "available",
+        "requiresInstallCommand": false
+    },
+    "providers": {
+        "metadata": [],
+        "install": [],
+        "runtime": ["Capell\\Hero\\Providers\\HeroServiceProvider"],
+        "admin": [],
+        "frontend": []
+    },
+    "database": {
+        "migrations": false,
+        "settings": false,
+        "requiredTables": []
+    },
+    "commands": {
+        "install": null,
+        "setup": "capell:hero-setup",
+        "setupParams": [],
+        "demo": null,
+        "demoParams": [],
+        "health": null
+    },
+    "settings": [],
+    "permissions": [],
+    "capabilities": [],
+    "assets": [],
+    "healthChecks": []
+}

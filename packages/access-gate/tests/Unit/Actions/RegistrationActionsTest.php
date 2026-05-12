@@ -238,6 +238,37 @@ it('does not accept public registrations for inactive or invite-only areas', fun
     ]],
 ]);
 
+it('does not accept public registrations before a scheduled access area opens', function (): void {
+    Notification::fake();
+
+    $area = Area::factory()->create([
+        'status' => AccessAreaStatus::Active,
+        'opens_at' => now()->addHour(),
+    ]);
+
+    expect(fn (): mixed => resolve(CreateRegistrationAction::class)->handle($area, [
+        'email' => 'mona@example.test',
+    ]))->toThrow(ValidationException::class);
+
+    expect(Registration::query()->count())->toBe(0);
+});
+
+it('does not accept public registrations after a scheduled access area closes', function (): void {
+    Notification::fake();
+
+    $area = Area::factory()->create([
+        'status' => AccessAreaStatus::Active,
+        'opens_at' => now()->subHours(2),
+        'closes_at' => now()->subHour(),
+    ]);
+
+    expect(fn (): mixed => resolve(CreateRegistrationAction::class)->handle($area, [
+        'email' => 'mona@example.test',
+    ]))->toThrow(ValidationException::class);
+
+    expect(Registration::query()->count())->toBe(0);
+});
+
 final class TestProviderUsernameRegistrationField implements RegistrationField
 {
     public function key(): string

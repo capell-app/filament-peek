@@ -35,7 +35,7 @@ final class PublishingTrendChartWidget extends ChartWidget implements CapellWidg
 
     protected function getData(): array
     {
-        $data = BuildPublishingTrendAction::run($this->dashboardPeriod);
+        $data = BuildPublishingTrendAction::run($this->getDashboardPeriod());
 
         return [
             'datasets' => [

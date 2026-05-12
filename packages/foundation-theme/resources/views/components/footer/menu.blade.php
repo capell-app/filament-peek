@@ -1,8 +1,8 @@
 @props([
     'items' => null,
     'headingClass' => '',
-    'menuItemClass' => 'focus:text-primary break-all text-sm font-medium leading-tight text-gray-100 hover:text-gray-400 xl:text-base',
-    'menuSubItemClass' => 'focus:text-primary py-1 text-xs font-medium leading-tight text-gray-100 hover:text-gray-400 xl:text-sm',
+    'menuItemClass' => 'focus:text-primary hover:text-primary break-all text-sm font-medium leading-tight text-[var(--color-footer-link)] xl:text-base',
+    'menuSubItemClass' => 'focus:text-primary hover:text-primary py-1 text-xs font-medium leading-tight text-[var(--color-footer-muted)] xl:text-sm',
 ])
 @php
     use Capell\Navigation\Data\NavigationItemData;

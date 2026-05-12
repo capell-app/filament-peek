@@ -31,6 +31,8 @@ class AreaFactory extends Factory
             'key' => str($areaName)->slug()->toString(),
             'name' => str($areaName)->title()->toString(),
             'status' => AccessAreaStatus::Active,
+            'opens_at' => null,
+            'closes_at' => null,
             'identity_mode' => IdentityMode::Hybrid,
             'approval_strategy' => ApprovalStrategy::Manual,
             'approval_limit' => null,

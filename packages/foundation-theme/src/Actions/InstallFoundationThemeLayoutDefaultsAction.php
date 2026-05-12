@@ -6,7 +6,6 @@ namespace Capell\FoundationTheme\Actions;
 
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\LayoutEnum;
-use Capell\Core\LayoutBuilder\Actions\CreateHeroWidgetAction;
 use Capell\Core\LayoutBuilder\Support\Creator\WidgetCreator;
 use Capell\Core\Models\Layout;
 use Capell\Core\Support\Creator\LayoutCreator;
@@ -34,11 +33,9 @@ final class InstallFoundationThemeLayoutDefaultsAction
         $widgetCreator->pageContentWidget();
         $widgetCreator->pageSlotWidget();
 
-        $heroWidget = CreateHeroWidgetAction::run(height: 'medium');
-
         $result = ['created' => 0, 'updated' => 0, 'skipped' => 0];
 
-        foreach ($this->layoutDefaults($heroWidget->key) as $layoutKey => $containers) {
+        foreach ($this->layoutDefaults() as $layoutKey => $containers) {
             $layout = $this->resolveLayout($layoutKey);
             $hadContainers = $layout->containers !== [];
 
@@ -67,7 +64,7 @@ final class InstallFoundationThemeLayoutDefaultsAction
     /**
      * @return array<string, array<string, mixed>>
      */
-    private function layoutDefaults(string $heroWidgetKey): array
+    private function layoutDefaults(): array
     {
         return [
             LayoutEnum::Default->value => [
@@ -79,22 +76,6 @@ final class InstallFoundationThemeLayoutDefaultsAction
                 'sidebar' => $this->sidebarContainer([
                     ['widget_key' => 'latest-pages'],
                 ]),
-            ],
-            LayoutEnum::Home->value => [
-                'hero' => [
-                    'meta' => [
-                        'colspan' => 12,
-                        'container' => ContainerWidthEnum::Full,
-                    ],
-                    'widgets' => [
-                        ['widget_key' => $heroWidgetKey],
-                    ],
-                ],
-                'main' => [
-                    'widgets' => [
-                        ['widget_key' => 'page-content'],
-                    ],
-                ],
             ],
             LayoutEnum::Results->value => [
                 'main' => $this->mainContainer([

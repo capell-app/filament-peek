@@ -7,10 +7,27 @@
     'page',
     'theme' => [],
 ])
+@php
+    use Capell\Core\Actions\ColorConverterAction;
+    use Capell\Frontend\Facades\Frontend;
+
+    $themeModel = Frontend::theme();
+@endphp
+
+<style>
+    :root {
+        --bg-color-main: {{ ColorConverterAction::run($themeModel->getMeta('main_background_color', '#f8fafc')) }};
+    }
+
+    .dark:root {
+        --bg-color-main: {{ ColorConverterAction::run($themeModel->getMeta('main_dark_background_color', '#111827')) }};
+    }
+</style>
+
 <main
     id="main"
     @class([
-        'relative z-0 flex min-h-full flex-1 flex-col overflow-x-hidden lg:!min-h-0',
+        'relative z-0 flex min-h-full flex-1 flex-col overflow-x-hidden bg-[var(--bg-color-main)] lg:!min-h-0',
         $theme['meta']['main_class'] ?? '',
         $mainClass ?? '',
     ])

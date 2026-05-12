@@ -35,8 +35,9 @@ test('default theme treats navigation as optional', function (): void {
     $header = file_get_contents($themePath . '/resources/views/components/header/index.blade.php');
     $footer = file_get_contents($themePath . '/resources/views/components/footer/index.blade.php');
 
-    expect($header)->toContain('NavigationAvailability::check()')
-        ->and($header)->toContain('if ($navigationAvailable)')
+    expect($header)->toContain("scenario: 'foundation-theme-primary-navigation'")
+        ->and($header)->not->toContain('NavigationAvailability::check()')
+        ->and($header)->not->toContain('if ($navigationAvailable)')
         ->and($footer)->toContain('NavigationAvailability::check()')
         ->and($footer)->toContain('if (! $navigationAvailable)');
 });

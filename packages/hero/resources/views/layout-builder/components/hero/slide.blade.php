@@ -34,7 +34,7 @@
                 ? [
                     'bg-gradient-to-t',
                     'from-gray-600/60 to-gray-800/70 dark:from-gray-800/80 dark:to-gray-900/80' => $color === 'dark',
-                    'from-black/10 to-gray-100/60 dark:from-gray-800/80 dark:to-gray-900/80' => $color === 'light',
+                    'from-white/90 to-[#fbfaf7] dark:from-white/90 dark:to-[#fbfaf7]' => $color === 'light',
                 ]
                 : []
             ),

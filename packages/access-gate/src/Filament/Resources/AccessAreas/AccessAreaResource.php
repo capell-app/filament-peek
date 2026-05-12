@@ -67,6 +67,13 @@ final class AccessAreaResource extends Resource
                     ->label(__('capell-access-gate::filament.fields.status'))
                     ->options(self::enumOptions(AccessAreaStatus::class, 'capell-access-gate::filament.area_status'))
                     ->required(),
+                DateTimePicker::make('opens_at')
+                    ->label(__('capell-access-gate::filament.fields.opens_at'))
+                    ->nullable(),
+                DateTimePicker::make('closes_at')
+                    ->label(__('capell-access-gate::filament.fields.closes_at'))
+                    ->nullable()
+                    ->rules(['nullable', 'date', 'after:opens_at']),
                 Select::make('identity_mode')
                     ->label(__('capell-access-gate::filament.fields.identity_mode'))
                     ->options(self::enumOptions(IdentityMode::class, 'capell-access-gate::filament.identity_mode'))

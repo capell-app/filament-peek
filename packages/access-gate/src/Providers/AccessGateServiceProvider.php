@@ -66,6 +66,8 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
                 '2026_05_10_190838_05_create_access_gate_browser_tokens_table',
                 '2026_05_10_190838_06_create_access_gate_events_table',
                 '2026_05_10_190838_07_add_site_id_to_access_gate_areas_table',
+                '2026_05_12_120000_08_add_schedule_to_access_gate_areas_table',
+                '2026_05_12_120001_09_add_download_resolver_indexes_to_access_gate_tables',
             ]);
     }
 

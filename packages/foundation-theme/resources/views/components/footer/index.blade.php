@@ -64,17 +64,80 @@
 @endphp
 
 @props([
-    'headingClass' => 'font-heading text-lg font-light leading-tight text-gray-300',
+    'headingClass' => 'font-heading text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-[var(--color-footer-heading)]',
 ])
+@php
+    $footerRenderHooks = app(RenderHookRegistry::class)->renderAll(
+        RenderHookLocation::Footer,
+        item: ['headingClass' => $headingClass],
+        target: 'footer.index',
+    );
+    $hasFooterMenu = $footerMenuItems?->isNotEmpty() === true;
+    $hasFooterRenderHooks = trim((string) $footerRenderHooks) !== '';
+    $hasFooterPrimaryContent = $hasFooterMenu || $hasFooterRenderHooks;
+@endphp
+
 <style>
     :root {
-        --color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_color', '245,245,245')) }};
-        --bg-color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_background_color', '69,69,72')) }};
+        --color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_color', '#1f2937')) }};
+        --color-footer-heading: color-mix(
+            in srgb,
+            var(--color-footer),
+            #020617 18%
+        );
+        --color-footer-muted: color-mix(
+            in srgb,
+            var(--color-footer),
+            var(--bg-color-footer) 28%
+        );
+        --color-footer-link: color-mix(
+            in srgb,
+            var(--color-footer),
+            #020617 8%
+        );
+        --bg-color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_background_color', '#f1f5f9')) }};
+        --bg-color-footer-panel: color-mix(
+            in srgb,
+            var(--bg-color-footer),
+            #020617 3%
+        );
+        --bg-color-footer-muted: color-mix(
+            in srgb,
+            var(--bg-color-footer),
+            #020617 6%
+        );
+        --border-color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_border_color', '#e2e8f0')) }};
     }
 
     .dark:root {
-        --color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_dark_color', '233,233,233')) }};
-        --bg-color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_dark_background_color', '32,31,40')) }};
+        --color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_dark_color', '#e5e7eb')) }};
+        --color-footer-heading: color-mix(
+            in srgb,
+            var(--color-footer),
+            #ffffff 10%
+        );
+        --color-footer-muted: color-mix(
+            in srgb,
+            var(--color-footer),
+            var(--bg-color-footer) 24%
+        );
+        --color-footer-link: color-mix(
+            in srgb,
+            var(--color-footer),
+            #ffffff 6%
+        );
+        --bg-color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_dark_background_color', '#111827')) }};
+        --bg-color-footer-panel: color-mix(
+            in srgb,
+            var(--bg-color-footer),
+            #ffffff 5%
+        );
+        --bg-color-footer-muted: color-mix(
+            in srgb,
+            var(--bg-color-footer),
+            #ffffff 8%
+        );
+        --border-color-footer: {{ ColorConverterAction::run($theme->getMeta('footer_dark_border_color', '#374151')) }};
     }
 </style>
 
@@ -91,53 +154,61 @@
 >
     <div
         @class([
-            '@container flex-wrap px-8 py-14 lg:pt-16',
+            '@container flex-wrap px-8',
+            'py-8 lg:py-10' => ! $hasFooterPrimaryContent,
+            'py-10 lg:py-12' => $hasFooterPrimaryContent,
             $containerWidth->getContainerClass(),
         ])
     >
         <div
-            class="@2xl:grid-cols-2 @4xl:grid-cols-3 grid gap-x-8 gap-y-10 xl:flex xl:flex-row xl:gap-x-10"
+            @class([
+                'rounded-lg bg-[var(--bg-color-footer-panel)] px-6 py-7 md:px-8 md:py-8',
+                'flex justify-center' => ! $hasFooterPrimaryContent,
+                '@2xl:grid-cols-2 @4xl:grid-cols-3 grid gap-x-8 gap-y-8 xl:flex xl:flex-row xl:gap-x-10' => $hasFooterPrimaryContent,
+            ])
         >
             <x-capell::footer.site-info
                 :$site
-                class="order-2 shrink-0 text-center lg:order-1 lg:text-left xl:max-w-[30%] xl:pr-10"
+                @class([
+                    'shrink-0',
+                    'max-w-xl text-center' => ! $hasFooterPrimaryContent,
+                    'order-2 text-center lg:order-1 lg:text-left xl:max-w-[30%] xl:pr-10' => $hasFooterPrimaryContent,
+                ])
             />
 
-            <div
-                class="@4xl:col-span-2 order-1 grid grow gap-10 lg:order-2 xl:flex"
-            >
-                @if ($footerMenuItems?->isNotEmpty())
-                    <x-capell::footer.menu
-                        :$headingClass
-                        :items="$footerMenuItems"
-                        class="grow"
-                    />
-                @endif
+            @if ($hasFooterPrimaryContent)
+                <div
+                    class="@4xl:col-span-2 order-1 grid grow gap-8 lg:order-2 xl:flex"
+                >
+                    @if ($hasFooterMenu)
+                        <x-capell::footer.menu
+                            :$headingClass
+                            :items="$footerMenuItems"
+                            class="grow"
+                        />
+                    @endif
 
-                {!!
-                    app(RenderHookRegistry::class)->renderAll(
-                        RenderHookLocation::Footer,
-                        item: ['headingClass' => $headingClass],
-                        target: 'footer.index',
-                    )
-                !!}
-            </div>
+                    {!! $footerRenderHooks !!}
+                </div>
+            @endif
         </div>
     </div>
 
     @if ($subFooterMenuItems?->isNotEmpty() || $footerCopy || count($siteLanguages) > 1)
-        <x-capell::footer.sub-footer
-            :items="$subFooterMenuItems"
-            :$siteLanguages
-            class="sub-footer border-t border-white/5"
-        >
-            {!!
-                RenderHtmlContentAction::run(Lang::get($footerCopy, [
-                    'name' => $site->name,
-                    'year' => date('Y'),
-                ]))
-            !!}
-        </x-capell::footer.sub-footer>
+        <div class="bg-[var(--bg-color-footer-muted)]">
+            <x-capell::footer.sub-footer
+                :items="$subFooterMenuItems"
+                :$siteLanguages
+                class="sub-footer"
+            >
+                {!!
+                    RenderHtmlContentAction::run(Lang::get($footerCopy, [
+                        'name' => $site->name,
+                        'year' => date('Y'),
+                    ]))
+                !!}
+            </x-capell::footer.sub-footer>
+        </div>
     @endif
 </footer>
 

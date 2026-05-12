@@ -90,13 +90,13 @@ it('does not rebuild tailwind assets for runtime theme color changes', function 
         ->and($tokens)->toContain('->merge($theme->colors)');
 });
 
-it('keeps foundation header menu controls screen reader accurate', function (): void {
+it('delegates primary header navigation to the navigation render hook', function (): void {
     $header = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/header/index.blade.php');
 
-    expect($header)->toContain('aria-controls="main-menu"')
-        ->and($header)->toContain('x-bind:aria-expanded="isMenuOpen.toString()"')
-        ->and($header)->toContain('x-text=')
-        ->and($header)->toContain("isMenuOpen\n                                ? '{{ __('capell-frontend::generic.close_menu') }}'")
-        ->and($header)->toContain(": '{{ __('capell-frontend::generic.open_menu') }}'")
-        ->and($header)->not->toContain("\$refs.toggleMenu.setAttribute('aria-expanded', 'true')");
+    expect($header)->toContain("scenario: 'foundation-theme-primary-navigation'")
+        ->and($header)->toContain("target: 'capell::header.index'")
+        ->and($header)->toContain('capell-navigation-menu-open-changed')
+        ->and($header)->not->toContain('x-ref="toggleMenu"')
+        ->and($header)->not->toContain('toggleMenu()')
+        ->and($header)->not->toContain('Capell\\Navigation');
 });

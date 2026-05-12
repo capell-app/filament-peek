@@ -91,6 +91,69 @@ it('allows protected content when a matching area is paused', function (): void 
         ->assertSee('secret');
 });
 
+it('allows protected content before a scheduled access area opens', function (): void {
+    Area::factory()->create([
+        'key' => 'preview',
+        'status' => AccessAreaStatus::Active,
+        'opens_at' => now()->addHour(),
+        'identity_mode' => IdentityMode::Hybrid,
+    ]);
+
+    Route::middleware('access-gate:preview')->get('/access-gate-test/before-window', fn (): string => 'secret');
+
+    $this
+        ->get('/access-gate-test/before-window')
+        ->assertOk()
+        ->assertSee('secret')
+        ->assertHeaderContains('Cache-Control', 'no-store')
+        ->assertHeaderContains('Cache-Control', 'private');
+});
+
+it('blocks protected content during a scheduled access area window', function (): void {
+    $rendered = false;
+
+    Area::factory()->create([
+        'key' => 'preview',
+        'status' => AccessAreaStatus::Active,
+        'opens_at' => now()->subHour(),
+        'closes_at' => now()->addHour(),
+        'identity_mode' => IdentityMode::Hybrid,
+    ]);
+
+    Route::middleware('access-gate:preview')->get('/access-gate-test/inside-window', function () use (&$rendered): string {
+        $rendered = true;
+
+        return 'secret';
+    });
+
+    $this->get('/access-gate-test/inside-window')
+        ->assertRedirect(route('capell-access-gate.request', [
+            'area' => 'preview',
+            'redirect' => 'http://localhost/access-gate-test/inside-window',
+        ]));
+
+    expect($rendered)->toBeFalse();
+});
+
+it('allows protected content after a scheduled access area closes', function (): void {
+    Area::factory()->create([
+        'key' => 'preview',
+        'status' => AccessAreaStatus::Active,
+        'opens_at' => now()->subHours(2),
+        'closes_at' => now()->subHour(),
+        'identity_mode' => IdentityMode::Hybrid,
+    ]);
+
+    Route::middleware('access-gate:preview')->get('/access-gate-test/after-window', fn (): string => 'secret');
+
+    $this
+        ->get('/access-gate-test/after-window')
+        ->assertOk()
+        ->assertSee('secret')
+        ->assertHeaderContains('Cache-Control', 'no-store')
+        ->assertHeaderContains('Cache-Control', 'private');
+});
+
 it('blocks protected content when the active access area is assigned to the current site', function (): void {
     defineAccessGateSiteTables();
     defineAccessGateSiteDomain(siteId: 1, domain: 'example.test');

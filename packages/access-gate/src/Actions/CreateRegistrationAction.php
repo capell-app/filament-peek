@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Capell\AccessGate\Actions;
 
 use Capell\AccessGate\Contracts\RegistrationField;
-use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Enums\EventType;
 use Capell\AccessGate\Enums\RegistrationPolicy;
@@ -142,7 +141,7 @@ final class CreateRegistrationAction
      */
     private function assertAreaAcceptsPublicRegistrations(Area $area): void
     {
-        if ($area->status === AccessAreaStatus::Active && $area->approval_strategy !== ApprovalStrategy::InviteOnly) {
+        if (AreaIsCurrentlyGatingAction::run($area) && $area->approval_strategy !== ApprovalStrategy::InviteOnly) {
             return;
         }
 

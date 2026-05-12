@@ -2,7 +2,7 @@
 
 @props([
     'color',
-    'content_class' => 'hero-content prose max-w-none tracking-wider',
+    'content_class' => 'hero-content prose w-full max-w-[min(62rem,100%)]',
     'headingSize' => 'h1',
     'linkClass' => 'text-link hover:text-primary focus:text-primary font-medium focus:underline',
     'size' => 'md',
@@ -32,10 +32,10 @@
     @if ($title)
         <{{ $headingSize }}
             @class([
-            'hero-heading leading-12 font-semibold text-balance lg:leading-14',
+            'hero-heading text-balance',
             'text-2xl md:text-4xl' => $size === 'sm',
             'text-3xl md:text-5xl' => $size === 'md',
-            'text-4xl md:text-6xl' => $size === 'lg',
+            'text-4xl md:text-5xl' => $size === 'lg',
             ])
         >
             @if ($url)

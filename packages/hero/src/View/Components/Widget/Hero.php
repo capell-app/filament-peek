@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Capell\FoundationTheme\View\Components\Widget;
+namespace Capell\Hero\View\Components\Widget;
 
 use Capell\Core\LayoutBuilder\Actions\HeroWidgetHasPrimaryHeadingAction;
 use Capell\Core\Models\Language;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Hero extends AbstractWidget
 {
-    protected static string $defaultView = 'capell-layout-builder::components.widget.hero';
+    protected static string $defaultView = 'capell-hero::components.widget.hero';
 
     public static function loadWidgetAssets(array &$morphRelations, ?Language $language = null): void
     {

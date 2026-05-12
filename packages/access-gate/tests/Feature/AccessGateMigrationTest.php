@@ -51,6 +51,19 @@ it('includes site scoping on access areas', function (): void {
     expect(Schema::hasColumn('access_gate_areas', 'site_id'))->toBeTrue();
 });
 
+it('includes scheduling columns on access areas', function (): void {
+    expect(Schema::hasColumn('access_gate_areas', 'opens_at'))->toBeTrue()
+        ->and(Schema::hasColumn('access_gate_areas', 'closes_at'))->toBeTrue();
+});
+
+it('includes resolver indexes for download access state lookups', function (): void {
+    expect(Schema::hasIndex('access_gate_registrations', 'ag_regs_area_email_norm_requested_idx'))->toBeTrue()
+        ->and(Schema::hasIndex('access_gate_registrations', 'ag_regs_area_user_requested_idx'))->toBeTrue()
+        ->and(Schema::hasIndex('access_gate_grants', 'ag_grants_area_reg_status_idx'))->toBeTrue()
+        ->and(Schema::hasIndex('access_gate_grants', 'ag_grants_area_email_status_idx'))->toBeTrue()
+        ->and(Schema::hasIndex('access_gate_grants', 'ag_grants_area_user_status_idx'))->toBeTrue();
+});
+
 /**
  * @return list<string>
  */
@@ -64,5 +77,7 @@ function accessGateMigrationFiles(): array
         __DIR__ . '/../../database/migrations/2026_05_10_190838_05_create_access_gate_browser_tokens_table.php',
         __DIR__ . '/../../database/migrations/2026_05_10_190838_06_create_access_gate_events_table.php',
         __DIR__ . '/../../database/migrations/2026_05_10_190838_07_add_site_id_to_access_gate_areas_table.php',
+        __DIR__ . '/../../database/migrations/2026_05_12_120000_08_add_schedule_to_access_gate_areas_table.php',
+        __DIR__ . '/../../database/migrations/2026_05_12_120001_09_add_download_resolver_indexes_to_access_gate_tables.php',
     ];
 }

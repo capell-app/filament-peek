@@ -20,6 +20,7 @@ use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -62,17 +63,17 @@ final class ResolveAccessGateAccessAction
             return new AccessGateAccessResultData($areaExists && $siteScopeEnabled && $siteId !== null);
         }
 
-        if ($areas->where('status', AccessAreaStatus::Active)->isEmpty()) {
-            return new AccessGateAccessResultData(true);
+        $gatingAreas = $areas
+            ->filter(fn (Area $area): bool => AreaIsCurrentlyGatingAction::run($area))
+            ->values();
+
+        if ($gatingAreas->isEmpty()) {
+            return new AccessGateAccessResultData(true, $this->scheduledArea($areas));
         }
 
         $deniedResult = null;
 
-        foreach ($areas as $area) {
-            if ($area->status !== AccessAreaStatus::Active) {
-                continue;
-            }
-
+        foreach ($gatingAreas as $area) {
             $result = $this->resolveArea($request, $area);
 
             if ($result->allowed) {
@@ -83,6 +84,16 @@ final class ResolveAccessGateAccessAction
         }
 
         return $deniedResult ?? new AccessGateAccessResultData(false);
+    }
+
+    /**
+     * @param  Collection<int, Area>  $areas
+     */
+    private function scheduledArea(Collection $areas): ?Area
+    {
+        return $areas
+            ->first(fn (Area $area): bool => $area->status === AccessAreaStatus::Active
+                && ($area->opens_at !== null || $area->closes_at !== null));
     }
 
     private function siteScopeEnabled(): bool

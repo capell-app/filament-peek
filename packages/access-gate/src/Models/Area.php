@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $site_id
  * @property string $name
  * @property AccessAreaStatus $status
+ * @property CarbonInterface|null $opens_at
+ * @property CarbonInterface|null $closes_at
  * @property IdentityMode $identity_mode
  * @property ApprovalStrategy $approval_strategy
  * @property int|null $approval_limit
@@ -48,6 +50,8 @@ class Area extends AccessGateModel
         'site_id',
         'name',
         'status',
+        'opens_at',
+        'closes_at',
         'identity_mode',
         'approval_strategy',
         'approval_limit',
@@ -105,6 +109,8 @@ class Area extends AccessGateModel
     {
         return [
             'status' => AccessAreaStatus::class,
+            'opens_at' => 'datetime',
+            'closes_at' => 'datetime',
             'identity_mode' => IdentityMode::class,
             'approval_strategy' => ApprovalStrategy::class,
             'registration_policy' => RegistrationPolicy::class,

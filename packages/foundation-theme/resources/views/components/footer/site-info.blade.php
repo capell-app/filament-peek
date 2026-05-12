@@ -30,7 +30,9 @@
     </a>
 
     @if ($tagline = $site->translation->getMeta('tagline'))
-        <p class="footer-tagline text-sm text-gray-300">
+        <p
+            class="footer-tagline max-w-prose text-sm leading-6 text-[var(--color-footer-muted)]"
+        >
             {{ $tagline }}
         </p>
     @endif

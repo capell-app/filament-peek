@@ -38,9 +38,9 @@ $theme = Frontend::theme();
 @php
     use Capell\Core\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
     use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-    use Illuminate\Support\Collection;
     use Capell\Frontend\Actions\GetPageVariablesAction;
     use Capell\Frontend\Actions\RenderHtmlContentAction;
+    use Capell\Hero\Data\HeroAssetSlideData;
 
     if ($containerIndex === 0 && $theme->getMeta('header_position') === 'fixed') {
         $slideClass .= ' pt-20 lg:pt-32';
@@ -56,6 +56,24 @@ $theme = Frontend::theme();
     $containerClass = GetWidgetContainerWidthAction::run($widget);
 
     $pageVariables = GetPageVariablesAction::run();
+
+    $contentAlign = $widget->getMeta('content_align', 'center');
+    $contentWidth = $widget->getMeta('content_width', 'balanced');
+    $mediaPosition = $widget->getMeta('media_position', 'right');
+
+    $contentAlignmentClass = match ($contentAlign) {
+        'left', 'start' => 'items-start text-left',
+        default => 'items-center text-center',
+    };
+
+    $contentWidthClass = match ($contentWidth) {
+        'compact' => 'max-w-[42rem]',
+        'wide' => 'max-w-[72rem]',
+        default => 'max-w-[min(62rem,100%)]',
+    };
+
+    $pageHeroTitle = $page->translation->getMeta('hero_title');
+    $pageHeroTitle = is_string($pageHeroTitle) && $pageHeroTitle !== '' ? __($pageHeroTitle, $pageVariables) : null;
 @endphp
 {{-- format-ignore-end --}}
 @if ($widget->assets->isNotEmpty() || $page->translation->getMeta('hero') || ! config('capell-layout-builder.widget.skip_render_empty', true))
@@ -64,14 +82,15 @@ $theme = Frontend::theme();
             'widget-hero relative z-10 grid w-full',
             'mb-10' => ! $loop->last,
             'mt-10' => ! $loop->first,
-            'bg-gray-50 dark:bg-gray-900' => $color === 'light',
+            'bg-[#fbfaf7] text-[#1f2923] dark:bg-[#fbfaf7] dark:text-[#1f2923]' => $color === 'light',
             'bg-gray-800 dark:bg-gray-900' => $color === 'dark',
             'min-h-[calc(100vh-var(--header-height))]' => $height === 'full',
-            'h-[calc(100vh-var(--header-height))]' => filled($height) && $height !== 'full',
         ])
-        style="--hero-height: {{ $height }}"
+        @style([
+            "min-height: {$height}" => filled($height) && $height !== 'full',
+        ])
     >
-        <x-capell-layout-builder::hero.wrapper
+        <x-capell-hero::hero.wrapper
             :key="$containerKey . '-widget-' . $widgetIndex"
             :total="$total"
             :carousel-align="$carouselAlign"
@@ -96,115 +115,99 @@ $theme = Frontend::theme();
                     {{-- format-ignore-start --}}
                 @php
                     /** @var \Capell\Core\Models\WidgetAsset $widgetAsset */
-                    $slideColorScheme = $widgetAsset->asset->getMeta('color', $color);
-
-                    $linkedPage = $widgetAsset->asset instanceof \Capell\Core\Models\Page ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
-
-                    $url = null;
-                    if ($linkedPage) {
-                        $url = $linkedPage->pageUrl->full_url;
-                    }
-
-                    if ($widgetAsset->asset instanceof \Capell\Core\Models\Media) {
-                        $bgImage = $widgetAsset->asset;
-                        $images = null;
-                    } else {
-                        $bgCollectionName = \Capell\Core\Enums\MediaCollectionEnum::BackgroundImage->value;
-                        $bgImage = $widgetAsset->media?->firstWhere('collection_name', $bgCollectionName)
-                            ?? $widgetAsset->asset->media?->firstWhere('collection_name', $bgCollectionName);
-
-                        $imageCollectionName = \Capell\Core\Enums\MediaCollectionEnum::Image->value;
-                        $images = $widgetAsset->media?->where('collection_name', $imageCollectionName);
-                        if (! $images?->isNotEmpty()) {
-                            $images = $widgetAsset->asset->media?->where('collection_name', $imageCollectionName);
-                        }
-                    }
+                    $slide = HeroAssetSlideData::fromWidgetAsset($widgetAsset, $widget, $color);
                 @endphp
                 {{-- format-ignore-end --}}
-                    <x-capell-layout-builder::hero.slide
-                        :background-image="$bgImage"
-                        :background-color="$widgetAsset->asset->getMeta('background_color', $backgroundColor)"
-                        :background-size="$widgetAsset->asset->getMeta('background_size', $widget->getMeta('background_size', 'cover'))"
-                        :background-position="$widgetAsset->asset->getMeta('background_position', $widget->getMeta('background_position', 'center'))"
-                        :background-attachment="$widgetAsset->asset->getMeta('background_attachment', $widget->getMeta('background_attachment', 'scroll'))"
-                        :background-repeat="$widgetAsset->asset->getMeta('background_repeat', $widget->getMeta('background_repeat', 'no-repeat'))"
-                        :background-overlay="$bgImage && $widgetAsset->asset->translation ? $color : ''"
+                    <x-capell-hero::hero.slide
+                        :background-image="$slide->backgroundImage"
+                        :background-color="$slide->asset->getMeta('background_color', $backgroundColor)"
+                        :background-size="$slide->asset->getMeta('background_size', $widget->getMeta('background_size', 'cover'))"
+                        :background-position="$slide->asset->getMeta('background_position', $widget->getMeta('background_position', 'center'))"
+                        :background-attachment="$slide->asset->getMeta('background_attachment', $widget->getMeta('background_attachment', 'scroll'))"
+                        :background-repeat="$slide->asset->getMeta('background_repeat', $widget->getMeta('background_repeat', 'no-repeat'))"
+                        :background-overlay="$slide->backgroundImage && $slide->asset->translation ? $slide->color : ''"
                         :first="$loop->first"
                         :total="$total"
-                        :title="$widgetAsset->asset->translation->title"
-                        :color="$slideColorScheme"
+                        :title="$slide->asset->translation->title"
+                        :color="$slide->color"
                         :container-class="$containerClass->getContainerClass()"
                         :class="$slideClass"
                     >
                         <div
                             @class([
                                 '@container grid select-text gap-4 gap-x-10 gap-y-8 py-14 lg:gap-x-16 lg:py-24',
-                                'lg:grid-cols-12' => $images?->isNotEmpty(),
+                                'lg:grid-cols-12' => $slide->images?->isNotEmpty(),
                             ])
                         >
                             <div
                                 @class([
                                     'flex flex-col justify-center',
-                                    'items-center text-center' => ! $images?->isNotEmpty(),
-                                    'lg:col-span-5 xl:col-span-7' => $images?->isNotEmpty(),
-                                    'py-[4vh]' => ! $widgetAsset->asset->image && ! $bgImage,
+                                    $contentAlignmentClass => ! $slide->images?->isNotEmpty(),
+                                    'items-start text-left' => $slide->images?->isNotEmpty(),
+                                    'lg:col-span-5 xl:col-span-7' => $slide->images?->isNotEmpty(),
+                                    'lg:order-2' => $slide->images?->isNotEmpty() && $mediaPosition === 'left',
+                                    'py-[4vh]' => ! $slide->asset->image && ! $slide->backgroundImage,
                                 ])
                             >
-                                @if ($widgetAsset->asset)
-                                    <x-capell-layout-builder::hero.content
-                                        :title="$widgetAsset->asset->translation->title"
+                                @if ($slide->asset)
+                                    <x-capell-hero::hero.content
+                                        :title="$slide->asset->translation->title"
                                         :heading-size="$loop->first ? 'h1' : 'h2'"
-                                        :$url
-                                        :color="$slideColorScheme"
-                                        :size="! $images?->isNotEmpty() ? 'lg' : 'md'"
+                                        :url="$slide->url"
+                                        :color="$slide->color"
+                                        :size="! $slide->images?->isNotEmpty() ? 'lg' : 'md'"
+                                        :content_class="'hero-content prose w-full ' . $contentWidthClass"
                                     >
-                                        {!! RenderHtmlContentAction::run((string) $widgetAsset->asset->translation->content, ['page' => $page, 'site' => $site]) !!}
+                                        {!! RenderHtmlContentAction::run((string) $slide->asset->translation->content, ['page' => $page, 'site' => $site]) !!}
 
-                                        @if ($widgetAsset->asset->getMeta('link_text'))
+                                        @if ($slide->asset->getMeta('link_text'))
                                             <a
                                                 class="text-link hover:text-primary font-medium no-underline focus:underline"
-                                                href="{{ $url }}"
+                                                href="{{ $slide->url }}"
                                                 wire:navigate
                                             >
                                                 @svg('heroicon-s-chevron-right', 'mr-2 inline-block h-6 w-6')
-                                                {{ $widgetAsset->asset->getMeta('link_text') }}
+                                                {{ $slide->asset->getMeta('link_text') }}
                                             </a>
                                         @endif
 
                                         @if ($loop->first && $heroContent)
                                             {{ $heroContent }}
                                         @endif
-                                    </x-capell-layout-builder::hero.content>
+                                    </x-capell-hero::hero.content>
                                 @endif
 
-                                @if ($widgetAsset->asset->related?->isNotEmpty())
-                                    <x-capell-layout-builder::hero.related
+                                @if ($slide->asset->related?->isNotEmpty())
+                                    <x-capell-hero::hero.related
                                         class="w-full"
-                                        :related="$widgetAsset->asset->related"
+                                        :related="$slide->asset->related"
                                         :key="$containerKey . '-widget-' . $widgetIndex . '-related'"
                                     />
                                 @endif
 
-                                @if ($widgetAsset->asset->getMeta('actions'))
+                                @if ($slide->asset->getMeta('actions'))
                                     <x-capell-layout-builder::actions
                                         class="hero-actions mt-8 w-full"
-                                        :actions="$widgetAsset->asset->getMeta('actions')"
-                                        :color="$slideColorScheme"
+                                        :actions="$slide->asset->getMeta('actions')"
+                                        :color="$slide->color"
                                         action-item-class="hero-action-item"
                                     />
                                 @endif
                             </div>
 
-                            @if ($images?->isNotEmpty())
+                            @if ($slide->images?->isNotEmpty())
                                 <div
-                                    class="relative z-30 flex w-full items-center lg:col-span-6 xl:col-span-5"
+                                    @class([
+                                        'relative z-30 flex w-full items-center lg:col-span-6 xl:col-span-5',
+                                        'lg:order-1' => $mediaPosition === 'left',
+                                    ])
                                 >
-                                    @foreach ($images as $media)
+                                    @foreach ($slide->images as $media)
                                         @if ($loop->first)
                                             <x-capell::media
                                                 format="webp"
                                                 :media="$media"
-                                                :alt="$widgetAsset->asset->translation->title"
+                                                :alt="$slide->asset->translation->title"
                                                 class="hero-slide-img h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
                                                 loading="eager"
                                             />
@@ -217,7 +220,7 @@ $theme = Frontend::theme();
                                             <x-capell::media
                                                 format="webp"
                                                 :media="$media"
-                                                :alt="$widgetAsset->asset->translation->title"
+                                                :alt="$slide->asset->translation->title"
                                                 class="hero-slide-img h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
                                                 loading="lazy"
                                             />
@@ -226,10 +229,10 @@ $theme = Frontend::theme();
                                 </div>
                             @endif
                         </div>
-                    </x-capell-layout-builder::hero.slide>
+                    </x-capell-hero::hero.slide>
                 @endforeach
             @elseif ($page->translation->getMeta('hero'))
-                <x-capell-layout-builder::hero.slide
+                <x-capell-hero::hero.slide
                     :background-image="$widget->image"
                     :background-color="$widget->getMeta('background_color', $theme->getMeta('background_color'))"
                     :background-size="$widget->getMeta('background_size', 'cover')"
@@ -241,16 +244,16 @@ $theme = Frontend::theme();
                     :color="$color"
                     container-class="container"
                 >
-                    <div class="@lg:py-16 flex select-text items-center py-20">
-                        <x-capell-layout-builder::hero.content
-                            :title="
-                                $widget->translation
-                                ? __($widget->translation->title, $pageVariables)
-                                : null
-                            "
+                    <div class="@lg:py-12 flex select-text items-center py-12">
+                        <x-capell-hero::hero.content
+                            :title="$pageHeroTitle ?: ($widget->translation ? __($widget->translation->title, $pageVariables) : null)"
                             :color="$color"
-                            size="lg"
-                            class="hero-page-content"
+                            size="md"
+                            :content_class="'hero-content prose w-full ' . $contentWidthClass"
+                            @class([
+                                'hero-page-content',
+                                'mx-auto' => $contentAlign === 'center',
+                            ])
                         >
                             {!! RenderHtmlContentAction::run((string) __($page->translation->getMeta('hero'), $pageVariables), ['page' => $page, 'site' => $site]) !!}
 
@@ -263,10 +266,10 @@ $theme = Frontend::theme();
                                     :results="$this->results"
                                 />
                             @endif
-                        </x-capell-layout-builder::hero.content>
+                        </x-capell-hero::hero.content>
                     </div>
-                </x-capell-layout-builder::hero.slide>
+                </x-capell-hero::hero.slide>
             @endif
-        </x-capell-layout-builder::hero.wrapper>
+        </x-capell-hero::hero.wrapper>
     </section>
 @endif

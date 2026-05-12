@@ -11,7 +11,7 @@
 <div {{ $attributes }}>
     <div
         @class([
-            'sm:grid-col-2 grid flex-wrap items-center gap-x-4 gap-y-4 py-4 md:flex lg:grid lg:grid-cols-3 lg:py-6 xl:grid-cols-5',
+            'sm:grid-col-2 grid flex-wrap items-center gap-x-4 gap-y-4 py-4 md:flex lg:grid lg:grid-cols-3 lg:py-5 xl:grid-cols-5',
             $containerWidth->getContainerClass(),
         ])
     >
@@ -24,8 +24,8 @@
                     href="{{ $item->data['url'] ?? '' }}"
                     wire:navigate
                     @class([
-                        'nav-item flex text-sm font-medium text-gray-200 hover:text-gray-400',
-                        "before:content-['|'] before:px-2 before:opacity-50 before:text-gray-200" => ! $loop->first,
+                        'nav-item hover:text-primary flex text-sm font-medium text-[var(--color-footer-link)]',
+                        "before:content-['|'] before:px-2 before:opacity-40 before:text-[var(--color-footer-muted)]" => ! $loop->first,
                         'active' => $item->active,
                     ])
                 >
@@ -62,7 +62,7 @@
 
         @if ($slot->isNotEmpty())
             <div
-                class="sm:grid-col-2 grow text-center text-xs font-medium leading-tight text-gray-300 md:col-span-1 lg:order-2"
+                class="sm:grid-col-2 grow text-center text-xs font-medium leading-tight text-[var(--color-footer-muted)] md:col-span-1 lg:order-2"
             >
                 {{ $slot }}
             </div>
