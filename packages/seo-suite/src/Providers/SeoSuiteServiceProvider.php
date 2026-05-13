@@ -104,7 +104,6 @@ use Capell\SeoSuite\Support\SearchConsole\NullSearchConsoleClient;
 use Capell\SeoSuite\Support\SectionRegistry;
 use Capell\SeoSuite\Targets\FlatJsonTarget;
 use Closure;
-use Composer\InstalledVersions;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
@@ -545,19 +544,6 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
             static fn (string $path): string => pathinfo($path, PATHINFO_FILENAME),
             $files,
         );
-    }
-
-    private function getVersion(): string
-    {
-        if (! class_exists(InstalledVersions::class)) {
-            return 'dev';
-        }
-
-        if (! InstalledVersions::isInstalled(static::$packageName)) {
-            return 'dev';
-        }
-
-        return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
     }
 
     private function registerModels(): self

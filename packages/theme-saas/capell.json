@@ -13,23 +13,16 @@
         "bundle": "themes"
     },
     "namespace": "Capell\\ThemeStudio\\Saas",
-    "surfaces": [
-        "frontend"
-    ],
+    "surfaces": ["frontend"],
     "dependencies": {
-        "requires": [
-            "capell-app/core",
-            "capell-app/foundation-theme"
-        ],
+        "requires": ["capell-app/core", "capell-app/foundation-theme"],
         "optional": [],
         "conflicts": []
     },
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\ThemeStudio\\Saas\\SaasThemeServiceProvider"
-        ],
+        "runtime": ["Capell\\ThemeStudio\\Saas\\SaasThemeServiceProvider"],
         "admin": [],
         "frontend": []
     },
@@ -47,22 +40,14 @@
     },
     "settings": [],
     "permissions": [],
-    "capabilities": [
-        "theme-saas",
-        "theme-saas-frontend"
-    ],
+    "capabilities": ["theme-saas", "theme-saas-frontend"],
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 0,
-        "cacheTags": [
-            "theme-saas"
-        ],
+        "cacheTags": ["theme-saas"],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": [
-                "site",
-                "locale"
-            ],
+            "variesBy": ["site", "locale"],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -78,10 +63,7 @@
     "marketplace": {
         "summary": "Theme SaaS registers the saas theme key and product-focused renderer views for software and subscription sites.",
         "screenshots": [],
-        "categories": [
-            "frontend",
-            "themes"
-        ]
+        "categories": ["frontend", "themes"]
     },
     "extends": "capell-app/foundation-theme",
     "themeKey": "saas"

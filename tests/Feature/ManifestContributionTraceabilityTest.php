@@ -29,21 +29,21 @@ it('keeps manifest contribution rows structurally valid', function (): void {
     foreach (capell_manifest_v3_manifest_payloads(dirname(__DIR__, 2)) as $path => $manifest) {
         foreach (($manifest['contributes'] ?? []) as $index => $contribution) {
             if (! is_array($contribution)) {
-                $invalid[$path][] = "contributes.{$index} must be an object";
+                $invalid[$path][] = sprintf('contributes.%s must be an object', $index);
 
                 continue;
             }
 
             foreach (['type', 'class'] as $field) {
                 if (! is_string($contribution[$field] ?? null) || $contribution[$field] === '') {
-                    $invalid[$path][] = "contributes.{$index}.{$field} must be a non-empty string";
+                    $invalid[$path][] = sprintf('contributes.%s.%s must be a non-empty string', $index, $field);
                 }
             }
         }
 
         foreach (capell_manifest_v3_deferred_contribution_types($manifest) as $type) {
             if (! array_key_exists($type, CAPELL_MANIFEST_V3_CONTRIBUTION_PATTERNS)) {
-                $invalid[$path][] = "contributionTraceability.deferredContributions contains unknown type {$type}";
+                $invalid[$path][] = 'contributionTraceability.deferredContributions contains unknown type ' . $type;
             }
         }
     }

@@ -25,10 +25,6 @@ final class AreaIsCurrentlyGatingAction
             return false;
         }
 
-        if ($area->closes_at instanceof CarbonInterface && $area->closes_at->isBefore($now)) {
-            return false;
-        }
-
-        return true;
+        return ! ($area->closes_at instanceof CarbonInterface && $area->closes_at->isBefore($now));
     }
 }

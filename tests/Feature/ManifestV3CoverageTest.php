@@ -22,7 +22,7 @@ it('keeps every package on manifest v3 with the required contract fields', funct
     foreach ($manifests as $path => $manifest) {
         foreach (CAPELL_MANIFEST_V3_REQUIRED_ROOT_FIELDS as $field) {
             if (! array_key_exists($field, $manifest)) {
-                $invalid[$path][] = "missing {$field}";
+                $invalid[$path][] = 'missing ' . $field;
             }
         }
 
@@ -32,7 +32,7 @@ it('keeps every package on manifest v3 with the required contract fields', funct
 
         foreach (['slug', 'displayName', 'capellApiVersion', 'version'] as $field) {
             if (! is_string($manifest[$field] ?? null) || $manifest[$field] === '') {
-                $invalid[$path][] = "{$field} must be a non-empty string";
+                $invalid[$path][] = $field . ' must be a non-empty string';
             }
         }
 
@@ -63,13 +63,13 @@ it('keeps every package on manifest v3 with the required contract fields', funct
 
         foreach (['cacheable', 'sensitiveOutput', 'queueInvalidation'] as $field) {
             if (! is_bool($manifest['performance']['cacheSafety'][$field] ?? null)) {
-                $invalid[$path][] = "performance.cacheSafety.{$field} must be boolean";
+                $invalid[$path][] = sprintf('performance.cacheSafety.%s must be boolean', $field);
             }
         }
 
         foreach (['variesBy', 'invalidationSources'] as $field) {
             if (! is_array($manifest['performance']['cacheSafety'][$field] ?? null)) {
-                $invalid[$path][] = "performance.cacheSafety.{$field} must be a list";
+                $invalid[$path][] = sprintf('performance.cacheSafety.%s must be a list', $field);
             }
         }
 
@@ -105,7 +105,7 @@ it('declares commercial intent and capabilities for paid packages', function ():
 
         foreach (['proposedLicense', 'requestedCertification', 'supportPolicy', 'privateDocsRequested'] as $field) {
             if (! array_key_exists($field, $manifest['commercial'] ?? [])) {
-                $invalid[$path][] = "commercial.{$field} is required";
+                $invalid[$path][] = sprintf('commercial.%s is required', $field);
             }
         }
     }

@@ -13,25 +13,17 @@
         "bundle": "operations"
     },
     "namespace": "Capell\\LoginAudit",
-    "surfaces": [
-        "admin"
-    ],
+    "surfaces": ["admin"],
     "dependencies": {
-        "requires": [
-            "capell-app/admin"
-        ],
+        "requires": ["capell-app/admin"],
         "optional": [],
         "conflicts": []
     },
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\LoginAudit\\Providers\\LoginAuditServiceProvider"
-        ],
-        "admin": [
-            "Capell\\LoginAudit\\Providers\\AdminServiceProvider"
-        ],
+        "runtime": ["Capell\\LoginAudit\\Providers\\LoginAuditServiceProvider"],
+        "admin": ["Capell\\LoginAudit\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "contributes": [],
@@ -48,10 +40,7 @@
     },
     "settings": [],
     "permissions": [],
-    "capabilities": [
-        "login-audit",
-        "login-audit-admin"
-    ],
+    "capabilities": ["login-audit", "login-audit-admin"],
     "performance": {
         "frontendRenderBudgetMs": 0,
         "adminQueryBudget": 40,
@@ -74,10 +63,7 @@
     "marketplace": {
         "summary": "Login Audit records login, failed login, logout, and admin/user activity metadata for Capell users.",
         "screenshots": [],
-        "categories": [
-            "admin",
-            "operations"
-        ]
+        "categories": ["admin", "operations"]
     },
     "contributionTraceability": {
         "deferredContributions": [

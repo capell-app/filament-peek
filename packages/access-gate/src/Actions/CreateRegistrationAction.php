@@ -141,7 +141,7 @@ final class CreateRegistrationAction
      */
     private function assertAreaAcceptsPublicRegistrations(Area $area): void
     {
-        if (AreaIsCurrentlyGatingAction::run($area) && $area->approval_strategy !== ApprovalStrategy::InviteOnly) {
+        if (AreaIsCurrentlyGatingAction::run($area) === true && $area->approval_strategy !== ApprovalStrategy::InviteOnly) {
             return;
         }
 

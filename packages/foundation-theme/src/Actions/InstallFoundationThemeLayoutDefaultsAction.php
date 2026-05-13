@@ -67,6 +67,11 @@ final class InstallFoundationThemeLayoutDefaultsAction
     private function layoutDefaults(): array
     {
         return [
+            LayoutEnum::Home->value => [
+                'main' => $this->mainContainer([
+                    ['widget_key' => 'page-content'],
+                ], 12),
+            ],
             LayoutEnum::Default->value => [
                 'main' => $this->mainContainer([
                     ['widget_key' => 'breadcrumbs'],
@@ -113,11 +118,11 @@ final class InstallFoundationThemeLayoutDefaultsAction
      * @param  array<int, array<string, string>>  $widgets
      * @return array<string, mixed>
      */
-    private function mainContainer(array $widgets): array
+    private function mainContainer(array $widgets, int $colspan = 9): array
     {
         return [
             'meta' => [
-                'colspan' => 9,
+                'colspan' => $colspan,
             ],
             'widgets' => $widgets,
         ];

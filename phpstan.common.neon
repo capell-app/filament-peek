@@ -83,3 +83,5 @@ parameters:
         - phpstan/nestedset-traits.stub
         - phpstan/core-layout.stub
         - phpstan/capell-dynamic-surfaces.stub
+    scanFiles:
+        - scripts/audit-manifest-v3.php

@@ -14,8 +14,9 @@ final class RegisterLocalPackageManifestsServiceProvider extends ServiceProvider
     public function register(): void
     {
         $loader = new ManifestLoader(new ManifestValidator);
+        $manifestPaths = glob(__DIR__ . '/../../packages/*/capell.json');
 
-        foreach (glob(__DIR__ . '/../../packages/*/capell.json') ?: [] as $manifestPath) {
+        foreach ($manifestPaths === false ? [] : $manifestPaths as $manifestPath) {
             $manifest = $loader->load($manifestPath);
 
             CapellCore::registerManifestPackage(

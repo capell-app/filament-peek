@@ -19,7 +19,6 @@ use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
-use Composer\InstalledVersions;
 use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Package;
 
@@ -146,14 +145,5 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
         }
 
         return $this;
-    }
-
-    private function getVersion(): string
-    {
-        if (! class_exists(InstalledVersions::class) || ! InstalledVersions::isInstalled(self::$packageName)) {
-            return 'dev';
-        }
-
-        return InstalledVersions::getPrettyVersion(self::$packageName) ?? 'dev';
     }
 }

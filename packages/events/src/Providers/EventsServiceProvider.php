@@ -107,38 +107,6 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
         return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
     }
 
-    /**
-     * @return list<string>
-     */
-    private function getPackagePermissions(): array
-    {
-        return [
-            'create_event',
-            'create_event_occurrence',
-            'create_event_registration',
-            'create_event_venue',
-            'delete_event',
-            'delete_event_occurrence',
-            'delete_event_registration',
-            'delete_event_venue',
-            'replicate_event',
-            'restore_event',
-            'restore_event_venue',
-            'update_event',
-            'update_event_occurrence',
-            'update_event_registration',
-            'update_event_venue',
-            'view_any_event',
-            'view_any_event_occurrence',
-            'view_any_event_registration',
-            'view_any_event_venue',
-            'view_event',
-            'view_event_occurrence',
-            'view_event_registration',
-            'view_event_venue',
-        ];
-    }
-
     private function registerModels(): self
     {
         EventModelRegistrar::register();

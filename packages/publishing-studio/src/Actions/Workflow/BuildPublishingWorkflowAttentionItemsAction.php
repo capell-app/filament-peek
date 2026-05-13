@@ -37,7 +37,7 @@ final class BuildPublishingWorkflowAttentionItemsAction implements ContributesWo
             return [];
         }
 
-        $count = app(BuildPublishingWorkflowCommandCenterAction::class)->attentionCount($user);
+        $count = resolve(BuildPublishingWorkflowCommandCenterAction::class)->attentionCount($user);
 
         return [
             new WorkflowAttentionItemData(

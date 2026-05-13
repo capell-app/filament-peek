@@ -51,6 +51,18 @@ Lets marketing and editorial teams connect landing pages to goals and see which 
 - Campaign dashboard widgets.
 - Frontend landing page with campaign widgets.
 
+## Screenshots
+
+![Campaign groups index](../../../public/docs/screenshots/packages/campaign-studio/campaign-groups-index.png)
+
+![Campaign landing pages index](../../../public/docs/screenshots/packages/campaign-studio/campaign-landing-pages-index.png)
+
+![Campaign conversion goal form](../../../public/docs/screenshots/packages/campaign-studio/campaign-conversion-goals-form.png)
+
+![Campaign CTA block form](../../../public/docs/screenshots/packages/campaign-studio/cta-block-form.png)
+
+![Campaign dashboard widgets](../../../public/docs/screenshots/packages/campaign-studio/campaign-dashboard-widgets.png)
+
 ## Pitfalls
 
 - Install dependent packages before expecting attribution from form-builder or insights.

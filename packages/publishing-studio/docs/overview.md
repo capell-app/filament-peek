@@ -54,6 +54,22 @@ Gives editorial teams a Statamic-style content history feel while remaining a se
 - Stale drafts, recovery imports, activity history, and audit trail.
 - Rollback, entity restore, and version history flow.
 
+## Screenshots
+
+![Publishing workflow dashboard](../../../public/docs/screenshots/packages/publishing-studio/editorial-timeline-dashboard.png)
+
+![Preview link management](../../../public/docs/screenshots/packages/publishing-studio/preview-link-management.png)
+
+![Workspace compare readiness](../../../public/docs/screenshots/packages/publishing-studio/compare-readiness.png)
+
+![Scheduled publishing](../../../public/docs/screenshots/packages/publishing-studio/scheduled-publishing.png)
+
+![Stale drafts](../../../public/docs/screenshots/packages/publishing-studio/stale-drafts.png)
+
+![Rollback restore from the pages table](../../../public/docs/screenshots/packages/publishing-studio/rollback-restore.png)
+
+The live preview, preview banner, recovery import, and activity history screenshots need seeded workspace/import data before they should be published.
+
 ## Pitfalls
 
 - Models participating in draft/publish must implement Draftable and be registered.

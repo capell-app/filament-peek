@@ -47,6 +47,14 @@ Helps site operators review access activity and spot account behaviour that need
 - Dashboard widget.
 - Authentication log settings screen.
 
+## Screenshots
+
+![Authentication logs admin index](../../../public/docs/screenshots/packages/login-audit/login-audits-admin-index.png)
+
+![Authentication log settings screen](../../../public/docs/screenshots/packages/login-audit/login-audit-settings-screen.png)
+
+![Login audit dashboard widget](../../../public/docs/screenshots/packages/login-audit/dashboard-widget.png)
+
 ## Pitfalls
 
 - Set CDN IP header config before trusting IP addresses behind a proxy.

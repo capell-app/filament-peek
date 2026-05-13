@@ -12,7 +12,6 @@ use Capell\Deployments\Data\ComposerRequirementData;
 use Capell\Deployments\Data\PublishComposerChangeResultData;
 use Capell\Deployments\Filament\Pages\DeploymentConnectionPage;
 use Capell\Deployments\Models\DeploymentConnection;
-use Composer\InstalledVersions;
 use Spatie\LaravelPackageTools\Package;
 
 class DeploymentsServiceProvider extends AbstractPackageServiceProvider
@@ -48,18 +47,5 @@ class DeploymentsServiceProvider extends AbstractPackageServiceProvider
         if (config('capell-deployments.enabled', true) === true) {
             CapellAdmin::registerExtensionPage(static::$packageName, DeploymentConnectionPage::class);
         }
-    }
-
-    private function getVersion(): string
-    {
-        if (! class_exists(InstalledVersions::class)) {
-            return 'dev';
-        }
-
-        if (! InstalledVersions::isInstalled(static::$packageName)) {
-            return 'dev';
-        }
-
-        return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
     }
 }

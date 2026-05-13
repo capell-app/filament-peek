@@ -13,27 +13,17 @@
         "bundle": "growth"
     },
     "namespace": "Capell\\GA4Reports",
-    "surfaces": [
-        "admin",
-        "console"
-    ],
+    "surfaces": ["admin", "console"],
     "dependencies": {
-        "requires": [
-            "capell-app/admin",
-            "capell-app/core"
-        ],
+        "requires": ["capell-app/admin", "capell-app/core"],
         "optional": [],
         "conflicts": []
     },
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": [
-            "Capell\\GA4Reports\\Providers\\GA4ReportsServiceProvider"
-        ],
-        "admin": [
-            "Capell\\GA4Reports\\Providers\\AdminServiceProvider"
-        ],
+        "runtime": ["Capell\\GA4Reports\\Providers\\GA4ReportsServiceProvider"],
+        "admin": ["Capell\\GA4Reports\\Providers\\AdminServiceProvider"],
         "frontend": []
     },
     "contributes": [],
@@ -50,11 +40,7 @@
     },
     "settings": [],
     "permissions": [],
-    "capabilities": [
-        "ga4-reports",
-        "ga4-reports-admin",
-        "ga4-reports-console"
-    ],
+    "capabilities": ["ga4-reports", "ga4-reports-admin", "ga4-reports-console"],
     "performance": {
         "frontendRenderBudgetMs": 0,
         "adminQueryBudget": 40,
@@ -77,11 +63,7 @@
     "marketplace": {
         "summary": "GA4 Reports provides dashboard reporting for Capell.",
         "screenshots": [],
-        "categories": [
-            "admin",
-            "console",
-            "growth"
-        ]
+        "categories": ["admin", "console", "growth"]
     },
     "contributionTraceability": {
         "deferredContributions": [

@@ -21,7 +21,6 @@ use Capell\PasswordPolicy\Filament\Pages\ForcedPasswordChangePage;
 use Capell\PasswordPolicy\Filament\Pages\PasswordPolicySettingsPage;
 use Capell\PasswordPolicy\Filament\Settings\PasswordPolicySettingsSchema;
 use Capell\PasswordPolicy\Settings\PasswordPolicySettings;
-use Composer\InstalledVersions;
 use Filament\Support\Icons\Heroicon;
 use Spatie\LaravelPackageTools\Package;
 use Throwable;
@@ -150,14 +149,5 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
         config(['settings.settings' => $settings]);
 
         return $this;
-    }
-
-    private function getVersion(): string
-    {
-        if (! class_exists(InstalledVersions::class) || ! InstalledVersions::isInstalled(static::$packageName)) {
-            return 'dev';
-        }
-
-        return InstalledVersions::getPrettyVersion(static::$packageName) ?? 'dev';
     }
 }

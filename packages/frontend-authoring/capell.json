@@ -13,10 +13,7 @@
         "bundle": "foundation"
     },
     "namespace": "Capell\\FrontendAuthoring",
-    "surfaces": [
-        "frontend",
-        "console"
-    ],
+    "surfaces": ["frontend", "console"],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -54,15 +51,10 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 0,
-        "cacheTags": [
-            "frontend-authoring"
-        ],
+        "cacheTags": ["frontend-authoring"],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": [
-                "site",
-                "locale"
-            ],
+            "variesBy": ["site", "locale"],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -78,18 +70,10 @@
     "marketplace": {
         "summary": "Frontend Authoring owns the admin beacon, in-page edit manifest, signed edit routes, and cache-aware field saves.",
         "screenshots": [],
-        "categories": [
-            "console",
-            "foundation",
-            "frontend"
-        ]
+        "categories": ["console", "foundation", "frontend"]
     },
-    "scopes": [
-        "frontend"
-    ],
+    "scopes": ["frontend"],
     "contributionTraceability": {
-        "deferredContributions": [
-            "route"
-        ]
+        "deferredContributions": ["route"]
     }
 }

@@ -263,7 +263,7 @@ final class BuildPublishingWorkflowCommandCenterAction
 
     private function assignedReviewCount(?Authenticatable $user): int
     {
-        if ($user === null) {
+        if (! $user instanceof Authenticatable) {
             return 0;
         }
 
@@ -483,7 +483,7 @@ final class BuildPublishingWorkflowCommandCenterAction
             return true;
         }
 
-        if ($user === null) {
+        if (! $user instanceof Authenticatable) {
             return false;
         }
 

@@ -10,7 +10,6 @@ use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\MediaAI\Contracts\ImageDoctor;
 use Capell\MediaAI\Filament\MediaAIEditActionExtender;
 use Capell\MediaAI\Support\NullImageDoctor;
-use Composer\InstalledVersions;
 use Spatie\LaravelPackageTools\Package;
 
 final class MediaAIServiceProvider extends AbstractPackageServiceProvider
@@ -39,18 +38,5 @@ final class MediaAIServiceProvider extends AbstractPackageServiceProvider
         ) {
             $this->app->tag(MediaAIEditActionExtender::class, MediaEditActionExtender::TAG);
         }
-    }
-
-    private function version(): string
-    {
-        if (! class_exists(InstalledVersions::class)) {
-            return 'dev';
-        }
-
-        if (! InstalledVersions::isInstalled(self::$packageName)) {
-            return 'dev';
-        }
-
-        return InstalledVersions::getPrettyVersion(self::$packageName) ?? 'dev';
     }
 }

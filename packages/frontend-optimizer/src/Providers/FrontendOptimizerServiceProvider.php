@@ -10,7 +10,6 @@ use Capell\FrontendOptimizer\Contracts\CriticalCssGenerator;
 use Capell\FrontendOptimizer\Support\LayoutAssetRegistry;
 use Capell\FrontendOptimizer\Support\PlaywrightCriticalCssGenerator;
 use Capell\FrontendOptimizer\Support\WidgetAssetRegistry;
-use Composer\InstalledVersions;
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
 
@@ -38,14 +37,5 @@ final class FrontendOptimizerServiceProvider extends AbstractPackageServiceProvi
 
         Blade::directive('frontendOptimizerAssets', fn (string $expression): string => sprintf('<?php echo ' . RenderProfileAssetsAction::class . '::run(%s); ?>', $expression));
 
-    }
-
-    private function getVersion(): string
-    {
-        if (! class_exists(InstalledVersions::class) || ! InstalledVersions::isInstalled(self::$packageName)) {
-            return 'dev';
-        }
-
-        return InstalledVersions::getPrettyVersion(self::$packageName) ?? 'dev';
     }
 }

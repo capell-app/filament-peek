@@ -76,6 +76,16 @@ SEO Suite contributes content graph edges from page SEO snapshots and broken-lin
 - AI creator action modal.
 - Search Console insights panel.
 
+## Screenshots
+
+![SEO audit page](../../../public/docs/screenshots/packages/seo-suite/seo-audit-page.png)
+
+![Broken links diagnostics](../../../public/docs/screenshots/packages/seo-suite/broken-links-page.png)
+
+![Translation coverage settings](../../../public/docs/screenshots/packages/seo-suite/translation-coverage-page.png)
+
+The sitemap page, page SEO panel, and AI creator modal screenshots should be republished after those capture routes are stable.
+
 ## Pitfalls
 
 - Do not enable AI creator without checking provider credentials and review workflow.
