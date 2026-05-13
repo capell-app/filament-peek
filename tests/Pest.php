@@ -58,6 +58,7 @@ extendCapellPackageTests(EventsTestCase::class, 'events', 'events');
 extendCapellPackageTests(FormBuilderTestCase::class, 'form-builder', 'form-builder');
 extendCapellPackageTests(FrontendAuthoringTestCase::class, 'frontend-authoring', 'frontend-authoring');
 extendCapellPackageTests(FrontendOptimizerTestCase::class, 'frontend-optimizer', 'frontend-optimizer');
+extendCapellPackageTests(PackagesTestCase::class, 'hero', 'hero');
 extendCapellPackageTests(InsightsTestCase::class, 'insights', 'insights');
 extendCapellPackageTests(PackagesTestCase::class, 'login-audit', 'login-audit');
 extendCapellPackageTests(MediaAITestCase::class, 'media-ai', 'media-ai');

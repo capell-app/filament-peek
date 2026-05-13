@@ -32,6 +32,7 @@ use Capell\FoundationTheme\Providers\FoundationThemeServiceProvider;
 use Capell\Frontend\Contracts\SettingsMigrationProviderInterface;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\FrontendAuthoring\Providers\FrontendAuthoringServiceProvider;
+use Capell\Hero\Providers\HeroServiceProvider;
 use Capell\Insights\Providers\InsightsServiceProvider;
 use Capell\LoginAudit\Providers\LoginAuditServiceProvider;
 use Capell\MediaLibrary\Filament\Pages\MediaHealthPage;
@@ -114,6 +115,7 @@ class PackagesTestCase extends AbstractTestCase
             SeoSuiteServiceProvider::class,
             SearchServiceProvider::class,
             TagsServiceProvider::class,
+            HeroServiceProvider::class,
             FrontendAuthoringServiceProvider::class,
             PublishingStudioServiceProvider::class,
             MediaLibraryServiceProvider::class,
@@ -215,6 +217,7 @@ class PackagesTestCase extends AbstractTestCase
         CapellCore::forcePackageInstalled(LoginAuditServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/media-library');
         CapellCore::forcePackageInstalled(SearchServiceProvider::$packageName);
+        CapellCore::forcePackageInstalled(HeroServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendAuthoringServiceProvider::$packageName);
         CapellCore::forcePackageInstalled('capell-app/publishing-studio');
     }
