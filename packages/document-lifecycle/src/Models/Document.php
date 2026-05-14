@@ -47,6 +47,14 @@ class Document extends Model
         return $this->hasMany(DocumentPublication::class);
     }
 
+    /**
+     * @return HasMany<DocumentAcceptance, $this>
+     */
+    public function acceptances(): HasMany
+    {
+        return $this->hasMany(DocumentAcceptance::class, 'document_key', 'key');
+    }
+
     public function latestPublication(): ?DocumentPublication
     {
         return $this->publications()

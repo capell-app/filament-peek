@@ -9,6 +9,8 @@ use Capell\Core\Facades\CapellCore;
 use Capell\DocumentLifecycle\Enums\DocumentStatusEnum;
 use Capell\DocumentLifecycle\Filament\Resources\Documents\Pages\EditDocument;
 use Capell\DocumentLifecycle\Filament\Resources\Documents\Pages\ListDocuments;
+use Capell\DocumentLifecycle\Filament\Resources\Documents\RelationManagers\AcceptancesRelationManager;
+use Capell\DocumentLifecycle\Filament\Resources\Documents\RelationManagers\PublicationsRelationManager;
 use Capell\DocumentLifecycle\Models\Document;
 use Capell\DocumentLifecycle\Providers\DocumentLifecycleServiceProvider;
 use Filament\Forms\Components\KeyValue;
@@ -115,6 +117,14 @@ final class DocumentResource extends Resource
         return [
             'index' => ListDocuments::route('/'),
             'edit' => EditDocument::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            PublicationsRelationManager::class,
+            AcceptancesRelationManager::class,
         ];
     }
 
