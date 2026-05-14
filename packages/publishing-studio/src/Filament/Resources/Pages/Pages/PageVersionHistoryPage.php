@@ -9,12 +9,11 @@ use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Filament\Resources\Pages\PageResource;
 use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\Core\Models\Page;
-use Capell\PublishingStudio\Actions\DeletePageDraftAction;
-use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
-use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\Actions\ComparePublishingRevisionAction;
+use Capell\PublishingStudio\Actions\ListPublishingRevisionsAction;
+use Capell\PublishingStudio\Models\PublishingRevision;
 use Capell\PublishingStudio\Services\WorkspaceDiffService;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page as FilamentPage;
 use Filament\Support\Icons\Heroicon;
@@ -22,8 +21,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 
 /**
- * Full-page version history for a Page record. Shows all workspace draft copies
- * of this page in a timeline sidebar; selecting one renders the diff against live.
+ * Full-page published revision history for a Page record. Draft copies are
+ * deliberately excluded: revisions are immutable publish/restore snapshots.
  *
  * @property Page $record
  */
@@ -31,7 +30,7 @@ class PageVersionHistoryPage extends FilamentPage
 {
     use InteractsWithRecord;
 
-    public ?int $selectedWorkspaceId = null;
+    public ?int $selectedRevisionId = null;
 
     protected static string $resource = PageResource::class;
 
@@ -55,10 +54,10 @@ class PageVersionHistoryPage extends FilamentPage
 
         $this->authorizeResourceAccess();
 
-        $first = $this->getWorkspaceCopies()->first();
+        $first = $this->getRevisions()->first();
 
-        if ($first instanceof Page) {
-            $this->selectedWorkspaceId = $first->workspace_id;
+        if ($first instanceof PublishingRevision) {
+            $this->selectedRevisionId = (int) $first->getKey();
         }
     }
 
@@ -67,66 +66,27 @@ class PageVersionHistoryPage extends FilamentPage
         return __('capell-admin::button.version_history') . ' — ' . $this->record->name;
     }
 
-    public function selectVersion(int $workspaceId): void
+    public function selectRevision(int $revisionId): void
     {
-        $this->selectedWorkspaceId = $workspaceId;
-    }
-
-    public function deleteVersion(int $draftId): void
-    {
-        $draft = Page::query()->withoutGlobalScopes()->findOrFail($draftId);
-
-        $this->authorize('update', $draft);
-
-        $workspaceName = $draft->workspace?->name ?? '—';
-
-        if ($this->selectedWorkspaceId === $draft->workspace_id) {
-            $this->selectedWorkspaceId = null;
-        }
-
-        DeletePageDraftAction::run($draft);
-
-        Notification::make()
-            ->title(__('capell-admin::message.draft_deleted_notification', ['workspace' => $workspaceName]))
-            ->success()
-            ->send();
+        $this->selectedRevisionId = $revisionId;
     }
 
     /**
-     * @return Collection<int, Page>
+     * @return Collection<int, PublishingRevision>
      */
-    public function getWorkspaceCopies(): Collection
+    public function getRevisions(): Collection
     {
-        return Page::query()
-            ->withoutGlobalScopes()
-            ->where('uuid', $this->record->uuid)
-            ->where('workspace_id', '!=', 0)
-            ->with(['workspace' => fn ($query) => $query->with('creator'), 'pageUrl'])
-            ->latest('updated_at')
-            ->get();
+        return ListPublishingRevisionsAction::run($this->record);
     }
 
-    public function getSelectedWorkspace(): ?Workspace
+    public function getSelectedRevision(): ?PublishingRevision
     {
-        if ($this->selectedWorkspaceId === null) {
+        if ($this->selectedRevisionId === null) {
             return null;
         }
 
-        return Workspace::query()->find($this->selectedWorkspaceId);
-    }
-
-    /**
-     * @return Collection<int, array<string, mixed>>
-     */
-    public function getDiffs(): Collection
-    {
-        $workspace = $this->getSelectedWorkspace();
-
-        if (! $workspace instanceof Workspace) {
-            return collect();
-        }
-
-        return (new WorkspaceDiffService)->diff($workspace);
+        return $this->getRevisions()
+            ->first(fn (PublishingRevision $revision): bool => (int) $revision->getKey() === $this->selectedRevisionId);
     }
 
     public function renderHtmlDiff(mixed $before, mixed $after): string
@@ -143,11 +103,6 @@ class PageVersionHistoryPage extends FilamentPage
         return str_contains($value, "\n") || strlen($value) > 120;
     }
 
-    public function getWorkspaceUrl(Workspace $workspace): string
-    {
-        return WorkspaceResource::getUrl('compare', ['record' => $workspace]);
-    }
-
     protected function getActions(): array
     {
         return [
@@ -161,10 +116,14 @@ class PageVersionHistoryPage extends FilamentPage
 
     protected function getViewData(): array
     {
+        $selectedRevision = $this->getSelectedRevision();
+
         return [
-            'copies' => $this->getWorkspaceCopies(),
-            'diffs' => $this->getDiffs(),
-            'selectedWorkspace' => $this->getSelectedWorkspace(),
+            'revisions' => $this->getRevisions(),
+            'diffs' => $selectedRevision instanceof PublishingRevision
+                ? collect([ComparePublishingRevisionAction::run($selectedRevision)])
+                : collect(),
+            'selectedRevision' => $selectedRevision,
         ];
     }
 }

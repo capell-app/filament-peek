@@ -57,7 +57,7 @@
     "database": {
         "migrations": true,
         "settings": false,
-        "requiredTables": ["workspaces"]
+        "requiredTables": ["workspaces", "publishing_revisions"]
     },
     "commands": {
         "install": null,
@@ -94,6 +94,7 @@
         "release-window-guards",
         "review-assignments",
         "review-reminders",
+        "revision-history",
         "rollback-restore",
         "scheduled-publishing",
         "stale-draft-management",

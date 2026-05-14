@@ -11,6 +11,14 @@ return [
     'settings' => [
         'enable_user_resource_bridge' => 'Show Publishing Studio user details',
     ],
+    'revisions' => [
+        'action_label' => 'Revisions (:count)',
+        'close' => 'Close',
+        'empty' => 'No published revisions yet.',
+        'modal_heading' => 'Published revisions',
+        'select_prompt' => 'Select a published revision to compare it with the previous published state.',
+        'version_label' => 'Revision :version',
+    ],
     'kind' => [
         'manual' => 'Manual',
         'import' => 'Import',

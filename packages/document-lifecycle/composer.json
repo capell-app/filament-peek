@@ -1,0 +1,37 @@
+{
+    "name": "capell-app/document-lifecycle",
+    "description": "Controlled document registry, publication metadata, hashes, and acceptance evidence for Capell",
+    "keywords": [
+        "capell",
+        "document-lifecycle",
+        "legal",
+        "governance",
+        "publishing",
+        "cms"
+    ],
+    "homepage": "https://github.com/capell-app/document-lifecycle",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "capell-app/admin": "*",
+        "capell-app/core": "*",
+        "capell-app/publishing-studio": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Capell\\DocumentLifecycle\\": "src/",
+            "Capell\\DocumentLifecycle\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Capell\\DocumentLifecycle\\Providers\\DocumentLifecycleServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true
+}

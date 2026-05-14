@@ -1,9 +1,9 @@
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
     use Capell\Core\Enums\MediaConversionEnum;
-    use Capell\Core\LayoutBuilder\Enums\ContainerAlignmentEnum;
-    use Capell\Core\LayoutBuilder\Enums\ResponsiveVisibilityEnum;
-    use Capell\Core\LayoutBuilder\Facades\CapellLayout;
+    use Capell\LayoutBuilder\Enums\ContainerAlignmentEnum;
+    use Capell\LayoutBuilder\Enums\ResponsiveVisibilityEnum;
+    use Capell\LayoutBuilder\Facades\CapellLayout;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 @endphp

@@ -3,7 +3,7 @@
     use Capell\Core\Enums\DefaultColorEnum;
     use Capell\Core\Enums\MediaCollectionEnum;
     use Capell\Core\Enums\MediaConversionEnum;
-    use Capell\Core\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
+    use Capell\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
     use Capell\Frontend\Facades\Frontend;
     use Illuminate\Support\Arr;
 

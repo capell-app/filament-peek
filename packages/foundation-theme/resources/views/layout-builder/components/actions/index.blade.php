@@ -1,5 +1,5 @@
 @php
-    use Capell\Core\LayoutBuilder\Enums\ActionLinkEnum;
+    use Capell\LayoutBuilder\Enums\ActionLinkEnum;
     use Capell\Core\Models\PageUrl;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Support\Loader\PageLoader;

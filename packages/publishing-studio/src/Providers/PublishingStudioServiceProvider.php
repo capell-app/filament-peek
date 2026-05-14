@@ -37,6 +37,7 @@ use Capell\PublishingStudio\Http\Livewire\WorkspacePageDraftHandler;
 use Capell\PublishingStudio\Http\Middleware\ResolveWorkspaceContext;
 use Capell\PublishingStudio\Listeners\StampWorkspaceOnActivity;
 use Capell\PublishingStudio\Models\PreviewLink;
+use Capell\PublishingStudio\Models\PublishingRevision;
 use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Models\WorkspaceApproval;
@@ -111,6 +112,7 @@ class PublishingStudioServiceProvider extends ServiceProvider
     {
         CapellCore::registerModels([
             PreviewLink::class,
+            PublishingRevision::class,
             Version::class,
             Workspace::class,
             WorkspaceApproval::class,
@@ -168,6 +170,7 @@ class PublishingStudioServiceProvider extends ServiceProvider
             'workspace_field_comment' => WorkspaceFieldComment::class,
             'workspace_review_assignment' => WorkspaceReviewAssignment::class,
             'version' => Version::class,
+            'publishing_revision' => PublishingRevision::class,
             'preview_link' => PreviewLink::class,
         ]);
 

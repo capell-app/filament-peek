@@ -36,7 +36,7 @@ $theme = Frontend::theme();
 ])
 {{-- format-ignore-start --}}
 @php
-    use Capell\Core\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
+    use Capell\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
     use Illuminate\Contracts\Pagination\LengthAwarePaginator;
     use Capell\Frontend\Actions\GetPageVariablesAction;
     use Capell\Frontend\Actions\RenderHtmlContentAction;

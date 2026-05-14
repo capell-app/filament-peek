@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\Hero\View\Components\Widget;
 
-use Capell\Core\LayoutBuilder\Actions\HeroWidgetHasPrimaryHeadingAction;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Frontend\Facades\Frontend;
+use Capell\LayoutBuilder\Actions\HeroWidgetHasPrimaryHeadingAction;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Model;
 

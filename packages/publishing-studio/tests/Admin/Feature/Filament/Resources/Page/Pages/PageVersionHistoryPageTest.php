@@ -5,9 +5,10 @@ declare(strict_types=1);
 use Capell\Admin\Filament\Resources\Pages\PageResource;
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Core\Models\Page;
-use Capell\PublishingStudio\Actions\CopyOnWriteAction;
+use Capell\PublishingStudio\Actions\RecordPublishingRevisionAction;
+use Capell\PublishingStudio\Enums\PublishingRevisionEventEnum;
 use Capell\PublishingStudio\Filament\Resources\Pages\Pages\PageVersionHistoryPage;
-use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\Models\PublishingRevision;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
 use function Pest\Laravel\get;
@@ -34,110 +35,90 @@ test('accessible via the page resource url', function (): void {
         ->assertSuccessful();
 });
 
-test('shows no-drafts prompt when page has no workspace copies', function (): void {
+test('shows no published revisions prompt when page has no revision rows', function (): void {
     $page = Page::factory()->create();
 
     livewire(PageVersionHistoryPage::class, ['record' => $page->getRouteKey()])
-        ->assertSee(__('capell-admin::message.version_history_no_drafts'));
+        ->assertSee(__('capell-publishing-studio::workspace.revisions.empty'));
 });
 
-test('lists workspace copy names in the timeline', function (): void {
-    $live = Page::factory()->create();
-    $workspace = Workspace::factory()->create(['name' => 'Sprint 42']);
+test('lists published revisions in the timeline', function (): void {
+    $page = Page::factory()->create(['name' => 'Published page']);
 
-    (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'Sprint edit']),
-        $workspace,
+    RecordPublishingRevisionAction::run(
+        revisionableType: Page::class,
+        revisionableId: (int) $page->getKey(),
+        revisionableUuid: $page->uuid,
+        eventType: PublishingRevisionEventEnum::Published,
+        beforePayload: ['name' => 'Old page'],
+        afterPayload: ['name' => 'Published page'],
+        notes: 'release notes',
     );
 
-    livewire(PageVersionHistoryPage::class, ['record' => $live->getRouteKey()])
-        ->assertSee('Sprint 42')
-        ->assertDontSee(__('capell-admin::message.version_history_no_drafts'));
+    livewire(PageVersionHistoryPage::class, ['record' => $page->getRouteKey()])
+        ->assertSee(__('capell-publishing-studio::workspace.revisions.version_label', ['version' => 1]))
+        ->assertSee('release notes')
+        ->assertDontSee(__('capell-publishing-studio::workspace.revisions.empty'));
 });
 
-test('auto-selects the workspace copy on mount when there is one draft', function (): void {
-    $live = Page::factory()->create();
-    $workspace = Workspace::factory()->create();
+test('auto-selects the latest published revision on mount', function (): void {
+    $page = Page::factory()->create();
 
-    (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'a draft']),
-        $workspace,
+    $revision = RecordPublishingRevisionAction::run(
+        revisionableType: Page::class,
+        revisionableId: (int) $page->getKey(),
+        revisionableUuid: $page->uuid,
+        eventType: PublishingRevisionEventEnum::Published,
+        beforePayload: ['name' => 'Old'],
+        afterPayload: ['name' => 'New'],
     );
 
-    livewire(PageVersionHistoryPage::class, ['record' => $live->getRouteKey()])
-        ->assertSet('selectedWorkspaceId', $workspace->id);
+    livewire(PageVersionHistoryPage::class, ['record' => $page->getRouteKey()])
+        ->assertSet('selectedRevisionId', $revision->id);
 });
 
-test('selectVersion updates the selected workspace id', function (): void {
-    $live = Page::factory()->create();
-    $workspace = Workspace::factory()->create();
+test('selectRevision updates the selected revision id', function (): void {
+    $page = Page::factory()->create();
 
-    (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'draft version']),
-        $workspace,
+    $first = RecordPublishingRevisionAction::run(
+        revisionableType: Page::class,
+        revisionableId: (int) $page->getKey(),
+        revisionableUuid: $page->uuid,
+        eventType: PublishingRevisionEventEnum::Published,
+        beforePayload: ['name' => 'First'],
+        afterPayload: ['name' => 'Second'],
     );
 
-    livewire(PageVersionHistoryPage::class, ['record' => $live->getRouteKey()])
-        ->call('selectVersion', $workspace->id)
-        ->assertSet('selectedWorkspaceId', $workspace->id);
+    $second = RecordPublishingRevisionAction::run(
+        revisionableType: Page::class,
+        revisionableId: (int) $page->getKey(),
+        revisionableUuid: $page->uuid,
+        eventType: PublishingRevisionEventEnum::Restored,
+        beforePayload: ['name' => 'Second'],
+        afterPayload: ['name' => 'First'],
+    );
+
+    livewire(PageVersionHistoryPage::class, ['record' => $page->getRouteKey()])
+        ->assertSet('selectedRevisionId', $second->id)
+        ->call('selectRevision', $first->id)
+        ->assertSet('selectedRevisionId', $first->id);
 });
 
-test('deleteVersion removes the draft and sends a notification', function (): void {
-    $live = Page::factory()->create();
-    $workspace = Workspace::factory()->create(['name' => 'Removable Draft']);
+test('version history action exists on edit page with revision count in label', function (): void {
+    $page = Page::factory()->create();
 
-    /** @var Page $draft */
-    $draft = (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'about to be deleted']),
-        $workspace,
+    RecordPublishingRevisionAction::run(
+        revisionableType: Page::class,
+        revisionableId: (int) $page->getKey(),
+        revisionableUuid: $page->uuid,
+        eventType: PublishingRevisionEventEnum::Published,
+        beforePayload: ['name' => 'Old'],
+        afterPayload: ['name' => 'New'],
     );
 
-    livewire(PageVersionHistoryPage::class, ['record' => $live->getRouteKey()])
-        ->call('deleteVersion', $draft->id)
-        ->assertNotified(__('capell-admin::message.draft_deleted_notification', ['workspace' => 'Removable Draft']));
-
-    expect(Page::query()->withoutGlobalScopes()->find($draft->id))->toBeNull();
-});
-
-test('deleteVersion clears the selected workspace id when deleting the active version', function (): void {
-    $live = Page::factory()->create();
-    $workspace = Workspace::factory()->create();
-
-    /** @var Page $draft */
-    $draft = (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'selected draft']),
-        $workspace,
-    );
-
-    livewire(PageVersionHistoryPage::class, ['record' => $live->getRouteKey()])
-        ->call('selectVersion', $workspace->id)
-        ->assertSet('selectedWorkspaceId', $workspace->id)
-        ->call('deleteVersion', $draft->id)
-        ->assertSet('selectedWorkspaceId', null);
-});
-
-test('version history action exists on edit page with draft count in label', function (): void {
-    $live = Page::factory()->create();
-    $workspace = Workspace::factory()->create();
-
-    (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'a draft']),
-        $workspace,
-    );
-
-    livewire(EditPage::class, ['record' => $live->getRouteKey()])
-        ->assertActionExists('revisions');
-});
-
-test('version history action label includes the draft count', function (): void {
-    $live = Page::factory()->create();
-
-    $workspace = Workspace::factory()->create();
-    (new CopyOnWriteAction)->cloneForEdit(
-        $live->fresh()->fill(['name' => 'draft']),
-        $workspace,
-    );
-
-    livewire(EditPage::class, ['record' => $live->getRouteKey()])
-        ->assertActionHasLabel('revisions', __('capell-admin::button.revisions', ['count' => 1]));
+    livewire(EditPage::class, ['record' => $page->getRouteKey()])
+        ->assertActionExists('revisions')
+        ->assertActionHasLabel('revisions', __('capell-admin::button.revisions', [
+            'count' => PublishingRevision::query()->where('revisionable_uuid', $page->uuid)->count(),
+        ]));
 });

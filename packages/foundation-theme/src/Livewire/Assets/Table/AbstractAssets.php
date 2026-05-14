@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\FoundationTheme\Livewire\Assets\Table;
 
-use Capell\Admin\LayoutBuilder\Livewire\Filament\ModalTableSelect;
+use Capell\LayoutBuilder\Livewire\Filament\ModalTableSelect;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;

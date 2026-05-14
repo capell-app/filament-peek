@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Models;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -30,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read Workspace|null $sourceWorkspace
+ * @property-read Collection<int, PublishingRevision> $publishingRevisions
  */
 class Version extends Model
 {
@@ -67,6 +70,12 @@ class Version extends Model
     public function publishedBy(): MorphTo
     {
         return $this->morphTo('published_by');
+    }
+
+    /** @return HasMany<PublishingRevision, self> */
+    public function publishingRevisions(): HasMany
+    {
+        return $this->hasMany(PublishingRevision::class);
     }
 
     /**

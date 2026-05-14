@@ -59,6 +59,7 @@ const CAPELL_MANIFEST_V3_MIGRATION_GROUPS = [
         'frontend-optimizer',
         'hero',
         'html-cache',
+        'layout-builder',
         'media-library',
         'navigation',
         'site-discovery',
@@ -70,6 +71,7 @@ const CAPELL_MANIFEST_V3_MIGRATION_GROUPS = [
         'dashboard-reports',
         'deployments',
         'diagnostics',
+        'document-lifecycle',
         'ga4-reports',
         'insights',
         'login-audit',
@@ -122,6 +124,27 @@ const CAPELL_MANIFEST_V3_CONTRIBUTION_PATTERNS = [
     'migration' => 'loadMigrationsFrom',
     'scheduled-job' => 'Schedule::',
     'agent-capability' => 'CapellAgentBridgeCapabilityRegistry',
+];
+
+const CAPELL_MANIFEST_V3_KNOWN_CONTRIBUTION_TYPES = [
+    'admin-page',
+    'dashboard-widget',
+    'overview-stat',
+    'admin-resource',
+    'configurator',
+    'schema-extender',
+    'model',
+    'section',
+    'page-type',
+    'permission',
+    'route',
+    'setting',
+    'page-variation',
+    'asset',
+    'migration',
+    'scheduled-job',
+    'agent-capability',
+    'public-api-endpoint',
 ];
 
 /**

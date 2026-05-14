@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Rollback;
 
+use Capell\PublishingStudio\Actions\RecordPublishingRevisionAction;
+use Capell\PublishingStudio\Enums\PublishingRevisionEventEnum;
 use Capell\PublishingStudio\Events\VersionRolledBack;
 use Capell\PublishingStudio\Exceptions\EntityNotInVersionException;
 use Capell\PublishingStudio\Models\Version;
@@ -60,7 +62,7 @@ class EntityRollbackAction
             throw EntityNotInVersionException::missing($modelClass, $entityUuid, $targetVersion->id);
         }
 
-        $report = DB::transaction(function () use ($modelClass, $entityUuid, $targetRow, $targetVersion): EntityRollbackReport {
+        $report = DB::transaction(function () use ($modelClass, $entityUuid, $targetRow, $targetVersion, $actor, $reason): EntityRollbackReport {
             $prototype = new $modelClass;
             $keyName = $prototype->getKeyName();
             $usesSoftDeletes = $this->usesSoftDeletes($prototype);
@@ -84,6 +86,10 @@ class EntityRollbackAction
                     noOp: true,
                 );
             }
+
+            $beforePayload = $currentLive instanceof Model
+                ? RecordPublishingRevisionAction::payloadFor($currentLive)
+                : null;
 
             if ($currentLive instanceof Model) {
                 if ($usesSoftDeletes) {
@@ -109,6 +115,18 @@ class EntityRollbackAction
             }
 
             $targetRow->save();
+
+            RecordPublishingRevisionAction::run(
+                revisionableType: $modelClass,
+                revisionableId: (int) $targetRow->getKey(),
+                revisionableUuid: $entityUuid,
+                eventType: PublishingRevisionEventEnum::Restored,
+                beforePayload: $beforePayload,
+                afterPayload: RecordPublishingRevisionAction::payloadFor($targetRow),
+                version: $targetVersion,
+                actor: $actor,
+                notes: $reason,
+            );
 
             return new EntityRollbackReport(
                 modelClass: $modelClass,
