@@ -30,7 +30,14 @@
         ],
         "frontend": []
     },
-    "contributes": [],
+    "contributes": [
+        {
+            "type": "admin-resource",
+            "class": "Capell\\DocumentLifecycle\\Manifest\\DocumentResourceContribution",
+            "resourceClass": "Capell\\DocumentLifecycle\\Filament\\Resources\\Documents\\DocumentResource",
+            "group": "Document"
+        }
+    ],
     "database": {
         "migrations": true,
         "settings": false,

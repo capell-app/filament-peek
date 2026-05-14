@@ -118,6 +118,27 @@ const CAPELL_MANIFEST_V3_CONTRIBUTION_PATTERNS = [
     'agent-capability' => 'CapellAgentBridgeCapabilityRegistry',
 ];
 
+const CAPELL_MANIFEST_V3_KNOWN_CONTRIBUTION_TYPES = [
+    'admin-page',
+    'dashboard-widget',
+    'overview-stat',
+    'admin-resource',
+    'configurator',
+    'schema-extender',
+    'model',
+    'section',
+    'page-type',
+    'permission',
+    'route',
+    'setting',
+    'page-variation',
+    'asset',
+    'migration',
+    'scheduled-job',
+    'agent-capability',
+    'public-api-endpoint',
+];
+
 /**
  * @return array{
  *     packages: array<string, array<string, mixed>>,
