@@ -43,6 +43,6 @@ final class ComputeDocumentContentHashAction
             ksort($value);
         }
 
-        return array_map(fn (mixed $item): mixed => $this->normalise($item), $value);
+        return array_map($this->normalise(...), $value);
     }
 }

@@ -418,7 +418,7 @@ class Publisher
     private function revisionableUuidFor(Model $record): ?string
     {
         $attributes = $record->getAttributes();
-        $uuid = array_key_exists('uuid', $attributes) ? $attributes['uuid'] : null;
+        $uuid = $attributes['uuid'] ?? null;
 
         if ($uuid !== null && $uuid !== '') {
             return (string) $uuid;

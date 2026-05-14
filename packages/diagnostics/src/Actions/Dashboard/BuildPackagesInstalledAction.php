@@ -140,17 +140,17 @@ final class BuildPackagesInstalledAction
         );
     }
 
-    protected function installedJsonPath(): string
+    private function installedJsonPath(): string
     {
         return $this->customInstalledJsonPath ?? base_path('vendor/composer/installed.json');
     }
 
-    protected function localPackagesPath(): string
+    private function localPackagesPath(): string
     {
         return $this->customLocalPackagesPath ?? base_path('packages');
     }
 
-    protected function installedComposerDirectory(): string
+    private function installedComposerDirectory(): string
     {
         return dirname($this->installedJsonPath());
     }
@@ -158,7 +158,7 @@ final class BuildPackagesInstalledAction
     /**
      * @return array<string, array{short: string, config: ?string, docs: ?string, display?: string, bundle?: string, health_checks?: int, install?: ?string, doctor?: ?string}>
      */
-    protected function knownPackages(): array
+    private function knownPackages(): array
     {
         $knownPackages = self::KNOWN_PACKAGES;
         $packagesPath = $this->localPackagesPath();
@@ -257,7 +257,7 @@ final class BuildPackagesInstalledAction
             return null;
         }
 
-        $filename = pathinfo($configPaths[0], PATHINFO_FILENAME);
+        $filename = pathinfo((string) $configPaths[0], PATHINFO_FILENAME);
 
         return is_string($filename) && $filename !== '' ? $filename : null;
     }

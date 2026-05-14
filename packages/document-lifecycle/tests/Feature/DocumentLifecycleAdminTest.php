@@ -11,7 +11,7 @@ use Capell\DocumentLifecycle\Models\Document;
 use Capell\DocumentLifecycle\Models\DocumentAcceptance;
 use Capell\DocumentLifecycle\Models\DocumentPublication;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
@@ -50,7 +50,7 @@ it('shows controlled document publication and acceptance audit trails', function
         'document_id' => $document->getKey(),
         'version_label' => '2026-05-14',
         'content_hash' => str_repeat('a', 64),
-        'published_at' => Carbon::parse('2026-05-14 10:00:00'),
+        'published_at' => Date::parse('2026-05-14 10:00:00'),
     ]);
 
     $acceptance = DocumentAcceptance::query()->create([
@@ -58,7 +58,7 @@ it('shows controlled document publication and acceptance audit trails', function
         'document_version' => '2026-05-14',
         'document_publication_id' => $publication->getKey(),
         'document_hash' => str_repeat('a', 64),
-        'accepted_at' => Carbon::parse('2026-05-14 11:00:00'),
+        'accepted_at' => Date::parse('2026-05-14 11:00:00'),
         'context' => 'registration',
     ]);
 

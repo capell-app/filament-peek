@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\DocumentLifecycle\Models;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -32,6 +33,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class DocumentAcceptance extends Model
 {
+    use HasFactory;
+
     protected $table = 'legal_acceptances';
 
     /** @var array<int, string> */

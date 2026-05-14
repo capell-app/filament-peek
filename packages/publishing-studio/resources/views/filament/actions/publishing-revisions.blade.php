@@ -3,7 +3,9 @@
         <div class="rounded-lg border border-gray-200 p-4 dark:border-white/10">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="text-sm font-medium text-gray-950 dark:text-white">
+                    <p
+                        class="text-sm font-medium text-gray-950 dark:text-white"
+                    >
                         {{ __('capell-publishing-studio::workspace.revisions.version_label', ['version' => $revision->version]) }}
                     </p>
                     <p class="text-sm text-gray-500 dark:text-gray-400">

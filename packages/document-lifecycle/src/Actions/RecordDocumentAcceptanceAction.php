@@ -30,7 +30,7 @@ final class RecordDocumentAcceptanceAction
         $publication = ResolveLatestDocumentPublicationAction::run($documentKey);
         $documentVersion = $publication instanceof DocumentPublication
             ? $publication->version_label
-            : (string) config("legal.documents.{$documentKey}", config('legal.terms_version'));
+            : (string) config('legal.documents.' . $documentKey, config('legal.terms_version'));
 
         return DocumentAcceptance::query()->create([
             'acceptor_type' => $this->morphType($acceptor),

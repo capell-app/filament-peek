@@ -338,7 +338,9 @@
                         class="space-y-2 border-t border-gray-200 p-3 dark:border-gray-700"
                     >
                         @if ($selectedRevision->publishedVersion)
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                            <p
+                                class="text-sm font-medium text-gray-900 dark:text-white"
+                            >
                                 {{ $selectedRevision->publishedVersion->name }}
                             </p>
                         @endif

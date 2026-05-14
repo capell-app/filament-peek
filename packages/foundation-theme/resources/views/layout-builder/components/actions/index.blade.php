@@ -1,9 +1,9 @@
 @php
-    use Capell\LayoutBuilder\Enums\ActionLinkEnum;
     use Capell\Core\Models\PageUrl;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Support\Loader\PageLoader;
     use Capell\Frontend\Support\Loader\SiteLoader;
+    use Capell\LayoutBuilder\Enums\ActionLinkEnum;
 
     $page = Frontend::page();
     $language = Frontend::language();

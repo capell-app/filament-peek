@@ -6,6 +6,7 @@ namespace Capell\Diagnostics\Actions\Dashboard;
 
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\Admin\Support\AdminSurfaceLookup;
+use Capell\ContentBlocks\Support\BlockRegistry;
 use Capell\Core\Data\PageTypeData;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\PackageRegistry\CapellPackageRegistry;
@@ -20,7 +21,7 @@ final class BuildRegistryHealthAction
 {
     use AsAction;
 
-    private const BLOCK_REGISTRY_CLASS = 'Capell\\ContentBlocks\\Support\\BlockRegistry';
+    private const BLOCK_REGISTRY_CLASS = BlockRegistry::class;
 
     private const MAX_REGISTRY_ENTRIES_PER_SECTION = 100;
 
@@ -137,7 +138,7 @@ final class BuildRegistryHealthAction
             return null;
         }
 
-        $registry = app(self::BLOCK_REGISTRY_CLASS);
+        $registry = resolve(self::BLOCK_REGISTRY_CLASS);
 
         if (! method_exists($registry, 'all')) {
             return null;

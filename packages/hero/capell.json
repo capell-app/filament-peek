@@ -15,7 +15,11 @@
     "namespace": "Capell\\Hero",
     "surfaces": ["frontend", "console"],
     "dependencies": {
-        "requires": ["capell-app/core", "capell-app/frontend", "capell-app/layout-builder"],
+        "requires": [
+            "capell-app/core",
+            "capell-app/frontend",
+            "capell-app/layout-builder"
+        ],
         "optional": [],
         "conflicts": []
     },

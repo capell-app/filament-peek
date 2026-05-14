@@ -50,9 +50,9 @@ final class PublishDocumentFromPublishingRevisionAction
     private function documentForRevision(PublishingRevision $revision): ?Document
     {
         $documentableIds = array_values(array_unique(array_filter([
-            (int) $revision->revisionable_id,
+            $revision->revisionable_id,
             $this->beforePayloadId($revision),
-        ])));
+        ], static fn (?int $documentableId): bool => $documentableId !== null)));
 
         if ($documentableIds === []) {
             return null;
@@ -74,7 +74,7 @@ final class PublishDocumentFromPublishingRevisionAction
         return array_values(array_unique(array_filter([
             $revisionableType,
             is_string($alias) ? $alias : null,
-        ])));
+        ], static fn (?string $documentableType): bool => $documentableType !== null)));
     }
 
     private function beforePayloadId(PublishingRevision $revision): ?int
@@ -86,7 +86,7 @@ final class PublishDocumentFromPublishingRevisionAction
 
     private function syncDocumentableTarget(Document $document, PublishingRevision $revision): void
     {
-        if ((int) $document->documentable_id === (int) $revision->revisionable_id) {
+        if ((int) $document->documentable_id === $revision->revisionable_id) {
             return;
         }
 

@@ -6,6 +6,7 @@ namespace Capell\DocumentLifecycle\Models;
 
 use Capell\DocumentLifecycle\Enums\DocumentStatusEnum;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -23,6 +24,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Document extends Model
 {
+    use HasFactory;
+
     protected $table = 'document_lifecycle_documents';
 
     protected $fillable = [

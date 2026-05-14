@@ -60,6 +60,52 @@ it('normalises associative payload order before hashing', function (): void {
     expect($first)->toBe($second);
 });
 
+it('keeps document publication versions immutable', function (): void {
+    $document = RegisterDocumentAction::run('terms', 'Terms of Service');
+
+    $first = PublishDocumentAction::run(
+        document: $document,
+        content: ['body' => 'Version one'],
+        versionLabel: '2026-05-07',
+    );
+
+    $again = PublishDocumentAction::run(
+        document: $document->refresh(),
+        content: ['body' => 'Version one'],
+        versionLabel: '2026-05-07',
+    );
+
+    expect($again->is($first))->toBeTrue()
+        ->and(DocumentPublication::query()->count())->toBe(1);
+
+    PublishDocumentAction::run(
+        document: $document->refresh(),
+        content: ['body' => 'Changed content'],
+        versionLabel: '2026-05-07',
+    );
+})->throws(LogicException::class);
+
+it('does not mutate an existing publication when a version hash conflicts', function (): void {
+    $document = RegisterDocumentAction::run('terms', 'Terms of Service');
+    $publication = PublishDocumentAction::run(
+        document: $document,
+        content: ['body' => 'Version one'],
+        versionLabel: '2026-05-07',
+    );
+    $originalHash = $publication->content_hash;
+
+    expect(function () use ($document): void {
+        PublishDocumentAction::run(
+            document: $document->refresh(),
+            content: ['body' => 'Changed content'],
+            versionLabel: '2026-05-07',
+        );
+    })->toThrow(LogicException::class);
+
+    expect($publication->refresh()->content_hash)->toBe($originalHash)
+        ->and(DocumentPublication::query()->count())->toBe(1);
+});
+
 it('creates document publications from publishing revision rows for registered documents', function (): void {
     createDocumentLifecycleDraftableFixtureTable();
 

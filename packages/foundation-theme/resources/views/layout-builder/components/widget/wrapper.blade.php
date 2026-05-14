@@ -3,8 +3,8 @@
     use Capell\Core\Enums\DefaultColorEnum;
     use Capell\Core\Enums\MediaCollectionEnum;
     use Capell\Core\Enums\MediaConversionEnum;
-    use Capell\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
     use Illuminate\Support\Arr;
 
     $theme = Frontend::theme();

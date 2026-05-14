@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\DocumentLifecycle\Models;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class DocumentPublication extends Model
 {
+    use HasFactory;
+
     protected $table = 'document_lifecycle_publications';
 
     protected $fillable = [

@@ -74,6 +74,7 @@ $theme = Frontend::theme();
 
     $pageHeroTitle = $page->translation->getMeta('hero_title');
     $pageHeroTitle = is_string($pageHeroTitle) && $pageHeroTitle !== '' ? __($pageHeroTitle, $pageVariables) : null;
+    $paginationResults = $results ?? null;
 @endphp
 {{-- format-ignore-end --}}
 @if ($widget->assets->isNotEmpty() || $page->translation->getMeta('hero') || ! config('capell-layout-builder.widget.skip_render_empty', true))
@@ -257,13 +258,13 @@ $theme = Frontend::theme();
                         >
                             {!! RenderHtmlContentAction::run((string) __($page->translation->getMeta('hero'), $pageVariables), ['page' => $page, 'site' => $site]) !!}
 
-                            @if (isset($this->results) && $this->results instanceof LengthAwarePaginator && $this->results->hasPages())
+                            @if ($paginationResults instanceof LengthAwarePaginator && $paginationResults->hasPages())
                                 @php
                                     Frontend::setFrontendData('has_pagination_summary', true);
                                 @endphp
 
                                 <x-capell-layout-builder::pagination.hero-summary
-                                    :results="$this->results"
+                                    :results="$paginationResults"
                                 />
                             @endif
                         </x-capell-hero::hero.content>
