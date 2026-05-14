@@ -6,9 +6,9 @@ namespace Capell\FoundationTheme\Actions;
 
 use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\LayoutEnum;
-use Capell\Core\LayoutBuilder\Support\Creator\WidgetCreator;
 use Capell\Core\Models\Layout;
 use Capell\Core\Support\Creator\LayoutCreator;
+use Capell\LayoutBuilder\Support\Creator\WidgetCreator;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**

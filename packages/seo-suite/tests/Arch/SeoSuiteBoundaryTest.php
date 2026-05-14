@@ -19,7 +19,7 @@ arch('seo-suite does not import packages that depend on it')
         'Capell\Blog',
         'Capell\FormBuilder',
         'Capell\Media',
-        'Capell\Core\LayoutBuilder',
+        'Capell\LayoutBuilder',
         'Capell\Navigation',
         'Capell\Marketplace',
         'Capell\Tags',

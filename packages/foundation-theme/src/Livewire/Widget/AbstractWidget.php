@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\FoundationTheme\Livewire\Widget;
 
 use Capell\Core\Enums\AssetComponentEnum;
-use Capell\Core\LayoutBuilder\Enums\CapellLayoutCacheKeyEnum;
 use Capell\Core\Models\Widget;
 use Capell\Frontend\Facades\Frontend;
+use Capell\LayoutBuilder\Enums\CapellLayoutCacheKeyEnum;
 use Closure;
 use Exception;
 use Illuminate\Contracts\View\View;
