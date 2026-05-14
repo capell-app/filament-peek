@@ -20,6 +20,7 @@
         "php": "^8.2",
         "capell-app/core": "*",
         "capell-app/frontend": "*",
+        "capell-app/layout-builder": "*",
         "lorisleiva/laravel-actions": "^2.8",
         "spatie/laravel-package-tools": "^1.0"
     },

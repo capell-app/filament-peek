@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\CampaignStudio\Filament\Configurators\Widgets;
 
-use Capell\Admin\LayoutBuilder\Filament\Configurators\Widgets\DefaultWidgetConfigurator;
+use Capell\LayoutBuilder\Filament\Configurators\Widgets\DefaultWidgetConfigurator;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
 

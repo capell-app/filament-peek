@@ -10,7 +10,7 @@
     use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Core\Enums\MediaCollectionEnum;
     use Capell\Core\Facades\CapellCore;
-    use Capell\Admin\LayoutBuilder\Livewire\Filament\LayoutBuilder;
+    use Capell\LayoutBuilder\Livewire\Filament\LayoutBuilder;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconSize;
     use Filament\Support\Enums\Size;

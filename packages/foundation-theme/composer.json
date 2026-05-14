@@ -6,6 +6,7 @@
     "require": {
         "php": "^8.2",
         "capell-app/frontend": "*",
+        "capell-app/layout-builder": "*",
         "lorisleiva/laravel-actions": "^2.8",
         "spatie/laravel-data": "^4.0",
         "spatie/laravel-package-tools": "^1.0"

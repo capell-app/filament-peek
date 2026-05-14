@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Capell\CampaignStudio\Actions;
 
-use Capell\Admin\LayoutBuilder\Filament\Configurators\Types\WidgetTypeConfigurator;
 use Capell\CampaignStudio\Enums\CampaignWidgetComponentEnum;
 use Capell\CampaignStudio\Filament\Configurators\Widgets\CampaignCtaBlockWidgetConfigurator;
 use Capell\CampaignStudio\Filament\Configurators\Widgets\CampaignHeroWidgetConfigurator;
@@ -17,6 +16,7 @@ use Capell\Core\LayoutBuilder\Enums\LayoutTypeEnum;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Type;
 use Capell\Core\Models\Widget;
+use Capell\LayoutBuilder\Filament\Configurators\Types\WidgetTypeConfigurator;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 final class InstallCampaignLayoutsAction

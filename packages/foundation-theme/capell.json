@@ -15,7 +15,7 @@
     "namespace": "Capell\\FoundationTheme",
     "surfaces": ["admin", "frontend"],
     "dependencies": {
-        "requires": ["capell-app/frontend"],
+        "requires": ["capell-app/frontend", "capell-app/layout-builder"],
         "optional": [],
         "conflicts": []
     },
