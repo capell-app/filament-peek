@@ -1,0 +1,35 @@
+{
+    "name": "capell-app/layout-builder",
+    "description": "Visual layout composition, content-first editing, and public layout rendering for Capell",
+    "keywords": [
+        "capell",
+        "layout-builder",
+        "cms",
+        "filament",
+        "livewire"
+    ],
+    "homepage": "https://github.com/capell-app/layout-builder",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "capell-app/admin": "*",
+        "capell-app/core": "*",
+        "capell-app/frontend": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Capell\\LayoutBuilder\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Capell\\LayoutBuilder\\LayoutBuilderServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true
+}

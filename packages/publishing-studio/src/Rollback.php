@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio;
 
+use Capell\PublishingStudio\Actions\RecordPublishingRevisionAction;
+use Capell\PublishingStudio\Enums\PublishingRevisionEventEnum;
 use Capell\PublishingStudio\Events\VersionRolledBack;
 use Capell\PublishingStudio\Exceptions\StaleWorkspaceException;
 use Capell\PublishingStudio\Models\Version;
@@ -75,12 +77,42 @@ final readonly class Rollback
                 ? null
                 : Version::query()->whereKey($lockedLiveId)->first();
 
+            $pendingRevisions = [];
+
             foreach ($this->registry::all() as $modelClass => $registeredDraftable) {
                 unset($registeredDraftable);
 
                 $modelInstance = new $modelClass;
                 $keyName = $modelInstance->getKeyName();
                 $targetIds = $target->manifestIdsFor($modelClass);
+
+                if ($targetIds !== []) {
+                    $targetRows = $modelClass::query()
+                        ->withoutGlobalScopes()
+                        ->whereIn($keyName, $targetIds)
+                        ->get();
+
+                    foreach ($targetRows as $targetRow) {
+                        $revisionableUuid = $this->revisionableUuidFor($targetRow);
+                        $recordUuid = $this->recordUuidFor($targetRow);
+                        $currentLive = $recordUuid === null
+                            ? null
+                            : $modelClass::query()
+                                ->withoutGlobalScopes()
+                                ->where('workspace_id', 0)
+                                ->where('uuid', $recordUuid)
+                                ->first();
+
+                        $pendingRevisions[] = [
+                            'revisionable_type' => $modelClass,
+                            'revisionable_id' => (int) $targetRow->getKey(),
+                            'revisionable_uuid' => $revisionableUuid,
+                            'before_payload' => $currentLive instanceof Model
+                                ? RecordPublishingRevisionAction::payloadFor($currentLive)
+                                : null,
+                        ];
+                    }
+                }
 
                 $deleteQuery = $modelClass::query()
                     ->withoutGlobalScopes()
@@ -127,6 +159,28 @@ final readonly class Rollback
                 'published_by_id' => $actor?->getKey(),
                 'published_at' => now(),
             ]);
+
+            foreach ($pendingRevisions as $pendingRevision) {
+                $revisionableType = $pendingRevision['revisionable_type'];
+                $restoredRow = $revisionableType::query()
+                    ->withoutGlobalScopes()
+                    ->whereKey($pendingRevision['revisionable_id'])
+                    ->first();
+
+                RecordPublishingRevisionAction::run(
+                    revisionableType: $pendingRevision['revisionable_type'],
+                    revisionableId: $pendingRevision['revisionable_id'],
+                    revisionableUuid: $pendingRevision['revisionable_uuid'],
+                    eventType: PublishingRevisionEventEnum::Restored,
+                    beforePayload: $pendingRevision['before_payload'],
+                    afterPayload: $restoredRow instanceof Model
+                        ? RecordPublishingRevisionAction::payloadFor($restoredRow)
+                        : null,
+                    version: $rollbackRecord,
+                    actor: $actor,
+                    notes: $reason,
+                );
+            }
 
             return [$rollbackRecord, $previousLive];
         });
@@ -188,5 +242,25 @@ final readonly class Rollback
                 implode(', ', $missingModelClasses),
             ));
         }
+    }
+
+    private function revisionableUuidFor(Model $record): ?string
+    {
+        $uuid = $record->getAttribute('uuid');
+
+        if ($uuid !== null && $uuid !== '') {
+            return (string) $uuid;
+        }
+
+        $key = $record->getKey();
+
+        return $key === null ? null : (string) $key;
+    }
+
+    private function recordUuidFor(Model $record): ?string
+    {
+        $uuid = $record->getAttribute('uuid');
+
+        return $uuid === null || $uuid === '' ? null : (string) $uuid;
     }
 }

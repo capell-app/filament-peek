@@ -58,6 +58,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property-read Version|null $baseVersion
  * @property-read Version|null $publishedVersion
  * @property-read Collection<int, WorkspaceApproval> $approvals
+ * @property-read Collection<int, PublishingRevision> $publishingRevisions
  */
 class Workspace extends Model implements Userstampable
 {
@@ -109,6 +110,12 @@ class Workspace extends Model implements Userstampable
     public function publishedVersion(): HasOne
     {
         return $this->hasOne(Version::class, 'source_workspace_id');
+    }
+
+    /** @return HasMany<PublishingRevision, self> */
+    public function publishingRevisions(): HasMany
+    {
+        return $this->hasMany(PublishingRevision::class);
     }
 
     /** @return HasMany<WorkspaceApproval, self> */

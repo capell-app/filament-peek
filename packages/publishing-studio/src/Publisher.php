@@ -6,7 +6,9 @@ namespace Capell\PublishingStudio;
 
 use Capell\Core\Contracts\Pageable;
 use Capell\PublishingStudio\Actions\InvalidatePublishedWorkspaceFrontendCacheAction;
+use Capell\PublishingStudio\Actions\RecordPublishingRevisionAction;
 use Capell\PublishingStudio\Checks\PublishCheckPipeline;
+use Capell\PublishingStudio\Enums\PublishingRevisionEventEnum;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Enums\WorkspaceTransitionEnum;
 use Capell\PublishingStudio\Events\WorkspaceEventDispatcher;
@@ -117,6 +119,7 @@ class Publisher
             $this->assertNoUrlCollisions($workspace);
 
             $manifest = [];
+            $pendingRevisions = [];
 
             foreach ($this->registry::all() as $modelClass => $registeredDraftable) {
                 $modelInstance = new $modelClass;
@@ -147,14 +150,33 @@ class Publisher
 
                 foreach ($workspaceRows as $workspaceRow) {
                     $registeredDraftable->finalizeOnPublish($workspaceRow);
+                    $beforePayload = null;
 
                     if ($hasUuid && $workspaceRow->getAttribute('uuid') !== null) {
+                        $liveRow = $modelClass::query()
+                            ->withoutGlobalScopes()
+                            ->where('workspace_id', 0)
+                            ->where('uuid', $workspaceRow->getAttribute('uuid'))
+                            ->first();
+
+                        $beforePayload = $liveRow instanceof Model
+                            ? RecordPublishingRevisionAction::payloadFor($liveRow)
+                            : null;
+
                         $modelClass::query()
                             ->withoutGlobalScopes()
                             ->where('workspace_id', 0)
                             ->where('uuid', $workspaceRow->getAttribute('uuid'))
                             ->delete();
                     }
+
+                    $pendingRevisions[] = [
+                        'revisionable_type' => $modelClass,
+                        'revisionable_id' => (int) $workspaceRow->getKey(),
+                        'revisionable_uuid' => $this->revisionableUuidFor($workspaceRow),
+                        'before_payload' => $beforePayload,
+                        'after_payload' => $this->publishedPayloadFor($workspaceRow),
+                    ];
                 }
 
                 $modelClass::query()
@@ -188,6 +210,21 @@ class Publisher
                 'published_by_id' => $publishedBy?->getKey(),
                 'published_at' => now(),
             ]);
+
+            foreach ($pendingRevisions as $pendingRevision) {
+                RecordPublishingRevisionAction::run(
+                    revisionableType: $pendingRevision['revisionable_type'],
+                    revisionableId: $pendingRevision['revisionable_id'],
+                    revisionableUuid: $pendingRevision['revisionable_uuid'],
+                    eventType: PublishingRevisionEventEnum::Published,
+                    beforePayload: $pendingRevision['before_payload'],
+                    afterPayload: $pendingRevision['after_payload'],
+                    workspace: $workspace,
+                    version: $newVersion,
+                    actor: $publishedBy,
+                    notes: $notes,
+                );
+            }
 
             $workspace->status = WorkspaceStatusEnum::Published;
             $workspace->published_at = now();
@@ -365,5 +402,29 @@ class Publisher
     private function tableHasColumn(string $table, string $column): bool
     {
         return DB::getSchemaBuilder()->hasColumn($table, $column);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function publishedPayloadFor(Model $record): array
+    {
+        $payload = RecordPublishingRevisionAction::payloadFor($record);
+        $payload['workspace_id'] = 0;
+
+        return $payload;
+    }
+
+    private function revisionableUuidFor(Model $record): ?string
+    {
+        $uuid = $record->getAttribute('uuid');
+
+        if ($uuid !== null && $uuid !== '') {
+            return (string) $uuid;
+        }
+
+        $key = $record->getKey();
+
+        return $key === null ? null : (string) $key;
     }
 }

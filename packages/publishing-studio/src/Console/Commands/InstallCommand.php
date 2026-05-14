@@ -44,6 +44,7 @@ class InstallCommand extends Command
             __DIR__ . '/../../../database/migrations/2026_05_10_190866_08_z_add_workspace_columns_to_core_tables.php',
             __DIR__ . '/../../../database/migrations/2026_05_10_190866_10_z_add_workspace_id_to_import_sessions_table.php',
             __DIR__ . '/../../../database/migrations/2026_05_10_190866_09_z_add_workspace_id_to_external_tables.php',
+            __DIR__ . '/../../../database/migrations/2026_05_10_190866_11_create_publishing_revisions_table.php',
         ];
 
         return $this->call('capell:publish-migrations', ['--items' => $migrations]) === self::SUCCESS;

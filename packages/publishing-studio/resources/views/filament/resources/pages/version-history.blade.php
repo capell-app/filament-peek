@@ -1,12 +1,11 @@
 @php
-    use Capell\Admin\Filament\Resources\Pages\Pages\PageVersionHistoryPage;
-    use Capell\Core\Models\Page;
-    use Capell\PublishingStudio\Models\Workspace;
+    use Capell\PublishingStudio\Filament\Resources\Pages\Pages\PageVersionHistoryPage;
+    use Capell\PublishingStudio\Models\PublishingRevision;
     use Illuminate\Support\Collection;
 
-    /** @var Collection<int, Page> $copies */
+    /** @var Collection<int, PublishingRevision> $revisions */
     /** @var Collection<int, array<string, mixed>> $diffs */
-    /** @var Workspace|null $selectedWorkspace */
+    /** @var PublishingRevision|null $selectedRevision */
     /** @var PageVersionHistoryPage $this */
 @endphp
 
@@ -137,10 +136,10 @@
     <div class="flex items-start gap-6">
         {{-- Main diff area --}}
         <div class="min-w-0 flex-1 space-y-4">
-            @if ($selectedWorkspace === null)
+            @if ($selectedRevision === null)
                 <x-filament::section>
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        {{ __('capell-admin::message.version_history_select_prompt') }}
+                        {{ __('capell-publishing-studio::workspace.revisions.select_prompt') }}
                     </p>
                 </x-filament::section>
             @elseif ($diffs->isEmpty())
@@ -261,21 +260,17 @@
                         </div>
                     </div>
 
-                    {{-- Draft workspace versions --}}
-                    @forelse ($copies as $copy)
-                        @if ($copy->isLive())
-                            @continue
-                        @endif
-
+                    {{-- Published entity revisions --}}
+                    @forelse ($revisions as $revision)
                         @php
-                            $isSelected = $this->selectedWorkspaceId === $copy->workspace_id;
-                            $creatorName = $copy->workspace?->creator?->getAttribute('name');
-                            $updatedAt = $copy->updated_at;
+                            $isSelected = $this->selectedRevisionId === (int) $revision->getKey();
+                            $actorName = $revision->actor?->getAttribute('name');
+                            $workspaceName = $revision->workspace?->name;
                         @endphp
 
                         <button
                             type="button"
-                            wire:click="selectVersion({{ $copy->workspace_id }})"
+                            wire:click="selectRevision({{ $revision->getKey() }})"
                             class="{{ $isSelected ? 'bg-primary-50 dark:bg-primary-900/20' : '' }} flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
                         >
                             <div
@@ -289,97 +284,69 @@
                                 <p
                                     class="{{ $isSelected ? 'text-primary-700 dark:text-primary-300' : 'text-gray-900 dark:text-white' }} truncate text-sm font-medium"
                                 >
-                                    {{ $copy->workspace?->name ?? '—' }}
+                                    {{ __('capell-publishing-studio::workspace.revisions.version_label', ['version' => $revision->version]) }}
                                 </p>
-                                @if ($updatedAt)
+                                @if ($revision->created_at)
                                     <p
                                         class="text-xs text-gray-500 dark:text-gray-400"
                                     >
-                                        {{ $updatedAt->format('M j, Y \a\t g:ia') }}
+                                        {{ $revision->created_at->format('M j, Y \a\t g:ia') }}
                                     </p>
                                 @endif
 
-                                @if ($creatorName)
+                                @if ($workspaceName)
                                     <p
                                         class="text-xs text-gray-400 dark:text-gray-500"
                                     >
-                                        {{ $creatorName }}
+                                        {{ $workspaceName }}
                                     </p>
                                 @endif
 
-                                @if ($copy->workspace?->status)
-                                    <span
-                                        class="{{
-                                            match ($copy->workspace->status->value ?? '') {
-                                                'open' => 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-                                                'in_review' => 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
-                                                'approved' => 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-                                                'published' => 'bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-                                                default => 'bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
-                                            }
-                                        }} inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                @if ($actorName)
+                                    <p
+                                        class="text-xs text-gray-400 dark:text-gray-500"
                                     >
-                                        {{ $copy->workspace->status->getLabel() }}
-                                    </span>
+                                        {{ $actorName }}
+                                    </p>
                                 @endif
+
+                                <span
+                                    class="{{
+                                        match ($revision->event_type->value) {
+                                            'published' => 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+                                            'restored' => 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+                                            default => 'bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+                                        }
+                                    }} inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                >
+                                    {{ $revision->event_type->value }}
+                                </span>
                             </div>
                         </button>
                     @empty
                         <div class="px-4 py-6 text-center">
                             <p class="text-sm text-gray-400 dark:text-gray-500">
-                                {{ __('capell-admin::message.version_history_no_drafts') }}
+                                {{ __('capell-publishing-studio::workspace.revisions.empty') }}
                             </p>
                         </div>
                     @endforelse
                 </div>
 
-                {{-- Selected version actions --}}
-                @if ($selectedWorkspace !== null)
-                    @php
-                        $selectedCopy = $copies->first(fn (Page $copy): bool => $copy->workspace_id === $this->selectedWorkspaceId);
-                        $previewUrl = rescue(fn (): ?string => $selectedCopy?->pageUrl?->full_url, null, false);
-                    @endphp
-
+                {{-- Selected revision metadata --}}
+                @if ($selectedRevision !== null)
                     <div
                         class="space-y-2 border-t border-gray-200 p-3 dark:border-gray-700"
                     >
-                        <a
-                            href="{{ $this->getWorkspaceUrl($selectedWorkspace) }}"
-                            class="border-primary-600 text-primary-700 hover:bg-primary-50 dark:border-primary-400 dark:text-primary-300 dark:hover:bg-primary-900/20 flex w-full items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors"
-                        >
-                            <x-filament::icon
-                                icon="heroicon-o-arrow-top-right-on-square"
-                                class="h-4 w-4"
-                            />
-                            {{ __('capell-admin::message.version_history_open_workspace') }}
-                        </a>
-                        @if ($previewUrl)
-                            <a
-                                href="{{ $previewUrl }}"
-                                target="_blank"
-                                class="flex w-full items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
-                            >
-                                <x-filament::icon
-                                    icon="heroicon-o-eye"
-                                    class="h-4 w-4"
-                                />
-                                {{ __('capell-admin::message.version_history_preview') }}
-                            </a>
+                        @if ($selectedRevision->publishedVersion)
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                {{ $selectedRevision->publishedVersion->name }}
+                            </p>
                         @endif
 
-                        @if ($selectedCopy !== null)
-                            <button
-                                type="button"
-                                wire:click="deleteVersion({{ $selectedCopy->id }})"
-                                wire:confirm="{{ __('capell-admin::message.version_history_delete_confirm') }}"
-                                class="flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                            >
-                                <x-filament::icon
-                                    icon="heroicon-o-trash"
-                                    class="h-4 w-4"
-                                />
-                                {{ __('capell-admin::message.version_history_delete') }}
-                            </button>
+                        @if ($selectedRevision->notes)
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ $selectedRevision->notes }}
+                            </p>
                         @endif
                     </div>
                 @endif
