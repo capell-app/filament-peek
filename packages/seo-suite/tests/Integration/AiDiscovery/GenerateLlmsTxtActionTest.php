@@ -5,10 +5,12 @@ declare(strict_types=1);
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\SiteDomain;
 use Capell\Frontend\Http\Controllers\PageController as FrontendPageController;
 use Capell\Frontend\Support\State\FrontendState;
 use Capell\SeoSuite\Actions\BuildAiReadinessAuditAction;
 use Capell\SeoSuite\Actions\BuildAiRobotsTxtRulesAction;
+use Capell\SeoSuite\Actions\BuildRobotsTxtAction;
 use Capell\SeoSuite\Actions\ClearAiDiscoveryCacheAction;
 use Capell\SeoSuite\Actions\GenerateLlmsFullTxtAction;
 use Capell\SeoSuite\Actions\GenerateLlmsTxtAction;
@@ -311,6 +313,31 @@ it('does not serve direct page markdown for noindex pages', function (): void {
         ->toThrow(NotFoundHttpException::class);
 });
 
+it('does not serve direct page markdown for translation noindex pages', function (): void {
+    $language = createAiDiscoveryLanguage();
+    $site = Site::factory()->language($language)->withTranslations($language)->create();
+    $siteDomain = $site->siteDomains()->first();
+    $page = Page::factory()
+        ->site($site)
+        ->withTranslations($language, [
+            'title' => 'Translation Private Page',
+            'content' => '<p>Private markdown body.</p>',
+            'meta' => ['robots' => ['noindex']],
+        ])
+        ->create();
+
+    ResolveAiDiscoveryProfileAction::run($site, $language);
+
+    resolve(FrontendState::class)
+        ->withSite($site)
+        ->withLanguage($language)
+        ->withDomain($siteDomain)
+        ->withPage($page);
+
+    expect(fn () => resolve(PageMarkdownController::class)(Request::create('/translation-private-page.md'), 'translation-private-page'))
+        ->toThrow(NotFoundHttpException::class);
+});
+
 it('expires cached direct page markdown when a page is excluded from ai discovery', function (): void {
     $language = createAiDiscoveryLanguage();
     $site = Site::factory()->language($language)->withTranslations($language)->create();
@@ -518,6 +545,68 @@ it('serves ai crawler rules through robots txt and allows site rules to override
         ->and($response->headers->get('Content-Type'))->toBe('text/plain; charset=utf-8')
         ->and($response->getContent())->not->toContain("User-agent: GPTBot\nDisallow: /")
         ->and($response->getContent())->toContain("User-agent: OAI-SearchBot\nAllow: /");
+});
+
+it('composes robots txt with ordinary crawler defaults, sitemap urls, and ai crawler rules', function (): void {
+    config(['capell.sitemap.xml_path' => '/sitemap-xml']);
+
+    $language = createAiDiscoveryLanguage();
+    $site = Site::factory()
+        ->language($language)
+        ->withTranslations($language, siteDomainData: [
+            'scheme' => 'https',
+            'domain' => 'example.test',
+            'path' => null,
+        ])
+        ->create();
+    SeedDefaultAiCrawlerRulesAction::run();
+
+    $robots = BuildRobotsTxtAction::run($site);
+
+    expect($robots)->toStartWith("User-agent: *\nAllow: /\nSitemap: https://example.test/sitemap-xml")
+        ->and($robots)->toContain('# Capell AI Discovery managed rules')
+        ->and($robots)->toContain('User-agent: GPTBot');
+});
+
+it('composes robots txt safely without a site', function (): void {
+    SeedDefaultAiCrawlerRulesAction::run();
+
+    $robots = BuildRobotsTxtAction::run(null);
+
+    expect($robots)->toStartWith("User-agent: *\nAllow: /")
+        ->and($robots)->not->toContain('Sitemap:')
+        ->and($robots)->toContain('# Capell AI Discovery managed rules');
+});
+
+it('omits disabled site domains from robots txt sitemap urls', function (): void {
+    config(['capell.sitemap.xml_path' => '/sitemap-xml']);
+
+    $language = createAiDiscoveryLanguage();
+    $site = Site::factory()
+        ->language($language)
+        ->withTranslations($language, siteDomainData: [
+            'scheme' => 'https',
+            'domain' => 'public.example.test',
+            'path' => null,
+            'status' => true,
+        ])
+        ->create();
+    SiteDomain::factory()
+        ->site($site)
+        ->language($language)
+        ->create([
+            'scheme' => 'https',
+            'domain' => 'disabled.example.test',
+            'path' => null,
+            'status' => false,
+        ]);
+
+    $site->load('siteDomains');
+
+    $robots = BuildRobotsTxtAction::run($site);
+
+    expect($robots)->toContain('Sitemap: https://public.example.test/sitemap-xml')
+        ->and($robots)->not->toContain('disabled.example.test');
 });
 
 it('syncs site language ai discovery settings from site translation meta', function (): void {

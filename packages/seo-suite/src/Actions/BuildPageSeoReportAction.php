@@ -8,6 +8,8 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
+use Capell\Frontend\Actions\ResolvePageCanonicalUrlAction;
+use Capell\Frontend\Actions\ResolvePageRobotsDirectivesAction;
 use Capell\SeoSuite\Data\PageSeoReportData;
 use Capell\SeoSuite\Data\SeoIssueData;
 use Capell\SeoSuite\Data\SeoPreviewData;
@@ -32,6 +34,7 @@ final class BuildPageSeoReportAction
             'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->id),
             'pageUrl' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->id),
             'pageUrl.siteDomain',
+            'canonicalPage.pageUrls.siteDomain',
             'site',
             'translations',
         ]);
@@ -121,8 +124,8 @@ final class BuildPageSeoReportAction
             schemaDashboardReports: BuildSchemaTemplateReportAction::run($page, $site, $language),
             redirectOpportunities: BuildRedirectOpportunityReportAction::run($site->id, $language->id, (int) $page->getKey()),
             searchConsoleInsights: BuildPageSearchConsoleInsightsAction::run($page),
-            canonicalUrl: $this->metaValue($page, 'canonical_url') ?? $previewUrl,
-            robotsDirectives: $this->robotsDirectives($page),
+            canonicalUrl: ResolvePageCanonicalUrlAction::run($page, $language) ?? $previewUrl,
+            robotsDirectives: ResolvePageRobotsDirectivesAction::run($page, $language),
         );
     }
 
@@ -200,30 +203,7 @@ final class BuildPageSeoReportAction
 
     private function hasNoIndexDirective(Page $page): bool
     {
-        return in_array(RobotsDirectiveEnum::NoIndex->value, $this->robotsDirectives($page), true);
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function robotsDirectives(Page $page): array
-    {
-        $directives = method_exists($page, 'getMeta')
-            ? $page->getMeta('robots', [])
-            : ($page->meta['robots'] ?? []);
-
-        if (is_string($directives)) {
-            $directives = [$directives];
-        }
-
-        if (! is_array($directives)) {
-            return [];
-        }
-
-        return array_values(array_filter(
-            array_map($this->stringValue(...), $directives),
-            fn (?string $directive): bool => $directive !== null,
-        ));
+        return in_array(RobotsDirectiveEnum::NoIndex->value, ResolvePageRobotsDirectivesAction::run($page), true);
     }
 
     /**

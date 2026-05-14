@@ -108,3 +108,64 @@ test('can see webpage meta schema', function (): void {
             },
         );
 });
+
+test('renders complete seo head output from shared public resolvers', function (): void {
+    $site = Site::factory()
+        ->withTranslations(siteDomainData: [
+            'scheme' => 'https',
+            'domain' => 'example.test',
+            'path' => null,
+        ])
+        ->meta([
+            'meta_schema' => [
+                MetaSchemaEnum::Webpage->getComponent(),
+            ],
+            'business_name' => 'Test Business',
+        ])
+        ->create();
+
+    $page = Page::factory()
+        ->site($site)
+        ->meta([
+            'canonical_url' => 'https://example.test/canonical',
+            'robots' => ['noindex', 'nofollow'],
+        ])
+        ->withTranslations(data: [
+            'title' => 'Public SEO Page',
+            'meta' => [
+                'title' => 'Public SEO Search Title',
+                'description' => 'Public SEO description for rendered head output.',
+                'social_title' => 'Public SEO Social Title',
+                'social_description' => 'Public SEO social description.',
+            ],
+        ])
+        ->create();
+    $page->translations()->update([
+        'meta' => [
+            'title' => 'Public SEO Search Title',
+            'description' => 'Public SEO description for rendered head output.',
+            'social_title' => 'Public SEO Social Title',
+            'social_description' => 'Public SEO social description.',
+        ],
+    ]);
+    $page->refresh();
+
+    $html = get($page->pageUrl->full_url)
+        ->assertOk()
+        ->getContent();
+
+    $defaultAlternateUrl = $page->pageUrl->full_url;
+
+    expect($html)->toContain('<title>')
+        ->and($html)->toContain('Public SEO Search Title')
+        ->and($html)->toContain('name="description"')
+        ->and($html)->toContain('Public SEO description for rendered head output.')
+        ->and($html)->toContain('property="og:title"')
+        ->and($html)->toContain('Public SEO Social Title')
+        ->and($html)->toContain('name="twitter:title"')
+        ->and($html)->toContain('script type="application/ld+json"');
+
+    expect(preg_match_all('/<link\s+href="https:\/\/example\.test\/canonical"\s+rel="canonical"\s*\/>/m', $html))->toBe(1)
+        ->and(preg_match_all('/<meta\s+name="robots"\s+content="noindex, nofollow"\s*\/>/m', $html))->toBe(1)
+        ->and(preg_match_all('/<link\s+href="' . preg_quote($defaultAlternateUrl, '/') . '"\s+hreflang="x-default"\s+rel="alternate"\s*\/>/m', $html))->toBe(1);
+});

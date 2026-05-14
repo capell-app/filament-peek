@@ -8,6 +8,7 @@ use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Frontend\Actions\ResolvePageRobotsDirectivesAction;
 use Capell\SeoSuite\Enums\RobotsDirectiveEnum;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,9 +23,10 @@ final class PageIsDiscoverableForAiDiscoveryAction
 
     public function handle(Page $page, Site $site, Language $language): bool
     {
-        return Page::query()
+        $discoverablePage = Page::query()
             ->whereKey($page->getKey())
             ->where('site_id', $site->getKey())
+            ->with(['translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->getKey())])
             ->withWhereHas(
                 'pageUrl',
                 fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->getKey()),
@@ -49,6 +51,12 @@ final class PageIsDiscoverableForAiDiscoveryAction
                     ->orWhereJsonDoesntContain('pages.meta->robots', RobotsDirectiveEnum::NoIndex->value),
             )
             ->publishedDate()
-            ->exists();
+            ->first();
+
+        if (! $discoverablePage instanceof Page) {
+            return false;
+        }
+
+        return ! in_array(RobotsDirectiveEnum::NoIndex->value, ResolvePageRobotsDirectivesAction::run($discoverablePage, $language), true);
     }
 }

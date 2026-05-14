@@ -9,6 +9,8 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
+use Capell\Frontend\Actions\ResolvePageCanonicalUrlAction;
+use Capell\Frontend\Actions\ResolvePageRobotsDirectivesAction;
 use Capell\SeoSuite\Data\AiReadinessIssueData;
 use Capell\SeoSuite\Enums\RobotsDirectiveEnum;
 use Capell\SeoSuite\Models\AiDiscoveryPageProfile;
@@ -39,6 +41,7 @@ final class BuildAiReadinessAuditAction
         $page->loadMissing([
             'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->getKey()),
             'pageUrl' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->getKey()),
+            'canonicalPage.pageUrls.siteDomain',
         ]);
 
         $siteProfile = ResolveAiDiscoveryProfileAction::run($site, $language);
@@ -58,7 +61,7 @@ final class BuildAiReadinessAuditAction
             $issues->push($this->issue('weak_title', 'warning', 'Use a clearer, more specific title.', $page));
         }
 
-        if ($this->canonicalUrl($page, $translation) === '') {
+        if ($this->canonicalUrl($page, $language) === '') {
             $issues->push($this->issue('missing_canonical', 'warning', 'Add a canonical URL or ensure the page URL is available.', $page));
         }
 
@@ -78,7 +81,7 @@ final class BuildAiReadinessAuditAction
             $issues->push($this->issue('duplicate_entity_name', 'notice', 'Another page is using the same entity title.', $page));
         }
 
-        if (in_array(RobotsDirectiveEnum::NoIndex->value, $this->robotsDirectives($page), true)) {
+        if (in_array(RobotsDirectiveEnum::NoIndex->value, ResolvePageRobotsDirectivesAction::run($page, $language), true)) {
             $issues->push($this->issue('excluded_by_noindex', 'warning', 'This page is excluded by noindex.', $page));
         }
 
@@ -97,11 +100,9 @@ final class BuildAiReadinessAuditAction
         return trim(strip_tags((string) ($meta['title'] ?? $translation?->title ?? $page->name)));
     }
 
-    private function canonicalUrl(Page $page, ?Translation $translation): string
+    private function canonicalUrl(Page $page, Language $language): string
     {
-        $meta = (array) $translation?->meta;
-
-        return trim((string) ($meta['canonical_url'] ?? $page->pageUrl?->full_url ?? ''));
+        return trim((string) (ResolvePageCanonicalUrlAction::run($page, $language) ?? ''));
     }
 
     private function hasSchema(Page $page, ?Translation $translation): bool
@@ -146,32 +147,6 @@ final class BuildAiReadinessAuditAction
                     );
             })
             ->exists();
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function robotsDirectives(Page $page): array
-    {
-        $directives = method_exists($page, 'getMeta')
-            ? $page->getMeta('robots', [])
-            : ($page->meta['robots'] ?? []);
-
-        if (is_string($directives)) {
-            $directives = [$directives];
-        }
-
-        if (! is_array($directives)) {
-            return [];
-        }
-
-        return array_values(array_filter(
-            array_map(
-                fn (mixed $directive): ?string => is_scalar($directive) ? trim((string) $directive) : null,
-                $directives,
-            ),
-            fn (?string $directive): bool => $directive !== null && $directive !== '',
-        ));
     }
 
     private function auditEnabled(): bool

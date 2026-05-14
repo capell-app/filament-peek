@@ -34,13 +34,11 @@ final class HeroServiceProvider extends AbstractPackageServiceProvider
     public function packageBooted(): void
     {
         $this->registerTailwindSources();
-
-        if (! $this->isPackageInstalled()) {
-            return;
-        }
-
         $this->registerViews();
         $this->registerBladeComponents();
+
+        if (! $this->isPackageInstalled()) {
+        }
     }
 
     private function isPackageInstalled(): bool

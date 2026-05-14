@@ -32,6 +32,7 @@ final class RefreshSiteSeoSnapshotsAction
                 'translation.language',
                 'translations.language',
                 'pageUrl.siteDomain',
+                'canonicalPage.pageUrls.siteDomain',
                 'type',
             ])
             ->orderBy('id')

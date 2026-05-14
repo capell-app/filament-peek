@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Capell\SeoSuite\Providers;
 
+use Capell\Admin\Contracts\DashboardSettingsContributor;
 use Capell\Admin\Contracts\Extenders\PageEditExtender;
 use Capell\Admin\Contracts\Extenders\PageHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\PageResourceWidgetExtender;
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\Admin\Contracts\Extenders\SiteHeaderActionExtender;
 use Capell\Admin\Contracts\Extenders\SiteSchemaExtender;
+use Capell\Admin\Enums\DashboardEnum;
+use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Admin\Support\CapellAdminManager;
@@ -51,8 +54,14 @@ use Capell\SeoSuite\Filament\Pages\SeoAuditPage;
 use Capell\SeoSuite\Filament\Pages\SeoSuiteSettingsPage;
 use Capell\SeoSuite\Filament\Pages\TranslationCoveragePage;
 use Capell\SeoSuite\Filament\Settings\AIOrchestratorSettingsSchema;
+use Capell\SeoSuite\Filament\Settings\Contributors\SeoSuiteDashboardSettingsContributor;
 use Capell\SeoSuite\Filament\Settings\SeoSettingsSchema;
 use Capell\SeoSuite\Filament\Settings\StructuredDataSettingsSchema;
+use Capell\SeoSuite\Filament\Widgets\AiDiscoveryCoverageWidget;
+use Capell\SeoSuite\Filament\Widgets\SearchConsoleOverviewWidget;
+use Capell\SeoSuite\Filament\Widgets\SearchMovementWidget;
+use Capell\SeoSuite\Filament\Widgets\SeoOpportunitiesWidget;
+use Capell\SeoSuite\Filament\Widgets\TopSearchPagesWidget;
 use Capell\SeoSuite\Handlers\ClearCircuitBreakerHandler;
 use Capell\SeoSuite\Http\Controllers\LlmsFullTxtController;
 use Capell\SeoSuite\Http\Controllers\LlmsTxtController;
@@ -344,6 +353,24 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
         return $this;
     }
 
+    protected function registerDashboardSettingsContributor(): self
+    {
+        $this->app->tag([SeoSuiteDashboardSettingsContributor::class], DashboardSettingsContributor::TAG);
+
+        return $this;
+    }
+
+    protected function registerDashboardWidgets(): self
+    {
+        CapellAdmin::registerDashboardWidget(SearchConsoleOverviewWidget::class, DashboardEnum::Main);
+        CapellAdmin::registerDashboardWidget(TopSearchPagesWidget::class, DashboardEnum::Main);
+        CapellAdmin::registerDashboardWidget(SearchMovementWidget::class, DashboardEnum::Main);
+        CapellAdmin::registerDashboardWidget(SeoOpportunitiesWidget::class, DashboardEnum::Main);
+        CapellAdmin::registerDashboardWidget(AiDiscoveryCoverageWidget::class, DashboardEnum::Main);
+
+        return $this;
+    }
+
     protected function registerFrontendViews(): self
     {
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell');
@@ -459,6 +486,8 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
             ->registerSchemaTemplateRegistry()
             ->bindPageMarkdownResponder()
             ->registerFilamentPages()
+            ->registerDashboardSettingsContributor()
+            ->registerDashboardWidgets()
             ->registerFrontendViews()
             ->registerRenderHooks()
             ->registerLlmsTxtRoute();

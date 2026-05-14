@@ -74,6 +74,77 @@ it('warns when robots directives noindex a page', function (): void {
     expect($robotsIssue?->severity)->toBe(SeoIssueSeverityEnum::Warning);
 });
 
+it('uses translation robots directives when building page reports', function (): void {
+    $language = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
+    $site = SiteFactory::new()->recycle($language)->language($language)->withTranslations($language)->create();
+    $page = PageFactory::new()
+        ->site($site)
+        ->withTranslations($language, [
+            'meta' => [
+                'title' => 'Search Title',
+                'description' => 'Search description.',
+                'robots' => ['noindex'],
+            ],
+        ])
+        ->create();
+
+    $report = BuildPageSeoReportAction::run($page, $site, $language);
+
+    expect($report->robotsDirectives)->toBe(['noindex'])
+        ->and(collect($report->issues)->pluck('key'))->toContain(SeoCheckKeyEnum::Robots);
+});
+
+it('detects noindex inside comma separated scalar robots directives', function (): void {
+    $language = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
+    $site = SiteFactory::new()->recycle($language)->language($language)->withTranslations($language)->create();
+    $page = PageFactory::new()
+        ->site($site)
+        ->withTranslations($language, [
+            'meta' => [
+                'title' => 'Search Title',
+                'description' => 'Search description.',
+                'robots' => 'noindex, nofollow',
+            ],
+        ])
+        ->create();
+
+    $report = BuildPageSeoReportAction::run($page, $site, $language);
+
+    expect($report->robotsDirectives)->toBe(['noindex', 'nofollow'])
+        ->and(collect($report->issues)->pluck('key'))->toContain(SeoCheckKeyEnum::Robots);
+});
+
+it('uses robots directives from the requested translation only', function (): void {
+    $english = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
+    $french = LanguageFactory::new()->create(['name' => 'French', 'code' => 'fr']);
+    $site = SiteFactory::new()->recycle($english)->language($english)->withTranslations(collect([$english, $french]))->create();
+    $page = PageFactory::new()
+        ->site($site)
+        ->withTranslations($english, [
+            'meta' => [
+                'title' => 'English Search Title',
+                'description' => 'English search description.',
+                'robots' => ['noindex'],
+            ],
+        ])
+        ->create();
+    $page->translations()->create([
+        'language_id' => $french->id,
+        'title' => 'Titre de recherche français',
+        'meta' => [
+            'title' => 'Titre de recherche français complet',
+            'description' => 'Description française complète pour le rapport de référencement.',
+            'robots' => ['index'],
+        ],
+    ]);
+    PageUrl::factory()->page($page)->site($site)->language($french)->state(['url' => '/fr/page'])->create();
+
+    $report = BuildPageSeoReportAction::run($page, $site, $french);
+
+    expect($report->robotsDirectives)->toBe(['index'])
+        ->and(collect($report->issues)->pluck('key'))->not->toContain(SeoCheckKeyEnum::Robots);
+});
+
 it('reloads language scoped relations for the requested language', function (): void {
     $english = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
     $french = LanguageFactory::new()->create(['name' => 'French', 'code' => 'fr']);
@@ -126,11 +197,13 @@ it('includes passed checks, canonical, robots, and page redirect opportunities',
             'meta' => [
                 'title' => 'A complete search title for this landing page',
                 'description' => 'A complete search description that gives editors enough useful context.',
-                'canonical_url' => 'https://example.com/canonical-page',
             ],
         ])
         ->create([
-            'meta' => ['robots' => ['index', 'follow']],
+            'meta' => [
+                'canonical_url' => 'https://example.com/canonical-page',
+                'robots' => ['index', 'follow'],
+            ],
         ]);
 
     PageUrl::factory()->page($page)->site($site)->language($language)->state(['url' => '/canonical-page'])->create();

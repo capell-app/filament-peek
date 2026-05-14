@@ -45,8 +45,60 @@
 
 {!! app(RenderHookRegistry::class)->renderAll(RenderHookLocation::HeaderBefore) !!}
 
+@if ($usesAlpine)
+    <script>
+        window.capellSiteHeader = ({ scrollUp = false } = {}) => ({
+            isDarkMode: document.documentElement.classList.contains('dark'),
+            isNavigationOverlayOpen: false,
+            scrollUp,
+            isHidden: false,
+            lastScrollY: 0,
+            init() {
+                if (this.scrollUp) {
+                    this.lastScrollY = window.scrollY
+                    window.addEventListener(
+                        'scroll',
+                        () => {
+                            const currentY = window.scrollY
+                            const delta = currentY - this.lastScrollY
+                            if (currentY <= 0) {
+                                this.isHidden = false
+                            } else if (delta > 4) {
+                                this.isHidden = true
+                            } else if (delta < -4) {
+                                this.isHidden = false
+                            }
+                            this.lastScrollY = currentY
+                        },
+                        { passive: true },
+                    )
+                }
+
+                this.$watch('isDarkMode', (value) => {
+                    document.documentElement.classList.toggle('dark', value)
+                    localStorage.theme = value ? 'dark' : 'light'
+                })
+
+                window.addEventListener(
+                    'capell-navigation-menu-open-changed',
+                    (event) => {
+                        this.isNavigationOverlayOpen = Boolean(
+                            event.detail?.open,
+                        )
+                    },
+                )
+            },
+            toggleDarkMode() {
+                this.isDarkMode = !this.isDarkMode
+            },
+        })
+    </script>
+@endif
+
 <header
-    @if ($usesAlpine) x-data="siteHeader({ scrollUp: {{ $theme->scroll_up_header ? 'true' : 'false' }} })" @endif
+    @if ($usesAlpine) x-data="window.capellSiteHeader({
+                scrollUp: {{ $theme->scroll_up_header ? 'true' : 'false' }},
+            })" @endif
     @class([
         'capell-product-header transition-padding left-0 right-0 top-0 z-50 flex min-h-[var(--header-height)] w-full text-[var(--color-header)] transition-transform duration-300 ease-in-out lg:h-auto',
         'border-b border-[var(--border-header)]' => $headerBorderColor,
@@ -58,9 +110,9 @@
     id="header"
     @if ($usesAlpine)
         :class="{
-                                                                                        'h-screen': isNavigationOverlayOpen,
-                                                                                        '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
-                                                                                    }"
+                                                                                                                'h-screen': isNavigationOverlayOpen,
+                                                                                                                '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
+                                                                                                            }"
     @endif
 >
     <div
@@ -117,55 +169,3 @@
         !!}
     </div>
 </header>
-
-@if ($usesAlpine)
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('siteHeader', ({ scrollUp = false } = {}) => ({
-                isDarkMode: document.documentElement.classList.contains('dark'),
-                isNavigationOverlayOpen: false,
-                scrollUp,
-                isHidden: false,
-                lastScrollY: 0,
-                init() {
-                    if (this.scrollUp) {
-                        this.lastScrollY = window.scrollY
-                        window.addEventListener(
-                            'scroll',
-                            () => {
-                                const currentY = window.scrollY
-                                const delta = currentY - this.lastScrollY
-                                if (currentY <= 0) {
-                                    this.isHidden = false
-                                } else if (delta > 4) {
-                                    this.isHidden = true
-                                } else if (delta < -4) {
-                                    this.isHidden = false
-                                }
-                                this.lastScrollY = currentY
-                            },
-                            { passive: true },
-                        )
-                    }
-
-                    this.$watch('isDarkMode', (value) => {
-                        document.documentElement.classList.toggle('dark', value)
-                        localStorage.theme = value ? 'dark' : 'light'
-                    })
-
-                    window.addEventListener(
-                        'capell-navigation-menu-open-changed',
-                        (event) => {
-                            this.isNavigationOverlayOpen = Boolean(
-                                event.detail?.open,
-                            )
-                        },
-                    )
-                },
-                toggleDarkMode() {
-                    this.isDarkMode = !this.isDarkMode
-                },
-            }))
-        })
-    </script>
-@endif
