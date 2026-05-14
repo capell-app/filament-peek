@@ -15,186 +15,71 @@
     :index="$loop->index"
     :$widget
 >
-    <section
-        style="
-            padding: 3rem 2rem;
-            background-color: var(--layout-builder-surface);
-        "
-    >
-        @if ($widget->translation)
-            <div style="margin-bottom: 2.5rem; max-width: 38rem">
-                @if ($widget->translation->title)
-                    <h2
-                        class="ap-feature-list-headline"
-                        style="
-                            color: var(--layout-builder-on-surface);
-                            font-family: var(--layout-builder-font-headline);
-                            font-size: var(--layout-builder-text-headline-lg);
-                            font-weight: 700;
-                            margin-bottom: 0.75rem;
-                        "
-                    >
-                        {{ $widget->translation->title }}
-                    </h2>
-                @endif
+    <section class="ap-showcase-feature-list capell-showcase">
+        <div class="capell-showcase__inner">
+            @if ($widget->translation)
+                <div class="capell-showcase__section-head">
+                    @if ($widget->translation->title)
+                        <h2
+                            class="ap-feature-list-headline capell-showcase__heading"
+                        >
+                            {{ $widget->translation->title }}
+                        </h2>
+                    @endif
 
-                @if ($widget->translation->content)
-                    <p
-                        class="ap-feature-list-description"
-                        style="
-                            color: var(--layout-builder-on-surface-variant);
-                            font-size: var(--layout-builder-text-body-lg);
-                            line-height: 1.6;
-                        "
-                    >
-                        {!! strip_tags($widget->translation->content) !!}
-                    </p>
-                @endif
-            </div>
-        @endif
+                    @if ($widget->translation->content)
+                        <p
+                            class="ap-feature-list-description capell-showcase__copy"
+                        >
+                            {!! strip_tags($widget->translation->content) !!}
+                        </p>
+                    @endif
+                </div>
+            @endif
 
-        @if ($layout === 'vertical')
             <div
-                style="
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.25rem;
-                    max-width: 38rem;
-                "
+                @class([
+                    'ap-feature-list' => $layout === 'vertical',
+                    'ap-feature-grid' => $layout !== 'vertical',
+                ])
             >
                 @forelse ($widget->assets as $widgetAsset)
-                    <div
-                        class="ap-feature-item layout-builder-card"
-                        style="
-                            display: flex;
-                            gap: 1rem;
-                            background-color: var(
-                                --layout-builder-surface-container
-                            );
-                        "
-                    >
-                        @if ($widgetAsset->asset->getMeta('icon'))
-                            <div style="flex-shrink: 0; font-size: 1.75rem">
-                                {{ $widgetAsset->asset->getMeta('icon') }}
-                            </div>
+                    @php
+                        $asset = $widgetAsset->asset;
+                        $icon = (string) $asset->getMeta('icon', '');
+                    @endphp
+
+                    <article class="ap-feature-item layout-builder-card">
+                        @if ($icon !== '')
+                            <span class="ap-feature-item__icon">
+                                @if (str_starts_with($icon, 'heroicon-'))
+                                    @svg($icon, 'h-5 w-5')
+                                @else
+                                    {{ $icon }}
+                                @endif
+                            </span>
                         @endif
 
-                        <div>
-                            @if ($widgetAsset->asset->translation?->title)
-                                <h3
-                                    class="ap-feature-title"
-                                    style="
-                                        color: var(--layout-builder-on-surface);
-                                        font-size: var(
-                                            --layout-builder-text-title-md
-                                        );
-                                        font-weight: 600;
-                                        margin-bottom: 0.375rem;
-                                    "
-                                >
-                                    {{ $widgetAsset->asset->translation->title }}
-                                </h3>
-                            @endif
-
-                            @if ($widgetAsset->asset->translation?->content)
-                                <p
-                                    class="ap-feature-description"
-                                    style="
-                                        color: var(
-                                            --layout-builder-on-surface-variant
-                                        );
-                                        font-size: var(
-                                            --layout-builder-text-body-sm
-                                        );
-                                        line-height: 1.55;
-                                    "
-                                >
-                                    {{ strip_tags($widgetAsset->asset->translation->content) }}
-                                </p>
-                            @endif
-                        </div>
-                    </div>
-                @empty
-                    <p style="color: var(--layout-builder-on-surface-variant)">
-                        No features configured.
-                    </p>
-                @endforelse
-            </div>
-        @else
-            <div
-                style="
-                    display: grid;
-                    grid-template-columns: repeat(3, minmax(0, 1fr));
-                    gap: 1.5rem;
-                "
-            >
-                @forelse ($widget->assets as $widgetAsset)
-                    <div
-                        class="ap-feature-item layout-builder-card"
-                        style="
-                            text-align: center;
-                            background-color: var(
-                                --layout-builder-surface-container
-                            );
-                        "
-                    >
-                        @if ($widgetAsset->asset->getMeta('icon'))
-                            <div
-                                style="
-                                    font-size: 2.25rem;
-                                    margin-bottom: 0.75rem;
-                                "
-                            >
-                                {{ $widgetAsset->asset->getMeta('icon') }}
-                            </div>
-                        @endif
-
-                        @if ($widgetAsset->asset->translation?->title)
-                            <h3
-                                class="ap-feature-title"
-                                style="
-                                    color: var(--layout-builder-on-surface);
-                                    font-size: var(
-                                        --layout-builder-text-title-md
-                                    );
-                                    font-weight: 600;
-                                    margin-bottom: 0.375rem;
-                                "
-                            >
-                                {{ $widgetAsset->asset->translation->title }}
+                        @if ($asset->translation?->title)
+                            <h3 class="ap-feature-title ap-feature-item__title">
+                                {{ $asset->translation->title }}
                             </h3>
                         @endif
 
-                        @if ($widgetAsset->asset->translation?->content)
+                        @if ($asset->translation?->content)
                             <p
-                                class="ap-feature-description"
-                                style="
-                                    color: var(
-                                        --layout-builder-on-surface-variant
-                                    );
-                                    font-size: var(
-                                        --layout-builder-text-body-sm
-                                    );
-                                    line-height: 1.55;
-                                "
+                                class="ap-feature-description ap-feature-item__description"
                             >
-                                {{ strip_tags($widgetAsset->asset->translation->content) }}
+                                {{ strip_tags($asset->translation->content) }}
                             </p>
                         @endif
-                    </div>
+                    </article>
                 @empty
-                    <div
-                        style="
-                            grid-column: 1 / -1;
-                            text-align: center;
-                            padding: 3rem;
-                            color: var(--layout-builder-on-surface-variant);
-                        "
-                    >
+                    <div class="py-12 text-slate-300">
                         No features configured.
                     </div>
                 @endforelse
             </div>
-        @endif
+        </div>
     </section>
 </x-capell-layout-builder::widget.wrapper>

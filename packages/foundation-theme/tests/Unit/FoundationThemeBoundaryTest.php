@@ -41,13 +41,25 @@ it('owns the foundation frontend javascript runtime', function (): void {
         ->and($config)->toContain('@awcodes/alpine-floating-ui');
 });
 
-it('loads layout builder javascript only when the frontend layout uses widgets', function (): void {
+it('bundles layout builder javascript into the foundation frontend runtime', function (): void {
     $provider = file_get_contents(dirname(__DIR__, 2) . '/src/Providers/FoundationThemeServiceProvider.php');
+    $entrypoint = file_get_contents(dirname(__DIR__, 2) . '/resources/js/capell-frontend.js');
 
-    expect($provider)->toContain('VendorAssetConditionRegistry')
-        ->and($provider)->toContain('LAYOUT_BUILDER_ASSETS_CONDITION')
-        ->and($provider)->toContain('currentLayoutHasWidgets')
-        ->and($provider)->toContain('condition: self::LAYOUT_BUILDER_ASSETS_CONDITION');
+    expect($entrypoint)->toContain('./layout-builder/widget/carousel')
+        ->and($provider)->toContain("path: 'vendor/capell-foundation-theme'")
+        ->and($provider)->not->toContain('VendorAssetConditionRegistry')
+        ->and($provider)->not->toContain('LAYOUT_BUILDER_ASSETS_CONDITION');
+});
+
+it('publishes the foundation frontend runtime build during setup', function (): void {
+    $provider = file_get_contents(dirname(__DIR__, 2) . '/src/Providers/FoundationThemeServiceProvider.php');
+    $command = file_get_contents(dirname(__DIR__, 2) . '/src/Console/Commands/SetupCommand.php');
+
+    expect($provider)->toContain('capell-foundation-theme-assets')
+        ->and(file_exists(dirname(__DIR__, 2) . '/publishes/build/manifest.json'))->toBeTrue()
+        ->and(file_exists(dirname(__DIR__, 2) . '/publishes/build/assets/capell-frontend-Bpa81WpI.js'))->toBeTrue()
+        ->and($command)->toContain('vendor:publish')
+        ->and($command)->toContain('capell-foundation-theme-assets');
 });
 
 it('owns the default body content and layout component files', function (): void {
@@ -96,7 +108,31 @@ it('delegates primary header navigation to the navigation render hook', function
     expect($header)->toContain("scenario: 'foundation-theme-primary-navigation'")
         ->and($header)->toContain("target: 'capell::header.index'")
         ->and($header)->toContain('capell-navigation-menu-open-changed')
+        ->and($header)->toContain('capell-product-header')
+        ->and($header)->toContain('capell-product-nav-item')
         ->and($header)->not->toContain('x-ref="toggleMenu"')
         ->and($header)->not->toContain('toggleMenu()')
         ->and($header)->not->toContain('Capell\\Navigation');
+});
+
+it('owns the product showcase styling for modern homepage widgets', function (): void {
+    $themeCss = file_get_contents(dirname(__DIR__, 2) . '/resources/css/theme/theme.css');
+    $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/hero-banner.blade.php');
+    $cardGrid = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/card-grid.blade.php');
+    $featureList = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/feature-list.blade.php');
+    $cta = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/cta-section.blade.php');
+    $gallery = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/image-gallery.blade.php');
+
+    expect($themeCss)->toContain('.capell-showcase')
+        ->and($themeCss)->toContain('.ap-hero__product')
+        ->and($themeCss)->toContain('.ap-card-grid')
+        ->and($themeCss)->toContain('.ap-feature-grid')
+        ->and($themeCss)->toContain('.ap-gallery-grid')
+        ->and($themeCss)->toContain('.ap-showcase-cta')
+        ->and($hero)->toContain('Capell control plane')
+        ->and($hero)->toContain('Content model')
+        ->and($cardGrid)->toContain('ap-card__link')
+        ->and($featureList)->toContain('ap-feature-item__icon')
+        ->and($cta)->toContain('Homepage content is widget, media, and layout driven.')
+        ->and($gallery)->toContain('ap-gallery-caption');
 });

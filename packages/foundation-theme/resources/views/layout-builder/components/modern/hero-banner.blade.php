@@ -25,79 +25,145 @@
     :$widget
 >
     <section
-        class="ap-hero relative overflow-hidden"
-        style="
-            min-height: 480px;
-            background-color: var(--layout-builder-background);
-            {{ $backgroundImage ? "background-image: url('{$backgroundImage->getFullUrl()}'); background-size: cover; background-position: center;" : '' }}
-        "
+        class="ap-hero capell-showcase relative overflow-hidden"
+        @if ($backgroundImage)
+            style="background-image: url('{{ $backgroundImage->getFullUrl() }}'); background-size: cover; background-position: center;"
+        @endif
     >
-        <div
-            class="absolute inset-0"
-            style="
-                background: linear-gradient(
-                    135deg,
-                    rgba(19, 19, 19, 0.92) 0%,
-                    rgba(19, 19, 19, 0.7) 100%
-                );
-            "
-        ></div>
+        <div class="ap-hero__overlay"></div>
 
-        <div
-            class="relative flex flex-col justify-center px-8 py-16 md:px-16"
-            style="min-height: 480px"
-        >
-            <div style="max-width: 40rem">
+        <div class="ap-hero__inner capell-showcase__inner">
+            <div class="ap-hero__content">
                 @if ($title)
                     <h1
-                        class="ap-headline"
-                        style="
-                            color: var(--layout-builder-on-surface);
-                            font-family: var(--layout-builder-font-headline);
-                            font-size: var(--layout-builder-text-display-md);
-                            font-weight: 700;
-                            letter-spacing: -0.02em;
-                            margin-bottom: 1.25rem;
-                        "
+                        class="ap-hero__title capell-showcase__heading ap-headline"
                     >
                         {{ $title }}
                     </h1>
                 @endif
 
                 @if ($content)
-                    <p
-                        style="
-                            color: var(--layout-builder-on-surface-variant);
-                            font-size: var(--layout-builder-text-body-lg);
-                            line-height: 1.65;
-                            margin-bottom: 2rem;
-                        "
-                    >
+                    <p class="ap-hero__copy capell-showcase__copy">
                         {!! strip_tags($content) !!}
                     </p>
                 @endif
 
                 @if ($primaryButtonText || $secondaryButtonText)
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+                    <div class="ap-hero__actions">
                         @if ($primaryButtonText)
                             <a
                                 href="{{ $primaryButtonUrl }}"
-                                class="layout-builder-btn layout-builder-btn-primary ap-cta-primary"
+                                class="ap-hero__button ap-hero__button--primary ap-cta-primary"
                             >
-                                {{ $primaryButtonText }}
+                                <span>{{ $primaryButtonText }}</span>
+                                @svg('heroicon-o-arrow-right', 'h-4 w-4')
                             </a>
                         @endif
 
                         @if ($secondaryButtonText)
                             <a
                                 href="{{ $secondaryButtonUrl }}"
-                                class="layout-builder-btn layout-builder-btn-secondary ap-cta-secondary"
+                                class="ap-hero__button ap-hero__button--secondary ap-cta-secondary"
                             >
-                                {{ $secondaryButtonText }}
+                                <span>{{ $secondaryButtonText }}</span>
+                                @svg('heroicon-o-code-bracket', 'h-4 w-4')
                             </a>
                         @endif
                     </div>
                 @endif
+            </div>
+
+            <div class="ap-hero__product" aria-hidden="true">
+                <div class="ap-hero__panel">
+                    <div class="ap-hero__panel-header">
+                        <span class="ap-hero__panel-title">
+                            Capell control plane
+                        </span>
+                        <span class="ap-hero__panel-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+
+                    <div class="ap-hero__panel-body">
+                        <div class="ap-hero__rail">
+                            <span class="ap-hero__rail-icon">
+                                @svg('heroicon-o-circle-stack', 'h-5 w-5')
+                            </span>
+                            <span>
+                                <span class="ap-hero__rail-title">
+                                    Content model
+                                </span>
+                                <span class="ap-hero__rail-copy">
+                                    Pages, sections, widgets, media
+                                </span>
+                            </span>
+                            <span
+                                class="ap-hero__rail-status ap-hero__rail-status--blue"
+                            >
+                                Typed
+                            </span>
+                        </div>
+
+                        <div class="ap-hero__rail">
+                            <span class="ap-hero__rail-icon">
+                                @svg('heroicon-o-rectangle-group', 'h-5 w-5')
+                            </span>
+                            <span>
+                                <span class="ap-hero__rail-title">
+                                    Layout builder
+                                </span>
+                                <span class="ap-hero__rail-copy">
+                                    Composable editor-owned frontend
+                                </span>
+                            </span>
+                            <span
+                                class="ap-hero__rail-status ap-hero__rail-status--green"
+                            >
+                                Live
+                            </span>
+                        </div>
+
+                        <div class="ap-hero__rail">
+                            <span class="ap-hero__rail-icon">
+                                @svg('heroicon-o-bolt', 'h-5 w-5')
+                            </span>
+                            <span>
+                                <span class="ap-hero__rail-title">
+                                    Static delivery
+                                </span>
+                                <span class="ap-hero__rail-copy">
+                                    Generated HTML, warm cache, fast routes
+                                </span>
+                            </span>
+                            <span
+                                class="ap-hero__rail-status ap-hero__rail-status--blue"
+                            >
+                                Ready
+                            </span>
+                        </div>
+
+                        <div class="ap-hero__rail">
+                            <span class="ap-hero__rail-icon">
+                                @svg('heroicon-o-puzzle-piece', 'h-5 w-5')
+                            </span>
+                            <span>
+                                <span class="ap-hero__rail-title">
+                                    Package runtime
+                                </span>
+                                <span class="ap-hero__rail-copy">
+                                    Frontend assets owned by each package
+                                </span>
+                            </span>
+                            <span
+                                class="ap-hero__rail-status ap-hero__rail-status--green"
+                            >
+                                Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

@@ -24,7 +24,7 @@ it('declares only the foundation css asset for blade only pages', function (): v
         ->and($requirements[0]->source)->toBe('resources/css/capell/frontend.css');
 });
 
-it('uses an existing theme css asset as the foundation css requirement when configured', function (): void {
+it('keeps the generated foundation css separate from theme meta assets', function (): void {
     $theme = Theme::factory()->make([
         'meta' => [
             'assets' => ['resources/css/app.css'],
@@ -42,7 +42,7 @@ it('uses an existing theme css asset as the foundation css requirement when conf
     ));
 
     expect($requirements)->toHaveCount(1)
-        ->and($requirements[0]->source)->toBe('resources/css/app.css')
+        ->and($requirements[0]->source)->toBe('resources/css/capell/frontend.css')
         ->and($requirements[0]->buildPath)->toBe('build');
 });
 
@@ -59,5 +59,22 @@ it('declares runtime javascript only when the frontend runtime needs javascript'
     expect(collect($requirements)->contains(
         fn (FrontendAssetRequirementData $requirement): bool => $requirement->handle === 'foundation-theme:runtime'
             && $requirement->kind === FrontendAssetRequirementData::KIND_JS,
+    ))->toBeTrue();
+});
+
+it('loads the runtime from the foundation theme published build', function (): void {
+    $requirements = resolve(FoundationThemeAssetContributor::class)->requirements(new FrontendAssetContextData(
+        page: null,
+        site: null,
+        language: null,
+        layout: null,
+        theme: null,
+        runtime: FrontendRuntimeManifestData::forRenderingStrategy(RenderingStrategyEnum::FullLivewire),
+    ));
+
+    expect(collect($requirements)->contains(
+        fn (FrontendAssetRequirementData $requirement): bool => $requirement->handle === 'foundation-theme:runtime'
+            && $requirement->source === 'resources/js/capell-frontend.js'
+            && $requirement->buildPath === 'vendor/capell-foundation-theme',
     ))->toBeTrue();
 });

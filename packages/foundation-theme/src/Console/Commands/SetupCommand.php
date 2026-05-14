@@ -15,6 +15,9 @@ final class SetupCommand extends Command
 
     public function handle(): int
     {
+        $this->components->info('Publishing Foundation theme frontend assets.');
+        $this->call('vendor:publish', ['--tag' => 'capell-foundation-theme-assets', '--force' => true]);
+
         $result = InstallFoundationThemeLayoutDefaultsAction::run((bool) $this->option('force'));
 
         $this->components->info(sprintf(

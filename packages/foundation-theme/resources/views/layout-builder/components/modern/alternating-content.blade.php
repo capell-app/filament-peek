@@ -35,6 +35,7 @@
             @forelse ($widget->assets as $widgetAsset)
                 @php
                     $isRight = $widgetAsset->asset->getMeta('position') === 'right';
+                    $icon = (string) $widgetAsset->asset->getMeta('icon', '');
                 @endphp
 
                 <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
@@ -44,9 +45,13 @@
                             'md:order-last' => $isRight,
                         ])
                     >
-                        @if ($widgetAsset->asset->getMeta('icon'))
-                            <span class="text-8xl">
-                                {{ $widgetAsset->asset->getMeta('icon') }}
+                        @if ($icon !== '')
+                            <span class="text-blue-700">
+                                @if (str_starts_with($icon, 'heroicon-'))
+                                    @svg($icon, 'h-20 w-20')
+                                @else
+                                    <span class="text-8xl">{{ $icon }}</span>
+                                @endif
                             </span>
                         @elseif ($widgetAsset->asset->media->first() ?? $widgetAsset->asset->image ?? null)
                             @php

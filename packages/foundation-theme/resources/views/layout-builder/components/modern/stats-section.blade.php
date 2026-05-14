@@ -42,12 +42,22 @@
             ])
         >
             @forelse ($widget->assets as $widgetAsset)
+                @php
+                    $icon = (string) $widgetAsset->asset->getMeta('icon', '');
+                @endphp
+
                 <div
                     class="rounded-xl border border-stone-200 bg-white p-8 text-center"
                 >
-                    @if ($widgetAsset->asset->getMeta('icon'))
-                        <div class="mb-3 text-4xl">
-                            {{ $widgetAsset->asset->getMeta('icon') }}
+                    @if ($icon !== '')
+                        <div
+                            class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-700"
+                        >
+                            @if (str_starts_with($icon, 'heroicon-'))
+                                @svg($icon, 'h-6 w-6')
+                            @else
+                                <span class="text-3xl">{{ $icon }}</span>
+                            @endif
                         </div>
                     @endif
 

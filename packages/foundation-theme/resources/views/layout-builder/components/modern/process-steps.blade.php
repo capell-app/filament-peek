@@ -42,12 +42,22 @@
 
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
                     @forelse ($widget->assets as $widgetAsset)
+                        @php
+                            $icon = (string) $widgetAsset->asset->getMeta('icon', $loop->index + 1);
+                        @endphp
+
                         <div class="relative text-center">
                             <div class="relative z-10 mx-auto mb-4 h-24 w-24">
                                 <div
-                                    class="flex h-24 w-24 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-4xl shadow-sm"
+                                    class="flex h-24 w-24 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-blue-700 shadow-sm"
                                 >
-                                    {{ $widgetAsset->asset->getMeta('icon', $loop->index + 1) }}
+                                    @if (str_starts_with($icon, 'heroicon-'))
+                                        @svg($icon, 'h-8 w-8')
+                                    @else
+                                        <span class="text-4xl">
+                                            {{ $icon }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <div
                                     class="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-stone-800 text-xs font-bold text-white"
@@ -80,11 +90,19 @@
         @else
             <div class="mx-auto max-w-3xl space-y-8">
                 @forelse ($widget->assets as $widgetAsset)
+                    @php
+                        $icon = (string) $widgetAsset->asset->getMeta('icon', $loop->index + 1);
+                    @endphp
+
                     <div class="flex gap-6">
                         <div
-                            class="relative flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-2xl shadow-sm"
+                            class="relative flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-blue-700 shadow-sm"
                         >
-                            {{ $widgetAsset->asset->getMeta('icon', $loop->index + 1) }}
+                            @if (str_starts_with($icon, 'heroicon-'))
+                                @svg($icon, 'h-6 w-6')
+                            @else
+                                <span class="text-2xl">{{ $icon }}</span>
+                            @endif
                             <div
                                 class="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white"
                             >

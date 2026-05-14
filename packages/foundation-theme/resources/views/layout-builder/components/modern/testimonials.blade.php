@@ -84,8 +84,16 @@
                                         class="flex items-center gap-4 border-t border-gray-200 pt-6"
                                     >
                                         @if ($icon)
-                                            <div class="text-3xl">
-                                                {{ $icon }}
+                                            <div
+                                                class="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-700"
+                                            >
+                                                @if (str_starts_with((string) $icon, 'heroicon-'))
+                                                    @svg($icon, 'h-5 w-5')
+                                                @else
+                                                    <span class="text-3xl">
+                                                        {{ $icon }}
+                                                    </span>
+                                                @endif
                                             </div>
                                         @endif
 
@@ -177,7 +185,17 @@
                             class="flex items-center gap-4 border-t border-gray-200 pt-6"
                         >
                             @if ($icon)
-                                <div class="text-3xl">{{ $icon }}</div>
+                                <div
+                                    class="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-700"
+                                >
+                                    @if (str_starts_with((string) $icon, 'heroicon-'))
+                                        @svg($icon, 'h-5 w-5')
+                                    @else
+                                        <span class="text-3xl">
+                                            {{ $icon }}
+                                        </span>
+                                    @endif
+                                </div>
                             @endif
 
                             <div>

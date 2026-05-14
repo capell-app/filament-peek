@@ -17,126 +17,84 @@
     :index="$loop->index"
     :$widget
 >
-    <section
-        style="
-            padding: 3rem 2rem;
-            background-color: var(--layout-builder-surface);
-        "
-    >
-        @if ($title || $content)
-            <div style="margin-bottom: 2rem; max-width: 38rem">
-                @if ($title)
-                    <h2
-                        class="ap-gallery-headline"
-                        style="
-                            color: var(--layout-builder-on-surface);
-                            font-family: var(--layout-builder-font-headline);
-                            font-size: var(--layout-builder-text-headline-lg);
-                            font-weight: 700;
-                            margin-bottom: 0.75rem;
-                        "
-                    >
-                        {{ $title }}
-                    </h2>
-                @endif
-
-                @if ($content)
-                    <p
-                        class="ap-gallery-description"
-                        style="
-                            color: var(--layout-builder-on-surface-variant);
-                            font-size: var(--layout-builder-text-body-lg);
-                            line-height: 1.6;
-                        "
-                    >
-                        {!! strip_tags($content) !!}
-                    </p>
-                @endif
-            </div>
-        @endif
-
-        @if ($widget->assets->isNotEmpty())
-            <div
-                style="
-                    display: grid;
-                    grid-template-columns: repeat(
-                        {{ $columns }},
-                        minmax(0, 1fr)
-                    );
-                    gap: 1rem;
-                "
-            >
-                @foreach ($widget->assets as $asset)
-                    @php
-                        $media = $asset->media->first() ?: $asset->asset->media->first();
-                    @endphp
-
-                    @if ($media)
-                        <div
-                            class="ap-gallery-item"
-                            style="
-                                overflow: hidden;
-                                background-color: var(
-                                    --layout-builder-surface-container
-                                );
-                            "
+    <section class="ap-showcase-gallery capell-showcase">
+        <div class="capell-showcase__inner">
+            @if ($title || $content)
+                <div class="capell-showcase__section-head">
+                    @if ($title)
+                        <h2
+                            class="ap-gallery-headline capell-showcase__heading"
                         >
-                            <img
-                                src="{{ $media->getFullUrl() }}"
-                                alt="{{ $media->name }}"
-                                style="
-                                    width: 100%;
-                                    height: 200px;
-                                    object-fit: cover;
-                                    display: block;
-                                "
-                            />
-                        </div>
+                            {{ $title }}
+                        </h2>
                     @endif
-                @endforeach
-            </div>
-        @elseif ($widget->image)
-            <div
-                style="
-                    display: grid;
-                    grid-template-columns: repeat(
-                        {{ $columns }},
-                        minmax(0, 1fr)
-                    );
-                    gap: 1rem;
-                "
-            >
+
+                    @if ($content)
+                        <p class="ap-gallery-description capell-showcase__copy">
+                            {!! strip_tags($content) !!}
+                        </p>
+                    @endif
+                </div>
+            @endif
+
+            @if ($widget->assets->isNotEmpty())
                 <div
-                    class="ap-gallery-item"
+                    class="ap-gallery-grid"
                     style="
-                        overflow: hidden;
-                        background-color: var(
-                            --layout-builder-surface-container
-                        );
+                        --ap-gallery-columns: {{ max(1, min(4, $columns)) }};
                     "
                 >
-                    <img
-                        src="{{ $widget->image->getFullUrl() }}"
-                        alt="{{ $widget->image->name }}"
-                        style="
-                            width: 100%;
-                            height: 200px;
-                            object-fit: cover;
-                            display: block;
-                        "
-                    />
+                    @foreach ($widget->assets as $asset)
+                        @php
+                            $media =
+                                $asset->media->firstWhere(
+                                    'collection_name',
+                                    'image',
+                                ) ?:
+                                $asset->asset->media->firstWhere(
+                                    'collection_name',
+                                    'image',
+                                );
+                            $caption = $asset->asset->translation?->title ?? $media?->name;
+                        @endphp
+
+                        @if ($media)
+                            <figure class="ap-gallery-item">
+                                <img
+                                    src="{{ $media->getFullUrl() }}"
+                                    alt="{{ $caption }}"
+                                />
+                                <figcaption class="ap-gallery-caption">
+                                    <span>{{ $caption }}</span>
+                                    @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')
+                                </figcaption>
+                            </figure>
+                        @endif
+                    @endforeach
                 </div>
-            </div>
-        @else
-            <div
-                style="
-                    padding: 3rem;
-                    text-align: center;
-                    color: var(--layout-builder-on-surface-variant);
-                "
-            >
-                No images configured.
-            </div>
-        @endif
+            @elseif ($widget->image)
+                <div
+                    class="ap-gallery-grid"
+                    style="
+                        --ap-gallery-columns: {{ max(1, min(4, $columns)) }};
+                    "
+                >
+                    <figure class="ap-gallery-item">
+                        <img
+                            src="{{ $widget->image->getFullUrl() }}"
+                            alt="{{ $widget->image->name }}"
+                        />
+                        <figcaption class="ap-gallery-caption">
+                            <span>{{ $widget->image->name }}</span>
+                            @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')
+                        </figcaption>
+                    </figure>
+                </div>
+            @else
+                <div class="py-12 text-center text-slate-500">
+                    No images configured.
+                </div>
+            @endif
+        </div>
     </section>
 </x-capell-layout-builder::widget.wrapper>

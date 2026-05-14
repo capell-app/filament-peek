@@ -90,7 +90,7 @@ final class AdminServiceProvider extends ServiceProvider
     {
         $table = config('permission.table_names.permissions', 'permissions');
 
-        if (is_string($table) && app(RuntimeSchemaState::class)->hasTable($table)) {
+        if (is_string($table) && resolve(RuntimeSchemaState::class)->hasTable($table)) {
             EnsureDiagnosticsPermissionsAction::run();
         }
 
