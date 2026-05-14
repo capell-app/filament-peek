@@ -39,6 +39,8 @@ class EditRegionField extends LivewireComponent implements HasForms
     /** @var array<string, mixed>|null */
     public ?array $data = [];
 
+    public ?string $savedStatus = null;
+
     public function mount(string $payload): void
     {
         $this->authorizeAdmin();
@@ -69,11 +71,14 @@ class EditRegionField extends LivewireComponent implements HasForms
         /** @var array{value?: mixed} $state */
         $state = $this->form->getState();
         $result = UpdateEditableRegionAction::run($this->region(), (string) ($state['value'] ?? ''));
+        $this->savedStatus = $result['status'];
 
         $this->dispatch(
             'capell-authoring-saved',
             cleared: $result['cleared'],
             urls: $result['urls'],
+            status: $result['status'],
+            redirectUrl: $result['redirect_url'],
         );
     }
 

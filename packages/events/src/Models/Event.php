@@ -107,7 +107,7 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
         'site_id',
         'starts_at',
         'timezone',
-        'type_id',
+        'blueprint_id',
         'uuid',
         'visible_from',
         'visible_until',

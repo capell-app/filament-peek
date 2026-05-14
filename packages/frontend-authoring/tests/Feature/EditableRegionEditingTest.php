@@ -16,10 +16,18 @@ use Capell\FrontendAuthoring\Http\Controllers\EditRegionController;
 use Capell\FrontendAuthoring\Support\EditableRegionSigner;
 use Capell\HtmlCache\Models\CachedModelUrl;
 use Capell\HtmlCache\Support\Cache\HtmlCachePathResolver;
+use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
+use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\WorkspaceRegistry;
 use Capell\Tests\Fixtures\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -30,6 +38,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 beforeEach(function (): void {
     Config::set('capell-frontend-authoring.enabled', true);
+    Config::set('capell-frontend-authoring.workflow.require_approval', false);
     Config::set('capell-admin.auto_refresh_cache', false);
 });
 
@@ -168,14 +177,133 @@ it('updates allowed editable region fields and rejects unknown fields', function
 
     $translation->refresh();
 
-    expect($titleResult)->toBe(['cleared' => 0, 'urls' => []])
-        ->and($metaResult)->toBe(['cleared' => 0, 'urls' => []])
+    expect($titleResult)->toMatchArray(['cleared' => 0, 'urls' => [], 'status' => 'published', 'redirect_url' => null])
+        ->and($metaResult)->toMatchArray(['cleared' => 0, 'urls' => [], 'status' => 'published', 'redirect_url' => null])
         ->and($translation->title)->toBe('Updated title')
         ->and($translation->meta)->toHaveKey('seo.description', 'Updated description');
 
     expect(fn (): array => UpdateEditableRegionAction::run(editableRegionPayload($translation, 'admin.hidden'), 'Nope'))
         ->toThrow(HttpException::class);
 });
+
+it('saves inline edits into an approval workspace and returns a preview redirect when approval is required', function (): void {
+    Config::set('capell-frontend-authoring.workflow.require_approval', true);
+    ensureEditableRegionWorkflowTables();
+    WorkspaceRegistry::register(Translation::class);
+
+    $user = User::factory()->create();
+    actingAs($user);
+    Route::get('/workflow-preview-stub', fn (): string => 'preview')->name('capell-frontend.home');
+
+    $translation = createEditableRegionTranslation();
+
+    $result = UpdateEditableRegionAction::run(editableRegionPayload($translation, 'title'), 'Draft title');
+
+    $translation->refresh();
+    $workspace = Workspace::query()->firstOrFail();
+    $draftTranslation = Translation::query()
+        ->withoutGlobalScopes()
+        ->where('workspace_id', $workspace->getKey())
+        ->firstOrFail();
+
+    expect($result['status'])->toBe('pending_approval')
+        ->and($result['cleared'])->toBe(0)
+        ->and($result['redirect_url'])->toContain('__workspace=')
+        ->and($workspace->status)->toBe(WorkspaceStatusEnum::InReview)
+        ->and($translation->title)->toBe('Original title')
+        ->and($draftTranslation->title)->toBe('Draft title');
+});
+
+function ensureEditableRegionWorkflowTables(): void
+{
+    Relation::morphMap([
+        'workspace' => Workspace::class,
+        'user' => User::class,
+        'translation' => Translation::class,
+    ]);
+
+    if (! Schema::hasColumn('translations', 'workspace_id')) {
+        DB::statement('DROP INDEX IF EXISTS translations_language_id_translatable_type_translatable_id_unique');
+
+        Schema::table('translations', function (Blueprint $table): void {
+            $table->unsignedBigInteger('workspace_id')->default(0)->index();
+            $table->unsignedBigInteger('shadowed_by_workspace_id')->default(0)->index();
+            $table->unique(['language_id', 'translatable_type', 'translatable_id', 'workspace_id'], 'translations_identity_workspace_unique');
+        });
+    }
+
+    if (! Schema::hasTable('workspaces')) {
+        Schema::create('workspaces', function (Blueprint $table): void {
+            $table->id();
+            $table->uuid('uuid')->nullable();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('description')->nullable();
+            $table->string('color')->nullable();
+            $table->string('status')->default('open');
+            $table->string('kind')->default('manual');
+            $table->unsignedBigInteger('base_version_id')->nullable();
+            $table->unsignedBigInteger('cloned_from_id')->nullable();
+            $table->json('settings')->nullable();
+            $table->timestamp('submitted_at')->nullable();
+            $table->timestamp('approved_at')->nullable();
+            $table->timestamp('publish_at')->nullable();
+            $table->timestamp('unpublish_at')->nullable();
+            $table->timestamp('embargo_until')->nullable();
+            $table->timestamp('review_reminder_at')->nullable();
+            $table->timestamp('published_at')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    if (! Schema::hasTable('versions')) {
+        Schema::create('versions', function (Blueprint $table): void {
+            $table->id();
+            $table->uuid('uuid')->nullable();
+            $table->unsignedInteger('number')->default(1);
+            $table->string('name')->nullable();
+            $table->text('notes')->nullable();
+            $table->boolean('is_live')->default(false);
+            $table->json('manifest')->nullable();
+            $table->unsignedBigInteger('source_workspace_id')->nullable();
+            $table->unsignedBigInteger('rollback_of_version_id')->nullable();
+            $table->nullableMorphs('published_by');
+            $table->timestamp('published_at')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    if (! Schema::hasTable('workspace_approvals')) {
+        Schema::create('workspace_approvals', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('workspace_id');
+            $table->nullableMorphs('actionable');
+            $table->unsignedInteger('level')->default(1);
+            $table->string('action');
+            $table->text('notes')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    if (! Schema::hasTable('preview_links')) {
+        Schema::create('preview_links', function (Blueprint $table): void {
+            $table->id();
+            $table->unsignedBigInteger('workspace_id');
+            $table->string('token')->unique();
+            $table->nullableMorphs('issued_by');
+            $table->timestamp('issued_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->timestamp('last_accessed_at')->nullable();
+            $table->unsignedInteger('access_count')->default(0);
+            $table->timestamp('revoked_at')->nullable();
+            $table->timestamps();
+        });
+    }
+}
 
 it('encodes signed region payloads and rejects tampered payloads', function (): void {
     $translation = createEditableRegionTranslation();

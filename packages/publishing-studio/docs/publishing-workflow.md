@@ -44,12 +44,51 @@ Release Workspaces are the campaign-shaped form of the same workflow: editors gr
 - Models must be registered for workspace copy-on-write behaviour.
 - Package integrations should use PublishingStudio actions instead of writing live rows directly.
 
-## Screenshot Requirements
+## Annotated Workflow Screenshots
 
-- Editorial timeline dashboard.
-- Live preview, preview link management, and preview banner.
-- Compare, dry-run validation, and publish readiness panel.
-- Approval history, reviewer assignments, and field comments.
-- Scheduled publishing queue with embargo, unpublish, and review-reminder metadata.
-- Stale drafts, recovery imports, activity history, and audit trail.
-- Rollback, entity restore, and version history flow.
+These screenshots were captured from a local Capell admin panel with overlay
+text that names the responsibility at each stage. They are intended for package
+docs and marketplace review, not as a substitute for the automated workflow
+tests.
+
+### 1. Workflow Dashboard
+
+The publishing workflow page is the shared command centre for open drafts,
+review pressure, scheduled releases, and stale work.
+
+![Workflow dashboard](images/screenshots/10-workflow-dashboard.png)
+
+### 2. Editor Responsibility
+
+Editors own draft changes and submit the workspace for approval. Draft content
+stays isolated from the live page until a release action runs.
+
+![Editor responsibility](images/screenshots/11-workspaces-editor-submit.png)
+
+### 3. Reviewer Responsibility
+
+Reviewers approve, reject, or request changes. Approval unlocks release controls
+but does not publish content by itself.
+
+![Reviewer responsibility](images/screenshots/12-review-approval.png)
+
+### 4. Preview Links
+
+Signed preview links let stakeholders inspect draft content before it becomes
+live. Expiry and revocation stay visible in the admin.
+
+![Preview links](images/screenshots/13-preview-links.png)
+
+### 5. Scheduled Publishing
+
+Release managers can schedule, reschedule, or unschedule an approved workspace.
+The scheduler publishes only when the release time has elapsed.
+
+![Scheduled publishing](images/screenshots/14-scheduled-publishing.png)
+
+### 6. Stale Draft Cleanup
+
+The stale-drafts view highlights unfinished work that needs review, cleanup, or
+a fresh publishing decision.
+
+![Stale draft cleanup](images/screenshots/15-stale-drafts.png)

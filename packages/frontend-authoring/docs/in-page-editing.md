@@ -4,6 +4,8 @@ Frontend Authoring lets an admin edit page fields from the rendered frontend wit
 
 ![Frontend page with authoring enabled for admins](images/screenshots/frontend-page-with-authoring-enabled.png)
 
+![Capell app homepage with frontend authoring controls visible](images/screenshots/capell-app-frontend-authoring-working.png)
+
 ## Admin Flow
 
 1. The public page is rendered by the active frontend theme and can be served from HTML cache.

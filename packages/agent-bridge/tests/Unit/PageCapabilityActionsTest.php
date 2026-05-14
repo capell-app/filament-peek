@@ -17,7 +17,7 @@ it('previews draft page creation with the validated payload', function (): void 
     $payload = [
         'name' => 'Campaign landing page',
         'site_id' => 1,
-        'type_id' => 2,
+        'blueprint_id' => 2,
         'layout_id' => 3,
         'meta' => ['hidden' => true],
     ];

@@ -30,7 +30,7 @@ class EnsureEventPublishingSurfaceAction
 
         $page = Page::query()->firstOrNew([
             'site_id' => $site->getKey(),
-            'type_id' => $defaults->eventsListingPageType()->getKey(),
+            'blueprint_id' => $defaults->eventsListingPageType()->getKey(),
             'layout_id' => $defaults->eventsListingLayout()->getKey(),
             'parent_id' => null,
         ]);

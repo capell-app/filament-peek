@@ -85,7 +85,7 @@
         pageGroup: TypeGroupEnum::Default,
     );
     $hasFooterMenu = $footerMenuItems?->isNotEmpty() === true;
-    $hasLatestFooterPages = $latestFooterPages->isNotEmpty();
+    $hasLatestFooterPages = ! $hasFooterMenu && $latestFooterPages->isNotEmpty();
     $hasFooterRenderHooks = trim((string) $footerRenderHooks) !== '';
     $hasFooterPrimaryContent = $hasFooterMenu || $hasLatestFooterPages || $hasFooterRenderHooks;
 @endphp
@@ -208,10 +208,12 @@
                         />
                     @endif
 
-                    <x-capell::footer.latest-pages
-                        :$headingClass
-                        :pages="$latestFooterPages"
-                    />
+                    @if ($hasLatestFooterPages)
+                        <x-capell::footer.latest-pages
+                            :$headingClass
+                            :pages="$latestFooterPages"
+                        />
+                    @endif
 
                     {!! $footerRenderHooks !!}
                 </div>

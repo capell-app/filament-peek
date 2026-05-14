@@ -17,7 +17,10 @@
             document.addEventListener('livewire:init', function () {
                 Livewire.on('capell-authoring-saved', function () {
                     window.parent.postMessage(
-                        { type: 'capell-authoring:saved' },
+                        {
+                            type: 'capell-authoring:saved',
+                            detail: arguments[0] || {},
+                        },
                         window.location.origin,
                     )
                 })

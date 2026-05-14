@@ -36,6 +36,10 @@ return [
         'output_css' => 'resources/css/capell/frontend.css',
     ],
 
+    'blaze' => [
+        'enabled' => env('CAPELL_FOUNDATION_THEME_BLAZE_ENABLED', false),
+    ],
+
     // Media & Storage
     'local_storage_url' => env('CAPELL_LOCAL_STORAGE_URL', ''),
     'use_site_domain_for_media' => env('CAPELL_USE_SITE_DOMAIN_FOR_MEDIA', false),

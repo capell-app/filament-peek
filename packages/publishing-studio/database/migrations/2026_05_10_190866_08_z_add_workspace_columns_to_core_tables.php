@@ -14,13 +14,13 @@ return new class extends Migration
         'navigations',
         'sites',
         'site_domains',
-        'types',
+        'blueprints',
         'themes',
         'layouts',
         'languages',
         'translations',
         'page_urls',
-        'asset_relations',
+        'asset_attachments',
     ];
 
     public function up(): void

@@ -7,6 +7,7 @@ namespace Capell\FoundationTheme\Support;
 use Capell\Core\Models\Type;
 use Capell\Core\Models\Widget;
 use Capell\LayoutBuilder\Enums\ResponsiveLayoutPattern;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use JsonException;
@@ -208,12 +209,12 @@ HTML);
             }
         }
 
-        if ($widget->relationLoaded('type')) {
-            $type = $widget->getRelation('type');
+        $type = $widget->relationLoaded('type')
+            ? $widget->getRelation('type')
+            : (Model::getConnectionResolver() === null ? null : $widget->getRelationValue('type'));
 
-            if ($type instanceof Type) {
-                return $type->getMeta($key, $default);
-            }
+        if ($type instanceof Type) {
+            return $type->getMeta($key, $default);
         }
 
         return $default;

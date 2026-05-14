@@ -10,6 +10,12 @@ These are embedded in [page-creation-and-approval-flow.md](../../page-creation-a
 | `01-pages-list.png`                | Pages list with SEO Overview summary and the table of pages                                     |
 | `04-create-page-save-as-draft.png` | `/admin/pages/create` form with `Create` + `Save as Draft` + `Create & create another` buttons  |
 | `05-publishing-studio-list.png`    | PublishingStudio list with status badges + `Latest review note` column + action buttons per row |
+| `10-workflow-dashboard.png`        | Annotated workflow command centre for drafts, review pressure, schedules, and stale work        |
+| `11-workspaces-editor-submit.png`  | Annotated editor responsibility step for draft ownership and submission                         |
+| `12-review-approval.png`           | Annotated reviewer responsibility step for approve, reject, and request-changes decisions       |
+| `13-preview-links.png`             | Annotated preview-link management step for signed links, expiry, and revocation                 |
+| `14-scheduled-publishing.png`      | Annotated release-manager scheduling step                                                       |
+| `15-stale-drafts.png`              | Annotated stale-draft cleanup step                                                              |
 
 ## Regenerating
 

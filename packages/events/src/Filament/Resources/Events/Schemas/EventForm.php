@@ -27,7 +27,7 @@ class EventForm implements FormConfigurator
         return $schema
             ->components([
                 SiteSelect::make('site_id'),
-                TypeSelect::make('type_id')->required(),
+                TypeSelect::make('blueprint_id')->required(),
                 LayoutSelect::make('layout_id')->required(),
                 TextInput::make('name')
                     ->label(__('capell-events::table.name'))

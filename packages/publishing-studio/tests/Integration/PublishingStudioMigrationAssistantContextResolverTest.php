@@ -109,7 +109,7 @@ it('runs page imports inside the target workspace context', function (): void {
                 'attributes' => [
                     'name' => 'Workspace imported page',
                     'layout_id' => $layout->getKey(),
-                    'type_id' => $type->getKey(),
+                    'blueprint_id' => $type->getKey(),
                     'site_id' => $site->getKey(),
                     'parent_id' => null,
                 ],

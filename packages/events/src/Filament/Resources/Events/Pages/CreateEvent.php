@@ -32,7 +32,7 @@ class CreateEvent extends CreatePage
         /** @var class-string<Type> $model */
         $model = Type::class;
 
-        $this->data['type_id'] = $model::query()
+        $this->data['blueprint_id'] = $model::query()
             ->pageType()
             ->where('key', 'event')
             ->value('id') ?? $defaults->eventPageType()->getKey();

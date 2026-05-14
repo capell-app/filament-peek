@@ -61,7 +61,7 @@ function insertBasePage(Workspace $workspace, array $overrides = []): string
         'uuid' => $uuid,
         'name' => 'Test Page',
         'workspace_id' => $workspace->id,
-        'type_id' => 1,
+        'blueprint_id' => 1,
         'layout_id' => 1,
         'site_id' => 1,
     ], $overrides));

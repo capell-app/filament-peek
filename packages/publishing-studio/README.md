@@ -50,7 +50,7 @@ This package makes its Composer dependencies visible because they are part of th
 
 ## Screens And Workflow
 
-Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
+Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment. The step-by-step workflow screenshots with overlay text live in [docs/publishing-workflow.md](docs/publishing-workflow.md).
 
 - Editorial timeline dashboard.
 - Live preview, preview link management, and preview banner.

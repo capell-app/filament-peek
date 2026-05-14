@@ -38,6 +38,8 @@ This package makes its Composer dependencies visible because they are part of th
 
 Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
+The documentation screenshots include the package working inside `capell-app`: the runner logs in as an admin, opens the public homepage, waits for the beacon to decorate editable regions, and hovers the first region so the edit control is visible.
+
 ## Code Map
 
 | Area      | Path                                        | Purpose                                                             |

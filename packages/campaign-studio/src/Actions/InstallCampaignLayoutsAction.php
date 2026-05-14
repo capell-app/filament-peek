@@ -122,7 +122,7 @@ final class InstallCampaignLayoutsAction
                 ['key' => $widgetKey],
                 [
                     'name' => $preset->name() . ' - ' . $definition['name'],
-                    'type_id' => $type->getKey(),
+                    'blueprint_id' => $type->getKey(),
                     'meta' => [
                         'component' => $definition['component'],
                     ],

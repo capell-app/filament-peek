@@ -31,7 +31,7 @@ class EventFactory extends Factory
 
         return [
             'site_id' => fn (): int => $this->site()->id,
-            'type_id' => fn (): int => $this->type('event', TypeEnum::Page->value)->id,
+            'blueprint_id' => fn (): int => $this->type('event', TypeEnum::Page->value)->id,
             'layout_id' => fn (): int => Layout::query()->firstOrCreate([
                 'key' => 'event',
             ], [
@@ -65,7 +65,7 @@ class EventFactory extends Factory
             'key' => 'default',
         ], [
             'name' => 'Default',
-            'type_id' => $this->type('default', TypeEnum::Theme->value)->id,
+            'blueprint_id' => $this->type('default', TypeEnum::Theme->value)->id,
             'default' => true,
             'status' => true,
         ]);
@@ -73,7 +73,7 @@ class EventFactory extends Factory
         return Site::query()->firstOrCreate([
             'name' => 'Default site',
         ], [
-            'type_id' => $this->type('default', TypeEnum::Site->value)->id,
+            'blueprint_id' => $this->type('default', TypeEnum::Site->value)->id,
             'theme_id' => $theme->id,
             'language_id' => $language->id,
             'default' => true,

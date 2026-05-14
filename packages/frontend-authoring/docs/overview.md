@@ -4,6 +4,8 @@ Frontend Authoring replaces the old frontend toolbar package. It keeps the beaco
 
 See [In-page editing](in-page-editing.md) for the full admin flow, screenshot, screenshot-package requirements, and browser-test contract.
 
+![Capell app homepage with frontend authoring controls visible](images/screenshots/capell-app-frontend-authoring-working.png)
+
 ## Runtime Flow
 
 1. The frontend page renders normally and can be served from HTML cache.

@@ -128,6 +128,10 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
     private function registerBlazeComponents(): void
     {
+        if (config('capell-foundation-theme.blaze.enabled', false) !== true) {
+            return;
+        }
+
         if ($this->app->environment('testing')) {
             return;
         }

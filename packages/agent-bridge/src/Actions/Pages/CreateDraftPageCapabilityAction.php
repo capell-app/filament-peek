@@ -34,7 +34,7 @@ final class CreateDraftPageCapabilityAction implements CapellAgentBridgeCapabili
         $page = $pageClass::query()->create([
             'name' => $payload['name'],
             'site_id' => $payload['site_id'],
-            'type_id' => $payload['type_id'],
+            'blueprint_id' => $payload['blueprint_id'],
             'layout_id' => $payload['layout_id'],
             'parent_id' => $payload['parent_id'] ?? null,
             'meta' => $payload['meta'] ?? null,
@@ -62,7 +62,7 @@ final class CreateDraftPageCapabilityAction implements CapellAgentBridgeCapabili
         validator($payload, [
             'name' => ['required', 'string', 'max:255'],
             'site_id' => ['required', 'integer'],
-            'type_id' => ['required', 'integer'],
+            'blueprint_id' => ['required', 'integer'],
             'layout_id' => ['required', 'integer'],
             'parent_id' => ['nullable', 'integer'],
             'meta' => ['nullable', 'array'],

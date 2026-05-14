@@ -22,5 +22,48 @@ $beacon = [
 <div wire:ignore>
     <script>
         window.beaconData = @json($beacon)
+        ;(function (beacon) {
+            if (!beacon || !beacon.url || beacon.error) {
+                return
+            }
+
+            const token = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content')
+
+            fetch(beacon.url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'X-CSRF-TOKEN': token } : {}),
+                },
+                body: JSON.stringify({
+                    ...beacon.payload,
+                    url: window.location.href,
+                }),
+            })
+                .then((response) => (response.ok ? response.json() : null))
+                .then((payload) => {
+                    if (!payload || !Array.isArray(payload.scripts)) {
+                        return
+                    }
+
+                    payload.scripts.forEach((scriptContent) => {
+                        if (
+                            typeof scriptContent !== 'string' ||
+                            scriptContent.trim() === ''
+                        ) {
+                            return
+                        }
+
+                        const script = document.createElement('script')
+                        script.text = scriptContent
+                        document.body.appendChild(script)
+                    })
+                })
+                .catch(() => {})
+        })(window.beaconData)
     </script>
 </div>

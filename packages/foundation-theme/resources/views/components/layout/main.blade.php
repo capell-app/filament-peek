@@ -9,9 +9,20 @@
 ])
 @php
     use Capell\Core\Actions\ColorConverterAction;
+    use Capell\Core\Contracts\Pageable;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Frontend\Support\Loader\PageLoader;
 
     $themeModel = Frontend::theme();
+    $language = Frontend::language();
+    $site = Frontend::site();
+    $previousPage = (bool) $page->getMeta('with_next_prev')
+        ? PageLoader::getPreviousPage($page, $site, $language)
+        : null;
+    $nextPage = (bool) $page->getMeta('with_next_prev')
+        ? PageLoader::getNextPage($page, $site, $language)
+        : null;
+    $finalCta = $page->getMeta('final_cta');
 @endphp
 
 <style>
@@ -117,6 +128,56 @@
             @php
                 $slotRendered = true;
             @endphp
+        @endif
+
+        @if ($previousPage instanceof Pageable || $nextPage instanceof Pageable)
+            <div class="capell-neighbor-links-mobile px-6 pb-12">
+                <div class="neighbor-links">
+                    @if ($previousPage)
+                        <x-capell::page.neighbor-link
+                            :neighbor-page="$previousPage"
+                            neighbor="previous"
+                        />
+                    @endif
+
+                    @if ($nextPage)
+                        <x-capell::page.neighbor-link
+                            :neighbor-page="$nextPage"
+                            neighbor="next"
+                        />
+                    @endif
+                </div>
+            </div>
+        @endif
+
+        @if (is_array($finalCta) && filled($finalCta['title'] ?? null))
+            <section class="capell-final-cta mx-auto mb-12 mt-4 max-w-7xl px-6">
+                <div class="capell-final-cta-panel">
+                    <div>
+                        @if (filled($finalCta['kicker'] ?? null))
+                            <p class="capell-section-kicker">
+                                {{ $finalCta['kicker'] }}
+                            </p>
+                        @endif
+
+                        <h2>{{ $finalCta['title'] }}</h2>
+
+                        @if (filled($finalCta['summary'] ?? null))
+                            <p>{{ $finalCta['summary'] }}</p>
+                        @endif
+                    </div>
+
+                    @if (filled($finalCta['url'] ?? null) && filled($finalCta['label'] ?? null))
+                        <a
+                            href="{{ $finalCta['url'] }}"
+                            class="capell-final-cta-link"
+                            @wireNavigate
+                        >
+                            {{ $finalCta['label'] }}
+                        </a>
+                    @endif
+                </div>
+            </section>
         @endif
     </div>
     {{-- format-ignore-end --}}

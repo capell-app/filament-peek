@@ -77,7 +77,18 @@
     },
     "marketplace": {
         "summary": "Frontend Authoring owns the admin beacon, in-page edit manifest, signed edit routes, and cache-aware field saves.",
-        "screenshots": [],
+        "screenshots": [
+            {
+                "path": "public/docs/screenshots/packages/frontend-authoring/capell-app-frontend-authoring-working.png",
+                "alt": "Capell app homepage with Frontend Authoring edit controls visible to an authenticated admin.",
+                "caption": "Frontend Authoring working on the Capell app homepage."
+            },
+            {
+                "path": "public/docs/screenshots/packages/frontend-authoring/capell-app-frontend-authoring-mobile.png",
+                "alt": "Mobile Capell app homepage with Frontend Authoring editable regions enabled for an admin.",
+                "caption": "Mobile proof that editable regions are added by the admin beacon."
+            }
+        ],
         "categories": ["console", "foundation", "frontend"]
     },
     "scopes": ["frontend"],

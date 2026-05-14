@@ -86,6 +86,10 @@
                 @if (! $useFloat && $panelVisibleClass !== '' && $panelHiddenClass !== '')
                     x-bind:class="isOpen ? '{{ $panelVisibleClass }}' : '{{ $panelHiddenClass }}'"
                 @endif
+                @if (! $useFloat)
+                    x-bind:aria-hidden="(! isOpen).toString()"
+                    x-bind:inert="! isOpen"
+                @endif
                 {{ $panelAttributes }}
                 :id="$id('{{ $dropdownName }}-dropdown-button')"
             >
@@ -108,6 +112,10 @@
                 @endif
                 @if (! $useFloat && $panelVisibleClass !== '' && $panelHiddenClass !== '')
                     x-bind:class="isOpen ? '{{ $panelVisibleClass }}' : '{{ $panelHiddenClass }}'"
+                @endif
+                @if (! $useFloat)
+                    x-bind:aria-hidden="(! isOpen).toString()"
+                    x-bind:inert="! isOpen"
                 @endif
                 {{ $panelAttributes }}
                 :id="$id('{{ $dropdownName }}-dropdown-button')"
@@ -159,6 +167,10 @@
                 @if (! $useFloat && $panelVisibleClass !== '' && $panelHiddenClass !== '')
                     x-bind:class="isOpen ? '{{ $panelVisibleClass }}' : '{{ $panelHiddenClass }}'"
                 @endif
+                @if (! $useFloat)
+                    x-bind:aria-hidden="(! isOpen).toString()"
+                    x-bind:inert="! isOpen"
+                @endif
                 {{ $panelAttributes }}
                 :id="$id('{{ $dropdownName }}-dropdown-button')"
             >
@@ -181,6 +193,10 @@
                 @endif
                 @if (! $useFloat && $panelVisibleClass !== '' && $panelHiddenClass !== '')
                     x-bind:class="isOpen ? '{{ $panelVisibleClass }}' : '{{ $panelHiddenClass }}'"
+                @endif
+                @if (! $useFloat)
+                    x-bind:aria-hidden="(! isOpen).toString()"
+                    x-bind:inert="! isOpen"
                 @endif
                 {{ $panelAttributes }}
                 :id="$id('{{ $dropdownName }}-dropdown-button')"

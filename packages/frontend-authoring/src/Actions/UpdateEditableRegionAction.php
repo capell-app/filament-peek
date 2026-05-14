@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace Capell\FrontendAuthoring\Actions;
 
 use Capell\FrontendAuthoring\Data\EditableRegionPayloadData;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Concerns\AsObject;
+use Throwable;
 
 class UpdateEditableRegionAction
 {
     use AsObject;
 
     /**
-     * @return array{cleared: int, urls: list<string>}
+     * @return array{cleared: int, urls: list<string>, status: string, redirect_url: string|null}
      */
     public function handle(EditableRegionPayloadData $payload, string $value): array
     {
@@ -25,6 +30,10 @@ class UpdateEditableRegionAction
         $record = $modelClass::query()->findOrFail($payload->recordKey);
         $urls = CollectAffectedCachedUrlsAction::run($record);
 
+        if ($this->shouldRequireApproval($record)) {
+            return $this->saveForApproval($record, $payload, $value, $urls);
+        }
+
         $this->applyValue($record, $payload->field, $value);
         $record->save();
 
@@ -33,7 +42,87 @@ class UpdateEditableRegionAction
         return [
             'cleared' => $cleared,
             'urls' => $urls,
+            'status' => 'published',
+            'redirect_url' => null,
         ];
+    }
+
+    /**
+     * @param  list<string>  $urls
+     * @return array{cleared: int, urls: list<string>, status: string, redirect_url: string|null}
+     */
+    private function saveForApproval(Model $record, EditableRegionPayloadData $payload, string $value, array $urls): array
+    {
+        $workspaceClass = 'Capell\\PublishingStudio\\Models\\Workspace';
+        $workspaceContextClass = 'Capell\\PublishingStudio\\WorkspaceContext';
+        $workspaceRegistryClass = 'Capell\\PublishingStudio\\WorkspaceRegistry';
+        $previewUrlActionClass = 'Capell\\PublishingStudio\\Actions\\GenerateWorkspacePreviewUrlAction';
+        $copyOnWriteActionClass = 'Capell\\PublishingStudio\\Actions\\CopyOnWriteAction';
+
+        abort_unless(
+            class_exists($workspaceClass)
+            && class_exists($workspaceContextClass)
+            && class_exists($workspaceRegistryClass)
+            && class_exists($previewUrlActionClass)
+            && $workspaceRegistryClass::isRegistered($record::class),
+            409,
+        );
+
+        /** @var Model&object $workspace */
+        $workspace = $workspaceClass::query()->create([
+            'name' => (string) config('capell-frontend-authoring.workflow.workspace_name', 'Inline editor changes'),
+            'slug' => 'inline-editor-' . now()->format('YmdHis') . '-' . strtolower(str()->random(6)),
+        ]);
+
+        $workspaceContextClass::runWith($workspace, function () use ($copyOnWriteActionClass, $record, $payload, $value, $workspace): void {
+            $this->applyValue($record, $payload->field, $value);
+
+            if ((int) ($record->getAttribute('workspace_id') ?? 0) === 0 && class_exists($copyOnWriteActionClass)) {
+                (new $copyOnWriteActionClass)->cloneForEdit($record, $workspace);
+
+                return;
+            }
+
+            $record->save();
+        });
+
+        $user = Auth::user();
+
+        if ($user instanceof User && method_exists($workspace, 'submitForApproval')) {
+            try {
+                $workspace->submitForApproval($user, 'Submitted from frontend inline editor.');
+            } catch (Throwable) {
+                $workspace->forceFill(['status' => 'in_review', 'submitted_at' => now()])->save();
+            }
+        }
+
+        $path = parse_url($payload->currentUrl, PHP_URL_PATH);
+        $previewUrl = (new $previewUrlActionClass)->handle($workspace->fresh(), is_string($path) ? $path : '/');
+
+        return [
+            'cleared' => 0,
+            'urls' => $urls,
+            'status' => 'pending_approval',
+            'redirect_url' => $previewUrl,
+        ];
+    }
+
+    private function shouldRequireApproval(Model $record): bool
+    {
+        if (config('capell-frontend-authoring.workflow.require_approval') !== true) {
+            return false;
+        }
+
+        if (! Auth::user() instanceof AuthenticatableContract) {
+            return false;
+        }
+
+        if (! $record::query() instanceof Builder) {
+            return false;
+        }
+
+        return array_key_exists('workspace_id', $record->getAttributes())
+            || in_array('workspace_id', $record->getFillable(), true);
     }
 
     private function applyValue(Model $record, string $field, string $value): void

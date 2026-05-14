@@ -30,12 +30,12 @@ class NewsletterTestCase extends AbstractTestCase
     {
         $siteType = Type::factory()->site()->create();
         $themeType = Type::factory()->theme()->create();
-        $theme = Theme::factory()->create(['type_id' => $themeType->getKey()]);
+        $theme = Theme::factory()->create(['blueprint_id' => $themeType->getKey()]);
         $language = Language::factory()->english()->create();
 
         return Site::query()->create([
             'name' => $name,
-            'type_id' => $siteType->getKey(),
+            'blueprint_id' => $siteType->getKey(),
             'theme_id' => $theme->getKey(),
             'language_id' => $language->getKey(),
             'default' => true,

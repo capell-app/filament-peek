@@ -43,7 +43,7 @@
         :id="$id('dropdown-button')"
         x-cloak
         class="lg:right:-0 lg:translate-none absolute inset-0 z-10 origin-top-left bg-white outline-none transition-[translate,visibility] duration-300 ease-in-out lg:bottom-auto lg:left-auto lg:top-full lg:-mt-2 lg:min-w-48 lg:rounded-lg lg:border lg:border-gray-200 lg:p-1.5 lg:shadow-sm lg:transition-none dark:bg-gray-900 dark:lg:border-gray-700"
-        x-bind:class="open ? 'visible translate-x-0' : 'invisible translate-x-full'"
+        x-bind:class="open ? 'visible opacity-100' : 'pointer-events-none invisible opacity-0'"
     >
         <li
             class="mb-2 border-b border-gray-200 lg:hidden dark:border-gray-700"

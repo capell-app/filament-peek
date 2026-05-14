@@ -1,9 +1,11 @@
 @php
+    use Capell\Core\Contracts\Pageable;
     use Capell\Core\Enums\ContentStructure;
     use Capell\FoundationTheme\View\Components\Widget\Page\Children as PageChildrenComponent;
     use Capell\FoundationTheme\View\Components\Widget\Page\Latest as PageLatestComponent;
     use Capell\FoundationTheme\View\Components\Widget\Page\Siblings as PageSiblingsComponent;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Frontend\Support\Loader\PageLoader;
 @endphp
 
 @props([
@@ -27,6 +29,8 @@
         @php
             $page = Frontend::page();
             $layout = Frontend::layout();
+            $language = Frontend::language();
+            $site = Frontend::site();
             $theme = Frontend::theme();
             $pageContents = (array) $widget->getMeta('page_content', ['title', 'content']);
             $headingTag = $widget->getMeta('heading_tag');
@@ -34,6 +38,12 @@
             $hasPrimaryHeading = (bool) Frontend::getFrontendData('has_primary_heading');
             $hasContent = in_array('content', $pageContents, true) && ! empty($page->translation->content);
             $hasTitle = in_array('title', $pageContents, true) && ! (empty($widgetData['meta']['show_page_title']) && $hasPrimaryHeading);
+            $previousPage = (bool) $page->getMeta('with_next_prev')
+                ? PageLoader::getPreviousPage($page, $site, $language)
+                : null;
+            $nextPage = (bool) $page->getMeta('with_next_prev')
+                ? PageLoader::getNextPage($page, $site, $language)
+                : null;
 
             if (! $headingTag) {
                 $headingTag = $hasPrimaryHeading ? 'h2' : 'h1';
@@ -79,6 +89,29 @@
                             :title="$hasTitle ? $page->translation->title : null"
                         />
                     @endif
+                @endif
+
+                @if ($previousPage instanceof Pageable || $nextPage instanceof Pageable)
+                    <div class="clear-both">
+                        <div
+                            class="capell-neighbor-links-desktop neighbor-links mt-10 flex divide-y divide-gray-100 border-t border-gray-100 pt-6 md:divide-x md:divide-y-0"
+                        >
+                            @if ($previousPage)
+                                <x-capell::page.neighbor-link
+                                    :neighbor-page="$previousPage"
+                                    neighbor="previous"
+                                />
+                            @endif
+
+                            @if ($nextPage)
+                                <x-capell::page.neighbor-link
+                                    :neighbor-page="$nextPage"
+                                    neighbor="next"
+                                    class="ml-auto"
+                                />
+                            @endif
+                        </div>
+                    </div>
                 @endif
             </x-capell-layout-builder::widget.wrapper>
         @endif

@@ -13,7 +13,30 @@
             "targetType": "admin-surface",
             "target": "WorkspaceResource",
             "required": true,
+            "capturedFile": "docs/images/screenshots/10-workflow-dashboard.png",
             "notes": "Show the flagship timeline entry point with active drafts, review status, publish readiness, and recent workflow activity."
+        },
+        {
+            "id": "editor-responsibility",
+            "title": "Editor responsibility",
+            "package": "publishing-studio",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "WorkspaceResource",
+            "required": true,
+            "capturedFile": "docs/images/screenshots/11-workspaces-editor-submit.png",
+            "notes": "Show editors managing draft changes while content remains isolated from the live page until a release action runs."
+        },
+        {
+            "id": "reviewer-responsibility",
+            "title": "Reviewer responsibility",
+            "package": "publishing-studio",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "WorkspaceResource",
+            "required": true,
+            "capturedFile": "docs/images/screenshots/12-review-approval.png",
+            "notes": "Show reviewers approving, rejecting, or requesting changes before publish controls become available."
         },
         {
             "id": "live-preview",
@@ -33,6 +56,7 @@
             "targetType": "admin-surface",
             "target": "PreviewLinkResource",
             "required": true,
+            "capturedFile": "docs/images/screenshots/13-preview-links.png",
             "notes": "Show issued preview links with expiry, revocation, last accessed time, and access count."
         },
         {
@@ -63,6 +87,7 @@
             "targetType": "admin-surface",
             "target": "ScheduledPublishingPage",
             "required": true,
+            "capturedFile": "docs/images/screenshots/14-scheduled-publishing.png",
             "notes": "Show release timing, scheduled publishing-studio, embargo-aware publishing windows, and queue state."
         },
         {
@@ -83,6 +108,7 @@
             "targetType": "admin-surface",
             "target": "StaleDraftsPage",
             "required": true,
+            "capturedFile": "docs/images/screenshots/15-stale-drafts.png",
             "notes": "Show stale workspace detection, review nudges, and cleanup actions for unfinished draft work."
         },
         {

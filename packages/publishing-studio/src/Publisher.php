@@ -116,7 +116,9 @@ class Publisher
             $workspace->status = WorkspaceStatusEnum::Publishing;
             $workspace->save();
 
-            $this->assertNoUrlCollisions($workspace);
+            if ($makeLive) {
+                $this->assertNoUrlCollisions($workspace);
+            }
 
             $manifest = [];
             $pendingRevisions = [];
@@ -141,7 +143,7 @@ class Publisher
                     ->where('workspace_id', $workspace->id)
                     ->get();
 
-                if ($modelInstance instanceof Pageable) {
+                if ($makeLive && $modelInstance instanceof Pageable) {
                     $publishedModelIds[$modelClass] = array_merge(
                         $publishedModelIds[$modelClass] ?? [],
                         array_map(intval(...), $workspaceRows->modelKeys()),
@@ -153,21 +155,33 @@ class Publisher
                     $beforePayload = null;
 
                     if ($hasUuid && $workspaceRow->getAttribute('uuid') !== null) {
-                        $liveRow = $modelClass::query()
+                        $liveRowQuery = $modelClass::query()
                             ->withoutGlobalScopes()
                             ->where('workspace_id', 0)
-                            ->where('uuid', $workspaceRow->getAttribute('uuid'))
-                            ->first();
+                            ->where('uuid', $workspaceRow->getAttribute('uuid'));
+
+                        if ($this->tableHasColumn($table, 'deleted_at')) {
+                            $liveRowQuery->whereNull('deleted_at');
+                        }
+
+                        $liveRow = $liveRowQuery->first();
 
                         $beforePayload = $liveRow instanceof Model
                             ? RecordPublishingRevisionAction::payloadFor($liveRow)
                             : null;
 
-                        $modelClass::query()
-                            ->withoutGlobalScopes()
-                            ->where('workspace_id', 0)
-                            ->where('uuid', $workspaceRow->getAttribute('uuid'))
-                            ->delete();
+                        if ($makeLive) {
+                            $liveDeleteQuery = $modelClass::query()
+                                ->withoutGlobalScopes()
+                                ->where('workspace_id', 0)
+                                ->where('uuid', $workspaceRow->getAttribute('uuid'));
+
+                            if ($this->tableHasColumn($table, 'deleted_at')) {
+                                $liveDeleteQuery->whereNull('deleted_at');
+                            }
+
+                            $liveDeleteQuery->delete();
+                        }
                     }
 
                     $pendingRevisions[] = [
@@ -179,16 +193,28 @@ class Publisher
                     ];
                 }
 
-                $modelClass::query()
-                    ->withoutGlobalScopes()
-                    ->where('workspace_id', $workspace->id)
-                    ->update(['workspace_id' => 0]);
+                if ($makeLive) {
+                    $modelClass::query()
+                        ->withoutGlobalScopes()
+                        ->where('workspace_id', $workspace->id)
+                        ->update(['workspace_id' => 0]);
 
-                $liveIds = $modelClass::query()
-                    ->withoutGlobalScopes()
-                    ->where('workspace_id', 0)
-                    ->pluck($modelInstance->getKeyName())
-                    ->all();
+                    $liveQuery = $modelClass::query()
+                        ->withoutGlobalScopes()
+                        ->where('workspace_id', 0);
+
+                    if ($this->tableHasColumn($table, 'deleted_at')) {
+                        $liveQuery->whereNull('deleted_at');
+                    }
+
+                    $liveIds = $liveQuery
+                        ->pluck($modelInstance->getKeyName())
+                        ->all();
+                } else {
+                    $liveIds = $workspaceRows
+                        ->pluck($modelInstance->getKeyName())
+                        ->all();
+                }
 
                 $manifest[$modelClass] = array_map(intval(...), $liveIds);
             }

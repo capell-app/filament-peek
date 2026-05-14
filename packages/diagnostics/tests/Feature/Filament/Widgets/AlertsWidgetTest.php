@@ -61,7 +61,7 @@ it('shows type, theme, and language warnings when a site exists but none are con
 it('shows only language warning when default theme & site exist but no default language', function (): void {
     createAllTypes();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
-    Theme::factory()->state(['type_id' => $themeType?->id, 'default' => true])->create();
+    Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     $language = Language::factory()->create(['default' => false]);
     Site::factory()->language($language)->create();
 
@@ -81,7 +81,7 @@ it('shows only theme warning when default language & site exist but no default t
     createAllTypes();
     Language::factory()->default()->create();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
-    $theme = Theme::factory()->state(['type_id' => $themeType?->id, 'default' => false])->createQuietly();
+    $theme = Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => false])->createQuietly();
     Site::factory()->theme($theme)->create();
 
     $livewire = livewire(AlertsWidget::class);
@@ -120,7 +120,7 @@ it('has create theme action with correct URL', function (): void {
 it('does not show resource alerts when all defaults exist', function (): void {
     createAllTypes();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
-    Theme::factory()->state(['type_id' => $themeType?->id, 'default' => true])->create();
+    Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();
 
@@ -133,7 +133,7 @@ it('does not show resource alerts when all defaults exist', function (): void {
 it('shows installer alert only when installer package is present', function (): void {
     createAllTypes();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
-    Theme::factory()->state(['type_id' => $themeType?->id, 'default' => true])->create();
+    Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();
 
@@ -155,7 +155,7 @@ it('shows installer alert only when installer package is present', function (): 
 it('adds installer actions only when installer package is present', function (): void {
     createAllTypes();
     $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
-    Theme::factory()->state(['type_id' => $themeType?->id, 'default' => true])->create();
+    Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();
 

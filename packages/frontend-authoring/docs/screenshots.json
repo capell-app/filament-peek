@@ -40,12 +40,61 @@
             "title": "Frontend page with authoring enabled for admins.",
             "package": "frontend-authoring",
             "surface": "frontend",
+            "user": "admin",
             "targetType": "frontend-url",
             "target": null,
+            "url": "/",
+            "waitFor": ".capell-authoring-region",
+            "hover": ".capell-authoring-region",
+            "overlay": {
+                "text": "Inline editor",
+                "position": "top-right"
+            },
             "required": true,
             "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
             "output": "packages/frontend-authoring/docs/images/screenshots/frontend-page-with-authoring-enabled.png",
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Authenticated frontend capture. The runner logs in as an admin, opens the public Capell app homepage, waits for the beacon to decorate editable regions, and hovers the first editable region so the authoring control is visible."
+        },
+        {
+            "id": "capell-app-frontend-authoring-working",
+            "title": "Capell app frontend authoring working on the public homepage.",
+            "package": "frontend-authoring",
+            "surface": "frontend",
+            "user": "admin",
+            "targetType": "frontend-url",
+            "target": null,
+            "url": "/",
+            "waitFor": ".capell-authoring-region",
+            "hover": ".capell-authoring-region",
+            "overlay": {
+                "text": "Inline editor",
+                "position": "top-right"
+            },
+            "required": true,
+            "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
+            "output": "packages/frontend-authoring/docs/images/screenshots/capell-app-frontend-authoring-working.png",
+            "notes": "Documentation proof that capell-app renders the frontend authoring package working: an authenticated admin beacon decorates the public homepage with editable regions and visible edit controls."
+        },
+        {
+            "id": "capell-app-frontend-authoring-mobile",
+            "title": "Capell app frontend authoring working on mobile.",
+            "package": "frontend-authoring",
+            "surface": "frontend",
+            "user": "admin",
+            "targetType": "frontend-url",
+            "target": null,
+            "url": "/",
+            "waitFor": ".capell-authoring-region",
+            "hover": ".capell-authoring-region",
+            "overlay": {
+                "text": "Inline editor",
+                "position": "bottom-center"
+            },
+            "viewport": "mobile",
+            "required": true,
+            "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
+            "output": "packages/frontend-authoring/docs/images/screenshots/capell-app-frontend-authoring-mobile.png",
+            "notes": "Mobile proof that the authoring overlay works against the Capell app frontend without adding public authoring metadata to cached HTML."
         },
         {
             "id": "beacon-network-request",

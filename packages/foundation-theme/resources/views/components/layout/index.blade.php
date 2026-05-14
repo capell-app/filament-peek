@@ -105,10 +105,14 @@ $isSystemPageLayout = data_get($layout->admin ?? [], 'system_page_layout') === t
 
         @if ($footer)
             {{ $footer }}
-        @elseif ($footer === null && (! isset($theme['meta']['footer']) || $theme['meta']['footer'] !== false))
-            <x-dynamic-component
-                :component="$theme['meta']['footer_file'] ?? 'capell::footer'"
-            />
+        @elseif ($footer !== false && (! isset($theme['meta']['footer']) || $theme['meta']['footer'] !== false))
+            @if (($theme['meta']['footer_file'] ?? 'capell::footer') === 'capell::footer')
+                {!! view('capell::components.footer.index')->render() !!}
+            @else
+                <x-dynamic-component
+                    :component="$theme['meta']['footer_file']"
+                />
+            @endif
         @endif
     </div>
 @endif

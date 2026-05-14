@@ -5,12 +5,21 @@
     'menuSubItemClass' => 'focus:text-primary hover:text-primary py-1 text-xs font-medium leading-tight text-[var(--color-footer-muted)] xl:text-sm',
 ])
 @php
-    use Capell\Navigation\Data\NavigationItemData;
     use Illuminate\Support\Collection;
 
     /**
      * @var Collection<NavigationItemData> $items
      */
+    $childLabels = $items
+        ->flatMap(fn (mixed $item): Collection => $item->children->pluck('label'))
+        ->unique()
+        ->values();
+
+    $items = $items
+        ->reject(fn (mixed $item): bool => $childLabels->contains($item->label))
+        ->unique(fn (mixed $item): string => $item->label . '|' . ($item->data['url'] ?? ''))
+        ->values();
+
     $half = (int) ceil($items->count() / 2);
 
     /**
