@@ -2,14 +2,14 @@
     'container',
     'containerKey',
     'containerWidth' => null,
+    'ctaBlock' => null,
     'loop',
     'widget',
 ])
 
 @php
-    use Capell\CampaignStudio\Models\CampaignCtaBlock;
-
-    $ctaBlock = CampaignCtaBlock::query()->find($widget->getMeta('cta_block_id'));
+    use Capell\CampaignStudio\Actions\BuildCampaignUrlAction;
+    use Capell\CampaignStudio\Data\UtmData;
 @endphp
 
 <x-capell-layout-builder::widget.wrapper

@@ -53,9 +53,10 @@
                                     <span class="text-8xl">{{ $icon }}</span>
                                 @endif
                             </span>
-                        @elseif ($widgetAsset->asset->media->first() ?? $widgetAsset->asset->image ?? null)
+                        @elseif (($widgetAsset->asset->relationLoaded('media') ? $widgetAsset->asset->media->first() : null) ?? ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null))
                             @php
-                                $media = $widgetAsset->asset->media->first() ?? $widgetAsset->asset->image;
+                                $media = ($widgetAsset->asset->relationLoaded('media') ? $widgetAsset->asset->media->first() : null)
+                                    ?? ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
                             @endphp
 
                             <img

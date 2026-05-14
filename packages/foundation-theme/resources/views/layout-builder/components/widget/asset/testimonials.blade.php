@@ -107,7 +107,8 @@
                         @php
                             $title = '';
                             $content = '';
-                            $media = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
+                            $media = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
+                                ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
 
                             $position = $widgetAsset->asset->translation->getMeta('position', '');
                             $company = $widgetAsset->asset->translation->getMeta('company', '');

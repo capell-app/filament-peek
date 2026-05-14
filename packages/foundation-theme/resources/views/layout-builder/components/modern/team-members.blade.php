@@ -58,7 +58,8 @@
                     $role = $widgetAsset->asset->getMeta('position');
                     $tags = $widgetAsset->asset->getMeta('tags', []);
                     $social = $widgetAsset->asset->getMeta('social', []);
-                    $media = $widgetAsset->asset->media->first() ?? $widgetAsset->asset->image ?? null;
+                    $media = ($widgetAsset->asset->relationLoaded('media') ? $widgetAsset->asset->media->first() : null)
+                        ?? ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
                     $icon = $widgetAsset->asset->getMeta('icon');
                 @endphp
 

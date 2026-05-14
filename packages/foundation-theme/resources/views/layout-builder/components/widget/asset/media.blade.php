@@ -56,7 +56,8 @@
                 @foreach ($widget->assets as $widgetAsset)
                     {{-- format-ignore-start --}}
                 @php
-                    $image = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
+                    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
+                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
                     if (! $image) {
                         report('Image not found for WidgetAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
                         continue;

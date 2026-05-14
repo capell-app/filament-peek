@@ -19,6 +19,7 @@ Nearly all new Capell packages should be added to this packages repo under `pack
 - Frontend authoring is a post-load admin feature. The page loads as ordinary public HTML, the browser calls the beacon, and only an authenticated admin beacon response may add edit controls or signed Filament editor URLs.
 - Unique/static HTML caching depends on this rule. Cached HTML must stay safe to serve to anonymous visitors, normal signed-in users, admins, crawlers, and static exports.
 - When touching frontend packages, theme packages, page cache, or beacon code, add or preserve tests proving anonymous and non-admin responses expose no authoring surface.
+- Public Blade views must not execute database queries or lazy-load relationships. Load public render data in controllers, Actions, Livewire components, view composers, Capell payload builders, or explicit view component classes, then pass hydrated data into views. Treat `::query()`, `DB::`, `loadMissing()`, relationship fallback access like `$model->media->first()`, and direct model lookups in public package views as performance bugs.
 
 ## Architecture: Actions + Data
 

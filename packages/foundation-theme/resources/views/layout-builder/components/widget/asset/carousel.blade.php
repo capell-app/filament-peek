@@ -131,7 +131,8 @@
                     {{-- format-ignore-start --}}
                 @php
                     /** @var Media|null $media */
-                    $media = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
+                    $media = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
+                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
                     if (! $media) {
                         throw new RuntimeException('Image not found for WidgetAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
                     }

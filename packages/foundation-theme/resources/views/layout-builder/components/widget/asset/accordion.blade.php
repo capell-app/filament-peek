@@ -61,7 +61,8 @@
                 @php
                     /** @var WidgetAsset $widgetAsset */
 
-                    $image = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
+                    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
+                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
 
                     $linkedPage = $widgetAsset->asset instanceof Pageable
                         ? $widgetAsset->asset

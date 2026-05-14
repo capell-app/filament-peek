@@ -9,7 +9,8 @@
     use Capell\Core\Contracts\Pageable;
 
     $linkedPage = $widgetAsset->asset instanceof Pageable ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
-    $image = $widgetAsset->media->first() ?: $widgetAsset->asset->image;
+    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
+        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
 @endphp
 
 <div

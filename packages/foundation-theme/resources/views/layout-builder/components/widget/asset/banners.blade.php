@@ -50,8 +50,8 @@
                 @foreach ($widget->assets as $widgetAsset)
                     {{-- format-ignore-start --}}
                 @php
-                    $image = $widgetAsset->media->first()
-                        ?: $widgetAsset->asset->image
+                    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
+                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null)
                         ?: $widget->getMedia(MediaCollectionEnum::BackgroundImage->value);
                     $title = '';
                     $content = '';

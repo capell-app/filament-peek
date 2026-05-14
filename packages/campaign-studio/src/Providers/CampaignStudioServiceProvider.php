@@ -19,6 +19,7 @@ use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Spatie\LaravelPackageTools\Package;
 
@@ -98,6 +99,8 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
 
     private function registerComponents(): self
     {
+        Blade::componentNamespace('Capell\\CampaignStudio\\View\\Components', 'capell-campaign-studio');
+
         CapellCore::registerComponents('Widget', CampaignWidgetComponentEnum::cases());
 
         return $this;
