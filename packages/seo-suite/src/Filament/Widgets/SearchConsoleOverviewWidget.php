@@ -28,16 +28,40 @@ final class SearchConsoleOverviewWidget extends StatsOverviewWidget implements C
     {
         $stats = BuildSearchConsoleDashboardStatsAction::run();
 
-        return [
+        $statsCollection = [
             Stat::make(__('capell-seo-suite::dashboard.clicks'), number_format($stats->clicks)),
             Stat::make(__('capell-seo-suite::dashboard.impressions'), number_format($stats->impressions)),
             Stat::make(__('capell-seo-suite::dashboard.ctr'), number_format($stats->ctr, 1) . '%'),
             Stat::make(
                 __('capell-seo-suite::dashboard.average_position'),
-                $stats->averagePosition === null ? '-' : number_format($stats->averagePosition, 1),
+                $stats->averagePosition === null ? __('capell-seo-suite::dashboard.not_available') : number_format($stats->averagePosition, 1),
             ),
             Stat::make(__('capell-seo-suite::dashboard.rising_pages'), number_format($stats->risingPages)),
             Stat::make(__('capell-seo-suite::dashboard.declining_pages'), number_format($stats->decliningPages)),
         ];
+
+        return array_map(
+            fn (Stat $stat): Stat => $stat->description($this->windowDescription($stats->windowStart, $stats->windowEnd, $stats->mixedWindows)),
+            $statsCollection,
+        );
+    }
+
+    private function windowDescription(?string $windowStart, ?string $windowEnd, bool $mixedWindows): string
+    {
+        if ($windowStart === null || $windowEnd === null) {
+            return __('capell-seo-suite::dashboard.no_search_console_data');
+        }
+
+        if ($mixedWindows) {
+            return __('capell-seo-suite::dashboard.mixed_search_console_windows', [
+                'start' => $windowStart,
+                'end' => $windowEnd,
+            ]);
+        }
+
+        return __('capell-seo-suite::dashboard.latest_search_console_window', [
+            'start' => $windowStart,
+            'end' => $windowEnd,
+        ]);
     }
 }

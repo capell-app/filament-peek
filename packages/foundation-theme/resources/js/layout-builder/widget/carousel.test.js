@@ -47,6 +47,7 @@ vi.mock('swiper/modules', () => {
     return {
         Autoplay: Symbol('Autoplay'),
         EffectFade: Symbol('EffectFade'),
+        Grid: Symbol('Grid'),
         Mousewheel: Symbol('Mousewheel'),
         Navigation: Symbol('Navigation'),
         Pagination: Symbol('Pagination'),
@@ -229,5 +230,30 @@ describe('carousel runtime', () => {
         ).toHaveBeenCalledOnce()
         expect(swiperNode.dataset.initialized).toBeUndefined()
         expect(swiperNode.swiper).toBeUndefined()
+    })
+
+    it('supports multi-row carousel settings without loop mode', () => {
+        document.body.innerHTML = createCarouselMarkup(
+            'data-carousel-id="rows-carousel" data-carousel-loop="1" data-carousel-rows="2"',
+        )
+
+        const swiperNode = document.querySelector('.swiper')
+        const options = parseCarouselOptions(swiperNode)
+        const controls = resolveCarouselControls(swiperNode, options)
+        const abortController = new AbortController()
+
+        const settings = buildSwiperSettings(
+            swiperNode,
+            options,
+            controls,
+            abortController.signal,
+        )
+
+        expect(options.rows).toBe(2)
+        expect(settings.loop).toBe(false)
+        expect(settings.grid).toEqual({
+            fill: 'row',
+            rows: 2,
+        })
     })
 })

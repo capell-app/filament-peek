@@ -24,6 +24,8 @@
         ? __($page->translation->label, \Capell\Frontend\Actions\GetPageVariablesAction::run())
         : '';
 
+    $showCurrentPage = $page instanceof Page && ($page->url_params === null || Frontend::params() === []);
+
     $home = $site->getHomePage($language);
 @endphp
 {{-- format-ignore-end --}}
@@ -75,17 +77,19 @@
                     </li>
                 @endforeach
 
-                <li aria-current="page">
-                    <div class="flex items-center">
-                        @svg('heroicon-m-chevron-right', 'mr-1 h-4 w-4 text-gray-400')
-                        <span
-                            class="text-sm font-light text-gray-500"
-                            title="{{ htmlspecialchars(strip_tags($currentPageLabel)) }}"
-                        >
-                            {{ $currentPageLabel }}
-                        </span>
-                    </div>
-                </li>
+                @if ($showCurrentPage)
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            @svg('heroicon-m-chevron-right', 'mr-1 h-4 w-4 text-gray-400')
+                            <span
+                                class="text-sm font-light text-gray-500"
+                                title="{{ htmlspecialchars(strip_tags($currentPageLabel)) }}"
+                            >
+                                {{ $currentPageLabel }}
+                            </span>
+                        </div>
+                    </li>
+                @endif
             </ol>
         </x-capell-layout-builder::widget.wrapper>
     </nav>

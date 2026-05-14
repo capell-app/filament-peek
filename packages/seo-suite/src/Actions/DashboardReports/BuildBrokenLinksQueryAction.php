@@ -17,7 +17,7 @@ final class BuildBrokenLinksQueryAction
     {
         return BrokenLink::query()
             ->where('http_status', '>=', 400)
-            ->whereHas('page', fn (Builder $query): Builder => SiteScope::applyForCurrentActor($query))
+            ->whereHas('page', fn (Builder $query): Builder => SiteScope::applyForCurrentActor($query, denyWhenMissingActor: true))
             ->with('page');
     }
 }

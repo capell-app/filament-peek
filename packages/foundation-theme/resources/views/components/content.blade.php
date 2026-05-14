@@ -32,6 +32,15 @@
 ])
 
 @php
+    $imageWidth = 360;
+    $imageHeight = null;
+
+    if ($image) {
+        $sourceWidth = max(1, (int) $image->getWidth());
+        $sourceHeight = max(1, (int) $image->getHeight());
+        $imageHeight = (int) round($imageWidth * ($sourceHeight / $sourceWidth));
+    }
+
     if (! $headingSize && ! $headingTag) {
         $headingSize = $muted ? $headingTag = 'h4' : $headingTag = 'h3';
     }
@@ -78,7 +87,8 @@
         <x-capell::media
                 :media="$image"
                 fit="crop"
-                :width="360"
+                :width="$imageWidth"
+                :height="$imageHeight"
                 data-group="gallery"
                 :data-title="$image->name"
                 :data-lightbox="$image->getFullUrl()"
@@ -86,11 +96,13 @@
                 tabindex="0"
                 aria-label="{{ __('capell-frontend::generic.open_image') }}: {{ $title }}"
                 :alt="$title"
+                fetchpriority="high"
                 @class([
                     'h-auto object-cover object-center lightbox cursor-pointer md:float-right md:max-w-[40%] md:ml-10 md:mt-0',
                     'rounded' => (bool) $theme->getMeta('rounded_images'),
                 ])
-                loading="lazy"
+                loading="eager"
+                sizes="(min-width: 768px) 40vw, 88vw"
         />
         {{-- format-ignore-end --}}
     @endif
@@ -107,7 +119,7 @@
         {{-- format-ignore-start --}}
         <{{ $headingTag }}
             @class([
-                '2xl:text-2xl font-medium mb-4 not-prose text-balance text-lg text-secondary xl:text-xl',
+                'font-medium mb-4 not-prose text-secondary',
                 'text-secondary' => $headingStyle === 'secondary',
                 'text-4xl' => $headingSize === 'h1',
                 'text-3xl' => $headingSize === 'h2',

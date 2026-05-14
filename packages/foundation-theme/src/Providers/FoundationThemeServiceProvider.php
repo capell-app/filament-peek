@@ -59,6 +59,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         $package
             ->name(self::$name)
             ->hasConfigFile()
+            ->hasTranslations()
             ->hasCommands([
                 GenerateTailwindAssetsCommand::class,
                 SetupCommand::class,

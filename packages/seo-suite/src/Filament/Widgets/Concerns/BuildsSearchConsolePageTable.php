@@ -23,11 +23,16 @@ trait BuildsSearchConsolePageTable
             ->paginated(false)
             ->searchable(false)
             ->heading($this->heading())
+            ->emptyStateHeading(__('capell-seo-suite::dashboard.no_search_console_rows'))
+            ->emptyStateDescription(__('capell-seo-suite::dashboard.no_search_console_rows_description'))
             ->columns([
                 TextColumn::make('url')
                     ->label(__('capell-seo-suite::dashboard.url'))
                     ->limit(60)
+                    ->tooltip(fn (mixed $state): ?string => is_string($state) && $state !== '' ? $state : null)
                     ->wrap(),
+                TextColumn::make('direction')
+                    ->label(__('capell-seo-suite::dashboard.direction')),
                 TextColumn::make('clicks')
                     ->label(__('capell-seo-suite::dashboard.clicks'))
                     ->numeric(),

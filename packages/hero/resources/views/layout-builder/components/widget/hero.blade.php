@@ -116,6 +116,7 @@ $theme = Frontend::theme();
                     {{-- format-ignore-start --}}
                 @php
                     /** @var \Capell\Core\Models\WidgetAsset $widgetAsset */
+                    $isFirstSlide = $loop->first;
                     $slide = HeroAssetSlideData::fromWidgetAsset($widgetAsset, $widget, $color);
                 @endphp
                 {{-- format-ignore-end --}}
@@ -127,7 +128,7 @@ $theme = Frontend::theme();
                         :background-attachment="$slide->asset->getMeta('background_attachment', $widget->getMeta('background_attachment', 'scroll'))"
                         :background-repeat="$slide->asset->getMeta('background_repeat', $widget->getMeta('background_repeat', 'no-repeat'))"
                         :background-overlay="$slide->backgroundImage && $slide->asset->translation ? $slide->color : ''"
-                        :first="$loop->first"
+                        :first="$isFirstSlide"
                         :total="$total"
                         :title="$slide->asset->translation->title"
                         :color="$slide->color"
@@ -153,7 +154,7 @@ $theme = Frontend::theme();
                                 @if ($slide->asset)
                                     <x-capell-hero::hero.content
                                         :title="$slide->asset->translation->title"
-                                        :heading-size="$loop->first ? 'h1' : 'h2'"
+                                        :heading-size="$isFirstSlide ? 'h1' : 'h2'"
                                         :url="$slide->url"
                                         :color="$slide->color"
                                         :size="! $slide->images?->isNotEmpty() ? 'lg' : 'md'"
@@ -172,7 +173,7 @@ $theme = Frontend::theme();
                                             </a>
                                         @endif
 
-                                        @if ($loop->first && $heroContent)
+                                        @if ($isFirstSlide && $heroContent)
                                             {{ $heroContent }}
                                         @endif
                                     </x-capell-hero::hero.content>
@@ -209,8 +210,11 @@ $theme = Frontend::theme();
                                                 format="webp"
                                                 :media="$media"
                                                 :alt="$slide->asset->translation->title"
+                                                :width="420"
+                                                :fetchpriority="$isFirstSlide ? 'high' : null"
                                                 class="hero-slide-img h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
-                                                loading="eager"
+                                                loading="{{ $isFirstSlide ? 'eager' : 'lazy' }}"
+                                                sizes="(min-width: 1024px) 38vw, 88vw"
                                             />
                                             @continue
                                         @endif

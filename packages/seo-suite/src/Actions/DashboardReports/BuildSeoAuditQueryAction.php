@@ -23,6 +23,6 @@ final class BuildSeoAuditQueryAction
                 'translations.language',
             ]);
 
-        return SiteScope::applyForCurrentActor($query);
+        return SiteScope::applyForCurrentActor($query, denyWhenMissingActor: true);
     }
 }

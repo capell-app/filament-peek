@@ -5,6 +5,7 @@ import {
     Autoplay,
     EffectFade,
     Mousewheel,
+    Grid,
 } from 'swiper/modules'
 
 const carouselStore = new WeakMap()
@@ -180,6 +181,7 @@ export function parseCarouselOptions(swiperNode) {
         perView: readSlidesPerView(swiperNode),
         rewind:
             readBooleanAttribute(swiperNode, ['data-carousel-rewind']) ?? false,
+        rows: readNumberAttribute(swiperNode, ['data-carousel-rows']) ?? 1,
         slideCount,
         speed:
             readNumberAttribute(swiperNode, ['data-carousel-speed']) ??
@@ -331,7 +333,7 @@ export function buildSwiperSettings(swiperNode, options, controls, signal) {
         centeredSlides: options.align === 'center',
         grabCursor: options.grabCursor,
         initialSlide: options.initialSlide,
-        loop: options.loop,
+        loop: options.rows > 1 ? false : options.loop,
         observeParents: true,
         observer: true,
         preventClicks: false,
@@ -346,6 +348,14 @@ export function buildSwiperSettings(swiperNode, options, controls, signal) {
 
     if (options.breakpoints) {
         settings.breakpoints = options.breakpoints
+    }
+
+    if (options.rows > 1) {
+        modules.push(Grid)
+        settings.grid = {
+            fill: 'row',
+            rows: options.rows,
+        }
     }
 
     if (

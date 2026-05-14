@@ -8,6 +8,7 @@ use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Models\Layout;
 use Capell\Core\Support\Creator\LayoutCreator;
+use Capell\LayoutBuilder\Actions\ApplyLayoutSidebarWidgetContributionsAction;
 use Capell\LayoutBuilder\Support\Creator\WidgetCreator;
 use Lorisleiva\Actions\Concerns\AsObject;
 
@@ -50,6 +51,8 @@ final class InstallFoundationThemeLayoutDefaultsAction
                 'containers' => $containers,
                 'widgets' => $this->widgetKeys($containers),
             ]);
+
+            ApplyLayoutSidebarWidgetContributionsAction::run($layout);
 
             $result[$hadContainers ? 'updated' : 'created']++;
         }

@@ -1,6 +1,14 @@
 @props([
     'site',
+    'contactPage' => null,
 ])
+
+@php
+    $businessName = $site->getMeta('business_name');
+    $email = $site->getMeta('email');
+    $phone = $site->getMeta('phone');
+@endphp
+
 <div
     {{ $attributes->merge(['class' => 'footer-site-info space-y-4']) }}
 >
@@ -35,6 +43,50 @@
         >
             {{ $tagline }}
         </p>
+    @endif
+
+    @if ($businessName || $email || $phone || $contactPage?->pageUrl)
+        <address
+            class="footer-contact text-sm not-italic leading-6 text-[var(--color-footer-muted)]"
+        >
+            @if ($businessName)
+                <div>{{ $businessName }}</div>
+            @endif
+
+            @if ($email)
+                <div>
+                    <a
+                        href="mailto:{{ $email }}"
+                        class="hover:text-primary focus:text-primary"
+                    >
+                        {{ $email }}
+                    </a>
+                </div>
+            @endif
+
+            @if ($phone)
+                <div>
+                    <a
+                        href="tel:{{ preg_replace('/[^0-9+]/', '', $phone) }}"
+                        class="hover:text-primary focus:text-primary"
+                    >
+                        {{ $phone }}
+                    </a>
+                </div>
+            @endif
+
+            @if ($contactPage?->pageUrl)
+                <div>
+                    <a
+                        href="{{ $contactPage->pageUrl->full_url }}"
+                        class="hover:text-primary focus:text-primary font-medium text-[var(--color-footer-link)]"
+                        wire:navigate
+                    >
+                        {{ $contactPage->getTranslation('label') ?? __('capell-foundation-theme::generic.contact') }}
+                    </a>
+                </div>
+            @endif
+        </address>
     @endif
 
     @if ($socialLinks = $site->getMeta('social_links'))

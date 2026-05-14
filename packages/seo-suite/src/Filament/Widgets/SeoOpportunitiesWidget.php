@@ -34,10 +34,13 @@ final class SeoOpportunitiesWidget extends BaseWidget implements CapellWidgetCon
             ->paginated(false)
             ->searchable(false)
             ->heading(__('capell-seo-suite::dashboard.seo_opportunities'))
+            ->emptyStateHeading(__('capell-seo-suite::dashboard.no_seo_opportunities'))
+            ->emptyStateDescription(__('capell-seo-suite::dashboard.no_seo_opportunities_description'))
             ->columns([
                 TextColumn::make('page')
                     ->label(__('capell-seo-suite::dashboard.page'))
                     ->limit(50)
+                    ->tooltip(fn (mixed $state): ?string => is_string($state) && $state !== '' ? $state : null)
                     ->wrap(),
                 TextColumn::make('score')
                     ->label(__('capell-seo-suite::dashboard.score'))

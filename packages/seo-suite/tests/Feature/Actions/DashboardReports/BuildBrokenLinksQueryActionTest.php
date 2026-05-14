@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\SeoSuite\Actions\DashboardReports\BuildBrokenLinksQueryAction;
+use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
+
+uses(CreatesAdminUser::class);
 
 function createScopedUserForBuildBrokenLinksQueryActionTest(SupportCollection $assignedSiteIds): Authenticatable
 {
@@ -52,6 +55,10 @@ function createScopedUserForBuildBrokenLinksQueryActionTest(SupportCollection $a
 }
 
 describe('BuildBrokenLinksQueryAction', function (): void {
+    beforeEach(function (): void {
+        test()->actingAsAdmin();
+    });
+
     it('returns a query builder instance', function (): void {
         $query = BuildBrokenLinksQueryAction::run();
 

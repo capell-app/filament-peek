@@ -1,5 +1,7 @@
 @php
     use Capell\Core\Actions\ColorConverterAction;
+    use Capell\Core\Enums\PageOrderEnum;
+    use Capell\Core\Enums\TypeGroupEnum;
     use Capell\Core\Models\Language;
     use Capell\Core\Models\Page;
     use Capell\FoundationTheme\Support\NavigationAvailability;
@@ -7,6 +9,7 @@
     use Capell\Frontend\Actions\RenderHtmlContentAction;
     use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\Frontend\Support\Loader\PageLoader;
     use Capell\Frontend\Support\Loader\SiteLoader;
     use Capell\Frontend\Support\Render\RenderHookRegistry;
     use Capell\Navigation\Actions\BuildNavigationRenderModelAction;
@@ -74,9 +77,17 @@
         item: ['headingClass' => $headingClass],
         target: 'footer.index',
     );
+    $latestFooterPages = PageLoader::getPages(
+        language: $language,
+        site: $site,
+        limit: 4,
+        ordering: PageOrderEnum::Latest,
+        pageGroup: TypeGroupEnum::Default,
+    );
     $hasFooterMenu = $footerMenuItems?->isNotEmpty() === true;
+    $hasLatestFooterPages = $latestFooterPages->isNotEmpty();
     $hasFooterRenderHooks = trim((string) $footerRenderHooks) !== '';
-    $hasFooterPrimaryContent = $hasFooterMenu || $hasFooterRenderHooks;
+    $hasFooterPrimaryContent = $hasFooterMenu || $hasLatestFooterPages || $hasFooterRenderHooks;
 @endphp
 
 <style>
@@ -177,6 +188,7 @@
         >
             <x-capell::footer.site-info
                 :$site
+                :$contactPage
                 @class([
                     'shrink-0',
                     'max-w-xl text-center' => ! $hasFooterPrimaryContent,
@@ -195,6 +207,11 @@
                             class="grow"
                         />
                     @endif
+
+                    <x-capell::footer.latest-pages
+                        :$headingClass
+                        :pages="$latestFooterPages"
+                    />
 
                     {!! $footerRenderHooks !!}
                 </div>

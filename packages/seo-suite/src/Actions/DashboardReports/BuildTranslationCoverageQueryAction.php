@@ -18,6 +18,6 @@ final class BuildTranslationCoverageQueryAction
         $query = Page::query()
             ->with(['site.languages', 'translations']);
 
-        return SiteScope::applyForCurrentActor($query);
+        return SiteScope::applyForCurrentActor($query, denyWhenMissingActor: true);
     }
 }
