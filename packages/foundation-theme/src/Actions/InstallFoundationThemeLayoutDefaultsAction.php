@@ -8,8 +8,8 @@ use Capell\Core\Enums\ContainerWidthEnum;
 use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Models\Layout;
 use Capell\Core\Support\Creator\LayoutCreator;
-use Capell\LayoutBuilder\Actions\ApplyLayoutSidebarWidgetContributionsAction;
-use Capell\LayoutBuilder\Support\Creator\WidgetCreator;
+use Capell\LayoutBuilder\Actions\ApplyLayoutSidebarElementContributionsAction;
+use Capell\LayoutBuilder\Support\Creator\ElementCreator;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -28,12 +28,12 @@ final class InstallFoundationThemeLayoutDefaultsAction
         $layoutCreator->createHomeLayout();
         $layoutCreator->createDefaultLayout();
 
-        $widgetCreator = resolve(WidgetCreator::class);
-        $widgetCreator->breadcrumbWidget();
-        $widgetCreator->childrenWidget();
-        $widgetCreator->latestPagesWidget();
-        $widgetCreator->pageContentWidget();
-        $widgetCreator->siblingsWidget();
+        $elementCreator = resolve(ElementCreator::class);
+        $elementCreator->breadcrumbElement();
+        $elementCreator->childrenElement();
+        $elementCreator->latestPagesElement();
+        $elementCreator->pageContentElement();
+        $elementCreator->siblingsElement();
 
         $result = ['created' => 0, 'updated' => 0, 'skipped' => 0];
 
@@ -49,10 +49,10 @@ final class InstallFoundationThemeLayoutDefaultsAction
 
             $layout->update([
                 'containers' => $containers,
-                'widgets' => $this->widgetKeys($containers),
+                'elements' => $this->elementKeys($containers),
             ]);
 
-            ApplyLayoutSidebarWidgetContributionsAction::run($layout);
+            ApplyLayoutSidebarElementContributionsAction::run($layout);
 
             $result[$hadContainers ? 'updated' : 'created']++;
         }
@@ -67,6 +67,9 @@ final class InstallFoundationThemeLayoutDefaultsAction
 
     private function hasLegacyHomeHeroDefault(Layout $layout): bool
     {
+        $layoutElements = $layout->getAttribute('elements');
+        $legacyWidgets = $layout->getAttribute('widgets');
+
         return $layout->key === LayoutEnum::Home->value
             && $layout->containers === [
                 'hero' => [
@@ -75,7 +78,7 @@ final class InstallFoundationThemeLayoutDefaultsAction
                     ],
                 ],
             ]
-            && $layout->widgets === ['hero'];
+            && ($layoutElements === ['hero'] || $legacyWidgets === ['hero']);
     }
 
     /**
@@ -86,28 +89,28 @@ final class InstallFoundationThemeLayoutDefaultsAction
         return [
             LayoutEnum::Home->value => [
                 'main' => $this->mainContainer([
-                    ['widget_key' => 'page-content'],
+                    ['element_key' => 'page-content'],
                 ], 12),
             ],
             LayoutEnum::Default->value => [
                 'main' => $this->mainContainer([
-                    ['widget_key' => 'breadcrumbs'],
-                    ['widget_key' => 'page-content'],
-                    ['widget_key' => 'children'],
+                    ['element_key' => 'breadcrumbs'],
+                    ['element_key' => 'page-content'],
+                    ['element_key' => 'children'],
                 ]),
                 'sidebar' => $this->sidebarContainer([
-                    ['widget_key' => 'siblings'],
-                    ['widget_key' => 'latest-pages'],
+                    ['element_key' => 'siblings'],
+                    ['element_key' => 'latest-pages'],
                 ]),
             ],
         ];
     }
 
     /**
-     * @param  array<int, array<string, string>>  $widgets
+     * @param  array<int, array<string, string>>  $elements
      * @return array<string, mixed>
      */
-    private function sidebarContainer(array $widgets): array
+    private function sidebarContainer(array $elements): array
     {
         return [
             'meta' => [
@@ -118,21 +121,21 @@ final class InstallFoundationThemeLayoutDefaultsAction
                 'padding' => ['md'],
                 'html_class' => 'sidebar-sticky space-y-8',
             ],
-            'widgets' => $widgets,
+            'elements' => $elements,
         ];
     }
 
     /**
-     * @param  array<int, array<string, string>>  $widgets
+     * @param  array<int, array<string, string>>  $elements
      * @return array<string, mixed>
      */
-    private function mainContainer(array $widgets, int $colspan = 9): array
+    private function mainContainer(array $elements, int $colspan = 9): array
     {
         return [
             'meta' => [
                 'colspan' => $colspan,
             ],
-            'widgets' => $widgets,
+            'elements' => $elements,
         ];
     }
 
@@ -140,12 +143,12 @@ final class InstallFoundationThemeLayoutDefaultsAction
      * @param  array<string, array<string, mixed>>  $containers
      * @return array<int, string>
      */
-    private function widgetKeys(array $containers): array
+    private function elementKeys(array $containers): array
     {
         return collect($containers)
-            ->flatMap(fn (array $container): array => $container['widgets'] ?? [])
-            ->unique('widget_key')
-            ->pluck('widget_key')
+            ->flatMap(fn (array $container): array => $container['elements'] ?? [])
+            ->unique('element_key')
+            ->pluck('element_key')
             ->values()
             ->all();
     }

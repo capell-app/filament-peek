@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Filament\Resources\PublishingStudio\Actions;
 
 use Capell\PublishingStudio\Actions\SetWorkspaceSchedulerMetadataAction;
+use Capell\PublishingStudio\Exceptions\InvalidSchedulerMetadataException;
 use Capell\PublishingStudio\Models\Workspace;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
@@ -27,7 +28,8 @@ class SchedulerMetadataAction extends Action
             ->visible(fn (Workspace $record): bool => ! $record->status->isTerminal())
             ->schema([
                 DateTimePicker::make('unpublish_at')
-                    ->label(__('capell-publishing-studio::scheduler.fields.takedown_reminder_at'))
+                    ->label(__('capell-publishing-studio::scheduler.fields.unpublish_at'))
+                    ->helperText(__('capell-publishing-studio::scheduler.fields.unpublish_at_help'))
                     ->seconds(false)
                     ->default(fn (Workspace $record): ?CarbonImmutable => $record->unpublish_at),
                 DateTimePicker::make('embargo_until')
@@ -40,11 +42,21 @@ class SchedulerMetadataAction extends Action
                     ->default(fn (Workspace $record): ?CarbonImmutable => $record->review_reminder_at),
             ])
             ->action(function (Workspace $record, array $data): void {
-                SetWorkspaceSchedulerMetadataAction::run($record, [
-                    'unpublish_at' => $data['unpublish_at'] ?? null,
-                    'embargo_until' => $data['embargo_until'] ?? null,
-                    'review_reminder_at' => $data['review_reminder_at'] ?? null,
-                ]);
+                try {
+                    SetWorkspaceSchedulerMetadataAction::run($record, [
+                        'unpublish_at' => $data['unpublish_at'] ?? null,
+                        'embargo_until' => $data['embargo_until'] ?? null,
+                        'review_reminder_at' => $data['review_reminder_at'] ?? null,
+                    ], auth()->user());
+                } catch (InvalidSchedulerMetadataException $invalidSchedulerMetadataException) {
+                    Notification::make()
+                        ->title(__('capell-publishing-studio::scheduler.notifications.validation_failed'))
+                        ->body($invalidSchedulerMetadataException->getMessage())
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
 
                 Notification::make()
                     ->title(__('capell-publishing-studio::scheduler.notifications.updated'))

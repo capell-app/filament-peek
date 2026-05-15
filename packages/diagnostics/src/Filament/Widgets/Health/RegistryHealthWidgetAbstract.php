@@ -22,8 +22,8 @@ final class RegistryHealthWidgetAbstract extends Widget implements CapellWidgetC
 
     protected string $view = 'capell-diagnostics::widgets.registry-health';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 1];
 
     public static function getDescription(): string
     {

@@ -6,7 +6,7 @@ namespace Capell\CampaignStudio\Providers;
 
 use Capell\Admin\Contracts\Extenders\PageSchemaExtender;
 use Capell\CampaignStudio\Console\Commands\InstallCampaignLayoutsCommand;
-use Capell\CampaignStudio\Enums\CampaignWidgetComponentEnum;
+use Capell\CampaignStudio\Enums\CampaignElementComponentEnum;
 use Capell\CampaignStudio\Filament\Extenders\Page\CampaignPageSchemaExtender;
 use Capell\CampaignStudio\Listeners\RecordFormSubmissionConversion;
 use Capell\CampaignStudio\Listeners\SyncCampaignLandingPageFromPage;
@@ -101,7 +101,7 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
     {
         Blade::componentNamespace('Capell\\CampaignStudio\\View\\Components', 'capell-campaign-studio');
 
-        CapellCore::registerComponents('Widget', CampaignWidgetComponentEnum::cases());
+        CapellCore::registerComponents('Element', CampaignElementComponentEnum::cases());
 
         return $this;
     }

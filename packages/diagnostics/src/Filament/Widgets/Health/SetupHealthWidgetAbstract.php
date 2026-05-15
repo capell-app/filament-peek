@@ -22,7 +22,7 @@ final class SetupHealthWidgetAbstract extends Widget implements CapellWidgetCont
 
     protected string $view = 'capell-diagnostics::widgets.setup-health';
 
-    protected int|string|array $columnSpan = ['default' => 'full'];
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 0;
 

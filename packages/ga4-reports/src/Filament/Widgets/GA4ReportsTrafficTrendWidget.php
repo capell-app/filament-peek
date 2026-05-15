@@ -23,8 +23,8 @@ final class GA4ReportsTrafficTrendWidget extends ChartWidget implements CapellWi
 
     protected static string $settingsKey = 'ga4_reports_traffic_trend';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 2];
 
     protected static ?int $sort = 22;
 

@@ -81,12 +81,12 @@ final class BuildSearchConsolePageRowsAction
         return [
             'id' => 'search-console-url-' . $metric->id,
             'url' => $metric->url,
-            'clicks' => (int) $metric->clicks,
-            'impressions' => (int) $metric->impressions,
-            'ctr' => round(((float) $metric->ctr) * 100, 1),
-            'average_position' => $metric->average_position === null ? __('capell-seo-suite::dashboard.not_available') : number_format((float) $metric->average_position, 1),
-            'click_delta' => (int) $metric->click_delta,
-            'direction' => $this->directionLabel((int) $metric->click_delta),
+            'clicks' => $metric->clicks,
+            'impressions' => $metric->impressions,
+            'ctr' => round($metric->ctr * 100, 1),
+            'average_position' => $metric->average_position === null ? __('capell-seo-suite::dashboard.not_available') : number_format($metric->average_position, 1),
+            'click_delta' => $metric->click_delta,
+            'direction' => $this->directionLabel($metric->click_delta),
         ];
     }
 

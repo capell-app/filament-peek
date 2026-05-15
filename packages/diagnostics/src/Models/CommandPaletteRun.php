@@ -19,7 +19,7 @@ final class CommandPaletteRun extends Model
     use HasFactory;
 
     /**
-     * @var array<int, string>
+     * @var array<string>
      */
     protected $guarded = [];
 

@@ -7,9 +7,12 @@ namespace Capell\PublishingStudio\Actions;
 use Capell\Core\Contracts\Pageable;
 use Capell\Frontend\Support\Cache\PageCacheInvalidator;
 use Illuminate\Database\Eloquent\Model;
+use Lorisleiva\Actions\Concerns\AsAction;
 
 class InvalidatePublishedWorkspaceFrontendCacheAction
 {
+    use AsAction;
+
     /**
      * @param  array<class-string<Model>, array<int, int>>  $publishedModelIds
      */

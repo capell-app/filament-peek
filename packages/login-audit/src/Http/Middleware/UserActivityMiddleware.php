@@ -6,6 +6,7 @@ namespace Capell\LoginAudit\Http\Middleware;
 
 use Capell\LoginAudit\Actions\ResolveLoginAuditIpAddressAction;
 use Capell\LoginAudit\Models\LoginAudit;
+use Carbon\CarbonImmutable;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +50,7 @@ class UserActivityMiddleware
             ->first();
 
         if ($log !== null) {
-            $log->last_seen_at = now();
+            $log->last_seen_at = CarbonImmutable::now();
             $log->save();
         }
     }

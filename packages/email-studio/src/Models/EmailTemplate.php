@@ -15,7 +15,7 @@ class EmailTemplate extends Model
     /** @use HasFactory<EmailTemplateFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'site_scope_key',

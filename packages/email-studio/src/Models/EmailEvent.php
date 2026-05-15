@@ -15,7 +15,7 @@ class EmailEvent extends Model
     /** @use HasFactory<EmailEventFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'site_scope_key',

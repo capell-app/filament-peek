@@ -20,6 +20,7 @@ use Capell\PublishingStudio\Exceptions\StaleWorkspaceException;
 use Capell\PublishingStudio\Exceptions\UrlCollisionException;
 use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -253,7 +254,7 @@ class Publisher
             }
 
             $workspace->status = WorkspaceStatusEnum::Published;
-            $workspace->published_at = now();
+            $workspace->published_at = CarbonImmutable::now();
             $workspace->save();
 
             return $newVersion;

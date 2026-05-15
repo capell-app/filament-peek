@@ -44,7 +44,7 @@ class Area extends AccessGateModel
     /** @use HasFactory<AreaFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'key',
         'site_id',

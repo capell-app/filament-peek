@@ -9,7 +9,7 @@ use Capell\Admin\Enums\DashboardEnum;
 use Capell\Admin\Enums\NavigationGroupPositionEnum;
 use Capell\Admin\Facades\CapellAdmin;
 use Capell\CampaignStudio\Actions\BuildCampaignOverviewStatsAction;
-use Capell\CampaignStudio\Enums\CampaignWidgetConfiguratorEnum;
+use Capell\CampaignStudio\Enums\CampaignElementConfiguratorEnum;
 use Capell\CampaignStudio\Enums\ResourceEnum;
 use Capell\CampaignStudio\Filament\Widgets\TopCampaignStudioWidget;
 use Capell\CampaignStudio\Filament\Widgets\TopLandingPagesWidget;
@@ -75,12 +75,12 @@ final class AdminServiceProvider extends ServiceProvider
 
     private function registerConfigurators(): self
     {
-        foreach (CampaignWidgetConfiguratorEnum::cases() as $configurator) {
+        foreach (CampaignElementConfiguratorEnum::cases() as $configurator) {
             $configuratorClass = $configurator->value;
 
             CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::configurator(
                 class: $configuratorClass,
-                group: LayoutBuilderConfiguratorTypeEnum::Widget->value,
+                group: LayoutBuilderConfiguratorTypeEnum::Element->value,
                 name: $configuratorClass::getKey(),
             ));
         }
@@ -100,31 +100,31 @@ final class AdminServiceProvider extends ServiceProvider
     {
         CapellAdmin::registerOverviewStat(
             key: 'campaign_overview',
-            label: fn (): string => __('capell-campaign-studio::widgets.active_campaign-studio'),
+            label: fn (): string => __('capell-campaign-studio::elements.active_campaign-studio'),
             value: fn (): int => $this->campaignOverview()['active_campaign-studio'],
             group: fn (): string => __('capell-admin::navigation.group_marketing'),
             sort: 150,
-            settingsLabel: fn (): string => __('capell-campaign-studio::widgets.campaign_overview'),
+            settingsLabel: fn (): string => __('capell-campaign-studio::elements.campaign_overview'),
         );
 
         CapellAdmin::registerOverviewStat(
             key: 'campaign_overview.conversions',
-            label: fn (): string => __('capell-campaign-studio::widgets.conversions'),
+            label: fn (): string => __('capell-campaign-studio::elements.conversions'),
             value: fn (): int => $this->campaignOverview()['conversions'],
             group: fn (): string => __('capell-admin::navigation.group_marketing'),
             sort: 151,
             settingsKey: 'campaign_overview',
-            settingsLabel: fn (): string => __('capell-campaign-studio::widgets.campaign_overview'),
+            settingsLabel: fn (): string => __('capell-campaign-studio::elements.campaign_overview'),
         );
 
         CapellAdmin::registerOverviewStat(
             key: 'campaign_overview.conversion_rate',
-            label: fn (): string => __('capell-campaign-studio::widgets.conversion_rate'),
+            label: fn (): string => __('capell-campaign-studio::elements.conversion_rate'),
             value: fn (): string => $this->campaignOverview()['conversion_rate'] . '%',
             group: fn (): string => __('capell-admin::navigation.group_marketing'),
             sort: 152,
             settingsKey: 'campaign_overview',
-            settingsLabel: fn (): string => __('capell-campaign-studio::widgets.campaign_overview'),
+            settingsLabel: fn (): string => __('capell-campaign-studio::elements.campaign_overview'),
         );
 
         return $this;

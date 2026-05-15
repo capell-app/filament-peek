@@ -19,13 +19,13 @@ SEO Suite adds metadata panels, structured data, broken link tracking, Search Co
 - SEO audit, AI Discovery, broken links, not-found URLs, and translation coverage pages.
 - AI creator actions for briefs, images, layouts, metadata suggestions, and draft application.
 - AI Discovery for `llms.txt`, optional `llms-full.txt`, page Markdown URLs, `Accept: text/markdown`, configurable AI crawler rules, and page-readiness audits.
-- Search Console sync and dashboard-dashboard_reports.
+- Search Console sync and dashboard reports.
 
 ## Why It Matters
 
 **For developers:** Exposes SEO work as actions, contracts, data objects, settings schemas, and extenders that connect to core pages, sites, translations, routes, and optional AI providers.
 
-**For teams:** Gives editors and site operators practical checks before publishing and operational dashboard-dashboard_reports after launch.
+**For teams:** Gives editors and site operators practical checks before publishing and operational dashboard reports after launch.
 
 ## Built With
 

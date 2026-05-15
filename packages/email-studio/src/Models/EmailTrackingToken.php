@@ -14,7 +14,7 @@ class EmailTrackingToken extends Model
     /** @use HasFactory<EmailTrackingTokenFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'site_scope_key',

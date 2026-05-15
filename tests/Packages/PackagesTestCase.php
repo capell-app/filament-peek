@@ -34,6 +34,7 @@ use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\FrontendAuthoring\Providers\FrontendAuthoringServiceProvider;
 use Capell\Hero\Providers\HeroServiceProvider;
 use Capell\Insights\Providers\InsightsServiceProvider;
+use Capell\LayoutBuilder\LayoutBuilderServiceProvider;
 use Capell\LoginAudit\Providers\LoginAuditServiceProvider;
 use Capell\MediaLibrary\Filament\Pages\MediaHealthPage;
 use Capell\MediaLibrary\MediaLibraryServiceProvider;
@@ -104,6 +105,7 @@ class PackagesTestCase extends AbstractTestCase
             MigrationAssistantServiceProvider::class,
             ContentSectionsServiceProvider::class,
             ContentBlocksServiceProvider::class,
+            LayoutBuilderServiceProvider::class,
             NavigationServiceProvider::class,
             BlogServiceProvider::class,
             BlogFrontendServiceProvider::class,
@@ -142,6 +144,7 @@ class PackagesTestCase extends AbstractTestCase
         $this->registerDiagnosticsPagesForFilament();
 
         CapellCore::forcePackageInstalled('capell-app/navigation');
+        CapellCore::forcePackageInstalled(LayoutBuilderServiceProvider::$packageName);
 
         $app->make(Repository::class)->set('tags.tag_model', Tag::class);
         $app->make(Repository::class)->set('media-library.media_model', Media::class);

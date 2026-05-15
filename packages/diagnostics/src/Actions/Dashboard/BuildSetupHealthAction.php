@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Capell\Diagnostics\Actions\Dashboard;
 
 use Capell\Admin\Enums\SetupHealthEnum;
+use Capell\Admin\Filament\Resources\Blueprints\BlueprintResource;
 use Capell\Admin\Filament\Resources\Languages\LanguageResource;
 use Capell\Admin\Filament\Resources\Sites\SiteResource;
 use Capell\Admin\Filament\Resources\Themes\ThemeResource;
-use Capell\Admin\Filament\Resources\Types\TypeResource;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\Diagnostics\Data\Dashboard\SetupCheckData;
 use Capell\Diagnostics\Data\Dashboard\SetupHealthData;
 use Exception;
@@ -28,7 +28,7 @@ final class BuildSetupHealthAction
         $siteExists = Site::query()->exists();
         $languageExists = Language::query()->exists();
         $themeExists = Theme::query()->exists();
-        $typeExists = Type::query()->exists();
+        $typeExists = Blueprint::query()->exists();
 
         $checks = [
             new SetupCheckData(
@@ -56,7 +56,7 @@ final class BuildSetupHealthAction
                 id: 'type',
                 label: __('capell-admin::setup-health.type.label'),
                 status: $typeExists ? SetupHealthEnum::Green : SetupHealthEnum::Red,
-                fixUrl: $typeExists ? null : $this->tryGetUrl(TypeResource::class, 'create'),
+                fixUrl: $typeExists ? null : $this->tryGetUrl(BlueprintResource::class, 'create'),
                 fixLabel: $typeExists ? null : __('capell-admin::setup-health.type.fix_label'),
             ),
         ];

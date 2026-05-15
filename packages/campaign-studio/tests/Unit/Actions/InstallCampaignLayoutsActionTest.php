@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 use Capell\CampaignStudio\Actions\InstallCampaignLayoutsAction;
 use Capell\Core\Models\Layout;
-use Capell\Core\Models\Widget;
+use Capell\LayoutBuilder\Models\Element;
 
-it('installs campaign layouts with layout-builder compatible widget references', function (): void {
+it('installs campaign layouts with layout-builder compatible element references', function (): void {
     $result = InstallCampaignLayoutsAction::run();
 
     $layout = Layout::query()->where('key', 'campaign-lead-generation')->firstOrFail();
     $containers = $layout->getAttribute('containers');
-    $widgets = $layout->getAttribute('widgets');
+    $elements = $layout->getAttribute('elements');
 
     expect($result)->toBe(['created' => 3, 'updated' => 0, 'skipped' => 0])
         ->and($containers)->toHaveKeys(['hero', 'proof', 'form'])
-        ->and($containers['hero']['widgets'][0])->toMatchArray([
-            'widget_key' => 'campaign-lead-generation-campaign-hero',
+        ->and($containers['hero']['elements'][0])->toMatchArray([
+            'element_key' => 'campaign-lead-generation-campaign-hero',
             'occurrence' => 1,
         ])
-        ->and($widgets)->toContain('campaign-lead-generation-campaign-hero')
-        ->and(Widget::query()->where('key', 'campaign-lead-generation-campaign-hero')->exists())->toBeTrue()
-        ->and(Widget::query()->where('key', 'campaign-lead-generation-campaign-cta-block')->exists())->toBeTrue()
-        ->and(Widget::query()->where('key', 'campaign-lead-generation-campaign-lead-form')->exists())->toBeTrue();
+        ->and($elements)->toContain('campaign-lead-generation-campaign-hero')
+        ->and(Element::query()->where('key', 'campaign-lead-generation-campaign-hero')->exists())->toBeTrue()
+        ->and(Element::query()->where('key', 'campaign-lead-generation-campaign-cta-block')->exists())->toBeTrue()
+        ->and(Element::query()->where('key', 'campaign-lead-generation-campaign-lead-form')->exists())->toBeTrue();
 });
 
 it('skips existing campaign layouts unless forced', function (): void {

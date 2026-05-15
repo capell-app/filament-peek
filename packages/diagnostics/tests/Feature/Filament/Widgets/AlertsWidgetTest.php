@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use Capell\Admin\Enums\AlertTypeEnum;
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\BlueprintSubjectEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\Diagnostics\Filament\Widgets\Health\AlertsWidgetAbstract as AlertsWidget;
 use Capell\Installer\Providers\InstallerServiceProvider;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
@@ -21,8 +21,8 @@ uses(CreatesAdminUser::class)
 
 function createAllTypes(): void
 {
-    foreach (TypeEnum::cases() as $enum) {
-        Type::factory()->type($enum)->create();
+    foreach (BlueprintSubjectEnum::cases() as $enum) {
+        Blueprint::factory()->type($enum)->create();
     }
 }
 
@@ -60,7 +60,7 @@ it('shows type, theme, and language warnings when a site exists but none are con
 
 it('shows only language warning when default theme & site exist but no default language', function (): void {
     createAllTypes();
-    $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
+    $themeType = Blueprint::query()->where('type', BlueprintSubjectEnum::Theme)->first();
     Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     $language = Language::factory()->create(['default' => false]);
     Site::factory()->language($language)->create();
@@ -80,7 +80,7 @@ it('shows only language warning when default theme & site exist but no default l
 it('shows only theme warning when default language & site exist but no default theme', function (): void {
     createAllTypes();
     Language::factory()->default()->create();
-    $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
+    $themeType = Blueprint::query()->where('type', BlueprintSubjectEnum::Theme)->first();
     $theme = Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => false])->createQuietly();
     Site::factory()->theme($theme)->create();
 
@@ -109,7 +109,7 @@ it('has create language action with correct URL', function (): void {
 it('has create theme action with correct URL', function (): void {
     $language = Language::factory()->create(['default' => false]);
     Site::factory()->language($language)->create();
-    Type::factory()->theme()->create();
+    Blueprint::factory()->theme()->create();
 
     $widget = new AlertsWidget;
     $action = $widget->getAction('createTheme');
@@ -119,7 +119,7 @@ it('has create theme action with correct URL', function (): void {
 
 it('does not show resource alerts when all defaults exist', function (): void {
     createAllTypes();
-    $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
+    $themeType = Blueprint::query()->where('type', BlueprintSubjectEnum::Theme)->first();
     Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();
@@ -132,7 +132,7 @@ it('does not show resource alerts when all defaults exist', function (): void {
 
 it('shows installer alert only when installer package is present', function (): void {
     createAllTypes();
-    $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
+    $themeType = Blueprint::query()->where('type', BlueprintSubjectEnum::Theme)->first();
     Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();
@@ -154,7 +154,7 @@ it('shows installer alert only when installer package is present', function (): 
 
 it('adds installer actions only when installer package is present', function (): void {
     createAllTypes();
-    $themeType = Type::query()->where('type', TypeEnum::Theme)->first();
+    $themeType = Blueprint::query()->where('type', BlueprintSubjectEnum::Theme)->first();
     Theme::factory()->state(['blueprint_id' => $themeType?->id, 'default' => true])->create();
     Language::factory()->default()->create();
     Site::factory()->create();

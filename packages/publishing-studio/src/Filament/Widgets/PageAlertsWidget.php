@@ -10,7 +10,7 @@ use Capell\Admin\Enums\ResourceEnum;
 use Capell\Admin\Filament\Resources\Pages\PageResource;
 use Capell\Admin\Filament\Resources\Sites\SiteResource;
 use Capell\Admin\Filament\Widgets\ResourceAlertsWidget;
-use Capell\Core\Actions\GetResourceFromTypeAction;
+use Capell\Core\Actions\GetResourceFromBlueprintAction;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\PublishStatusEnum;
 use Capell\Core\Models\Page;
@@ -236,6 +236,6 @@ class PageAlertsWidget extends ResourceAlertsWidget
      */
     private function getResource(): string
     {
-        return GetResourceFromTypeAction::run(ResourceEnum::Page, $this->record->type) ?? PageResource::class;
+        return GetResourceFromBlueprintAction::run(ResourceEnum::Page, $this->record->type) ?? PageResource::class;
     }
 }

@@ -3116,7 +3116,7 @@ declare(strict_types=1);
 
 namespace Capell\Newsletter\Actions;
 
-use Capell\Core\Models\Type;
+use Capell\Core\Models\Blueprint;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
 use Capell\LayoutBuilder\Enums\WidgetTypeEnum;
 use Capell\LayoutBuilder\Filament\Configurators\Types\WidgetTypeConfigurator;

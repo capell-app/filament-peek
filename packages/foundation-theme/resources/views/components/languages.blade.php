@@ -35,7 +35,6 @@ $theme = Frontend::theme();
             class="h-4 w-4"
             src="{{ asset("vendor/blade-country-flags/4x3-{$language->flag}.svg") }}"
             alt="{{ $language->name }}"
-            x-tooltip.raw="{{ $language->name }}"
             title="{{ $language->name }}"
             loading="lazy"
         />

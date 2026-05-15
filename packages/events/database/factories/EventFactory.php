@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Capell\Events\Database\Factories;
 
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\BlueprintSubjectEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\Events\Enums\EventBookingModeEnum;
 use Capell\Events\Enums\EventLocationModeEnum;
 use Capell\Events\Enums\EventVisibilityEnum;
@@ -31,7 +31,7 @@ class EventFactory extends Factory
 
         return [
             'site_id' => fn (): int => $this->site()->id,
-            'blueprint_id' => fn (): int => $this->type('event', TypeEnum::Page->value)->id,
+            'blueprint_id' => fn (): int => $this->type('event', BlueprintSubjectEnum::Page->value)->id,
             'layout_id' => fn (): int => Layout::query()->firstOrCreate([
                 'key' => 'event',
             ], [
@@ -65,7 +65,7 @@ class EventFactory extends Factory
             'key' => 'default',
         ], [
             'name' => 'Default',
-            'blueprint_id' => $this->type('default', TypeEnum::Theme->value)->id,
+            'blueprint_id' => $this->type('default', BlueprintSubjectEnum::Theme->value)->id,
             'default' => true,
             'status' => true,
         ]);
@@ -73,7 +73,7 @@ class EventFactory extends Factory
         return Site::query()->firstOrCreate([
             'name' => 'Default site',
         ], [
-            'blueprint_id' => $this->type('default', TypeEnum::Site->value)->id,
+            'blueprint_id' => $this->type('default', BlueprintSubjectEnum::Site->value)->id,
             'theme_id' => $theme->id,
             'language_id' => $language->id,
             'default' => true,
@@ -81,9 +81,9 @@ class EventFactory extends Factory
         ]);
     }
 
-    private function type(string $key, string $type): Type
+    private function type(string $key, string $type): Blueprint
     {
-        return Type::query()->firstOrCreate([
+        return Blueprint::query()->firstOrCreate([
             'key' => $key,
             'type' => $type,
         ], [

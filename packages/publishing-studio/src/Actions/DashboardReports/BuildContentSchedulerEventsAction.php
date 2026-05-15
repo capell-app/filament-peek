@@ -7,10 +7,13 @@ namespace Capell\PublishingStudio\Actions\DashboardReports;
 use Capell\Core\Actions\GetEditPageResourceUrlAction;
 use Capell\Core\Models\Page;
 use Capell\PublishingStudio\Data\SchedulerEventData;
+use Capell\PublishingStudio\Enums\SchedulerEventStateEnum;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
+use Capell\PublishingStudio\Models\SchedulerEvent;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Support\WorkspaceSchema;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -30,162 +33,237 @@ final class BuildContentSchedulerEventsAction
         ?string $sourceType = null,
         ?CarbonInterface $startsAt = null,
         ?CarbonInterface $endsAt = null,
+        ?SchedulerEventStateEnum $state = null,
+        ?int $siteId = null,
+        ?array $siteIds = null,
+        ?int $ownerId = null,
+        ?string $ownerType = null,
+        int $limit = 250,
     ): Collection {
+        $startsAt = $startsAt instanceof CarbonInterface ? CarbonImmutable::instance($startsAt) : CarbonImmutable::now();
+        $endsAt = $endsAt instanceof CarbonInterface ? CarbonImmutable::instance($endsAt) : CarbonImmutable::now()->addMonths(6);
+        $siteIds ??= $siteId !== null ? [$siteId] : null;
+
         $events = collect();
 
         if ($sourceType === null || $sourceType === 'page') {
-            $events = $events->merge($this->pageEvents());
+            $events = $events->merge($this->pageEvents($eventType, $startsAt, $endsAt, $state, $siteIds, $ownerId, $ownerType, $limit));
         }
 
         if ($sourceType === null || $sourceType === 'workspace') {
-            $events = $events->merge($this->workspaceEvents());
+            $events = $events->merge($this->workspaceEvents($eventType, $startsAt, $endsAt, $state, $siteIds, $ownerId, $ownerType, $limit));
+            $events = $events->merge($this->legacyWorkspaceEvents($eventType, $startsAt, $endsAt, $state, $siteIds, $ownerId, $ownerType, $limit));
         }
 
         return $events
-            ->filter(fn (SchedulerEventData $event): bool => ! $eventType instanceof SchedulerEventTypeEnum || $event->eventType === $eventType)
-            ->filter(fn (SchedulerEventData $event): bool => ! $startsAt instanceof CarbonInterface || $event->scheduledFor->greaterThanOrEqualTo($startsAt))
-            ->filter(fn (SchedulerEventData $event): bool => ! $endsAt instanceof CarbonInterface || $event->scheduledFor->lessThanOrEqualTo($endsAt))
+            ->unique(fn (SchedulerEventData $event): string => implode(':', [
+                $event->sourceType,
+                (string) $event->sourceId,
+                $event->eventType->value,
+                (string) $event->scheduledFor->getTimestamp(),
+            ]))
             ->sortBy(fn (SchedulerEventData $event): int => $event->scheduledFor->getTimestamp())
+            ->take($limit)
             ->values();
     }
 
     /**
      * @return Collection<int, SchedulerEventData>
      */
-    private function pageEvents(): Collection
-    {
+    private function pageEvents(
+        ?SchedulerEventTypeEnum $eventType,
+        CarbonInterface $startsAt,
+        CarbonInterface $endsAt,
+        ?SchedulerEventStateEnum $state,
+        ?array $siteIds,
+        ?int $ownerId,
+        ?string $ownerType,
+        int $limit,
+    ): Collection {
+        if (($state instanceof SchedulerEventStateEnum && $state !== SchedulerEventStateEnum::Scheduled)
+            || $ownerId !== null
+            || $ownerType !== null) {
+            return collect();
+        }
+
+        $events = collect();
+
+        if (! $eventType instanceof SchedulerEventTypeEnum || $eventType === SchedulerEventTypeEnum::Publish) {
+            $events = $events->merge($this->pageColumnEvents('visible_from', SchedulerEventTypeEnum::Publish, $startsAt, $endsAt, $siteIds, $limit));
+        }
+
+        if (! $eventType instanceof SchedulerEventTypeEnum || $eventType === SchedulerEventTypeEnum::Unpublish) {
+            return $events->merge($this->pageColumnEvents('visible_until', SchedulerEventTypeEnum::Unpublish, $startsAt, $endsAt, $siteIds, $limit));
+        }
+
+        return $events;
+    }
+
+    /**
+     * @return Collection<int, SchedulerEventData>
+     */
+    private function pageColumnEvents(
+        string $column,
+        SchedulerEventTypeEnum $eventType,
+        CarbonInterface $startsAt,
+        CarbonInterface $endsAt,
+        ?array $siteIds,
+        int $limit,
+    ): Collection {
         return Page::query()
-            ->with('type')
-            ->where(function (Builder $query): void {
-                $query->where('visible_from', '>', now())
-                    ->orWhere('visible_until', '>', now());
-            })
+            ->with(['type', 'site'])
+            ->whereBetween($column, [$startsAt, $endsAt])
+            ->when($siteIds !== null, fn (Builder $query): Builder => $query->whereIn('site_id', $siteIds))
+            ->orderBy($column)
+            ->limit($limit)
             ->get()
-            ->flatMap(function (Page $page): array {
-                $events = [];
-                $page->loadMissing('type');
+            ->map(function (Page $page) use ($column, $eventType): SchedulerEventData {
+                $scheduledFor = $page->getAttribute($column);
                 $recordUrl = GetEditPageResourceUrlAction::run($page);
 
-                if ($page->visible_from !== null && $page->visible_from->isFuture()) {
-                    $events[] = new SchedulerEventData(
-                        id: 'page-' . $page->id . '-publish',
-                        sourceType: 'page',
-                        sourceId: $page->id,
-                        title: $page->name,
-                        eventType: SchedulerEventTypeEnum::Publish,
-                        scheduledFor: $page->visible_from,
-                        status: (string) __('capell-publishing-studio::scheduler.status.page_scheduled'),
-                        description: (string) __('capell-publishing-studio::scheduler.descriptions.page_publish'),
-                        recordUrl: $recordUrl,
-                    );
-                }
-
-                if ($page->visible_until !== null && $page->visible_until->isFuture()) {
-                    $events[] = new SchedulerEventData(
-                        id: 'page-' . $page->id . '-unpublish',
-                        sourceType: 'page',
-                        sourceId: $page->id,
-                        title: $page->name,
-                        eventType: SchedulerEventTypeEnum::Unpublish,
-                        scheduledFor: $page->visible_until,
-                        status: (string) __('capell-publishing-studio::scheduler.status.page_scheduled'),
-                        description: (string) __('capell-publishing-studio::scheduler.descriptions.page_unpublish'),
-                        recordUrl: $recordUrl,
-                    );
-                }
-
-                return $events;
+                return new SchedulerEventData(
+                    id: 'page-' . $page->id . '-' . $eventType->value,
+                    sourceType: 'page',
+                    sourceId: $page->id,
+                    title: $page->name,
+                    eventType: $eventType,
+                    scheduledFor: CarbonImmutable::instance($scheduledFor),
+                    status: __('capell-publishing-studio::scheduler.status.page_scheduled'),
+                    description: (string) __('capell-publishing-studio::scheduler.descriptions.page_' . $eventType->value),
+                    recordUrl: $recordUrl,
+                    state: SchedulerEventStateEnum::Scheduled,
+                    siteId: $page->site_id,
+                    siteName: $page->site?->name,
+                    timezone: config('app.timezone', 'UTC'),
+                );
             });
     }
 
     /**
      * @return Collection<int, SchedulerEventData>
      */
-    private function workspaceEvents(): Collection
-    {
-        $schedulerColumns = $this->workspaceSchedulerColumns();
-
-        if ($schedulerColumns === []) {
+    private function workspaceEvents(
+        ?SchedulerEventTypeEnum $eventType,
+        CarbonInterface $startsAt,
+        CarbonInterface $endsAt,
+        ?SchedulerEventStateEnum $state,
+        ?array $siteIds,
+        ?int $ownerId,
+        ?string $ownerType,
+        int $limit,
+    ): Collection {
+        if (! Schema::hasTable('publishing_scheduler_events')) {
             return collect();
         }
 
-        return Workspace::query()
-            ->where(function (Builder $query) use ($schedulerColumns): void {
-                foreach (array_values($schedulerColumns) as $index => $column) {
-                    if ($index === 0) {
-                        $query->where($column, '>', now());
-
-                        continue;
-                    }
-
-                    $query->orWhere($column, '>', now());
-                }
-            })
+        return SchedulerEvent::query()
+            ->with(['workspace', 'owner'])
+            ->whereBetween('scheduled_for', [$startsAt, $endsAt])
+            ->when($eventType instanceof SchedulerEventTypeEnum, fn (Builder $query): Builder => $query->where('event_type', $eventType->value))
+            ->when($state instanceof SchedulerEventStateEnum, fn (Builder $query): Builder => $query->where('state', $state->value))
+            ->when($siteIds !== null, fn (Builder $query): Builder => $query->whereIn('site_id', $siteIds))
+            ->when($ownerId !== null, fn (Builder $query): Builder => $query->where('owner_id', $ownerId))
+            ->when($ownerType !== null, fn (Builder $query): Builder => $query->where('owner_type', $ownerType))
+            ->orderBy('scheduled_for')
+            ->limit($limit)
             ->get()
-            ->flatMap(function (Workspace $workspace) use ($schedulerColumns): array {
-                $events = [];
-                $recordUrl = Route::has('filament.admin.resources.publishing-studio.index')
-                    ? WorkspaceResource::getUrl('index', [
-                        'tableSearch' => $workspace->name,
-                    ])
-                    : '#';
-
-                if (in_array('publish_at', $schedulerColumns, true) && $workspace->publish_at !== null && $workspace->publish_at->isFuture()) {
-                    $events[] = $this->workspaceEvent($workspace, SchedulerEventTypeEnum::Publish, $workspace->publish_at, 'workspace_publish', $recordUrl);
-                }
-
-                if (in_array('unpublish_at', $schedulerColumns, true) && $workspace->unpublish_at !== null && $workspace->unpublish_at->isFuture()) {
-                    $events[] = $this->workspaceEvent($workspace, SchedulerEventTypeEnum::Unpublish, $workspace->unpublish_at, 'workspace_takedown_reminder', $recordUrl);
-                }
-
-                if (in_array('embargo_until', $schedulerColumns, true) && $workspace->embargo_until !== null && $workspace->embargo_until->isFuture()) {
-                    $events[] = $this->workspaceEvent($workspace, SchedulerEventTypeEnum::Embargo, $workspace->embargo_until, 'workspace_embargo', $recordUrl);
-                }
-
-                if (in_array('review_reminder_at', $schedulerColumns, true) && $workspace->review_reminder_at !== null && $workspace->review_reminder_at->isFuture()) {
-                    $events[] = $this->workspaceEvent($workspace, SchedulerEventTypeEnum::ReviewReminder, $workspace->review_reminder_at, 'workspace_review_reminder', $recordUrl);
-                }
-
-                return $events;
-            });
+            ->map(fn (SchedulerEvent $event): SchedulerEventData => $this->workspaceEvent($event));
     }
 
     /**
-     * @return array<int, string>
+     * @return Collection<int, SchedulerEventData>
      */
-    private function workspaceSchedulerColumns(): array
-    {
-        if (! WorkspaceSchema::hasWorkspaceTable()) {
-            return [];
+    private function legacyWorkspaceEvents(
+        ?SchedulerEventTypeEnum $eventType,
+        CarbonInterface $startsAt,
+        CarbonInterface $endsAt,
+        ?SchedulerEventStateEnum $state,
+        ?array $siteIds,
+        ?int $ownerId,
+        ?string $ownerType,
+        int $limit,
+    ): Collection {
+        if (! WorkspaceSchema::hasWorkspaceTable()
+            || ($state instanceof SchedulerEventStateEnum && $state !== SchedulerEventStateEnum::Scheduled)
+            || $siteIds !== null
+            || $ownerId !== null
+            || $ownerType !== null) {
+            return collect();
         }
 
-        $columns = Schema::getColumnListing((new Workspace)->getTable());
+        $columns = [
+            SchedulerEventTypeEnum::Publish->value => 'publish_at',
+            SchedulerEventTypeEnum::Unpublish->value => 'unpublish_at',
+            SchedulerEventTypeEnum::Embargo->value => 'embargo_until',
+            SchedulerEventTypeEnum::ReviewReminder->value => 'review_reminder_at',
+        ];
 
-        return array_values(array_intersect([
-            'publish_at',
-            'unpublish_at',
-            'embargo_until',
-            'review_reminder_at',
-        ], $columns));
+        $events = collect();
+
+        foreach ($columns as $eventTypeValue => $column) {
+            $currentEventType = SchedulerEventTypeEnum::from($eventTypeValue);
+
+            if ($eventType instanceof SchedulerEventTypeEnum && $eventType !== $currentEventType) {
+                continue;
+            }
+
+            $events = $events->merge(
+                Workspace::query()
+                    ->whereBetween($column, [$startsAt, $endsAt])
+                    ->orderBy($column)
+                    ->limit($limit)
+                    ->get()
+                    ->map(fn (Workspace $workspace): SchedulerEventData => $this->legacyWorkspaceEvent($workspace, $currentEventType, $column)),
+            );
+        }
+
+        return $events;
     }
 
-    private function workspaceEvent(
-        Workspace $workspace,
-        SchedulerEventTypeEnum $eventType,
-        CarbonInterface $scheduledFor,
-        string $descriptionKey,
-        ?string $recordUrl,
-    ): SchedulerEventData {
+    private function legacyWorkspaceEvent(Workspace $workspace, SchedulerEventTypeEnum $eventType, string $column): SchedulerEventData
+    {
+        $recordUrl = Route::has('filament.admin.resources.publishing-studio.index')
+            ? WorkspaceResource::getUrl('index', ['tableSearch' => $workspace->name])
+            : null;
+
         return new SchedulerEventData(
             id: 'workspace-' . $workspace->id . '-' . $eventType->value,
             sourceType: 'workspace',
             sourceId: $workspace->id,
             title: $workspace->name,
             eventType: $eventType,
-            scheduledFor: $scheduledFor,
+            scheduledFor: CarbonImmutable::instance($workspace->getAttribute($column)),
             status: $workspace->status->getLabel(),
-            description: (string) __('capell-publishing-studio::scheduler.descriptions.' . $descriptionKey),
+            description: (string) __('capell-publishing-studio::scheduler.descriptions.workspace_' . $eventType->value),
             recordUrl: $recordUrl,
+            state: SchedulerEventStateEnum::Scheduled,
+            timezone: config('app.timezone', 'UTC'),
+        );
+    }
+
+    private function workspaceEvent(SchedulerEvent $event): SchedulerEventData
+    {
+        $workspace = $event->workspace;
+        $recordUrl = Route::has('filament.admin.resources.publishing-studio.index') && $workspace instanceof Workspace
+            ? WorkspaceResource::getUrl('index', ['tableSearch' => $workspace->name])
+            : null;
+
+        return new SchedulerEventData(
+            id: 'scheduler-event-' . $event->id,
+            sourceType: 'workspace',
+            sourceId: $event->source_id,
+            title: $workspace?->name ?? (string) __('capell-publishing-studio::scheduler.missing_workspace'),
+            eventType: $event->event_type,
+            scheduledFor: $event->scheduled_for,
+            status: $event->state->getLabel(),
+            description: (string) __('capell-publishing-studio::scheduler.descriptions.workspace_' . $event->event_type->value),
+            recordUrl: $recordUrl,
+            state: $event->state,
+            siteId: $event->site_id,
+            ownerId: $event->owner_id,
+            ownerName: $event->owner?->name ?? null,
+            timezone: $event->display_timezone,
+            failure: $event->last_failure_message,
         );
     }
 }

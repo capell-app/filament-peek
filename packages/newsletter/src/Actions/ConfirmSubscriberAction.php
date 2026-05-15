@@ -32,6 +32,10 @@ class ConfirmSubscriberAction
             }
 
             $subscriber = $publicToken->subscriber;
+            if (! $subscriber instanceof Subscriber) {
+                return null;
+            }
+
             $subscriber->forceFill([
                 'status' => SubscriberStatus::Subscribed,
                 'confirmed_at' => now(),
@@ -49,7 +53,9 @@ class ConfirmSubscriberAction
 
             QueueProviderSyncAction::run($subscriber);
 
-            return $subscriber->refresh();
+            $subscriber->refresh();
+
+            return $subscriber;
         });
     }
 }

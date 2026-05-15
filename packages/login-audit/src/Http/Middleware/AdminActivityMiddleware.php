@@ -6,6 +6,7 @@ namespace Capell\LoginAudit\Http\Middleware;
 
 use Capell\LoginAudit\Actions\ResolveLoginAuditIpAddressAction;
 use Capell\LoginAudit\Models\LoginAudit;
+use Carbon\CarbonImmutable;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +37,7 @@ class AdminActivityMiddleware
 
         $userAgent = (string) $request->userAgent();
 
-        $now = now();
+        $now = CarbonImmutable::now();
 
         $log = LoginAudit::query()
             ->where('authenticatable_type', $user->getMorphClass())

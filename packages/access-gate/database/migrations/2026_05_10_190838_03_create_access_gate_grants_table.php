@@ -33,6 +33,9 @@ return new class extends Migration
             $table->index(['access_area_id', 'user_id']);
             $table->index(['access_area_id', 'email']);
             $table->index(['access_area_id', 'subject_type', 'subject_id']);
+            $table->index(['access_area_id', 'registration_id', 'status', 'revoked_at'], 'ag_grants_area_reg_status_idx');
+            $table->index(['access_area_id', 'email', 'status', 'revoked_at'], 'ag_grants_area_email_status_idx');
+            $table->index(['access_area_id', 'user_id', 'status', 'revoked_at'], 'ag_grants_area_user_status_idx');
         });
     }
 

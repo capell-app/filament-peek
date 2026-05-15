@@ -13,7 +13,7 @@ class ProviderAudience extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'provider_connection_id',
         'name',

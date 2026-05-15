@@ -6,6 +6,7 @@ namespace Capell\PublishingStudio\Filament\Resources\PublishingStudio\Actions;
 
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Exceptions\InvalidScheduleException;
+use Capell\PublishingStudio\Exceptions\InvalidSchedulerMetadataException;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\SchedulePublishAction;
 use Carbon\CarbonImmutable;
@@ -55,7 +56,7 @@ class ScheduleAction extends Action
                         CarbonImmutable::parse($data['publish_at']),
                         $user,
                     );
-                } catch (InvalidScheduleException $invalidScheduleException) {
+                } catch (InvalidScheduleException|InvalidSchedulerMetadataException $invalidScheduleException) {
                     Notification::make()
                         ->title(__('capell-admin::workspace.notifications.schedule_failed'))
                         ->body($invalidScheduleException->getMessage())

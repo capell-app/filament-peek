@@ -6,11 +6,13 @@ namespace Capell\SeoSuite\Support\Admin;
 
 use Capell\Admin\Contracts\Extenders\PageEditExtender;
 use Capell\SeoSuite\Filament\Widgets\EditPageSeoAuditWidget;
+use Filament\Actions\Action;
+use Filament\Widgets\Widget;
 
 class PageSeoAuditPageEditExtender implements PageEditExtender
 {
     /**
-     * @return array<int, mixed>
+     * @return array<int, Action>
      */
     public function getFormActions(): array
     {
@@ -18,7 +20,7 @@ class PageSeoAuditPageEditExtender implements PageEditExtender
     }
 
     /**
-     * @return array<int, mixed>
+     * @return array<int, class-string<Widget>>
      */
     public function getHeaderWidgets(): array
     {

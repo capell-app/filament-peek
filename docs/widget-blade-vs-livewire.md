@@ -129,13 +129,13 @@ The string value is the Blade component name — it maps directly to the file pa
 ### 3. Add a WidgetCreator method
 
 ```php
-public function myWidget(?Type $type = null): Widget
+public function myWidget(?Blueprint $blueprint = null): Widget
 {
-    $type ??= resolve(TypeCreator::class)->defaultWidgetType();
+    $blueprint ??= resolve(TypeCreator::class)->defaultElementType();
 
     return $this->widgetModel::query()->firstOrCreate(['key' => 'my-widget'], [
         'name' => 'My Widget',
-        'type_id' => $type->id,
+        'blueprint_id' => $blueprint->id,
         'meta' => [
             'component' => WidgetComponentEnum::MyWidget,
             'some_option' => 'value',

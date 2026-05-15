@@ -9,9 +9,9 @@ This page is the consolidated implementation overview for the CampaignStudio pac
 CampaignStudio adds campaign groups, landing pages, CTA blocks, conversion goals, UTM attribution, and conversion reporting to Capell.
 
 - Campaign Filament resources for groups, landing pages, goals, and CTA blocks.
-- Campaign dashboard widgets.
+- Campaign dashboard elements.
 - Page schema extender for campaign fields.
-- core layout builder widget configurators for campaign hero, CTA, and lead form blocks.
+- core layout builder element configurators for campaign hero, CTA, and lead form blocks.
 - Conversion recording actions for page views, CTA clicks, and form submissions.
 
 ## Developer Notes
@@ -29,7 +29,7 @@ Connects Capell pages, FormBuilder, Insights, and core layout builder APIs throu
 Lets marketing and editorial teams connect landing pages to goals and see which campaign-studio convert.
 
 - Adds campaign admin navigation and database tables.
-- Adds campaign dashboard widgets.
+- Adds campaign dashboard elements.
 - Adds config keys for conversion cookie, UTM keys, table names, and layout presets.
 - May use Insights events and FormBuilder submissions when those packages are installed.
 - No explicit public route is registered by this package.
@@ -48,8 +48,8 @@ Lets marketing and editorial teams connect landing pages to goals and see which 
 - Campaign landing pages index.
 - Campaign conversion goals form.
 - CTA block form.
-- Campaign dashboard widgets.
-- Frontend landing page with campaign widgets.
+- Campaign dashboard elements.
+- Frontend landing page with campaign elements.
 
 ## Screenshots
 
@@ -61,7 +61,7 @@ Lets marketing and editorial teams connect landing pages to goals and see which 
 
 ![Campaign CTA block form](../../../public/docs/screenshots/packages/campaign-studio/cta-block-form.png)
 
-![Campaign dashboard widgets](../../../public/docs/screenshots/packages/campaign-studio/campaign-dashboard-widgets.png)
+![Campaign dashboard elements](../../../public/docs/screenshots/packages/campaign-studio/campaign-dashboard-elements.png)
 
 ## Pitfalls
 
@@ -114,9 +114,9 @@ Lets marketing and editorial teams connect landing pages to goals and see which 
 
 ## Permissions And Gates
 
-- Gate: CampaignOverviewStatsWidget: `admin`, `super_admin`
-- Gate: TopCampaignStudioWidget: `admin`, `super_admin`
-- Gate: TopLandingPagesWidget: `admin`, `super_admin`
+- Gate: CampaignOverviewStatsElement: `admin`, `super_admin`
+- Gate: TopCampaignStudioElement: `admin`, `super_admin`
+- Gate: TopLandingPagesElement: `admin`, `super_admin`
 
 ## Migrations
 
@@ -176,5 +176,5 @@ Deployment should read [screenshots.json](screenshots.json), install the package
 - Campaign landing pages index.
 - Campaign conversion goals form.
 - CTA block form.
-- Campaign dashboard widgets.
-- Frontend landing page with campaign widgets.
+- Campaign dashboard elements.
+- Frontend landing page with campaign elements.

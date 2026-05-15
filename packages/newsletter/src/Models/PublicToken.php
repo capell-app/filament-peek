@@ -18,7 +18,7 @@ class PublicToken extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'subscriber_id',
         'type',

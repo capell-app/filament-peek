@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\SeoSuite\Support\InternalLinks;
 
-use Capell\Core\Enums\TypeGroupEnum;
+use Capell\Core\Enums\BlueprintGroupEnum;
 use Capell\Core\Enums\UrlTypeEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
@@ -33,7 +33,7 @@ final class InternalLinkCandidateRepository
                 fn (Builder $query): Builder => $query
                     ->where(
                         fn (Builder $query): Builder => $query->whereNull('group')
-                            ->orWhereIn('group', config('capell.core.sitemap.type_groups', [TypeGroupEnum::Default->value])),
+                            ->orWhereIn('group', config('capell.core.sitemap.type_groups', [BlueprintGroupEnum::Default->value])),
                     )
                     ->enabled()
                     ->visible()

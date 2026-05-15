@@ -9,7 +9,6 @@ use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\PublishingStudio\Enums\ResourceEnum;
 use Capell\PublishingStudio\Enums\WorkspaceKindEnum;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
-use Capell\PublishingStudio\Filament\Resources\PublishingStudio\WorkspaceResource;
 use Capell\PublishingStudio\Filament\Widgets\WorkspaceMergeHistoryWidgetAbstract as WorkspaceMergeHistoryWidget;
 use Capell\PublishingStudio\Models\Workspace;
 use Filament\Resources\Pages\ManageRecords;
@@ -21,7 +20,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ManagePublishingStudio extends ManageRecords
 {
-    /** @return class-string<WorkspaceResource> */
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resource(ResourceEnum::Workspace);

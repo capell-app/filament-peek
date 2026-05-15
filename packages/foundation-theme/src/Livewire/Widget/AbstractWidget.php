@@ -47,7 +47,7 @@ abstract class AbstractWidget extends Component
      */
     public static function getWidgetByKey(string $widgetKey): ?Widget
     {
-        $cacheKey = CapellLayoutCacheKeyEnum::WidgetByKey->value . $widgetKey;
+        $cacheKey = CapellLayoutCacheKeyEnum::ElementByKey->value . $widgetKey;
 
         return self::getCached(
             $cacheKey,

@@ -23,8 +23,8 @@ final class PublishingTrendChartWidget extends ChartWidget implements CapellWidg
 
     protected static string $settingsKey = 'publishing_trend';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 2];
 
     protected static ?int $sort = 1;
 

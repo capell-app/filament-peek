@@ -5,10 +5,10 @@ declare(strict_types=1);
 use Capell\Core\Database\Factories\LanguageFactory;
 use Capell\Core\Database\Factories\PageFactory;
 use Capell\Core\Database\Factories\SiteFactory;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
 use Capell\SeoSuite\Actions\SchemaGraphAction;
 use Capell\SeoSuite\Contracts\SchemaTemplate;
 use Capell\SeoSuite\Enums\SchemaTemplateTypeEnum;
@@ -21,7 +21,7 @@ it('does not duplicate article-compatible page schema nodes', function (): void 
         ->language($language)
         ->withTranslations($language)
         ->create();
-    $type = Type::factory()
+    $type = Blueprint::factory()
         ->page()
         ->create(['meta' => ['schema' => ['type' => 'BlogPosting']]]);
     $page = PageFactory::new()
@@ -51,7 +51,7 @@ it('does not discard richer package-owned schema templates with the same type', 
         ->language($language)
         ->withTranslations($language)
         ->create();
-    $type = Type::factory()
+    $type = Blueprint::factory()
         ->page()
         ->create(['meta' => ['schema' => ['type' => 'Event']]]);
     $page = PageFactory::new()

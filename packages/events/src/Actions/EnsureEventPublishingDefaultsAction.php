@@ -7,10 +7,10 @@ namespace Capell\Events\Actions;
 use Capell\Admin\Filament\Configurators\Pages\ResultsPageConfigurator;
 use Capell\Admin\Filament\Configurators\Types\PageTypeConfigurator;
 use Capell\Core\Actions\GetOrCreateResultsLayoutAction;
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\BlueprintSubjectEnum;
 use Capell\Core\Enums\UrlParamTypeEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Layout;
-use Capell\Core\Models\Type;
 use Capell\Core\Support\Creator\LayoutCreator;
 use Capell\Events\Enums\LivewireComponentEnum;
 use Filament\Support\Icons\Heroicon;
@@ -31,11 +31,11 @@ class EnsureEventPublishingDefaultsAction
         $this->eventsListingLayout();
     }
 
-    public function eventPageType(): Type
+    public function eventPageType(): Blueprint
     {
-        return Type::query()->firstOrCreate([
+        return Blueprint::query()->firstOrCreate([
             'key' => 'event',
-            'type' => TypeEnum::Page,
+            'type' => BlueprintSubjectEnum::Page,
         ], [
             'name' => __('capell-events::generic.event'),
             'group' => 'Event',
@@ -55,11 +55,11 @@ class EnsureEventPublishingDefaultsAction
         ]);
     }
 
-    public function eventsListingPageType(): Type
+    public function eventsListingPageType(): Blueprint
     {
-        return Type::query()->firstOrCreate([
+        return Blueprint::query()->firstOrCreate([
             'key' => 'events',
-            'type' => TypeEnum::Page,
+            'type' => BlueprintSubjectEnum::Page,
         ], [
             'name' => __('capell-events::generic.events'),
             'group' => 'Event',

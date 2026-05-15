@@ -67,9 +67,6 @@ class CompareVersionPage extends Page
         return $workspace;
     }
 
-    /**
-     * @return Collection<int, array<string, mixed>>
-     */
     public function getDiffs(): Collection
     {
         return (new WorkspaceDiffService)->diffTree($this->getWorkspace());

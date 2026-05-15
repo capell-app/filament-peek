@@ -22,8 +22,8 @@ final class GA4ReportsSetupStatusWidget extends BaseWidget implements CapellWidg
 
     protected static string $settingsKey = 'ga4_reports_sync_status';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 1];
 
     protected static ?int $sort = 24;
 
@@ -43,9 +43,6 @@ final class GA4ReportsSetupStatusWidget extends BaseWidget implements CapellWidg
             ]);
     }
 
-    /**
-     * @return Collection<int, array{id: string, label: string, value: string}>
-     */
     private function getRecords(): Collection
     {
         $config = ResolveGA4ReportsConfigAction::run();
@@ -54,27 +51,27 @@ final class GA4ReportsSetupStatusWidget extends BaseWidget implements CapellWidg
         return collect([
             [
                 'id' => 'configured',
-                'label' => __('capell-ga4-reports::widgets.configured'),
+                'label' => (string) __('capell-ga4-reports::widgets.configured'),
                 'value' => $config->enabled && $config->propertyId !== '' && $config->credentialsPath !== ''
-                    ? __('capell-ga4-reports::widgets.yes')
-                    : __('capell-ga4-reports::widgets.no'),
+                    ? (string) __('capell-ga4-reports::widgets.yes')
+                    : (string) __('capell-ga4-reports::widgets.no'),
             ],
             [
                 'id' => 'property-id',
-                'label' => __('capell-ga4-reports::settings.property_id'),
-                'value' => $config->propertyId !== '' ? $config->propertyId : __('capell-ga4-reports::widgets.not_set'),
+                'label' => (string) __('capell-ga4-reports::settings.property_id'),
+                'value' => $config->propertyId !== '' ? (string) $config->propertyId : (string) __('capell-ga4-reports::widgets.not_set'),
             ],
             [
                 'id' => 'last-sync',
-                'label' => __('capell-ga4-reports::widgets.last_sync'),
+                'label' => (string) __('capell-ga4-reports::widgets.last_sync'),
                 'value' => $latestRun instanceof GA4ReportsSyncRun && $latestRun->finished_at !== null
                     ? $latestRun->finished_at->toDateTimeString()
-                    : __('capell-ga4-reports::widgets.never'),
+                    : (string) __('capell-ga4-reports::widgets.never'),
             ],
             [
                 'id' => 'last-status',
-                'label' => __('capell-ga4-reports::widgets.last_status'),
-                'value' => $latestRun instanceof GA4ReportsSyncRun ? $latestRun->status : __('capell-ga4-reports::widgets.not_available'),
+                'label' => (string) __('capell-ga4-reports::widgets.last_status'),
+                'value' => $latestRun instanceof GA4ReportsSyncRun ? $latestRun->status : (string) __('capell-ga4-reports::widgets.not_available'),
             ],
         ]);
     }

@@ -223,6 +223,7 @@ function ensureEditableRegionWorkflowTables(): void
     ]);
 
     if (! Schema::hasColumn('translations', 'workspace_id')) {
+        DB::statement('DROP INDEX IF EXISTS translations_key_unique');
         DB::statement('DROP INDEX IF EXISTS translations_language_id_translatable_type_translatable_id_unique');
 
         Schema::table('translations', function (Blueprint $table): void {

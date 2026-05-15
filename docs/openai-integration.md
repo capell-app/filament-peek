@@ -105,7 +105,7 @@ The settings schema is `Capell\SeoSuite\Filament\Settings\AIOrchestratorSettings
 
 ## Safety model
 
-AI actions should receive bounded context and return structured data. `GenerateAiContentBriefAction` sends the page, site, language, SEO issues, passed checks, canonical URL, robots directives, schema dashboard-dashboard_reports, internal-link suggestions, redirect opportunities, and Search Console insights to the provider, then validates that the response is a JSON object before returning `AiContentBriefData`.
+AI actions should receive bounded context and return structured data. `GenerateAiContentBriefAction` sends the page, site, language, SEO issues, passed checks, canonical URL, robots directives, schema reports, internal-link suggestions, redirect opportunities, and Search Console insights to the provider, then validates that the response is a JSON object before returning `AiContentBriefData`.
 
 Keep generated output behind editor review. Use `ApplyAiDraftAction` only after a user has selected a draft, and keep any automatic publish decisions in deterministic checks such as SEO score, missing metadata, or schema coverage.
 

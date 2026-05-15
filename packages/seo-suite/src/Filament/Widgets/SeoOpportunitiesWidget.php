@@ -21,8 +21,8 @@ final class SeoOpportunitiesWidget extends BaseWidget implements CapellWidgetCon
 
     protected static string $settingsKey = 'seo_opportunities';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'xl' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['xl' => 1];
 
     protected static ?int $sort = 44;
 

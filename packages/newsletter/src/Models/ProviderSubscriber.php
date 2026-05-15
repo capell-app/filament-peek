@@ -12,7 +12,7 @@ class ProviderSubscriber extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'subscriber_id',
         'provider_audience_id',

@@ -7,10 +7,10 @@ namespace Capell\Newsletter\Tests;
 use Capell\Admin\Providers\AdminServiceProvider as CapellAdminServiceProvider;
 use Capell\Admin\Providers\Filament\AdminPanelProvider;
 use Capell\Core\Facades\CapellCore;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\FormBuilder\Providers\FormBuilderServiceProvider;
 use Capell\Newsletter\Providers\NewsletterServiceProvider;
 use Capell\Tags\Providers\TagsServiceProvider;
@@ -28,8 +28,8 @@ class NewsletterTestCase extends AbstractTestCase
 
     protected function createNewsletterSite(string $name = 'Newsletter Site'): Site
     {
-        $siteType = Type::factory()->site()->create();
-        $themeType = Type::factory()->theme()->create();
+        $siteType = Blueprint::factory()->site()->create();
+        $themeType = Blueprint::factory()->theme()->create();
         $theme = Theme::factory()->create(['blueprint_id' => $themeType->getKey()]);
         $language = Language::factory()->english()->create();
 

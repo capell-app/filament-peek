@@ -12,6 +12,7 @@
     use Capell\Core\Contracts\Pageable;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Support\Loader\PageLoader;
+    use Capell\LayoutBuilder\Facades\CapellLayout;
 
     $themeModel = Frontend::theme();
     $language = Frontend::language();
@@ -58,23 +59,22 @@
         @if ($layout->containers)
             @foreach ($layout->containers as $containerKey => $container)
                 @php
-                    $widgets = collect($container['widgets'])
-                        ->map(
-                            fn ($widgetData): ?\Capell\Core\Models\Widget => $layout->layoutWidgets->firstWhere(
-                                'key',
-                                $widgetData['widget_key'],
-                            ),
-                        )
+                    $layoutModules = collect($container['elements'] ?? [])
+                        ->map(fn (array $elementData): ?\Capell\LayoutBuilder\Models\Element => CapellLayout::getContainerElement(
+                            (string) $containerKey,
+                            (string) ($elementData['element_key'] ?? ''),
+                            (int) ($elementData['occurrence'] ?? 1),
+                        ))
                         ->filter();
 
-                    if ($widgets->isEmpty()) {
+                    if ($layoutModules->isEmpty()) {
                         continue;
                     }
 
                     if (! $slotRendered) {
-                        $hasSlotWidget = $widgets->contains(
-                            fn (\Capell\Core\Models\Widget $widget): bool => ($widget->meta['type'] ?? null) === 'slot'
-                                || ($widget->relationLoaded('type') && $widget->type?->getMeta('type') === 'slot'),
+                        $hasSlotWidget = $layoutModules->contains(
+                            fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ($layoutModule->meta['type'] ?? null) === 'slot'
+                                || ($layoutModule->relationLoaded('type') && $layoutModule->type?->getMeta('type') === 'slot'),
                         );
 
                         if ($hasSlotWidget) {

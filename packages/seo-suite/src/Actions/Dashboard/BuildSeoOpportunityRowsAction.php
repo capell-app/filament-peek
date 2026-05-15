@@ -16,9 +16,6 @@ final class BuildSeoOpportunityRowsAction
 {
     use AsAction;
 
-    /**
-     * @return Collection<int, array{id: string, page: string, score: int, critical_count: int, warning_count: int, notices: int}>
-     */
     public function handle(int $limit = 5): Collection
     {
         return SiteScope::applyForCurrentActor(PageSeoSnapshot::query(), denyWhenMissingActor: true)
@@ -31,10 +28,10 @@ final class BuildSeoOpportunityRowsAction
             ->map(fn (PageSeoSnapshot $snapshot): array => [
                 'id' => 'seo-opportunity-' . $snapshot->id,
                 'page' => $this->pageLabel($snapshot),
-                'score' => (int) $snapshot->score,
-                'critical_count' => (int) $snapshot->critical_count,
-                'warning_count' => (int) $snapshot->warning_count,
-                'notices' => (int) $snapshot->notice_count,
+                'score' => $snapshot->score,
+                'critical_count' => $snapshot->critical_count,
+                'warning_count' => $snapshot->warning_count,
+                'notices' => $snapshot->notice_count,
             ])
             ->values();
     }

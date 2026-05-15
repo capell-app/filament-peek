@@ -13,7 +13,6 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class ListEvents extends ListPages
 {
-    /** @return class-string<EventResource> */
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resourceIfRegistered(AdminResourceEnum::Page, strtolower(ResourceEnum::Event->name))

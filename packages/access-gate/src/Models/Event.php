@@ -31,7 +31,7 @@ class Event extends AccessGateModel
     /** @use HasFactory<EventFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'access_area_id',
         'registration_id',

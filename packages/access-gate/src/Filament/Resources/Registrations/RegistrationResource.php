@@ -126,7 +126,9 @@ final class RegistrationResource extends Resource
                         ->icon(Heroicon::ArrowPath)
                         ->visible(fn (Registration $record): bool => self::canRetryGithubInvites($record))
                         ->requiresConfirmation()
-                        ->action(fn (Registration $record): mixed => self::retryGithubInvites($record)),
+                        ->action(function (Registration $record): void {
+                            self::retryGithubInvites($record);
+                        }),
                     Action::make('expire')
                         ->label(__('capell-access-gate::filament.actions.expire'))
                         ->color('danger')

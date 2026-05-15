@@ -22,8 +22,8 @@ final class ContentGraphHealthWidgetAbstract extends Widget implements CapellWid
 
     protected string $view = 'capell-diagnostics::widgets.content-graph-health';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 1];
 
     public static function getDescription(): string
     {

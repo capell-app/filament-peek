@@ -2,12 +2,25 @@
 
 First-party optional packages for Capell CMS. This repository is the package workspace beside the host application in `../capell-4`; install only the packages a project needs.
 
+Package pages are published at `docs.capell.app/packages/<package>/`. Each package page should be useful on its own for developers searching for a specific Capell capability, and should link to deeper docs when the package owns setup, data, workflow, API, or extension details.
+
 Each package README follows the same shape:
 
 - At a glance: Composer name, namespace, runtime surfaces, service providers, and package dependencies.
 - What it adds: the editor, frontend, console, queue, or integration behaviour the package owns.
 - Code map: the package directories future changes should inspect first.
 - Surfaces: Filament, Livewire, HTTP, commands, persistence, extension points, docs, and tests.
+
+## Find A Package By Job
+
+| Job                                            | Start with                                                                                                                                                                                                     | Why                                                                                    |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Build editable pages and reusable layouts      | [layout-builder](packages/layout-builder/README.md), [content-sections](packages/content-sections/README.md), [hero](packages/hero/README.md)                                                                  | Owns layout containers, elements, content sections, and starter visual content.        |
+| Publish articles, archives, and tagged content | [blog](packages/blog/README.md), [tags](packages/tags/README.md), [site-discovery](packages/site-discovery/README.md)                                                                                          | Adds article workflow, taxonomy, public archives, and sitemap discovery.               |
+| Add campaign and conversion reporting          | [campaign-studio](packages/campaign-studio/README.md), [insights](packages/insights/README.md), [ga4-reports](packages/ga4-reports/README.md)                                                                  | Connects landing pages, goals, first-party events, and GA4 snapshots.                  |
+| Improve technical SEO and search               | [seo-suite](packages/seo-suite/README.md), [search](packages/search/README.md), [site-discovery](packages/site-discovery/README.md)                                                                            | Covers metadata, structured data, sitemaps, public search, and discoverability checks. |
+| Prepare demos, screenshots, and fixture sites  | [demo-kit](packages/demo-kit/README.md), [foundation-theme](packages/foundation-theme/README.md)                                                                                                               | Generates repeatable demo sites, package demo content, and frontend theme output.      |
+| Tighten admin operations and access controls   | [diagnostics](packages/diagnostics/README.md), [dashboard-reports](packages/dashboard-reports/README.md), [password-policy](packages/password-policy/README.md), [login-audit](packages/login-audit/README.md) | Adds health checks, dashboard signals, password enforcement, and login visibility.     |
 
 ## Package Index
 
@@ -16,10 +29,10 @@ Each package README follows the same shape:
 | Package                                                 | Composer package              | Purpose                                                                                            |
 | ------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
 | [address](packages/address/README.md)                   | `capell-app/address`          | Country, region, and address data for Capell forms and admin records.                              |
-| [blog](packages/blog/README.md)                         | `capell-app/blog`             | Article publishing, archive pages, tag pages, article widgets, and sitemap contributions.          |
+| [blog](packages/blog/README.md)                         | `capell-app/blog`             | Article publishing, archive pages, tag pages, article elements, and sitemap contributions.         |
 | [content-sections](packages/content-sections/README.md) | `capell-app/content-sections` | Reusable content section records and Livewire rendering.                                           |
 | [events](packages/events/README.md)                     | `capell-app/events`           | Event records, venues, occurrences, registrations, calendar pages, and iCalendar feeds.            |
-| [hero](packages/hero/README.md)                         | `capell-app/hero`             | Default home-page hero widget rendering and setup.                                                 |
+| [hero](packages/hero/README.md)                         | `capell-app/hero`             | Default home-page hero element rendering and setup.                                                |
 | [media-library](packages/media-library/README.md)       | `capell-app/media-library`    | Awcodes Curator backend integration for Capell media.                                              |
 | [navigation](packages/navigation/README.md)             | `capell-app/navigation`       | Editor-managed menus for Capell frontend themes.                                                   |
 | [notes](packages/notes/README.md)                       | `capell-app/notes`            | Contextual notes, assignments, mentions, and reminders.                                            |

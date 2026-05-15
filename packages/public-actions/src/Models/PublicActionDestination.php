@@ -26,7 +26,7 @@ class PublicActionDestination extends Model
     /** @use HasFactory<PublicActionDestinationFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'public_action_id',
         'adapter',

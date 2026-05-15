@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Enums\BlueprintSubjectEnum;
 use Capell\Core\Enums\LayoutEnum;
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Layout;
-use Capell\Core\Models\Type;
 use Capell\Events\Actions\CancelOccurrenceAction;
 use Capell\Events\Actions\EnsureEventPublishingDefaultsAction;
 use Capell\Events\Actions\EnsureEventPublishingSurfaceAction;
@@ -49,13 +49,13 @@ it('reschedules event occurrences with override metadata', function (): void {
 it('ensures event publishing defaults for event pages and listing pages', function (): void {
     EnsureEventPublishingDefaultsAction::run();
 
-    $eventType = Type::query()->where([
+    $eventType = Blueprint::query()->where([
         'key' => 'event',
-        'type' => TypeEnum::Page,
+        'type' => BlueprintSubjectEnum::Page,
     ])->firstOrFail();
-    $listingType = Type::query()->where([
+    $listingType = Blueprint::query()->where([
         'key' => 'events',
-        'type' => TypeEnum::Page,
+        'type' => BlueprintSubjectEnum::Page,
     ])->firstOrFail();
 
     expect($eventType->meta['schema']['type'])->toBe('Event')
@@ -83,7 +83,7 @@ it('installs event publishing defaults and surfaces for existing sites', functio
 
     InstallPackageAction::run();
 
-    expect(Type::query()->where('key', 'event')->exists())->toBeTrue()
-        ->and(Type::query()->where('key', 'events')->exists())->toBeTrue()
+    expect(Blueprint::query()->where('key', 'event')->exists())->toBeTrue()
+        ->and(Blueprint::query()->where('key', 'events')->exists())->toBeTrue()
         ->and($site->pages()->where('name', __('capell-events::generic.events'))->exists())->toBeTrue();
 });

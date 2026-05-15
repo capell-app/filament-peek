@@ -31,6 +31,7 @@ class EventCalendarWidget extends Widget
             ->oldest('starts_at')
             ->limit(250)
             ->get()
-            ->groupBy(fn (EventOccurrence $occurrence): string => $occurrence->starts_at->toDateString());
+            ->groupBy(fn (EventOccurrence $occurrence): string => $occurrence->starts_at->toDateString())
+            ->toBase();
     }
 }

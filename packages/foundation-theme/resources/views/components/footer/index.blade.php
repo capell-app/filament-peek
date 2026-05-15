@@ -1,7 +1,7 @@
 @php
     use Capell\Core\Actions\ColorConverterAction;
+    use Capell\Core\Enums\BlueprintGroupEnum;
     use Capell\Core\Enums\PageOrderEnum;
-    use Capell\Core\Enums\TypeGroupEnum;
     use Capell\Core\Models\Language;
     use Capell\Core\Models\Page;
     use Capell\FoundationTheme\Support\NavigationAvailability;
@@ -82,7 +82,7 @@
         site: $site,
         limit: 4,
         ordering: PageOrderEnum::Latest,
-        pageGroup: TypeGroupEnum::Default,
+        pageGroup: BlueprintGroupEnum::Default,
     );
     $hasFooterMenu = $footerMenuItems?->isNotEmpty() === true;
     $hasLatestFooterPages = ! $hasFooterMenu && $latestFooterPages->isNotEmpty();

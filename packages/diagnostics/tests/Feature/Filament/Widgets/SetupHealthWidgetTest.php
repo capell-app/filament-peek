@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\Diagnostics\Filament\Widgets\Health\SetupHealthWidgetAbstract as SetupHealthWidget;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 
@@ -43,7 +43,7 @@ it('shows failing items with fix actions', function (): void {
 it('displays all green checks with 100 percent progress', function (): void {
     Site::factory()->create();
     Language::factory()->create();
-    Type::factory()->create();
+    Blueprint::factory()->create();
     Theme::factory()->create();
 
     livewire(SetupHealthWidget::class)
@@ -54,7 +54,7 @@ it('displays all green checks with 100 percent progress', function (): void {
 it('shows success message when all checks are green', function (): void {
     Site::factory()->create();
     Language::factory()->create();
-    Type::factory()->create();
+    Blueprint::factory()->create();
     Theme::factory()->create();
 
     livewire(SetupHealthWidget::class)
@@ -64,7 +64,7 @@ it('shows success message when all checks are green', function (): void {
 it('hides items section when all checks pass', function (): void {
     Site::factory()->create();
     Language::factory()->create();
-    Type::factory()->create();
+    Blueprint::factory()->create();
     Theme::factory()->create();
 
     livewire(SetupHealthWidget::class)
@@ -74,7 +74,7 @@ it('hides items section when all checks pass', function (): void {
 it('auto-hides when every check is green', function (): void {
     Site::factory()->create();
     Language::factory()->create();
-    Type::factory()->create();
+    Blueprint::factory()->create();
     Theme::factory()->create();
 
     expect(SetupHealthWidget::canView())->toBeFalse();

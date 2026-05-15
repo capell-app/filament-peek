@@ -23,8 +23,8 @@ final class GA4ReportsOverviewStatsWidget extends BaseWidget implements CapellWi
 
     protected static string $settingsKey = 'ga4_reports_overview';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full'];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 21;
 
@@ -44,9 +44,6 @@ final class GA4ReportsOverviewStatsWidget extends BaseWidget implements CapellWi
             ]);
     }
 
-    /**
-     * @return Collection<int, array{id: string, label: string, value: string}>
-     */
     private function getRecords(): Collection
     {
         $overview = BuildGA4ReportsOverviewAction::run($this->getGA4ReportsWindow());
@@ -54,27 +51,27 @@ final class GA4ReportsOverviewStatsWidget extends BaseWidget implements CapellWi
         return collect([
             [
                 'id' => 'screen-page-views',
-                'label' => __('capell-ga4-reports::widgets.screen_page_views'),
+                'label' => (string) __('capell-ga4-reports::widgets.screen_page_views'),
                 'value' => number_format($overview->screenPageViews),
             ],
             [
                 'id' => 'sessions',
-                'label' => __('capell-ga4-reports::widgets.sessions'),
+                'label' => (string) __('capell-ga4-reports::widgets.sessions'),
                 'value' => number_format($overview->sessions),
             ],
             [
                 'id' => 'total-users',
-                'label' => __('capell-ga4-reports::widgets.total_users'),
+                'label' => (string) __('capell-ga4-reports::widgets.total_users'),
                 'value' => number_format($overview->totalUsers),
             ],
             [
                 'id' => 'engagement-rate',
-                'label' => __('capell-ga4-reports::widgets.engagement_rate'),
+                'label' => (string) __('capell-ga4-reports::widgets.engagement_rate'),
                 'value' => number_format($overview->engagementRate * 100, 1) . '%',
             ],
             [
                 'id' => 'conversions',
-                'label' => __('capell-ga4-reports::widgets.conversions'),
+                'label' => (string) __('capell-ga4-reports::widgets.conversions'),
                 'value' => number_format($overview->conversions),
             ],
         ]);

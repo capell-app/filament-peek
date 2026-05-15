@@ -123,11 +123,12 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
         return __('capell-admin::generic.page_not_found_info');
     }
 
-    /**
-     * @param  InsightsEvent  $record
-     */
     public function getTableRecordKey(Model|array $record): string
     {
+        if (! $record instanceof InsightsEvent) {
+            return '';
+        }
+
         return $record->url;
     }
 

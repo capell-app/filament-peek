@@ -6,8 +6,9 @@ namespace Capell\PublishingStudio\Filament\Widgets;
 
 use Capell\Admin\Contracts\CapellWidgetContract;
 use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
-use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
+use Capell\PublishingStudio\Actions\DashboardReports\BuildVisibleContentSchedulerEventsAction;
 use Capell\PublishingStudio\Data\SchedulerEventData;
+use Capell\PublishingStudio\Enums\SchedulerEventStateEnum;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -26,7 +27,7 @@ final class ContentSchedulerOverviewWidget extends StatsOverviewWidget implement
 
     protected int|array|null $columns = [
         'default' => 2,
-        'md' => 4,
+        'md' => 3,
     ];
 
     /**
@@ -34,13 +35,25 @@ final class ContentSchedulerOverviewWidget extends StatsOverviewWidget implement
      */
     protected function getStats(): array
     {
-        $events = BuildContentSchedulerEventsAction::run();
+        $events = BuildVisibleContentSchedulerEventsAction::run();
 
         return [
             $this->stat($events, SchedulerEventTypeEnum::Publish),
             $this->stat($events, SchedulerEventTypeEnum::Unpublish),
             $this->stat($events, SchedulerEventTypeEnum::Embargo),
             $this->stat($events, SchedulerEventTypeEnum::ReviewReminder),
+            Stat::make(
+                __('capell-publishing-studio::scheduler.health.failed'),
+                $events->filter(fn (SchedulerEventData $event): bool => $event->state === SchedulerEventStateEnum::Failed)->count(),
+            )->color('danger'),
+            Stat::make(
+                __('capell-publishing-studio::scheduler.health.blocked'),
+                $events->filter(fn (SchedulerEventData $event): bool => in_array($event->state, [
+                    SchedulerEventStateEnum::SkippedEmbargo,
+                    SchedulerEventStateEnum::SkippedReleaseWindow,
+                    SchedulerEventStateEnum::SkippedStale,
+                ], true))->count(),
+            )->color('warning'),
         ];
     }
 

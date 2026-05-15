@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\SeoSuite\Actions;
 
-use Capell\Core\Enums\TypeGroupEnum;
+use Capell\Core\Enums\BlueprintGroupEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
@@ -36,7 +36,7 @@ final class PageIsDiscoverableForAiDiscoveryAction
                 fn (BuilderContract $query): BuilderContract => $query
                     ->where(
                         fn (Builder $typeQuery): Builder => $typeQuery->whereNull('group')
-                            ->orWhereIn('group', config('capell.core.sitemap.type_groups', [TypeGroupEnum::Default->value])),
+                            ->orWhereIn('group', config('capell.core.sitemap.type_groups', [BlueprintGroupEnum::Default->value])),
                     )
                     ->enabled()
                     ->visible()

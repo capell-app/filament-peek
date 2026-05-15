@@ -571,7 +571,7 @@ it('composes robots txt with ordinary crawler defaults, sitemap urls, and ai cra
 it('composes robots txt safely without a site', function (): void {
     SeedDefaultAiCrawlerRulesAction::run();
 
-    $robots = BuildRobotsTxtAction::run(null);
+    $robots = BuildRobotsTxtAction::run();
 
     expect($robots)->toStartWith("User-agent: *\nAllow: /")
         ->and($robots)->not->toContain('Sitemap:')

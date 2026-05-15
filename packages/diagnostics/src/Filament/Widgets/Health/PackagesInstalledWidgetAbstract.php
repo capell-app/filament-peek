@@ -22,8 +22,8 @@ final class PackagesInstalledWidgetAbstract extends Widget implements CapellWidg
 
     protected string $view = 'capell-diagnostics::widgets.packages-installed';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 2];
 
     public static function getDescription(): string
     {

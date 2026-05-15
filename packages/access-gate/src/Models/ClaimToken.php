@@ -27,7 +27,7 @@ class ClaimToken extends AccessGateModel
     /** @use HasFactory<ClaimTokenFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'access_area_id',
         'registration_id',

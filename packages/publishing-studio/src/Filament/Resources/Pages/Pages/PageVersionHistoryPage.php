@@ -42,7 +42,6 @@ class PageVersionHistoryPage extends FilamentPage
 
     protected string $view = 'capell-publishing-studio::filament.resources.pages.version-history';
 
-    /** @return class-string<PageResource> */
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resource(ResourceEnum::Page);
@@ -50,7 +49,11 @@ class PageVersionHistoryPage extends FilamentPage
 
     public function mount(string|int $record): void
     {
-        $this->record = $this->resolveRecord($record);
+        $resolvedRecord = $this->resolveRecord($record);
+
+        abort_unless($resolvedRecord instanceof Page, 404);
+
+        $this->record = $resolvedRecord;
 
         $this->authorizeResourceAccess();
 

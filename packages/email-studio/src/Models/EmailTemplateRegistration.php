@@ -13,7 +13,7 @@ class EmailTemplateRegistration extends Model
     /** @use HasFactory<EmailTemplateRegistrationFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'site_scope_key',

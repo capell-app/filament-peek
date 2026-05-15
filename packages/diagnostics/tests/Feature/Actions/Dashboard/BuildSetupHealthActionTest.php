@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Capell\Admin\Enums\SetupHealthEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\Diagnostics\Actions\Dashboard\BuildSetupHealthAction;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Spatie\Permission\Models\Role;
@@ -39,7 +39,7 @@ it('dashboard-dashboard_reports allGreen only when every check is green', functi
 
     Site::factory()->create();
     Language::factory()->create();
-    Type::factory()->create();
+    Blueprint::factory()->create();
     Theme::factory()->create();
 
     $adminUser = $this->createUser();

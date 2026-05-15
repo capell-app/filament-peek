@@ -13,7 +13,7 @@ class ProviderInterestMapping extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'provider_audience_id',
         'tag_id',

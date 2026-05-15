@@ -13,6 +13,9 @@ return new class extends SettingsMigration
             'seo_suite.seo_check_meta_description' => true,
             'seo_suite.seo_check_meta_title' => true,
             'seo_suite.seo_check_duplicate_title' => true,
+            'seo_suite.ai_discovery_audit_enabled' => true,
+            'seo_suite.ai_discovery_default_enabled' => true,
+            'seo_suite.ai_discovery_crawler_policy' => 'search_visible_training_restricted',
         ];
 
         foreach ($defaults as $key => $value) {

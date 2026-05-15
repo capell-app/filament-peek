@@ -19,8 +19,8 @@ class PageApprovalStatus extends Widget
 
     protected string $view = 'capell-admin::livewire.page-approval-status';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full'];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = 'full';
 
     public function render(): View
     {

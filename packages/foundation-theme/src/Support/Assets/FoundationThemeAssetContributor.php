@@ -50,8 +50,7 @@ final class FoundationThemeAssetContributor implements FrontendAssetContributor
 
     private function shouldLoadRuntimeJavaScript(FrontendAssetContextData $context): bool
     {
-        return $context->runtime->usesAlpine
-            || $context->runtime->usesBeacon
+        return $context->runtime->usesBeacon
             || $context->runtime->usesIslands
             || $context->runtime->usesLivewire;
     }

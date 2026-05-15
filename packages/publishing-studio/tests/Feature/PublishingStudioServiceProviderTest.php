@@ -39,6 +39,7 @@ it('uses the publishing-studio context resolver for migration assistant exports'
 
 it('falls back to core dashboard providers when the workspace schema is missing', function (): void {
     Schema::shouldReceive('hasTable')->with('workspaces')->andReturnFalse();
+    Schema::shouldReceive('hasTable')->with('publishing_scheduler_events')->andReturnFalse();
 
     expect(resolve(ContentHealthDataProvider::class))->toBeInstanceOf(NullContentHealthDataProvider::class)
         ->and(resolve(MyWorkQueueDataProvider::class))->toBeInstanceOf(NullMyWorkQueueDataProvider::class)

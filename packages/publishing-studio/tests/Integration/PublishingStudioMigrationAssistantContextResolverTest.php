@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
 use Capell\MigrationAssistant\Data\ExportOptions;
 use Capell\MigrationAssistant\Services\Export\PageExportService;
 use Capell\MigrationAssistant\Services\Import\PackageReader;
@@ -94,7 +94,7 @@ it('exports workspace draft pages when a source workspace is selected', function
 it('runs page imports inside the target workspace context', function (): void {
     $workspace = Workspace::factory()->create();
     $layout = Layout::factory()->create();
-    $type = Type::factory()->create();
+    $type = Blueprint::factory()->create();
     $site = Site::factory()->create();
 
     $package = new PackageReadResult(

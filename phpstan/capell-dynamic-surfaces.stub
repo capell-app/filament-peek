@@ -14,6 +14,10 @@ use Carbon\CarbonInterface;
  */
 class AuthenticationLog {}
 
+namespace Capell\Admin\Contracts\Reports;
+
+interface ActivityTrailQueryProvider {}
+
 namespace Spatie\LaravelSettings\Migrations;
 
 /**
@@ -31,14 +35,138 @@ class ShieldConfig {}
 namespace Capell\Core\Models;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-/** @property-read Collection<int, Model> $navigations */
+class PageUrl extends Model {}
+
+/**
+ * @property-read Collection<int, \Capell\Core\Models\Language> $languages
+ * @property-read Collection<int, Model> $navigations
+ * @property-read Language|null $language
+ */
 class Site extends Model {}
 
+/**
+ * @property string $name
+ * @property int|string|null $site_id
+ * @property-read Site|null $site
+ * @property-read Collection<int, Model> $translations
+ */
 class Page extends Model
 {
     public function isLive(): bool {}
+}
+
+class Language extends Model {}
+
+/**
+ * @property array<array-key, mixed>|null $meta
+ *
+ * @method static Builder<static>|Blueprint navigationType()
+ */
+class Blueprint extends Model {}
+
+class Type extends Model {}
+
+namespace Filament\Resources;
+
+class Resource {}
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
+class MorphOne {}
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
+class MorphMany {}
+
+namespace Capell\Admin\Filament\Resources\Pages;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PageResource
+{
+    /** @return class-string<Model> */
+    public static function getModel(): string {}
+}
+
+namespace Capell\Admin\Filament\Contracts;
+
+interface HasPageResource
+{
+    /** @return class-string<\Filament\Resources\Resource> */
+    public static function getResource(): string;
+}
+
+namespace Capell\Admin\Filament\Resources\Pages\Pages;
+
+class CreatePage
+{
+    /** @return class-string<\Filament\Resources\Resource> */
+    public static function getResource(): string {}
+}
+
+class EditPage
+{
+    /** @return class-string<\Filament\Resources\Resource> */
+    public static function getResource(): string {}
+}
+
+class ListPages
+{
+    /** @return class-string<\Filament\Resources\Resource> */
+    public static function getResource(): string {}
+}
+
+namespace Capell\Core\Contracts;
+
+interface Pageable
+{
+    public function pageUrl(): mixed;
+
+    public function pageUrls(): mixed;
+
+    public function site(): mixed;
+}
+
+namespace Capell\Core\Models\Contracts;
+
+interface Blueprintable
+{
+    public function blueprint(): mixed;
+}
+
+namespace Capell\Core\Support\Creator;
+
+use Capell\Core\Models\Blueprint;
+use Illuminate\Database\Eloquent\Model;
+
+class BlueprintCreator
+{
+    public function createPageType(string $name): Blueprint {}
+
+    public function defaultPageType(): Blueprint {}
+
+    public function notFoundPageType(): Blueprint {}
+
+    public function maintenancePageType(): Blueprint {}
+
+    public function homePageType(): Blueprint {}
+
+    public function systemPageType(): Blueprint {}
+}
+
+class PageCreator
+{
+    /** @var class-string<Model> */
+    protected string $pageModel;
 }
 
 namespace Capell\Core\Contracts\Media;
@@ -64,4 +192,15 @@ namespace Sinnbeck\DomAssertions\Asserts;
 class AssertElement
 {
     public function containsAttribute(string $attribute, ?string $value = null): self {}
+}
+
+namespace Spatie\EloquentSortable;
+
+interface Sortable
+{
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
+     */
+    public function scopeOrdered(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder;
 }

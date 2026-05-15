@@ -62,6 +62,27 @@ it('declares runtime javascript only when the frontend runtime needs javascript'
     ))->toBeTrue();
 });
 
+it('does not load the foundation runtime for generic alpine chrome', function (): void {
+    $requirements = resolve(FoundationThemeAssetContributor::class)->requirements(new FrontendAssetContextData(
+        page: null,
+        site: null,
+        language: null,
+        layout: null,
+        theme: null,
+        runtime: new FrontendRuntimeManifestData(
+            renderingStrategy: RenderingStrategyEnum::BladeOnly,
+            usesLivewire: false,
+            usesAlpine: true,
+            usesBeacon: false,
+            usesWireNavigate: false,
+            usesIslands: false,
+            modules: ['frontend-chrome' => true],
+        ),
+    ));
+
+    expect(collect($requirements)->pluck('handle')->all())->not->toContain('foundation-theme:runtime');
+});
+
 it('loads the runtime from the foundation theme published build', function (): void {
     $requirements = resolve(FoundationThemeAssetContributor::class)->requirements(new FrontendAssetContextData(
         page: null,

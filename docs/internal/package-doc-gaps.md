@@ -13,12 +13,16 @@ The package README still counts as package documentation, but it is not enough f
 
 ## Packages Missing Substantive Docs
 
-| Package             | Product group     | Contexts        | Current package docs | Docs to add                                                                 |
-| ------------------- | ----------------- | --------------- | -------------------- | --------------------------------------------------------------------------- |
-| `dashboard-reports` | Capell Operations | admin           | Credits only         | `overview.md`                                                               |
-| `ga4-reports`       | Capell Growth     | admin, console  | Credits only         | `overview.md`, `ga4-reports-database.md`, `sync-workflow.md`                |
-| `password-policy`   | Capell Foundation | admin, console  | Credits only         | `overview.md`, `password-policy-database.md`, `settings-and-enforcement.md` |
-| `demo-kit`          | Capell Foundation | admin, frontend | Credits only         | `overview.md`, `demo-content.md`                                            |
+No first-party package is currently missing a substantive public docs file. Every package with a `composer.json` now has at least a README plus either `docs/overview.md` or a more specific package guide.
+
+## Recently Closed Gaps
+
+| Package             | Product group     | Contexts        | Added docs    | Notes                                                                |
+| ------------------- | ----------------- | --------------- | ------------- | -------------------------------------------------------------------- |
+| `dashboard-reports` | Capell Operations | admin           | `overview.md` | Covers dashboard widgets, data providers, and page-derived reports.  |
+| `ga4-reports`       | Capell Growth     | admin, console  | `overview.md` | Covers GA4 settings, sync command, local snapshots, and data client. |
+| `password-policy`   | Capell Operations | admin, console  | `overview.md` | Covers settings, Actions, password history, and enforcement flow.    |
+| `demo-kit`          | Capell Foundation | admin, frontend | `overview.md` | Covers demo commands, repeatable plans, seeds, and package dispatch. |
 
 ## Implementation Plan
 

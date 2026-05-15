@@ -1,7 +1,7 @@
 @props([
     'container',
     'containerKey',
-    'containerWidgets',
+    'containerElements',
 ])
 @php
     // Represent in two columns to ensure there's enough space
@@ -9,8 +9,8 @@
 
     $containerTitle = str($containerKey)->title();
 
-    $widgetHasResourceTypes = ! empty(
-        array_filter($containerWidgets, fn ($widget) => ! empty($widget->type->admin['asset_types']))
+    $elementHasResourceTypes = ! empty(
+        array_filter($containerElements, fn (mixed $element): bool => ! empty($element->type->admin['asset_types']))
     );
 @endphp
 
@@ -201,9 +201,9 @@
 
         <div
             x-show="! isCollapsed"
-            class="layout-container-widgets min-h-[52px] rounded-b-lg"
-            x-sort="$wire.reorderWidgets('{{ $containerKey }}', $item, $position)"
-            x-sort:group="widgets"
+            class="layout-container-elements min-h-[52px] rounded-b-lg"
+            x-sort="$wire.reorderElements('{{ $containerKey }}', $item, $position)"
+            x-sort:group="elements"
             x-sort:config="{
                 animation: 160,
                 easing: 'cubic-bezier(0.2, 0, 0, 1)',
@@ -215,25 +215,28 @@
             }"
             x-on:dragover.prevent="$event.dataTransfer.dropEffect = 'copy'"
             x-on:drop.prevent="
-                const widgetId = Number(
-                    $event.dataTransfer.getData('application/x-capell-widget-id'),
+                const elementId = Number(
+                    $event.dataTransfer.getData('application/x-capell-element-id'),
                 )
-                if (widgetId)
-                    $wire.addPaletteWidgetToContainer(widgetId, {{ Js::from($containerKey) }})
+                if (elementId)
+                    $wire.addPaletteElementToContainer(
+                        elementId,
+                        {{ Js::from($containerKey) }},
+                    )
             "
         >
-            @foreach ($container['widgets'] as $widgetIndex => $containerWidget)
+            @foreach ($container['elements'] as $elementIndex => $containerElement)
                 <div
-                    class="layout-container-widget-drop-zone group flex min-h-8 items-center px-3 transition"
+                    class="layout-container-element-drop-zone group flex min-h-8 items-center px-3 transition"
                     x-on:drop.stop.prevent="
-                        const widgetId = Number(
-                            $event.dataTransfer.getData('application/x-capell-widget-id'),
+                        const elementId = Number(
+                            $event.dataTransfer.getData('application/x-capell-element-id'),
                         )
-                        if (widgetId)
-                            $wire.addPaletteWidgetToContainer(
-                                widgetId,
+                        if (elementId)
+                            $wire.addPaletteElementToContainer(
+                                elementId,
                                 {{ Js::from($containerKey) }},
-                                {{ $widgetIndex }},
+                                {{ $elementIndex }},
                             )
                     "
                 >
@@ -247,7 +250,7 @@
                             class="border-primary-500/60 bg-primary-50 dark:bg-primary-500/10 rounded-full border px-2 py-0.5"
                         >
                             +
-                            {{ __('capell-layout-builder::message.insert_widget_here') }}
+                            {{ __('capell-layout-builder::message.insert_element_here') }}
                         </span>
                         <span
                             class="border-primary-500/60 h-px flex-1 border-t border-dashed"
@@ -255,26 +258,26 @@
                     </div>
                 </div>
 
-                <x-capell-layout-builder::filament.layout-builder.widget
+                <x-capell-layout-builder::filament.layout-builder.element
                     :$containerKey
-                    :$containerWidget
+                    :$containerElement
                     :$loop
-                    :widget="$containerWidgets[$widgetIndex]"
-                    :$widgetIndex
+                    :element="$containerElements[$elementIndex]"
+                    :$elementIndex
                 />
             @endforeach
 
             <div
-                class="layout-container-widget-drop-zone group flex min-h-8 items-center px-3 transition"
+                class="layout-container-element-drop-zone group flex min-h-8 items-center px-3 transition"
                 x-on:drop.stop.prevent="
-                    const widgetId = Number(
-                        $event.dataTransfer.getData('application/x-capell-widget-id'),
+                    const elementId = Number(
+                        $event.dataTransfer.getData('application/x-capell-element-id'),
                     )
-                    if (widgetId)
-                        $wire.addPaletteWidgetToContainer(
-                            widgetId,
+                    if (elementId)
+                        $wire.addPaletteElementToContainer(
+                            elementId,
                             {{ Js::from($containerKey) }},
-                            {{ count($container['widgets']) }},
+                            {{ count($container['elements']) }},
                         )
                 "
             >
@@ -288,7 +291,7 @@
                         class="border-primary-500/60 bg-primary-50 dark:bg-primary-500/10 rounded-full border px-2 py-0.5"
                     >
                         +
-                        {{ __('capell-layout-builder::message.insert_widget_here') }}
+                        {{ __('capell-layout-builder::message.insert_element_here') }}
                     </span>
                     <span
                         class="border-primary-500/60 h-px flex-1 border-t border-dashed"
@@ -298,8 +301,8 @@
         </div>
 
         <style>
-            .layout-container-widgets:empty::before {
-                content: '{{ __('capell-admin::generic.drag_and_drop_widgets_here') }}';
+            .layout-container-elements:empty::before {
+                content: '{{ __('capell-admin::generic.drag_and_drop_elements_here') }}';
                 text-align: center;
                 display: block;
                 height: 100%;

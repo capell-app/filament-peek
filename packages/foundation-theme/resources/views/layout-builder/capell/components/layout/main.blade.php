@@ -30,11 +30,11 @@
         @if ($layout->containers)
             @foreach ($layout->containers as $containerKey => $container)
                 @php
-                    $widgets = collect($container['widgets'])
+                    $widgets = collect($container['elements'] ?? [])
                         ->map(
-                            fn ($widgetData): ?\Capell\Core\Models\Widget => $layout->layoutWidgets->firstWhere(
+                            fn (array $elementData): ?\Capell\LayoutBuilder\Models\Element => $layout->layoutElements->firstWhere(
                                 'key',
-                                $widgetData['widget_key'],
+                                $elementData['element_key'],
                             ),
                         )
                         ->filter();
@@ -45,7 +45,7 @@
 
                     if (! $slotRendered) {
                         $hasSlotWidget = $widgets->contains(
-                            fn (\Capell\Core\Models\Widget $widget) => $widget->getMeta('type') === 'slot',
+                            fn (\Capell\LayoutBuilder\Models\Element $widget): bool => $widget->getMeta('type') === 'slot',
                         );
 
                         if ($hasSlotWidget) {

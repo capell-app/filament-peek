@@ -25,7 +25,7 @@ class CampaignLandingPage extends Model
     /** @use HasFactory<CampaignLandingPageFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'campaign_group_id',
         'page_id',

@@ -32,7 +32,7 @@ final class ResendAccessGateClaimTokenAction
             ->latest('id')
             ->first();
 
-        if ($grant === null) {
+        if (! $grant instanceof Grant) {
             return null;
         }
 

@@ -32,8 +32,8 @@ final class LoginAuditsWidget extends BaseWidget implements CapellWidgetContract
 
     protected static string $settingsKey = 'login_audits';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 2];
 
     protected static ?int $sort = 6;
 

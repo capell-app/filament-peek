@@ -19,7 +19,7 @@ class SyncAttempt extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'subscriber_id',
         'provider_connection_id',

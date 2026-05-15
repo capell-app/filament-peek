@@ -21,7 +21,7 @@ class CampaignCtaBlock extends Model
 
     use SoftDeletes;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'campaign_group_id',
         'site_id',

@@ -9,6 +9,7 @@ use Capell\Core\Concerns\HasCapellMedia;
 use Capell\Core\Contracts\Pageable;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Enums\PageOrderEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Concerns\CloneableExcept;
 use Capell\Core\Models\Concerns\HasAssets;
 use Capell\Core\Models\Concerns\HasMetaData;
@@ -28,7 +29,6 @@ use Capell\Core\Models\Layout;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Translation;
-use Capell\Core\Models\Type;
 use Capell\Events\Database\Factories\EventFactory;
 use Capell\Events\Enums\EventBookingModeEnum;
 use Capell\Events\Enums\EventLocationModeEnum;
@@ -59,7 +59,7 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
  * @property-read PageUrl|null $pageUrl
  * @property-read Site $site
  * @property-read Translation|null $translation
- * @property-read Type $type
+ * @property-read Blueprint $type
  */
 class Event extends Model implements HasMedia, Pageable, Publishable, Translatable, Typeable, Userstampable
 {
@@ -86,7 +86,7 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
     protected $table = 'events';
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected $fillable = [
         'all_day',
@@ -121,9 +121,9 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
 
     protected static string $factory = EventFactory::class;
 
-    public static function getDefaultType(?string $group): ?Type
+    public static function getDefaultType(?string $group): ?Blueprint
     {
-        return Type::query()
+        return Blueprint::query()
             ->pageType()
             ->when($group !== null, fn (Builder $query): Builder => $query->adminResource($group))
             ->where('key', 'event')
@@ -163,6 +163,7 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
         return $this->belongsTo(Layout::class);
     }
 
+    /** @return BelongsTo<Site, $this> */
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
@@ -178,13 +179,13 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
         return $this->hasMany(EventOccurrence::class);
     }
 
-    /** @return MorphOne<PageUrl, self> */
+    /** @return MorphOne<PageUrl, $this> */
     public function pageUrl(): MorphOne
     {
         return $this->morphOne(PageUrl::class, 'pageable')->withDefault(['site_id' => $this->site_id]);
     }
 
-    /** @return MorphMany<PageUrl, self> */
+    /** @return MorphMany<PageUrl, $this> */
     public function pageUrls(): MorphMany
     {
         $relation = $this->morphMany(PageUrl::class, 'pageable');
@@ -196,7 +197,7 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
         return $relation;
     }
 
-    /** @return MorphMany<self, self> */
+    /** @return MorphMany<self, $this> */
     public function canonicalPages(): MorphMany
     {
         return $this->morphMany(

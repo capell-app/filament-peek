@@ -23,7 +23,7 @@ class PublicActionDispatchAttempt extends Model
     /** @use HasFactory<PublicActionDispatchAttemptFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'public_action_submission_id',
         'public_action_destination_id',

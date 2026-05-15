@@ -5,10 +5,10 @@ declare(strict_types=1);
 use Capell\Core\Database\Factories\LanguageFactory;
 use Capell\Core\Database\Factories\PageFactory;
 use Capell\Core\Database\Factories\SiteFactory;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
 use Capell\SeoSuite\Actions\BuildPageSeoReportAction;
 use Capell\SeoSuite\Actions\BuildSchemaTemplateReportAction;
 use Capell\SeoSuite\Contracts\SchemaTemplate;
@@ -65,7 +65,7 @@ it('dashboard-dashboard_reports missing default template fields as warnings', fu
 it('dashboard-dashboard_reports missing fields as critical when the page type explicitly requires the schema type', function (): void {
     $language = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);
     $site = SiteFactory::new()->recycle($language)->language($language)->withTranslations($language)->create();
-    $articleType = Type::factory()->page()->create(['meta' => ['schema' => ['type' => 'Article']]]);
+    $articleType = Blueprint::factory()->page()->create(['meta' => ['schema' => ['type' => 'Article']]]);
     $page = PageFactory::new()->site($site)->type($articleType)->withTranslations($language)->create();
     $registry = new SchemaTemplateRegistry;
     $registry->register(

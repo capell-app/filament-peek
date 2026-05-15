@@ -24,8 +24,8 @@ final class GA4ReportsTopPagesWidget extends BaseWidget implements CapellWidgetC
 
     protected static string $settingsKey = 'ga4_reports_top_pages';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 2];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 2];
 
     protected static ?int $sort = 23;
 
@@ -57,9 +57,6 @@ final class GA4ReportsTopPagesWidget extends BaseWidget implements CapellWidgetC
             ]);
     }
 
-    /**
-     * @return Collection<int, array{id: string, page_path: string, page_title: ?string, screen_page_views: int, sessions: int, total_users: int, conversions: int}>
-     */
     private function getRecords(): Collection
     {
         return collect(BuildTopGA4ReportsPagesAction::run($this->getGA4ReportsWindow(), 10))
@@ -71,6 +68,7 @@ final class GA4ReportsTopPagesWidget extends BaseWidget implements CapellWidgetC
                 'sessions' => $page->sessions,
                 'total_users' => $page->totalUsers,
                 'conversions' => $page->conversions,
-            ]);
+            ])
+            ->values();
     }
 }

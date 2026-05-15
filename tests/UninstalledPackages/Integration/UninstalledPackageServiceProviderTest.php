@@ -44,8 +44,8 @@ use Capell\Insights\Models\InsightsConsent;
 use Capell\Insights\Models\InsightsEvent;
 use Capell\Insights\Models\InsightsVisit;
 use Capell\Insights\Providers\InsightsServiceProvider;
+use Capell\LayoutBuilder\Filament\Resources\Elements\ElementResource;
 use Capell\LayoutBuilder\Filament\Resources\Layouts\LayoutResource;
-use Capell\LayoutBuilder\Filament\Resources\Widgets\WidgetResource;
 use Capell\LoginAudit\Filament\Resources\LoginAudits\LoginAuditResource;
 use Capell\LoginAudit\Filament\Widgets\LoginAuditsWidget;
 use Capell\LoginAudit\Models\LoginAudit;
@@ -196,7 +196,7 @@ it('does not expose admin resources, pages, widgets, or routes for uninstalled p
         ImportSessionResource::class,
         LayoutResource::class,
         SectionResource::class,
-        WidgetResource::class,
+        ElementResource::class,
         NavigationResource::class,
         TagResource::class,
         WorkspaceResource::class,

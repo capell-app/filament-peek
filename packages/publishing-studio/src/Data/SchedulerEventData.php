@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Data;
 
+use Capell\PublishingStudio\Enums\SchedulerEventStateEnum;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Carbon\CarbonInterface;
 use Spatie\LaravelData\Data;
@@ -20,6 +21,13 @@ final class SchedulerEventData extends Data
         public string $status,
         public ?string $description = null,
         public ?string $recordUrl = null,
+        public ?SchedulerEventStateEnum $state = null,
+        public ?int $siteId = null,
+        public ?string $siteName = null,
+        public ?int $ownerId = null,
+        public ?string $ownerName = null,
+        public ?string $timezone = null,
+        public ?string $failure = null,
     ) {}
 
     /**
@@ -39,6 +47,15 @@ final class SchedulerEventData extends Data
             'status' => $this->status,
             'description' => $this->description,
             'record_url' => $this->recordUrl,
+            'state' => $this->state?->value,
+            'state_label' => $this->state?->getLabel(),
+            'state_color' => $this->state?->getColor(),
+            'site_id' => $this->siteId,
+            'site_name' => $this->siteName,
+            'owner_id' => $this->ownerId,
+            'owner_name' => $this->ownerName,
+            'timezone' => $this->timezone,
+            'failure' => $this->failure,
         ];
     }
 }

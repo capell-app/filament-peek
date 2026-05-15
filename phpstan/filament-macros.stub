@@ -12,6 +12,14 @@ namespace Filament\Actions {
     class Action {}
 }
 
+namespace Filament\Widgets {
+    class Widget
+    {
+        /** @var string */
+        protected string $view;
+    }
+}
+
 namespace Filament\Schemas\Components {
     /**
      * @method self contained(bool|\Closure $contained = true)

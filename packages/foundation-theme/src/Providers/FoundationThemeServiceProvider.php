@@ -11,6 +11,7 @@ use Capell\Core\Events\PackageInstalled;
 use Capell\Core\Events\PackageUninstalled;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Theme;
+use Capell\Core\Support\Assets\VendorAssetConditionRegistry;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
 use Capell\Core\Support\Themes\ThemeChromeRegistry;
@@ -37,6 +38,7 @@ use Capell\FoundationTheme\View\Components\Widget\Slot as SlotComponent;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Contracts\FrontendAssetContributor;
 use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
+use Capell\Frontend\Data\FrontendAssetContextData;
 use Capell\Frontend\Data\FrontendAssetData;
 use Capell\LayoutBuilder\Enums\FrontendComponentKeyEnum;
 use Illuminate\Contracts\View\Factory as ViewFactory;
@@ -81,6 +83,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
         $this->registerAssets();
         $this->registerTailwindEventListeners();
+        $this->registerVendorAssetConditions();
         $this->registerVendorCssJsAssets();
         $this->registerMediaUrlGenerator();
         $this->registerModelInterceptors();
@@ -226,6 +229,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
                 path: 'vendor/capell-foundation-theme',
                 file: 'resources/js/capell-frontend.js',
                 packageName: self::$packageName,
+                condition: 'foundation-theme-runtime',
             ),
         );
 
@@ -259,6 +263,16 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
         CapellCore::registerVendorAsset(
             VendorAssetData::tailwindImport('swiper/css/navigation', self::$packageName),
+        );
+    }
+
+    private function registerVendorAssetConditions(): void
+    {
+        resolve(VendorAssetConditionRegistry::class)->register(
+            'foundation-theme-runtime',
+            fn (FrontendAssetContextData $context): bool => $context->runtime->usesBeacon
+                || $context->runtime->usesIslands
+                || $context->runtime->usesLivewire,
         );
     }
 

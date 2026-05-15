@@ -6,13 +6,11 @@ namespace Capell\Events\Filament\Resources\Registrations\Pages;
 
 use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\Events\Enums\ResourceEnum;
-use Capell\Events\Filament\Resources\Registrations\EventRegistrationResource;
 use Filament\Resources\Pages\ManageRecords;
 use Override;
 
 class ManageEventRegistrations extends ManageRecords
 {
-    /** @return class-string<EventRegistrationResource> */
     #[Override]
     public static function getResource(): string
     {

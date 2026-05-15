@@ -22,7 +22,7 @@ class EmailTemplateVariant extends Model
     /** @use HasFactory<EmailTemplateVariantFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'site_scope_key',

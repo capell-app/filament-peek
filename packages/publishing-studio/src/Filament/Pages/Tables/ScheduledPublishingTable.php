@@ -5,13 +5,22 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Filament\Pages\Tables;
 
 use Capell\Admin\Filament\Contracts\TableConfigurator;
-use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
+use Capell\Admin\Support\SiteScope;
+use Capell\PublishingStudio\Actions\CancelSchedulerEventAction;
+use Capell\PublishingStudio\Actions\DashboardReports\BuildVisibleContentSchedulerEventsAction;
+use Capell\PublishingStudio\Actions\ExecuteSchedulerEventAction;
 use Capell\PublishingStudio\Data\SchedulerEventData;
+use Capell\PublishingStudio\Enums\SchedulerEventStateEnum;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
+use Capell\PublishingStudio\Models\SchedulerEvent;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 
 class ScheduledPublishingTable implements TableConfigurator
 {
@@ -43,7 +52,8 @@ class ScheduledPublishingTable implements TableConfigurator
                 TextColumn::make('status')
                     ->label(__('capell-admin::table.status'))
                     ->size('sm')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn (array $record): string => $record['state_color'] ?? 'gray'),
                 TextColumn::make('scheduled_for')
                     ->label(__('capell-publishing-studio::scheduler.table.scheduled_for'))
                     ->size('sm')
@@ -53,6 +63,15 @@ class ScheduledPublishingTable implements TableConfigurator
                     ->size('sm')
                     ->wrap()
                     ->toggleable(),
+                TextColumn::make('failure')
+                    ->label(__('capell-publishing-studio::scheduler.table.failure'))
+                    ->size('sm')
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('timezone')
+                    ->label(__('capell-publishing-studio::scheduler.table.timezone'))
+                    ->size('sm')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('event_type')
@@ -64,6 +83,79 @@ class ScheduledPublishingTable implements TableConfigurator
                         'workspace' => __('capell-publishing-studio::scheduler.sources.workspace'),
                         'page' => __('capell-publishing-studio::scheduler.sources.page'),
                     ]),
+                SelectFilter::make('state')
+                    ->label(__('capell-publishing-studio::scheduler.filters.state'))
+                    ->options(SchedulerEventStateEnum::class),
+                SelectFilter::make('quick')
+                    ->label(__('capell-publishing-studio::scheduler.filters.quick'))
+                    ->options([
+                        'today' => __('capell-publishing-studio::scheduler.quick_filters.today'),
+                        'next_7_days' => __('capell-publishing-studio::scheduler.quick_filters.next_7_days'),
+                        'failed' => __('capell-publishing-studio::scheduler.quick_filters.failed'),
+                        'blocked' => __('capell-publishing-studio::scheduler.quick_filters.blocked'),
+                        'automatic_unpublishes' => __('capell-publishing-studio::scheduler.quick_filters.automatic_unpublishes'),
+                        'review_reminders_due' => __('capell-publishing-studio::scheduler.quick_filters.review_reminders_due'),
+                    ]),
+            ])
+            ->actions([
+                Action::make('details')
+                    ->label(__('capell-publishing-studio::scheduler.actions.details'))
+                    ->modalHeading(fn (array $record): string => (string) $record['title'])
+                    ->modalContent(fn (array $record): HtmlString => self::details($record))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(__('capell-publishing-studio::scheduler.actions.close')),
+                Action::make('retry')
+                    ->label(__('capell-publishing-studio::scheduler.actions.retry'))
+                    ->visible(fn (array $record): bool => ($record['state'] ?? null) === SchedulerEventStateEnum::Failed->value)
+                    ->action(function (array $record): void {
+                        $event = self::eventFromRecord($record);
+
+                        if (! $event instanceof SchedulerEvent) {
+                            return;
+                        }
+
+                        $event->state = SchedulerEventStateEnum::Scheduled;
+                        $event->claimed_at = null;
+                        $event->save();
+
+                        ExecuteSchedulerEventAction::run($event);
+                        $event->refresh();
+
+                        if ($event->state === SchedulerEventStateEnum::Executed) {
+                            Notification::make()
+                                ->title(__('capell-publishing-studio::scheduler.notifications.retry_succeeded'))
+                                ->success()
+                                ->send();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->title(__('capell-publishing-studio::scheduler.notifications.retry_failed'))
+                            ->body($event->last_failure_message)
+                            ->danger()
+                            ->send();
+                    }),
+                Action::make('cancel')
+                    ->label(__('capell-publishing-studio::scheduler.actions.cancel'))
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn (array $record): bool => ($record['state'] ?? null) === SchedulerEventStateEnum::Scheduled->value
+                        && str_starts_with((string) ($record['id'] ?? ''), 'scheduler-event-'))
+                    ->action(function (array $record): void {
+                        $event = self::eventFromRecord($record);
+
+                        if (! $event instanceof SchedulerEvent) {
+                            return;
+                        }
+
+                        CancelSchedulerEventAction::run($event, auth()->user());
+
+                        Notification::make()
+                            ->title(__('capell-publishing-studio::scheduler.notifications.cancelled'))
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->recordUrl(fn (array $record): ?string => $record['record_url'] ?? null)
             ->defaultSort(column: 'scheduled_for', direction: 'asc')
@@ -82,11 +174,45 @@ class ScheduledPublishingTable implements TableConfigurator
     ): Collection {
         $eventType = self::filterValue($filters, 'event_type');
         $sourceType = self::filterValue($filters, 'source_type');
+        $stateValue = self::filterValue($filters, 'state');
+        $quick = self::filterValue($filters, 'quick');
 
-        $records = BuildContentSchedulerEventsAction::run(
+        $startsAt = now()->subMonth();
+        $endsAt = now()->addMonths(6);
+
+        if ($quick === 'today') {
+            $startsAt = today();
+            $endsAt = now()->endOfDay();
+        } elseif ($quick === 'next_7_days') {
+            $startsAt = today();
+            $endsAt = now()->addDays(7)->endOfDay();
+        } elseif ($quick === 'failed' || $quick === 'blocked') {
+            $startsAt = now()->subYears(5);
+            $endsAt = now()->addMonths(6);
+        }
+
+        $records = BuildVisibleContentSchedulerEventsAction::run(
             eventType: $eventType !== null ? SchedulerEventTypeEnum::tryFrom($eventType) : null,
             sourceType: $sourceType,
+            startsAt: $startsAt,
+            endsAt: $endsAt,
+            state: $stateValue !== null ? SchedulerEventStateEnum::tryFrom($stateValue) : null,
         )->map(fn (SchedulerEventData $event): array => $event->toTableRecord());
+
+        if ($quick === 'failed') {
+            $records = $records->filter(fn (array $record): bool => ($record['state'] ?? null) === SchedulerEventStateEnum::Failed->value);
+        } elseif ($quick === 'blocked') {
+            $blockedStates = [
+                SchedulerEventStateEnum::SkippedEmbargo->value,
+                SchedulerEventStateEnum::SkippedReleaseWindow->value,
+                SchedulerEventStateEnum::SkippedStale->value,
+            ];
+            $records = $records->filter(fn (array $record): bool => in_array($record['state'] ?? null, $blockedStates, true));
+        } elseif ($quick === 'automatic_unpublishes') {
+            $records = $records->filter(fn (array $record): bool => ($record['event_type'] ?? null) === SchedulerEventTypeEnum::Unpublish->value);
+        } elseif ($quick === 'review_reminders_due') {
+            $records = $records->filter(fn (array $record): bool => ($record['event_type'] ?? null) === SchedulerEventTypeEnum::ReviewReminder->value);
+        }
 
         if (is_string($search) && $search !== '') {
             $needle = mb_strtolower($search);
@@ -121,6 +247,8 @@ class ScheduledPublishingTable implements TableConfigurator
             'event_type_label',
             'source_type',
             'status',
+            'state_label',
+            'failure',
             'description' => mb_strtolower((string) ($record[$sortColumn] ?? '')),
             'scheduled_for' => $record['scheduled_for'],
             default => $record['scheduled_for'],
@@ -139,5 +267,51 @@ class ScheduledPublishingTable implements TableConfigurator
         }
 
         return $value;
+    }
+
+    /**
+     * @param  array<string, mixed>  $record
+     */
+    private static function eventFromRecord(array $record): ?SchedulerEvent
+    {
+        $id = (string) ($record['id'] ?? '');
+
+        if (! str_starts_with($id, 'scheduler-event-')) {
+            return null;
+        }
+
+        $event = SchedulerEvent::query()->find((int) str_replace('scheduler-event-', '', $id));
+
+        return $event instanceof SchedulerEvent && self::canUseSite($event->site_id) ? $event : null;
+    }
+
+    private static function canUseSite(?int $siteId): bool
+    {
+        $actor = auth()->user();
+
+        if (! $actor instanceof Authenticatable || SiteScope::isGlobalActor($actor) || ! method_exists($actor, 'getAssignedSiteIds')) {
+            return true;
+        }
+
+        return $siteId !== null && $actor->getAssignedSiteIds()->contains($siteId);
+    }
+
+    /**
+     * @param  array<string, mixed>  $record
+     */
+    private static function details(array $record): HtmlString
+    {
+        $lines = [
+            __('capell-publishing-studio::scheduler.table.event_type') . ': ' . ($record['event_type_label'] ?? ''),
+            __('capell-admin::table.status') . ': ' . ($record['state_label'] ?? $record['status'] ?? ''),
+            __('capell-publishing-studio::scheduler.table.scheduled_for') . ': ' . (($record['scheduled_for'] ?? null)?->toDateTimeString() ?? ''),
+            __('capell-publishing-studio::scheduler.table.timezone') . ': ' . ($record['timezone'] ?? ''),
+        ];
+
+        if (($record['failure'] ?? null) !== null) {
+            $lines[] = __('capell-publishing-studio::scheduler.table.failure') . ': ' . $record['failure'];
+        }
+
+        return new HtmlString('<div aria-live="polite" class="space-y-2 text-sm"><p>' . implode('</p><p>', array_map(e(...), $lines)) . '</p></div>');
     }
 }

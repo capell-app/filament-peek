@@ -16,7 +16,7 @@ class ListPageSeoAuditWidget extends Widget
 {
     use HasBlankPlaceholder;
 
-    protected int|string|array $columnSpan = ['default' => 'full'];
+    protected int|string|array $columnSpan = 'full';
 
     protected string $view = 'capell-seo-suite::filament.widgets.seo-audit-list';
 

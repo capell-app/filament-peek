@@ -70,6 +70,7 @@ Delete from SEO Suite after moving:
 ### Task 1: Scaffold Site Discovery Package
 
 **Files:**
+
 - Create: `packages/site-discovery/composer.json`
 - Create: `packages/site-discovery/capell.json`
 - Create: `packages/site-discovery/README.md`
@@ -157,7 +158,9 @@ Create `packages/site-discovery/capell.json`:
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": ["Capell\\SiteDiscovery\\Providers\\SiteDiscoveryServiceProvider"],
+        "runtime": [
+            "Capell\\SiteDiscovery\\Providers\\SiteDiscoveryServiceProvider"
+        ],
         "admin": [],
         "frontend": []
     },
@@ -451,6 +454,7 @@ git commit -m "feat(site-discovery): scaffold package"
 ### Task 2: Add Neutral Discovery API
 
 **Files:**
+
 - Create: `packages/site-discovery/src/Data/DiscoverablePageData.php`
 - Create: `packages/site-discovery/src/Data/DiscoverableUrlData.php`
 - Create: `packages/site-discovery/src/Contracts/DiscoverableUrlSource.php`
@@ -785,6 +789,7 @@ git commit -m "feat(site-discovery): add public discovery API"
 ### Task 3: Move Sitemap Output Into Site Discovery
 
 **Files:**
+
 - Move: sitemap source files from `packages/seo-suite/src/**` to `packages/site-discovery/src/**`
 - Move: sitemap views from `packages/seo-suite/resources/views/**` to `packages/site-discovery/resources/views/**`
 - Move: sitemap tests from `packages/seo-suite/tests/**` to `packages/site-discovery/tests/**`
@@ -980,7 +985,7 @@ use Capell\Core\Events\PageDeleted;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Events\SiteCreated;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Facades\CapellCore;
 use Capell\SiteDiscovery\Console\Commands\XmlSitemapCommand;
 use Capell\SiteDiscovery\Filament\Extenders\Page\SitemapResourceHeaderActionExtender;
@@ -1078,6 +1083,7 @@ git commit -m "refactor(site-discovery): move sitemap output from seo suite"
 ### Task 4: Make SEO Suite Depend On Site Discovery
 
 **Files:**
+
 - Modify: `packages/seo-suite/composer.json`
 - Modify: `packages/seo-suite/capell.json`
 - Modify: `packages/seo-suite/src/Providers/SeoSuiteServiceProvider.php`
@@ -1129,7 +1135,7 @@ use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
 use Capell\Core\Enums\TypeEnum;
 use Capell\Core\Events\SiteCreated;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
+use Capell\Core\Models\Blueprint;
 use Capell\SeoSuite\Console\Commands\XmlSitemapCommand;
 use Capell\SeoSuite\Filament\Extenders\Page\SitemapResourceHeaderActionExtender;
 use Capell\SeoSuite\Filament\Extenders\Site\SitemapSiteHeaderActionExtender;
@@ -1364,6 +1370,7 @@ git commit -m "refactor(seo-suite): depend on site discovery"
 ### Task 5: Update Package Docs And Metadata
 
 **Files:**
+
 - Modify: `packages/seo-suite/README.md`
 - Modify: `packages/seo-suite/docs/overview.md`
 - Modify: `packages/seo-suite/docs/sitemaps.md`
@@ -1430,7 +1437,7 @@ See [../site-discovery/README.md](../site-discovery/README.md).
 In `docs/README.md`, add a row near SEO Suite/Search:
 
 ```markdown
-| Site Discovery     | [`packages/site-discovery/README.md`](../packages/site-discovery/README.md)                                                                                    |
+| Site Discovery | [`packages/site-discovery/README.md`](../packages/site-discovery/README.md) |
 ```
 
 In `docs/openai-integration.md`, replace the Sitemaps link:
@@ -1477,6 +1484,7 @@ git commit -m "docs: document site discovery split"
 ### Task 6: Tighten Package Boundaries
 
 **Files:**
+
 - Modify: `packages/seo-suite/tests/Arch/SeoSuiteBoundaryTest.php`
 - Modify: `packages/site-discovery/tests/Arch/SiteDiscoveryBoundaryTest.php`
 - Modify: package imports found by `rg`
@@ -1564,6 +1572,7 @@ git commit -m "test: enforce site discovery package boundaries"
 ### Task 7: Final Verification
 
 **Files:**
+
 - No planned source edits unless verification exposes failures.
 
 - [ ] **Step 1: Regenerate autoload**

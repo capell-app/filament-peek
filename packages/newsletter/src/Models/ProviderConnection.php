@@ -19,7 +19,7 @@ class ProviderConnection extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'name',

@@ -18,6 +18,7 @@ use Spatie\Tags\HasTags;
 
 /**
  * @property SubscriberStatus $status
+ * @property CarbonInterface|null $pending_at
  * @property CarbonInterface|null $subscribed_at
  * @property CarbonInterface|null $unsubscribed_at
  * @property CarbonInterface|null $updated_at
@@ -29,7 +30,7 @@ class Subscriber extends Model
 
     use HasTags;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'email_hash',

@@ -47,7 +47,8 @@ it('bundles layout builder javascript into the foundation frontend runtime', fun
 
     expect($entrypoint)->toContain('./layout-builder/widget/carousel')
         ->and($provider)->toContain("path: 'vendor/capell-foundation-theme'")
-        ->and($provider)->not->toContain('VendorAssetConditionRegistry')
+        ->and($provider)->toContain('foundation-theme-runtime')
+        ->and($provider)->toContain('VendorAssetConditionRegistry')
         ->and($provider)->not->toContain('LAYOUT_BUILDER_ASSETS_CONDITION');
 });
 

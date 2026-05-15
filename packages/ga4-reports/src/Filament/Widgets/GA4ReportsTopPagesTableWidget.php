@@ -23,7 +23,7 @@ final class GA4ReportsTopPagesTableWidget extends BaseWidget
 
     protected static string $settingsKey = 'ga4_reports_top_pages';
 
-    /** @var int|string|array<string, int|string|null> */
+    /** @var int|string|array<string, int|null> */
     protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 30;
@@ -62,9 +62,6 @@ final class GA4ReportsTopPagesTableWidget extends BaseWidget
             ]);
     }
 
-    /**
-     * @return Collection<int, array{id: string, page_path: string, page_title: ?string, screen_page_views: int, sessions: int, total_users: int, conversions: int}>
-     */
     private function getRecords(): Collection
     {
         return collect(BuildTopGA4ReportsPagesAction::run($this->getGA4ReportsWindow(), 100))
@@ -76,6 +73,7 @@ final class GA4ReportsTopPagesTableWidget extends BaseWidget
                 'sessions' => $page->sessions,
                 'total_users' => $page->totalUsers,
                 'conversions' => $page->conversions,
-            ]);
+            ])
+            ->values();
     }
 }

@@ -24,8 +24,8 @@ final class TopLandingPagesWidget extends TableWidget implements CapellWidgetCon
 
     protected static string $settingsKey = 'top_landing_pages';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'lg' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['lg' => 1];
 
     protected static ?int $sort = 22;
 

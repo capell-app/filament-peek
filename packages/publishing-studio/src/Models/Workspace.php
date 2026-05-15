@@ -112,19 +112,25 @@ class Workspace extends Model implements Userstampable
         return $this->hasOne(Version::class, 'source_workspace_id');
     }
 
-    /** @return HasMany<PublishingRevision, self> */
+    /** @return HasMany<PublishingRevision, $this> */
     public function publishingRevisions(): HasMany
     {
         return $this->hasMany(PublishingRevision::class);
     }
 
-    /** @return HasMany<WorkspaceApproval, self> */
+    /** @return HasMany<WorkspaceApproval, $this> */
     public function approvals(): HasMany
     {
         return $this->hasMany(WorkspaceApproval::class);
     }
 
-    /** @return HasOne<WorkspaceApproval, self> */
+    /** @return HasMany<WorkspaceReviewAssignment, $this> */
+    public function reviewAssignments(): HasMany
+    {
+        return $this->hasMany(WorkspaceReviewAssignment::class);
+    }
+
+    /** @return HasOne<WorkspaceApproval, $this> */
     public function latestApproval(): HasOne
     {
         return $this->hasOne(WorkspaceApproval::class)->latestOfMany();
@@ -149,7 +155,7 @@ class Workspace extends Model implements Userstampable
         $previousStatus = $this->status;
 
         $this->status = WorkspaceStatusEnum::InReview;
-        $this->submitted_at = now();
+        $this->submitted_at = CarbonImmutable::now();
         $this->save();
 
         $this->approvals()->create([
@@ -179,7 +185,7 @@ class Workspace extends Model implements Userstampable
 
         if ($level >= $requiredLevels) {
             $this->status = WorkspaceStatusEnum::Approved;
-            $this->approved_at = now();
+            $this->approved_at = CarbonImmutable::now();
             $this->save();
 
             event(new WorkspaceStateChanged($this, $previousStatus, $this->status, WorkspaceTransitionEnum::Approved->value, $user, $notes));

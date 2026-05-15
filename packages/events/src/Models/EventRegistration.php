@@ -27,7 +27,7 @@ class EventRegistration extends Model
 
     protected static string $factory = EventRegistrationFactory::class;
 
-    /** @return BelongsTo<EventOccurrence, self> */
+    /** @return BelongsTo<EventOccurrence, $this> */
     public function occurrence(): BelongsTo
     {
         return $this->belongsTo(EventOccurrence::class, 'event_occurrence_id');

@@ -10,6 +10,7 @@ use Capell\Admin\Contracts\Extenders\PageResourcePageExtender;
 use Capell\Admin\Contracts\Extenders\PageTableExtender;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\AssetRelation;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Media;
@@ -19,7 +20,6 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\SiteDomain;
 use Capell\Core\Models\Theme;
 use Capell\Core\Models\Translation;
-use Capell\Core\Models\Type;
 use Capell\Core\Support\Database\RuntimeSchemaState;
 use Capell\Frontend\Enums\RenderHookLocation;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
@@ -38,6 +38,9 @@ use Capell\PublishingStudio\Http\Middleware\ResolveWorkspaceContext;
 use Capell\PublishingStudio\Listeners\StampWorkspaceOnActivity;
 use Capell\PublishingStudio\Models\PreviewLink;
 use Capell\PublishingStudio\Models\PublishingRevision;
+use Capell\PublishingStudio\Models\SchedulerDelivery;
+use Capell\PublishingStudio\Models\SchedulerEvent;
+use Capell\PublishingStudio\Models\SchedulerIcalToken;
 use Capell\PublishingStudio\Models\Version;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Models\WorkspaceApproval;
@@ -113,6 +116,9 @@ class PublishingStudioServiceProvider extends ServiceProvider
         CapellCore::registerModels([
             PreviewLink::class,
             PublishingRevision::class,
+            SchedulerDelivery::class,
+            SchedulerEvent::class,
+            SchedulerIcalToken::class,
             Version::class,
             Workspace::class,
             WorkspaceApproval::class,
@@ -171,6 +177,9 @@ class PublishingStudioServiceProvider extends ServiceProvider
             'workspace_review_assignment' => WorkspaceReviewAssignment::class,
             'version' => Version::class,
             'publishing_revision' => PublishingRevision::class,
+            'scheduler_delivery' => SchedulerDelivery::class,
+            'scheduler_event' => SchedulerEvent::class,
+            'scheduler_ical_token' => SchedulerIcalToken::class,
             'preview_link' => PreviewLink::class,
         ]);
 
@@ -182,7 +191,7 @@ class PublishingStudioServiceProvider extends ServiceProvider
         $simpleModels = [
             Site::class,
             SiteDomain::class,
-            Type::class,
+            Blueprint::class,
             Theme::class,
             Layout::class,
             Language::class,

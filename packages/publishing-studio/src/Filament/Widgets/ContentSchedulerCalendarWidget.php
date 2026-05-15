@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Filament\Widgets;
 
-use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
+use Capell\PublishingStudio\Actions\DashboardReports\BuildVisibleContentSchedulerEventsAction;
 use Capell\PublishingStudio\Data\SchedulerEventData;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
@@ -22,7 +22,7 @@ final class ContentSchedulerCalendarWidget extends Widget
     #[Computed]
     public function eventsByDate(): Collection
     {
-        return BuildContentSchedulerEventsAction::run()
+        return BuildVisibleContentSchedulerEventsAction::run()
             ->groupBy(fn (SchedulerEventData $event): string => $event->scheduledFor->format('Y-m-d'));
     }
 }

@@ -20,7 +20,7 @@ final class BuildRobotsTxtAction
         $sections = array_filter([
             $this->standardRules($site),
             trim(BuildAiRobotsTxtRulesAction::run($site)),
-        ]);
+        ], static fn (string $section): bool => $section !== '');
 
         return implode("\n\n", $sections) . "\n";
     }
@@ -49,7 +49,9 @@ final class BuildRobotsTxtAction
         }
 
         $site->loadMissing(['siteDomains' => fn ($query) => $query->enabled()->with('language')]);
-        $xmlPath = '/' . ltrim((string) config('capell.sitemap.xml_path', '/sitemap-xml'), '/');
+
+        $configuredPath = config('capell.sitemap.xml_path', '/sitemap-xml');
+        $xmlPath = '/' . ltrim(is_string($configuredPath) ? $configuredPath : '/sitemap-xml', '/');
 
         return $site->siteDomains
             ->filter(fn (SiteDomain $siteDomain): bool => $siteDomain->status)

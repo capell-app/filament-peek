@@ -29,7 +29,7 @@ class CampaignGroup extends Model
 
     use SoftDeletes;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'name',

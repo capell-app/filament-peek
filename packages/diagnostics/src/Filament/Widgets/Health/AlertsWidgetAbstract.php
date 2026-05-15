@@ -6,16 +6,16 @@ namespace Capell\Diagnostics\Filament\Widgets\Health;
 
 use Capell\Admin\Data\MessageData;
 use Capell\Admin\Enums\AlertTypeEnum;
+use Capell\Admin\Filament\Resources\Blueprints\BlueprintResource;
 use Capell\Admin\Filament\Resources\Languages\LanguageResource;
 use Capell\Admin\Filament\Resources\Sites\SiteResource;
 use Capell\Admin\Filament\Resources\Themes\ThemeResource;
-use Capell\Admin\Filament\Resources\Types\TypeResource;
 use Capell\Admin\Filament\Widgets\ResourceAlertsWidget;
-use Capell\Core\Enums\TypeEnum;
+use Capell\Core\Enums\BlueprintSubjectEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
-use Capell\Core\Models\Type;
 use Capell\Installer\Providers\InstallerServiceProvider;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -32,7 +32,7 @@ final class AlertsWidgetAbstract extends ResourceAlertsWidget
             return false;
         }
 
-        $hasAllTypes = Type::query()->count() >= count(TypeEnum::cases());
+        $hasAllTypes = Blueprint::query()->count() >= count(BlueprintSubjectEnum::cases());
         $hasFoundationTheme = Theme::query()->default()->exists();
         $hasDefaultLanguage = Language::query()->default()->exists();
         $hasSite = Site::query()->exists();
@@ -79,7 +79,7 @@ final class AlertsWidgetAbstract extends ResourceAlertsWidget
             ->color('warning')
             ->outlined()
             ->size('sm')
-            ->url(fn (): string => TypeResource::getUrl(parameters: ['tableAction' => 'create']));
+            ->url(fn (): string => BlueprintResource::getUrl(parameters: ['tableAction' => 'create']));
     }
 
     public function viewInstallerAction(): Action
@@ -129,8 +129,8 @@ final class AlertsWidgetAbstract extends ResourceAlertsWidget
     {
         $alerts = collect();
 
-        $typeCount = Type::query()->count();
-        $typeExpected = count(TypeEnum::cases());
+        $typeCount = Blueprint::query()->count();
+        $typeExpected = count(BlueprintSubjectEnum::cases());
 
         if ($typeCount < $typeExpected) {
             $alerts->put('types', new MessageData(

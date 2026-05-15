@@ -7,7 +7,7 @@ namespace Capell\PublishingStudio\Filament\Pages;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
-use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
+use Capell\PublishingStudio\Actions\DashboardReports\BuildVisibleContentSchedulerEventsAction;
 use Capell\PublishingStudio\Filament\Pages\Tables\ScheduledPublishingTable;
 use Capell\PublishingStudio\Filament\Widgets\ContentSchedulerCalendarWidget;
 use Capell\PublishingStudio\Filament\Widgets\ContentSchedulerOverviewWidget;
@@ -53,7 +53,7 @@ class ScheduledPublishingPage extends Page implements HasActions, HasTable
     #[Override]
     public static function getNavigationBadge(): ?string
     {
-        $count = BuildContentSchedulerEventsAction::run()->count();
+        $count = BuildVisibleContentSchedulerEventsAction::run()->count();
 
         return $count > 0 ? (string) $count : null;
     }

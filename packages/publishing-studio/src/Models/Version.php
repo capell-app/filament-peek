@@ -72,7 +72,7 @@ class Version extends Model
         return $this->morphTo('published_by');
     }
 
-    /** @return HasMany<PublishingRevision, self> */
+    /** @return HasMany<PublishingRevision, $this> */
     public function publishingRevisions(): HasMany
     {
         return $this->hasMany(PublishingRevision::class);

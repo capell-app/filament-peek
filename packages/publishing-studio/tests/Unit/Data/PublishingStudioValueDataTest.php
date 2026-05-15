@@ -11,6 +11,7 @@ use Capell\PublishingStudio\Data\Imports\PageImportStatusData;
 use Capell\PublishingStudio\Data\Imports\PageImportWizardStateData;
 use Capell\PublishingStudio\Data\SchedulerEventData;
 use Capell\PublishingStudio\Data\WorkspaceSettingsData;
+use Capell\PublishingStudio\Enums\SchedulerEventStateEnum;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Capell\PublishingStudio\Rollback\EntityRollbackReport;
 use Capell\PublishingStudio\Services\MediaDiffResult;
@@ -125,6 +126,12 @@ final class PublishingStudioValueDataTest extends TestCase
             status: 'scheduled',
             description: 'Ready to publish.',
             recordUrl: 'https://example.test/admin/workspaces/42',
+            state: SchedulerEventStateEnum::Scheduled,
+            siteId: 3,
+            siteName: 'Main site',
+            ownerId: 7,
+            ownerName: 'Editor',
+            timezone: 'Europe/London',
         );
 
         $this->assertSame([
@@ -139,6 +146,15 @@ final class PublishingStudioValueDataTest extends TestCase
             'status' => 'scheduled',
             'description' => 'Ready to publish.',
             'record_url' => 'https://example.test/admin/workspaces/42',
+            'state' => 'scheduled',
+            'state_label' => 'capell-publishing-studio::scheduler.states.scheduled',
+            'state_color' => 'info',
+            'site_id' => 3,
+            'site_name' => 'Main site',
+            'owner_id' => 7,
+            'owner_name' => 'Editor',
+            'timezone' => 'Europe/London',
+            'failure' => null,
         ], $event->toTableRecord());
     }
 

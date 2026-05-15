@@ -14,7 +14,7 @@
 {{-- format-ignore-start --}}
 @php
     use Capell\Admin\Facades\CapellAdmin;
-    use Capell\Core\Actions\GetResourceFromTypeAction;
+    use Capell\Core\Actions\GetResourceFromBlueprintAction;
     use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Core\Models\Page;
     use Capell\Core\Models\Site;
@@ -246,7 +246,7 @@
 
             <x-filament::dropdown.list>
                 @php
-                    $resource = GetResourceFromTypeAction::run(ucfirst($widgetAsset->asset_type), $widgetAsset->asset->type);
+                    $resource = GetResourceFromBlueprintAction::run(ucfirst($widgetAsset->asset_type), $widgetAsset->asset->type);
                 @endphp
 
                 @if ($resource)

@@ -21,8 +21,8 @@ final class CampaignOverviewStatsWidget extends StatsOverviewWidget implements C
 
     protected static string $settingsKey = 'campaign_overview';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full'];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = 'full';
 
     protected static ?int $sort = 20;
 

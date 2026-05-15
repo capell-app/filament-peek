@@ -33,6 +33,7 @@ it('registers every installed package in the Capell package registry', function 
         'capell-app/address',
         'capell-app/admin',
         'capell-app/insights',
+        'capell-app/layout-builder',
         'capell-app/login-audit',
         'capell-app/migration-assistant',
         'capell-app/blog',

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio;
 
+use Capell\PublishingStudio\Actions\SyncWorkspaceSchedulerEventsAction;
+use Capell\PublishingStudio\Actions\ValidateWorkspaceSchedulerMetadataAction;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Enums\WorkspaceTransitionEnum;
 use Capell\PublishingStudio\Events\WorkspaceStateChanged;
@@ -35,11 +37,15 @@ class SchedulePublishAction
             throw InvalidScheduleException::mustBeInFuture($workspace, $scheduledFor);
         }
 
+        $metadata = ValidateWorkspaceSchedulerMetadataAction::run($workspace, ['publish_at' => $scheduledFor]);
+
         $previousStatus = $workspace->status;
 
         $workspace->status = WorkspaceStatusEnum::Scheduled;
-        $workspace->publish_at = $scheduledFor;
+        $workspace->publish_at = $metadata->publishAt;
         $workspace->save();
+
+        SyncWorkspaceSchedulerEventsAction::run($workspace, $metadata, $actor);
 
         event(new WorkspaceStateChanged(
             $workspace,
@@ -70,6 +76,8 @@ class SchedulePublishAction
         $workspace->status = WorkspaceStatusEnum::Approved;
         $workspace->publish_at = null;
         $workspace->save();
+
+        SyncWorkspaceSchedulerEventsAction::run($workspace, null, $actor);
 
         event(new WorkspaceStateChanged(
             $workspace,

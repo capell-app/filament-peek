@@ -36,7 +36,7 @@ class Grant extends AccessGateModel
     /** @use HasFactory<GrantFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'access_area_id',
         'registration_id',

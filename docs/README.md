@@ -9,6 +9,18 @@ For package-level upstream credits, services, and acknowledgements, see [Credits
 For theme package authoring, see [Creating a Capell theme](creating-a-theme.md).
 For optional package integration rules, see [Optional Package Boundaries](optional-package-boundaries.md).
 
+Use package `overview.md` pages for search-facing package summaries and task-level orientation. Use focused package docs for API, data, workflow, provider, and extension contracts.
+
+## Package Docs By Intent
+
+| Intent                                      | Package docs                                                                                                                                                                                                                                  |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dashboard reporting and operations signals  | [Dashboard Reports overview](../packages/dashboard-reports/docs/overview.md), [Diagnostics overview](../packages/diagnostics/docs/overview.md), [Login Audit overview](../packages/login-audit/docs/overview.md)                              |
+| Analytics, growth, and conversion reporting | [GA4 Reports overview](../packages/ga4-reports/docs/overview.md), [Insights overview](../packages/insights/docs/overview.md), [Campaign Studio overview](../packages/campaign-studio/docs/overview.md)                                        |
+| SEO, search, and public discovery           | [SEO Suite overview](../packages/seo-suite/docs/overview.md), [Search overview](../packages/search/docs/overview.md), [Site Discovery README](../packages/site-discovery/README.md)                                                           |
+| Demo data and frontend presentation         | [Demo Kit overview](../packages/demo-kit/docs/overview.md), [Foundation Theme overview](../packages/foundation-theme/docs/overview.md), [Creating a Capell theme](creating-a-theme.md)                                                        |
+| Admin access and security                   | [Password Policy overview](../packages/password-policy/docs/overview.md), [Access Gate requests](../packages/access-gate/docs/access-requests.md), [Public Actions integrations](../packages/public-actions/docs/actions-and-integrations.md) |
+
 | Package            | Local reference                                                                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Address            | [`packages/address/README.md`](../packages/address/README.md)                                                                                                    |

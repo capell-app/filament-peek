@@ -129,12 +129,12 @@
         'mb-20' => in_array('b-xl', $margin, true),
     ])
 >
-    @foreach ($container['widgets'] as $widgetIndex => $widgetData)
+    @foreach ($container['elements'] as $widgetIndex => $widgetData)
         {{-- format-ignore-start --}}
                                     @php
-                                        $widget = CapellLayout::getContainerWidget(
+                                        $widget = CapellLayout::getContainerElement(
                                             $containerKey,
-                                            $widgetData['widget_key'],
+                                            $widgetData['element_key'],
                                             $widgetData['occurrence'] ?? 1,
                                         );
 

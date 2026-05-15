@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Capell\AgentBridge\Tools\Site;
 
 use Capell\Core\Enums\UrlTypeEnum;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
 use Capell\Navigation\Models\Navigation;
 use Composer\InstalledVersions;
 use Illuminate\Database\Eloquent\Model;
@@ -67,7 +67,7 @@ final class InspectSiteStateTool extends Tool
             'languages' => $this->countOptionalModel(Language::class),
             'pages' => $this->countOptionalModel(Page::class),
             'pageUrls' => $this->countOptionalModel(PageUrl::class),
-            'types' => $this->countOptionalModel(Type::class),
+            'types' => $this->countOptionalModel(Blueprint::class),
             'redirects' => $this->countRedirects(),
             'navigations' => $this->countOptionalModel(Navigation::class),
         ];

@@ -25,7 +25,7 @@ class PublicActionIntegrationToken extends Model
     /** @use HasFactory<PublicActionIntegrationTokenFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'site_id',
         'name',

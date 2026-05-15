@@ -78,6 +78,7 @@ This package makes its Composer dependencies visible because they are part of th
 
 ## Docs
 
+- [overview.md](docs/overview.md)
 - [credits-and-acknowledgements.md](docs/credits-and-acknowledgements.md)
 
 ## Testing

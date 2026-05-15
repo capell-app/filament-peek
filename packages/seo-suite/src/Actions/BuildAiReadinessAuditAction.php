@@ -102,7 +102,7 @@ final class BuildAiReadinessAuditAction
 
     private function canonicalUrl(Page $page, Language $language): string
     {
-        return trim((string) (ResolvePageCanonicalUrlAction::run($page, $language) ?? ''));
+        return trim(ResolvePageCanonicalUrlAction::run($page, $language) ?? '');
     }
 
     private function hasSchema(Page $page, ?Translation $translation): bool

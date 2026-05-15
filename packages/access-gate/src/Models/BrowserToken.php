@@ -30,7 +30,7 @@ class BrowserToken extends AccessGateModel
     /** @use HasFactory<BrowserTokenFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'access_area_id',
         'grant_id',

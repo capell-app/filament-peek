@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Type;
 use Capell\SeoSuite\Contracts\SchemaTemplate;
 use Capell\SeoSuite\Enums\SchemaTemplateTypeEnum;
 use Capell\SeoSuite\Support\SchemaTemplates\SchemaTemplateRegistry;
@@ -67,7 +67,7 @@ it('lists templates matching the page schema type', function (): void {
     $webPageTemplate = schemaTemplateRegistryTestTemplate();
     $articleTemplate = schemaTemplateRegistryTestTemplate();
     $page = new Page;
-    $type = new Type;
+    $type = new Blueprint;
     $type->meta = ['schema' => ['type' => 'BlogPosting']];
 
     $page->setRelation('type', $type);

@@ -38,6 +38,8 @@ return new class extends Migration
             $table->index('site_id');
             $table->index(['window_start', 'window_end']);
             $table->index('click_delta');
+            $table->index(['site_id', 'window_end', 'window_start'], 'search_console_metrics_site_window_index');
+            $table->index(['site_id', 'window_end', 'window_start', 'click_delta'], 'search_console_metrics_site_window_delta_index');
             $table->unique(['site_id', 'url_hash', 'window_start', 'window_end'], 'search_console_url_metrics_unique_window');
         });
     }

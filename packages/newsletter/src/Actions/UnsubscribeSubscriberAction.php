@@ -32,6 +32,10 @@ class UnsubscribeSubscriberAction
             }
 
             $subscriber = $publicToken->subscriber;
+            if (! $subscriber instanceof Subscriber) {
+                return null;
+            }
+
             $subscriber->forceFill([
                 'status' => SubscriberStatus::Unsubscribed,
                 'unsubscribed_at' => now(),
@@ -48,7 +52,9 @@ class UnsubscribeSubscriberAction
 
             QueueProviderSyncAction::run($subscriber);
 
-            return $subscriber->refresh();
+            $subscriber->refresh();
+
+            return $subscriber;
         });
     }
 }

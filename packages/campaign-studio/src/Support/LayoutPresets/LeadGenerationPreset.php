@@ -25,7 +25,7 @@ final class LeadGenerationPreset extends CampaignLayoutPreset
         ];
     }
 
-    public function widgets(): array
+    public function elements(): array
     {
         return [
             ['container' => 'hero', 'type' => 'campaign-hero'],

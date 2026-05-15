@@ -29,7 +29,7 @@ class PublicActionSubmission extends Model
     /** @use HasFactory<PublicActionSubmissionFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'public_action_id',
         'site_id',

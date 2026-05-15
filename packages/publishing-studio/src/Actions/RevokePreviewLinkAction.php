@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Actions;
 
 use Capell\PublishingStudio\Models\PreviewLink;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Date;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -19,7 +19,7 @@ class RevokePreviewLinkAction
 
     public function handle(PreviewLink $link, Authenticatable $actor): PreviewLink
     {
-        $link->revoked_at = Date::now();
+        $link->revoked_at = CarbonImmutable::now();
         $link->save();
 
         return $link;

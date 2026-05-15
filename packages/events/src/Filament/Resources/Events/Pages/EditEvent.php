@@ -15,7 +15,6 @@ class EditEvent extends EditPage
 {
     use InteractsWithRecord { resolveRecord as baseResolveRecord; }
 
-    /** @return class-string<EventResource> */
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resourceIfRegistered(AdminResourceEnum::Page, strtolower(ResourceEnum::Event->name))

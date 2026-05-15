@@ -12,9 +12,12 @@ return new class extends Migration
     {
         AccessGateSchema::builder()->create('access_gate_areas', function (Blueprint $table): void {
             $table->id();
+            $table->unsignedBigInteger('site_id')->nullable()->index();
             $table->string('key')->unique();
             $table->string('name');
             $table->string('status')->index();
+            $table->dateTime('opens_at')->nullable();
+            $table->dateTime('closes_at')->nullable();
             $table->string('identity_mode')->index();
             $table->string('approval_strategy')->index();
             $table->unsignedInteger('approval_limit')->nullable();

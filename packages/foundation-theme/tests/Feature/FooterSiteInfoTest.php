@@ -32,6 +32,7 @@ it('renders site contact details from meta', function (): void {
     $contactPage = new Page(['name' => 'Contact']);
     $contactPageUrl = new PageUrl(['url' => '/contact']);
     $contactPageUrl->setRelation('siteDomain', $siteDomain);
+
     $contactPage->setRelation('pageUrl', $contactPageUrl);
     $contactPage->setRelation('translation', new Translation([
         'title' => 'Talk to us',

@@ -25,7 +25,7 @@ class CampaignConversion extends Model
     /** @use HasFactory<CampaignConversionFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'campaign_group_id',
         'campaign_landing_page_id',

@@ -16,9 +16,9 @@ CampaignStudio adds campaign groups, landing pages, CTA blocks, conversion goals
 CampaignStudio adds campaign groups, landing pages, CTA blocks, conversion goals, UTM attribution, and conversion reporting to Capell.
 
 - Campaign Filament resources for groups, landing pages, goals, and CTA blocks.
-- Campaign dashboard widgets.
+- Campaign dashboard elements.
 - Page schema extender for campaign fields.
-- core layout builder widget configurators for campaign hero, CTA, and lead form blocks.
+- core layout builder element configurators for campaign hero, CTA, and lead form blocks.
 - Conversion recording actions for page views, CTA clicks, and form submissions.
 
 ## Why It Matters
@@ -62,8 +62,8 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Campaign landing pages index.
 - Campaign conversion goals form.
 - CTA block form.
-- Campaign dashboard widgets.
-- Frontend landing page with campaign widgets.
+- Campaign dashboard elements.
+- Frontend landing page with campaign elements.
 
 ## Technical Shape
 
@@ -81,7 +81,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 | Data      | `packages/campaign-studio/src/Data`      | Structured payloads, form state, view models, and integration data. |
 | Enums     | `packages/campaign-studio/src/Enums`     | Persisted states and Filament option values.                        |
 | Models    | `packages/campaign-studio/src/Models`    | Eloquent records owned by the package.                              |
-| Filament  | `packages/campaign-studio/src/Filament`  | Admin resources, pages, widgets, and settings UI.                   |
+| Filament  | `packages/campaign-studio/src/Filament`  | Admin resources, pages, elements, and settings UI.                  |
 | Providers | `packages/campaign-studio/src/Providers` | Registration, extension hooks, routes, migrations, and resources.   |
 | Resources | `packages/campaign-studio/resources`     | Views, translations, assets, and package resources.                 |
 | Config    | `packages/campaign-studio/config`        | Package configuration and publishable config.                       |
@@ -92,7 +92,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 - Resources: `CampaignConversionGoalResource`, `CampaignCtaBlockResource`, `CampaignGroupResource`, `CampaignLandingPageResource`.
 - Pages: `CreateCampaignConversionGoal`, `CreateCampaignCtaBlock`, `CreateCampaignGroup`, `CreateCampaignLandingPage`, `EditCampaignConversionGoal`, `EditCampaignCtaBlock`, `EditCampaignGroup`, `EditCampaignLandingPage`, `ListCampaignConversionGoals`, `ListCampaignCtaBlocks`, `ListCampaignGroups`, `ListCampaignLandingPages`.
-- Widgets: `CampaignCtaBlockWidgetConfigurator`, `CampaignHeroWidgetConfigurator`, `CampaignLeadFormWidgetConfigurator`, `CampaignOverviewStatsWidget`, `TopCampaignStudioWidget`, `TopLandingPagesWidget`.
+- Elements: `CampaignCtaBlockElementConfigurator`, `CampaignHeroElementConfigurator`, `CampaignLeadFormElementConfigurator`, `CampaignOverviewStatsElement`, `TopCampaignStudioElement`, `TopLandingPagesElement`.
 
 ## Commands
 
@@ -119,7 +119,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 ## Install Impact
 
 - Adds campaign admin navigation and database tables.
-- Adds campaign dashboard widgets.
+- Adds campaign dashboard elements.
 - Adds config keys for conversion cookie, UTM keys, table names, and layout presets.
 - May use Insights events and FormBuilder submissions when those packages are installed.
 - No explicit public route is registered by this package.
@@ -149,9 +149,9 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - EditCampaignLandingPage (packages/campaign-studio/src/Filament/Resources/CampaignLandingPages/Pages/EditCampaignLandingPage.php)
 - ListCampaignLandingPages (packages/campaign-studio/src/Filament/Resources/CampaignLandingPages/Pages/ListCampaignLandingPages.php)
 
-- Gate: CampaignOverviewStatsWidget: `admin`, `super_admin`
-- Gate: TopCampaignStudioWidget: `admin`, `super_admin`
-- Gate: TopLandingPagesWidget: `admin`, `super_admin`
+- Gate: CampaignOverviewStatsElement: `admin`, `super_admin`
+- Gate: TopCampaignStudioElement: `admin`, `super_admin`
+- Gate: TopLandingPagesElement: `admin`, `super_admin`
 
 ## Common Pitfalls
 

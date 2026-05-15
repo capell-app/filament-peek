@@ -9,6 +9,8 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Capell\Events\Filament\Widgets\EventCalendarWidget;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 use Override;
 
@@ -54,9 +56,7 @@ class EventCalendarPage extends Page
         return __('capell-events::generic.admin_calendar_subheading');
     }
 
-    /**
-     * @return list<class-string>
-     */
+    /** @return array<class-string<Widget>|WidgetConfiguration> */
     #[Override]
     protected function getHeaderWidgets(): array
     {

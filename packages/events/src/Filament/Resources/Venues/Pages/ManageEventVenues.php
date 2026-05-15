@@ -6,14 +6,12 @@ namespace Capell\Events\Filament\Resources\Venues\Pages;
 
 use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\Events\Enums\ResourceEnum;
-use Capell\Events\Filament\Resources\Venues\EventVenueResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Override;
 
 class ManageEventVenues extends ManageRecords
 {
-    /** @return class-string<EventVenueResource> */
     #[Override]
     public static function getResource(): string
     {

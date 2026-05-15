@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\FoundationTheme\Support;
 
-use Capell\Core\Models\Type;
+use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Widget;
 use Capell\LayoutBuilder\Enums\ResponsiveLayoutPattern;
 use Illuminate\Database\Eloquent\Model;
@@ -213,7 +213,7 @@ HTML);
             ? $widget->getRelation('type')
             : (Model::getConnectionResolver() === null ? null : $widget->getRelationValue('type'));
 
-        if ($type instanceof Type) {
+        if ($type instanceof Blueprint) {
             return $type->getMeta($key, $default);
         }
 

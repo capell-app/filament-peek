@@ -22,8 +22,8 @@ final class TailwindBuildStatusWidgetAbstract extends Widget implements CapellWi
 
     protected string $view = 'capell-diagnostics::widgets.tailwind-build-status';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 1];
 
     #[Computed(persist: true, seconds: 300)]
     public function data(): TailwindBuildStatusData

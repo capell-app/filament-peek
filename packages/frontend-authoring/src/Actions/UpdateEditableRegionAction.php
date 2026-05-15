@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Capell\FrontendAuthoring\Actions;
 
 use Capell\FrontendAuthoring\Data\EditableRegionPayloadData;
+use Capell\PublishingStudio\Actions\CopyOnWriteAction;
+use Capell\PublishingStudio\Actions\GenerateWorkspacePreviewUrlAction;
+use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\WorkspaceContext;
+use Capell\PublishingStudio\WorkspaceRegistry;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsObject;
 use Throwable;
 
@@ -53,11 +59,11 @@ class UpdateEditableRegionAction
      */
     private function saveForApproval(Model $record, EditableRegionPayloadData $payload, string $value, array $urls): array
     {
-        $workspaceClass = 'Capell\\PublishingStudio\\Models\\Workspace';
-        $workspaceContextClass = 'Capell\\PublishingStudio\\WorkspaceContext';
-        $workspaceRegistryClass = 'Capell\\PublishingStudio\\WorkspaceRegistry';
-        $previewUrlActionClass = 'Capell\\PublishingStudio\\Actions\\GenerateWorkspacePreviewUrlAction';
-        $copyOnWriteActionClass = 'Capell\\PublishingStudio\\Actions\\CopyOnWriteAction';
+        $workspaceClass = Workspace::class;
+        $workspaceContextClass = WorkspaceContext::class;
+        $workspaceRegistryClass = WorkspaceRegistry::class;
+        $previewUrlActionClass = GenerateWorkspacePreviewUrlAction::class;
+        $copyOnWriteActionClass = CopyOnWriteAction::class;
 
         abort_unless(
             class_exists($workspaceClass)
@@ -68,10 +74,9 @@ class UpdateEditableRegionAction
             409,
         );
 
-        /** @var Model&object $workspace */
         $workspace = $workspaceClass::query()->create([
-            'name' => (string) config('capell-frontend-authoring.workflow.workspace_name', 'Inline editor changes'),
-            'slug' => 'inline-editor-' . now()->format('YmdHis') . '-' . strtolower(str()->random(6)),
+            'name' => config('capell-frontend-authoring.workflow.workspace_name', 'Inline editor changes'),
+            'slug' => 'inline-editor-' . now()->format('YmdHis') . '-' . strtolower(Str::random(6)),
         ]);
 
         $workspaceContextClass::runWith($workspace, function () use ($copyOnWriteActionClass, $record, $payload, $value, $workspace): void {

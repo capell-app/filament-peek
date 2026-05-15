@@ -36,7 +36,7 @@ class Registration extends AccessGateModel
     /** @use HasFactory<RegistrationFactory> */
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'access_area_id',
         'email',

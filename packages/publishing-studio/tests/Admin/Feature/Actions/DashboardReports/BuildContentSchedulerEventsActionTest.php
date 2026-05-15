@@ -5,7 +5,9 @@ declare(strict_types=1);
 use Capell\Core\Models\Page;
 use Capell\PublishingStudio\Actions\DashboardReports\BuildContentSchedulerEventsAction;
 use Capell\PublishingStudio\Data\SchedulerEventData;
+use Capell\PublishingStudio\Enums\SchedulerEventStateEnum;
 use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
+use Capell\PublishingStudio\Models\SchedulerEvent;
 use Capell\PublishingStudio\Models\Workspace;
 use Carbon\CarbonImmutable;
 
@@ -45,7 +47,7 @@ test('returns calendar-ready scheduler events for pages and publishing-studio', 
             SchedulerEventTypeEnum::Unpublish->value,
         ])
         ->and($events->first(fn (SchedulerEventData $event): bool => $event->title === 'Summer campaign' && $event->eventType === SchedulerEventTypeEnum::Unpublish)?->description)
-        ->toContain('does not automatically unpublish')
+        ->toContain('expires automatically')
         ->and($events->first()->title)->toBe('Spring launch page');
 });
 
@@ -68,4 +70,33 @@ test('filters scheduler events by type and source', function (): void {
     expect($events)->toHaveCount(1)
         ->and($events->first()->sourceType)->toBe('workspace')
         ->and($events->first()->title)->toBe('Workspace publish');
+});
+
+test('state filters only return durable events in that state', function (): void {
+    CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-05-01 09:00:00', 'UTC'));
+
+    Page::factory()->create([
+        'name' => 'Scheduled page',
+        'visible_from' => CarbonImmutable::parse('2026-05-02 10:00:00', 'UTC'),
+    ]);
+    Workspace::factory()->scheduled('2026-05-04 09:00:00')->create([
+        'name' => 'Legacy workspace',
+    ]);
+    $workspace = Workspace::factory()->create(['name' => 'Failed workspace']);
+
+    SchedulerEvent::query()->create([
+        'event_type' => SchedulerEventTypeEnum::Publish,
+        'state' => SchedulerEventStateEnum::Failed,
+        'source_type' => $workspace->getMorphClass(),
+        'source_id' => $workspace->id,
+        'workspace_id' => $workspace->id,
+        'scheduled_for' => CarbonImmutable::parse('2026-05-03 09:00:00', 'UTC'),
+        'idempotency_key' => 'failed-workspace',
+    ]);
+
+    $events = BuildContentSchedulerEventsAction::run(state: SchedulerEventStateEnum::Failed);
+
+    expect($events)->toHaveCount(1)
+        ->and($events->first()->title)->toBe('Failed workspace')
+        ->and($events->first()->state)->toBe(SchedulerEventStateEnum::Failed);
 });

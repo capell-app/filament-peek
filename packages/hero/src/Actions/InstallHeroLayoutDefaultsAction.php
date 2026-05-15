@@ -10,8 +10,8 @@ use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Translation;
 use Capell\Core\Support\Creator\LayoutCreator;
-use Capell\LayoutBuilder\Actions\CreateHeroWidgetAction;
-use Capell\LayoutBuilder\Support\Creator\WidgetCreator;
+use Capell\LayoutBuilder\Actions\CreateHeroElementAction;
+use Capell\LayoutBuilder\Support\Creator\ElementCreator;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -27,9 +27,9 @@ final class InstallHeroLayoutDefaultsAction
     public function handle(bool $force = false): array
     {
         resolve(LayoutCreator::class)->setup();
-        resolve(WidgetCreator::class)->pageContentWidget();
+        resolve(ElementCreator::class)->pageContentElement();
 
-        $heroWidget = CreateHeroWidgetAction::run(height: 'small', meta: [
+        $heroElement = CreateHeroElementAction::run(height: 'small', meta: [
             'color' => 'light',
             'content_align' => 'center',
             'content_width' => 'balanced',
@@ -55,13 +55,13 @@ final class InstallHeroLayoutDefaultsAction
                         'colspan' => 12,
                         'container' => ContainerWidthEnum::Full,
                     ],
-                    'widgets' => [
-                        ['widget_key' => $heroWidget->key],
+                    'elements' => [
+                        ['element_key' => $heroElement->key],
                     ],
                 ],
                 ...$this->mainContainer($homeLayout->containers),
             ],
-            'widgets' => [$heroWidget->key, 'page-content'],
+            'elements' => [$heroElement->key, 'page-content'],
         ]);
 
         return [
@@ -86,8 +86,8 @@ final class InstallHeroLayoutDefaultsAction
         return [
             'main' => [
                 ...$main,
-                'widgets' => [
-                    ['widget_key' => 'page-content'],
+                'elements' => [
+                    ['element_key' => 'page-content'],
                 ],
             ],
         ];

@@ -37,7 +37,7 @@ class DocumentAcceptance extends Model
 
     protected $table = 'legal_acceptances';
 
-    /** @var array<int, string> */
+    /** @var array<string> */
     protected $guarded = [];
 
     public function acceptor(): MorphTo

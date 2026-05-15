@@ -11,6 +11,7 @@ use Capell\Admin\Filament\Widgets\Dashboard\ListPagesWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\SiteStatsOverviewWidget;
+use Capell\Core\Models\Site;
 use Capell\Core\Models\SiteDomain;
 use Capell\LoginAudit\Filament\Widgets\LoginAuditsWidget;
 use Capell\PublishingStudio\Filament\Widgets\WorkspaceActivityWidgetAbstract;
@@ -21,7 +22,7 @@ it('getColumns returns the dashboard grid columns', function (): void {
 });
 
 it('getWidgets contains all expected widget classes', function (): void {
-    SiteDomain::factory()->default()->create();
+    Site::factory()->has(SiteDomain::factory()->default())->create();
 
     $dashboard = new CapellDashboard;
     $widgets = $dashboard->getWidgets();

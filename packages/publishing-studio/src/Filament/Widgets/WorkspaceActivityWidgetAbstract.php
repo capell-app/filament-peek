@@ -25,8 +25,8 @@ final class WorkspaceActivityWidgetAbstract extends Widget implements CapellWidg
 
     protected string $view = 'capell-publishing-studio::widgets.workspace-activity';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 1];
 
     public static function canView(): bool
     {

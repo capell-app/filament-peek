@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio;
 
+use Capell\PublishingStudio\Actions\RunDueSchedulerEventsAction;
 use Capell\PublishingStudio\Enums\WorkspaceStatusEnum;
 use Capell\PublishingStudio\Exceptions\EmbargoActiveException;
 use Capell\PublishingStudio\Exceptions\ReleaseWindowClosedException;
@@ -16,10 +17,8 @@ use Illuminate\Queue\SerializesModels;
 use Throwable;
 
 /**
- * Publishes every workspace whose `publish_at` has elapsed. PublishingStudio that
- * fall outside the release window are left in the Scheduled state so the
- * next tick can retry; unrecoverable failures are reported and the workspace
- * is left in Scheduled for manual intervention.
+ * Backwards-compatible scheduler entry point. The durable scheduler events
+ * now own publish, public-expiry, and review reminder execution.
  */
 class PublishScheduledPublishingStudioJob implements ShouldQueue
 {
@@ -28,8 +27,10 @@ class PublishScheduledPublishingStudioJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function handle(Publisher $publisher): void
+    public function handle(?Publisher $publisher = null): void
     {
+        $publisher ??= new Publisher;
+
         Workspace::query()
             ->where('status', WorkspaceStatusEnum::Scheduled->value)
             ->whereNotNull('publish_at')
@@ -38,13 +39,13 @@ class PublishScheduledPublishingStudioJob implements ShouldQueue
             ->each(function (Workspace $workspace) use ($publisher): void {
                 try {
                     $publisher->publish($workspace);
-                } catch (EmbargoActiveException) {
-                    // Leave Scheduled — next tick will retry once the embargo has passed.
-                } catch (ReleaseWindowClosedException) {
-                    // Leave Scheduled — next tick will retry once the window opens.
+                } catch (EmbargoActiveException|ReleaseWindowClosedException) {
+                    // Leave Scheduled so the durable scheduler can retry once unblocked.
                 } catch (Throwable $failure) {
                     report($failure);
                 }
             });
+
+        RunDueSchedulerEventsAction::run(limit: 50, includePublish: false);
     }
 }

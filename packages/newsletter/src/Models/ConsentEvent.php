@@ -15,7 +15,7 @@ class ConsentEvent extends Model
 {
     use HasFactory;
 
-    /** @var array<string> */
+    /** @var list<string> */
     protected $fillable = [
         'subscriber_id',
         'site_id',

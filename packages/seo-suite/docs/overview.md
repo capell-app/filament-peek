@@ -13,7 +13,7 @@ SEO Suite adds metadata panels, AI Discovery outputs, structured data, broken li
 - AI creator actions for briefs, images, layouts, metadata suggestions, and draft application.
 - AI Discovery generation for `llms.txt`, optional `llms-full.txt`, per-page Markdown views, `robots.txt` AI crawler rules, and page-readiness audit signals.
 - AI Discovery admin management for browsing pages, filling summaries, toggling page inclusion, previewing Markdown, and reviewing readiness issue counts.
-- Search Console sync and dashboard-dashboard_reports.
+- Search Console sync and dashboard reports.
 
 ## Developer Notes
 
@@ -45,7 +45,7 @@ AI Discovery is an optional SEO Suite surface for AI-readable public content. It
 
 ## Operational Notes
 
-Gives editors and site operators practical checks before publishing and operational dashboard-dashboard_reports after launch.
+Gives editors and site operators practical checks before publishing and operational dashboard reports after launch.
 
 - Adds SEO and AI-related tables/settings.
 - Extends page and site admin form-builder; page-level SEO fields live in this package rather than the core admin sidebar settings.

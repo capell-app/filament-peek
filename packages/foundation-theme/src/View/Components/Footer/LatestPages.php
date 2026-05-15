@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\FoundationTheme\View\Components\Footer;
 
+use Capell\Core\Enums\BlueprintGroupEnum;
 use Capell\Core\Enums\PageOrderEnum;
-use Capell\Core\Enums\TypeGroupEnum;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Illuminate\Contracts\View\View as ViewContract;
@@ -27,7 +27,7 @@ class LatestPages extends Component
             site: Frontend::site(),
             limit: $this->limit,
             ordering: PageOrderEnum::Latest,
-            pageGroup: TypeGroupEnum::Default,
+            pageGroup: BlueprintGroupEnum::Default,
         );
     }
 

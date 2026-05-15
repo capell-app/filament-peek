@@ -25,8 +25,8 @@ final class AiMetricsWidgetAbstract extends Widget implements CapellWidgetContra
 
     protected string $view = 'capell-seo-suite::filament.widgets.ai-metrics';
 
-    /** @var int|string|array<string, int|string|null> */
-    protected int|string|array $columnSpan = ['default' => 'full', 'md' => 1];
+    /** @var int|string|array<string, int|null> */
+    protected int|string|array $columnSpan = ['md' => 1];
 
     private static ?string $heading = 'AI metrics';
 

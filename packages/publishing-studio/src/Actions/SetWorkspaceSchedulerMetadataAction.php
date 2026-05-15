@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Capell\PublishingStudio\Actions;
 
 use Capell\PublishingStudio\Models\Workspace;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 final class SetWorkspaceSchedulerMetadataAction
@@ -16,31 +16,26 @@ final class SetWorkspaceSchedulerMetadataAction
     /**
      * @param  array{unpublish_at?: CarbonInterface|string|null, embargo_until?: CarbonInterface|string|null, review_reminder_at?: CarbonInterface|string|null}  $metadata
      */
-    public function handle(Workspace $workspace, array $metadata): Workspace
+    public function handle(Workspace $workspace, array $metadata, ?Authenticatable $actor = null): Workspace
     {
-        foreach (['unpublish_at', 'embargo_until', 'review_reminder_at'] as $field) {
+        $validated = ValidateWorkspaceSchedulerMetadataAction::run($workspace, $metadata);
+
+        foreach ([
+            'unpublish_at' => $validated->unpublishAt,
+            'embargo_until' => $validated->embargoUntil,
+            'review_reminder_at' => $validated->reviewReminderAt,
+        ] as $field => $value) {
             if (! array_key_exists($field, $metadata)) {
                 continue;
             }
 
-            $workspace->setAttribute($field, $this->parseDate($metadata[$field]));
+            $workspace->setAttribute($field, $value);
         }
 
         $workspace->save();
 
+        SyncWorkspaceSchedulerEventsAction::run($workspace, $validated, $actor);
+
         return $workspace->refresh();
-    }
-
-    private function parseDate(CarbonInterface|string|null $value): ?CarbonImmutable
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        if ($value instanceof CarbonInterface) {
-            return CarbonImmutable::instance($value);
-        }
-
-        return CarbonImmutable::parse($value);
     }
 }
