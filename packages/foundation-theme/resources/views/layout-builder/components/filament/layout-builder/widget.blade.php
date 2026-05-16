@@ -17,7 +17,7 @@
     use Illuminate\View\ComponentAttributeBag;
 
     /**
-     * @var \Capell\Core\Models\Widget $widget
+     * @var \Capell\LayoutBuilder\Models\Element $widget
     */
 
     /**

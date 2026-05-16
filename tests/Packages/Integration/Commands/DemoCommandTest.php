@@ -9,9 +9,9 @@ use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\Core\Models\Widget;
 use Capell\LayoutBuilder\Actions\AddHeroElementToLayoutAction;
 use Capell\LayoutBuilder\Actions\CreateHeroElementAction;
+use Capell\LayoutBuilder\Models\Element;
 use Capell\LayoutBuilder\Support\Creator\DemoCreator;
 use Illuminate\Console\Command;
 use Mockery\MockInterface;
@@ -22,11 +22,11 @@ it('adds hero meta to blog and article pages when blog package is installed', fu
     AddHeroElementToLayoutAction::shouldRun()->once();
     Blueprint::factory()->type('section')->create(['key' => 'hero']);
 
-    $heroWidget = Widget::factory()->make();
-    CreateHeroElementAction::shouldRun()->twice()->andReturn($heroWidget);
+    $heroElement = Element::factory()->make();
+    CreateHeroElementAction::shouldRun()->twice()->andReturn($heroElement);
 
     $demoCreator = mock(DemoCreator::class, function (DemoCreator&MockInterface $mock): void {
-        $mock->shouldReceive('createContentsWidget')->once();
+        $mock->shouldReceive('createContentsElement')->once();
     });
 
     app()->instance(DemoCreator::class, $demoCreator);

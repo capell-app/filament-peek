@@ -6,49 +6,70 @@ namespace Capell\AccessGate\Console\Commands;
 
 use Capell\AccessGate\Http\Middleware\AccessGateMiddleware;
 use Capell\AccessGate\Models\Area;
+use Capell\Core\Data\Diagnostics\DoctorCheckResultData;
+use Capell\Core\Data\Diagnostics\DoctorReportData;
 use Illuminate\Console\Command;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 use Throwable;
 
 final class AccessGateDoctorCommand extends Command
 {
-    protected $signature = 'capell:access-gate-doctor';
+    protected $signature = 'capell:access-gate-doctor
+        {--json : Output a machine-readable JSON health report}';
 
     protected $description = 'Check Access Gate configuration and safety requirements.';
 
     public function handle(Router $router): int
     {
-        $failures = 0;
+        $checks = collect([
+            $this->checkDatabase(),
+            $this->checkMiddleware($router),
+            $this->checkCookies(),
+            $this->checkClaimHosts(),
+        ]);
 
-        $failures += $this->checkDatabase();
-        $failures += $this->checkMiddleware($router);
-        $failures += $this->checkCookies();
-        $this->checkClaimHosts();
+        $report = new DoctorReportData(
+            status: $checks->every(fn (DoctorCheckResultData $check): bool => $check->passed) ? 'passed' : 'failed',
+            checks: $checks->values(),
+        );
 
-        if ($failures > 0) {
-            $this->error(__('capell-access-gate::doctor.failed', ['count' => $failures]));
+        if ($this->option('json')) {
+            $this->line(json_encode($report->toArray(), JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
 
-            return self::FAILURE;
+            return $report->passed() ? CommandAlias::SUCCESS : CommandAlias::FAILURE;
+        }
+
+        $this->outputChecks($checks);
+
+        if (! $report->passed()) {
+            $this->error(__('capell-access-gate::doctor.failed', ['count' => $checks->where('passed', false)->count()]));
+
+            return CommandAlias::FAILURE;
         }
 
         $this->info(__('capell-access-gate::doctor.passed'));
 
-        return self::SUCCESS;
+        return CommandAlias::SUCCESS;
     }
 
-    private function checkDatabase(): int
+    private function checkDatabase(): DoctorCheckResultData
     {
         $connection = config('access-gate.connection');
         $connectionName = is_string($connection) && $connection !== '' ? $connection : config('database.default');
 
         try {
             DB::connection($connectionName)->getPdo();
-        } catch (Throwable) {
-            $this->error(__('capell-access-gate::doctor.database.unreachable', ['connection' => $connectionName]));
-
-            return 1;
+        } catch (Throwable $throwable) {
+            return new DoctorCheckResultData(
+                label: 'Access Gate database',
+                passed: false,
+                message: __('capell-access-gate::doctor.database.unreachable', ['connection' => $connectionName]),
+                remediation: $throwable->getMessage(),
+            );
         }
 
         $missingTables = collect([
@@ -61,24 +82,30 @@ final class AccessGateDoctorCommand extends Command
         ])->reject(fn (string $table): bool => Schema::connection($connectionName)->hasTable($table));
 
         if ($missingTables->isNotEmpty()) {
-            $this->error(__('capell-access-gate::doctor.database.missing_tables', [
-                'tables' => $missingTables->implode(', '),
-            ]));
-
-            return 1;
+            return new DoctorCheckResultData(
+                label: 'Access Gate database',
+                passed: false,
+                message: __('capell-access-gate::doctor.database.missing_tables', [
+                    'tables' => $missingTables->implode(', '),
+                ]),
+            );
         }
 
-        $this->info(__('capell-access-gate::doctor.database.ok', ['connection' => $connectionName]));
-
-        return 0;
+        return new DoctorCheckResultData(
+            label: 'Access Gate database',
+            passed: true,
+            message: __('capell-access-gate::doctor.database.ok', ['connection' => $connectionName]),
+        );
     }
 
-    private function checkMiddleware(Router $router): int
+    private function checkMiddleware(Router $router): DoctorCheckResultData
     {
         if (! array_key_exists('access-gate', $router->getMiddleware())) {
-            $this->error(__('capell-access-gate::doctor.middleware.alias_missing'));
-
-            return 1;
+            return new DoctorCheckResultData(
+                label: 'Access Gate middleware',
+                passed: false,
+                message: __('capell-access-gate::doctor.middleware.alias_missing'),
+            );
         }
 
         $webMiddleware = $router->getMiddlewareGroups()['web'] ?? [];
@@ -86,52 +113,70 @@ final class AccessGateDoctorCommand extends Command
         $pageCachePosition = $this->firstMiddlewarePosition($webMiddleware, $this->pageCacheAliases());
 
         if ($pageCachePosition !== null && $this->priorityRunsAccessGateBeforePageCache($router)) {
-            $this->info(__('capell-access-gate::doctor.middleware.ok'));
-
-            return 0;
+            return new DoctorCheckResultData(
+                label: 'Access Gate middleware',
+                passed: true,
+                message: __('capell-access-gate::doctor.middleware.ok'),
+            );
         }
 
         if ($pageCachePosition !== null && $accessGatePosition !== null && $accessGatePosition > $pageCachePosition) {
-            $this->error(__('capell-access-gate::doctor.middleware.page_cache_before_gate'));
-
-            return 1;
+            return new DoctorCheckResultData(
+                label: 'Access Gate middleware',
+                passed: false,
+                message: __('capell-access-gate::doctor.middleware.page_cache_before_gate'),
+            );
         }
 
         if ($pageCachePosition !== null && $accessGatePosition === null) {
-            $this->error(__('capell-access-gate::doctor.middleware.route_level_required'));
-
-            return 1;
+            return new DoctorCheckResultData(
+                label: 'Access Gate middleware',
+                passed: false,
+                message: __('capell-access-gate::doctor.middleware.route_level_required'),
+            );
         }
 
-        $this->info(__('capell-access-gate::doctor.middleware.ok'));
-
-        return 0;
+        return new DoctorCheckResultData(
+            label: 'Access Gate middleware',
+            passed: true,
+            message: __('capell-access-gate::doctor.middleware.ok'),
+        );
     }
 
-    private function checkCookies(): int
+    private function checkCookies(): DoctorCheckResultData
     {
         $sameSite = strtolower($this->configString('access-gate.cookies.browser_token.same_site', 'lax'));
         $secure = config('access-gate.cookies.browser_token.secure');
 
         if (! in_array($sameSite, ['lax', 'strict', 'none'], true)) {
-            $this->error(__('capell-access-gate::doctor.cookies.invalid_same_site'));
-
-            return 1;
+            return new DoctorCheckResultData(
+                label: 'Access Gate cookies',
+                passed: false,
+                message: __('capell-access-gate::doctor.cookies.invalid_same_site'),
+            );
         }
 
         if ($sameSite === 'none' && $secure !== true) {
-            $this->error(__('capell-access-gate::doctor.cookies.none_requires_secure'));
-
-            return 1;
+            return new DoctorCheckResultData(
+                label: 'Access Gate cookies',
+                passed: false,
+                message: __('capell-access-gate::doctor.cookies.none_requires_secure'),
+            );
         }
 
         if (app()->environment('production') && $secure !== true) {
-            $this->warn(__('capell-access-gate::doctor.cookies.production_secure'));
+            return new DoctorCheckResultData(
+                label: 'Access Gate cookies',
+                passed: true,
+                message: __('capell-access-gate::doctor.cookies.production_secure'),
+            );
         }
 
-        $this->info(__('capell-access-gate::doctor.cookies.ok'));
-
-        return 0;
+        return new DoctorCheckResultData(
+            label: 'Access Gate cookies',
+            passed: true,
+            message: __('capell-access-gate::doctor.cookies.ok'),
+        );
     }
 
     private function configString(string $key, string $default): string
@@ -139,14 +184,16 @@ final class AccessGateDoctorCommand extends Command
         return config($key, $default);
     }
 
-    private function checkClaimHosts(): void
+    private function checkClaimHosts(): DoctorCheckResultData
     {
         $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
 
         if (! is_string($appHost) || $appHost === '') {
-            $this->warn(__('capell-access-gate::doctor.claim_hosts.app_url_missing'));
-
-            return;
+            return new DoctorCheckResultData(
+                label: 'Access Gate claim hosts',
+                passed: true,
+                message: __('capell-access-gate::doctor.claim_hosts.app_url_missing'),
+            );
         }
 
         $areasWithMissingHost = Area::query()
@@ -158,14 +205,40 @@ final class AccessGateDoctorCommand extends Command
             });
 
         if ($areasWithMissingHost->isNotEmpty()) {
-            $this->warn(__('capell-access-gate::doctor.claim_hosts.app_host_not_listed', [
-                'areas' => $areasWithMissingHost->pluck('key')->implode(', '),
-            ]));
-
-            return;
+            return new DoctorCheckResultData(
+                label: 'Access Gate claim hosts',
+                passed: true,
+                message: __('capell-access-gate::doctor.claim_hosts.app_host_not_listed', [
+                    'areas' => $areasWithMissingHost->pluck('key')->implode(', '),
+                ]),
+            );
         }
 
-        $this->info(__('capell-access-gate::doctor.claim_hosts.ok'));
+        return new DoctorCheckResultData(
+            label: 'Access Gate claim hosts',
+            passed: true,
+            message: __('capell-access-gate::doctor.claim_hosts.ok'),
+        );
+    }
+
+    /**
+     * @param  Collection<int, DoctorCheckResultData>  $checks
+     */
+    private function outputChecks(Collection $checks): void
+    {
+        $checks->each(function (DoctorCheckResultData $check): void {
+            if ($check->passed) {
+                $this->info($check->message);
+
+                return;
+            }
+
+            $this->error($check->message);
+
+            if ($check->remediation !== null && $check->remediation !== '') {
+                $this->line($check->remediation);
+            }
+        });
     }
 
     /**

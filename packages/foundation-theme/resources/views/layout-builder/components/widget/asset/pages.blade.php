@@ -43,7 +43,7 @@
 @endphp
 
 <div class="contents">
-    @if ($pages->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+    @if ($pages->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
         <x-capell-layout-builder::widget.wrapper
             class="widget-pages"
             container-class="space-y-4"

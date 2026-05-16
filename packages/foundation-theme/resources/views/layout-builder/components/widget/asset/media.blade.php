@@ -19,7 +19,7 @@
     'widget',
     'widget_theme' => $widget->getMeta('widget_theme'),
 ])
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         :class="'widget-media-gallery' . ($containerWidth === ContainerWidthEnum::Full ? ' px-4' : '')"
         :$container
@@ -59,7 +59,7 @@
                     $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
                         ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
                     if (! $image) {
-                        report('Image not found for WidgetAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
+                        report('Image not found for ElementAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
                         continue;
                     }
                 @endphp

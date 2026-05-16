@@ -38,6 +38,22 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $site_id
+ * @property int $language_id
+ * @property int|null $pageable_id
+ * @property string|null $pageable_type
+ * @property string $url
+ * @property string|null $target_url
+ * @property string|null $full_url
+ * @property mixed|null $type
+ * @property bool $is_manual
+ * @property int $hit_count
+ * @property mixed|null $last_hit_at
+ * @property mixed|null $updated_at
+ * @property-read Language|null $language
+ */
 class PageUrl extends Model {}
 
 /**
@@ -45,33 +61,94 @@ class PageUrl extends Model {}
  * @property-read Collection<int, Model> $navigations
  * @property-read Language|null $language
  */
-class Site extends Model {}
+class Site extends Model
+{
+    /** @param array<string, mixed> $state */
+    public static function factory(mixed $count = null, array $state = []): mixed {}
+
+    public function getSiteDomainUrl(Language $language): string {}
+}
 
 /**
+ * @property int $id
+ * @property int $language_id
+ * @property string $translatable_type
+ * @property int $translatable_id
+ * @property string $code
+ * @property string $locale
  * @property string $name
+ * @property string|null $title
+ * @property string|null $slug
+ * @property mixed|null $content
+ * @property-read Language|null $language
+ */
+class Translation extends Model {}
+
+/**
+ * @property int $id
+ * @property string $name
+ * @property string|null $label
  * @property int|string|null $site_id
+ * @property-read string|null $title
+ * @property-read Blueprint|null $type
+ * @property-read Blueprint|null $blueprint
+ * @property-read Layout|null $layout
  * @property-read Site|null $site
+ * @property-read PageUrl|null $pageUrl
+ * @property-read Translation|null $translation
  * @property-read Collection<int, Model> $translations
  */
 class Page extends Model
 {
+    /** @return array<string, string> */
+    public static function getTypes(): array {}
+
+    /** @param array<string, mixed> $state */
+    public static function factory(mixed $count = null, array $state = []): mixed {}
+
     public function isLive(): bool {}
 }
 
-class Language extends Model {}
+class Language extends Model
+{
+    /** @param array<string, mixed> $state */
+    public static function factory(mixed $count = null, array $state = []): mixed {}
+}
 
 /**
+ * @property int $id
+ * @property string $name
+ * @property mixed $type
+ * @property string $key
+ * @property string|null $group
  * @property array<array-key, mixed>|null $meta
+ * @property array<array-key, mixed>|null $admin
+ * @property string|null $component
+ * @property string|null $component_item
+ * @property bool|null $is_livewire
+ * @property string|null $view_file
+ * @property int $order
+ * @property bool $default
+ * @property bool $status
  *
  * @method static Builder<static>|Blueprint navigationType()
+ * @method static Builder<static>|Blueprint pageType()
  */
-class Blueprint extends Model {}
+class Blueprint extends Model
+{
+    /** @param array<string, mixed> $state */
+    public static function factory(mixed $count = null, array $state = []): mixed {}
+}
 
 class Type extends Model {}
 
 namespace Filament\Resources;
 
-class Resource {}
+class Resource
+{
+    /** @param array<string, mixed> $parameters */
+    public static function getUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?\Illuminate\Database\Eloquent\Model $tenant = null): string {}
+}
 
 namespace Illuminate\Database\Eloquent\Relations;
 
@@ -79,7 +156,11 @@ namespace Illuminate\Database\Eloquent\Relations;
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  */
-class MorphOne {}
+class MorphOne
+{
+    /** @param array<string, mixed> $attributes */
+    public function withDefault(array|callable|bool $attributes = []): static {}
+}
 
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
@@ -95,6 +176,8 @@ class PageResource
 {
     /** @return class-string<Model> */
     public static function getModel(): string {}
+
+    public static function getResourceName(): string {}
 }
 
 namespace Capell\Admin\Filament\Contracts;
@@ -189,9 +272,29 @@ class DemoCreator
 
 namespace Sinnbeck\DomAssertions\Asserts;
 
-class AssertElement
+class BaseAssert {}
+
+class AssertElement extends BaseAssert
 {
     public function containsAttribute(string $attribute, ?string $value = null): self {}
+
+    public function containsText(string $text): self {}
+
+    public function doesntContain(string $selector): self {}
+
+    public function contains(string $selector, ?int $count = null): self {}
+
+    public function has(string $attribute, string $value): self {}
+
+    /**
+     * @param  callable(AssertElement): BaseAssert  $callback
+     */
+    public function find(string $selector, callable $callback): self {}
+
+    /**
+     * @param  callable(AssertElement, int): BaseAssert  $callback
+     */
+    public function each(string $selector, callable $callback): self {}
 }
 
 namespace Spatie\EloquentSortable;

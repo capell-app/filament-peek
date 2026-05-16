@@ -24,7 +24,7 @@
     'withSummary' => (bool) $widget->getMeta('with_summary'),
 ])
 
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         class="widget-assets widget-assets-features"
         :$container

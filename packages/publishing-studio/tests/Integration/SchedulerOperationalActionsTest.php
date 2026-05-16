@@ -26,6 +26,7 @@ use Capell\Tests\Fixtures\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 afterEach(function (): void {
     CarbonImmutable::setTestNow();
@@ -195,8 +196,8 @@ it('protects the public iCal route with tokens, revocation, and conditional resp
     CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-05-01 09:00:00', 'UTC'));
 
     $workspace = Workspace::factory()->create(['name' => 'Feed campaign']);
-    $owner = User::factory()->create();
-    $owner->givePermissionTo('ViewAny:Workspace');
+    Permission::findOrCreate('ViewAny:Workspace', 'web');
+    $owner = test()->createUserWithPermission('ViewAny:Workspace');
     SchedulerEvent::query()->create([
         'event_type' => SchedulerEventTypeEnum::Publish,
         'state' => SchedulerEventStateEnum::Scheduled,

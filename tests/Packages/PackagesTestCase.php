@@ -160,7 +160,11 @@ class PackagesTestCase extends AbstractTestCase
     private function registerBlazeOptimizedViews(): void
     {
         foreach ([
-            __DIR__ . '/../../packages/blog/resources/views/components',
+            __DIR__ . '/../../packages/blog/resources/views/components/article-meta.blade.php',
+            __DIR__ . '/../../packages/blog/resources/views/components/asset-after-title.blade.php',
+            __DIR__ . '/../../packages/blog/resources/views/components/footer',
+            __DIR__ . '/../../packages/blog/resources/views/components/page',
+            __DIR__ . '/../../packages/blog/resources/views/components/tag.blade.php',
             __DIR__ . '/../../packages/foundation-theme/resources/views/layout-builder/components',
             __DIR__ . '/../../packages/seo-suite/resources/views/components/schema',
             __DIR__ . '/../../packages/foundation-theme/resources/views/components',

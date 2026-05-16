@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\FoundationTheme\Livewire\Widget;
 
 use Capell\Core\Enums\AssetComponentEnum;
-use Capell\Core\Models\Widget;
 use Capell\Frontend\Facades\Frontend;
 use Capell\LayoutBuilder\Enums\CapellLayoutCacheKeyEnum;
+use Capell\LayoutBuilder\Models\Element;
 use Closure;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -17,7 +17,7 @@ use Livewire\Component;
 use stdClass;
 
 /**
- * @property-read Widget $widget
+ * @property-read Element $widget
  */
 abstract class AbstractWidget extends Component
 {
@@ -42,16 +42,13 @@ abstract class AbstractWidget extends Component
         return static::$defaultView;
     }
 
-    /**
-     * Get a Widget model by its key, with caching.
-     */
-    public static function getWidgetByKey(string $widgetKey): ?Widget
+    public static function getElementByKey(string $elementKey): ?Element
     {
-        $cacheKey = CapellLayoutCacheKeyEnum::ElementByKey->value . $widgetKey;
+        $cacheKey = CapellLayoutCacheKeyEnum::ElementByKey->value . $elementKey;
 
         return self::getCached(
             $cacheKey,
-            fn () => Widget::query()->firstWhere('key', $widgetKey),
+            fn () => Element::query()->firstWhere('key', $elementKey),
         );
     }
 
@@ -74,11 +71,11 @@ abstract class AbstractWidget extends Component
     }
 
     #[Computed]
-    public function widget(): Widget
+    public function widget(): Element
     {
-        $widget = self::getWidgetByKey($this->widgetData['widget_key']);
+        $widget = self::getElementByKey($this->widgetData['element_key']);
 
-        throw_if(! $widget instanceof Widget, Exception::class, 'Widget not found');
+        throw_if(! $widget instanceof Element, Exception::class, 'Element not found');
 
         return $widget;
     }

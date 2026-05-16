@@ -14,12 +14,14 @@ use Capell\CampaignStudio\Enums\ResourceEnum;
 use Capell\CampaignStudio\Filament\Widgets\TopCampaignStudioWidget;
 use Capell\CampaignStudio\Filament\Widgets\TopLandingPagesWidget;
 use Capell\Core\Facades\CapellCore;
-use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum as LayoutBuilderConfiguratorTypeEnum;
+use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\ServiceProvider;
 
 final class AdminServiceProvider extends ServiceProvider
 {
+    private const LAYOUT_BUILDER_CONFIGURATOR_TYPE_ENUM = ConfiguratorTypeEnum::class;
+
     public function register(): void
     {
         $this->app->booting(function (): void {
@@ -75,12 +77,20 @@ final class AdminServiceProvider extends ServiceProvider
 
     private function registerConfigurators(): self
     {
+        if (! enum_exists(self::LAYOUT_BUILDER_CONFIGURATOR_TYPE_ENUM)) {
+            return $this;
+        }
+
         foreach (CampaignElementConfiguratorEnum::cases() as $configurator) {
             $configuratorClass = $configurator->value;
 
+            if (! class_exists($configuratorClass)) {
+                continue;
+            }
+
             CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::configurator(
                 class: $configuratorClass,
-                group: LayoutBuilderConfiguratorTypeEnum::Element->value,
+                group: self::LAYOUT_BUILDER_CONFIGURATOR_TYPE_ENUM::Element->value,
                 name: $configuratorClass::getKey(),
             ));
         }

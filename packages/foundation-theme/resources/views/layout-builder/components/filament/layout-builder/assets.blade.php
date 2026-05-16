@@ -1,7 +1,7 @@
 @props(['containerKey', 'hasPageAssets', 'occurrence', 'widget', 'widgetIndex'])
 @php
     use Capell\Core\Facades\CapellCore;
-    use Capell\Core\Models\WidgetAsset;
+    use Capell\LayoutBuilder\Models\ElementAsset;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;

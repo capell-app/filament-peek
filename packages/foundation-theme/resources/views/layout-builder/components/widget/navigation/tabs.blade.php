@@ -43,7 +43,7 @@
     'containerKey',
     'containerWidth' => null,
 ])
-@if ($items->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($items->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         class="widget-navigation-tabs"
         :$container

@@ -17,6 +17,7 @@ final class BuildSeoAuditQueryAction
     {
         $query = Page::query()
             ->with([
+                'blueprint',
                 'pageUrl.siteDomain',
                 'site.language',
                 'translation.language',

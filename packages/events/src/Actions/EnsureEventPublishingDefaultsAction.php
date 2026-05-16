@@ -57,7 +57,7 @@ class EnsureEventPublishingDefaultsAction
 
     public function eventsListingPageType(): Blueprint
     {
-        return Blueprint::query()->firstOrCreate([
+        $blueprint = Blueprint::query()->firstOrCreate([
             'key' => 'events',
             'type' => BlueprintSubjectEnum::Page,
         ], [
@@ -77,6 +77,21 @@ class EnsureEventPublishingDefaultsAction
                 'sitemap' => true,
             ],
         ]);
+
+        $blueprint->forceFill([
+            'component' => LivewireComponentEnum::EventsCalendarPage->value,
+            'is_livewire' => true,
+            'meta' => [
+                ...($blueprint->meta ?? []),
+                'component' => LivewireComponentEnum::EventsCalendarPage->value,
+                'livewire' => true,
+                'limit' => 24,
+                'pagination' => true,
+                'sitemap' => true,
+            ],
+        ])->save();
+
+        return $blueprint;
     }
 
     public function defaultEventLayout(): Layout

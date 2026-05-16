@@ -19,7 +19,7 @@
     $theme = Frontend::theme();
 
     /**
-    * @var \Capell\Core\Models\Widget $widget
+    * @var \Capell\LayoutBuilder\Models\Element $widget
     */
     $backgroundImage = $widget->getMedia(MediaCollectionEnum::BackgroundImage->value)->first()
       ?? $widget->getMedia(MediaCollectionEnum::Image->value)->first()

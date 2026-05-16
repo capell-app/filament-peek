@@ -10,29 +10,31 @@
 @endphp
 
 @props([
-    'color' => $widget->getMeta('color', 'dark'),
+    'color' => $element->getMeta('color', 'dark'),
     'container',
     'containerKey',
     'containerWidth' => null,
+    'element',
+    'elementIndex' => null,
     'loop',
-    'total' => $widget->assets->count(),
-    'widget',
-    'widgetIndex',
-    'maxWidth' => $widget->getMeta('max_width'),
-    'withChildCount' => (bool) $widget->getMeta('with_child_count'),
-    'withImage' => (bool) $widget->getMeta('with_image', true),
-    'withParent' => (bool) $widget->getMeta('with_parent'),
-    'withDate' => (bool) $widget->getMeta('with_date'),
-    'withSummary' => (bool) $widget->getMeta('with_summary'),
-    'spacing' => $widget->getMeta('spacing', true),
-    'columns' => (int) $widget->getMeta('columns'),
-    'headingSize' => $widget->getMeta('heading_size'),
-    'imagePosition' => $widget->getMeta('image_position', 'left'),
-    'responsiveLayoutOptions' => ResponsiveAssetLayoutOptions::fromWidget($widget, $total),
+    'total' => $element->assets->count(),
+    'widget' => $element,
+    'widgetIndex' => $elementIndex,
+    'maxWidth' => $element->getMeta('max_width'),
+    'withChildCount' => (bool) $element->getMeta('with_child_count'),
+    'withImage' => (bool) $element->getMeta('with_image', true),
+    'withParent' => (bool) $element->getMeta('with_parent'),
+    'withDate' => (bool) $element->getMeta('with_date'),
+    'withSummary' => (bool) $element->getMeta('with_summary'),
+    'spacing' => $element->getMeta('spacing', true),
+    'columns' => (int) $element->getMeta('columns'),
+    'headingSize' => $element->getMeta('heading_size'),
+    'imagePosition' => $element->getMeta('image_position', 'left'),
+    'responsiveLayoutOptions' => ResponsiveAssetLayoutOptions::fromElement($element, $total),
 ])
 @php
     $responsiveLayoutPattern = $responsiveLayoutOptions->pattern;
-    $assetLayoutKey = sprintf('%s-%s-%s', $containerKey, $widget->id ?? $widget->key, $loop->index);
+    $assetLayoutKey = sprintf('%s-%s-%s', $containerKey, $element->id ?? $element->key, $loop->index);
     $assetGridId = "asset-grid-{$assetLayoutKey}";
     $assetCarouselId = "asset-carousel-{$assetLayoutKey}";
     $maxWidthStyle = $maxWidth && ! in_array($maxWidth, ['none', 'sm', 'md', 'lg', 'xl'], true)
@@ -40,31 +42,31 @@
         : '';
 @endphp
 
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         class="widget-assets widget-assets-grid"
         :$container
         :$containerKey
         :$containerWidth
         :index="$loop->index"
-        :$widget
+        :widget="$element"
         container-class="space-y-6 md:space-y-10"
     >
-        @if ($widget->translation)
+        @if ($element->translation)
             <x-capell::content
                 :compact="true"
-                :content="$widget->translation->content"
-                :content-type="$widget->type->content_structure"
+                :content="$element->translation->content"
+                :content-type="$element->type->content_structure"
                 :color="$color"
-                :divider="$widget->getMeta('content_divider')"
+                :divider="$element->getMeta('content_divider')"
                 :muted="in_array($containerKey, $theme->secondary_containers)"
-                :title="$widget->translation->title"
-                :text-align="$widget->getMeta('align')"
-                :heading-style="$widget->getMeta('heading_style')"
+                :title="$element->translation->title"
+                :text-align="$element->getMeta('align')"
+                :heading-style="$element->getMeta('heading_style')"
             />
         @endif
 
-        @if ($widget->assets->isNotEmpty())
+        @if ($element->assets->isNotEmpty())
             @if ($responsiveLayoutPattern->usesMobileCarousel())
                 <div
                     wire:ignore
@@ -94,11 +96,11 @@
                     ])
                 >
                     <div class="swiper-wrapper">
-                        @foreach ($widget->assets as $asset)
+                        @foreach ($element->assets as $asset)
                             <div class="swiper-slide h-auto">
                                 <x-dynamic-component
                                     :component="app(AssetsRegistryInterface::class)->getAsset($asset['asset_type'])->component"
-                                    :componentItem="$widget->getMeta('component_item', AssetComponentEnum::Card->value)"
+                                    :componentItem="$element->getMeta('component_item', AssetComponentEnum::Card->value)"
                                     :$container
                                     :$containerKey
                                     :$loop
@@ -160,10 +162,10 @@
                         '2xl:grid-cols-6' => ! $responsiveLayoutOptions->shouldUseResponsiveGrid() && $total >= 6 && $columns !== 0 && $total <= $columns,
                     ])
                 >
-                    @foreach ($widget->assets as $asset)
+                    @foreach ($element->assets as $asset)
                         <x-dynamic-component
                             :component="app(AssetsRegistryInterface::class)->getAsset($asset['asset_type'])->component"
-                            :componentItem="$widget->getMeta('component_item', AssetComponentEnum::Card->value)"
+                            :componentItem="$element->getMeta('component_item', AssetComponentEnum::Card->value)"
                             :$container
                             :$containerKey
                             :$loop

@@ -42,7 +42,7 @@ class Pages extends AbstractWidget
 
         $limit = $this->widget->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
 
-        $paginationKey = $this->containerKey . ucfirst($this->widget->key) . $this->occurrence;
+        $paginationKey = $this->containerKey . ucfirst((string) $this->widget->key) . $this->occurrence;
         $paginationPage = (int) $this->getPage($paginationKey);
 
         $selection = $this->widget->assets->pluck('asset_id')->toArray();
@@ -72,7 +72,7 @@ class Pages extends AbstractWidget
             modifyQuery: fn (Builder $query) => $query->whereIn('id', $selection),
         );
 
-        if ($this->pages->isEmpty() && config('capell-layout-builder.widget.skip_render_empty', true) === true) {
+        if ($this->pages->isEmpty() && config('capell-layout-builder.element.skip_render_empty', true) === true) {
             $this->skipRender = true;
         }
     }

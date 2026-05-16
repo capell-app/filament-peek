@@ -28,7 +28,7 @@ $theme = Frontend::theme();
     'columns' => (int) $widget->getMeta('columns'),
 ])
 
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         class="widget-assets-blocks relative"
         :$container

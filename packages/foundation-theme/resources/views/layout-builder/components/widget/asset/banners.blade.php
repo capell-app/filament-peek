@@ -23,7 +23,7 @@
     $carouselId = sprintf('banner-carousel-%s-%s', $widget->id ?? $widget->key, $loop->index);
 @endphp
 
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <section
         class="widget-assets-banner relative flex w-full items-center justify-center overflow-hidden"
         style="

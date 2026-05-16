@@ -4,7 +4,7 @@
     use Capell\Core\Enums\MediaCollectionEnum;
     use Capell\Core\Enums\MediaConversionEnum;
     use Capell\Frontend\Facades\Frontend;
-    use Capell\LayoutBuilder\Actions\GetWidgetContainerWidthAction;
+    use Capell\LayoutBuilder\Actions\GetElementContainerWidthAction;
     use Illuminate\Support\Arr;
 
     $theme = Frontend::theme();
@@ -22,7 +22,7 @@
     'container',
     'containerKey',
     'containerClass' => '',
-    'containerWidth' => GetWidgetContainerWidthAction::run($widget),
+    'containerWidth' => GetElementContainerWidthAction::run($widget),
     'index',
     'margin' => Arr::wrap($widget->getMeta('margin')),
     'padding' => Arr::wrap($widget->getMeta('padding')),

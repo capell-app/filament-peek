@@ -7,7 +7,7 @@ test('asset widget view contains the responsive grid to carousel pattern hooks',
 
     $assetWidgetView = file_get_contents($themePath . '/resources/views/layout-builder/components/widget/asset/index.blade.php');
 
-    expect($assetWidgetView)->toContain('ResponsiveAssetLayoutOptions::fromWidget')
+    expect($assetWidgetView)->toContain('ResponsiveAssetLayoutOptions::fromElement')
         ->and($assetWidgetView)->toContain('usesMobileCarousel()')
         ->and($assetWidgetView)->toContain('data-carousel-breakpoints')
         ->and($assetWidgetView)->toContain('data-carousel-rows')

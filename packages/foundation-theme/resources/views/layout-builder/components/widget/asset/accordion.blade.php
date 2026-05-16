@@ -4,7 +4,7 @@
     use Capell\Core\Enums\AssetComponentEnum;
     use Capell\Core\Models\Page;
     use Capell\Frontend\Facades\Frontend;
-    use Capell\Core\Models\WidgetAsset;
+    use Capell\LayoutBuilder\Models\ElementAsset;
 
     $site = Frontend::site();
     $theme = Frontend::theme();
@@ -23,7 +23,7 @@
     'size' => $widget->getMeta('size'),
     'widget',
 ])
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         class="widget-section-grid widget-accordion space-y-6"
         :$container
@@ -59,7 +59,7 @@
                 @foreach ($widget->assets as $widgetAsset)
                     {{-- format-ignore-start --}}
                 @php
-                    /** @var WidgetAsset $widgetAsset */
+                    /** @var ElementAsset $widgetAsset */
 
                     $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
                         ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);

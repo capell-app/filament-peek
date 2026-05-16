@@ -35,8 +35,8 @@ it('keeps home page content defaults stable on repeated setup', function (): voi
         ->update([
             'containers' => [
                 'hero' => [
-                    'widgets' => [
-                        ['widget_key' => 'hero'],
+                    'elements' => [
+                        ['element_key' => 'hero'],
                     ],
                 ],
             ],

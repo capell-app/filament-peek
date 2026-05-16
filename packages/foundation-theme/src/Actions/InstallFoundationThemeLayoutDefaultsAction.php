@@ -41,7 +41,7 @@ final class InstallFoundationThemeLayoutDefaultsAction
             $layout = $this->resolveLayout($layoutKey);
             $hadContainers = $layout->containers !== [];
 
-            if ($hadContainers && ! $force && ! $this->hasLegacyHomeHeroDefault($layout)) {
+            if ($hadContainers && ! $force) {
                 $result['skipped']++;
 
                 continue;
@@ -63,22 +63,6 @@ final class InstallFoundationThemeLayoutDefaultsAction
     private function resolveLayout(string $layoutKey): Layout
     {
         return Layout::query()->where('key', $layoutKey)->firstOrFail();
-    }
-
-    private function hasLegacyHomeHeroDefault(Layout $layout): bool
-    {
-        $layoutElements = $layout->getAttribute('elements');
-        $legacyWidgets = $layout->getAttribute('widgets');
-
-        return $layout->key === LayoutEnum::Home->value
-            && $layout->containers === [
-                'hero' => [
-                    'widgets' => [
-                        ['widget_key' => 'hero'],
-                    ],
-                ],
-            ]
-            && ($layoutElements === ['hero'] || $legacyWidgets === ['hero']);
     }
 
     /**

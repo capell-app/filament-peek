@@ -60,7 +60,7 @@ it('ensures event publishing defaults for event pages and listing pages', functi
 
     expect($eventType->meta['schema']['type'])->toBe('Event')
         ->and($eventType->meta['with_date'])->toBeTrue()
-        ->and($listingType->meta['component'])->toBe(LivewireComponentEnum::EventsCalendarPage->value)
+        ->and($listingType->component)->toBe(LivewireComponentEnum::EventsCalendarPage->value)
         ->and(Layout::query()->where('key', 'event')->exists())->toBeTrue()
         ->and(Layout::query()->where('key', LayoutEnum::Results->value)->exists())->toBeTrue();
 });

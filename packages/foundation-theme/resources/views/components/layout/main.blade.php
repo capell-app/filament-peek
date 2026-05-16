@@ -71,16 +71,10 @@
                         continue;
                     }
 
-                    if (! $slotRendered) {
-                        $hasSlotWidget = $layoutModules->contains(
-                            fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ($layoutModule->meta['type'] ?? null) === 'slot'
-                                || ($layoutModule->relationLoaded('type') && $layoutModule->type?->getMeta('type') === 'slot'),
-                        );
-
-                        if ($hasSlotWidget) {
-                            $slotRendered = true;
-                        }
-                    }
+                    $hasSlotWidget = ! $slotRendered && $layoutModules->contains(
+                        fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ($layoutModule->meta['type'] ?? null) === 'slot'
+                            || ($layoutModule->relationLoaded('type') && $layoutModule->type?->getMeta('type') === 'slot'),
+                    );
 
                     $colspan = (int) ($container['meta']['colspan'] ?? 12);
 
@@ -107,6 +101,12 @@
                     :pageSlot="$hasSlotWidget ? $pageSlot : null"
                     :previousColspan="$previousColspan"
                 />
+
+                @php
+                    if ($hasSlotWidget && $pageSlot) {
+                        $slotRendered = true;
+                    }
+                @endphp
 
                 @php
                     $previousColspan += $colspan;

@@ -8,6 +8,13 @@ use Capell\Core\Database\Factories\SiteFactory;
 use Capell\SeoSuite\Actions\DashboardReports\BuildSeoAuditQueryAction;
 use Capell\SeoSuite\Filament\Pages\Tables\SeoAuditTable;
 use Capell\SeoSuite\Models\PageSeoSnapshot;
+use Capell\Tests\Support\Concerns\CreatesAdminUser;
+
+uses(CreatesAdminUser::class);
+
+beforeEach(function (): void {
+    test()->actingAsAdmin();
+});
 
 it('includes healthy and unhealthy pages in the site wide seo audit query', function (): void {
     $language = LanguageFactory::new()->create(['name' => 'English', 'code' => 'en']);

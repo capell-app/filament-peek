@@ -2,8 +2,10 @@
     use Capell\Core\Contracts\Pageable;
     use Capell\Core\Enums\ContentStructure;
     use Capell\FoundationTheme\View\Components\Widget\Page\Children as PageChildrenComponent;
+    use Capell\FoundationTheme\View\Components\Widget\Page\Content as PageContentComponent;
     use Capell\FoundationTheme\View\Components\Widget\Page\Latest as PageLatestComponent;
     use Capell\FoundationTheme\View\Components\Widget\Page\Siblings as PageSiblingsComponent;
+    use Capell\FoundationTheme\View\Components\Widget\Slot as SlotComponent;
     use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Support\Loader\PageLoader;
 @endphp
@@ -119,8 +121,10 @@
         @php
             $pageWidgetComponent = match ($component) {
                 'capell::widget.page.children' => PageChildrenComponent::class,
+                'capell::widget.page.content' => PageContentComponent::class,
                 'capell::widget.page.latest' => PageLatestComponent::class,
                 'capell::widget.page.siblings' => PageSiblingsComponent::class,
+                'capell::widget.slot' => SlotComponent::class,
                 default => null,
             };
         @endphp
@@ -134,6 +138,7 @@
                     loop: $loop,
                     widget: $widget,
                     widgetData: $widgetData,
+                    pageSlot: $pageSlot,
                 );
             @endphp
 
@@ -146,6 +151,9 @@
                 :$containerKey
                 :$containerIndex
                 :$containerWidth
+                :element="$widget"
+                :elementData="$widgetData"
+                :elementIndex="$widgetIndex"
                 :$loop
                 :$pageSlot
                 :$occurrence
@@ -156,6 +164,13 @@
         @endif
     @endif
 @elseif ($type === 'livewire')
+    @php
+        $livewireWidgetData = [
+            ...$widgetData,
+            'element_key' => $widgetData['element_key'] ?? $widget->key,
+        ];
+    @endphp
+
     @livewire($component,
         [
             'container' => $container,
@@ -167,7 +182,7 @@
             'pageSlot' => $pageSlot,
             'occurrence' => $occurrence,
             'widget' => $widget,
-            'widgetData' => $widgetData,
+            'widgetData' => $livewireWidgetData,
             'widgetIndex' => $widgetIndex,
         ],
         key($containerKey . '-' . $widget->key . '-' . $occurrence))

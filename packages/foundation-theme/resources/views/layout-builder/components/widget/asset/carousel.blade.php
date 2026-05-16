@@ -39,7 +39,7 @@
     $carouselEffect = $carouselFade ? 'fade' : $carouselEffect;
 @endphp
 
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.widget.skip_render_empty', true))
+@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-layout-builder::widget.wrapper
         class="widget-media-carousel"
         :$container
@@ -134,7 +134,7 @@
                     $media = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
                         ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
                     if (! $media) {
-                        throw new RuntimeException('Image not found for WidgetAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
+                        throw new RuntimeException('Image not found for ElementAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
                     }
 
                     $imageWidth = $media->getCustomProperty('width');

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\FoundationTheme\View\Components\Widget;
 
-use Capell\Core\Models\Widget;
+use Capell\LayoutBuilder\Models\Element;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -21,15 +21,27 @@ abstract class AbstractWidget extends Component
         public string $containerKey,
         public int $widgetIndex,
         public stdClass $loop,
-        public Widget $widget,
+        public Element $widget,
         public array $widgetData = [],
+        public mixed $pageSlot = null,
     ) {
         $this->mountWidget();
     }
 
     public function render(array $data = []): View|string|Closure
     {
-        if ($this->skipRender && config('capell-layout-builder.widget.skip_render_empty', true) === true) {
+        $data = [
+            'container' => $this->container,
+            'containerKey' => $this->containerKey,
+            'loop' => $this->loop,
+            'widget' => $this->widget,
+            'widgetData' => $this->widgetData,
+            'widgetIndex' => $this->widgetIndex,
+            'pageSlot' => $this->pageSlot,
+            ...$data,
+        ];
+
+        if ($this->skipRender && config('capell-layout-builder.element.skip_render_empty', true) === true) {
             return '';
         }
 
