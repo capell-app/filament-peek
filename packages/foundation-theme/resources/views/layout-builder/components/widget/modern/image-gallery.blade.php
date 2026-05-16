@@ -55,20 +55,56 @@
                                     'collection_name',
                                     'image',
                                 );
-                            $caption = $asset->asset->translation?->title ?? $media?->name;
+                            $role = $asset->asset->getMeta('role', 'gallery-item');
+                            $accent = $asset->asset->getMeta('accent', 'teal');
+                            $caption = $asset->asset->getMeta('caption', $asset->asset->translation?->title ?? $media?->name);
+                            $cropPreset = $asset->asset->getMeta('crop_preset');
                         @endphp
 
                         @if ($media)
-                            <figure class="ap-gallery-item">
+                            <figure
+                                class="ap-gallery-item"
+                                data-accent="{{ $accent }}"
+                                data-role="{{ $role }}"
+                            >
                                 <x-capell::media
                                     :media="$media"
                                     :alt="$caption"
+                                    :size="$cropPreset"
                                     class="h-full w-full object-cover"
                                     height="240"
                                     loading="lazy"
                                     sizes="(min-width: 768px) 33vw, 88vw"
                                     width="320"
                                 />
+                                <figcaption class="ap-gallery-caption">
+                                    <span>{{ $caption }}</span>
+                                    @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')
+                                </figcaption>
+                            </figure>
+                        @else
+                            @php
+                                $icon = $asset->asset->getMeta('icon', 'heroicon-o-squares-2x2');
+                            @endphp
+
+                            <figure
+                                class="ap-gallery-item ap-gallery-item--placeholder"
+                                data-accent="{{ $accent }}"
+                                data-role="{{ $role }}"
+                            >
+                                <div class="ap-gallery-placeholder">
+                                    @if (str_starts_with((string) $icon, 'heroicon-'))
+                                        @svg($icon, 'h-8 w-8')
+                                    @else
+                                        <span>{{ $icon }}</span>
+                                    @endif
+                                    <strong>{{ $caption }}</strong>
+                                    @if ($asset->asset->translation?->content)
+                                        <span>
+                                            {{ strip_tags($asset->asset->translation->content) }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <figcaption class="ap-gallery-caption">
                                     <span>{{ $caption }}</span>
                                     @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')

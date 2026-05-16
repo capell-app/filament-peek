@@ -212,9 +212,7 @@ abstract class AbstractWidget extends Component
         $widgetData = $reference['widget_data'] ?? [];
         $widgetIndex = $reference['widget_index'] ?? null;
 
-        if (! is_string($containerKey) || $containerKey === '' || ! is_string($elementKey) || $elementKey === '') {
-            throw new Exception('Widget reference is invalid');
-        }
+        throw_if(! is_string($containerKey) || $containerKey === '' || ! is_string($elementKey) || $elementKey === '', Exception::class, 'Widget reference is invalid');
 
         $this->containerKey = $containerKey;
         $this->elementKey = $elementKey;
@@ -227,9 +225,7 @@ abstract class AbstractWidget extends Component
         $this->referenceWidgetData = is_array($widgetData) ? $widgetData : [];
         $this->widgetIndex = is_numeric($widgetIndex) ? max(0, (int) $widgetIndex) : 0;
 
-        if ($this->pageId === null || $this->siteId === null) {
-            throw new Exception('Widget reference is invalid');
-        }
+        throw_if($this->pageId === null || $this->siteId === null, Exception::class, 'Widget reference is invalid');
 
         $this->clearResolvedContext();
     }
@@ -409,15 +405,15 @@ abstract class AbstractWidget extends Component
             return true;
         }
 
-        if ($site instanceof Site && (int) $layout->site_id !== (int) $site->getKey()) {
+        if ($site instanceof Site && $layout->site_id !== (int) $site->getKey()) {
             return false;
         }
 
-        if ($this->siteId !== null && (int) $layout->site_id !== $this->siteId) {
+        if ($this->siteId !== null && $layout->site_id !== $this->siteId) {
             return false;
         }
 
-        if (is_numeric($pageSiteId) && (int) $pageSiteId !== (int) $layout->site_id) {
+        if (is_numeric($pageSiteId) && (int) $pageSiteId !== $layout->site_id) {
             return false;
         }
 

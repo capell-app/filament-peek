@@ -55,14 +55,22 @@
                                     'collection_name',
                                     'image',
                                 );
-                            $caption = $asset->asset->translation?->title ?? $media?->name;
+                            $role = $asset->asset->getMeta('role', 'gallery-item');
+                            $accent = $asset->asset->getMeta('accent', 'teal');
+                            $caption = $asset->asset->getMeta('caption', $asset->asset->translation?->title ?? $media?->name);
+                            $cropPreset = $asset->asset->getMeta('crop_preset');
                         @endphp
 
                         @if ($media)
-                            <figure class="ap-gallery-item">
+                            <figure
+                                class="ap-gallery-item"
+                                data-accent="{{ $accent }}"
+                                data-role="{{ $role }}"
+                            >
                                 <x-capell::media
                                     :media="$media"
                                     :alt="$caption"
+                                    :size="$cropPreset"
                                     class="h-full w-full object-cover"
                                     height="240"
                                     loading="lazy"
@@ -77,12 +85,12 @@
                         @else
                             @php
                                 $icon = $asset->asset->getMeta('icon', 'heroicon-o-squares-2x2');
-                                $accent = $asset->asset->getMeta('accent', 'teal');
                             @endphp
 
                             <figure
                                 class="ap-gallery-item ap-gallery-item--placeholder"
                                 data-accent="{{ $accent }}"
+                                data-role="{{ $role }}"
                             >
                                 <div class="ap-gallery-placeholder">
                                     @if (str_starts_with((string) $icon, 'heroicon-'))

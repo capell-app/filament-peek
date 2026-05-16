@@ -33,3 +33,9 @@ if (
 This applies to models, Actions, Blade components, Filament fields, listeners, render hooks, and service-provider registrations that touch package runtime behavior.
 
 `class_exists()` is still appropriate for non-Capell PHP/library capabilities, dynamic configured classes, autoload priming before cache deserialization, and defensive validation after the Capell package has already been proven installed.
+
+## Frontend runtime contributors
+
+Optional packages must not make `capell/frontend` import their models or Actions to decide public runtime requirements. Use `Capell\Frontend\Contracts\FrontendRuntimeManifestContributor` instead.
+
+Example: layout-builder registers `LayoutBuilderRuntimeManifestContributor` during package registration. The contributor inspects layout-builder element data and adds the `layout-builder`, Alpine, Livewire, and island flags to `FrontendRuntimeManifestData`. Frontend only loops over tagged contributors and remains installable without layout-builder.

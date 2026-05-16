@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Capell\FoundationTheme\View\Components\Actions;
 use Capell\Frontend\Actions\Performance\RecordExtensionRenderContributionAction;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\Finder\Finder;
 
 test('default theme escapes site titles and plain footer text', function (): void {
     $themePath = dirname(__DIR__, 2);
@@ -54,7 +55,7 @@ test('public layout output does not include debug widget comments', function ():
 
     expect($container)
         ->not->toContain('<!-- {$widget->key} Widget')
-        ->not->toContain('config(\'app.debug\')');
+        ->not->toContain("config('app.debug')");
 });
 
 test('public action buttons mark their csrf output as non-cacheable', function (): void {
@@ -77,4 +78,40 @@ test('public action buttons mark their csrf output as non-cacheable', function (
 
     expect($contribution?->cacheable)->toBeFalse()
         ->and($contribution?->sensitiveOutput)->toBeTrue();
+});
+
+test('public blade keeps data loading out of templates', function (): void {
+    $themePath = dirname(__DIR__, 2);
+    $violations = [];
+    $forbiddenPatterns = [
+        'DB::',
+        '::query(',
+        'loadMissing(',
+        'relationLoaded(',
+        'getMedia(',
+    ];
+
+    $files = (new Finder)
+        ->files()
+        ->in($themePath . '/resources/views')
+        ->name('*.blade.php')
+        ->notPath('layout-builder/components/filament')
+        ->notPath('layout-builder/components/infolists');
+
+    foreach ($files as $file) {
+        $contents = $file->getContents();
+        $relativePath = str_replace($themePath . '/', '', $file->getPathname());
+
+        foreach ($forbiddenPatterns as $pattern) {
+            if (str_contains($contents, $pattern)) {
+                $violations[] = $relativePath . ' contains ' . $pattern;
+            }
+        }
+    }
+
+    expect($violations)->toBe(
+        [],
+        'Public Blade data-loading violations found:' . PHP_EOL .
+        json_encode($violations, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+    );
 });

@@ -6,11 +6,11 @@
 ])
 
 @php
-    use Capell\Core\Contracts\Pageable;
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
 
-    $linkedPage = $widgetAsset->asset instanceof Pageable ? $widgetAsset->asset : $widgetAsset->asset->linkedPage;
-    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
-        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
+    $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+    $linkedPage = $assetRenderData->linkedPage;
+    $image = $assetRenderData->image;
 @endphp
 
 <div
@@ -46,7 +46,7 @@
                     :media="$image"
                     :width="120"
                     :height="120"
-                    :alt="$widgetAsset->asset->translation?->title"
+                    :alt="$assetRenderData->title"
                     fit="crop"
                     class="h-10 w-10 rounded-full object-cover object-center"
                     loading="lazy"
@@ -57,7 +57,7 @@
                 :media="$image"
                 :width="120"
                 :height="120"
-                :alt="$widgetAsset->asset->translation?->title"
+                :alt="$assetRenderData->title"
                 fit="crop"
                 class="h-10 w-10 rounded-full object-cover object-center"
                 loading="lazy"

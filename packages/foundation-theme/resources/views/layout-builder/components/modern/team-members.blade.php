@@ -8,6 +8,8 @@
 ])
 
 @php
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
+
     $gridClasses = [
         2 => 'grid-cols-1 md:grid-cols-2',
         3 => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
@@ -55,12 +57,13 @@
         <div class="{{ $gridClass }} grid gap-6">
             @forelse ($widget->assets as $widgetAsset)
                 @php
-                    $role = $widgetAsset->asset->getMeta('position');
-                    $tags = $widgetAsset->asset->getMeta('tags', []);
-                    $social = $widgetAsset->asset->getMeta('social', []);
-                    $media = ($widgetAsset->asset->relationLoaded('media') ? $widgetAsset->asset->media->first() : null)
-                        ?? ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
-                    $icon = $widgetAsset->asset->getMeta('icon');
+                    $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                    $asset = $assetRenderData->asset;
+                    $role = $assetRenderData->position;
+                    $tags = $assetRenderData->tags;
+                    $social = $assetRenderData->social;
+                    $media = $assetRenderData->image;
+                    $icon = $assetRenderData->icon;
                 @endphp
 
                 <div
@@ -72,7 +75,7 @@
                         >
                             <img
                                 src="{{ $media->getFullUrl() }}"
-                                alt="{{ $widgetAsset->asset->translation?->title }}"
+                                alt="{{ $assetRenderData->title }}"
                                 class="h-full w-full object-cover"
                             />
                         </div>
@@ -84,11 +87,11 @@
                         </div>
                     @endif
 
-                    @if ($widgetAsset->asset->translation?->title)
+                    @if ($assetRenderData->title)
                         <h3
                             class="mb-1 text-lg font-bold tracking-tight text-gray-900"
                         >
-                            {{ $widgetAsset->asset->translation->title }}
+                            {{ $assetRenderData->title }}
                         </h3>
                     @endif
 
@@ -100,9 +103,9 @@
                         </p>
                     @endif
 
-                    @if ($widgetAsset->asset->translation?->content)
+                    @if ($assetRenderData->content)
                         <p class="mb-4 text-sm leading-relaxed text-gray-500">
-                            {{ strip_tags($widgetAsset->asset->translation->content) }}
+                            {{ strip_tags($assetRenderData->content) }}
                         </p>
                     @endif
 

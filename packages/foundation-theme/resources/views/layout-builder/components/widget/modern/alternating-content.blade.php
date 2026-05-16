@@ -6,6 +6,10 @@
     'widget',
 ])
 
+@php
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
+@endphp
+
 <x-capell-layout-builder::widget.wrapper
     class="widget-ap-alternating-content"
     :$container
@@ -34,8 +38,10 @@
         <div class="mx-auto max-w-5xl space-y-16">
             @forelse ($widget->assets as $widgetAsset)
                 @php
-                    $isRight = $widgetAsset->asset->getMeta('position') === 'right';
-                    $icon = (string) $widgetAsset->asset->getMeta('icon', '');
+                    $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                    $isRight = $assetRenderData->position === 'right';
+                    $icon = (string) ($assetRenderData->icon ?? '');
+                    $media = $assetRenderData->image;
                 @endphp
 
                 <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
@@ -53,15 +59,10 @@
                                     <span class="text-8xl">{{ $icon }}</span>
                                 @endif
                             </span>
-                        @elseif (($widgetAsset->asset->relationLoaded('media') ? $widgetAsset->asset->media->first() : null) ?? ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null))
-                            @php
-                                $media = ($widgetAsset->asset->relationLoaded('media') ? $widgetAsset->asset->media->first() : null)
-                                    ?? ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
-                            @endphp
-
+                        @elseif ($media)
                             <img
                                 src="{{ $media->getFullUrl() }}"
-                                alt="{{ $widgetAsset->asset->translation?->title }}"
+                                alt="{{ $assetRenderData->title }}"
                                 class="h-full w-full rounded-xl object-cover"
                             />
                         @endif
@@ -74,15 +75,15 @@
                             {{ $loop->index + 1 }}
                         </div>
 
-                        @if ($widgetAsset->asset->translation?->title)
+                        @if ($assetRenderData->title)
                             <h3 class="mb-3 text-2xl font-bold text-gray-900">
-                                {{ $widgetAsset->asset->translation->title }}
+                                {{ $assetRenderData->title }}
                             </h3>
                         @endif
 
-                        @if ($widgetAsset->asset->translation?->content)
+                        @if ($assetRenderData->content)
                             <p class="text-base leading-relaxed text-gray-600">
-                                {{ strip_tags($widgetAsset->asset->translation->content) }}
+                                {{ strip_tags($assetRenderData->content) }}
                             </p>
                         @endif
                     </div>

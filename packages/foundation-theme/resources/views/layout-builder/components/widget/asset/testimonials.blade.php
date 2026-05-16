@@ -1,5 +1,6 @@
 @php
     use Capell\Core\Facades\CapellCore;
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
     use Capell\Frontend\Facades\Frontend;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -107,15 +108,19 @@
                         @php
                             $title = '';
                             $content = '';
-                            $media = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
-                                ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
+                            $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                            $media = $assetRenderData->image;
 
-                            $position = $widgetAsset->asset->translation->getMeta('position', '');
-                            $company = $widgetAsset->asset->translation->getMeta('company', '');
+                            $position = is_object($assetRenderData->translation) && method_exists($assetRenderData->translation, 'getMeta')
+                                ? $assetRenderData->translation->getMeta('position', '')
+                                : '';
+                            $company = is_object($assetRenderData->translation) && method_exists($assetRenderData->translation, 'getMeta')
+                                ? $assetRenderData->translation->getMeta('company', '')
+                                : '';
 
                             if (CapellCore::getAsset($widgetAsset->asset_type)->hasTranslations) {
-                                $title = $widgetAsset->asset->translation?->title;
-                                $content = $widgetAsset->asset->translation?->content;
+                                $title = $assetRenderData->title;
+                                $content = $assetRenderData->content;
                             }
                         @endphp
                         {{-- format-ignore-end --}}
@@ -136,7 +141,7 @@
                                     @if ($media)
                                         <x-capell::media
                                             :media="$media"
-                                            :alt="$widgetAsset->asset->translation->label"
+                                            :alt="$assetRenderData->alt"
                                             rounded="full"
                                             class="h-20 w-20 object-cover"
                                             itemprop="image"

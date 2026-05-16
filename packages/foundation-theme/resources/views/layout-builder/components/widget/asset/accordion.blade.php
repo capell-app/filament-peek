@@ -1,8 +1,8 @@
 {{-- format-ignore-start --}}
 @php
-    use Capell\Core\Contracts\Pageable;
     use Capell\Core\Enums\AssetComponentEnum;
     use Capell\Core\Models\Page;
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
     use Capell\Frontend\Facades\Frontend;
     use Capell\LayoutBuilder\Models\ElementAsset;
 
@@ -61,13 +61,9 @@
                 @php
                     /** @var ElementAsset $widgetAsset */
 
-                    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
-                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
-
-                    $linkedPage = $widgetAsset->asset instanceof Pageable
-                        ? $widgetAsset->asset
-                        : $widgetAsset->asset->linkedPage;
-
+                    $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                    $image = $assetRenderData->image;
+                    $linkedPage = $assetRenderData->linkedPage;
                     $actions = $widgetAsset->asset->getMeta('actions', []);
                 @endphp
                 {{-- format-ignore-end --}}

@@ -1,6 +1,7 @@
 @php
     use Capell\Core\Contracts\Pageable;
     use Capell\Core\Enums\ContentStructure;
+    use Capell\FoundationTheme\Actions\BuildPageContentRenderDataAction;
 @endphp
 
 @props([
@@ -33,20 +34,16 @@
 {{-- format-ignore-start --}}
 @php
     $page = $pageRecord;
-    $pageTranslation = $page instanceof Pageable && method_exists($page, 'relationLoaded') && $page->relationLoaded('translation')
-        ? $page->getRelation('translation')
-        : null;
-    $pageType = $page instanceof Pageable && method_exists($page, 'relationLoaded') && $page->relationLoaded('type')
-        ? $page->getRelation('type')
-        : null;
     $secondaryContainers = $theme?->secondary_containers ?? ['sidebar'];
+    $pageContentRenderData = BuildPageContentRenderDataAction::run(
+        page: $page instanceof Pageable ? $page : null,
+        pageContents: $pageContents,
+        showPageTitle: ! (empty($widgetData['meta']['show_page_title']) && $hasPrimaryHeading),
+    );
 
-    $hasContent = in_array('content', $pageContents, true) && ! empty($pageTranslation?->content) && $pageType !== null;
-    $hasTitle = in_array('title', $pageContents, true) && ! (empty($widgetData['meta']['show_page_title']) && $hasPrimaryHeading);
+    $hasContent = $pageContentRenderData->hasContent;
+    $hasTitle = $pageContentRenderData->hasTitle;
     $hasNeighborLinks = $previousPage instanceof Pageable || $nextPage instanceof Pageable;
-    $pageImage = $page instanceof Pageable && method_exists($page, 'relationLoaded') && $page->relationLoaded('image')
-        ? $page->getRelation('image')
-        : null;
 
     if (! $headingTag) {
         $headingTag = ($hasPrimaryHeading ? 'h2' : 'h1');
@@ -65,34 +62,34 @@
         tag="article"
     >
         @if (in_array('content', $pageContents, true))
-            @if ($pageType?->content_structure === ContentStructure::Blocks)
+            @if ($pageContentRenderData->contentStructure === ContentStructure::Blocks)
                 @if ($hasTitle)
                     <{{ $headingTag }} class="text-{{ $headingSize }} mb-6">
-                        {{ $pageTranslation?->title }}
+                        {{ $pageContentRenderData->title }}
                     </{{ $headingTag }}>
                 @endif
 
                 <x-capell::blocks
-                    :blocks="$pageTranslation?->content"
+                    :blocks="$pageContentRenderData->content"
                     :$layout
                     :$containerKey
                     :$page
                 />
             @else
                 <x-capell::content
-                    :content="$pageTranslation?->content"
-                    :content-type="$pageType?->content_structure"
+                    :content="$pageContentRenderData->content"
+                    :content-type="$pageContentRenderData->contentStructure"
                     :divider="$widget->getMeta('content_divider')"
                     :heading-size="$headingSize"
                     :heading-tag="$headingTag"
                     :$layout
                     :muted="in_array($containerKey, $secondaryContainers)"
-                    :image="$pageImage"
+                    :image="$pageContentRenderData->image"
                     :page-record="$page"
                     :site="$site"
                     :text-align="$widget->getMeta('align')"
                     :theme="$theme"
-                    :title="$hasTitle ? $pageTranslation?->title : null"
+                    :title="$hasTitle ? $pageContentRenderData->title : null"
                     :url-params="$urlParams"
                 />
             @endif

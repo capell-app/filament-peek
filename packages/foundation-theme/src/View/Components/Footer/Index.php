@@ -76,8 +76,8 @@ final class Index extends Component
         $this->footerCopy = $this->site->translation->getMeta('footer_copy');
         $this->containerWidth = GetLayoutContainerWidthAction::run();
         $this->footerSpacing = $this->theme->getMeta('footer_spacing', 'compact');
-        $this->footerDividerColor = $this->theme->getMeta('footer_divider') ? $this->theme->getMeta('footer_border_color') : null;
-        $this->footerRenderHooks = app(RenderHookRegistry::class)->renderAll(
+        $this->footerDividerColor = (bool) $this->theme->getMeta('footer_divider') ? $this->theme->getMeta('footer_border_color') : null;
+        $this->footerRenderHooks = resolve(RenderHookRegistry::class)->renderAll(
             RenderHookLocation::Footer,
             item: ['headingClass' => $this->headingClass],
             target: 'footer.index',

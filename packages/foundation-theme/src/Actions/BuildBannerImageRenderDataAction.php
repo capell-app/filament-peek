@@ -23,13 +23,13 @@ final class BuildBannerImageRenderDataAction
 
         $meta = is_array($widget->meta) ? $widget->meta : [];
         $actions = $meta['actions'] ?? null;
-        $hasContent = $content || $title || $actions;
+        $hasContent = filled($content) || filled($title) || filled($actions);
 
         return new BannerImageRenderData(
             backgroundImage: $backgroundImage,
             actions: $actions,
-            hasContent: (bool) $hasContent,
-            imageRoundedClass: $this->imageRoundedClass($rounded, (bool) $hasContent, (bool) $reverseOrder),
+            hasContent: $hasContent,
+            imageRoundedClass: $this->imageRoundedClass($rounded, $hasContent, (bool) $reverseOrder),
         );
     }
 

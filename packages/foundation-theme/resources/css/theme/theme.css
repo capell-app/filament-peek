@@ -505,8 +505,23 @@
         background:
             linear-gradient(135deg, rgb(15 23 42 / 90%), rgb(15 23 42 / 72%)),
             var(--capell-showcase-ink);
-        min-height: min(760px, calc(100vh - var(--header-height) + 120px));
+        min-height: var(
+            --ap-hero-min-height,
+            min(760px, calc(100vh - var(--header-height) + 120px))
+        );
         position: relative;
+    }
+
+    .ap-hero[data-hero-style='compact'] {
+        --ap-hero-min-height: min(540px, calc(100vh - var(--header-height)));
+    }
+
+    .ap-hero[data-hero-style='immersive'] {
+        --ap-hero-min-height: min(860px, 94vh);
+    }
+
+    .ap-hero[data-hero-style='editorial'] .ap-hero__inner {
+        grid-template-columns: minmax(0, 0.9fr) minmax(22rem, 0.8fr);
     }
 
     .ap-hero::before {

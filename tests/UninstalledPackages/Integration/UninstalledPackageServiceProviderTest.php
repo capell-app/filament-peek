@@ -30,11 +30,10 @@ use Capell\ContentSections\Filament\Resources\Sections\SectionResource;
 use Capell\ContentSections\Models\Section;
 use Capell\Core\Enums\VendorAssetEnum;
 use Capell\Core\Facades\CapellCore;
-use Capell\Core\Models\Widget;
-use Capell\Core\Models\WidgetAsset;
 use Capell\Diagnostics\Filament\Pages\DiagnosticsPage;
 use Capell\Diagnostics\Filament\Widgets\Health\SiteHealthWidgetAbstract;
 use Capell\Diagnostics\Providers\DiagnosticsServiceProvider;
+use Capell\FormBuilder\Filament\Resources\Submissions\SubmissionResource;
 use Capell\FormBuilder\Models\Form;
 use Capell\FormBuilder\Models\Submission;
 use Capell\FormBuilder\Providers\FormBuilderServiceProvider;
@@ -46,6 +45,8 @@ use Capell\Insights\Models\InsightsVisit;
 use Capell\Insights\Providers\InsightsServiceProvider;
 use Capell\LayoutBuilder\Filament\Resources\Elements\ElementResource;
 use Capell\LayoutBuilder\Filament\Resources\Layouts\LayoutResource;
+use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Models\ElementAsset;
 use Capell\LoginAudit\Filament\Resources\LoginAudits\LoginAuditResource;
 use Capell\LoginAudit\Filament\Widgets\LoginAuditsWidget;
 use Capell\LoginAudit\Models\LoginAudit;
@@ -148,8 +149,8 @@ it('registers package metadata but skips runtime models, tables, settings, and a
         Submission::class,
         CuratorMedia::class,
         Section::class,
-        Widget::class,
-        WidgetAsset::class,
+        Element::class,
+        ElementAsset::class,
         Navigation::class,
         AIGenerationHistory::class,
         BrokenLink::class,
@@ -192,7 +193,7 @@ it('does not expose admin resources, pages, widgets, or routes for uninstalled p
         CampaignGroupResource::class,
         CampaignLandingPageResource::class,
         'Capell\\FormBuilder\\Filament\\Resources\\FormBuilder\\FormResource',
-        'Capell\\FormBuilder\\Filament\\Resources\\Submissions\\SubmissionResource',
+        SubmissionResource::class,
         ImportSessionResource::class,
         LayoutResource::class,
         SectionResource::class,

@@ -175,7 +175,7 @@ final class Actions extends Component
         }
 
         $site = Frontend::site();
-        $targetSite = (int) $action['site_id'] === (int) $site->id
+        $targetSite = $action['site_id'] === $site->id
             ? $site
             : SiteLoader::getSites()->firstWhere('id', $action['site_id']);
 

@@ -1,5 +1,6 @@
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
     use Capell\Frontend\Facades\Frontend;
     use Illuminate\Support\Str;
 
@@ -56,8 +57,8 @@
                 @foreach ($widget->assets as $widgetAsset)
                     {{-- format-ignore-start --}}
                 @php
-                    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
-                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
+                    $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                    $image = $assetRenderData->image;
                     if (! $image) {
                         report('Image not found for ElementAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
                         continue;
@@ -78,7 +79,7 @@
                                 :$loop
                                 :media="$image"
                                 :preview="(int) $image->getMeta('image_id')"
-                                :alt="$widgetAsset->asset->translation?->label"
+                                :alt="$assetRenderData->alt"
                                 :width="440"
                                 media_type="video"
                                 fit="crop-center"
@@ -90,7 +91,7 @@
                                 :height="$large ? 600 : 300"
                                 :$loop
                                 :media="$image"
-                                :alt="$widgetAsset->asset->translation?->label"
+                                :alt="$assetRenderData->alt"
                                 :width="440"
                                 fit="crop-center"
                                 lightbox="true"

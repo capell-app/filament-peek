@@ -16,8 +16,6 @@ use Capell\Address\Models\Address;
 use Capell\Address\Models\Country;
 use Capell\Blog\Models\Article;
 use Capell\ContentSections\Models\Section;
-use Capell\Core\Models\Widget;
-use Capell\Core\Models\WidgetAsset;
 use Capell\Core\Providers\CapellServiceProvider;
 use Capell\FoundationTheme\View\Components\Widget\Page\Breadcrumbs;
 use Capell\FoundationTheme\View\Components\Widget\Page\Children;
@@ -25,6 +23,8 @@ use Capell\FoundationTheme\View\Components\Widget\Page\Content;
 use Capell\FoundationTheme\View\Components\Widget\Page\Latest;
 use Capell\FoundationTheme\View\Components\Widget\Page\Siblings;
 use Capell\LayoutBuilder\Livewire\Filament\LayoutBuilder;
+use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Models\ElementAsset;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
 use Capell\Tests\Support\Concerns\BuildsOrderedMigrationWorkspace;
@@ -139,8 +139,8 @@ abstract class AbstractTestCase extends TestCase
             'country' => Country::class,
             'section' => Section::class,
             'user' => User::class,
-            'widget' => Widget::class,
-            'widget_asset' => WidgetAsset::class,
+            'element' => Element::class,
+            'element_asset' => ElementAsset::class,
         ]);
 
         Model::shouldBeStrict();

@@ -11,6 +11,7 @@
 @php
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Contracts\Pageable;
+    use Capell\FoundationTheme\Actions\ElementIsSlotAction;
     use Capell\Frontend\Facades\Frontend;
     use Capell\LayoutBuilder\Support\CapellLayoutManager;
     use Capell\LayoutBuilder\Support\LayoutElementData;
@@ -74,8 +75,7 @@
                         ->contains(static fn (array $elementData): bool => LayoutElementData::key($elementData) === 'page-content');
 
                     $hasSlotWidget = ! $slotRendered && $layoutModules->contains(
-                        fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ($layoutModule->meta['type'] ?? null) === 'slot'
-                            || ($layoutModule->relationLoaded('type') && $layoutModule->type?->getMeta('type') === 'slot'),
+                        fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ElementIsSlotAction::run($layoutModule),
                     );
 
                     $colspan = (int) ($container['meta']['colspan'] ?? 12);

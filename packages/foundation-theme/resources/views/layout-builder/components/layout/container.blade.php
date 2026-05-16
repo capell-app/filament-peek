@@ -1,12 +1,14 @@
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
     use Capell\Core\Enums\MediaConversionEnum;
+    use Capell\FoundationTheme\Actions\ResolveLoadedLayoutContainerBackgroundImageAction;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
+    use Capell\Frontend\Facades\Frontend;
     use Capell\LayoutBuilder\Enums\ContainerAlignmentEnum;
+    use Capell\LayoutBuilder\Enums\ElementComponentEnum;
     use Capell\LayoutBuilder\Enums\ResponsiveVisibilityEnum;
     use Capell\LayoutBuilder\Support\CapellLayoutManager;
     use Capell\LayoutBuilder\Support\LayoutElementData;
-    use Spatie\MediaLibrary\MediaCollections\Models\Media;
 @endphp
 
 @props([
@@ -41,15 +43,11 @@
     $hideOnTablet = in_array(ResponsiveVisibilityEnum::Tablet->value, $hiddenOn, true);
     $hideOnDesktop = in_array(ResponsiveVisibilityEnum::Desktop->value, $hiddenOn, true);
 
-    $layoutMedia = method_exists($layout, 'relationLoaded') && $layout->relationLoaded('media')
-        ? $layout->getRelation('media')
-        : collect();
-    /** @var ?Media $backgroundImage */
-    $backgroundImage = method_exists($layoutMedia, 'first')
-        ? $layoutMedia->first(fn (mixed $media): bool => $media instanceof Media && $media->collection_name === $containerKey . '-background')
-        : null;
+    $backgroundImage = ResolveLoadedLayoutContainerBackgroundImageAction::run($layout, (string) $containerKey);
 
     $currentColspan = $colspan;
+    $pageMeta = is_array(Frontend::page()?->meta) ? Frontend::page()->meta : [];
+    $showHero = ! array_key_exists('show_hero', $pageMeta) || $pageMeta['show_hero'] !== false;
 @endphp
 {{-- format-ignore-end --}}
 @if ($colspan === 12 && $previousColspan && $previousColspan !== 12)
@@ -155,6 +153,15 @@
 
                                         $component = $widget->getComponent();
                                         if (! $component) {
+                                            continue;
+                                        }
+
+                                        $componentKey = (string) $component;
+                                        if (! $showHero && in_array($componentKey, [
+                                            ElementComponentEnum::Hero->value,
+                                            ElementComponentEnum::BannerImage->value,
+                                            ElementComponentEnum::ApHeroBanner->value,
+                                        ], true)) {
                                             continue;
                                         }
 

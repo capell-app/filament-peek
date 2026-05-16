@@ -7,7 +7,7 @@
 
     $site = Frontend::site();
     $theme = Frontend::theme();
-    $layout = Frontend::layout();
+    $page = Frontend::page();
     $runtimeManifest = Frontend::getFrontendData('runtimeManifest');
     $usesAlpine = $runtimeManifest?->usesAlpine ?? false;
     $usesWireNavigate = $runtimeManifest?->usesWireNavigate ?? false;
@@ -15,7 +15,11 @@
     $headerBorderColor = $theme->getMeta('header_divider') ? $theme->getMeta('header_border_color') : null;
     $headerDarkBorderColor = $theme->getMeta('header_divider') ? $theme->getMeta('header_dark_border_color', $headerBorderColor) : null;
     $headerShadow = $theme->getMeta('header_shadow', 'none');
-    $headerOverHero = (bool) $layout?->getMeta('header_over_hero', $theme->getMeta('header_over_hero', false));
+    $pageMeta = is_array($page?->meta) ? $page->meta : [];
+    $showHero = ! array_key_exists('show_hero', $pageMeta) || $pageMeta['show_hero'] !== false;
+    $headerOverHero = array_key_exists('header_over_hero', $pageMeta)
+        ? (bool) $pageMeta['header_over_hero']
+        : (bool) $theme->getMeta('header_over_hero', false);
 
     $containerWidth = GetLayoutContainerWidthAction::run();
 @endphp
@@ -105,7 +109,7 @@
         'capell-product-header transition-padding left-0 right-0 top-0 z-50 flex min-h-[var(--header-height)] w-full text-[var(--color-header)] transition-transform duration-300 ease-in-out lg:h-auto',
         'border-b border-[var(--border-header)]' => $headerBorderColor,
         'shadow-sm shadow-black/5 dark:shadow-black/20' => $headerShadow === 'subtle',
-        'header-over-hero absolute' => $headerOverHero && ! $theme->fixed_header && ! $theme->sticky_header && ! $theme->scroll_up_header,
+        'header-over-hero absolute' => $showHero && $headerOverHero && ! $theme->fixed_header && ! $theme->sticky_header && ! $theme->scroll_up_header,
         'header-sticky sticky left-0 right-0 top-0 z-50' => $theme->sticky_header,
         'header-fixed fixed left-0 right-0 top-0 z-50' => $theme->fixed_header,
         'header-scroll-up fixed left-0 right-0 top-0 z-50' => $theme->scroll_up_header,
@@ -113,9 +117,9 @@
     id="header"
     @if ($usesAlpine)
         :class="{
-                                                                                                                                                                                                                                                            'h-screen': isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                            '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                        }"
+                                                                                                                                                                                                                                                                                            'h-screen': isNavigationOverlayOpen,
+                                                                                                                                                                                                                                                                                            '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
+                                                                                                                                                                                                                                                                                        }"
     @endif
 >
     <div

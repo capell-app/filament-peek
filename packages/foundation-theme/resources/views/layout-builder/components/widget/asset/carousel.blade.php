@@ -1,4 +1,5 @@
 @php
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
     use Capell\Frontend\Facades\Frontend;
     use Spatie\Image\Image;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -131,8 +132,8 @@
                     {{-- format-ignore-start --}}
                 @php
                     /** @var Media|null $media */
-                    $media = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
-                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null);
+                    $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                    $media = $assetRenderData->image;
                     if (! $media) {
                         throw new RuntimeException('Image not found for ElementAsset: ' . $widgetAsset->asset_type . ' ' . $widgetAsset->id);
                     }
@@ -165,7 +166,7 @@
                             :class="'swiper-slide-img object-cover h-64 mx-auto bg-gray-50 transition-transform duration-300 group-hover:scale-105 group-focus:scale-105' . ($theme->withDarkMode ? ' dark:bg-gray-900' : '')"
                             :$loop
                             :media="$media"
-                            :alt="$widgetAsset->asset->translation?->label"
+                            :alt="$assetRenderData->alt"
                             :width="$width"
                             :height="$height"
                             sizes="(max-width: 640px) 80vw, 20w"

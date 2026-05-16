@@ -35,9 +35,9 @@ final class Index extends Component
         $this->layout = Frontend::layout();
         $this->site = Frontend::site();
         $this->isSystemPageLayout = data_get($this->layout->admin ?? [], 'system_page_layout') === true;
-        $this->layoutNeighborLinks = ! $this->isSystemPageLayout
-            ? BuildLayoutNeighborLinksDataAction::run($this->page, $this->site, Frontend::language())
-            : null;
+        $this->layoutNeighborLinks = $this->isSystemPageLayout
+            ? null
+            : BuildLayoutNeighborLinksDataAction::run($this->page, $this->site, Frontend::language());
     }
 
     public function render(): View

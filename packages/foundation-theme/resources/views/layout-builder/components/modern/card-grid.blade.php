@@ -46,9 +46,16 @@
                         @php
                             $asset = $widgetAsset->asset;
                             $icon = (string) $asset->getMeta('icon', '');
+                            $accent = $asset->getMeta('accent', 'teal');
+                            $role = $asset->getMeta('role', 'card');
+                            $caption = $asset->getMeta('caption');
                         @endphp
 
-                        <article class="ap-card layout-builder-card">
+                        <article
+                            class="ap-card layout-builder-card"
+                            data-accent="{{ $accent }}"
+                            data-role="{{ $role }}"
+                        >
                             @if ($icon !== '')
                                 <span class="ap-card__icon">
                                     @if (str_starts_with($icon, 'heroicon-'))
@@ -61,7 +68,7 @@
 
                             @if ($asset->translation?->title)
                                 <h3 class="ap-card-title ap-card__title">
-                                    {{ $asset->translation->title }}
+                                    {{ $caption ?: $asset->translation->title }}
                                 </h3>
                             @endif
 

@@ -7,6 +7,7 @@ $theme = Frontend::theme();
 @php
     use Capell\Core\Enums\AssetComponentEnum;
     use Capell\Core\Facades\CapellCore;
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
     use Capell\Frontend\Contracts\AssetsRegistryInterface;
 @endphp
 
@@ -54,7 +55,12 @@ $theme = Frontend::theme();
 
         @if ($widget->assets->isNotEmpty())
             <div>
-                @if ($color = $widget->assets->first()->asset->getMeta('color'))
+                @php
+                    $firstAssetRenderData = BuildElementAssetRenderDataAction::run($widget->assets->first());
+                    $lastAssetRenderData = BuildElementAssetRenderDataAction::run($widget->assets->last());
+                @endphp
+
+                @if ($color = ($firstAssetRenderData->meta['color'] ?? null))
                     <x-capell-layout-builder::widget.asset.extended-background
                         :$color
                         position="left"
@@ -89,7 +95,7 @@ $theme = Frontend::theme();
                         />
                     @endforeach
                 </div>
-                @if ($color = $widget->assets->last()->asset->getMeta('color'))
+                @if ($color = ($lastAssetRenderData->meta['color'] ?? null))
                     <x-capell-layout-builder::widget.asset.extended-background
                         :$color
                         position="right"

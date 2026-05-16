@@ -4,6 +4,7 @@
     use Capell\FoundationTheme\View\Components\Widget\Page\Latest as PageLatestComponent;
     use Capell\FoundationTheme\View\Components\Widget\Page\Siblings as PageSiblingsComponent;
     use Capell\FoundationTheme\View\Components\Widget\Slot as SlotComponent;
+    use Capell\Frontend\Facades\Frontend;
     use Illuminate\Contracts\View\View as ViewContract;
     use Illuminate\Support\Facades\Crypt;
     use Livewire\Blaze\Blaze;
@@ -88,8 +89,6 @@
     @endif
 @elseif ($type === 'livewire')
     @php
-        use Capell\Frontend\Facades\Frontend;
-
         $widgetReference = Crypt::encryptString(json_encode([
             'container_key' => $containerKey,
             'element_key' => $widgetData['element_key'] ?? $widget->key,
