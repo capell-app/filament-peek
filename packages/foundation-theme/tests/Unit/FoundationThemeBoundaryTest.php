@@ -130,7 +130,7 @@ it('owns the product showcase styling for modern homepage widgets', function ():
         ->and($themeCss)->toContain('.ap-feature-grid')
         ->and($themeCss)->toContain('.ap-gallery-grid')
         ->and($themeCss)->toContain('.ap-showcase-cta')
-        ->and($hero)->toContain('Capell control plane')
+        ->and($hero)->toContain('Capell layout composition')
         ->and($hero)->toContain('Content model')
         ->and($cardGrid)->toContain('ap-card__link')
         ->and($featureList)->toContain('ap-feature-item__icon')

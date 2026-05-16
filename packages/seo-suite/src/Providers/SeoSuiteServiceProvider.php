@@ -17,6 +17,7 @@ use Capell\Admin\Filament\Resources\Pages\Pages\EditPage;
 use Capell\Admin\Support\AdminEventRegistry;
 use Capell\Admin\Support\CapellAdminManager;
 use Capell\Core\Actions\RegisterBlazeOptimizedViewsAction;
+use Capell\Core\Contracts\Pageable;
 use Capell\Core\Data\PackageData;
 use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Events\PageDeleted;
@@ -28,6 +29,7 @@ use Capell\Core\Support\ContentGraph\ContentGraphRegistry;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Settings\SettingsGroupMetadata;
 use Capell\Core\Support\Settings\SettingsSchemaRegistry;
+use Capell\Frontend\Events\FrontendContextResolved;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\SeoSuite\Actions\Ai\RecordAiGenerationAction;
 use Capell\SeoSuite\Actions\ClearAiDiscoveryCacheAction;
@@ -39,6 +41,7 @@ use Capell\SeoSuite\Console\Commands\TestOpenAiConnectionCommand;
 use Capell\SeoSuite\Contracts\Schemas\SearchMetaDataSectionExtenderResolverInterface;
 use Capell\SeoSuite\Contracts\SearchConsoleClientInterface;
 use Capell\SeoSuite\Contracts\SeoPublishReportProvider;
+use Capell\SeoSuite\Enums\MetaSchemaEnum;
 use Capell\SeoSuite\Enums\SchemaTemplateTypeEnum;
 use Capell\SeoSuite\Events\AiGenerationCompleted;
 use Capell\SeoSuite\Events\AiGenerationFailed;
@@ -116,6 +119,7 @@ use Closure;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
@@ -485,6 +489,7 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
             ->registerSettingsSchema()
             ->registerSchemaTemplateRegistry()
             ->bindPageMarkdownResponder()
+            ->registerFrontendContextHydration()
             ->registerFilamentPages()
             ->registerDashboardSettingsContributor()
             ->registerDashboardWidgets()
@@ -502,6 +507,29 @@ class SeoSuiteServiceProvider extends AbstractPackageServiceProvider
         AiDiscoveryPageProfile::deleted(fn (AiDiscoveryPageProfile $profile): int => ClearAiDiscoveryCacheAction::run($profile->site, $profile->language, $profile->page));
 
         return $this;
+    }
+
+    private function registerFrontendContextHydration(): self
+    {
+        $events = $this->app->make(Dispatcher::class);
+        $events->listen(FrontendContextResolved::class, function (FrontendContextResolved $event): void {
+            $page = $event->context->page();
+
+            if (! $page instanceof Pageable || ! $page instanceof Model || ! $this->shouldHydratePageImages($event)) {
+                return;
+            }
+
+            $page->loadMissing(['image', 'media']);
+        });
+
+        return $this;
+    }
+
+    private function shouldHydratePageImages(FrontendContextResolved $event): bool
+    {
+        $metaSchema = data_get($event->context->site?->meta, 'meta_schema');
+
+        return is_array($metaSchema) && in_array(MetaSchemaEnum::Image->getComponent(), $metaSchema, true);
     }
 
     private function isPackageInstalled(): bool

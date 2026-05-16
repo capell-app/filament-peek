@@ -10,7 +10,7 @@ use Illuminate\Support\Sleep;
 it('stores token css under isolated theme preset and brand keys', function (): void {
     $brand = new BrandProfileData(
         primaryColor: '#123456',
-        accentColor: '#abcdef',
+        accentColor: '#92400e',
     );
 
     $store = new ThemeTokenStore(storage_path('framework/testing/theme-tokens'));
@@ -26,7 +26,7 @@ it('stores token css under isolated theme preset and brand keys', function (): v
 it('does not rewrite token css when the generated content is unchanged', function (): void {
     $brand = new BrandProfileData(
         primaryColor: '#123456',
-        accentColor: '#abcdef',
+        accentColor: '#92400e',
     );
 
     $store = new ThemeTokenStore(storage_path('framework/testing/theme-tokens-idempotent'));

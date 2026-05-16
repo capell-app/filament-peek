@@ -14,28 +14,18 @@
 ])
 {{-- format-ignore-start --}}
 @php
-    use Capell\Core\Enums\ContainerWidthEnum;use Capell\Core\Enums\MediaCollectionEnum;use Capell\Frontend\Facades\Frontend;
+    use Capell\Core\Enums\ContainerWidthEnum;use Capell\FoundationTheme\Actions\BuildBannerImageRenderDataAction;use Capell\Frontend\Facades\Frontend;
 
     $theme = Frontend::theme();
 
     /**
     * @var \Capell\LayoutBuilder\Models\Element $widget
     */
-    $backgroundImage = $widget->getMedia(MediaCollectionEnum::BackgroundImage->value)->first()
-      ?? $widget->getMedia(MediaCollectionEnum::Image->value)->first()
-      ?? $widget->assets->first()?->media?->first();
-
-    $actions = $widget->getMeta('actions');
-
-    $hasContent = $content || $title || $actions;
-
-    if ($rounded) {
-        $imgRounded = $hasContent
-              ? ($reverseOrder ? ' rounded-r-lg' : ' rounded-l-lg')
-              : ' rounded-lg';
-    } else {
-        $imgRounded = '';
-    }
+    $renderData = BuildBannerImageRenderDataAction::run($widget, $content, $title, $rounded, $reverseOrder);
+    $backgroundImage = $renderData->backgroundImage;
+    $actions = $renderData->actions;
+    $hasContent = $renderData->hasContent;
+    $imgRounded = $renderData->imageRoundedClass;
 @endphp
 {{-- format-ignore-end --}}
 
@@ -64,7 +54,9 @@
                 :media="$backgroundImage"
                 size="xxl"
                 :rounded="false"
+                :alt="$hasContent ? '' : null"
                 :class="'h-auto w-full object-cover md:h-full' . $imgRounded"
+                :aria-hidden="$hasContent ? 'true' : null"
             />
         </div>
     @endif
@@ -73,8 +65,9 @@
         <div
             @class([
                 'container',
-                'absolute inset-0 flex items-end', // Overlay on mobile, align to bottom
                 'z-10',
+                'absolute inset-0 flex items-end' => $backgroundImage,
+                'relative flex flex-col' => ! $backgroundImage,
                 'md:relative md:flex md:flex-col md:items-center',
                 'gap-y-6',
                 'gap-x-6',
@@ -85,13 +78,17 @@
         >
             <div
                 @class([
-                    'w-full md:w-1/2',
-                    'md:pl-10' => $reverseOrder,
-                    'md:pr-10' => ! $reverseOrder,
+                    'w-full',
+                    'md:w-1/2' => $backgroundImage,
+                    'md:pl-10' => $backgroundImage && $reverseOrder,
+                    'md:pr-10' => $backgroundImage && ! $reverseOrder,
                 ])
             >
                 <div
-                    @class(['rounded bg-white/80 p-6 backdrop-blur' => $backgroundColor])
+                    @class([
+                        'rounded p-6' => $backgroundImage && $hasContent,
+                        'bg-white/90 shadow-sm backdrop-blur' => $backgroundImage && $hasContent,
+                    ])
                 >
                     @if ($content || $title)
                         <x-capell::content

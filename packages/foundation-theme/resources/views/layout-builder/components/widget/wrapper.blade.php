@@ -1,8 +1,8 @@
 @php
     use Capell\Core\Enums\ContainerWidthEnum;
     use Capell\Core\Enums\DefaultColorEnum;
-    use Capell\Core\Enums\MediaCollectionEnum;
     use Capell\Core\Enums\MediaConversionEnum;
+    use Capell\FoundationTheme\Actions\ResolveLoadedWidgetBackgroundImageAction;
     use Capell\Frontend\Facades\Frontend;
     use Capell\LayoutBuilder\Actions\GetElementContainerWidthAction;
     use Illuminate\Support\Arr;
@@ -13,7 +13,7 @@
 @props([
     'backgroundAttachment' => $widget->getMeta('background_attachment'),
     'backgroundColor' => $widget->getMeta('background_color'),
-    'backgroundImage' => $widget->getMedia(MediaCollectionEnum::BackgroundImage->value)->first(),
+    'backgroundImage' => ResolveLoadedWidgetBackgroundImageAction::run($widget),
     'backgroundRepeat' => $widget->getMeta('background_repeat', 'no-repeat'),
     'backgroundOverlay' => (bool) $widget->getMeta('background_overlay'),
     'backgroundPosition' => $widget->getMeta('background_position', 'center'),

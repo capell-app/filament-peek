@@ -28,6 +28,9 @@ use Capell\FoundationTheme\Support\Blade\BladeDirectives;
 use Capell\FoundationTheme\Support\Interceptors\Themes\FoundationThemeInterceptor;
 use Capell\FoundationTheme\Support\Media\CapellUrlGenerator;
 use Capell\FoundationTheme\Support\Tailwind\TailwindAssetsGenerator;
+use Capell\FoundationTheme\View\Components\Actions as ActionsComponent;
+use Capell\FoundationTheme\View\Components\Footer\Index as FooterIndexComponent;
+use Capell\FoundationTheme\View\Components\Layout\Index as LayoutIndexComponent;
 use Capell\FoundationTheme\View\Components\Media\Svg;
 use Capell\FoundationTheme\View\Components\Widget\Page\Breadcrumbs as PageBreadcrumbsComponent;
 use Capell\FoundationTheme\View\Components\Widget\Page\Children as PageChildrenComponent;
@@ -163,6 +166,8 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         resolve(ViewFactory::class)->prependNamespace('capell', __DIR__ . '/../../resources/views');
 
         Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell');
+        Blade::component(FooterIndexComponent::class, 'capell::footer.index');
+        Blade::component(LayoutIndexComponent::class, 'capell::layout.index');
     }
 
     private function registerSettingsSchemas(): void
@@ -272,7 +277,8 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
             'foundation-theme-runtime',
             fn (FrontendAssetContextData $context): bool => $context->runtime->usesBeacon
                 || $context->runtime->usesIslands
-                || $context->runtime->usesLivewire,
+                || $context->runtime->usesLivewire
+                || ($context->runtime->modules['layout-builder'] ?? false),
         );
     }
 
@@ -300,6 +306,8 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
         Blade::component(PageBreadcrumbsComponent::class, 'capell::widget.page.breadcrumbs');
+        Blade::component(ActionsComponent::class, 'capell::actions');
+        Blade::component(ActionsComponent::class, 'capell-layout-builder::actions');
         Blade::component(PageContentComponent::class, 'capell-widget-page-content');
         Blade::component(PageContentComponent::class, 'capell::element.page.content');
         Blade::component(SlotComponent::class, 'capell::widget.slot');

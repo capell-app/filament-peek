@@ -1,35 +1,18 @@
-{{-- format-ignore-start --}}
-@php
-    use Capell\Core\Models\Page;use Capell\Frontend\Facades\Frontend;
-    use Capell\Frontend\Support\Loader\PageLoader;
-
-    $page = Frontend::page();
-    $site = Frontend::site();
-    $language = Frontend::language();
-@endphp
-
 @props([
+    'ancestors' => null,
     'container',
     'containerKey',
     'containerWidth' => null,
+    'currentPageLabel' => '',
+    'homeLabel' => null,
+    'homeUrl' => null,
     'loop',
+    'page' => null,
+    'showCurrentPage' => false,
     'widget',
 ])
-@php
-    $ancestors = $page instanceof Page
-        ? PageLoader::getPageAncestors($page, $language, $site)
-        : null;
 
-    $currentPageLabel = $page instanceof Page
-        ? __($page->translation->label, \Capell\Frontend\Actions\GetPageVariablesAction::run())
-        : '';
-
-    $showCurrentPage = $page instanceof Page && ($page->url_params === null || Frontend::params() === []);
-
-    $home = $site->getHomePage($language);
-@endphp
-{{-- format-ignore-end --}}
-@if ($page instanceof Page && $ancestors)
+@if ($page && $ancestors)
     <nav
         class="breadcrumbs my-4 text-gray-800"
         aria-label="{{ __('capell-frontend::generic.breadcrumbs') }}"
@@ -46,16 +29,16 @@
             <ol
                 class="inline-flex flex-wrap items-center space-x-1 md:space-x-2"
             >
-                @if ($home)
+                @if ($homeUrl && $homeLabel)
                     <li class="inline-flex items-center">
                         <a
                             class="hover:text-primary focus:text-primary inline-flex items-center text-sm font-medium text-gray-400"
-                            href="{{ $site->siteDomain->url }}"
+                            href="{{ $homeUrl }}"
                             @wireNavigate
                         >
                             @svg('heroicon-m-home', 'h-4 w-4 fill-current')
                             <span class="sr-only">
-                                {{ $home->translation->label }}
+                                {{ $homeLabel }}
                             </span>
                         </a>
                     </li>

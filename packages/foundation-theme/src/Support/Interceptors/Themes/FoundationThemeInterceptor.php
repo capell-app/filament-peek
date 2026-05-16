@@ -20,6 +20,7 @@ final class FoundationThemeInterceptor implements ThemeInterceptorInterface
             'assets' => ['resources/css/capell/frontend.css'],
             'assets_path' => 'build',
             'header_divider' => false,
+            'header_over_hero' => false,
             'header_border_color' => DefaultColorEnum::LightGray->getColor(),
             'header_shadow' => 'none',
             'footer_background_color' => '#f1f5f9',

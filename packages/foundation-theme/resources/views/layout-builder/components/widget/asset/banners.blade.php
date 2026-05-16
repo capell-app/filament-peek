@@ -1,10 +1,6 @@
 @php
-    use Capell\Core\Contracts\Pageable;
-    use Capell\Core\Enums\MediaCollectionEnum;
-    use Capell\Core\Facades\CapellCore;
-    use Capell\Core\Models\Page;
+    use Capell\FoundationTheme\Actions\BuildAssetBannerItemsAction;
     use Capell\Frontend\Facades\Frontend;
-    use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
     $page = Frontend::page();
     $theme = Frontend::theme();
@@ -15,20 +11,23 @@
     'containerIndex',
     'backgroundOverlay' => (bool) $widget->getMeta('background_overlay'),
     'loop',
-    'total' => $widget->assets->count(),
+    'total' => null,
     'widget',
     'widgetIndex',
 ])
 @php
     $carouselId = sprintf('banner-carousel-%s-%s', $widget->id ?? $widget->key, $loop->index);
+    $bannerItems = BuildAssetBannerItemsAction::run($widget);
+    $total ??= $bannerItems->count();
 @endphp
 
-@if ($widget->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
+@if ($bannerItems->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <section
         class="widget-assets-banner relative flex w-full items-center justify-center overflow-hidden"
         style="
             --swiper-pagination-bottom: 2rem;
-            --swiper-pagination-bullet-inactive-color: #fff;
+            --swiper-pagination-color: #111827;
+            --swiper-pagination-bullet-inactive-color: #6b7280;
         "
         data-carousel-scope
     >
@@ -47,37 +46,25 @@
             data-loop="0"
         >
             <div class="swiper-wrapper h-full w-full">
-                @foreach ($widget->assets as $widgetAsset)
-                    {{-- format-ignore-start --}}
-                @php
-                    $image = ($widgetAsset->relationLoaded('media') ? $widgetAsset->media->first() : null)
-                        ?: ($widgetAsset->asset->relationLoaded('image') ? $widgetAsset->asset->image : null)
-                        ?: $widget->getMedia(MediaCollectionEnum::BackgroundImage->value);
-                    $title = '';
-                    $content = '';
-                    if (CapellCore::getAsset($widgetAsset->asset_type)->hasTranslations) {
-                        $title = $widgetAsset->asset->translation?->title;
-                        $content = $widgetAsset->asset->translation?->content;
-                    }
+                @foreach ($bannerItems as $bannerItem)
+                    @php
+                        $hasImage = (bool) $bannerItem->image;
+                    @endphp
 
-                    $linkedPage = $widgetAsset->asset instanceof Pageable
-                        ? $widgetAsset->asset
-                        : $widgetAsset->asset->linkedPage;
-                @endphp
-                {{-- format-ignore-end --}}
                     <div
                         @class([
                             'swiper-slide widget-banner-item relative flex min-h-[20rem] w-full shrink-0 basis-full items-center justify-center',
+                            'bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-50' => ! $hasImage,
                             'swiper-slide-active' => $loop->first,
                         ])
                     >
-                        @if ($image)
+                        @if ($bannerItem->image)
                             <x-capell::media
                                 format="webp"
                                 curation="hero"
-                                :media="$image"
+                                :media="$bannerItem->image"
                                 height="100vh"
-                                :alt="$widgetAsset->asset->translation->label"
+                                :alt="$bannerItem->alt"
                                 :loading="$loop->first ? 'eager' : 'lazy'"
                                 :class="
                                     Arr::toCssClasses([
@@ -92,42 +79,50 @@
                             @endif
                         @endif
 
-                        @if ($title || $content)
+                        @if ($bannerItem->title || $bannerItem->content)
                             <div
                                 class="relative z-20 flex flex-col items-center justify-center space-y-6 px-4 py-20 text-center"
                             >
-                                @if ($title)
+                                @if ($bannerItem->title)
                                     <h4
-                                        class="font-heading text-2xl font-bold text-white md:text-4xl"
+                                        @class([
+                                            'font-heading text-2xl font-bold md:text-4xl',
+                                            'text-white' => $hasImage,
+                                            'text-gray-900 dark:text-gray-50' => ! $hasImage,
+                                        ])
                                     >
-                                        @if ($linkedPage?->pageUrl?->full_url)
+                                        @if ($bannerItem->url)
                                             <a
-                                                href="{{ $linkedPage->pageUrl->full_url }}"
+                                                href="{{ $bannerItem->url }}"
                                                 class="hover:underline"
                                             >
-                                                {{ $title }}
+                                                {{ $bannerItem->title }}
                                             </a>
                                         @else
-                                            {{ $title }}
+                                            {{ $bannerItem->title }}
                                         @endif
                                     </h4>
                                 @endif
 
-                                @if ($content)
+                                @if ($bannerItem->content)
                                     <div
-                                        class="max-w-2xl text-lg text-white md:text-2xl"
+                                        @class([
+                                            'max-w-2xl text-lg md:text-2xl',
+                                            'text-white' => $hasImage,
+                                            'text-gray-700 dark:text-gray-200' => ! $hasImage,
+                                        ])
                                     >
-                                        {!! $content !!}
+                                        {!! $bannerItem->content !!}
                                     </div>
                                 @endif
 
-                                @if ($linkedPage?->translation)
+                                @if ($bannerItem->url && $bannerItem->linkText)
                                     <x-capell::button
-                                        :url="$linkedPage?->pageUrl?->full_url"
+                                        :url="$bannerItem->url"
                                         color="primary"
                                         icon="heroicon-o-chevron-right"
                                     >
-                                        {{ $linkedPage->translation->link_text }}
+                                        {{ $bannerItem->linkText }}
                                     </x-capell::button>
                                 @endif
                             </div>
@@ -137,7 +132,7 @@
             </div>
             @if ($total > 1)
                 <div
-                    class="swiper-controls"
+                    class="swiper-controls inline-flex rounded-full bg-white/85 px-3 py-2 shadow-sm backdrop-blur"
                     data-carousel-controls="{{ $carouselId }}"
                 >
                     <div

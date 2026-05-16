@@ -4,7 +4,8 @@
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\LayoutBuilder\Enums\ContainerAlignmentEnum;
     use Capell\LayoutBuilder\Enums\ResponsiveVisibilityEnum;
-    use Capell\LayoutBuilder\Facades\CapellLayout;
+    use Capell\LayoutBuilder\Support\CapellLayoutManager;
+    use Capell\LayoutBuilder\Support\LayoutElementData;
     use Spatie\MediaLibrary\MediaCollections\Models\Media;
 @endphp
 
@@ -40,8 +41,13 @@
     $hideOnTablet = in_array(ResponsiveVisibilityEnum::Tablet->value, $hiddenOn, true);
     $hideOnDesktop = in_array(ResponsiveVisibilityEnum::Desktop->value, $hiddenOn, true);
 
+    $layoutMedia = method_exists($layout, 'relationLoaded') && $layout->relationLoaded('media')
+        ? $layout->getRelation('media')
+        : collect();
     /** @var ?Media $backgroundImage */
-    $backgroundImage = $layout->getFirstMedia($containerKey . '-background');
+    $backgroundImage = method_exists($layoutMedia, 'first')
+        ? $layoutMedia->first(fn (mixed $media): bool => $media instanceof Media && $media->collection_name === $containerKey . '-background')
+        : null;
 
     $currentColspan = $colspan;
 @endphp
@@ -129,13 +135,18 @@
         'mb-20' => in_array('b-xl', $margin, true),
     ])
 >
-    @foreach ($container['elements'] as $widgetIndex => $widgetData)
+    @foreach (LayoutElementData::normalizeMany($container['elements'] ?? []) as $widgetIndex => $widgetData)
         {{-- format-ignore-start --}}
                                     @php
-                                        $widget = CapellLayout::getContainerElement(
+                                        $widgetKey = LayoutElementData::key($widgetData);
+                                        if ($widgetKey === null) {
+                                            continue;
+                                        }
+
+                                        $widget = CapellLayoutManager::getStoredContainerElement(
                                             $containerKey,
-                                            $widgetData['element_key'],
-                                            $widgetData['occurrence'] ?? 1,
+                                            $widgetKey,
+                                            LayoutElementData::occurrence($widgetData),
                                         );
 
                                         if (! $widget) {
@@ -154,8 +165,6 @@
                                         }
                                     @endphp
                                     {{-- format-ignore-end --}}
-        {!! config('app.debug') ? "<!-- {$widget->key} Widget ({$widget->id}) - {$component} -->" : '' !!}
-
         <x-capell-layout-builder::layout.widget
             :$component
             :container-colspan="$colspan"
@@ -164,6 +173,7 @@
             :$containerIndex
             :container-width="$colspan === 12 ? $containerWidth : ContainerWidthEnum::Full"
             :$loop
+            :$layout
             :$type
             :$widget
             :$widgetIndex

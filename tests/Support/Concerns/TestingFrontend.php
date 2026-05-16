@@ -7,6 +7,7 @@ namespace Capell\Tests\Support\Concerns;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\Tests\AbstractTestCase;
 use Illuminate\Support\Facades\App;
+use Livewire\Blaze\Blaze;
 
 /**
  * @mixin AbstractTestCase
@@ -19,8 +20,10 @@ trait TestingFrontend
             return;
         }
 
-        // Disable HTML cache during tests to avoid stale content
-        // Config::set('capell-frontend.html_cache', false);
+        if (class_exists(Blaze::class)) {
+            Blaze::disable();
+            Blaze::optimize()->clear();
+        }
 
         // Clear page cache storage if present
         /*try {

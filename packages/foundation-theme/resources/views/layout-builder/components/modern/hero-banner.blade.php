@@ -15,6 +15,7 @@
 @php
     $backgroundImage = $widget->backgroundImage ?? $widget->image;
     $backgroundImageUrl = $backgroundImage?->getAvailableFullUrl(['large']);
+    $heroItems = $widget->assets->take(4);
 @endphp
 
 <x-capell-layout-builder::widget.wrapper
@@ -78,7 +79,7 @@
                 <div class="ap-hero__panel">
                     <div class="ap-hero__panel-header">
                         <span class="ap-hero__panel-title">
-                            Capell control plane
+                            Capell layout composition
                         </span>
                         <span class="ap-hero__panel-dots">
                             <span></span>
@@ -88,81 +89,75 @@
                     </div>
 
                     <div class="ap-hero__panel-body">
-                        <div class="ap-hero__rail">
-                            <span class="ap-hero__rail-icon">
-                                @svg('heroicon-o-circle-stack', 'h-5 w-5')
-                            </span>
-                            <span>
-                                <span class="ap-hero__rail-title">
-                                    Content model
-                                </span>
-                                <span class="ap-hero__rail-copy">
-                                    Pages, sections, widgets, media
-                                </span>
-                            </span>
-                            <span
-                                class="ap-hero__rail-status ap-hero__rail-status--blue"
-                            >
-                                Typed
-                            </span>
-                        </div>
+                        @forelse ($heroItems as $heroItem)
+                            @php
+                                $asset = $heroItem->asset;
+                                $icon = $asset->getMeta('icon', 'heroicon-o-squares-2x2');
+                                $status = $asset->getMeta('status', 'Ready');
+                                $isBlue = $loop->even;
+                            @endphp
 
-                        <div class="ap-hero__rail">
-                            <span class="ap-hero__rail-icon">
-                                @svg('heroicon-o-rectangle-group', 'h-5 w-5')
-                            </span>
-                            <span>
-                                <span class="ap-hero__rail-title">
-                                    Layout builder
+                            <div class="ap-hero__rail">
+                                <span class="ap-hero__rail-icon">
+                                    @if (str_starts_with((string) $icon, 'heroicon-'))
+                                        @svg($icon, 'h-5 w-5')
+                                    @else
+                                        <span>{{ $icon }}</span>
+                                    @endif
                                 </span>
-                                <span class="ap-hero__rail-copy">
-                                    Composable editor-owned frontend
+                                <span>
+                                    <span class="ap-hero__rail-title">
+                                        {{ $asset->translation?->title }}
+                                    </span>
+                                    <span class="ap-hero__rail-copy">
+                                        {{ strip_tags((string) $asset->translation?->content) }}
+                                    </span>
                                 </span>
-                            </span>
-                            <span
-                                class="ap-hero__rail-status ap-hero__rail-status--green"
-                            >
-                                Live
-                            </span>
-                        </div>
+                                <span
+                                    @class([
+                                        'ap-hero__rail-status',
+                                        'ap-hero__rail-status--blue' => $isBlue,
+                                        'ap-hero__rail-status--green' => ! $isBlue,
+                                    ])
+                                >
+                                    {{ $status }}
+                                </span>
+                            </div>
+                        @empty
+                            <div class="ap-hero__rail">
+                                <span class="ap-hero__rail-icon">
+                                    @svg('heroicon-o-circle-stack', 'h-5 w-5')
+                                </span>
+                                <span>
+                                    <span class="ap-hero__rail-title">
+                                        Content model
+                                    </span>
+                                    <span class="ap-hero__rail-copy">
+                                        Pages, sections, widgets, media
+                                    </span>
+                                </span>
+                                <span
+                                    class="ap-hero__rail-status ap-hero__rail-status--blue"
+                                >
+                                    Typed
+                                </span>
+                            </div>
+                        @endforelse
 
-                        <div class="ap-hero__rail">
-                            <span class="ap-hero__rail-icon">
-                                @svg('heroicon-o-bolt', 'h-5 w-5')
-                            </span>
-                            <span>
-                                <span class="ap-hero__rail-title">
-                                    Static delivery
+                        @if ($heroItems->isNotEmpty())
+                            <div class="ap-hero__slideshow-controls">
+                                <span>01</span>
+                                <span class="ap-hero__slideshow-progress">
+                                    <span></span>
                                 </span>
-                                <span class="ap-hero__rail-copy">
-                                    Generated HTML, warm cache, fast routes
+                                <span>
+                                    {{ str_pad((string) $heroItems->count(), 2, '0', STR_PAD_LEFT) }}
                                 </span>
-                            </span>
-                            <span
-                                class="ap-hero__rail-status ap-hero__rail-status--blue"
-                            >
-                                Ready
-                            </span>
-                        </div>
-
-                        <div class="ap-hero__rail">
-                            <span class="ap-hero__rail-icon">
-                                @svg('heroicon-o-puzzle-piece', 'h-5 w-5')
-                            </span>
-                            <span>
-                                <span class="ap-hero__rail-title">
-                                    Package runtime
+                                <span class="ap-hero__slideshow-play">
+                                    @svg('heroicon-o-play', 'h-4 w-4')
                                 </span>
-                                <span class="ap-hero__rail-copy">
-                                    Frontend assets owned by each package
-                                </span>
-                            </span>
-                            <span
-                                class="ap-hero__rail-status ap-hero__rail-status--green"
-                            >
-                                Verified
-                            </span>
-                        </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

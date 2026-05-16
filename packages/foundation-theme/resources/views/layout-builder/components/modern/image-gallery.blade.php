@@ -74,6 +74,34 @@
                                     @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')
                                 </figcaption>
                             </figure>
+                        @else
+                            @php
+                                $icon = $asset->asset->getMeta('icon', 'heroicon-o-squares-2x2');
+                                $accent = $asset->asset->getMeta('accent', 'teal');
+                            @endphp
+
+                            <figure
+                                class="ap-gallery-item ap-gallery-item--placeholder"
+                                data-accent="{{ $accent }}"
+                            >
+                                <div class="ap-gallery-placeholder">
+                                    @if (str_starts_with((string) $icon, 'heroicon-'))
+                                        @svg($icon, 'h-8 w-8')
+                                    @else
+                                        <span>{{ $icon }}</span>
+                                    @endif
+                                    <strong>{{ $caption }}</strong>
+                                    @if ($asset->asset->translation?->content)
+                                        <span>
+                                            {{ strip_tags($asset->asset->translation->content) }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <figcaption class="ap-gallery-caption">
+                                    <span>{{ $caption }}</span>
+                                    @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')
+                                </figcaption>
+                            </figure>
                         @endif
                     @endforeach
                 </div>

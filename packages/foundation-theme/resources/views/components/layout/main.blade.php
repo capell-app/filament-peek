@@ -1,5 +1,6 @@
 @props([
     'layout',
+    'layoutNeighborLinks' => null,
     'containerClass' => null,
     'mainClass' => null,
     'mainContainerClass' => null,
@@ -11,18 +12,12 @@
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Contracts\Pageable;
     use Capell\Frontend\Facades\Frontend;
-    use Capell\Frontend\Support\Loader\PageLoader;
-    use Capell\LayoutBuilder\Facades\CapellLayout;
+    use Capell\LayoutBuilder\Support\CapellLayoutManager;
+    use Capell\LayoutBuilder\Support\LayoutElementData;
 
     $themeModel = Frontend::theme();
-    $language = Frontend::language();
-    $site = Frontend::site();
-    $previousPage = (bool) $page->getMeta('with_next_prev')
-        ? PageLoader::getPreviousPage($page, $site, $language)
-        : null;
-    $nextPage = (bool) $page->getMeta('with_next_prev')
-        ? PageLoader::getNextPage($page, $site, $language)
-        : null;
+    $previousPage = $layoutNeighborLinks?->previousPage;
+    $nextPage = $layoutNeighborLinks?->nextPage;
     $finalCta = $page->getMeta('final_cta');
 @endphp
 
@@ -54,22 +49,29 @@
         @php
             $previousColspan = null;
             $slotRendered = false;
+            $pageContentWidgetRendered = false;
         @endphp
 
         @if ($layout->containers)
             @foreach ($layout->containers as $containerKey => $container)
                 @php
                     $layoutModules = collect($container['elements'] ?? [])
-                        ->map(fn (array $elementData): ?\Capell\LayoutBuilder\Models\Element => CapellLayout::getContainerElement(
+                        ->map(static fn (mixed $elementData): array => LayoutElementData::normalize($elementData))
+                        ->filter(static fn (array $elementData): bool => LayoutElementData::key($elementData) !== null)
+                        ->map(fn (array $elementData): ?\Capell\LayoutBuilder\Models\Element => CapellLayoutManager::getStoredContainerElement(
                             (string) $containerKey,
-                            (string) ($elementData['element_key'] ?? ''),
-                            (int) ($elementData['occurrence'] ?? 1),
+                            (string) LayoutElementData::key($elementData),
+                            LayoutElementData::occurrence($elementData),
                         ))
                         ->filter();
 
                     if ($layoutModules->isEmpty()) {
                         continue;
                     }
+
+                    $pageContentWidgetRendered = $pageContentWidgetRendered || collect($container['elements'] ?? [])
+                        ->map(static fn (mixed $elementData): array => LayoutElementData::normalize($elementData))
+                        ->contains(static fn (array $elementData): bool => LayoutElementData::key($elementData) === 'page-content');
 
                     $hasSlotWidget = ! $slotRendered && $layoutModules->contains(
                         fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ($layoutModule->meta['type'] ?? null) === 'slot'
@@ -130,8 +132,11 @@
             @endphp
         @endif
 
-        @if ($previousPage instanceof Pageable || $nextPage instanceof Pageable)
-            <div class="capell-neighbor-links-mobile px-6 pb-12">
+        @if (! $pageContentWidgetRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
+            <nav
+                class="capell-neighbor-links-mobile px-6 pb-12"
+                aria-label="{{ __('capell-foundation-theme::generic.page_navigation') }}"
+            >
                 <div class="neighbor-links">
                     @if ($previousPage)
                         <x-capell::page.neighbor-link
@@ -147,7 +152,7 @@
                         />
                     @endif
                 </div>
-            </div>
+            </nav>
         @endif
 
         @if (is_array($finalCta) && filled($finalCta['title'] ?? null))

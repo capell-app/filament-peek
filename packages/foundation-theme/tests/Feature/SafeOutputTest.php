@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use Capell\FoundationTheme\View\Components\Actions;
+use Capell\Frontend\Actions\Performance\RecordExtensionRenderContributionAction;
+use Illuminate\Support\Facades\Route;
+
 test('default theme escapes site titles and plain footer text', function (): void {
     $themePath = dirname(__DIR__, 2);
 
@@ -23,7 +27,7 @@ test('content component sanitizes cms html before rendering', function (): void 
 
     $content = file_get_contents($themePath . '/resources/views/components/content.blade.php');
 
-    expect($content)->toContain('RenderHtmlContentAction::run($content')
+    expect($content)->toContain('RenderHtmlContentAction::run($content, $pageVariables)')
         ->and($content)->not->toContain('{!! $content !!}')
         ->and($content)->not->toContain('{!! $page->translation->content !!}');
 });
@@ -33,10 +37,44 @@ test('default theme treats navigation as optional', function (): void {
 
     $header = file_get_contents($themePath . '/resources/views/components/header/index.blade.php');
     $footer = file_get_contents($themePath . '/resources/views/components/footer/index.blade.php');
+    $footerComponent = file_get_contents($themePath . '/src/View/Components/Footer/Index.php');
 
     expect($header)->toContain("scenario: 'foundation-theme-primary-navigation'")
         ->and($header)->not->toContain('NavigationAvailability::check()')
         ->and($header)->not->toContain('if ($navigationAvailable)')
-        ->and($footer)->toContain('NavigationAvailability::check()')
-        ->and($footer)->toContain('if (! $navigationAvailable)');
+        ->and($footerComponent)->toContain('NavigationAvailability::check()')
+        ->and($footerComponent)->toContain('$navigationAvailable')
+        ->and($footer)->not->toContain('NavigationAvailability::check()');
+});
+
+test('public layout output does not include debug widget comments', function (): void {
+    $themePath = dirname(__DIR__, 2);
+
+    $container = file_get_contents($themePath . '/resources/views/layout-builder/components/layout/container.blade.php');
+
+    expect($container)
+        ->not->toContain('<!-- {$widget->key} Widget')
+        ->not->toContain('config(\'app.debug\')');
+});
+
+test('public action buttons mark their csrf output as non-cacheable', function (): void {
+    Route::post('/public-actions/{action}', static fn (): string => 'ok')
+        ->name('capell-public-actions.submit');
+    Route::getRoutes()->refreshNameLookups();
+
+    resolve(RecordExtensionRenderContributionAction::class)->clear();
+
+    (new Actions(actions: [
+        [
+            'type' => 'public_action',
+            'public_action_key' => 'request-access',
+            'label' => 'Request access',
+        ],
+    ]))->render();
+
+    $contribution = collect(resolve(RecordExtensionRenderContributionAction::class)->recorded())
+        ->first(fn (mixed $record): bool => $record?->contributionClass === Actions::class);
+
+    expect($contribution?->cacheable)->toBeFalse()
+        ->and($contribution?->sensitiveOutput)->toBeTrue();
 });

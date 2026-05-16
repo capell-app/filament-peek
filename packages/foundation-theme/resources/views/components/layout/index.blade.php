@@ -1,14 +1,3 @@
-<?php
-use Capell\Frontend\Facades\Frontend;
-
-$theme = Frontend::theme();
-$page = Frontend::page();
-$layout = Frontend::layout();
-$site = Frontend::site();
-$isSystemPageLayout = data_get($layout->admin ?? [], 'system_page_layout') === true;
-
-?>
-
 @props([
     'containerClass' => null,
     'footer' => null,
@@ -17,6 +6,17 @@ $isSystemPageLayout = data_get($layout->admin ?? [], 'system_page_layout') === t
     'mainContainerClass' => null,
     'pageSlot' => null,
 ])
+@php
+    use Capell\Frontend\Facades\Frontend;
+
+    $theme ??= Frontend::theme();
+    $page ??= Frontend::page();
+    $layout ??= Frontend::layout();
+    $site ??= Frontend::site();
+    $isSystemPageLayout ??= data_get($layout->admin ?? [], 'system_page_layout') === true;
+    $layoutNeighborLinks ??= null;
+@endphp
+
 @if ($isSystemPageLayout)
     <div
         {{ $attributes->merge(['style' => 'min-height: 100vh; display: flex; flex-direction: column; background: #f8fafc; color: #0f172a;']) }}
@@ -97,6 +97,7 @@ $isSystemPageLayout = data_get($layout->admin ?? [], 'system_page_layout') === t
             :$layout
             :$page
             :$theme
+            :layout-neighbor-links="$layoutNeighborLinks"
             :page-slot="$pageSlot ?? $slot"
             :container-class="$containerClass"
             :main-class="$mainClass"
@@ -107,7 +108,7 @@ $isSystemPageLayout = data_get($layout->admin ?? [], 'system_page_layout') === t
             {{ $footer }}
         @elseif ($footer !== false && (! isset($theme['meta']['footer']) || $theme['meta']['footer'] !== false))
             @if (($theme['meta']['footer_file'] ?? 'capell::footer') === 'capell::footer')
-                {!! view('capell::components.footer.index')->render() !!}
+                <x-capell::footer.index />
             @else
                 <x-dynamic-component
                     :component="$theme['meta']['footer_file']"

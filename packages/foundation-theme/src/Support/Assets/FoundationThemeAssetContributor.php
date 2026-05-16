@@ -52,6 +52,7 @@ final class FoundationThemeAssetContributor implements FrontendAssetContributor
     {
         return $context->runtime->usesBeacon
             || $context->runtime->usesIslands
-            || $context->runtime->usesLivewire;
+            || $context->runtime->usesLivewire
+            || ($context->runtime->modules['layout-builder'] ?? false);
     }
 }

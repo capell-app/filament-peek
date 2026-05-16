@@ -18,6 +18,7 @@
         <nav
             id="sub-footer-menu"
             class="flex flex-wrap items-center justify-center gap-y-2 md:justify-start lg:order-1 xl:col-span-2"
+            aria-label="{{ __('capell-foundation-theme::generic.sub_footer_navigation') }}"
         >
             @foreach ($items as $id => $item)
                 <a

@@ -3,12 +3,6 @@
     use Capell\Frontend\Actions\GetPageVariablesAction;
     use Capell\Frontend\Actions\RenderHtmlContentAction;
     use Capell\Frontend\Facades\Frontend;
-
-    $page = Frontend::page();
-    $language = Frontend::language();
-    $site = Frontend::site();
-    $layout = Frontend::layout();
-    $theme = Frontend::theme();
 @endphp
 
 @props([
@@ -25,13 +19,62 @@
     'headingBalance' => true,
     'image' => null,
     'muted' => null,
+    'language' => null,
+    'layout' => null,
+    'pageRecord' => null,
+    'site' => null,
     'size' => '',
     'textAlign' => 'left',
+    'theme' => null,
     'title' => '',
+    'imageTitle' => null,
+    'urlParams' => null,
     'width' => 'full',
 ])
 
 @php
+    $page = $pageRecord;
+
+    if ($page === null) {
+        try {
+            $page = Frontend::page();
+        } catch (Throwable) {
+            $page = null;
+        }
+    }
+
+    if ($language === null) {
+        try {
+            $language = Frontend::language();
+        } catch (Throwable) {
+            $language = null;
+        }
+    }
+
+    if ($site === null) {
+        try {
+            $site = Frontend::site();
+        } catch (Throwable) {
+            $site = null;
+        }
+    }
+
+    if ($layout === null) {
+        try {
+            $layout = Frontend::layout();
+        } catch (Throwable) {
+            $layout = null;
+        }
+    }
+
+    if ($theme === null) {
+        try {
+            $theme = Frontend::theme();
+        } catch (Throwable) {
+            $theme = null;
+        }
+    }
+
     $imageWidth = 360;
     $imageHeight = null;
 
@@ -53,19 +96,29 @@
         $muted = true;
     }
 
+    $pageVariables = GetPageVariablesAction::run(
+        $page,
+        $site,
+        is_array($urlParams) ? $urlParams : [],
+    );
+    $translationVariables = collect($pageVariables)
+        ->filter(fn (mixed $value): bool => is_scalar($value) || $value instanceof Stringable)
+        ->map(fn (mixed $value): string => (string) $value)
+        ->all();
+
     if (is_string($content)) {
-        $content = __($content, GetPageVariablesAction::run($page));
+        $content = __($content, $translationVariables);
     }
 
-    $title = __($title, GetPageVariablesAction::run($page));
+    $title = __($title, $translationVariables);
 @endphp
 
 <div
     {{
         $attributes->class([
             'content-component prose prose-h1:font-bold [&>:first-child]:mt-0 [&>:last-child]:mb-0',
-            'prose-invert' => $color === 'light' && $theme->withDarkMode,
-            'dark:prose-invert' => $color !== 'light' && $theme->withDarkMode,
+            'prose-invert' => $color === 'light' && ($theme?->withDarkMode ?? false),
+            'dark:prose-invert' => $color !== 'light' && ($theme?->withDarkMode ?? false),
             'prose-muted' => $color === 'muted' || (! $color && $muted),
             'max-w-none' => $width === 'full',
             'mx-auto' => $align === 'center' || (! $align && $textAlign === 'center'),
@@ -90,16 +143,16 @@
                 :width="$imageWidth"
                 :height="$imageHeight"
                 data-group="gallery"
-                :data-title="$image->name"
+                :data-title="$imageTitle ?? $title"
                 :data-lightbox="$image->getFullUrl()"
                 role="button"
                 tabindex="0"
-                aria-label="{{ __('capell-frontend::generic.open_image') }}: {{ $title }}"
-                :alt="$title"
+                aria-label="{{ __('capell-frontend::generic.open_image') }}: {{ $imageTitle ?? $title }}"
+                :alt="$imageTitle ?? $title"
                 fetchpriority="high"
                 @class([
                     'h-auto object-cover object-center lightbox cursor-pointer md:float-right md:max-w-[40%] md:ml-10 md:mt-0',
-                    'rounded' => (bool) $theme->getMeta('rounded_images'),
+                    'rounded' => (bool) $theme?->getMeta('rounded_images'),
                 ])
                 loading="eager"
                 sizes="(min-width: 768px) 40vw, 88vw"
@@ -152,7 +205,7 @@
             :page="$page"
         />
     @else
-        {!! RenderHtmlContentAction::run($content, ['page' => $page, 'site' => $site]) !!}
+        {!! RenderHtmlContentAction::run($content, $pageVariables) !!}
     @endif
 
     {{ $slot }}

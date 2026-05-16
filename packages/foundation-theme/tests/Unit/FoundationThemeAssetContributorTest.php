@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Capell\Core\Models\Theme;
+use Capell\Core\Support\Assets\VendorAssetConditionRegistry;
+use Capell\FoundationTheme\Providers\FoundationThemeServiceProvider;
 use Capell\FoundationTheme\Support\Assets\FoundationThemeAssetContributor;
 use Capell\Frontend\Data\FrontendAssetContextData;
 use Capell\Frontend\Data\FrontendAssetRequirementData;
@@ -81,6 +83,31 @@ it('does not load the foundation runtime for generic alpine chrome', function ()
     ));
 
     expect(collect($requirements)->pluck('handle')->all())->not->toContain('foundation-theme:runtime');
+});
+
+it('loads the foundation runtime for blade-only layout builder interactions', function (): void {
+    $context = new FrontendAssetContextData(
+        page: null,
+        site: null,
+        language: null,
+        layout: null,
+        theme: null,
+        runtime: new FrontendRuntimeManifestData(
+            renderingStrategy: RenderingStrategyEnum::BladeOnly,
+            usesLivewire: false,
+            usesAlpine: true,
+            usesBeacon: false,
+            usesWireNavigate: false,
+            usesIslands: false,
+            modules: ['layout-builder' => true],
+        ),
+    );
+    $requirements = resolve(FoundationThemeAssetContributor::class)->requirements($context);
+    $registerVendorAssetConditions = new ReflectionMethod(FoundationThemeServiceProvider::class, 'registerVendorAssetConditions');
+    $registerVendorAssetConditions->invoke(new FoundationThemeServiceProvider(app()));
+
+    expect(collect($requirements)->pluck('handle')->all())->toContain('foundation-theme:runtime')
+        ->and(resolve(VendorAssetConditionRegistry::class)->passes('foundation-theme-runtime', $context))->toBeTrue();
 });
 
 it('loads the runtime from the foundation theme published build', function (): void {

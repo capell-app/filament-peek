@@ -28,7 +28,9 @@
     $chunks = $items->chunk($half);
 @endphp
 
-<nav {{ $attributes->merge(['id' => 'footer-menu']) }}>
+<nav
+    {{ $attributes->merge(['id' => 'footer-menu', 'aria-label' => __('capell-foundation-theme::generic.footer_navigation')]) }}
+>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         @foreach ($chunks as $chunk)
             <ul class="flex flex-col gap-y-4">
