@@ -105,15 +105,42 @@ it('does not rebuild tailwind assets for runtime theme color changes', function 
 
 it('delegates primary header navigation to the navigation render hook', function (): void {
     $header = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/header/index.blade.php');
+    $layoutArea = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/layout/area.blade.php');
+    $provider = file_get_contents(dirname(__DIR__, 2) . '/src/Providers/FoundationThemeServiceProvider.php');
 
     expect($header)->toContain("scenario: 'foundation-theme-primary-navigation'")
         ->and($header)->toContain("target: 'capell::header.index'")
+        ->and($header)->toContain('<x-capell::layout.area area="header" />')
+        ->and($layoutArea)->toContain('capell-layout-builder::components.layout.area')
+        ->and($provider)->toContain("->register('header'")
         ->and($header)->toContain('capell-navigation-menu-open-changed')
         ->and($header)->toContain('capell-product-header')
         ->and($header)->toContain('capell-product-nav-item')
         ->and($header)->not->toContain('x-ref="toggleMenu"')
         ->and($header)->not->toContain('toggleMenu()')
         ->and($header)->not->toContain('Capell\\Navigation');
+});
+
+it('delegates main layout container rendering to the shared frontend hook', function (): void {
+    $main = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/layout/main.blade.php');
+
+    expect($main)->toContain('RenderHookLocation::MainContent')
+        ->and($main)->toContain("scenario: 'frontend-main-layout'")
+        ->and($main)->toContain("target: 'capell::layout.main'")
+        ->and($main)->toContain('$mainContentHookOutput !==')
+        ->and($main)->toContain('<x-capell::content')
+        ->and($main)->not->toContain('Capell\\LayoutBuilder')
+        ->and($main)->not->toContain('LayoutElementData')
+        ->and($main)->not->toContain('CapellLayoutManager')
+        ->and($main)->not->toContain('x-capell::layout.container');
+});
+
+it('keeps public action rows constrained on narrow screens', function (): void {
+    $actions = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/actions/index.blade.php');
+
+    expect($actions)->toContain('actions flex max-w-full min-w-0 flex-wrap')
+        ->and($actions)->toContain('action-item max-w-full whitespace-normal')
+        ->and($actions)->toContain('action-item max-w-full rounded-full');
 });
 
 it('owns the product showcase styling for modern homepage elements', function (): void {

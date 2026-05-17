@@ -1,7 +1,7 @@
 <div
     {{
         $attributes->class([
-            'actions flex flex-wrap gap-2 lg:gap-x-4',
+            'actions flex min-w-0 max-w-full flex-wrap gap-2 lg:gap-x-4',
             'justify-center' => $align === 'center',
             'justify-start' => $align === 'start' || $align === 'left',
             'justify-end' => $align === 'end' || $align === 'right',
@@ -29,7 +29,7 @@
 
                 <button
                     type="submit"
-                    class="{{ 'action-item rounded-full px-3.5 py-2 text-xs font-semibold transition sm:px-5 sm:py-3 sm:text-sm ' . (($action['color'] ?? $buttonColor) === 'secondary' ? 'border border-slate-300 text-slate-800 hover:border-slate-950 dark:border-white/15 dark:text-slate-200 dark:hover:border-white' : 'bg-[var(--theme-accent)] text-slate-950 hover:bg-white') . ' ' . ($actionItemClass ?? '') }}"
+                    class="{{ 'action-item max-w-full rounded-full px-3.5 py-2 text-xs font-semibold whitespace-normal transition sm:px-5 sm:py-3 sm:text-sm ' . (($action['color'] ?? $buttonColor) === 'secondary' ? 'border border-slate-300 text-slate-800 hover:border-slate-950 dark:border-white/15 dark:text-slate-200 dark:hover:border-white' : 'bg-[var(--theme-accent)] text-slate-950 hover:bg-white') . ' ' . ($actionItemClass ?? '') }}"
                 >
                     {{ $action['label'] }}
                 </button>
@@ -46,7 +46,7 @@
             :size="$buttonSize"
             :weight="$buttonWeight"
             :wire-navigation="$action['wire_navigation'] ?? false"
-            :class="'action-item' . ' ' . ($actionItemClass ?? '')"
+            :class="'action-item max-w-full whitespace-normal' . ' ' . ($actionItemClass ?? '')"
         >
             @if ($action['hide_label'] ?? false)
                 <span class="sr-only">

@@ -55,7 +55,10 @@ $theme = Frontend::theme();
 
     $containerClass = GetElementContainerWidthAction::run($element);
 
-    $pageVariables = GetPageVariablesAction::run();
+    $pageVariables = collect(GetPageVariablesAction::run())
+        ->filter(static fn (mixed $value): bool => is_scalar($value) || $value === null)
+        ->map(static fn (mixed $value): string => (string) $value)
+        ->all();
 
     $contentAlign = $element->getMeta('content_align', 'center');
     $contentWidth = $element->getMeta('content_width', 'balanced');
@@ -137,13 +140,13 @@ $theme = Frontend::theme();
                     >
                         <div
                             @class([
-                                '@container grid select-text gap-4 gap-x-10 gap-y-8 py-14 lg:gap-x-16 lg:py-24',
+                                '@container grid min-w-0 max-w-full select-text gap-4 gap-x-10 gap-y-8 py-14 lg:gap-x-16 lg:py-24',
                                 'lg:grid-cols-12' => $slide->images?->isNotEmpty(),
                             ])
                         >
                             <div
                                 @class([
-                                    'flex flex-col justify-center',
+                                    'flex min-w-0 max-w-full flex-col justify-center',
                                     $contentAlignmentClass => ! $slide->images?->isNotEmpty(),
                                     'items-start text-left' => $slide->images?->isNotEmpty(),
                                     'lg:col-span-5 xl:col-span-7' => $slide->images?->isNotEmpty(),
@@ -190,6 +193,12 @@ $theme = Frontend::theme();
                                 @if ($slide->asset->getMeta('actions'))
                                     <x-capell::actions
                                         class="hero-actions mt-8 w-full"
+                                        style="
+                                            max-width: min(
+                                                100%,
+                                                calc(100vw - 12vw)
+                                            );
+                                        "
                                         :actions="$slide->asset->getMeta('actions')"
                                         :color="$slide->color"
                                         action-item-class="hero-action-item"
@@ -200,7 +209,7 @@ $theme = Frontend::theme();
                             @if ($slide->images?->isNotEmpty())
                                 <div
                                     @class([
-                                        'relative z-30 flex w-full items-center lg:col-span-6 xl:col-span-5',
+                                        'relative z-30 flex w-full min-w-0 max-w-full items-center overflow-hidden lg:col-span-6 xl:col-span-5',
                                         'lg:order-1' => $mediaPosition === 'left',
                                     ])
                                 >
@@ -212,7 +221,7 @@ $theme = Frontend::theme();
                                                 :alt="$slide->asset->translation->title"
                                                 :width="420"
                                                 :fetchpriority="$isFirstSlide ? 'high' : null"
-                                                class="hero-slide-img h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
+                                                class="hero-slide-img h-full max-h-[40vh] w-full min-w-0 max-w-full object-cover object-center lg:max-h-[400px]"
                                                 loading="{{ $isFirstSlide ? 'eager' : 'lazy' }}"
                                                 sizes="(min-width: 1024px) 38vw, 88vw"
                                             />
@@ -226,7 +235,7 @@ $theme = Frontend::theme();
                                                 format="webp"
                                                 :media="$media"
                                                 :alt="$slide->asset->translation->title"
-                                                class="hero-slide-img h-full max-h-[40vh] w-full object-cover object-center lg:max-h-[400px]"
+                                                class="hero-slide-img h-full max-h-[40vh] w-full min-w-0 max-w-full object-cover object-center lg:max-h-[400px]"
                                                 loading="lazy"
                                             />
                                         </div>

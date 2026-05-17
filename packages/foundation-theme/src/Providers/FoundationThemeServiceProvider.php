@@ -44,6 +44,7 @@ use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
 use Capell\Frontend\Data\FrontendAssetContextData;
 use Capell\Frontend\Data\FrontendAssetData;
 use Capell\LayoutBuilder\Enums\FrontendComponentKeyEnum;
+use Capell\LayoutBuilder\Support\LayoutAreas\LayoutAreaRegistry;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -91,6 +92,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         $this->registerMediaUrlGenerator();
         $this->registerModelInterceptors();
         $this->registerSettingsSchemas();
+        $this->registerLayoutAreas();
         $this->registerThemeChromeComponents();
     }
 
@@ -188,6 +190,19 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
         if ($this->app->resolved(ThemeChromeRegistry::class)) {
             $register($this->app->make(ThemeChromeRegistry::class));
+        }
+    }
+
+    private function registerLayoutAreas(): void
+    {
+        $register = function (LayoutAreaRegistry $registry): void {
+            $registry->register('header', __('capell-layout-builder::generic.header_area'));
+        };
+
+        $this->app->afterResolving(LayoutAreaRegistry::class, $register);
+
+        if ($this->app->resolved(LayoutAreaRegistry::class)) {
+            $register($this->app->make(LayoutAreaRegistry::class));
         }
     }
 

@@ -117,9 +117,9 @@
     id="header"
     @if ($usesAlpine)
         :class="{
-                                                                                                                                                                                                                                                                                                                                                                            'h-screen': isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                                                                                                                                            '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                                                                                                                                        }"
+                                                                                                                                                                                                                                                                                                                                                                                        'h-screen': isNavigationOverlayOpen,
+                                                                                                                                                                                                                                                                                                                                                                                        '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
+                                                                                                                                                                                                                                                                                                                                                                                    }"
     @endif
 >
     <div
@@ -174,5 +174,7 @@
                 target: 'capell::header.index',
             )
         !!}
+
+        <x-capell::layout.area area="header" />
     </div>
 </header>

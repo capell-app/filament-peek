@@ -308,6 +308,7 @@ Foundation Theme provides:
 
 - `capell` Blade namespace and anonymous `capell::...` components.
 - Core layout builder rendering views and widget components from the admin/frontend packages.
+- Layout Builder area rendering through `capell::layout.area`.
 - `capell:frontend-tailwind-assets`.
 - Tailwind imports and sources from installed vendor assets.
 - `FoundationThemeSettings` for lazy loading and asset minification defaults.
@@ -318,7 +319,62 @@ Child themes should stay on Foundation's shared runtime unless they need their
 own section markup. Put branded presentation in the child theme package, not in
 Foundation Theme.
 
-## 7. Generate Frontend CSS
+## 7. Register Layout Areas
+
+Layout areas are named places where a theme can render normal Layout Builder
+containers outside the standard page-body loop. Use them for theme chrome such
+as a header, footer, announcement bar, or campaign strip when editors should be
+able to manage the content with existing Layout Builder elements.
+
+Foundation Theme registers the built-in `header` area. A child theme can render
+that area directly from its header view:
+
+```blade
+<x-capell::layout.area area="header" />
+```
+
+To add another area, register it from the theme service provider:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Vendor\ClientTheme;
+
+use Capell\LayoutBuilder\Support\LayoutAreas\LayoutAreaRegistry;
+use Illuminate\Support\ServiceProvider;
+
+final class ClientThemeServiceProvider extends ServiceProvider
+{
+    public const THEME_KEY = 'client';
+
+    public function boot(): void
+    {
+        $this->app->afterResolving(
+            LayoutAreaRegistry::class,
+            function (LayoutAreaRegistry $registry): void {
+                $registry->register(
+                    key: 'announcement',
+                    label: __('vendor-theme-client::layout_areas.announcement'),
+                    themeKey: self::THEME_KEY,
+                );
+            },
+        );
+    }
+}
+```
+
+Editors choose the area on the container settings form. Containers with no
+`meta.area` value still render in `main`, so existing layouts keep working.
+
+Do not create hidden main-flow containers to place header or footer content. The
+area key is the placement contract, and the theme view is responsible for
+rendering that area. Public area Blade must stay query-free and must not expose
+editor markers, model IDs, signed admin URLs, field paths, or package/admin
+metadata.
+
+## 8. Generate Frontend CSS
 
 Foundation Theme aggregates Tailwind directives from:
 
@@ -349,7 +405,7 @@ The default output path is `resources/css/capell/frontend.css`. Per-theme output
 falls back to a derived filename such as `frontend-client.css`, unless the Theme
 model has a valid `output_css` meta value inside the configured CSS directory.
 
-## 8. Keep Public Output Safe
+## 9. Keep Public Output Safe
 
 Themes must never expose admin/editor implementation details to public users.
 Public Blade, cached HTML, theme CSS, and theme JavaScript must not contain
@@ -364,7 +420,7 @@ signed Filament editor URLs.
 Use stable selectors that already exist for presentation. Do not add hidden
 authoring-only markers to theme markup.
 
-## 9. Install And Select The Theme
+## 10. Install And Select The Theme
 
 The CLI and web installer both understand theme selection:
 
@@ -382,7 +438,7 @@ installed, Marketplace publishes the Composer change through the deployment
 publisher. Without Deployments, it shows the Composer command so the change can
 be applied manually.
 
-## 10. Test The Theme
+## 11. Test The Theme
 
 At minimum, add tests for:
 
@@ -393,6 +449,9 @@ At minimum, add tests for:
 - The definition includes presets, sections, package name, preview image, tags,
   best-fit labels, and assets.
 - Section renderers render the expected package views.
+- Registered layout areas appear only for the intended theme.
+- Containers assigned to theme areas render from the theme chrome, not from the
+  main content loop.
 - Child defaults layer over parent defaults, and database edits win.
 - The page wrapper renders `data-capell-theme` and brand token CSS variables.
 - Anonymous and non-admin frontend output exposes no authoring surface.

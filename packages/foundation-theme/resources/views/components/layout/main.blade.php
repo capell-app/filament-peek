@@ -11,15 +11,37 @@
 @php
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Contracts\Pageable;
-    use Capell\FoundationTheme\Actions\ElementIsSlotAction;
+    use Capell\Core\Enums\ContentStructure;
+    use Capell\Frontend\Data\MainContentRenderHookData;
+    use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Facades\Frontend;
-    use Capell\LayoutBuilder\Support\CapellLayoutManager;
-    use Capell\LayoutBuilder\Support\LayoutElementData;
+    use Capell\Frontend\Support\Render\RenderHookRegistry;
 
     $themeModel = Frontend::theme();
+    $themeData = is_array($theme) ? $theme : [];
     $previousPage = $layoutNeighborLinks?->previousPage;
     $nextPage = $layoutNeighborLinks?->nextPage;
     $finalCta = $page->getMeta('final_cta');
+    $translation = method_exists($page, 'relationLoaded') && $page->relationLoaded('translation') ? $page->translation : null;
+    $type = method_exists($page, 'relationLoaded') && $page->relationLoaded('type') ? $page->type : null;
+
+    $mainContentHookData = new MainContentRenderHookData(
+        layout: $layout,
+        page: $page,
+        pageSlot: $pageSlot,
+        theme: $themeData,
+        containerClass: $containerClass,
+        mainClass: $mainClass,
+        mainContainerClass: $mainContainerClass,
+        layoutNeighborLinks: $layoutNeighborLinks,
+    );
+
+    $mainContentHookOutput = app(RenderHookRegistry::class)->renderAll(
+        RenderHookLocation::MainContent,
+        $mainContentHookData,
+        scenario: 'frontend-main-layout',
+        target: 'capell::layout.main',
+    );
 @endphp
 
 <style>
@@ -36,7 +58,7 @@
     id="main"
     @class([
         'relative z-0 flex min-h-full flex-1 flex-col overflow-x-hidden bg-[var(--bg-color-main)] lg:!min-h-0',
-        $theme['meta']['main_class'] ?? '',
+        $themeData['meta']['main_class'] ?? '',
         $mainClass ?? '',
     ])
 >
@@ -47,92 +69,26 @@
             $mainContainerClass => (bool) $mainContainerClass,
         ])
     >
-        @php
-            $previousColspan = null;
-            $slotRendered = false;
-            $pageContentElementRendered = false;
-        @endphp
-
-        @if ($layout->containers)
-            @foreach ($layout->containers as $containerKey => $container)
-                @php
-                    $layoutModules = collect($container['elements'] ?? [])
-                        ->map(static fn (mixed $elementData): array => LayoutElementData::normalize($elementData))
-                        ->filter(static fn (array $elementData): bool => LayoutElementData::key($elementData) !== null)
-                        ->map(fn (array $elementData): ?\Capell\LayoutBuilder\Models\Element => CapellLayoutManager::getStoredContainerElement(
-                            (string) $containerKey,
-                            (string) LayoutElementData::key($elementData),
-                            LayoutElementData::occurrence($elementData),
-                        ))
-                        ->filter();
-
-                    if ($layoutModules->isEmpty()) {
-                        continue;
-                    }
-
-                    $pageContentElementRendered = $pageContentElementRendered || collect($container['elements'] ?? [])
-                        ->map(static fn (mixed $elementData): array => LayoutElementData::normalize($elementData))
-                        ->contains(static fn (array $elementData): bool => LayoutElementData::key($elementData) === 'page-content');
-
-                    $hasSlotElement = ! $slotRendered && $layoutModules->contains(
-                        fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ElementIsSlotAction::run($layoutModule),
-                    );
-
-                    $colspan = (int) ($container['meta']['colspan'] ?? 12);
-
-                    $columnStart = (int) ($container['meta']['column_start'] ?? 0);
-
-                    $htmlClass = $container['meta']['html_class'] ?? '';
-
-                    if ($containerClass) {
-                        if (is_string($containerClass)) {
-                            $htmlClass .= ' ' . $containerClass;
-                        } elseif (! empty($containerClass[$containerKey])) {
-                            $htmlClass .= ' ' . $containerClass[$containerKey];
-                        }
-                    }
-                @endphp
-                <x-capell::layout.container
-                    :$container
-                    :$containerKey
-                    :$layout
-                    :containerIndex="$loop->index"
-                    :colspan="$colspan"
-                    :column-start="$columnStart"
-                    :htmlClass="$htmlClass"
-                    :pageSlot="$hasSlotElement ? $pageSlot : null"
-                    :previousColspan="$previousColspan"
-                />
-
-                @php
-                    if ($hasSlotElement && $pageSlot) {
-                        $slotRendered = true;
-                    }
-                @endphp
-
-                @php
-                    $previousColspan += $colspan;
-                    if ($columnStart) {
-                        $previousColspan += $columnStart - 1;
-                    }
-                    $previousColspan = $previousColspan >= 12 ? 0 : $previousColspan;
-                @endphp
-            @endforeach
+        @if ($mainContentHookOutput !== '')
+            {!! $mainContentHookOutput !!}
+        @else
+            <x-capell::content
+                class="px-6 py-10"
+                :content="$translation?->content ?? ''"
+                :content-type="$type?->content_structure ?? ContentStructure::Html"
+                :title="$translation?->title ?? ''"
+                heading-tag="h1"
+            />
         @endif
 
-        @if ($previousColspan && $previousColspan !== 12)
-            </div>
-        </div>
-        @endif
-
-        @if ($pageSlot && ! $slotRendered)
+        @if ($pageSlot && ! $mainContentHookData->slotRendered)
             {{ $pageSlot }}
             @php
-                $slotRendered = true;
+                $mainContentHookData->slotRendered = true;
             @endphp
         @endif
 
-        @if (! $pageContentElementRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
+        @if (! $mainContentHookData->pageContentElementRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
             <nav
                 class="capell-neighbor-links-mobile px-6 pb-12"
                 aria-label="{{ __('capell-foundation-theme::generic.page_navigation') }}"

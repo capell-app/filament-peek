@@ -10,6 +10,7 @@ use Capell\Core\Models\Layout;
 use Capell\Core\Support\Creator\LayoutCreator;
 use Capell\LayoutBuilder\Actions\ApplyLayoutSidebarElementContributionsAction;
 use Capell\LayoutBuilder\Support\Creator\ElementCreator;
+use Capell\LayoutBuilder\Support\LayoutModelRegistrar;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -24,6 +25,8 @@ final class InstallFoundationThemeLayoutDefaultsAction
      */
     public function handle(bool $force = false): array
     {
+        LayoutModelRegistrar::register();
+
         $layoutCreator = resolve(LayoutCreator::class);
         $layoutCreator->createHomeLayout();
         $layoutCreator->createDefaultLayout();

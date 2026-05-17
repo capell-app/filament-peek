@@ -76,12 +76,12 @@
                         $containerWidth->getContainerClass(),
                     ])
                 >
-                    <div class="flex w-full flex-col gap-x-12 lg:grid lg:grid-cols-12 xl:gap-x-16">
+                    <div class="flex w-full min-w-0 flex-col gap-x-12 lg:grid lg:grid-cols-12 xl:gap-x-16">
                         @endif
 
                         <div
                             @class([
-                                "lg:col-span-[var(--colspan)]",
+                                "min-w-0 lg:col-span-[var(--colspan)]",
                                 "lg:col-start-[var(--column-start)]",
                             ])
                             style="--colspan: {{ $colspan }}; --column-start: {{ $columnStart }};"

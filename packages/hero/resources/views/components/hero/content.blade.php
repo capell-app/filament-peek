@@ -20,7 +20,7 @@
                     array_keys(
                         array_filter([
                             'prose-invert' => $color === 'dark',
-                            'ml-10' => $carouselArrows,
+                            'lg:ml-10' => $carouselArrows,
                         ]),
                     ),
                 ),

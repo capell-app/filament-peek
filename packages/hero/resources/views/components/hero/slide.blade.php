@@ -21,14 +21,14 @@
 <div
     {{
         $attributes->class([
-            'swiper-slide hero-item relative',
+            'swiper-slide hero-item relative w-full min-w-0 max-w-full overflow-hidden',
             'swiper-slide-selected' => $first,
         ])
     }}
 >
     <div
         @class([
-            'swiper-slide-inner relative flex w-full min-h-full',
+            'swiper-slide-inner relative flex min-h-full w-full min-w-0 max-w-full overflow-hidden',
             ...(
                 ! $backgroundColor && $color
                 ? [
@@ -76,7 +76,7 @@
         @endif
 
         @if ($slot->isNotEmpty())
-            <div @class(['relative grid w-full', $containerClass])>
+            <div @class(['relative grid w-full min-w-0 max-w-full overflow-hidden', $containerClass])>
                 {{ $slot }}
             </div>
         @endif

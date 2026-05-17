@@ -16,6 +16,7 @@ Capell default theme - ships the standard Tailwind asset pipeline, Blade directi
 - Capell default theme - ships the standard Tailwind asset pipeline, Blade directives, URL generator, and SVG media component.
 - Livewire components: `AbstractAssets`, `AbstractElement`, `PageAssets`, `Pages`.
 - Package setup or maintenance commands.
+- A `header` Layout Builder area so editors can place normal layout elements inside the Foundation header chrome.
 
 ## Why It Matters
 
@@ -54,6 +55,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Settings migration creates default theme settings.
 - Registers the `capell` Blade namespace and anonymous `capell::...` components.
 - Registers core layout builder frontend rendering views and element components.
+- Registers the `header` Layout Builder area and renders it from `capell::header.index`.
 - Runtime theme data layers parent defaults, child defaults, and database edits in that order.
 - GenerateTailwindAssetsCommand writes one frontend Tailwind directive file; runtime theme colours are emitted as CSS variables by the theme head tokens.
 - core layout builder JavaScript is registered as a conditional vendor build asset and only loads when the resolved frontend layout contains elements.
@@ -100,10 +102,36 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Listeners: `RunTailwindAssetsOnPackageChange`.
 - Register Capell extension points, routes, migrations, settings, render hooks, and resources from service providers.
 
+## Layout Builder Areas
+
+Foundation Theme exposes the first non-main Layout Builder area: `header`. Editors still work with ordinary containers and elements in the Layout Builder, but containers assigned to the header area render in the site header instead of the main page-content loop.
+
+The service provider registers the area with `Capell\LayoutBuilder\Support\LayoutAreas\LayoutAreaRegistry`:
+
+```php
+use Capell\LayoutBuilder\Support\LayoutAreas\LayoutAreaRegistry;
+
+$this->app->afterResolving(
+    LayoutAreaRegistry::class,
+    function (LayoutAreaRegistry $registry): void {
+        $registry->register('header', __('capell-layout-builder::generic.header_area'));
+    },
+);
+```
+
+The header view renders the area explicitly:
+
+```blade
+<x-capell::layout.area area="header" />
+```
+
+Use this pattern for future theme chrome areas such as `footer`, `announcement`, or client-specific header slots. Do not hide containers in the main loop to fake theme placement; set `meta.area`, register the area, and render it from the theme view that owns the chrome.
+
 ## Install Impact
 
 - Adds default theme settings.
 - Adds Foundation-owned core layout builder defaults when the package setup command runs.
+- Adds the `header` Layout Builder area when Layout Builder is installed.
 - Adds Tailwind asset generation command.
 - Adds config keys for asset build tool, npm dependencies, Tailwind sources, and media URL behaviour.
 - No public routes are registered by this package.
