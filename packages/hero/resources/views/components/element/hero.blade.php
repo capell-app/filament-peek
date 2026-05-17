@@ -115,7 +115,7 @@ $theme = Frontend::theme();
                 @foreach ($element->assets as $elementAsset)
                     {{-- format-ignore-start --}}
                 @php
-                    /** @var \Capell\Core\Models\WidgetAsset $elementAsset */
+                    /** @var \Capell\LayoutBuilder\Models\ElementAsset $elementAsset */
                     $isFirstSlide = $loop->first;
                     $slide = HeroAssetSlideData::fromElementAsset($elementAsset, $element, $color);
                 @endphp
@@ -188,7 +188,7 @@ $theme = Frontend::theme();
                                 @endif
 
                                 @if ($slide->asset->getMeta('actions'))
-                                    <x-capell-layout-builder::actions
+                                    <x-capell::actions
                                         class="hero-actions mt-8 w-full"
                                         :actions="$slide->asset->getMeta('actions')"
                                         :color="$slide->color"
@@ -267,7 +267,7 @@ $theme = Frontend::theme();
                                     Frontend::setFrontendData('has_pagination_summary', true);
                                 @endphp
 
-                                <x-capell-layout-builder::pagination.hero-summary
+                                <x-capell::pagination.hero-summary
                                     :results="$paginationResults"
                                 />
                             @endif

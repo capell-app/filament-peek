@@ -45,7 +45,7 @@
 <div class="contents">
     @if ($pages->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
         <x-capell-foundation-theme::element.wrapper
-            class="element-pages"
+            class="element-pages widget-pages"
             container-class="space-y-4"
             :$container
             :$containerKey

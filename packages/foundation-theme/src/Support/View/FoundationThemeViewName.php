@@ -22,6 +22,17 @@ final class FoundationThemeViewName
      */
     private static function legacyViewPrefixes(): array
     {
-        return [];
+        return [
+            'capell-layout-builder::components.widget.' => 'capell-foundation-theme::components.element.',
+            'capell-layout-builder::components.element.' => 'capell-foundation-theme::components.element.',
+            'capell-layout-builder::components.layout.' => 'capell-foundation-theme::components.layout.',
+            'capell-layout-builder::components.actions.' => 'capell-foundation-theme::components.actions.',
+            'capell-layout-builder::layout.' => 'capell-foundation-theme::components.layout.',
+            'capell-layout-builder::widget.' => 'capell-foundation-theme::components.element.',
+            'components.widget.' => 'capell-foundation-theme::components.element.',
+            'components.element.' => 'capell-foundation-theme::components.element.',
+            'components.layout.' => 'capell-foundation-theme::components.layout.',
+            'components.actions.' => 'capell-foundation-theme::components.actions.',
+        ];
     }
 }

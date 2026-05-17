@@ -17,11 +17,11 @@ use Capell\Address\Models\Country;
 use Capell\Blog\Models\Article;
 use Capell\ContentSections\Models\Section;
 use Capell\Core\Providers\CapellServiceProvider;
-use Capell\FoundationTheme\View\Components\Widget\Page\Breadcrumbs;
-use Capell\FoundationTheme\View\Components\Widget\Page\Children;
-use Capell\FoundationTheme\View\Components\Widget\Page\Content;
-use Capell\FoundationTheme\View\Components\Widget\Page\Latest;
-use Capell\FoundationTheme\View\Components\Widget\Page\Siblings;
+use Capell\FoundationTheme\View\Components\Element\Page\Breadcrumbs;
+use Capell\FoundationTheme\View\Components\Element\Page\Children;
+use Capell\FoundationTheme\View\Components\Element\Page\Content;
+use Capell\FoundationTheme\View\Components\Element\Page\Latest;
+use Capell\FoundationTheme\View\Components\Element\Page\Siblings;
 use Capell\LayoutBuilder\Livewire\Filament\LayoutBuilder;
 use Capell\LayoutBuilder\Models\Element;
 use Capell\LayoutBuilder\Models\ElementAsset;
@@ -55,6 +55,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
+use Illuminate\View\Factory as ViewFactory;
 use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
 use Lorisleiva\Actions\ActionServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
@@ -110,20 +111,36 @@ abstract class AbstractTestCase extends TestCase
         $this->loadMigrationsFrom($this->orderedMigrationWorkspacePath());
 
         // Temp fix to ensure components are locatable when run in parallel
+        resolve(ViewFactory::class)->addNamespace('capell-foundation-theme', __DIR__ . '/../packages/foundation-theme/resources/views');
+        resolve(ViewFactory::class)->addNamespace('capell-layout-builder', __DIR__ . '/../packages/foundation-theme/resources/views');
+        resolve(ViewFactory::class)->addNamespace('capell', __DIR__ . '/../packages/foundation-theme/resources/views');
+
         Blade::componentNamespace('Capell\\Blog\\View\\Components', 'capell-blog');
+        Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-foundation-theme');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
+        Blade::component(Breadcrumbs::class, 'capell::element.page.breadcrumbs');
         Blade::component(Breadcrumbs::class, 'capell::widget.page.breadcrumbs');
-        Blade::component('capell-layout-builder::components.widget.page.breadcrumbs', 'capell-layout-builder-widget-page-breadcrumbs');
+        Blade::component('capell-foundation-theme::components.element.page.breadcrumbs', 'capell-layout-builder-widget-page-breadcrumbs');
+        Blade::component(Content::class, 'capell-element-page-content');
         Blade::component(Content::class, 'capell-layout-builder-widget-page-content');
-        Blade::component('capell-layout-builder::components.widget.slot', 'capell-layout-builder-widget-slot');
-        Blade::component('capell-layout-builder::components.widget.slot', 'capell::widget.slot');
+        Blade::component('capell-foundation-theme::components.element.slot', 'capell-layout-builder-widget-slot');
+        Blade::component('capell-foundation-theme::components.element.slot', 'capell::widget.slot');
+        Blade::component('capell-foundation-theme::components.element.wrapper', 'capell-layout-builder::widget.wrapper');
+        Blade::component(Children::class, 'capell::element.page.children');
         Blade::component(Children::class, 'capell::widget.page.children');
+        Blade::component(Content::class, 'capell::element.page.content');
         Blade::component(Content::class, 'capell::widget.page.content');
+        Blade::component(Latest::class, 'capell::element.page.latest');
         Blade::component(Latest::class, 'capell::widget.page.latest');
+        Blade::component(Siblings::class, 'capell::element.page.siblings');
         Blade::component(Siblings::class, 'capell::widget.page.siblings');
+        Blade::component(Children::class, 'capell-layout-builder::element.page.children');
         Blade::component(Children::class, 'capell-layout-builder::widget.page.children');
+        Blade::component(Content::class, 'capell-layout-builder::element.page.content');
         Blade::component(Content::class, 'capell-layout-builder::widget.page.content');
+        Blade::component(Latest::class, 'capell-layout-builder::element.page.latest');
         Blade::component(Latest::class, 'capell-layout-builder::widget.page.latest');
+        Blade::component(Siblings::class, 'capell-layout-builder::element.page.siblings');
         Blade::component(Siblings::class, 'capell-layout-builder::widget.page.siblings');
         resolve('livewire.factory')->resolveMissingComponent(
             static fn (string $name): ?string => $name === 'capell-layout-builder::filament.layout-builder'

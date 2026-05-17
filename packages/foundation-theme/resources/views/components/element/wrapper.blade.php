@@ -8,6 +8,7 @@
     use Illuminate\Support\Arr;
 
     $theme = Frontend::theme();
+    $element ??= $widget ?? null;
 @endphp
 
 @props([

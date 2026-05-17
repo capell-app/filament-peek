@@ -50,15 +50,14 @@ final class HeroServiceProvider extends AbstractPackageServiceProvider
     {
         resolve(ViewFactory::class)->addNamespace(
             'capell-hero',
-            __DIR__ . '/../../resources/views/layout-builder',
+            __DIR__ . '/../../resources/views',
         );
     }
 
     private function registerBladeComponents(): void
     {
-        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/layout-builder/components', 'capell-hero');
+        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell-hero');
         Blade::component(Hero::class, 'capell::element.hero');
-        Blade::component(Hero::class, 'capell-layout-builder::element.hero');
     }
 
     private function registerTailwindSources(): void

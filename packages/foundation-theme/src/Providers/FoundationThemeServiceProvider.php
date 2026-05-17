@@ -311,6 +311,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         Blade::component(PageContentComponent::class, 'capell-element-page-content');
         Blade::component(PageContentComponent::class, 'capell::element.page.content');
         Blade::component(SlotComponent::class, 'capell::element.slot');
+        Blade::component('capell-foundation-theme::components.element.wrapper', 'capell-layout-builder::widget.wrapper');
         Blade::component(PageChildrenComponent::class, 'capell::element.page.children');
         Blade::component(PageLatestComponent::class, 'capell::element.page.latest');
         Blade::component(PageSiblingsComponent::class, 'capell::element.page.siblings');
