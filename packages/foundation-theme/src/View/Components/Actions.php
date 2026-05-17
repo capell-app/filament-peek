@@ -52,7 +52,7 @@ final class Actions extends Component
             );
         }
 
-        return view('capell-layout-builder::components.actions.index');
+        return view('capell-foundation-theme::components.actions.index');
     }
 
     private function hasPublicAction(): bool

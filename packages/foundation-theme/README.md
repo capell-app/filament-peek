@@ -14,7 +14,7 @@ Capell default theme - ships the standard Tailwind asset pipeline, Blade directi
 ## What It Adds
 
 - Capell default theme - ships the standard Tailwind asset pipeline, Blade directives, URL generator, and SVG media component.
-- Livewire components: `AbstractAssets`, `AbstractWidget`, `PageAssets`, `Pages`.
+- Livewire components: `AbstractAssets`, `AbstractElement`, `PageAssets`, `Pages`.
 - Package setup or maintenance commands.
 
 ## Why It Matters
@@ -53,10 +53,10 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Config file: capell-foundation-theme.php.
 - Settings migration creates default theme settings.
 - Registers the `capell` Blade namespace and anonymous `capell::...` components.
-- Registers core layout builder frontend rendering views and widget components.
+- Registers core layout builder frontend rendering views and element components.
 - Runtime theme data layers parent defaults, child defaults, and database edits in that order.
 - GenerateTailwindAssetsCommand writes one frontend Tailwind directive file; runtime theme colours are emitted as CSS variables by the theme head tokens.
-- core layout builder JavaScript is registered as a conditional vendor build asset and only loads when the resolved frontend layout contains widgets.
+- core layout builder JavaScript is registered as a conditional vendor build asset and only loads when the resolved frontend layout contains elements.
 - BladeDirectives and CapellUrlGenerator support rendering.
 - The beacon client is generic. It must not ship authoring controls or authoring metadata in theme HTML; `capell-app/frontend-authoring` owns the admin-only response that decorates the page.
 
@@ -66,7 +66,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 | --------- | ----------------------------------------- | ----------------------------------------------------------------- |
 | Actions   | `packages/foundation-theme/src/Actions`   | Domain operations. Test these directly where possible.            |
 | Enums     | `packages/foundation-theme/src/Enums`     | Persisted states and Filament option values.                      |
-| Filament  | `packages/foundation-theme/src/Filament`  | Admin resources, pages, widgets, and settings UI.                 |
+| Filament  | `packages/foundation-theme/src/Filament`  | Admin resources, pages, elements, and settings UI.                |
 | Livewire  | `packages/foundation-theme/src/Livewire`  | Interactive frontend or admin components.                         |
 | Providers | `packages/foundation-theme/src/Providers` | Registration, extension hooks, routes, migrations, and resources. |
 | Resources | `packages/foundation-theme/resources`     | Views, translations, assets, and package resources.               |
@@ -80,7 +80,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 ## Runtime Surface
 
-- Livewire: `AbstractAssets`, `AbstractWidget`, `PageAssets`, `Pages`.
+- Livewire: `AbstractAssets`, `AbstractElement`, `PageAssets`, `Pages`.
 
 ## Commands
 

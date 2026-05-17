@@ -23,35 +23,35 @@ final class BuildAssetBannerItemsAction
     /**
      * @return Collection<int, AssetBannerItemData>
      */
-    public function handle(Element $widget): Collection
+    public function handle(Element $element): Collection
     {
-        $widgetAssets = $widget->relationLoaded('assets') ? $widget->getRelation('assets') : collect();
+        $elementAssets = $element->relationLoaded('assets') ? $element->getRelation('assets') : collect();
 
-        if (! $widgetAssets instanceof Collection) {
+        if (! $elementAssets instanceof Collection) {
             return collect();
         }
 
-        return $widgetAssets
-            ->filter(fn (mixed $widgetAsset): bool => $widgetAsset instanceof ElementAsset)
-            ->map(fn (ElementAsset $widgetAsset): AssetBannerItemData => $this->item($widget, $widgetAsset))
+        return $elementAssets
+            ->filter(fn (mixed $elementAsset): bool => $elementAsset instanceof ElementAsset)
+            ->map(fn (ElementAsset $elementAsset): AssetBannerItemData => $this->item($element, $elementAsset))
             ->values();
     }
 
-    private function item(Element $widget, ElementAsset $widgetAsset): AssetBannerItemData
+    private function item(Element $element, ElementAsset $elementAsset): AssetBannerItemData
     {
-        $asset = $widgetAsset->relationLoaded('asset') ? $widgetAsset->getRelation('asset') : null;
-        $linkedPage = $this->linkedPage($widgetAsset, $asset);
+        $asset = $elementAsset->relationLoaded('asset') ? $elementAsset->getRelation('asset') : null;
+        $linkedPage = $this->linkedPage($elementAsset, $asset);
         $translation = $asset instanceof Model && $asset->relationLoaded('translation')
             ? $asset->getRelation('translation')
             : null;
 
-        $assetDefinition = $this->assetDefinition($widgetAsset);
+        $assetDefinition = $this->assetDefinition($elementAsset);
         $hasTranslations = $asset instanceof Model
             && is_object($assetDefinition)
             && (bool) ($assetDefinition->hasTranslations ?? false);
 
         return new AssetBannerItemData(
-            image: $this->image($widget, $widgetAsset, $asset),
+            image: $this->image($element, $elementAsset, $asset),
             alt: (string) ($translation?->label ?? $translation?->title ?? ''),
             title: $hasTranslations ? $translation?->title : null,
             content: $hasTranslations ? $translation?->content : null,
@@ -60,14 +60,14 @@ final class BuildAssetBannerItemsAction
         );
     }
 
-    private function image(Element $widget, ElementAsset $widgetAsset, mixed $asset): mixed
+    private function image(Element $element, ElementAsset $elementAsset, mixed $asset): mixed
     {
-        return $this->firstLoadedMedia($widgetAsset, MediaCollectionEnum::Image->value)
+        return $this->firstLoadedMedia($elementAsset, MediaCollectionEnum::Image->value)
             ?? ($asset instanceof Model && $asset->relationLoaded('image') ? $asset->getRelation('image') : null)
-            ?? $this->firstLoadedMedia($widget, MediaCollectionEnum::BackgroundImage->value);
+            ?? $this->firstLoadedMedia($element, MediaCollectionEnum::BackgroundImage->value);
     }
 
-    private function linkedPage(ElementAsset $widgetAsset, mixed $asset): mixed
+    private function linkedPage(ElementAsset $elementAsset, mixed $asset): mixed
     {
         if ($asset instanceof Pageable) {
             return $asset;
@@ -77,7 +77,7 @@ final class BuildAssetBannerItemsAction
             return $asset->getRelation('linkedPage');
         }
 
-        return $widgetAsset->relationLoaded('linkedPage') ? $widgetAsset->getRelation('linkedPage') : null;
+        return $elementAsset->relationLoaded('linkedPage') ? $elementAsset->getRelation('linkedPage') : null;
     }
 
     private function pageUrl(mixed $linkedPage): ?string
@@ -121,14 +121,14 @@ final class BuildAssetBannerItemsAction
         return $match instanceof Media ? $match : null;
     }
 
-    private function assetDefinition(ElementAsset $widgetAsset): mixed
+    private function assetDefinition(ElementAsset $elementAsset): mixed
     {
-        if (! is_string($widgetAsset->asset_type) || $widgetAsset->asset_type === '') {
+        if (! is_string($elementAsset->asset_type) || $elementAsset->asset_type === '') {
             return null;
         }
 
         try {
-            return CapellCore::getAsset($widgetAsset->asset_type);
+            return CapellCore::getAsset($elementAsset->asset_type);
         } catch (Throwable) {
             return null;
         }

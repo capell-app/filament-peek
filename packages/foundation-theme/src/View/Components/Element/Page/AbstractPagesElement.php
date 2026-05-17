@@ -17,7 +17,7 @@ abstract class AbstractPagesElement extends AbstractElement
 
     public Collection $pages;
 
-    protected static string $defaultView = 'capell-layout-builder::components.element.asset.pages';
+    protected static string $defaultView = 'capell-foundation-theme::components.element.asset.pages';
 
     public function render(array $data = []): View|string|Closure
     {

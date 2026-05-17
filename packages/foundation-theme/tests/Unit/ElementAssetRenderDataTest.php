@@ -52,12 +52,12 @@ it('builds element asset render data from loaded relations only', function (): v
     $asset->setRelation('translation', $translation);
     $asset->setRelation('linkedPage', $linkedPage);
 
-    $widgetAsset = new ElementAsset(['asset_type' => Page::class]);
-    $widgetAsset->setRelation('asset', $asset);
+    $elementAsset = new ElementAsset(['asset_type' => Page::class]);
+    $elementAsset->setRelation('asset', $asset);
 
     DB::enableQueryLog();
 
-    $renderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+    $renderData = BuildElementAssetRenderDataAction::run($elementAsset);
 
     expect($renderData->image)->toBe($media)
         ->and($renderData->linkedPage)->toBe($linkedPage)
@@ -98,28 +98,28 @@ it('builds page content render data from loaded relations only', function (): vo
 });
 
 it('builds hero rail items from loaded explicit hero assets only', function (): void {
-    $widget = new Element;
-    $widgetAsset = heroRailElementAsset('widget-card', 'Widget card');
+    $element = new Element;
+    $elementAsset = heroRailElementAsset('element-card', 'Element card');
     $page = new Page;
     $pageHeroAsset = heroRailElementAsset('hero-card', 'Hero card');
     $pageGenericAsset = heroRailElementAsset('card', 'Generic card');
 
-    $widget->setRelation('assets', new Collection([$widgetAsset]));
+    $element->setRelation('assets', new Collection([$elementAsset]));
     $page->setRelation('assets', new Collection([$pageHeroAsset, $pageGenericAsset]));
 
     DB::enableQueryLog();
 
-    $pageItems = BuildHeroRailItemsRenderDataAction::run($widget, $page, 'page');
-    $mixedItems = BuildHeroRailItemsRenderDataAction::run($widget, $page, 'mixed');
-    $elementItems = BuildHeroRailItemsRenderDataAction::run($widget, $page, 'element');
+    $pageItems = BuildHeroRailItemsRenderDataAction::run($element, $page, 'page');
+    $mixedItems = BuildHeroRailItemsRenderDataAction::run($element, $page, 'mixed');
+    $elementItems = BuildHeroRailItemsRenderDataAction::run($element, $page, 'element');
 
     expect($pageItems)->toHaveCount(1)
         ->and($pageItems[0]->caption)->toBe('Hero card')
         ->and($mixedItems)->toHaveCount(2)
         ->and($mixedItems[0]->caption)->toBe('Hero card')
-        ->and($mixedItems[1]->caption)->toBe('Widget card')
+        ->and($mixedItems[1]->caption)->toBe('Element card')
         ->and($elementItems)->toHaveCount(1)
-        ->and($elementItems[0]->caption)->toBe('Widget card')
+        ->and($elementItems[0]->caption)->toBe('Element card')
         ->and(DB::getQueryLog())->toBe([]);
 
     DB::disableQueryLog();

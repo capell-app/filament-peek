@@ -15,13 +15,13 @@ final class BuildBannerImageRenderDataAction
 {
     use AsObject;
 
-    public function handle(Element $widget, mixed $content, mixed $title, bool $rounded, mixed $reverseOrder): BannerImageRenderData
+    public function handle(Element $element, mixed $content, mixed $title, bool $rounded, mixed $reverseOrder): BannerImageRenderData
     {
-        $backgroundImage = $this->firstLoadedElementMedia($widget, MediaCollectionEnum::BackgroundImage->value)
-            ?? $this->firstLoadedElementMedia($widget, MediaCollectionEnum::Image->value)
-            ?? $this->firstAssetMedia($widget);
+        $backgroundImage = $this->firstLoadedElementMedia($element, MediaCollectionEnum::BackgroundImage->value)
+            ?? $this->firstLoadedElementMedia($element, MediaCollectionEnum::Image->value)
+            ?? $this->firstAssetMedia($element);
 
-        $meta = is_array($widget->meta) ? $widget->meta : [];
+        $meta = is_array($element->meta) ? $element->meta : [];
         $actions = $meta['actions'] ?? null;
         $hasContent = filled($content) || filled($title) || filled($actions);
 
@@ -33,13 +33,13 @@ final class BuildBannerImageRenderDataAction
         );
     }
 
-    private function firstLoadedElementMedia(Element $widget, string $collectionName): ?Media
+    private function firstLoadedElementMedia(Element $element, string $collectionName): ?Media
     {
-        if (! $widget->relationLoaded('media')) {
+        if (! $element->relationLoaded('media')) {
             return null;
         }
 
-        $media = $widget->getRelation('media');
+        $media = $element->getRelation('media');
 
         if (! $media instanceof Collection) {
             return null;
@@ -52,13 +52,13 @@ final class BuildBannerImageRenderDataAction
         return $match instanceof Media ? $match : null;
     }
 
-    private function firstAssetMedia(Element $widget): mixed
+    private function firstAssetMedia(Element $element): mixed
     {
-        if (! $widget->relationLoaded('assets')) {
+        if (! $element->relationLoaded('assets')) {
             return null;
         }
 
-        $assets = $widget->getRelation('assets');
+        $assets = $element->getRelation('assets');
 
         if (! method_exists($assets, 'first')) {
             return null;

@@ -10,11 +10,11 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\FoundationTheme\Actions\BuildAssetBannerItemsAction;
 use Capell\FoundationTheme\Actions\BuildBannerImageRenderDataAction;
-use Capell\FoundationTheme\Actions\ResolveLoadedWidgetBackgroundImageAction;
-use Capell\FoundationTheme\Livewire\Widget\AbstractWidget as LivewireWidget;
-use Capell\FoundationTheme\View\Components\Widget\Page\AbstractPagesWidget;
-use Capell\FoundationTheme\View\Components\Widget\Page\Breadcrumbs as BreadcrumbsWidget;
-use Capell\FoundationTheme\View\Components\Widget\Page\Content as ContentWidget;
+use Capell\FoundationTheme\Actions\ResolveLoadedElementBackgroundImageAction;
+use Capell\FoundationTheme\Livewire\Element\AbstractElement as LivewireElement;
+use Capell\FoundationTheme\View\Components\Element\Page\AbstractPagesElement;
+use Capell\FoundationTheme\View\Components\Element\Page\Breadcrumbs as BreadcrumbsElement;
+use Capell\FoundationTheme\View\Components\Element\Page\Content as ContentElement;
 use Capell\Frontend\Data\FrontendContext;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\CapellFrontendContext;
@@ -27,10 +27,10 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Livewire\Blaze\Blaze;
 
-test('sidebar page widgets expose stable styling and current page hooks', function (): void {
-    $component = new class(container: [], containerKey: 'sidebar', widgetIndex: 0, loop: (object) ['index' => 0], widget: new Element(['key' => 'pages', 'name' => 'Pages', 'meta' => ['view_file' => 'capell::components.no-results']])) extends AbstractPagesWidget
+test('sidebar page elements expose stable styling and current page hooks', function (): void {
+    $component = new class(container: [], containerKey: 'sidebar', elementIndex: 0, loop: (object) ['index' => 0], element: new Element(['key' => 'pages', 'name' => 'Pages', 'meta' => ['view_file' => 'capell::components.no-results']])) extends AbstractPagesElement
     {
-        protected function mountWidget(): void
+        protected function mountElement(): void
         {
             $this->pages = new Collection([
                 ['title' => 'Current page', 'url' => '/current'],
@@ -50,20 +50,20 @@ test('banner image render data uses only preloaded element media', function (): 
     $media = MediaFactory::new()->make([
         'collection_name' => MediaCollectionEnum::BackgroundImage->value,
     ]);
-    $widget = new Element(['key' => 'banner', 'meta' => []]);
-    $widget->setRelation('media', new Collection([$media]));
+    $element = new Element(['key' => 'banner', 'meta' => []]);
+    $element->setRelation('media', new Collection([$media]));
 
-    $renderData = BuildBannerImageRenderDataAction::run($widget, null, null, false, false);
+    $renderData = BuildBannerImageRenderDataAction::run($element, null, null, false, false);
 
     expect($renderData->backgroundImage)->toBe($media);
 });
 
 test('banner image render data does not lazy-load element media', function (): void {
-    $widget = Element::factory()->create(['key' => 'banner', 'meta' => []]);
+    $element = Element::factory()->create(['key' => 'banner', 'meta' => []]);
 
     DB::enableQueryLog();
 
-    $renderData = BuildBannerImageRenderDataAction::run($widget, null, null, false, false);
+    $renderData = BuildBannerImageRenderDataAction::run($element, null, null, false, false);
 
     expect($renderData->backgroundImage)->toBeNull()
         ->and(DB::getQueryLog())->toBe([]);
@@ -71,12 +71,12 @@ test('banner image render data does not lazy-load element media', function (): v
     DB::disableQueryLog();
 });
 
-test('widget wrapper background image resolution does not lazy-load media', function (): void {
-    $widget = Element::factory()->create(['key' => 'section', 'meta' => []]);
+test('element wrapper background image resolution does not lazy-load media', function (): void {
+    $element = Element::factory()->create(['key' => 'section', 'meta' => []]);
 
     DB::enableQueryLog();
 
-    $backgroundImage = ResolveLoadedWidgetBackgroundImageAction::run($widget);
+    $backgroundImage = ResolveLoadedElementBackgroundImageAction::run($element);
 
     expect($backgroundImage)->toBeNull()
         ->and(DB::getQueryLog())->toBe([]);
@@ -85,7 +85,7 @@ test('widget wrapper background image resolution does not lazy-load media', func
 });
 
 test('banner image content stays in normal flow when no background image exists', function (): void {
-    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/widget/banner-image.blade.php');
+    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/banner-image.blade.php');
 
     expect($view)
         ->toContain("'absolute inset-0 flex items-end' => \$backgroundImage")
@@ -96,7 +96,7 @@ test('banner image content stays in normal flow when no background image exists'
 });
 
 test('asset banner slides use readable foregrounds without an image', function (): void {
-    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/widget/asset/banners.blade.php');
+    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/asset/banners.blade.php');
 
     expect($view)
         ->toContain("'bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-50' => ! \$hasImage")
@@ -111,15 +111,15 @@ test('asset banner render data uses only loaded relations', function (): void {
     $media = MediaFactory::new()->make([
         'collection_name' => MediaCollectionEnum::Image->value,
     ]);
-    $widgetAsset = ElementAsset::factory()->make([
+    $elementAsset = ElementAsset::factory()->make([
         'asset_type' => Element::class,
     ]);
-    $widgetAsset->setRelation('media', new Collection([$media]));
+    $elementAsset->setRelation('media', new Collection([$media]));
 
-    $widget = new Element(['key' => 'asset-banners', 'meta' => []]);
-    $widget->setRelation('assets', new Collection([$widgetAsset]));
+    $element = new Element(['key' => 'asset-banners', 'meta' => []]);
+    $element->setRelation('assets', new Collection([$elementAsset]));
 
-    $items = BuildAssetBannerItemsAction::run($widget);
+    $items = BuildAssetBannerItemsAction::run($element);
 
     expect($items)->toHaveCount(1)
         ->and($items->first()->image)->toBe($media);
@@ -133,15 +133,15 @@ test('asset banner render data uses linked page loaded on the asset model', func
     $asset = new Element(['key' => 'linked-asset']);
     $asset->setRelation('linkedPage', $linkedPage);
 
-    $widgetAsset = ElementAsset::factory()->make([
+    $elementAsset = ElementAsset::factory()->make([
         'asset_type' => Element::class,
     ]);
-    $widgetAsset->setRelation('asset', $asset);
+    $elementAsset->setRelation('asset', $asset);
 
-    $widget = new Element(['key' => 'asset-banners', 'meta' => []]);
-    $widget->setRelation('assets', new Collection([$widgetAsset]));
+    $element = new Element(['key' => 'asset-banners', 'meta' => []]);
+    $element->setRelation('assets', new Collection([$elementAsset]));
 
-    $items = BuildAssetBannerItemsAction::run($widget);
+    $items = BuildAssetBannerItemsAction::run($element);
 
     expect($items)->toHaveCount(1)
         ->and($items->first()->url)->toBe('/linked-page')
@@ -149,11 +149,11 @@ test('asset banner render data uses linked page loaded on the asset model', func
 });
 
 test('asset banner render data does not lazy-load relations', function (): void {
-    $widget = Element::factory()->create(['key' => 'asset-banners', 'meta' => []]);
+    $element = Element::factory()->create(['key' => 'asset-banners', 'meta' => []]);
 
     DB::enableQueryLog();
 
-    $items = BuildAssetBannerItemsAction::run($widget);
+    $items = BuildAssetBannerItemsAction::run($element);
 
     expect($items)->toHaveCount(0)
         ->and(DB::getQueryLog())->toBe([]);
@@ -161,30 +161,30 @@ test('asset banner render data does not lazy-load relations', function (): void 
     DB::disableQueryLog();
 });
 
-test('public livewire widgets expose only an opaque reference as public state', function (): void {
-    $reflection = new ReflectionClass(LivewireWidget::class);
+test('public livewire elements expose only an opaque reference as public state', function (): void {
+    $reflection = new ReflectionClass(LivewireElement::class);
     $publicProperties = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
         ->map(fn (ReflectionProperty $property): string => $property->getName())
         ->all();
 
     expect($publicProperties)
-        ->toContain('widgetReference')
+        ->toContain('elementReference')
         ->not->toContain('container')
-        ->not->toContain('widget')
-        ->not->toContain('widgetData')
+        ->not->toContain('element')
+        ->not->toContain('elementData')
         ->not->toContain('loop');
 });
 
-test('layout livewire widgets preserve extension widget data mount parameters', function (): void {
-    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/layout/widget.blade.php');
+test('layout livewire elements preserve extension element data mount parameters', function (): void {
+    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/layout/element.blade.php');
 
     expect($view)
-        ->toContain("'widgetReference' => \$widgetReference")
-        ->toContain("'widget_data' => \$widgetData")
-        ->not->toContain("'widgetData' => \$widgetData");
+        ->toContain("'elementReference' => \$elementReference")
+        ->toContain("'element_data' => \$elementData")
+        ->not->toContain("'elementData' => \$elementData");
 });
 
-test('public livewire widgets resolve the scoped layout element clone', function (): void {
+test('public livewire elements resolve the scoped layout element clone', function (): void {
     $language = Language::factory()->create();
     $site = Site::factory()->create(['language_id' => $language->getKey()]);
     $element = Element::factory()->create(['key' => 'featured-pages']);
@@ -224,14 +224,14 @@ test('public livewire widgets resolve the scoped layout element clone', function
         slug: null,
     )));
 
-    $component = new class extends LivewireWidget
+    $component = new class extends LivewireElement
     {
         /** @var list<int> */
         public array $assetIds = [];
 
-        protected function mountWidget(): void
+        protected function mountElement(): void
         {
-            $this->assetIds = $this->widget->assets
+            $this->assetIds = $this->element->assets
                 ->pluck('asset_id')
                 ->map(fn (mixed $assetId): int => (int) $assetId)
                 ->values()
@@ -248,7 +248,7 @@ test('public livewire widgets resolve the scoped layout element clone', function
         'page_id' => $page->getKey(),
         'page_type' => $page->getMorphClass(),
         'site_id' => $site->getKey(),
-        'widget_index' => 1,
+        'element_index' => 1,
     ], JSON_THROW_ON_ERROR)));
 
     expect($component->assetIds)->toBe([(int) $secondOccurrenceAsset->getKey()]);
@@ -256,8 +256,8 @@ test('public livewire widgets resolve the scoped layout element clone', function
     $renderData = $component->render()->getData();
 
     expect($renderData['container'])->toHaveKey('elements')
-        ->and($renderData['widgetData']['meta']['show_page_title'])->toBeTrue()
-        ->and($renderData['widgetData']['occurrence'])->toBe(2);
+        ->and($renderData['elementData']['meta']['show_page_title'])->toBeTrue()
+        ->and($renderData['elementData']['occurrence'])->toBe(2);
 
     app()->instance(CapellFrontendContext::class, new CapellFrontendContext(new FrontendContext(
         site: null,
@@ -270,9 +270,9 @@ test('public livewire widgets resolve the scoped layout element clone', function
     )));
     Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
-    $hydratedComponent = new class extends LivewireWidget
+    $hydratedComponent = new class extends LivewireElement
     {
-        protected function mountWidget(): void {}
+        protected function mountElement(): void {}
     };
 
     $hydratedComponent->mount(Crypt::encryptString(json_encode([
@@ -284,19 +284,19 @@ test('public livewire widgets resolve the scoped layout element clone', function
         'page_id' => $page->getKey(),
         'page_type' => $page->getMorphClass(),
         'site_id' => $site->getKey(),
-        'widget_data' => [
+        'element_data' => [
             'meta' => ['show_page_title' => true],
             'tracking_key' => 'kept-in-reference',
         ],
-        'widget_index' => 1,
+        'element_index' => 1,
     ], JSON_THROW_ON_ERROR)));
     $hydratedData = $hydratedComponent->render()->getData();
 
-    expect($hydratedData['widgetData']['tracking_key'])->toBe('kept-in-reference')
-        ->and($hydratedData['widgetData']['meta']['show_page_title'])->toBeTrue();
+    expect($hydratedData['elementData']['tracking_key'])->toBe('kept-in-reference')
+        ->and($hydratedData['elementData']['meta']['show_page_title'])->toBeTrue();
 });
 
-test('public livewire widgets reject references without scoped page and site ids', function (): void {
+test('public livewire elements reject references without scoped page and site ids', function (): void {
     $language = Language::factory()->create();
     $site = Site::factory()->create(['language_id' => $language->getKey()]);
     $element = Element::factory()->create(['key' => 'legacy-featured-pages']);
@@ -310,11 +310,11 @@ test('public livewire widgets reject references without scoped page and site ids
         ],
     ]);
 
-    $component = new class extends LivewireWidget
+    $component = new class extends LivewireElement
     {
-        protected function mountWidget(): void
+        protected function mountElement(): void
         {
-            $this->widget;
+            $this->element;
         }
     };
 
@@ -324,12 +324,12 @@ test('public livewire widgets reject references without scoped page and site ids
         'language_id' => $language->getKey(),
         'layout_id' => $layout->getKey(),
         'occurrence' => 1,
-        'widget_index' => 0,
+        'element_index' => 0,
     ], JSON_THROW_ON_ERROR))))
-        ->toThrow(Exception::class, 'Widget reference is invalid');
+        ->toThrow(Exception::class, 'Element reference is invalid');
 });
 
-test('public livewire widgets can hydrate widgets from global layouts', function (): void {
+test('public livewire elements can hydrate elements from global layouts', function (): void {
     $language = Language::factory()->create();
     $site = Site::factory()->create(['language_id' => $language->getKey()]);
     $element = Element::factory()->create(['key' => 'global-featured-pages']);
@@ -363,13 +363,13 @@ test('public livewire widgets can hydrate widgets from global layouts', function
     )));
     Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
-    $component = new class extends LivewireWidget
+    $component = new class extends LivewireElement
     {
         public string $resolvedKey = '';
 
-        protected function mountWidget(): void
+        protected function mountElement(): void
         {
-            $this->resolvedKey = $this->widget->key;
+            $this->resolvedKey = $this->element->key;
         }
     };
 
@@ -382,13 +382,13 @@ test('public livewire widgets can hydrate widgets from global layouts', function
         'page_id' => $page->getKey(),
         'page_type' => $page->getMorphClass(),
         'site_id' => $site->getKey(),
-        'widget_index' => 0,
+        'element_index' => 0,
     ], JSON_THROW_ON_ERROR)));
 
     expect($component->resolvedKey)->toBe('global-featured-pages');
 });
 
-test('public livewire widgets reject global layout references replayed under another site', function (): void {
+test('public livewire elements reject global layout references replayed under another site', function (): void {
     $language = Language::factory()->create();
     $referenceSite = Site::factory()->create(['language_id' => $language->getKey()]);
     $currentSite = Site::factory()->create(['language_id' => $language->getKey()]);
@@ -417,11 +417,11 @@ test('public livewire widgets reject global layout references replayed under ano
     )));
     Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
-    $component = new class extends LivewireWidget
+    $component = new class extends LivewireElement
     {
-        protected function mountWidget(): void
+        protected function mountElement(): void
         {
-            $this->widget;
+            $this->element;
         }
     };
 
@@ -434,17 +434,17 @@ test('public livewire widgets reject global layout references replayed under ano
         'page_id' => $referencePage->getKey(),
         'page_type' => $referencePage->getMorphClass(),
         'site_id' => $referenceSite->getKey(),
-        'widget_index' => 0,
+        'element_index' => 0,
     ], JSON_THROW_ON_ERROR))))
         ->toThrow(Exception::class, 'Element not found');
 });
 
-test('public livewire page content widgets render from encrypted context without ambient frontend state', function (): void {
+test('public livewire page content elements render from encrypted context without ambient frontend state', function (): void {
     $language = Language::factory()->create();
     $site = Site::factory()->create(['language_id' => $language->getKey()]);
     $element = Element::factory()->create([
         'key' => 'page-content',
-        'meta' => ['view_file' => 'capell-layout-builder::components.widget.page.content'],
+        'meta' => ['view_file' => 'capell-foundation-theme::components.element.page.content'],
     ]);
     $layout = Layout::factory()->site($site)->create([
         'containers' => [
@@ -471,11 +471,11 @@ test('public livewire page content widgets render from encrypted context without
     )));
     Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
-    $component = new class extends LivewireWidget
+    $component = new class extends LivewireElement
     {
-        protected static string $defaultView = 'capell-layout-builder::components.widget.page.content';
+        protected static string $defaultView = 'capell-foundation-theme::components.element.page.content';
 
-        protected function mountWidget(): void {}
+        protected function mountElement(): void {}
     };
 
     $component->mount(Crypt::encryptString(json_encode([
@@ -487,13 +487,13 @@ test('public livewire page content widgets render from encrypted context without
         'page_id' => $page->getKey(),
         'page_type' => $page->getMorphClass(),
         'site_id' => $site->getKey(),
-        'widget_data' => [
+        'element_data' => [
             'meta' => [
                 'page_content' => ['title', 'content'],
                 'show_page_title' => true,
             ],
         ],
-        'widget_index' => 0,
+        'element_index' => 0,
     ], JSON_THROW_ON_ERROR)));
 
     $view = $component->render();
@@ -512,10 +512,10 @@ test('public livewire page content widgets render from encrypted context without
 
     expect($renderedPage->translation->title)->toBe('Hydrated page title')
         ->and($renderedPage->translation->content)->toBe('<p>Hydrated page content</p>')
-        ->and($renderData['widgetData']['meta']['page_content'])->toBe(['title', 'content'])
+        ->and($renderData['elementData']['meta']['page_content'])->toBe(['title', 'content'])
         ->and($html)->toContain('Hydrated page title')
         ->and($html)->toContain('Hydrated page content')
-        ->and(file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/widget/page/content.blade.php'))
+        ->and(file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/page/content.blade.php'))
         ->not->toContain('Frontend::page()');
 });
 
@@ -523,7 +523,7 @@ test('breadcrumbs render data does not lazy-load optional page and site relation
     $language = Language::factory()->create();
     $site = Site::factory()->create(['language_id' => $language->getKey()]);
     $page = Page::factory()->site($site)->create();
-    $widget = new Element(['key' => 'breadcrumbs', 'name' => 'Breadcrumbs', 'meta' => ['view_file' => 'capell-layout-builder::components.widget.page.breadcrumbs']]);
+    $element = new Element(['key' => 'breadcrumbs', 'name' => 'Breadcrumbs', 'meta' => ['view_file' => 'capell-foundation-theme::components.element.page.breadcrumbs']]);
 
     app()->instance(CapellFrontendContext::class, new CapellFrontendContext(new FrontendContext(
         site: $site,
@@ -540,12 +540,12 @@ test('breadcrumbs render data does not lazy-load optional page and site relation
     EloquentModel::preventLazyLoading();
 
     try {
-        $component = new BreadcrumbsWidget(
+        $component = new BreadcrumbsElement(
             container: [],
             containerKey: 'main',
-            widgetIndex: 0,
+            elementIndex: 0,
             loop: (object) ['index' => 0],
-            widget: $widget,
+            element: $element,
         );
 
         expect($component->render())->toBeInstanceOf(View::class);
@@ -554,7 +554,7 @@ test('breadcrumbs render data does not lazy-load optional page and site relation
     }
 });
 
-test('content page widget ignores contextless hydration when resolving next previous links', function (): void {
+test('content page element ignores contextless hydration when resolving next previous links', function (): void {
     app()->instance(CapellFrontendContext::class, new CapellFrontendContext(new FrontendContext(
         site: null,
         language: null,
@@ -566,21 +566,21 @@ test('content page widget ignores contextless hydration when resolving next prev
     )));
     Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
-    $widget = new Element(['key' => 'content', 'name' => 'Content', 'meta' => ['view_file' => 'capell::components.no-results']]);
+    $element = new Element(['key' => 'content', 'name' => 'Content', 'meta' => ['view_file' => 'capell::components.no-results']]);
 
-    $component = new ContentWidget(
+    $component = new ContentElement(
         container: [],
         containerKey: 'main',
-        widgetIndex: 0,
+        elementIndex: 0,
         loop: (object) ['index' => 0],
-        widget: $widget,
+        element: $element,
     );
 
     expect($component->previousPage)->toBeNull()
         ->and($component->nextPage)->toBeNull();
 });
 
-test('public livewire widgets reject references from another frontend site', function (): void {
+test('public livewire elements reject references from another frontend site', function (): void {
     $language = Language::factory()->create();
     $currentSite = Site::factory()->create(['language_id' => $language->getKey()]);
     $otherSite = Site::factory()->create(['language_id' => $language->getKey()]);
@@ -606,11 +606,11 @@ test('public livewire widgets reject references from another frontend site', fun
         slug: null,
     )));
 
-    $component = new class extends LivewireWidget
+    $component = new class extends LivewireElement
     {
-        protected function mountWidget(): void
+        protected function mountElement(): void
         {
-            $this->widget;
+            $this->element;
         }
     };
 
@@ -623,7 +623,7 @@ test('public livewire widgets reject references from another frontend site', fun
         'page_id' => $page->getKey(),
         'page_type' => $page->getMorphClass(),
         'site_id' => $currentSite->getKey(),
-        'widget_index' => 0,
+        'element_index' => 0,
     ], JSON_THROW_ON_ERROR))))
         ->toThrow(Exception::class, 'Element not found');
 });

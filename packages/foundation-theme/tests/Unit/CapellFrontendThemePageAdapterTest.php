@@ -78,21 +78,21 @@ it('maps public asset presentation data for theme listings', function (): void {
     $asset->setRelation('type', $type);
     $asset->setRelation('pageUrl', $pageUrl);
 
-    $widgetAsset = new class extends Model
+    $elementAsset = new class extends Model
     {
         use HasFactory;
     };
-    $widgetAsset->setRawAttributes(['meta' => ['badge' => 'Featured']]);
-    $widgetAsset->setRelation('asset', $asset);
+    $elementAsset->setRawAttributes(['meta' => ['badge' => 'Featured']]);
+    $elementAsset->setRelation('asset', $asset);
 
-    $widget = new class extends Model
+    $element = new class extends Model
     {
         use HasFactory;
     };
-    $widget->setRelation('assets', new Collection([$widgetAsset]));
+    $element->setRelation('assets', new Collection([$elementAsset]));
 
     $method = new ReflectionMethod(CapellFrontendThemePageAdapter::class, 'assetItems');
-    $items = $method->invoke(new CapellFrontendThemePageAdapter, $widget, 'summary');
+    $items = $method->invoke(new CapellFrontendThemePageAdapter, $element, 'summary');
 
     expect($items)->toHaveCount(1)
         ->and($items[0]['title'])->toBe('Snowy Owl')

@@ -18,9 +18,9 @@ final class BuildElementAssetRenderDataAction
 {
     use AsObject;
 
-    public function handle(ElementAsset $widgetAsset): ElementAssetRenderData
+    public function handle(ElementAsset $elementAsset): ElementAssetRenderData
     {
-        $asset = $this->loadedRelation($widgetAsset, 'asset');
+        $asset = $this->loadedRelation($elementAsset, 'asset');
         $translation = $asset instanceof Model ? $this->loadedRelation($asset, 'translation') : null;
         $type = $asset instanceof Model ? $this->loadedRelation($asset, 'type') : null;
         $meta = is_array(data_get($asset, 'meta')) ? data_get($asset, 'meta') : [];
@@ -29,8 +29,8 @@ final class BuildElementAssetRenderDataAction
 
         return new ElementAssetRenderData(
             asset: $asset,
-            image: $this->image($widgetAsset, $asset),
-            linkedPage: $this->linkedPage($widgetAsset, $asset),
+            image: $this->image($elementAsset, $asset),
+            linkedPage: $this->linkedPage($elementAsset, $asset),
             translation: $translation,
             meta: $meta,
             alt: $this->stringValue($translation, 'label') ?? $this->stringValue($translation, 'title') ?? '',
@@ -44,7 +44,7 @@ final class BuildElementAssetRenderDataAction
             headingWeight: $this->metaString($asset, 'heading_weight') ?? 'medium',
             icon: $this->metaString($asset, 'icon'),
             linkText: $this->stringValue($translation, 'link_text'),
-            linkUrl: $this->linkedPageUrl($widgetAsset, $asset),
+            linkUrl: $this->linkedPageUrl($elementAsset, $asset),
             position: $this->metaString($asset, 'position'),
             role: $this->metaString($asset, 'role'),
             social: $this->metaArray($asset, 'social'),
@@ -55,14 +55,14 @@ final class BuildElementAssetRenderDataAction
         );
     }
 
-    private function image(ElementAsset $widgetAsset, mixed $asset): ?Media
+    private function image(ElementAsset $elementAsset, mixed $asset): ?Media
     {
-        return $this->firstLoadedMedia($widgetAsset)
+        return $this->firstLoadedMedia($elementAsset)
             ?? ($asset instanceof Model ? $this->firstLoadedMedia($asset) : null)
             ?? ($asset instanceof Model ? $this->loadedImage($asset) : null);
     }
 
-    private function linkedPage(ElementAsset $widgetAsset, mixed $asset): mixed
+    private function linkedPage(ElementAsset $elementAsset, mixed $asset): mixed
     {
         if ($asset instanceof Pageable) {
             return $asset;
@@ -72,12 +72,12 @@ final class BuildElementAssetRenderDataAction
             return $this->loadedRelation($asset, 'linkedPage');
         }
 
-        return $this->loadedRelation($widgetAsset, 'linkedPage');
+        return $this->loadedRelation($elementAsset, 'linkedPage');
     }
 
-    private function linkedPageUrl(ElementAsset $widgetAsset, mixed $asset): ?string
+    private function linkedPageUrl(ElementAsset $elementAsset, mixed $asset): ?string
     {
-        $linkedPage = $this->linkedPage($widgetAsset, $asset);
+        $linkedPage = $this->linkedPage($elementAsset, $asset);
 
         if (! $linkedPage instanceof Model) {
             return null;

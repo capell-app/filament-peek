@@ -19,17 +19,17 @@ final class BuildHeroRailItemsRenderDataAction
     /**
      * @return Collection<int, ElementAssetRenderData>
      */
-    public function handle(Element $widget, ?Pageable $page, string $source, int $limit = 4): Collection
+    public function handle(Element $element, ?Pageable $page, string $source, int $limit = 4): Collection
     {
-        $widgetAssets = $this->loadedAssets($widget);
+        $elementAssets = $this->loadedAssets($element);
         $pageAssets = in_array($source, ['page', 'mixed'], true)
             ? $this->loadedPageHeroAssets($page)
             : collect();
 
         $assets = match ($source) {
             'page' => $pageAssets,
-            'mixed' => $pageAssets->merge($widgetAssets),
-            default => $widgetAssets,
+            'mixed' => $pageAssets->merge($elementAssets),
+            default => $elementAssets,
         };
 
         return $assets

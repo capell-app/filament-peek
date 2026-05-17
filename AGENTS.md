@@ -21,6 +21,12 @@ Nearly all new Capell packages should be added to this packages repo under `pack
 - When touching frontend packages, theme packages, page cache, or beacon code, add or preserve tests proving anonymous and non-admin responses expose no authoring surface.
 - Public Blade views must not execute database queries or lazy-load relationships. Load public render data in controllers, Actions, Livewire components, view composers, Capell payload builders, or explicit view component classes, then pass hydrated data into views. Treat `::query()`, `DB::`, `loadMissing()`, relationship fallback access like `$model->media->first()`, and direct model lookups in public package views as performance bugs.
 
+## CMS Content Boundaries
+
+- Seeders, demo creators, importers, and package setup commands must not store designed page or widget markup in database content fields. Database content may contain portable HTML only: paragraphs, headings, lists, links, emphasis, and other simple semantic tags that can survive theme changes.
+- Presentation HTML, layout wrappers, utility classes, Tailwind classes, component-specific classes, and complex structures belong in Blade views, frontend components, renderable elements, or theme assets.
+- For Demo Kit specifically, `DemoCreator` should save minimal editable copy and use Capell Layout Builder elements with package Blade views such as `demo-page-content` or package-owned widget views for rendered public presentation.
+
 ## Architecture: Actions + Data
 
 **All domain logic in Actions** (`packages/{pkg}/src/Actions/`, suffix `VerbNounAction`):

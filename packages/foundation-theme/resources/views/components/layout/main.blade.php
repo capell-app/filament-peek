@@ -50,7 +50,7 @@
         @php
             $previousColspan = null;
             $slotRendered = false;
-            $pageContentWidgetRendered = false;
+            $pageContentElementRendered = false;
         @endphp
 
         @if ($layout->containers)
@@ -70,11 +70,11 @@
                         continue;
                     }
 
-                    $pageContentWidgetRendered = $pageContentWidgetRendered || collect($container['elements'] ?? [])
+                    $pageContentElementRendered = $pageContentElementRendered || collect($container['elements'] ?? [])
                         ->map(static fn (mixed $elementData): array => LayoutElementData::normalize($elementData))
                         ->contains(static fn (array $elementData): bool => LayoutElementData::key($elementData) === 'page-content');
 
-                    $hasSlotWidget = ! $slotRendered && $layoutModules->contains(
+                    $hasSlotElement = ! $slotRendered && $layoutModules->contains(
                         fn (\Capell\LayoutBuilder\Models\Element $layoutModule): bool => ElementIsSlotAction::run($layoutModule),
                     );
 
@@ -92,7 +92,7 @@
                         }
                     }
                 @endphp
-                <x-capell-layout-builder::layout.container
+                <x-capell::layout.container
                     :$container
                     :$containerKey
                     :$layout
@@ -100,12 +100,12 @@
                     :colspan="$colspan"
                     :column-start="$columnStart"
                     :htmlClass="$htmlClass"
-                    :pageSlot="$hasSlotWidget ? $pageSlot : null"
+                    :pageSlot="$hasSlotElement ? $pageSlot : null"
                     :previousColspan="$previousColspan"
                 />
 
                 @php
-                    if ($hasSlotWidget && $pageSlot) {
+                    if ($hasSlotElement && $pageSlot) {
                         $slotRendered = true;
                     }
                 @endphp
@@ -132,7 +132,7 @@
             @endphp
         @endif
 
-        @if (! $pageContentWidgetRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
+        @if (! $pageContentElementRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
             <nav
                 class="capell-neighbor-links-mobile px-6 pb-12"
                 aria-label="{{ __('capell-foundation-theme::generic.page_navigation') }}"

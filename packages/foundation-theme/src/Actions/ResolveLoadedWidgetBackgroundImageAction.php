@@ -10,17 +10,17 @@ use Capell\LayoutBuilder\Models\Element;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsObject;
 
-final class ResolveLoadedWidgetBackgroundImageAction
+final class ResolveLoadedElementBackgroundImageAction
 {
     use AsObject;
 
-    public function handle(Element $widget): ?Media
+    public function handle(Element $element): ?Media
     {
-        if (! $widget->relationLoaded('media')) {
+        if (! $element->relationLoaded('media')) {
             return null;
         }
 
-        $media = $widget->getRelation('media');
+        $media = $element->getRelation('media');
 
         if (! $media instanceof Collection) {
             return null;

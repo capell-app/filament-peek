@@ -45,7 +45,7 @@ it('bundles layout builder javascript into the foundation frontend runtime', fun
     $provider = file_get_contents(dirname(__DIR__, 2) . '/src/Providers/FoundationThemeServiceProvider.php');
     $entrypoint = file_get_contents(dirname(__DIR__, 2) . '/resources/js/capell-frontend.js');
 
-    expect($entrypoint)->toContain('./layout-builder/widget/carousel')
+    expect($entrypoint)->toContain('./elements/element/carousel')
         ->and($provider)->toContain("path: 'vendor/capell-foundation-theme'")
         ->and($provider)->toContain('foundation-theme-runtime')
         ->and($provider)->toContain('VendorAssetConditionRegistry')
@@ -116,13 +116,13 @@ it('delegates primary header navigation to the navigation render hook', function
         ->and($header)->not->toContain('Capell\\Navigation');
 });
 
-it('owns the product showcase styling for modern homepage widgets', function (): void {
+it('owns the product showcase styling for modern homepage elements', function (): void {
     $themeCss = file_get_contents(dirname(__DIR__, 2) . '/resources/css/theme/theme.css');
-    $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/hero-banner.blade.php');
-    $cardGrid = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/card-grid.blade.php');
-    $featureList = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/feature-list.blade.php');
-    $cta = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/cta-section.blade.php');
-    $gallery = file_get_contents(dirname(__DIR__, 2) . '/resources/views/layout-builder/components/modern/image-gallery.blade.php');
+    $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/hero-banner.blade.php');
+    $cardGrid = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/card-grid.blade.php');
+    $featureList = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/feature-list.blade.php');
+    $cta = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/cta-section.blade.php');
+    $gallery = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/image-gallery.blade.php');
 
     expect($themeCss)->toContain('.capell-showcase')
         ->and($themeCss)->toContain('.ap-hero__product')
@@ -134,6 +134,6 @@ it('owns the product showcase styling for modern homepage widgets', function ():
         ->and($hero)->toContain('hero_empty_title')
         ->and($cardGrid)->toContain('ap-card__link')
         ->and($featureList)->toContain('ap-feature-item__icon')
-        ->and($cta)->toContain('Homepage content is widget, media, and layout driven.')
+        ->and($cta)->toContain('Homepage content is element, media, and layout driven.')
         ->and($gallery)->toContain('ap-gallery-caption');
 });

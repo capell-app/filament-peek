@@ -21,7 +21,7 @@ use Capell\FoundationTheme\Enums\FoundationThemeAssetEnum;
 use Capell\FoundationTheme\Filament\Settings\FoundationThemeSettingsSchema;
 use Capell\FoundationTheme\Listeners\RunTailwindAssetsOnPackageChange;
 use Capell\FoundationTheme\Livewire\Assets\Table\PageAssets;
-use Capell\FoundationTheme\Livewire\Widget\Pages;
+use Capell\FoundationTheme\Livewire\Element\Pages;
 use Capell\FoundationTheme\Settings\FoundationThemeSettings;
 use Capell\FoundationTheme\Support\Assets\FoundationThemeAssetContributor;
 use Capell\FoundationTheme\Support\Blade\BladeDirectives;
@@ -29,15 +29,15 @@ use Capell\FoundationTheme\Support\Interceptors\Themes\FoundationThemeIntercepto
 use Capell\FoundationTheme\Support\Media\CapellUrlGenerator;
 use Capell\FoundationTheme\Support\Tailwind\TailwindAssetsGenerator;
 use Capell\FoundationTheme\View\Components\Actions as ActionsComponent;
+use Capell\FoundationTheme\View\Components\Element\Page\Breadcrumbs as PageBreadcrumbsComponent;
+use Capell\FoundationTheme\View\Components\Element\Page\Children as PageChildrenComponent;
+use Capell\FoundationTheme\View\Components\Element\Page\Content as PageContentComponent;
+use Capell\FoundationTheme\View\Components\Element\Page\Latest as PageLatestComponent;
+use Capell\FoundationTheme\View\Components\Element\Page\Siblings as PageSiblingsComponent;
+use Capell\FoundationTheme\View\Components\Element\Slot as SlotComponent;
 use Capell\FoundationTheme\View\Components\Footer\Index as FooterIndexComponent;
 use Capell\FoundationTheme\View\Components\Layout\Index as LayoutIndexComponent;
 use Capell\FoundationTheme\View\Components\Media\Svg;
-use Capell\FoundationTheme\View\Components\Widget\Page\Breadcrumbs as PageBreadcrumbsComponent;
-use Capell\FoundationTheme\View\Components\Widget\Page\Children as PageChildrenComponent;
-use Capell\FoundationTheme\View\Components\Widget\Page\Content as PageContentComponent;
-use Capell\FoundationTheme\View\Components\Widget\Page\Latest as PageLatestComponent;
-use Capell\FoundationTheme\View\Components\Widget\Page\Siblings as PageSiblingsComponent;
-use Capell\FoundationTheme\View\Components\Widget\Slot as SlotComponent;
 use Capell\Frontend\Contracts\AssetsRegistryInterface;
 use Capell\Frontend\Contracts\FrontendAssetContributor;
 use Capell\Frontend\Contracts\FrontendComponentRegistryInterface;
@@ -247,7 +247,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         );
 
         CapellCore::registerVendorAsset(
-            VendorAssetData::tailwindImport('resources/css/layout-builder/capell-layout-builder.css', self::$packageName),
+            VendorAssetData::tailwindImport('resources/css/elements/foundation-elements.css', self::$packageName),
         );
 
         CapellCore::registerVendorAsset(
@@ -292,51 +292,51 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
     private function registerLayoutBuilderRendering(): void
     {
         resolve(ViewFactory::class)->addNamespace(
-            'capell-layout-builder',
-            __DIR__ . '/../../resources/views/layout-builder',
+            'capell-foundation-theme',
+            __DIR__ . '/../../resources/views',
         );
 
         resolve(ViewFactory::class)->addNamespace(
             'capell',
-            __DIR__ . '/../../resources/views/layout-builder',
+            __DIR__ . '/../../resources/views',
         );
 
-        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/layout-builder/components', 'capell');
-        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/layout-builder/components', 'capell-layout-builder');
+        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell');
+        Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell-foundation-theme');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell');
-        Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
-        Blade::component(PageBreadcrumbsComponent::class, 'capell::widget.page.breadcrumbs');
+        Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-foundation-theme');
+        Blade::component(PageBreadcrumbsComponent::class, 'capell::element.page.breadcrumbs');
         Blade::component(ActionsComponent::class, 'capell::actions');
-        Blade::component(ActionsComponent::class, 'capell-layout-builder::actions');
-        Blade::component(PageContentComponent::class, 'capell-widget-page-content');
+        Blade::component(ActionsComponent::class, 'capell-foundation-theme::actions');
+        Blade::component(PageContentComponent::class, 'capell-element-page-content');
         Blade::component(PageContentComponent::class, 'capell::element.page.content');
-        Blade::component(SlotComponent::class, 'capell::widget.slot');
-        Blade::component(PageChildrenComponent::class, 'capell::widget.page.children');
-        Blade::component(PageContentComponent::class, 'capell::widget.page.content');
-        Blade::component(PageLatestComponent::class, 'capell::widget.page.latest');
-        Blade::component(PageSiblingsComponent::class, 'capell::widget.page.siblings');
+        Blade::component(SlotComponent::class, 'capell::element.slot');
+        Blade::component(PageChildrenComponent::class, 'capell::element.page.children');
+        Blade::component(PageLatestComponent::class, 'capell::element.page.latest');
+        Blade::component(PageSiblingsComponent::class, 'capell::element.page.siblings');
 
         $registerLivewireComponents = function (): void {
             Livewire::addNamespace(
                 namespace: 'capell',
                 classNamespace: 'Capell\\FoundationTheme\\Livewire',
-                viewPath: __DIR__ . '/../../resources/views/layout-builder/livewire',
+                viewPath: __DIR__ . '/../../resources/views/livewire',
                 classPath: __DIR__ . '/../Livewire',
-                classViewPath: __DIR__ . '/../../resources/views/layout-builder/livewire',
+                classViewPath: __DIR__ . '/../../resources/views/livewire',
             );
 
             Livewire::addNamespace(
-                namespace: 'capell-layout-builder',
+                namespace: 'capell-foundation-theme',
                 classNamespace: 'Capell\\FoundationTheme\\Livewire',
-                viewPath: __DIR__ . '/../../resources/views/layout-builder/livewire',
+                viewPath: __DIR__ . '/../../resources/views/livewire',
                 classPath: __DIR__ . '/../Livewire',
-                classViewPath: __DIR__ . '/../../resources/views/layout-builder/livewire',
+                classViewPath: __DIR__ . '/../../resources/views/livewire',
             );
 
             resolve('livewire.factory')->resolveMissingComponent(
                 static fn (string $name): ?string => match ($name) {
-                    'capell::widget.pages' => Pages::class,
-                    'capell-layout-builder::assets.table.page-assets' => PageAssets::class,
+                    'capell::element.pages' => Pages::class,
+                    'capell-foundation-theme::element.pages' => Pages::class,
+                    'capell-foundation-theme::assets.table.page-assets' => PageAssets::class,
                     default => null,
                 },
             );
