@@ -18,9 +18,9 @@
     :index="$loop->index"
     :$element
 >
-    <section class="px-6 py-12 md:px-12 md:py-16">
+    <section class="px-6 py-11 md:px-12 md:py-14">
         @if ($element->translation)
-            <div class="mx-auto mb-12 max-w-2xl text-center">
+            <div class="mx-auto mb-8 max-w-2xl text-center md:mb-10">
                 @if ($element->translation->title)
                     <h2 class="text-3xl font-bold text-gray-900 md:text-4xl">
                         {{ $element->translation->title }}
@@ -35,7 +35,7 @@
             </div>
         @endif
 
-        <div class="mx-auto max-w-5xl space-y-16">
+        <div class="mx-auto max-w-5xl space-y-8 md:space-y-10">
             @forelse ($element->assets as $elementAsset)
                 @php
                     $assetRenderData = BuildElementAssetRenderDataAction::run($elementAsset);
@@ -44,10 +44,12 @@
                     $media = $assetRenderData->image;
                 @endphp
 
-                <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+                <div
+                    class="grid grid-cols-1 items-center gap-5 md:grid-cols-2 md:gap-8"
+                >
                     <div
                         @class([
-                            'flex min-h-64 items-center justify-center rounded-2xl bg-gray-50 p-8',
+                            'flex min-h-40 items-center justify-center rounded-2xl bg-gray-50 p-6 md:min-h-48 md:p-8',
                             'md:order-last' => $isRight,
                         ])
                     >

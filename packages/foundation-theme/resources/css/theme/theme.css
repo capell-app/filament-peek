@@ -461,7 +461,7 @@
 
     .capell-showcase__inner {
         margin-inline: auto;
-        max-width: 72rem;
+        max-width: 82rem;
         padding-inline: clamp(1.25rem, 4vw, 3rem);
     }
 
@@ -507,7 +507,7 @@
             var(--capell-showcase-ink);
         min-height: var(
             --ap-hero-min-height,
-            min(760px, calc(100vh - var(--header-height) + 120px))
+            min(650px, calc(100vh - var(--header-height, 0px)))
         );
         position: relative;
     }
@@ -551,23 +551,23 @@
     .ap-hero__inner {
         align-items: center;
         display: grid;
-        gap: clamp(2rem, 5vw, 4.5rem);
+        gap: clamp(1.5rem, 4vw, 3.25rem);
         grid-template-columns: minmax(0, 1fr);
         min-height: inherit;
-        padding-block: clamp(4.5rem, 10vw, 8rem);
+        padding-block: clamp(3rem, 7vw, 5.5rem);
         position: relative;
         z-index: 1;
     }
 
     .ap-hero__content {
         display: grid;
-        gap: 1.5rem;
+        gap: 1.1rem;
         max-width: 42rem;
     }
 
     .ap-hero__title {
         color: white;
-        font-size: clamp(3rem, 8vw, 6.25rem);
+        font-size: clamp(3.25rem, 6.6vw, 5.8rem);
         line-height: 0.9;
     }
 
@@ -670,8 +670,8 @@
 
     .ap-hero__panel-body {
         display: grid;
-        gap: 0.85rem;
-        padding: 1rem;
+        gap: 0.65rem;
+        padding: 0.85rem;
     }
 
     .ap-hero__rail {
@@ -681,7 +681,7 @@
         display: grid;
         gap: 0.65rem;
         grid-template-columns: auto minmax(0, 1fr) auto;
-        padding: 0.8rem;
+        padding: 0.65rem;
     }
 
     .ap-hero__rail-icon {
@@ -732,6 +732,14 @@
     .ap-showcase-gallery,
     .ap-showcase-cta {
         padding-block: clamp(4rem, 8vw, 7rem);
+    }
+
+    .ap-showcase-gallery {
+        padding-block: clamp(3.25rem, 6vw, 5.25rem);
+    }
+
+    .ap-showcase-gallery .capell-showcase__section-head {
+        margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
     }
 
     .ap-showcase-card-grid,
@@ -901,6 +909,11 @@
         padding: 0.8rem 0.9rem;
     }
 
+    .ap-gallery-placeholder {
+        min-height: 8.75rem;
+        padding: 1rem;
+    }
+
     .ap-showcase-cta {
         background:
             linear-gradient(135deg, rgb(15 23 42) 0%, rgb(30 41 59) 100%),
@@ -973,6 +986,10 @@
 
         .ap-hero__product {
             display: none;
+        }
+
+        .ap-hero {
+            min-height: auto;
         }
     }
 

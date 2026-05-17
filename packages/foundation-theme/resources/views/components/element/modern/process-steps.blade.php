@@ -15,9 +15,9 @@
     :index="$loop->index"
     :$element
 >
-    <section class="px-6 py-12 md:px-12 md:py-16">
+    <section class="px-6 py-11 md:px-12 md:py-14">
         @if ($element->translation)
-            <div class="mx-auto mb-12 max-w-2xl text-center">
+            <div class="mx-auto mb-8 max-w-2xl text-center md:mb-10">
                 @if ($element->translation->title)
                     <h2
                         class="mb-3 text-3xl font-bold tracking-tight text-gray-900 md:text-4xl"
@@ -40,7 +40,7 @@
                     class="absolute left-0 right-0 top-12 hidden h-px bg-stone-200 md:block"
                 ></div>
 
-                <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-4 md:gap-6">
                     @forelse ($element->assets as $elementAsset)
                         @php
                             $icon = (string) $elementAsset->asset->getMeta('icon', $loop->index + 1);

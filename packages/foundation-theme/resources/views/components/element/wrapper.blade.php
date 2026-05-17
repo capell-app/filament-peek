@@ -32,6 +32,10 @@
 ])
 @php
     $isDefaultColor = in_array($backgroundColor, DefaultColorEnum::cases(), true);
+
+    if ($element->getMeta('container') !== null || ! $containerWidth instanceof ContainerWidthEnum) {
+        $containerWidth = GetElementContainerWidthAction::run($element);
+    }
 @endphp
 
 @aware([
