@@ -117,9 +117,9 @@
     id="header"
     @if ($usesAlpine)
         :class="{
-                                                                                                                                                                                                                                                                                                                                                                    'h-screen': isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                                                                                                                                    '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                                                                                                                                }"
+                                                                                                                                                                                                                                                                                                                                                                            'h-screen': isNavigationOverlayOpen,
+                                                                                                                                                                                                                                                                                                                                                                            '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
+                                                                                                                                                                                                                                                                                                                                                                        }"
     @endif
 >
     <div
