@@ -63,8 +63,8 @@
 
                     $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
                     $image = $assetRenderData->image;
-                    $linkedPage = $assetRenderData->linkedPage;
-                    $actions = $widgetAsset->asset->getMeta('actions', []);
+                    $linkedPageUrl = $assetRenderData->linkUrl;
+                    $actions = $assetRenderData->actions;
                 @endphp
                 {{-- format-ignore-end --}}
                     <section
@@ -86,7 +86,7 @@
                                 ])
                             </div>
                             <div class="font-medium">
-                                {{ $widgetAsset->asset->translation?->title }}
+                                {{ $assetRenderData->title }}
                             </div>
                         </button>
 
@@ -100,18 +100,18 @@
                         >
                             <div class="ml-4 px-1 pr-4 pt-1">
                                 <div class="flex gap-6">
-                                    @if ($widgetAsset->asset->translation)
+                                    @if ($assetRenderData->content)
                                         <x-capell::content
                                             :compact="true"
-                                            :content="$widgetAsset->asset->translation->content"
-                                            :content-type="$widgetAsset->asset->type->content_structure"
+                                            :content="$assetRenderData->content"
+                                            :content-type="$assetRenderData->contentStructure"
                                         />
                                     @endif
 
                                     @if ($image)
-                                        @if ($linkedPage)
+                                        @if ($linkedPageUrl)
                                             <a
-                                                href="{{ $linkedPage->pageUrl->full_url }}"
+                                                href="{{ $linkedPageUrl }}"
                                                 @wireNavigate
                                                 class="shrink-0"
                                             >
@@ -119,7 +119,7 @@
                                                     :media="$image"
                                                     :width="120"
                                                     :height="120"
-                                                    :alt="$widgetAsset->asset->translation->title"
+                                                    :alt="$assetRenderData->title"
                                                     fit="crop"
                                                     class="h-10 w-10 rounded-full object-cover object-center"
                                                     loading="lazy"
@@ -130,7 +130,7 @@
                                                 :media="$image"
                                                 :width="120"
                                                 :height="120"
-                                                :alt="$widgetAsset->asset->translation->title"
+                                                :alt="$assetRenderData->title"
                                                 fit="crop"
                                                 class="h-10 w-10 rounded-full object-cover object-center"
                                                 loading="lazy"
@@ -139,18 +139,18 @@
                                     @endif
                                 </div>
 
-                                @if ($actions || $linkedPage)
+                                @if ($actions || $linkedPageUrl)
                                     <x-capell-layout-builder::actions
                                         :$actions
                                         class="mt-4"
                                     >
-                                        @if ($linkedPage)
+                                        @if ($linkedPageUrl)
                                             <x-capell::button
-                                                :url="$linkedPage->pageUrl->full_url"
+                                                :url="$linkedPageUrl"
                                                 color="default"
                                                 icon="heroicon-o-chevron-right"
                                             >
-                                                {{ $widgetAsset->asset->translation?->link_text }}
+                                                {{ $assetRenderData->linkText }}
                                             </x-capell::button>
                                         @endif
                                     </x-capell-layout-builder::actions>

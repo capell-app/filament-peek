@@ -9,32 +9,45 @@ it('keeps layout builder livewire internals behind declared adapters', function 
     $packagesPath = $rootPath . '/packages';
     $allowedFiles = [
         'packages/foundation-theme/src/Livewire/Assets/Table/AbstractAssets.php',
+        'packages/foundation-theme/resources/views/layout-builder/components/filament/layout-builder/widget.blade.php',
     ];
     $allowedLookup = array_fill_keys($allowedFiles, true);
     $violations = [];
 
-    $files = (new Finder)
+    $sourceFiles = (new Finder)
         ->files()
         ->in($packagesPath)
         ->exclude('layout-builder')
         ->path('/src/')
         ->name('*.php');
+    $viewFiles = (new Finder)
+        ->files()
+        ->in($packagesPath)
+        ->exclude('layout-builder')
+        ->path('/resources\/views/')
+        ->name('*.blade.php');
 
-    foreach ($files as $file) {
-        $relativePath = str_replace($rootPath . '/', '', $file->getPathname());
+    foreach ([$sourceFiles, $viewFiles] as $files) {
+        foreach ($files as $file) {
+            $relativePath = str_replace($rootPath . '/', '', $file->getPathname());
 
-        if (isset($allowedLookup[$relativePath])) {
-            continue;
+            if (isset($allowedLookup[$relativePath])) {
+                continue;
+            }
+
+            if (str_contains($file->getContents(), 'Capell\\LayoutBuilder\\Livewire\\Filament\\')) {
+                $violations[] = $relativePath;
+            }
         }
+    }
 
-        if (str_contains($file->getContents(), 'Capell\\LayoutBuilder\\Livewire\\Filament\\')) {
-            $violations[] = $relativePath;
-        }
+    foreach ($allowedFiles as $allowedFile) {
+        expect(file_exists($rootPath . '/' . $allowedFile))->toBeTrue();
     }
 
     expect($violations)->toBe(
         [],
-        'Package source must not depend on LayoutBuilder Livewire internals:' . PHP_EOL .
+        'Package source and Blade views must not depend on LayoutBuilder Livewire internals:' . PHP_EOL .
         json_encode($violations, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
     );
 });

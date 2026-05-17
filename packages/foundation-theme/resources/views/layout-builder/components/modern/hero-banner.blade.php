@@ -13,6 +13,8 @@
 ])
 
 @php
+    use Capell\FoundationTheme\Actions\BuildHeroRailItemsRenderDataAction;
+    use Capell\FoundationTheme\Actions\MarkPrimaryHeadingRenderedAction;
     use Capell\Frontend\Facades\Frontend;
 
     $page = Frontend::page();
@@ -24,18 +26,24 @@
     $heroAssetSource = (string) data_get($pageMeta, 'hero_asset_source', 'element');
     $backgroundImage = $widget->backgroundImage ?? $widget->image;
     $backgroundImageUrl = $backgroundImage?->getAvailableFullUrl(['large']);
-    $pageHeroAssets = collect($page?->assets ?? [])
-        ->filter(function (mixed $attachment): bool {
-            $role = (string) ($attachment->asset?->getMeta('role', '') ?? '');
+    $heroStyleRules = [];
 
-            return $role === '' || str_starts_with($role, 'hero');
-        });
-    $heroItems = match ($heroAssetSource) {
-        'page' => $pageHeroAssets,
-        'mixed' => $pageHeroAssets->merge($widget->assets),
-        default => $widget->assets,
-    };
-    $heroItems = $heroItems->take(4);
+    if ($backgroundImageUrl) {
+        $heroStyleRules[] = "background-image: url('{$backgroundImageUrl}');";
+        $heroStyleRules[] = 'background-size: cover;';
+        $heroStyleRules[] = 'background-position: center;';
+    }
+
+    if ($heroHeight) {
+        $heroStyleRules[] = "--ap-hero-min-height: {$heroHeight};";
+    }
+
+    $heroStyleAttribute = implode(' ', $heroStyleRules);
+    $heroItems = BuildHeroRailItemsRenderDataAction::run($widget, $page, $heroAssetSource);
+
+    if ($title) {
+        MarkPrimaryHeadingRenderedAction::run();
+    }
 @endphp
 
 <x-capell-layout-builder::widget.wrapper
@@ -49,19 +57,8 @@
     <section
         class="ap-hero capell-showcase relative overflow-hidden"
         data-hero-style="{{ $heroStyle }}"
-        @if ($backgroundImageUrl)
-            style="background-image: url('{{ $backgroundImageUrl }}'); background-size: cover; background-position: center; @if ($heroHeight)
-         --ap-hero-min-height: {{ $heroHeight }}; @endif
-
-
-
-
-
-
-
-                                                                "
-        @elseif ($heroHeight)
-            style="--ap-hero-min-height: {{ $heroHeight }};"
+        @if ($heroStyleAttribute !== '')
+            style="{{ $heroStyleAttribute }}"
         @endif
     >
         <div class="ap-hero__overlay"></div>
@@ -111,7 +108,7 @@
                 <div class="ap-hero__panel">
                     <div class="ap-hero__panel-header">
                         <span class="ap-hero__panel-title">
-                            Capell layout composition
+                            {{ __('capell-foundation-theme::generic.hero_panel_title') }}
                         </span>
                         <span class="ap-hero__panel-dots">
                             <span></span>
@@ -123,10 +120,9 @@
                     <div class="ap-hero__panel-body">
                         @forelse ($heroItems as $heroItem)
                             @php
-                                $asset = $heroItem->asset;
-                                $icon = $asset->getMeta('icon', 'heroicon-o-squares-2x2');
-                                $status = $asset->getMeta('status', 'Ready');
-                                $caption = $asset->getMeta('caption', $asset->translation?->title);
+                                $icon = $heroItem->icon ?? 'heroicon-o-squares-2x2';
+                                $status = $heroItem->status ?? __('capell-foundation-theme::generic.hero_item_status_ready');
+                                $caption = $heroItem->caption ?? $heroItem->title;
                                 $isBlue = $loop->even;
                             @endphp
 
@@ -143,7 +139,7 @@
                                         {{ $caption }}
                                     </span>
                                     <span class="ap-hero__rail-copy">
-                                        {{ strip_tags((string) $asset->translation?->content) }}
+                                        {{ strip_tags((string) $heroItem->content) }}
                                     </span>
                                 </span>
                                 <span
@@ -163,34 +159,19 @@
                                 </span>
                                 <span>
                                     <span class="ap-hero__rail-title">
-                                        Content model
+                                        {{ __('capell-foundation-theme::generic.hero_empty_title') }}
                                     </span>
                                     <span class="ap-hero__rail-copy">
-                                        Pages, sections, widgets, media
+                                        {{ __('capell-foundation-theme::generic.hero_empty_copy') }}
                                     </span>
                                 </span>
                                 <span
                                     class="ap-hero__rail-status ap-hero__rail-status--blue"
                                 >
-                                    Typed
+                                    {{ __('capell-foundation-theme::generic.hero_empty_status') }}
                                 </span>
                             </div>
                         @endforelse
-
-                        @if ($heroItems->isNotEmpty())
-                            <div class="ap-hero__slideshow-controls">
-                                <span>01</span>
-                                <span class="ap-hero__slideshow-progress">
-                                    <span></span>
-                                </span>
-                                <span>
-                                    {{ str_pad((string) $heroItems->count(), 2, '0', STR_PAD_LEFT) }}
-                                </span>
-                                <span class="ap-hero__slideshow-play">
-                                    @svg('heroicon-o-play', 'h-4 w-4')
-                                </span>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>

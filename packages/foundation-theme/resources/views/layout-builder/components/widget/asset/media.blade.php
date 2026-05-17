@@ -98,7 +98,7 @@
                             />
                         @endif
 
-                        @if ($widgetAsset->asset->translation?->title)
+                        @if ($assetRenderData->title)
                             <div
                                 @class([
                                     'pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center
@@ -111,7 +111,7 @@
                                     'rounded-b' => (bool) $theme->getMeta('rounded_images'),
                                 ])
                             >
-                                {{ $widgetAsset->asset->translation->title }}
+                                {{ $assetRenderData->title }}
                             </div>
                         @endif
                     </div>

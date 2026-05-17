@@ -173,11 +173,11 @@
                             lightbox="true"
                             rounded="true"
                         />
-                        @if ($widgetAsset->asset->translation?->title)
+                        @if ($assetRenderData->title)
                             <div
                                 class="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-full transform items-center justify-center break-words bg-gray-600/75 px-2 py-4 text-sm font-medium leading-none leading-tight text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus:translate-y-0 group-focus:opacity-100"
                             >
-                                {{ $widgetAsset->asset->translation->title }}
+                                {{ $assetRenderData->title }}
                             </div>
                         @endif
                     </div>

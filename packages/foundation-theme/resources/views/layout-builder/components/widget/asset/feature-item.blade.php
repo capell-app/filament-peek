@@ -9,8 +9,10 @@
     use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
 
     $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
-    $linkedPage = $assetRenderData->linkedPage;
+    $linkedPageUrl = $assetRenderData->linkUrl;
     $image = $assetRenderData->image;
+    $icon = $assetRenderData->icon;
+    $textAlign = $assetRenderData->textAlign ?? ('text-left' . ((int) $column === 1 && $widget->image ? ' lg:text-right' : ''));
 @endphp
 
 <div
@@ -19,29 +21,29 @@
         'lg:flex-row-reverse lg:text-right' => (int) $column === 1 && $widget->image,
     ])
 >
-    @if ($widgetAsset->asset->getMeta('icon', false))
+    @if ($icon)
         <div
             class="bg-gray flex h-14 w-14 shrink-0 items-center justify-center rounded-full p-3 dark:bg-gray-600"
         >
-            @if ($linkedPage)
-                <a href="{{ $linkedPage->pageUrl->full_url }}">
+            @if ($linkedPageUrl)
+                <a href="{{ $linkedPageUrl }}">
                     <x-capell::icon
-                        :icon="$widgetAsset->asset->getMeta('icon')"
+                        :icon="$icon"
                         class="h-10 w-10 text-white"
                         loading="lazy"
                     />
                 </a>
             @else
                 <x-capell::icon
-                    :icon="$widgetAsset->asset->getMeta('icon')"
+                    :icon="$icon"
                     class="h-10 w-10 text-white"
                     loading="lazy"
                 />
             @endif
         </div>
     @elseif ($image)
-        @if ($linkedPage)
-            <a href="{{ $linkedPage->pageUrl->full_url }}">
+        @if ($linkedPageUrl)
+            <a href="{{ $linkedPageUrl }}">
                 <x-capell::media
                     :media="$image"
                     :width="120"
@@ -65,16 +67,16 @@
         @endif
     @endif
 
-    @if ($widgetAsset->asset->translation)
+    @if ($assetRenderData->content || $assetRenderData->title)
         <x-capell::content
             :compact="true"
-            :content="$widgetAsset->asset->translation->content"
-            :content-type="$widgetAsset->asset->type->content_structure"
+            :content="$assetRenderData->content"
+            :content-type="$assetRenderData->contentStructure"
             :color="$color"
-            :title="$widgetAsset->asset->translation->title"
-            :heading-tag="$widgetAsset->asset->getMeta('heading_size', 'h3')"
-            :heading-weight="$widgetAsset->asset->getMeta('heading_weight', 'medium')"
-            :text-align="$widgetAsset->asset->getMeta('align') ?? $widgetAsset->asset->type->getMeta('align') ?? ('text-left' . ((int) $column === 1 && $widget->image ? ' lg:text-right' : ''))"
+            :title="$assetRenderData->title"
+            :heading-tag="$assetRenderData->headingSize"
+            :heading-weight="$assetRenderData->headingWeight"
+            :text-align="$textAlign"
             size="sm"
             class="prose-h3:mb-1 lg:prose-base lg:leading-snug"
         />

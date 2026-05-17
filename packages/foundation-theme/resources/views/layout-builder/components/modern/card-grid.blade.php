@@ -7,6 +7,10 @@
     'widget',
 ])
 
+@php
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
+@endphp
+
 <x-capell-layout-builder::widget.wrapper
     class="widget-ap-card-grid"
     :$container
@@ -44,11 +48,11 @@
                 @if ($widget->assets->isNotEmpty())
                     @foreach ($widget->assets as $widgetAsset)
                         @php
-                            $asset = $widgetAsset->asset;
-                            $icon = (string) $asset->getMeta('icon', '');
-                            $accent = $asset->getMeta('accent', 'teal');
-                            $role = $asset->getMeta('role', 'card');
-                            $caption = $asset->getMeta('caption');
+                            $assetRenderData = BuildElementAssetRenderDataAction::run($widgetAsset);
+                            $icon = $assetRenderData->icon ?? '';
+                            $accent = $assetRenderData->accent ?? 'teal';
+                            $role = $assetRenderData->role ?? 'card';
+                            $cardTitle = $assetRenderData->caption ?? $assetRenderData->title;
                         @endphp
 
                         <article
@@ -66,27 +70,27 @@
                                 </span>
                             @endif
 
-                            @if ($asset->translation?->title)
+                            @if ($cardTitle)
                                 <h3 class="ap-card-title ap-card__title">
-                                    {{ $caption ?: $asset->translation->title }}
+                                    {{ $cardTitle }}
                                 </h3>
                             @endif
 
-                            @if ($asset->translation?->content)
+                            @if ($assetRenderData->content)
                                 <p
                                     class="ap-card-description ap-card__description"
                                 >
-                                    {{ strip_tags($asset->translation->content) }}
+                                    {{ strip_tags($assetRenderData->content) }}
                                 </p>
                             @endif
 
-                            @if ($asset->getMeta('link_text') && $asset->getMeta('link_url'))
+                            @if (($assetRenderData->meta['link_text'] ?? null) && ($assetRenderData->meta['link_url'] ?? null))
                                 <a
-                                    href="{{ $asset->getMeta('link_url') }}"
+                                    href="{{ $assetRenderData->meta['link_url'] }}"
                                     class="ap-card-link ap-card__link"
                                 >
                                     <span>
-                                        {{ $asset->getMeta('link_text') }}
+                                        {{ $assetRenderData->meta['link_text'] }}
                                     </span>
                                     @svg('heroicon-o-arrow-right', 'h-4 w-4')
                                 </a>
@@ -117,10 +121,6 @@
                             @endif
                         </article>
                     @endforeach
-                @else
-                    <div class="col-span-full py-12 text-center text-slate-500">
-                        No cards configured.
-                    </div>
                 @endif
             </div>
         </div>

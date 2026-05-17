@@ -26,12 +26,15 @@ final class BuildPageContentRenderDataAction
         $content = data_get($translation, 'content');
         $title = data_get($translation, 'title');
         $contentStructure = data_get($type, 'content_structure');
+        $contentStructure = $contentStructure instanceof ContentStructure
+            ? $contentStructure
+            : ContentStructure::Html;
 
         return new PageContentRenderData(
             image: $image instanceof Media ? $image : null,
             content: is_string($content) ? $content : null,
-            contentStructure: $contentStructure instanceof ContentStructure ? $contentStructure : null,
-            hasContent: in_array('content', $pageContents, true) && is_string($content) && $content !== '' && $contentStructure instanceof ContentStructure,
+            contentStructure: $contentStructure,
+            hasContent: in_array('content', $pageContents, true) && is_string($content) && $content !== '',
             hasTitle: in_array('title', $pageContents, true) && $showPageTitle,
             title: is_string($title) ? $title : null,
         );

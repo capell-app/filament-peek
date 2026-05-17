@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\FoundationTheme\Actions;
 
 use Capell\Core\Contracts\Pageable;
+use Capell\Core\Enums\ContentStructure;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\Media;
 use Capell\FoundationTheme\Data\ElementAssetRenderData;
@@ -21,7 +22,10 @@ final class BuildElementAssetRenderDataAction
     {
         $asset = $this->loadedRelation($widgetAsset, 'asset');
         $translation = $asset instanceof Model ? $this->loadedRelation($asset, 'translation') : null;
+        $type = $asset instanceof Model ? $this->loadedRelation($asset, 'type') : null;
         $meta = is_array(data_get($asset, 'meta')) ? data_get($asset, 'meta') : [];
+        $title = $this->stringValue($translation, 'title');
+        $contentStructure = data_get($type, 'content_structure');
 
         return new ElementAssetRenderData(
             asset: $asset,
@@ -30,12 +34,24 @@ final class BuildElementAssetRenderDataAction
             translation: $translation,
             meta: $meta,
             alt: $this->stringValue($translation, 'label') ?? $this->stringValue($translation, 'title') ?? '',
+            actions: $this->metaArray($asset, 'actions'),
+            accent: $this->metaString($asset, 'accent'),
+            caption: $this->metaString($asset, 'caption') ?? $title,
             content: $this->stringValue($translation, 'content'),
+            contentStructure: $contentStructure instanceof ContentStructure ? $contentStructure : null,
+            cropPreset: $this->metaString($asset, 'crop_preset'),
+            headingSize: $this->metaString($asset, 'heading_size') ?? 'h3',
+            headingWeight: $this->metaString($asset, 'heading_weight') ?? 'medium',
             icon: $this->metaString($asset, 'icon'),
+            linkText: $this->stringValue($translation, 'link_text'),
+            linkUrl: $this->linkedPageUrl($widgetAsset, $asset),
             position: $this->metaString($asset, 'position'),
+            role: $this->metaString($asset, 'role'),
             social: $this->metaArray($asset, 'social'),
+            status: $this->metaString($asset, 'status'),
             tags: $this->metaArray($asset, 'tags'),
-            title: $this->stringValue($translation, 'title'),
+            textAlign: $this->metaString($asset, 'align') ?? $this->metaString($type, 'align'),
+            title: $title,
         );
     }
 
@@ -57,6 +73,20 @@ final class BuildElementAssetRenderDataAction
         }
 
         return $this->loadedRelation($widgetAsset, 'linkedPage');
+    }
+
+    private function linkedPageUrl(ElementAsset $widgetAsset, mixed $asset): ?string
+    {
+        $linkedPage = $this->linkedPage($widgetAsset, $asset);
+
+        if (! $linkedPage instanceof Model) {
+            return null;
+        }
+
+        $pageUrl = $this->loadedRelation($linkedPage, 'pageUrl');
+        $fullUrl = data_get($pageUrl, 'full_url');
+
+        return is_string($fullUrl) && $fullUrl !== '' ? $fullUrl : null;
     }
 
     private function loadedImage(Model $model): ?Media

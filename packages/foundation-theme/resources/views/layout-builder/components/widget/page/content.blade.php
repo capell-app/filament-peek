@@ -25,7 +25,7 @@
 @php
     $nextPage ??= null;
     $previousPage ??= null;
-    $configuredPageContents = $widget->getMeta('page_content') ?: ($widgetData['meta']['page_content'] ?? null);
+    $configuredPageContents = $widgetData['meta']['page_content'] ?? ($widget->getMeta('page_content') ?: null);
     $pageContents = is_array($configuredPageContents) ? $configuredPageContents : $pageContents;
     $pageContents = array_values(array_filter((array) $pageContents));
     $pageContents = $pageContents === [] ? ['title', 'content'] : $pageContents;

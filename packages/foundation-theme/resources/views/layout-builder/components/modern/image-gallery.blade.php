@@ -9,6 +9,10 @@
     'widget',
 ])
 
+@php
+    use Capell\FoundationTheme\Actions\BuildElementAssetRenderDataAction;
+@endphp
+
 <x-capell-layout-builder::widget.wrapper
     class="widget-ap-image-gallery"
     :$container
@@ -46,19 +50,12 @@
                 >
                     @foreach ($widget->assets as $asset)
                         @php
-                            $media =
-                                $asset->media->firstWhere(
-                                    'collection_name',
-                                    'image',
-                                ) ?:
-                                $asset->asset->media->firstWhere(
-                                    'collection_name',
-                                    'image',
-                                );
-                            $role = $asset->asset->getMeta('role', 'gallery-item');
-                            $accent = $asset->asset->getMeta('accent', 'teal');
-                            $caption = $asset->asset->getMeta('caption', $asset->asset->translation?->title ?? $media?->name);
-                            $cropPreset = $asset->asset->getMeta('crop_preset');
+                            $assetRenderData = BuildElementAssetRenderDataAction::run($asset);
+                            $media = $assetRenderData->image;
+                            $role = $assetRenderData->role ?? 'gallery-item';
+                            $accent = $assetRenderData->accent ?? 'teal';
+                            $caption = $assetRenderData->caption ?? $media?->name;
+                            $cropPreset = $assetRenderData->cropPreset;
                         @endphp
 
                         @if ($media)
@@ -84,7 +81,7 @@
                             </figure>
                         @else
                             @php
-                                $icon = $asset->asset->getMeta('icon', 'heroicon-o-squares-2x2');
+                                $icon = $assetRenderData->icon ?? 'heroicon-o-squares-2x2';
                             @endphp
 
                             <figure
@@ -99,9 +96,9 @@
                                         <span>{{ $icon }}</span>
                                     @endif
                                     <strong>{{ $caption }}</strong>
-                                    @if ($asset->asset->translation?->content)
+                                    @if ($assetRenderData->content)
                                         <span>
-                                            {{ strip_tags($asset->asset->translation->content) }}
+                                            {{ strip_tags($assetRenderData->content) }}
                                         </span>
                                     @endif
                                 </div>
@@ -135,10 +132,6 @@
                             @svg('heroicon-o-arrows-pointing-out', 'h-4 w-4 text-slate-400')
                         </figcaption>
                     </figure>
-                </div>
-            @else
-                <div class="py-12 text-center text-slate-500">
-                    No images configured.
                 </div>
             @endif
         </div>

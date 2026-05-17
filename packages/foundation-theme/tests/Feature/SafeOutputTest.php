@@ -115,3 +115,63 @@ test('public blade keeps data loading out of templates', function (): void {
         json_encode($violations, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
     );
 });
+
+test('reviewed public blade widgets do not read asset and page relations directly', function (): void {
+    $themePath = dirname(__DIR__, 2);
+    $files = [
+        'resources/views/layout-builder/components/modern/hero-banner.blade.php',
+        'resources/views/layout-builder/components/widget/modern/hero-banner.blade.php',
+        'resources/views/layout-builder/components/modern/image-gallery.blade.php',
+        'resources/views/layout-builder/components/widget/modern/image-gallery.blade.php',
+        'resources/views/layout-builder/components/modern/card-grid.blade.php',
+        'resources/views/layout-builder/components/widget/modern/card-grid.blade.php',
+        'resources/views/layout-builder/components/widget/asset/accordion.blade.php',
+        'resources/views/layout-builder/components/widget/asset/carousel.blade.php',
+        'resources/views/layout-builder/components/widget/asset/feature-item.blade.php',
+        'resources/views/layout-builder/components/widget/asset/media.blade.php',
+    ];
+    $forbiddenPatterns = [
+        '$page?->assets',
+        '$attachment->asset',
+        '$heroItem->asset',
+        '$asset->asset->media',
+        '$asset->asset->translation',
+        '$widgetAsset->asset->translation',
+        '$widgetAsset->asset->getMeta(',
+        '$linkedPage->pageUrl',
+    ];
+    $violations = [];
+
+    foreach ($files as $file) {
+        $contents = file_get_contents($themePath . '/' . $file);
+
+        foreach ($forbiddenPatterns as $pattern) {
+            if (str_contains($contents, $pattern)) {
+                $violations[] = $file . ' contains ' . $pattern;
+            }
+        }
+    }
+
+    expect($violations)->toBe(
+        [],
+        'Reviewed public Blade relation access found:' . PHP_EOL .
+        json_encode($violations, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+    );
+});
+
+test('ap hero and gallery public output avoid reviewed accessibility and editor copy regressions', function (): void {
+    $themePath = dirname(__DIR__, 2);
+    $hero = file_get_contents($themePath . '/resources/views/layout-builder/components/modern/hero-banner.blade.php');
+    $widgetHero = file_get_contents($themePath . '/resources/views/layout-builder/components/widget/modern/hero-banner.blade.php');
+    $gallery = file_get_contents($themePath . '/resources/views/layout-builder/components/widget/modern/image-gallery.blade.php');
+    $cardGrid = file_get_contents($themePath . '/resources/views/layout-builder/components/widget/modern/card-grid.blade.php');
+    $pageContent = file_get_contents($themePath . '/resources/views/layout-builder/components/widget/page/content.blade.php');
+
+    expect($hero)->toContain('MarkPrimaryHeadingRenderedAction::run()')
+        ->and($widgetHero)->toContain('MarkPrimaryHeadingRenderedAction::run()')
+        ->and($pageContent)->toContain("\$headingTag = (\$hasPrimaryHeading ? 'h2' : 'h1');")
+        ->and($hero)->not->toContain('ap-hero__slideshow-play')
+        ->and($widgetHero)->not->toContain('ap-hero__slideshow-play')
+        ->and($gallery)->not->toContain('No images configured')
+        ->and($cardGrid)->not->toContain('No cards configured');
+});
