@@ -49,11 +49,11 @@
         ],
         "coverage": "@php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=. -d pcov.exclude='~vendor|tests|storage|bootstrap|.temp~' vendor/bin/pest --coverage --min=80 --colors=always --configuration=phpunit.xml",
         "coverage-report": "@php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=. -d pcov.exclude='~vendor|tests|storage|bootstrap|.temp~' vendor/bin/pest --coverage --coverage-html=coverage --colors=always --configuration=phpunit.xml",
-        "test:unit": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:fast": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --stop-on-error --stop-on-failure --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:fast:ci": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:all": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --stop-on-error --stop-on-failure --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:all:ci": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
+        "test:unit": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml",
+        "test:fast": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --stop-on-error --stop-on-failure --configuration=phpunit.xml",
+        "test:fast:ci": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --configuration=phpunit.xml",
+        "test:all": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --stop-on-error --stop-on-failure --configuration=phpunit.xml",
+        "test:all:ci": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml",
         "test": [
             "@clear",
             "@test:unit"
