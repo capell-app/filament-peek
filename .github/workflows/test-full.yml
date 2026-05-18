@@ -124,4 +124,4 @@ jobs:
           fi
 
       - name: Execute full test suite
-        run: php -d memory_limit=-1 vendor/bin/pest --colors=always --parallel --stop-on-error --stop-on-failure --configuration=phpunit.xml
+        run: composer test:all:ci
