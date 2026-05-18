@@ -80,13 +80,6 @@
             }
         },
         {
-            "type": "path",
-            "url": "../capell-4/packages/*",
-            "options": {
-                "symlink": true
-            }
-        },
-        {
             "type": "vcs",
             "url": "https://github.com/capell-app/admin"
         },

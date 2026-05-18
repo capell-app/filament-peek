@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60398369b6019888caac195d4ab2538f",
+    "content-hash": "93051f9a330df10c474b53352d5ec846",
     "packages": [
         {
             "name": "aimeos/laravel-nestedset",
@@ -712,15 +712,22 @@
         {
             "name": "capell-app/admin",
             "version": "4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:capell-app/admin.git",
+                "reference": "a0b96befada63545211cd5665ec54298c936635d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../capell-4/packages/admin",
-                "reference": "186346d49f6b5c99ba59f4000a4a5509573462dd"
+                "type": "zip",
+                "url": "https://api.github.com/repos/capell-app/admin/zipball/a0b96befada63545211cd5665ec54298c936635d",
+                "reference": "a0b96befada63545211cd5665ec54298c936635d",
+                "shasum": ""
             },
             "require": {
                 "amidesfahani/filament-tinyeditor": "^4.0",
                 "awcodes/filament-badgeable-column": "^3.0|^4.0",
                 "bezhansalleh/filament-shield": "^4.1",
+                "capell-app/content-blocks": "self.version",
                 "capell-app/core": "self.version",
                 "cms-multi/filament-clear-cache": "^3.0",
                 "codewithdennis/filament-select-tree": "^4.0",
@@ -747,6 +754,7 @@
             "conflict": {
                 "firebase/php-jwt": "<7.0.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -783,6 +791,63 @@
                 "filamentphp",
                 "laravel"
             ],
+            "support": {
+                "source": "https://github.com/capell-app/admin/tree/4.x",
+                "issues": "https://github.com/capell-app/admin/issues"
+            },
+            "time": "2026-05-18T19:44:56+00:00"
+        },
+        {
+            "name": "capell-app/content-blocks",
+            "version": "4.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "./packages/block-library",
+                "reference": "4816d2d632ff6690b1143edca59ecb1e0f111a95"
+            },
+            "require": {
+                "capell-app/core": "*",
+                "filament/forms": "^4.7|^5.2",
+                "lorisleiva/laravel-actions": "*",
+                "php": "^8.3",
+                "spatie/laravel-package-tools": "*"
+            },
+            "suggest": {
+                "capell-app/content-sections": "Registers reusable section blocks against typed block definitions.",
+                "capell-app/foundation-theme": "Renders package block views through the default frontend theme."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Capell\\ContentBlocks\\Providers\\ContentBlocksServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Capell\\ContentBlocks\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Howdu",
+                    "email": "cms.multi2@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Shared typed content block primitives for Capell packages.",
+            "homepage": "https://github.com/capell-app/content-blocks",
+            "keywords": [
+                "capell",
+                "cms",
+                "content-blocks",
+                "filamentphp",
+                "laravel"
+            ],
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -791,10 +856,16 @@
         {
             "name": "capell-app/core",
             "version": "4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:capell-app/core.git",
+                "reference": "1d8008d7ca4e4255995a47a7f09d99e2bbc1b395"
+            },
             "dist": {
-                "type": "path",
-                "url": "../capell-4/packages/core",
-                "reference": "6282f83e8edc7cf66de762c1d8cb17149d2da23d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/capell-app/core/zipball/1d8008d7ca4e4255995a47a7f09d99e2bbc1b395",
+                "reference": "1d8008d7ca4e4255995a47a7f09d99e2bbc1b395",
+                "shasum": ""
             },
             "require": {
                 "aimeos/laravel-nestedset": "^7.0",
@@ -818,6 +889,7 @@
                 "symfony/filesystem": "^7.2|^8.0",
                 "symfony/process": "^7.2|^8.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -848,21 +920,29 @@
                 }
             ],
             "description": "Core for Capell.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/capell-app/core/tree/4.x",
+                "issues": "https://github.com/capell-app/core/issues"
+            },
+            "time": "2026-05-18T19:42:51+00:00"
         },
         {
             "name": "capell-app/frontend",
             "version": "4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:capell-app/frontend.git",
+                "reference": "ace01fa66952c806c8dca0e1e04f47ee6ec84b5f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../capell-4/packages/frontend",
-                "reference": "a40a5a71fd9bcc542884cea8835d023c80b4e828"
+                "type": "zip",
+                "url": "https://api.github.com/repos/capell-app/frontend/zipball/ace01fa66952c806c8dca0e1e04f47ee6ec84b5f",
+                "reference": "ace01fa66952c806c8dca0e1e04f47ee6ec84b5f",
+                "shasum": ""
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
+                "capell-app/content-blocks": "self.version",
                 "capell-app/core": "self.version",
                 "ext-dom": "*",
                 "guzzlehttp/guzzle": "^7.5",
@@ -878,6 +958,7 @@
                 "symfony/html-sanitizer": "^7.0|^8.0",
                 "voku/html-min": "^4.5"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -914,25 +995,33 @@
                 "frontend",
                 "laravel"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/capell-app/frontend/tree/4.x",
+                "issues": "https://github.com/capell-app/frontend/issues"
+            },
+            "time": "2026-05-18T19:49:39+00:00"
         },
         {
             "name": "capell-app/installer",
             "version": "4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:capell-app/installer.git",
+                "reference": "a3db33dc01c1a35601e9c57b5a217becebf536d2"
+            },
             "dist": {
-                "type": "path",
-                "url": "../capell-4/packages/installer",
-                "reference": "4b063aa2f7b627b7a8591ac7d61be9288b45b221"
+                "type": "zip",
+                "url": "https://api.github.com/repos/capell-app/installer/zipball/a3db33dc01c1a35601e9c57b5a217becebf536d2",
+                "reference": "a3db33dc01c1a35601e9c57b5a217becebf536d2",
+                "shasum": ""
             },
             "require": {
                 "capell-app/core": "self.version",
                 "ext-intl": "*",
-                "php": "^8.3",
+                "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.14.1"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -972,25 +1061,32 @@
                 "filamentphp",
                 "laravel"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/capell-app/installer/tree/v2.0.25",
+                "issues": "https://github.com/capell-app/installer/issues"
+            },
+            "time": "2026-05-18T11:38:53+00:00"
         },
         {
             "name": "capell-app/marketplace",
             "version": "4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:capell-app/marketplace.git",
+                "reference": "0d1b8ae3d877bc80114158ba3143b1b93bca62b2"
+            },
             "dist": {
-                "type": "path",
-                "url": "../capell-4/packages/marketplace",
-                "reference": "9942d10abde646aa3dc873ca68ce1fb7682758da"
+                "type": "zip",
+                "url": "https://api.github.com/repos/capell-app/marketplace/zipball/0d1b8ae3d877bc80114158ba3143b1b93bca62b2",
+                "reference": "0d1b8ae3d877bc80114158ba3143b1b93bca62b2",
+                "shasum": ""
             },
             "require": {
                 "capell-app/admin": "*",
                 "capell-app/core": "*",
                 "laravel/framework": "^11.45.3|^12.41.1|^13.0",
                 "lorisleiva/laravel-actions": "^2.8",
-                "php": "^8.3",
+                "php": "^8.2",
                 "spatie/laravel-data": "^4.5",
                 "spatie/laravel-package-tools": "^1.14.1"
             },
@@ -1000,6 +1096,7 @@
                 "pestphp/pest-plugin-laravel": "^3.0|^4.0",
                 "pestphp/pest-plugin-livewire": "^3.0|^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1028,10 +1125,11 @@
                 "proprietary"
             ],
             "description": "Extension marketplace browsing and acquisition for Capell CMS.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/capell-app/marketplace/tree/v2.0.25",
+                "issues": "https://github.com/capell-app/marketplace/issues"
+            },
+            "time": "2026-05-18T11:38:58+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
