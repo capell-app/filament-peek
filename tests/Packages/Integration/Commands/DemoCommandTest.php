@@ -9,9 +9,9 @@ use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\LayoutBuilder\Actions\AddHeroElementToLayoutAction;
-use Capell\LayoutBuilder\Actions\CreateHeroElementAction;
-use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Actions\AddHeroBlockToLayoutAction;
+use Capell\LayoutBuilder\Actions\CreateHeroBlockAction;
+use Capell\LayoutBuilder\Models\Block;
 use Capell\LayoutBuilder\Support\Creator\DemoCreator;
 use Illuminate\Console\Command;
 use Mockery\MockInterface;
@@ -19,14 +19,14 @@ use Mockery\MockInterface;
 use function Pest\Laravel\artisan;
 
 it('adds hero meta to blog and article pages when blog package is installed', function (): void {
-    AddHeroElementToLayoutAction::shouldRun()->once();
+    AddHeroBlockToLayoutAction::shouldRun()->once();
     Blueprint::factory()->type('section')->create(['key' => 'hero']);
 
-    $heroElement = Element::factory()->make();
-    CreateHeroElementAction::shouldRun()->twice()->andReturn($heroElement);
+    $heroBlock = Block::factory()->make();
+    CreateHeroBlockAction::shouldRun()->twice()->andReturn($heroBlock);
 
     $demoCreator = mock(DemoCreator::class, function (DemoCreator&MockInterface $mock): void {
-        $mock->shouldReceive('createContentsElement')->once();
+        $mock->shouldReceive('createContentsBlock')->once();
     });
 
     app()->instance(DemoCreator::class, $demoCreator);

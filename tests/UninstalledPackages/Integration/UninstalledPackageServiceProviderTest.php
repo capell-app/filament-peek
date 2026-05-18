@@ -43,10 +43,10 @@ use Capell\Insights\Models\InsightsConsent;
 use Capell\Insights\Models\InsightsEvent;
 use Capell\Insights\Models\InsightsVisit;
 use Capell\Insights\Providers\InsightsServiceProvider;
-use Capell\LayoutBuilder\Filament\Resources\Elements\ElementResource;
+use Capell\LayoutBuilder\Filament\Resources\Blocks\BlockResource;
 use Capell\LayoutBuilder\Filament\Resources\Layouts\LayoutResource;
-use Capell\LayoutBuilder\Models\Element;
-use Capell\LayoutBuilder\Models\ElementAsset;
+use Capell\LayoutBuilder\Models\Block;
+use Capell\LayoutBuilder\Models\BlockAsset;
 use Capell\LoginAudit\Filament\Resources\LoginAudits\LoginAuditResource;
 use Capell\LoginAudit\Filament\Widgets\LoginAuditsWidget;
 use Capell\LoginAudit\Models\LoginAudit;
@@ -149,8 +149,8 @@ it('registers package metadata but skips runtime models, tables, settings, and a
         Submission::class,
         CuratorMedia::class,
         Section::class,
-        Element::class,
-        ElementAsset::class,
+        Block::class,
+        BlockAsset::class,
         Navigation::class,
         AIGenerationHistory::class,
         BrokenLink::class,
@@ -197,7 +197,7 @@ it('does not expose admin resources, pages, widgets, or routes for uninstalled p
         ImportSessionResource::class,
         LayoutResource::class,
         SectionResource::class,
-        ElementResource::class,
+        BlockResource::class,
         NavigationResource::class,
         TagResource::class,
         WorkspaceResource::class,

@@ -17,14 +17,14 @@ use Capell\Address\Models\Country;
 use Capell\Blog\Models\Article;
 use Capell\ContentSections\Models\Section;
 use Capell\Core\Providers\CapellServiceProvider;
-use Capell\FoundationTheme\View\Components\Element\Page\Breadcrumbs;
-use Capell\FoundationTheme\View\Components\Element\Page\Children;
-use Capell\FoundationTheme\View\Components\Element\Page\Content;
-use Capell\FoundationTheme\View\Components\Element\Page\Latest;
-use Capell\FoundationTheme\View\Components\Element\Page\Siblings;
+use Capell\FoundationTheme\View\Components\Block\Page\Breadcrumbs;
+use Capell\FoundationTheme\View\Components\Block\Page\Children;
+use Capell\FoundationTheme\View\Components\Block\Page\Content;
+use Capell\FoundationTheme\View\Components\Block\Page\Latest;
+use Capell\FoundationTheme\View\Components\Block\Page\Siblings;
 use Capell\LayoutBuilder\Livewire\Filament\LayoutBuilder;
-use Capell\LayoutBuilder\Models\Element;
-use Capell\LayoutBuilder\Models\ElementAsset;
+use Capell\LayoutBuilder\Models\Block;
+use Capell\LayoutBuilder\Models\BlockAsset;
 use Capell\Tests\Fixtures\Models\User;
 use Capell\Tests\Fixtures\Policies\RolePolicy;
 use Capell\Tests\Support\Concerns\BuildsOrderedMigrationWorkspace;
@@ -120,28 +120,38 @@ abstract class AbstractTestCase extends TestCase
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-foundation-theme');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-layout-builder');
         Blade::component(Breadcrumbs::class, 'capell::element.page.breadcrumbs');
+        Blade::component(Breadcrumbs::class, 'capell::block.page.breadcrumbs');
         Blade::component(Breadcrumbs::class, 'capell::widget.page.breadcrumbs');
-        Blade::component('capell-foundation-theme::components.element.page.breadcrumbs', 'capell-layout-builder-widget-page-breadcrumbs');
+        Blade::component('capell-foundation-theme::components.block.page.breadcrumbs', 'capell-layout-builder-widget-page-breadcrumbs');
         Blade::component(Content::class, 'capell-element-page-content');
+        Blade::component(Content::class, 'capell-block-page-content');
         Blade::component(Content::class, 'capell-layout-builder-widget-page-content');
-        Blade::component('capell-foundation-theme::components.element.slot', 'capell-layout-builder-widget-slot');
-        Blade::component('capell-foundation-theme::components.element.slot', 'capell::widget.slot');
-        Blade::component('capell-foundation-theme::components.element.wrapper', 'capell-layout-builder::widget.wrapper');
+        Blade::component('capell-foundation-theme::components.block.slot', 'capell-layout-builder-widget-slot');
+        Blade::component('capell-foundation-theme::components.block.slot', 'capell::widget.slot');
+        Blade::component('capell-foundation-theme::components.block.wrapper', 'capell-layout-builder::widget.wrapper');
         Blade::component(Children::class, 'capell::element.page.children');
+        Blade::component(Children::class, 'capell::block.page.children');
         Blade::component(Children::class, 'capell::widget.page.children');
         Blade::component(Content::class, 'capell::element.page.content');
+        Blade::component(Content::class, 'capell::block.page.content');
         Blade::component(Content::class, 'capell::widget.page.content');
         Blade::component(Latest::class, 'capell::element.page.latest');
+        Blade::component(Latest::class, 'capell::block.page.latest');
         Blade::component(Latest::class, 'capell::widget.page.latest');
         Blade::component(Siblings::class, 'capell::element.page.siblings');
+        Blade::component(Siblings::class, 'capell::block.page.siblings');
         Blade::component(Siblings::class, 'capell::widget.page.siblings');
         Blade::component(Children::class, 'capell-layout-builder::element.page.children');
+        Blade::component(Children::class, 'capell-layout-builder::block.page.children');
         Blade::component(Children::class, 'capell-layout-builder::widget.page.children');
         Blade::component(Content::class, 'capell-layout-builder::element.page.content');
+        Blade::component(Content::class, 'capell-layout-builder::block.page.content');
         Blade::component(Content::class, 'capell-layout-builder::widget.page.content');
         Blade::component(Latest::class, 'capell-layout-builder::element.page.latest');
+        Blade::component(Latest::class, 'capell-layout-builder::block.page.latest');
         Blade::component(Latest::class, 'capell-layout-builder::widget.page.latest');
         Blade::component(Siblings::class, 'capell-layout-builder::element.page.siblings');
+        Blade::component(Siblings::class, 'capell-layout-builder::block.page.siblings');
         Blade::component(Siblings::class, 'capell-layout-builder::widget.page.siblings');
         resolve('livewire.factory')->resolveMissingComponent(
             static fn (string $name): ?string => $name === 'capell-layout-builder::filament.layout-builder'
@@ -157,8 +167,8 @@ abstract class AbstractTestCase extends TestCase
             'country' => Country::class,
             'section' => Section::class,
             'user' => User::class,
-            'element' => Element::class,
-            'element_asset' => ElementAsset::class,
+            'block' => Block::class,
+            'block_asset' => BlockAsset::class,
         ]);
 
         Model::shouldBeStrict();

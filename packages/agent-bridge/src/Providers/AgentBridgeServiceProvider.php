@@ -63,7 +63,6 @@ final class AgentBridgeServiceProvider extends ServiceProvider
 
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'capell-agent-bridge');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'capell-agent-bridge');
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/../../routes/agent-bridge.php');
 
         $this->registerSettingsIntegration();

@@ -66,7 +66,7 @@ parameters:
           path: packages/ga4-reports/tests/Unit/Support/GA4ReportsDataClientTest.php
         - message: '#Call to an undefined method Pest\\Expectation<.*>::first\(\)\.#'
           paths:
-              - packages/layout-builder/tests/Feature/Filament/Resources/Element/Pages/CreateElementTest.php
+              - packages/layout-builder/tests/Feature/Filament/Resources/Block/Pages/CreateBlockTest.php
               - packages/navigation/tests/Integration/Models/NavigationItemsCastTest.php
         - message: '#Call to an undefined method Pest\\Expectations\\HigherOrderExpectation<.*>::first\(\)\.#'
           path: packages/navigation/tests/Integration/Models/NavigationItemsCastTest.php
