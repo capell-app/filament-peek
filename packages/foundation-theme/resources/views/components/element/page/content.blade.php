@@ -59,6 +59,7 @@
         :index="$loop->index"
         :$element
         class="capell-page-content element-page-content"
+        container-class="capell-standard-page mx-auto max-w-4xl"
         tag="article"
     >
         @if (in_array('content', $pageContents, true))
@@ -77,6 +78,7 @@
                 />
             @else
                 <x-capell::content
+                    class="capell-standard-page-content prose-headings:text-slate-950 prose-a:text-primary prose-p:leading-8 text-slate-700"
                     :content="$pageContentRenderData->content"
                     :content-type="$pageContentRenderData->contentStructure"
                     :divider="$element->getMeta('content_divider')"
@@ -91,6 +93,7 @@
                     :theme="$theme"
                     :title="$hasTitle ? $pageContentRenderData->title : null"
                     :url-params="$urlParams"
+                    width="content"
                 />
             @endif
         @endif

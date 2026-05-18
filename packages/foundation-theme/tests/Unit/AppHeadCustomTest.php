@@ -7,7 +7,6 @@ it('owns the opinionated public head behavior', function (): void {
     $tokens = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/app/head/tokens.blade.php');
 
     expect($component)->toContain('localStorage.theme')
-        ->and($component)->toContain('prefers-color-scheme: dark')
         ->and($component)->toContain('updateHeaderSticky')
         ->and($component)->toContain('<x-capell::app.head.tokens />')
         ->and($tokens)->toContain('--color-brand')

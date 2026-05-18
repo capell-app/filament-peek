@@ -9,6 +9,7 @@ use Capell\Admin\Enums\PageTranslationSchemaHookEnum;
 use Capell\Admin\Filament\Components\Forms\CacheTimeSelect;
 use Capell\Admin\Filament\Components\Forms\PageRelationSelect;
 use Capell\Admin\Filament\Support\HelperText;
+use Capell\Core\Models\Page;
 use Capell\SeoSuite\Enums\RobotsDirectiveEnum;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -55,6 +56,12 @@ class PageSeoSettingsTabExtender implements PageSchemaExtender
      */
     public function extendTabs(Schema $configurator, array $tabs): array
     {
+        $record = $configurator->getRecord();
+
+        if ($record instanceof Model && ! $record instanceof Page) {
+            return $tabs;
+        }
+
         $tabs[] = Tab::make(__('capell-seo-suite::generic.seo_settings'))
             ->key('seo-settings')
             ->icon(Heroicon::OutlinedArrowTrendingUp)

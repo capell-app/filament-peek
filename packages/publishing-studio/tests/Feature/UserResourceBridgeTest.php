@@ -21,6 +21,7 @@ use Capell\PublishingStudio\Enums\ReviewDecisionEnum;
 use Capell\PublishingStudio\Enums\WorkspaceApprovalActionEnum;
 use Capell\PublishingStudio\Extenders\PublishingStudioUserSchemaExtender;
 use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
+use Capell\PublishingStudio\Filament\Pages\PublishingWorkflowPage;
 use Capell\PublishingStudio\Filament\Pages\ScheduledPublishingPage;
 use Capell\PublishingStudio\Filament\Pages\StaleDraftsPage;
 use Capell\PublishingStudio\Filament\Resources\PreviewLinks\PreviewLinkResource;
@@ -198,9 +199,10 @@ it('keeps the legacy admin fallback when the bridge host is unavailable', functi
             ->and($host->dashboardWidgets[MyWorkQueueWidget::class])->toContain(DashboardEnum::Main)
             ->and($registeredSurfaceClasses)->toContain(WorkspaceResource::class)
             ->and($registeredSurfaceClasses)->toContain(PreviewLinkResource::class)
-            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ActivityTrailPage::class)
-            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ScheduledPublishingPage::class)
-            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(StaleDraftsPage::class);
+            ->and($registeredSurfaceClasses)->toContain(PublishingWorkflowPage::class)
+            ->and($registeredSurfaceClasses)->toContain(ActivityTrailPage::class)
+            ->and($registeredSurfaceClasses)->toContain(ScheduledPublishingPage::class)
+            ->and($registeredSurfaceClasses)->toContain(StaleDraftsPage::class);
     } finally {
         app()->forgetInstance(CapellAdminManager::class);
         CapellAdmin::clearResolvedInstance(CapellAdminManager::class);

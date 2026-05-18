@@ -8,7 +8,6 @@ use Capell\LoginAudit\Actions\ResolveLoginAuditIpAddressAction;
 use Capell\LoginAudit\Models\LoginAudit;
 use Carbon\CarbonImmutable;
 use Closure;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -35,7 +34,9 @@ class UserActivityMiddleware
         /** @var User|null $user */
         $user = $request->user();
 
-        throw_unless(method_exists($user, 'authentications'), Exception::class, 'The User model must use the authentications relationship LoginAuditgable trait.');
+        if (! method_exists($user, 'authentications')) {
+            return;
+        }
 
         /** @var MorphMany<LoginAudit, User&Model> $builder */
         $builder = $user->authentications();

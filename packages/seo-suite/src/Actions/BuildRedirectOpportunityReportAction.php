@@ -46,7 +46,7 @@ final class BuildRedirectOpportunityReportAction
             ->all();
     }
 
-    private static function applyNonRedirectUrlScope(Builder $query): void
+    private function applyNonRedirectUrlScope(Builder $query): void
     {
         $query->whereNull('type')
             ->orWhere('type', '!=', UrlTypeEnum::Redirect->value);
@@ -107,7 +107,7 @@ final class BuildRedirectOpportunityReportAction
             ->where('site_id', $siteId)
             ->where('language_id', $languageId)
             ->where('status', true)
-            ->where(self::applyNonRedirectUrlScope(...))
+            ->where($this->applyNonRedirectUrlScope(...))
             ->when(
                 $candidatePath !== null,
                 fn (Builder $query): Builder => $query->whereIn('url', [$sourceUrl, $candidatePath]),
