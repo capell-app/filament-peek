@@ -52,6 +52,7 @@ final class CommandPalettePage extends Page
         return __('capell-admin::navigation.group_system');
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         if (self::userHasSuperAdminRole()) {
@@ -73,6 +74,7 @@ final class CommandPalettePage extends Page
         return auth()->user()?->can(DiagnosticsPermission::ViewDiagnostics->value) === true;
     }
 
+    #[Override]
     public function getTitle(): string
     {
         return 'Command Palette';

@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\SeoSuite\Actions\Dashboard\BuildSearchConsoleDashboardStatsAction;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Override;
 
 final class SearchConsoleOverviewWidget extends StatsOverviewWidget implements CapellWidgetContract
 {
@@ -24,6 +25,7 @@ final class SearchConsoleOverviewWidget extends StatsOverviewWidget implements C
 
     protected static ?int $sort = 40;
 
+    #[Override]
     protected function getStats(): array
     {
         $stats = BuildSearchConsoleDashboardStatsAction::run();

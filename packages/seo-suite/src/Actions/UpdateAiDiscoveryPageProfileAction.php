@@ -19,7 +19,7 @@ final class UpdateAiDiscoveryPageProfileAction
 {
     use AsAction;
 
-    private const MAX_STRING_LENGTH = 255;
+    private const int MAX_STRING_LENGTH = 255;
 
     /**
      * @param  array{include_in_ai_index?: mixed, section?: mixed, priority?: mixed, summary?: mixed, markdown_override?: mixed, exclude_reason?: mixed}  $data

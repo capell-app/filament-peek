@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * Assignment for a specific reviewer to decide on a workspace. Lives alongside
@@ -72,6 +73,7 @@ class WorkspaceReviewAssignment extends Model
         return $this->decision === ReviewDecisionEnum::Rejected;
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

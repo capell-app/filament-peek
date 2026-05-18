@@ -17,19 +17,23 @@ use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Override;
 
 class ManagePublishingStudio extends ManageRecords
 {
+    #[Override]
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resource(ResourceEnum::Workspace);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-admin::hints.publishing-studio');
     }
 
+    #[Override]
     public function getTabs(): array
     {
         return [
@@ -53,6 +57,7 @@ class ManagePublishingStudio extends ManageRecords
         ];
     }
 
+    #[Override]
     protected function getActions(): array
     {
         return [
@@ -76,6 +81,7 @@ class ManagePublishingStudio extends ManageRecords
     /**
      * @return array<class-string<Widget>|WidgetConfiguration>
      */
+    #[Override]
     protected function getHeaderWidgets(): array
     {
         return [

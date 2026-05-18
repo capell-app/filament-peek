@@ -7,6 +7,7 @@ namespace Capell\GA4Reports\Models;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @property CarbonImmutable $metric_date
@@ -23,6 +24,7 @@ final class GA4ReportsPageMetric extends Model
 
     protected $guarded = [];
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-ga4-reports.tables.page_metrics');
@@ -33,6 +35,7 @@ final class GA4ReportsPageMetric extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

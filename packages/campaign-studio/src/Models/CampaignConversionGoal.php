@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 
 /**
  * @property int $id
@@ -43,6 +44,7 @@ class CampaignConversionGoal extends Model
 
     protected static string $factory = CampaignConversionGoalFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-campaign-studio.tables.conversion_goals');
@@ -68,6 +70,7 @@ class CampaignConversionGoal extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

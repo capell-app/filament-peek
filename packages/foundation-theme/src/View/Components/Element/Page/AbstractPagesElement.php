@@ -8,6 +8,7 @@ use Capell\FoundationTheme\View\Components\Element\AbstractElement;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Override;
 
 abstract class AbstractPagesElement extends AbstractElement
 {
@@ -17,6 +18,7 @@ abstract class AbstractPagesElement extends AbstractElement
 
     protected static string $defaultView = 'capell-foundation-theme::components.element.asset.pages';
 
+    #[Override]
     public function render(array $data = []): View|string|Closure
     {
         if ($this->skipRender && config('capell-layout-builder.element.skip_render_empty', true) === true) {

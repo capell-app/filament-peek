@@ -13,7 +13,7 @@ use Capell\Navigation\Support\Loader\NavigationLoader;
 
 final class NavigationAvailability
 {
-    private const PackageName = 'capell-app/navigation';
+    private const string PackageName = 'capell-app/navigation';
 
     public static function check(): bool
     {

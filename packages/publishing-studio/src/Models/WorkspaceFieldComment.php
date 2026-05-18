@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * A reviewer comment attached to a single field on a workspace-scoped entity.
@@ -69,6 +70,7 @@ class WorkspaceFieldComment extends Model
         $this->forceFill(['resolved_at' => null])->save();
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

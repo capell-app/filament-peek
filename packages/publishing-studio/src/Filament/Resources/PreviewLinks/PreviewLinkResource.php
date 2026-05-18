@@ -41,11 +41,13 @@ class PreviewLinkResource extends Resource
         return static::getTableConfigurator()::configure($table);
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-admin::navigation.group_workflow');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return (string) __('capell-admin::navigation.preview_links');
@@ -63,11 +65,13 @@ class PreviewLinkResource extends Resource
         return (string) __('capell-admin::workspace.preview_link.plural');
     }
 
+    #[Override]
     public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
     {
         return static::$navigationIcon;
     }
 
+    #[Override]
     public static function getActiveNavigationIcon(): string|BackedEnum|Htmlable|null
     {
         return static::$activeNavigationIcon;

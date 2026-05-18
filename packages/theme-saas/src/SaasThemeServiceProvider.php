@@ -11,6 +11,7 @@ use Capell\Core\ThemeStudio\Rendering\BladeThemeRenderer;
 use Capell\Core\ThemeStudio\Rendering\ViewSectionRenderer;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class SaasThemeServiceProvider extends ServiceProvider
 {
@@ -78,6 +79,7 @@ class SaasThemeServiceProvider extends ServiceProvider
         );
     }
 
+    #[Override]
     public function register(): void {}
 
     public function boot(ThemeRegistry $registry): void

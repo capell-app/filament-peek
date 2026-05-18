@@ -6,6 +6,7 @@ namespace Capell\Diagnostics\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 final class FailedJob extends Model
 {
@@ -13,6 +14,7 @@ final class FailedJob extends Model
 
     public $timestamps = false;
 
+    #[Override]
     public function getTable(): string
     {
         return config('queue.failed.table', 'failed_jobs');

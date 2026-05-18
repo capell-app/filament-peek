@@ -23,9 +23,11 @@ use Capell\Search\Providers\SearchServiceProvider;
 use Capell\SeoSuite\Providers\SeoSuiteServiceProvider;
 use Capell\Tags\Providers\TagsServiceProvider;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class ForcePackagesUninstalledServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         foreach ($this->packageNames() as $packageName) {

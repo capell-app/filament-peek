@@ -22,7 +22,7 @@ final class BuildPackagesInstalledAction
      *
      * @var array<string, array{short: string, config: ?string, docs: ?string, display?: string, bundle?: string, health_checks?: int, install?: ?string, doctor?: ?string}>
      */
-    private const KNOWN_PACKAGES = [
+    private const array KNOWN_PACKAGES = [
         'capell-app/core' => [
             'short' => 'core',
             'config' => 'capell',

@@ -17,11 +17,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Override;
 
 class ListImportBatches extends ListRecords
 {
     protected static string $resource = ImportBatchResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [

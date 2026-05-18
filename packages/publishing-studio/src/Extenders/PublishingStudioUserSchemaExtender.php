@@ -29,10 +29,12 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
+use Override;
 use Throwable;
 
 class PublishingStudioUserSchemaExtender extends AbstractUserSchemaExtender
 {
+    #[Override]
     public function supports(UserSchemaContextData $context): bool
     {
         return $this->shouldLoadBridge();
@@ -41,6 +43,7 @@ class PublishingStudioUserSchemaExtender extends AbstractUserSchemaExtender
     /**
      * @return array<int, Component>
      */
+    #[Override]
     public function extendSidebarComponents(Schema $schema, UserSchemaContextData $context): array
     {
         if (! $context->record instanceof Model) {
@@ -69,6 +72,7 @@ class PublishingStudioUserSchemaExtender extends AbstractUserSchemaExtender
      * @param  array<int, mixed>  $relationManagers
      * @return array<int, mixed>
      */
+    #[Override]
     public function extendRelationManagers(Model $record, array $relationManagers, UserSchemaContextData $context): array
     {
         return [

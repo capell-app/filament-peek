@@ -6,11 +6,13 @@ namespace Capell\AccessGate\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 abstract class AccessGateModel extends Model
 {
     use HasFactory;
 
+    #[Override]
     public function getConnectionName(): ?string
     {
         $connection = config('access-gate.connection');

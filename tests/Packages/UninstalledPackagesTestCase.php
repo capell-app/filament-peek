@@ -34,6 +34,7 @@ use Capell\ThemeStudio\Corporate\CorporateThemeServiceProvider;
 use Capell\ThemeStudio\Saas\SaasThemeServiceProvider;
 use Illuminate\Foundation\Application;
 use Livewire\LivewireServiceProvider;
+use Override;
 
 class UninstalledPackagesTestCase extends AbstractTestCase
 {
@@ -46,6 +47,7 @@ class UninstalledPackagesTestCase extends AbstractTestCase
      * @param  Application  $app
      * @return class-string[]
      */
+    #[Override]
     protected function getPackageProviders(mixed $app): array
     {
         return [

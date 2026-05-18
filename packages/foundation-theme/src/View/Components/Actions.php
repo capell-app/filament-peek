@@ -17,7 +17,7 @@ use Illuminate\View\Component;
 
 final class Actions extends Component
 {
-    private const PackageName = 'capell-app/foundation-theme';
+    private const string PackageName = 'capell-app/foundation-theme';
 
     /** @var array<int, array<string, mixed>> */
     public array $resolvedActions;

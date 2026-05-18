@@ -8,14 +8,11 @@ use Spatie\LaravelData\Data;
 
 final class PageImportStatusData extends Data
 {
-    /** @var string */
-    public const NOTICE_SUMMARY_BLOCKING_ERRORS = 'summary_blocking_errors';
+    public const string NOTICE_SUMMARY_BLOCKING_ERRORS = 'summary_blocking_errors';
 
-    /** @var string */
-    public const NOTICE_CONFIRMATION_MISMATCH = 'confirmation_mismatch';
+    public const string NOTICE_CONFIRMATION_MISMATCH = 'confirmation_mismatch';
 
-    /** @var string */
-    public const NOTICE_IMPORT_QUEUED = 'import_queued';
+    public const string NOTICE_IMPORT_QUEUED = 'import_queued';
 
     /**
      * @param  array<string, mixed>  $resultSummary

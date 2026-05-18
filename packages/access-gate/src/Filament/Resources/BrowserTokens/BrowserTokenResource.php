@@ -95,21 +95,25 @@ final class BrowserTokenResource extends Resource
         return BrowserToken::class;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-access-gate::filament.navigation_group');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-access-gate::filament.resources.browser_tokens');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::getPackage(AccessGateServiceProvider::$packageName)->isInstalled();
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

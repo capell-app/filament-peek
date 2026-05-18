@@ -9,6 +9,7 @@ use Capell\EmailStudio\Enums\SuppressionReason;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @property int|null $site_id
@@ -40,6 +41,7 @@ class EmailSuppression extends Model
 
     protected static string $factory = EmailSuppressionFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.suppressions');
@@ -50,6 +52,7 @@ class EmailSuppression extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -16,6 +16,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
+use Override;
 
 class QueueHealthPage extends Page implements HasActions, HasTable
 {
@@ -32,11 +33,13 @@ class QueueHealthPage extends Page implements HasActions, HasTable
 
     protected string $view = 'capell-admin::components.pages.table';
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return (string) __('capell-admin::navigation.queue_health');
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         $user = auth()->user();
@@ -70,6 +73,7 @@ class QueueHealthPage extends Page implements HasActions, HasTable
         return $user->can(DiagnosticsPermission::ViewDiagnostics->value) === true;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return (string) (__('capell-admin::navigation.group_system'));

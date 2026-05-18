@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * @property int $campaign_conversion_goal_id
@@ -42,6 +43,7 @@ class CampaignConversion extends Model
 
     protected static string $factory = CampaignConversionFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-campaign-studio.tables.conversions');
@@ -82,6 +84,7 @@ class CampaignConversion extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

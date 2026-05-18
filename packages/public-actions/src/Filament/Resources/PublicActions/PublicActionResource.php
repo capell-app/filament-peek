@@ -113,16 +113,19 @@ final class PublicActionResource extends Resource
         return PublicAction::class;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-public-actions::filament.navigation_group');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::getPackage(PublicActionsServiceProvider::$packageName)->isInstalled();
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

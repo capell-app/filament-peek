@@ -32,8 +32,7 @@ final class StartPageImportAction
 {
     use AsAction;
 
-    /** @var string */
-    public const ERROR_UPLOAD_REQUIRED = 'upload_required';
+    public const string ERROR_UPLOAD_REQUIRED = 'upload_required';
 
     /**
      * @param  array<string, mixed>  $state

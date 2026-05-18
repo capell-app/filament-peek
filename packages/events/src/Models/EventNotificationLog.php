@@ -9,6 +9,7 @@ use Capell\Events\Enums\EventNotificationTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class EventNotificationLog extends Model
 {
@@ -31,6 +32,7 @@ class EventNotificationLog extends Model
         return $this->belongsTo(EventRegistration::class, 'event_registration_id');
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

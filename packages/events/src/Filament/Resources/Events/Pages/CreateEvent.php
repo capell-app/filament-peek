@@ -11,15 +11,18 @@ use Capell\Core\Models\Blueprint;
 use Capell\Events\Actions\EnsureEventPublishingDefaultsAction;
 use Capell\Events\Enums\ResourceEnum;
 use Capell\Events\Filament\Resources\Events\EventResource;
+use Override;
 
 class CreateEvent extends CreatePage
 {
+    #[Override]
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resourceIfRegistered(AdminResourceEnum::Page, strtolower(ResourceEnum::Event->name))
             ?? EventResource::class;
     }
 
+    #[Override]
     protected function beforeFill(): void
     {
         parent::beforeFill();

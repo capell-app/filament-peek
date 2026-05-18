@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 
 /**
  * @property string|null $city
@@ -85,6 +86,7 @@ class EventVenue extends Model implements Statusable, Userstampable
         return implode(', ', $parts);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -13,12 +13,14 @@ use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Closure;
 use Illuminate\Contracts\View\View;
+use Override;
 use Stringable;
 
 class Breadcrumbs extends AbstractElement
 {
     protected static string $defaultView = 'capell-foundation-theme::components.element.page.breadcrumbs';
 
+    #[Override]
     public function render(array $data = []): View|string|Closure
     {
         $page = Frontend::page();

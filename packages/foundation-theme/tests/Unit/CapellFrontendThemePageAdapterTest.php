@@ -2,104 +2,33 @@
 
 declare(strict_types=1);
 
-use Capell\Core\Models\Translation;
+use Capell\Core\ThemeStudio\Data\FooterData;
+use Capell\Core\ThemeStudio\Data\HeroSectionData;
+use Capell\Core\ThemeStudio\Data\NavigationData;
 use Capell\Frontend\ThemeStudio\Adapters\CapellFrontendThemePageAdapter;
-use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
-it('uses already loaded media without lazy loading named media relations', function (): void {
-    $model = new class extends Model
-    {
-        use HasFactory;
+it('builds portable fallback theme data for the current frontend page', function (): void {
+    $page = (new CapellFrontendThemePageAdapter)->currentPage();
+    $heroSection = $page->sections[0];
 
-        public function image(): mixed
-        {
-            throw new RuntimeException('Lazy image relation was loaded.');
-        }
-    };
+    expect($page->title)->toBe('Untitled page')
+        ->and($page->sections)->toHaveCount(1)
+        ->and($heroSection)->toBeInstanceOf(HeroSectionData::class)
+        ->and($page->navigation)->toBeInstanceOf(NavigationData::class)
+        ->and($page->navigation->brandName)->toBe('Capell')
+        ->and($page->footer)->toBeInstanceOf(FooterData::class)
+        ->and($page->footer->brandName)->toBe('Capell');
 
-    $model->setRelation('media', new Collection([
-        new class
-        {
-            public function getUrl(): string
-            {
-                return '/storage/example.jpg';
-            }
-        },
-    ]));
-
-    $method = new ReflectionMethod(CapellFrontendThemePageAdapter::class, 'mediaUrl');
-    $url = $method->invoke(new CapellFrontendThemePageAdapter, $model);
-
-    expect($url)->toBe('/storage/example.jpg');
+    expect($heroSection->toViewData()['section'])->toBe($heroSection);
 });
 
-it('maps public asset presentation data for theme listings', function (): void {
-    config()->set('capell-frontend.date_format', 'F j, Y');
+it('keeps default navigation usable when no package navigation is available', function (): void {
+    $navigation = (new CapellFrontendThemePageAdapter)->currentPage()->navigation;
 
-    $asset = new class extends Model
-    {
-        use HasFactory;
-    };
-    $asset->setRawAttributes([
-        'name' => 'snowy-owl',
-        'created_at' => CarbonImmutable::parse('2026-05-01 10:00:00'),
-        'meta' => ['category' => 'Bird profile', 'component' => 'internal-component'],
-    ]);
-
-    $translation = new Translation;
-    $translation->setRawAttributes([
-        'title' => 'Snowy Owl',
-        'content' => '<p>A quiet Arctic hunter with bright white plumage.</p>',
-    ]);
-
-    $creator = new class extends Model
-    {
-        use HasFactory;
-    };
-    $creator->setRawAttributes(['name' => 'Ben Johnson']);
-
-    $type = new class extends Model
-    {
-        use HasFactory;
-    };
-    $type->setRawAttributes(['name' => 'animal profile']);
-
-    $pageUrl = new class extends Model
-    {
-        use HasFactory;
-    };
-    $pageUrl->setRawAttributes(['url' => '/owls/snowy-owl']);
-
-    $asset->setRelation('translation', $translation);
-    $asset->setRelation('creator', $creator);
-    $asset->setRelation('type', $type);
-    $asset->setRelation('pageUrl', $pageUrl);
-
-    $elementAsset = new class extends Model
-    {
-        use HasFactory;
-    };
-    $elementAsset->setRawAttributes(['meta' => ['badge' => 'Featured']]);
-    $elementAsset->setRelation('asset', $asset);
-
-    $element = new class extends Model
-    {
-        use HasFactory;
-    };
-    $element->setRelation('assets', new Collection([$elementAsset]));
-
-    $method = new ReflectionMethod(CapellFrontendThemePageAdapter::class, 'assetItems');
-    $items = $method->invoke(new CapellFrontendThemePageAdapter, $element, 'summary');
-
-    expect($items)->toHaveCount(1)
-        ->and($items[0]['title'])->toBe('Snowy Owl')
-        ->and($items[0]['url'])->toBe('/owls/snowy-owl')
-        ->and($items[0]['publishedDate'])->toBe('May 1, 2026')
-        ->and($items[0]['author'])->toBe('Ben Johnson')
-        ->and($items[0]['type'])->toBe('Animal Profile')
-        ->and($items[0]['meta'])->toBe(['Bird profile', 'Featured'])
-        ->and($items[0]['meta'])->not->toContain('internal-component');
+    expect($navigation)->toBeInstanceOf(NavigationData::class)
+        ->and($navigation->items)->toBe([
+            ['label' => 'Content', 'url' => '#content'],
+            ['label' => 'Gallery', 'url' => '#gallery'],
+            ['label' => 'Contact', 'url' => '#footer'],
+        ]);
 });

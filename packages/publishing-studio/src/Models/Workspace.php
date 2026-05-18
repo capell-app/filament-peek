@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as AuthenticatedUser;
 use Illuminate\Support\Str;
+use Override;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -97,6 +98,7 @@ class Workspace extends Model implements Userstampable
         'kind' => 'manual',
     ];
 
+    #[Override]
     public function uniqueIds(): array
     {
         return ['uuid'];
@@ -272,6 +274,7 @@ class Workspace extends Model implements Userstampable
             ->dontSubmitEmptyLogs();
     }
 
+    #[Override]
     protected static function boot(): void
     {
         parent::boot();
@@ -295,6 +298,7 @@ class Workspace extends Model implements Userstampable
         });
     }
 
+    #[Override]
     protected static function booted(): void
     {
         static::creating(function (self $workspace): void {
@@ -340,6 +344,7 @@ class Workspace extends Model implements Userstampable
         ]);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -9,6 +9,7 @@ use Capell\EmailStudio\Enums\EmailEventType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class EmailEvent extends Model
 {
@@ -31,6 +32,7 @@ class EmailEvent extends Model
 
     protected static string $factory = EmailEventFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.events');
@@ -56,6 +58,7 @@ class EmailEvent extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

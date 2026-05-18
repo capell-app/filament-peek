@@ -58,21 +58,25 @@ class NewsletterTagResource extends Resource
             ->where('type', config('capell-newsletter.newsletter_tag_type', 'newsletter'));
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-admin::navigation.group_marketing');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-newsletter::navigation.newsletter_tags');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::isPackageInstalled(NewsletterServiceProvider::$packageName);
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

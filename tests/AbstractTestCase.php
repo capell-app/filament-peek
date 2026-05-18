@@ -62,6 +62,7 @@ use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
 use Orchestra\Workbench\WorkbenchServiceProvider;
+use Override;
 use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
 use Silber\PageCache\LaravelServiceProvider;
 use Sinnbeck\DomAssertions\DomAssertionsServiceProvider;
@@ -167,6 +168,7 @@ abstract class AbstractTestCase extends TestCase
         $this->setUpDatabase();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         try {

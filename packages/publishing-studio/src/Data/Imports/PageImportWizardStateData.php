@@ -8,14 +8,11 @@ use Spatie\LaravelData\Data;
 
 final class PageImportWizardStateData extends Data
 {
-    /** @var string */
-    public const NOTICE_UNRESOLVED_REFERENCES = 'unresolved_references';
+    public const string NOTICE_UNRESOLVED_REFERENCES = 'unresolved_references';
 
-    /** @var string */
-    public const NOTICE_BLOCKED_BY_WORKSPACE_CONFLICT = 'blocked_by_workspace_conflict';
+    public const string NOTICE_BLOCKED_BY_WORKSPACE_CONFLICT = 'blocked_by_workspace_conflict';
 
-    /** @var string */
-    public const NOTICE_BLOCKED_PENDING_DECISIONS = 'blocked_pending_decisions';
+    public const string NOTICE_BLOCKED_PENDING_DECISIONS = 'blocked_pending_decisions';
 
     /**
      * @param  list<array<string, mixed>>  $reviewRows

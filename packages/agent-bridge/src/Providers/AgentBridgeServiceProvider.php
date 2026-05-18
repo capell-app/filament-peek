@@ -35,12 +35,14 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Boost\AgentBridge\Boost;
+use Override;
 use Throwable;
 
 final class AgentBridgeServiceProvider extends ServiceProvider
 {
     public static string $packageName = 'capell-app/agent-bridge';
 
+    #[Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/capell-agent-bridge.php', 'capell-agent-bridge');

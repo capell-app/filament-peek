@@ -35,11 +35,13 @@ final class SystemHealthPage extends Dashboard
         return (string) (__('capell-admin::navigation.group_system'));
     }
 
+    #[Override]
     public static function getRoutePath(Panel $panel): string
     {
         return '/' . self::getSlug($panel);
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         if (config('capell.dashboard.system_health_enabled', true) === false) {
@@ -63,11 +65,13 @@ final class SystemHealthPage extends Dashboard
     /**
      * @return array<class-string<Widget>|WidgetConfiguration>
      */
+    #[Override]
     public function getWidgets(): array
     {
         return CapellAdmin::getDashboardWidgets(DashboardEnum::SystemHealth);
     }
 
+    #[Override]
     public function getColumns(): array
     {
         return ['default' => 1, 'md' => 3];

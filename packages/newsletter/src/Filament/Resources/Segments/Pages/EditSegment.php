@@ -7,11 +7,13 @@ namespace Capell\Newsletter\Filament\Resources\Segments\Pages;
 use Capell\Newsletter\Filament\Resources\Segments\SegmentResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Override;
 
 class EditSegment extends EditRecord
 {
     protected static string $resource = SegmentResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [

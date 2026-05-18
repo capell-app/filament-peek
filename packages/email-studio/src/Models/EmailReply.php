@@ -8,6 +8,7 @@ use Capell\EmailStudio\Database\Factories\EmailReplyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class EmailReply extends Model
 {
@@ -33,6 +34,7 @@ class EmailReply extends Model
 
     protected static string $factory = EmailReplyFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.replies');
@@ -53,6 +55,7 @@ class EmailReply extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

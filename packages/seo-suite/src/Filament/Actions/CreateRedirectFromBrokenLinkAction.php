@@ -13,11 +13,11 @@ use Filament\Actions\Action;
 
 class CreateRedirectFromBrokenLinkAction extends Action
 {
-    private const BUILD_REDIRECT_CREATE_URL_ACTION = BuildRedirectCreateUrlAction::class;
+    private const string BUILD_REDIRECT_CREATE_URL_ACTION = BuildRedirectCreateUrlAction::class;
 
-    private const REDIRECT_RESOURCE = RedirectResource::class;
+    private const string REDIRECT_RESOURCE = RedirectResource::class;
 
-    private const VALIDATE_REDIRECT_ACTION = ValidateRedirectAction::class;
+    private const string VALIDATE_REDIRECT_ACTION = ValidateRedirectAction::class;
 
     protected function setUp(): void
     {

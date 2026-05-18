@@ -12,6 +12,7 @@ use Capell\PublishingStudio\Models\WorkspaceApproval;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Override;
 
 class PageApprovalStatus extends Widget
 {
@@ -22,6 +23,7 @@ class PageApprovalStatus extends Widget
     /** @var int|string|array<string, int|null> */
     protected int|string|array $columnSpan = 'full';
 
+    #[Override]
     public function render(): View
     {
         $workspace = $this->record?->workspace;

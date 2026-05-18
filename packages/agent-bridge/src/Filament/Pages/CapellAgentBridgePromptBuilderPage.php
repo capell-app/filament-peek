@@ -118,6 +118,7 @@ final class CapellAgentBridgePromptBuilderPage extends Page implements HasForms
     }
 
     /** @return array<int, Action> */
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [

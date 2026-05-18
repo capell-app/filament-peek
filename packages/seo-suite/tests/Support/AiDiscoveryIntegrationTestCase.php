@@ -35,6 +35,7 @@ class AiDiscoveryIntegrationTestCase extends AbstractTestCase
         ];
     }
 
+    #[Override]
     protected function getEnvironmentSetUp(mixed $app): void
     {
         parent::getEnvironmentSetUp($app);

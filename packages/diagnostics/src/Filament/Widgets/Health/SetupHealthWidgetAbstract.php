@@ -10,6 +10,7 @@ use Capell\Diagnostics\Actions\Dashboard\BuildSetupHealthAction;
 use Capell\Diagnostics\Data\Dashboard\SetupHealthData;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Computed;
+use Override;
 
 final class SetupHealthWidgetAbstract extends Widget implements CapellWidgetContract
 {
@@ -26,6 +27,7 @@ final class SetupHealthWidgetAbstract extends Widget implements CapellWidgetCont
 
     protected static ?int $sort = 0;
 
+    #[Override]
     public static function canView(): bool
     {
         if (! self::canViewCheck()) {

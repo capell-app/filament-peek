@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * Backward-compatible model for the existing legal_acceptances table.
@@ -58,6 +59,7 @@ class DocumentAcceptance extends Model
         return $this->belongsTo(DocumentPublication::class, 'document_publication_id');
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

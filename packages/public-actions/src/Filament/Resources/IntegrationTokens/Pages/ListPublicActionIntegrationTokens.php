@@ -15,11 +15,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Override;
 
 final class ListPublicActionIntegrationTokens extends ListRecords
 {
     protected static string $resource = PublicActionIntegrationTokenResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [

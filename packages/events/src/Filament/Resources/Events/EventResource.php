@@ -45,6 +45,7 @@ class EventResource extends PageResource
     /**
      * @return class-string<Event>
      */
+    #[Override]
     public static function getModel(): string
     {
         return Event::class;
@@ -66,31 +67,37 @@ class EventResource extends PageResource
         return '/events/';
     }
 
+    #[Override]
     public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
     {
         return Heroicon::OutlinedCalendarDays;
     }
 
+    #[Override]
     public static function getActiveNavigationIcon(): string|BackedEnum|Htmlable|null
     {
         return Heroicon::CalendarDays;
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-events::generic.events');
     }
 
+    #[Override]
     public static function getNavigationParentItem(): ?string
     {
         return null;
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::getPackage(EventsServiceProvider::$packageName)->isInstalled();
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [
@@ -100,6 +107,7 @@ class EventResource extends PageResource
         ];
     }
 
+    #[Override]
     public static function mutateFormDataBeforeCreate(array &$data, array $formData = []): void
     {
         parent::mutateFormDataBeforeCreate($data, $formData);
@@ -115,11 +123,13 @@ class EventResource extends PageResource
         }
     }
 
+    #[Override]
     public static function applyTypeAdminResourceConstraint(BuilderContract $query, ?bool $hideSystemPages = false): void
     {
         $query->where('key', 'event');
     }
 
+    #[Override]
     public static function getResourceName(): ?string
     {
         return strtolower(ResourceEnum::Event->name);

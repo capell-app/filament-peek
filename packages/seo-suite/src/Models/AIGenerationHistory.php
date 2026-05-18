@@ -8,6 +8,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @property int $id
@@ -71,6 +72,7 @@ class AIGenerationHistory extends Model
         'language_id',
     ];
 
+    #[Override]
     protected function casts(): array
     {
         return [

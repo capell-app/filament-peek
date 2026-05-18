@@ -21,7 +21,7 @@ class Svg extends Component
      * browser.
      */
     /** @var list<string> */
-    private const DANGEROUS_TAGS = [
+    private const array DANGEROUS_TAGS = [
         'script',
         'foreignObject',
         'iframe',

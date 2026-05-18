@@ -87,31 +87,37 @@ final class DocumentResource extends Resource
         return Document::class;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-document-lifecycle::navigation.group');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-document-lifecycle::navigation.documents');
     }
 
+    #[Override]
     public static function getModelLabel(): string
     {
         return __('capell-document-lifecycle::navigation.document');
     }
 
+    #[Override]
     public static function getPluralModelLabel(): string
     {
         return __('capell-document-lifecycle::navigation.documents');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::isPackageInstalled(DocumentLifecycleServiceProvider::$packageName);
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [
@@ -120,6 +126,7 @@ final class DocumentResource extends Resource
         ];
     }
 
+    #[Override]
     public static function getRelations(): array
     {
         return [

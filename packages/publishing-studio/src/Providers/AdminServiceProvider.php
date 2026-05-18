@@ -69,10 +69,12 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Override;
 use Throwable;
 
 class AdminServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this->app->tag(

@@ -16,6 +16,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Override;
 use RuntimeException;
 
 /**
@@ -45,6 +46,7 @@ class CompareVersionPage extends Page
         $this->authorizeResourceAccess();
     }
 
+    #[Override]
     public function getTitle(): string|Htmlable
     {
         return __('capell-admin::workspace.compare.title', ['workspace' => $this->getWorkspace()->name]);
@@ -53,6 +55,7 @@ class CompareVersionPage extends Page
     /**
      * @return array<string, string>
      */
+    #[Override]
     public function getBreadcrumbs(): array
     {
         return [];
@@ -108,6 +111,7 @@ class CompareVersionPage extends Page
         };
     }
 
+    #[Override]
     protected function getViewData(): array
     {
         return [

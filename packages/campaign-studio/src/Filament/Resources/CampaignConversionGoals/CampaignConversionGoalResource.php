@@ -55,21 +55,25 @@ final class CampaignConversionGoalResource extends Resource
         return CampaignConversionGoal::class;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-admin::navigation.group_marketing');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-campaign-studio::navigation.conversion_goals');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::getPackage(CampaignStudioServiceProvider::$packageName)->isInstalled();
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

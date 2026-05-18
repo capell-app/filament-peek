@@ -9,6 +9,7 @@ use Capell\EmailStudio\Enums\EmailTemplateStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 class EmailTemplate extends Model
 {
@@ -28,6 +29,7 @@ class EmailTemplate extends Model
 
     protected static string $factory = EmailTemplateFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.templates');
@@ -48,6 +50,7 @@ class EmailTemplate extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

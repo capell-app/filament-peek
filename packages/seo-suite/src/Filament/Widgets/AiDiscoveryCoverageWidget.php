@@ -9,6 +9,7 @@ use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Capell\SeoSuite\Actions\Dashboard\BuildAiDiscoveryCoverageStatsAction;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Override;
 
 final class AiDiscoveryCoverageWidget extends StatsOverviewWidget implements CapellWidgetContract
 {
@@ -24,6 +25,7 @@ final class AiDiscoveryCoverageWidget extends StatsOverviewWidget implements Cap
 
     protected static ?int $sort = 45;
 
+    #[Override]
     protected function getStats(): array
     {
         $stats = BuildAiDiscoveryCoverageStatsAction::run();

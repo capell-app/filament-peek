@@ -7,6 +7,7 @@ namespace Capell\PasswordPolicy\Settings;
 use Capell\Core\Contracts\SettingsContract;
 use Capell\Core\Contracts\SettingsSchemaContract;
 use Capell\PasswordPolicy\Filament\Settings\PasswordPolicySettingsSchema;
+use Override;
 use Spatie\LaravelSettings\Settings;
 
 class PasswordPolicySettings extends Settings implements SettingsContract, SettingsSchemaContract
@@ -38,6 +39,7 @@ class PasswordPolicySettings extends Settings implements SettingsContract, Setti
         return resolve(self::class);
     }
 
+    #[Override]
     public function refresh(): self
     {
         parent::refresh();

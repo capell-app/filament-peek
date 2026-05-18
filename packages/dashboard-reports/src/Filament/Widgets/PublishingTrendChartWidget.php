@@ -11,6 +11,7 @@ use Capell\Admin\Filament\Concerns\HasLineChartOptions;
 use Capell\DashboardReports\Actions\Dashboard\BuildPublishingTrendAction;
 use Capell\DashboardReports\Data\Dashboard\PublishingTrendPointData;
 use Filament\Widgets\ChartWidget;
+use Override;
 
 final class PublishingTrendChartWidget extends ChartWidget implements CapellWidgetContract
 {
@@ -28,11 +29,13 @@ final class PublishingTrendChartWidget extends ChartWidget implements CapellWidg
 
     protected static ?int $sort = 1;
 
+    #[Override]
     public function getHeading(): string
     {
         return __('capell-dashboard-reports::dashboard.widget_publishing_trend');
     }
 
+    #[Override]
     protected function getData(): array
     {
         $data = BuildPublishingTrendAction::run($this->getDashboardPeriod());

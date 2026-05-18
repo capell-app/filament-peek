@@ -16,11 +16,11 @@ use Throwable;
 
 class PrismProvider implements ServiceContract
 {
-    private const CIRCUIT_BREAKER_KEY = 'ai_circuit_breaker_state';
+    private const string CIRCUIT_BREAKER_KEY = 'ai_circuit_breaker_state';
 
-    private const FAILURE_THRESHOLD = 5;
+    private const int FAILURE_THRESHOLD = 5;
 
-    private const CIRCUIT_TIMEOUT = 300;
+    private const int CIRCUIT_TIMEOUT = 300;
 
     protected int $maxRetries;
 

@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property string $email
@@ -33,6 +34,7 @@ class EventRegistration extends Model
         return $this->belongsTo(EventOccurrence::class, 'event_occurrence_id');
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

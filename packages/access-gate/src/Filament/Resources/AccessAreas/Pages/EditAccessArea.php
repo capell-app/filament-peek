@@ -14,11 +14,13 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
+use Override;
 
 final class EditAccessArea extends EditRecord
 {
     protected static string $resource = AccessAreaResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         $record = $this->getRecord();

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Override;
 use Throwable;
 
 /**
@@ -140,6 +141,7 @@ class SchedulerEvent extends Model
         $this->save();
     }
 
+    #[Override]
     protected static function booted(): void
     {
         static::creating(function (self $event): void {
@@ -156,6 +158,7 @@ class SchedulerEvent extends Model
             ->where('scheduled_for', '<=', now());
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * @property int $id
@@ -54,6 +55,7 @@ class DocumentPublication extends Model
         return $this->morphTo(__FUNCTION__, 'published_actor_type', 'published_actor_id');
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

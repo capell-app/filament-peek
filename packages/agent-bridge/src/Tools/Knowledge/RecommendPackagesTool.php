@@ -14,6 +14,7 @@ use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
+use Override;
 
 #[Name('capell-knowledge-recommend-packages')]
 #[Title('Recommend Capell Packages')]
@@ -21,6 +22,7 @@ use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 #[IsReadOnly]
 final class RecommendPackagesTool extends Tool
 {
+    #[Override]
     public function schema(JsonSchema $schema): array
     {
         return [

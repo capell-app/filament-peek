@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * An immutable snapshot of the manifest of record IDs that comprise the
@@ -89,6 +90,7 @@ class Version extends Model
         return $this->manifest[$modelClass] ?? [];
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

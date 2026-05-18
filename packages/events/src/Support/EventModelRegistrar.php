@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 class EventModelRegistrar
 {
     /** @var list<class-string> */
-    private const MODELS = [
+    private const array MODELS = [
         Event::class,
         EventVenue::class,
         EventOccurrence::class,

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Livewire\WithPagination;
+use Override;
 
 class Pages extends AbstractElement
 {
@@ -23,6 +24,7 @@ class Pages extends AbstractElement
 
     protected Collection|LengthAwarePaginator $pages;
 
+    #[Override]
     public function render(array $data = []): View|string|Closure
     {
         $data['pages'] = $this->pages;

@@ -11,9 +11,11 @@ use Capell\PublishingStudio\Console\Commands\PruneAbandonedPublishingStudioComma
 use Capell\PublishingStudio\PublishScheduledPublishingStudioJob;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class ConsoleServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void {}
 
     public function boot(): void

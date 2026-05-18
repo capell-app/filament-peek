@@ -24,7 +24,7 @@ class WorkspacePolicy
 {
     use ResolvesShieldPermission;
 
-    private const SUBJECT = 'Workspace';
+    private const string SUBJECT = 'Workspace';
 
     public function viewAny(Authenticatable $user): bool
     {

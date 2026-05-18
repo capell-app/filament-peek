@@ -80,21 +80,25 @@ final class AccessGateEventResource extends Resource
         return Event::class;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-access-gate::filament.navigation_group');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-access-gate::filament.resources.events');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::getPackage(AccessGateServiceProvider::$packageName)->isInstalled();
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

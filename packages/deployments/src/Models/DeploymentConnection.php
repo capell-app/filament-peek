@@ -11,6 +11,7 @@ use Capell\Deployments\Enums\InstallPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @property int $id
@@ -44,6 +45,7 @@ final class DeploymentConnection extends Model
         return DeploymentConnectionFactory::new();
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

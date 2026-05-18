@@ -12,6 +12,7 @@ use Capell\PublishingStudio\Data\Dashboard\WorkspaceMergeData;
 use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Computed;
+use Override;
 use Spatie\LaravelData\DataCollection;
 
 final class WorkspaceActivityWidgetAbstract extends Widget implements CapellWidgetContract
@@ -28,6 +29,7 @@ final class WorkspaceActivityWidgetAbstract extends Widget implements CapellWidg
     /** @var int|string|array<string, int|null> */
     protected int|string|array $columnSpan = ['md' => 1];
 
+    #[Override]
     public static function canView(): bool
     {
         return WorkspaceSchema::isReady() && self::canViewCheck();

@@ -13,6 +13,7 @@ use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Collection;
+use Override;
 
 final class ContentSchedulerOverviewWidget extends StatsOverviewWidget implements CapellWidgetContract
 {
@@ -33,6 +34,7 @@ final class ContentSchedulerOverviewWidget extends StatsOverviewWidget implement
     /**
      * @return array<int, Stat>
      */
+    #[Override]
     protected function getStats(): array
     {
         $events = BuildVisibleContentSchedulerEventsAction::run();

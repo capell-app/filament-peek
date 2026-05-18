@@ -14,11 +14,12 @@ use Capell\SeoSuite\Enums\SeoIssueSeverityEnum;
 use Capell\SeoSuite\Filament\Actions\AiContentBriefAction;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\View;
+use Override;
 use Throwable;
 
 class PageSeoPanel extends View
 {
-    private const VIEW_NAME = 'capell-seo-suite::filament.components.page-seo-panel';
+    private const string VIEW_NAME = 'capell-seo-suite::filament.components.page-seo-panel';
 
     protected function setUp(): void
     {
@@ -31,6 +32,7 @@ class PageSeoPanel extends View
             ->viewData(fn (Get $get): array => $this->reportViewData($get('language_id')));
     }
 
+    #[Override]
     public static function make(?string $view = null): static
     {
         $static = resolve(static::class, ['view' => $view ?? self::VIEW_NAME]);
@@ -42,6 +44,7 @@ class PageSeoPanel extends View
     /**
      * @return array<string, mixed>
      */
+    #[Override]
     public function getViewData(): array
     {
         return parent::getViewData();

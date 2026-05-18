@@ -16,6 +16,7 @@ use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
+use Override;
 
 #[Name('capell-site-run-capability')]
 #[Title('Run Site Capability Preview')]
@@ -23,6 +24,7 @@ use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 #[IsDestructive(false)]
 final class RunSiteCapabilityTool extends Tool
 {
+    #[Override]
     public function schema(JsonSchema $schema): array
     {
         return [

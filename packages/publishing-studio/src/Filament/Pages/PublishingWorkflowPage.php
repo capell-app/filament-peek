@@ -46,6 +46,7 @@ class PublishingWorkflowPage extends Page
         return (string) __('capell-admin::navigation.group_workflow');
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-publishing-studio::workflow.subheading');

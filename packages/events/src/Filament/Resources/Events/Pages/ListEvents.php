@@ -10,15 +10,18 @@ use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\Events\Enums\ResourceEnum;
 use Capell\Events\Filament\Resources\Events\EventResource;
 use Illuminate\Contracts\Support\Htmlable;
+use Override;
 
 class ListEvents extends ListPages
 {
+    #[Override]
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resourceIfRegistered(AdminResourceEnum::Page, strtolower(ResourceEnum::Event->name))
             ?? EventResource::class;
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-events::generic.events_info');

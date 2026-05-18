@@ -63,6 +63,7 @@ class ScheduledPublishingPage extends Page implements HasActions, HasTable
         return ScheduledPublishingTable::configure($table);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-publishing-studio::scheduler.subheading');
@@ -74,6 +75,7 @@ class ScheduledPublishingPage extends Page implements HasActions, HasTable
         return __('capell-publishing-studio::scheduler.title');
     }
 
+    #[Override]
     protected function getHeaderWidgets(): array
     {
         return [

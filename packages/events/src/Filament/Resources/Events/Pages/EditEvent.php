@@ -10,11 +10,13 @@ use Capell\Admin\Support\AdminSurfaceLookup;
 use Capell\Events\Enums\ResourceEnum;
 use Capell\Events\Filament\Resources\Events\EventResource;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Override;
 
 class EditEvent extends EditPage
 {
     use InteractsWithRecord { resolveRecord as baseResolveRecord; }
 
+    #[Override]
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resourceIfRegistered(AdminResourceEnum::Page, strtolower(ResourceEnum::Event->name))

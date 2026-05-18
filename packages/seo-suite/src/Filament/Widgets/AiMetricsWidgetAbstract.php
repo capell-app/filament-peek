@@ -13,6 +13,7 @@ use Capell\SeoSuite\Settings\AIOrchestratorSettings;
 use Capell\SeoSuite\Support\AiRateLimiter;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
+use Override;
 
 final class AiMetricsWidgetAbstract extends Widget implements CapellWidgetContract
 {
@@ -33,6 +34,7 @@ final class AiMetricsWidgetAbstract extends Widget implements CapellWidgetContra
     /**
      * @return array<string, mixed>
      */
+    #[Override]
     protected function getViewData(): array
     {
         return [

@@ -55,6 +55,7 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Gate;
 use Livewire\LivewireServiceProvider;
+use Override;
 use Spatie\ImageOptimizer\Optimizers\Svgo;
 
 class PackagesTestCase extends AbstractTestCase
@@ -95,6 +96,7 @@ class PackagesTestCase extends AbstractTestCase
      * @param  Application  $app
      * @return class-string[]
      */
+    #[Override]
     protected function getPackageProviders(mixed $app): array
     {
         return [
@@ -133,6 +135,7 @@ class PackagesTestCase extends AbstractTestCase
     /**
      * @param  Application  $app
      */
+    #[Override]
     protected function getEnvironmentSetUp(mixed $app): void
     {
         parent::getEnvironmentSetUp($app);

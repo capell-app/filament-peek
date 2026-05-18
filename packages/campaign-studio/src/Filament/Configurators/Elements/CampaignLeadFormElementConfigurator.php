@@ -7,9 +7,11 @@ namespace Capell\CampaignStudio\Filament\Configurators\Elements;
 use Capell\LayoutBuilder\Filament\Configurators\Elements\DefaultElementConfigurator;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Tabs\Tab;
+use Override;
 
 final class CampaignLeadFormElementConfigurator extends DefaultElementConfigurator
 {
+    #[Override]
     protected function detailsTab(): Tab
     {
         return Tab::make('campaign_form')

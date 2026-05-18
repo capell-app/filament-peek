@@ -36,6 +36,7 @@ class WorkspaceApprovalsRelationManager extends RelationManager
         return __('capell-publishing-studio::workspace.user_bridge.approvals');
     }
 
+    #[Override]
     public function getRelationship(): Relation|Builder
     {
         return static::scopedQueryForUser($this->getOwnerRecord());

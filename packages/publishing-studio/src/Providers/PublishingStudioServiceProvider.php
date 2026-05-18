@@ -60,6 +60,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Spatie\Activitylog\Models\Activity;
 
 class PublishingStudioServiceProvider extends ServiceProvider
@@ -69,6 +70,7 @@ class PublishingStudioServiceProvider extends ServiceProvider
     /** @var array<class-string<Model>, true> */
     private array $workspaceBehaviorApplied = [];
 
+    #[Override]
     public function register(): void
     {
         $this->app->register(AdminServiceProvider::class);

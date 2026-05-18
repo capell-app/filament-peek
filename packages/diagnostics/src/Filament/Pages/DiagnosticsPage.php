@@ -46,6 +46,7 @@ class DiagnosticsPage extends Page implements HasActions
         return __('capell-admin::navigation.group_system');
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         return config('capell.dashboard.developer_page_enabled', true) === true
@@ -57,6 +58,7 @@ class DiagnosticsPage extends Page implements HasActions
             );
     }
 
+    #[Override]
     public function getTitle(): string|Htmlable
     {
         return __('capell-diagnostics::package.diagnostics');
@@ -91,6 +93,7 @@ class DiagnosticsPage extends Page implements HasActions
     /**
      * @return array<int, Action>
      */
+    #[Override]
     protected function getHeaderActions(): array
     {
         return $this->makers()

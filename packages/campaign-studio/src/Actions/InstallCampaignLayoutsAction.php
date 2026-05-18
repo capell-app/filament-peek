@@ -26,7 +26,7 @@ final class InstallCampaignLayoutsAction
     /**
      * @var array<string, array{name: string, component: CampaignElementComponentEnum, configurator: class-string, icon: string}>
      */
-    private const WIDGET_DEFINITIONS = [
+    private const array WIDGET_DEFINITIONS = [
         'campaign-hero' => [
             'name' => 'Campaign hero',
             'component' => CampaignElementComponentEnum::CampaignHero,

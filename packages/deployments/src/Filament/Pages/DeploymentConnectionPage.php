@@ -13,6 +13,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
+use Override;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class DeploymentConnectionPage extends Page
@@ -21,26 +22,31 @@ final class DeploymentConnectionPage extends Page
 
     protected static ?string $slug = 'deployment-connection';
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-deployments::plugins.deployment_connection.nav_label');
     }
 
+    #[Override]
     public static function getNavigationGroup(): string
     {
         return 'System';
     }
 
+    #[Override]
     public static function getNavigationSort(): int
     {
         return 91;
     }
 
+    #[Override]
     public static function getNavigationIcon(): BackedEnum
     {
         return Heroicon::OutlinedServerStack;
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         if (Gate::allows(self::viewPermission())) {
@@ -50,6 +56,7 @@ final class DeploymentConnectionPage extends Page
         return auth()->user()?->can(self::viewPermission()) === true;
     }
 
+    #[Override]
     public function getTitle(): string
     {
         return __('capell-deployments::plugins.deployment_connection.title');

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * @property bool $all_day
@@ -147,6 +148,7 @@ class EventOccurrence extends Model
             ->where('status', '!=', EventOccurrenceStatusEnum::Cancelled->value);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

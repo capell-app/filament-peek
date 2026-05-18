@@ -13,6 +13,7 @@ use Capell\SeoSuite\Enums\AiDiscoveryStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class AiDiscoverySnapshot extends Model
 {
@@ -43,6 +44,7 @@ class AiDiscoverySnapshot extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

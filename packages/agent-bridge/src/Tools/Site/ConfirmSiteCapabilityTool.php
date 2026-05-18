@@ -16,6 +16,7 @@ use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Title;
 use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
+use Override;
 
 #[Name('capell-site-confirm-capability')]
 #[Title('Confirm Site Capability')]
@@ -23,6 +24,7 @@ use Laravel\Mcp\Server\Tools\Annotations\IsDestructive;
 #[IsDestructive]
 final class ConfirmSiteCapabilityTool extends Tool
 {
+    #[Override]
     public function schema(JsonSchema $schema): array
     {
         return [

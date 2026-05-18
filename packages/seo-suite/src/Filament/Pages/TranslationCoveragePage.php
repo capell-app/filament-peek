@@ -50,6 +50,7 @@ class TranslationCoveragePage extends Page implements HasActions, HasTable
         return TranslationCoverageTable::configure($table);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-admin::generic.translation_coverage_info');

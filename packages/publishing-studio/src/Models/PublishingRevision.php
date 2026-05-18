@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Override;
 
 /**
  * Immutable per-entity audit snapshot captured at publish and restore
@@ -74,6 +75,7 @@ class PublishingRevision extends Model
         return $this->morphTo();
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

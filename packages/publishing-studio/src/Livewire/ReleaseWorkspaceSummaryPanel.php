@@ -19,7 +19,7 @@ use Throwable;
 
 final class ReleaseWorkspaceSummaryPanel extends Component
 {
-    private const SUMMARY_ITEM_LIMIT = 25;
+    private const int SUMMARY_ITEM_LIMIT = 25;
 
     #[Locked]
     public ?int $workspaceId = null;

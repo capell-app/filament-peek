@@ -19,7 +19,7 @@ final class CacheHealthWidgetAbstract extends Widget implements CapellWidgetCont
 {
     use GatedByRoleAndSettings;
 
-    private const WARM_SITE_CACHE_ACTION = 'Capell\\Admin\\Actions\\Cache\\WarmSiteCacheAction';
+    private const string WARM_SITE_CACHE_ACTION = 'Capell\\Admin\\Actions\\Cache\\WarmSiteCacheAction';
 
     public ?int $selectedSiteId = null;
 

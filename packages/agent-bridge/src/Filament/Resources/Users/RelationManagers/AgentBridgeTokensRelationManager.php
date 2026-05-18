@@ -22,6 +22,7 @@ final class AgentBridgeTokensRelationManager extends RelationManager
 
     protected static bool $shouldSkipAuthorization = true;
 
+    #[Override]
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('capell-agent-bridge::admin.tokens');
@@ -38,6 +39,7 @@ final class AgentBridgeTokensRelationManager extends RelationManager
             ->where('user_id', $user->getKey());
     }
 
+    #[Override]
     public function getRelationship(): Builder
     {
         return self::scopedQueryForUser(CapellAgentBridgeToken::query(), $this->ownerRecord);

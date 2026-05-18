@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 use Spatie\Tags\HasTags;
 
 /**
@@ -94,6 +95,7 @@ class Subscriber extends Model
         )->withTimestamps();
     }
 
+    #[Override]
     protected static function booted(): void
     {
         static::saving(function (Subscriber $subscriber): void {
@@ -113,6 +115,7 @@ class Subscriber extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -6,6 +6,7 @@ namespace Capell\SeoSuite\Filament\Widgets;
 
 use Capell\SeoSuite\Models\AIGenerationHistory;
 use Filament\Widgets\Widget;
+use Override;
 
 class AiUsageWidget extends Widget
 {
@@ -14,6 +15,7 @@ class AiUsageWidget extends Widget
     /** @var int|string|array<string, int|null> */
     protected int|string|array $columnSpan = ['md' => 1];
 
+    #[Override]
     protected function getViewData(): array
     {
         $count = AIGenerationHistory::query()->count();

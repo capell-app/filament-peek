@@ -18,6 +18,7 @@ class ManageEventVenues extends ManageRecords
         return AdminSurfaceLookup::resource(ResourceEnum::EventVenue);
     }
 
+    #[Override]
     protected function getActions(): array
     {
         return [

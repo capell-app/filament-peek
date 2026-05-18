@@ -34,6 +34,7 @@ class EventVenueResource extends Resource
         return EventVenue::class;
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-events::generic.event_venues');
@@ -45,11 +46,13 @@ class EventVenueResource extends Resource
         return (string) __('capell-admin::navigation.group_content');
     }
 
+    #[Override]
     public static function getNavigationParentItem(): ?string
     {
         return (string) __('capell-events::generic.events');
     }
 
+    #[Override]
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
@@ -62,6 +65,7 @@ class EventVenueResource extends Resource
         ])->columns();
     }
 
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table->columns([
@@ -70,6 +74,7 @@ class EventVenueResource extends Resource
         ]);
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

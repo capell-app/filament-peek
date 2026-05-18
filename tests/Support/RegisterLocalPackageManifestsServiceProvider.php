@@ -8,9 +8,11 @@ use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Manifest\ManifestLoader;
 use Capell\Core\Support\Manifest\ManifestValidator;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 final class RegisterLocalPackageManifestsServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $loader = new ManifestLoader(new ManifestValidator);

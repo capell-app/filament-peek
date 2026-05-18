@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Support\Collection;
+use Override;
 
 final class GA4ReportsTopPagesWidget extends BaseWidget implements CapellWidgetContract
 {
@@ -29,6 +30,7 @@ final class GA4ReportsTopPagesWidget extends BaseWidget implements CapellWidgetC
 
     protected static ?int $sort = 23;
 
+    #[Override]
     public function table(Table $table): Table
     {
         return $table

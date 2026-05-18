@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
+use Override;
 
 /**
  * Persistent record of a signed preview URL that has been issued for a
@@ -75,6 +76,7 @@ class PreviewLink extends Model
         return ! $this->isRevoked() && ! $this->isExpired($now);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

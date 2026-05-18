@@ -28,9 +28,11 @@ use Capell\Diagnostics\Filament\Widgets\Health\TailwindBuildStatusWidgetAbstract
 use Capell\Diagnostics\Palette\CapellArtisanPaletteCommandProvider;
 use Capell\Diagnostics\Palette\DiagnosticsPaletteCommandProvider;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 final class AdminServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this->app->tag([

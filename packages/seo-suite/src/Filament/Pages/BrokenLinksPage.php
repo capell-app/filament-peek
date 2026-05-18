@@ -50,6 +50,7 @@ class BrokenLinksPage extends Page implements HasActions, HasTable
         return BrokenLinksTable::configure($table);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-admin::generic.broken_links_info');

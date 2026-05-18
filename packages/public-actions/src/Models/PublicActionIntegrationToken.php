@@ -12,6 +12,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property PublicActionIntegrationProvider $provider
@@ -43,6 +44,7 @@ class PublicActionIntegrationToken extends Model
         return hash('sha256', $plainTextToken);
     }
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-public-actions.tables.integration_tokens');
@@ -70,6 +72,7 @@ class PublicActionIntegrationToken extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

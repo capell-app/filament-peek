@@ -17,11 +17,13 @@ use Capell\Core\Facades\CapellCore;
 use Capell\LayoutBuilder\Enums\ConfiguratorTypeEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 final class AdminServiceProvider extends ServiceProvider
 {
-    private const LAYOUT_BUILDER_CONFIGURATOR_TYPE_ENUM = ConfiguratorTypeEnum::class;
+    private const string LAYOUT_BUILDER_CONFIGURATOR_TYPE_ENUM = ConfiguratorTypeEnum::class;
 
+    #[Override]
     public function register(): void
     {
         $this->app->booting(function (): void {

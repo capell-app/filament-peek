@@ -10,6 +10,7 @@ use Capell\Core\Models\Site;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class AiDiscoveryPageProfile extends Model
 {
@@ -35,6 +36,7 @@ class AiDiscoveryPageProfile extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -19,6 +19,7 @@ use Filament\Resources\Pages\Page as FilamentPage;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Override;
 
 /**
  * Full-page published revision history for a Page record. Draft copies are
@@ -42,6 +43,7 @@ class PageVersionHistoryPage extends FilamentPage
 
     protected string $view = 'capell-publishing-studio::filament.resources.pages.version-history';
 
+    #[Override]
     public static function getResource(): string
     {
         return AdminSurfaceLookup::resource(ResourceEnum::Page);
@@ -64,6 +66,7 @@ class PageVersionHistoryPage extends FilamentPage
         }
     }
 
+    #[Override]
     public function getTitle(): string|Htmlable
     {
         return __('capell-admin::button.version_history') . ' — ' . $this->record->name;
@@ -106,6 +109,7 @@ class PageVersionHistoryPage extends FilamentPage
         return str_contains($value, "\n") || strlen($value) > 120;
     }
 
+    #[Override]
     protected function getActions(): array
     {
         return [
@@ -117,6 +121,7 @@ class PageVersionHistoryPage extends FilamentPage
         ];
     }
 
+    #[Override]
     protected function getViewData(): array
     {
         $selectedRevision = $this->getSelectedRevision();

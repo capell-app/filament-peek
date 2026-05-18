@@ -18,7 +18,7 @@ use Throwable;
 
 final class GoogleSearchConsoleClient implements SearchConsoleClientInterface
 {
-    private const SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly';
+    private const string SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly';
 
     /**
      * @param  array{enabled?: bool, credentials_path?: string|null, property_url?: string|null}  $config

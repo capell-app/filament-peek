@@ -18,9 +18,11 @@ use Capell\Newsletter\Models\SyncAttempt;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class AdminServiceProvider extends ServiceProvider
 {
+    #[Override]
     public function register(): void
     {
         $this->app->booting(function (): void {

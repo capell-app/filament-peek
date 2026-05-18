@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * @property PublicActionStatus $status
@@ -49,6 +50,7 @@ class PublicAction extends Model
 
     protected static string $factory = PublicActionFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-public-actions.tables.actions');
@@ -74,6 +76,7 @@ class PublicAction extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -50,6 +50,7 @@ class AiDiscoveryPage extends Page implements HasActions, HasTable
         return AiDiscoveryTable::configure($table);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-seo-suite::generic.ai_discovery_info');

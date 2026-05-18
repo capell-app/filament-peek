@@ -118,6 +118,7 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
             ->defaultSort('total_visitors', 'desc');
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-admin::generic.page_not_found_info');

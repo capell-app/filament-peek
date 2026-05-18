@@ -13,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
+use Override;
 
 final class TopCampaignStudioWidget extends TableWidget implements CapellWidgetContract
 {
@@ -29,6 +30,7 @@ final class TopCampaignStudioWidget extends TableWidget implements CapellWidgetC
 
     protected static ?int $sort = 21;
 
+    #[Override]
     public function table(Table $table): Table
     {
         return $table

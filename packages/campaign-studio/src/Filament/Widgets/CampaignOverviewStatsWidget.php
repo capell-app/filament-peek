@@ -10,6 +10,7 @@ use Capell\Admin\Filament\Concerns\HasDashboardDateRange;
 use Capell\CampaignStudio\Actions\BuildCampaignOverviewStatsAction;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Override;
 
 final class CampaignOverviewStatsWidget extends StatsOverviewWidget implements CapellWidgetContract
 {
@@ -26,6 +27,7 @@ final class CampaignOverviewStatsWidget extends StatsOverviewWidget implements C
 
     protected static ?int $sort = 20;
 
+    #[Override]
     protected function getStats(): array
     {
         [$rangeStart, $rangeEnd] = $this->getDashboardDateRange();

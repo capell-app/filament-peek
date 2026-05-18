@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Schema;
 
 class SeoMetaCheck implements PublishCheck
 {
-    private const SEO_CHECK_MODE_BLOCKER = 'blocker';
+    private const string SEO_CHECK_MODE_BLOCKER = 'blocker';
 
-    private const SEO_CHECK_MODE_IGNORED = 'ignored';
+    private const string SEO_CHECK_MODE_IGNORED = 'ignored';
 
-    private const SEO_CHECK_MODE_WARNING = 'warning';
+    private const string SEO_CHECK_MODE_WARNING = 'warning';
 
     public function identifier(): string
     {

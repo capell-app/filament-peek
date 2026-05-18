@@ -9,6 +9,7 @@ use Capell\PublicActions\Enums\PublicActionDispatchStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property int $attempt
@@ -39,6 +40,7 @@ class PublicActionDispatchAttempt extends Model
 
     protected static string $factory = PublicActionDispatchAttemptFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-public-actions.tables.dispatch_attempts');
@@ -59,6 +61,7 @@ class PublicActionDispatchAttempt extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

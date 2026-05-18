@@ -21,9 +21,9 @@ beforeEach(function (): void {
 
 function fakeAdminAccessChecker(bool $isAdmin = true): void
 {
-    app()->instance(AdminAccessCheckerInterface::class, new class($isAdmin) implements AdminAccessCheckerInterface
+    app()->instance(AdminAccessCheckerInterface::class, new readonly class($isAdmin) implements AdminAccessCheckerInterface
     {
-        public function __construct(private readonly bool $isAdmin) {}
+        public function __construct(private bool $isAdmin) {}
 
         public function isAdmin(Authenticatable $user): bool
         {

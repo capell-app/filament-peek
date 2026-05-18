@@ -21,9 +21,9 @@ final class BuildRegistryHealthAction
 {
     use AsAction;
 
-    private const BLOCK_REGISTRY_CLASS = BlockRegistry::class;
+    private const string BLOCK_REGISTRY_CLASS = BlockRegistry::class;
 
-    private const MAX_REGISTRY_ENTRIES_PER_SECTION = 100;
+    private const int MAX_REGISTRY_ENTRIES_PER_SECTION = 100;
 
     public function handle(): RegistryHealthData
     {

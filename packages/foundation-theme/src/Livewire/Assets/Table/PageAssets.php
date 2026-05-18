@@ -13,6 +13,7 @@ use Capell\Core\Models\Page;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Locked;
+use Override;
 
 class PageAssets extends AbstractAssets implements HasPageResource
 {
@@ -47,6 +48,7 @@ class PageAssets extends AbstractAssets implements HasPageResource
         return $query;
     }
 
+    #[Override]
     protected function getTableQuery(): Builder
     {
         /* @var class-string<\Capell\Core\Models\Page> $model */

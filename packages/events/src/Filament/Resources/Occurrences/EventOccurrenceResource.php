@@ -23,6 +23,7 @@ class EventOccurrenceResource extends Resource
         return EventOccurrence::class;
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-events::generic.event_occurrences');
@@ -34,11 +35,13 @@ class EventOccurrenceResource extends Resource
         return (string) __('capell-admin::navigation.group_content');
     }
 
+    #[Override]
     public static function getNavigationParentItem(): ?string
     {
         return (string) __('capell-events::generic.events');
     }
 
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table->columns([
@@ -49,6 +52,7 @@ class EventOccurrenceResource extends Resource
         ]);
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

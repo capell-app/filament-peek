@@ -13,6 +13,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Override;
 use Throwable;
 
 class AiImageGeneratorAction extends Action
@@ -20,6 +21,7 @@ class AiImageGeneratorAction extends Action
     /**
      * @param  array<string, string>  $contextFieldKeys  Keys of sibling Filament fields to read as context
      */
+    #[Override]
     public static function make(?string $name = null, array $contextFieldKeys = []): static
     {
         return parent::make($name ?? 'generate-ai-image')

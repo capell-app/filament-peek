@@ -122,6 +122,7 @@ class ImportPagesPage extends Page implements HasForms
     }
 
     /** @return array<NavigationItem> */
+    #[Override]
     public function getSubNavigation(): array
     {
         return ImportSessionResource::getSubNavigation();

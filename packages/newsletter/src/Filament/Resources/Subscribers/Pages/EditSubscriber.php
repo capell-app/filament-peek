@@ -13,16 +13,19 @@ use Capell\Newsletter\Enums\SubscriberStatus;
 use Capell\Newsletter\Filament\Resources\Subscribers\SubscriberResource;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 class EditSubscriber extends EditRecord
 {
     protected static string $resource = SubscriberResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [];
     }
 
+    #[Override]
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $subscriber = UpsertSubscriberAction::run($this->subscriberData($data), $this->adminEvidence(), ConsentEventType::AdminUpdated);

@@ -19,10 +19,12 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
+use Override;
 use Throwable;
 
 final class AgentBridgeUserSchemaExtender extends AbstractUserSchemaExtender
 {
+    #[Override]
     public function supports(UserSchemaContextData $context): bool
     {
         if (! class_exists(ShouldLoadUserResourceBridgeAction::class)) {
@@ -39,6 +41,7 @@ final class AgentBridgeUserSchemaExtender extends AbstractUserSchemaExtender
         }
     }
 
+    #[Override]
     public function extendSidebarComponents(Schema $schema, UserSchemaContextData $context): array
     {
         if (! $context->record instanceof Model) {
@@ -56,6 +59,7 @@ final class AgentBridgeUserSchemaExtender extends AbstractUserSchemaExtender
         ];
     }
 
+    #[Override]
     public function extendRelationManagers(Model $record, array $relationManagers, UserSchemaContextData $context): array
     {
         return [

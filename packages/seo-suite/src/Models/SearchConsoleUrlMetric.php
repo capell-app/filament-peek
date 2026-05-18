@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 /**
  * @property CarbonInterface $window_start
@@ -47,6 +48,7 @@ class SearchConsoleUrlMetric extends Model
             ->limit($limit);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

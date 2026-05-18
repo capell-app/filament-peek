@@ -14,6 +14,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Override;
 
 class ActivityTrailPage extends Page implements HasActions, HasTable
 {
@@ -30,16 +31,19 @@ class ActivityTrailPage extends Page implements HasActions, HasTable
 
     protected string $view = 'capell-admin::components.pages.table';
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return (string) __('capell-admin::navigation.activity_trail');
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         return auth()->user()?->can(PublishingStudioPermission::ViewActivityTrailPage->value) ?? false;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return (string) (__('capell-admin::navigation.group_system'));

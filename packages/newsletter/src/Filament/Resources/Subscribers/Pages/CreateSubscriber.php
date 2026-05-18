@@ -13,11 +13,13 @@ use Capell\Newsletter\Enums\SubscriberStatus;
 use Capell\Newsletter\Filament\Resources\Subscribers\SubscriberResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 class CreateSubscriber extends CreateRecord
 {
     protected static string $resource = SubscriberResource::class;
 
+    #[Override]
     protected function handleRecordCreation(array $data): Model
     {
         $subscriber = UpsertSubscriberAction::run($this->subscriberData($data), $this->adminEvidence(), ConsentEventType::AdminUpdated);

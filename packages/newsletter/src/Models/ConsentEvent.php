@@ -10,6 +10,7 @@ use Capell\Newsletter\Enums\SubscriberStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class ConsentEvent extends Model
 {
@@ -49,6 +50,7 @@ class ConsentEvent extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -52,6 +52,7 @@ class StaleDraftsPage extends Page implements HasActions, HasTable
         return StaleDraftsTable::configure($table);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-admin::generic.stale_drafts_info');

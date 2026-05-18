@@ -126,12 +126,12 @@ it('persists configured search console metric rows before returning declining pa
         ],
     ];
 
-    app()->instance(SearchConsoleClientInterface::class, new class($metricRows) implements SearchConsoleClientInterface
+    app()->instance(SearchConsoleClientInterface::class, new readonly class($metricRows) implements SearchConsoleClientInterface
     {
         /**
          * @param  array<int, array<string, mixed>>  $metricRows
          */
-        public function __construct(private readonly array $metricRows) {}
+        public function __construct(private array $metricRows) {}
 
         public function isConfigured(): bool
         {

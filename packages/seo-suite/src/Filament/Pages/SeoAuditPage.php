@@ -50,6 +50,7 @@ class SeoAuditPage extends Page implements HasActions, HasTable
         return SeoAuditTable::configure($table);
     }
 
+    #[Override]
     public function getSubheading(): string|Htmlable|null
     {
         return __('capell-seo-suite::generic.seo_audit_info');

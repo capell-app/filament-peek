@@ -12,6 +12,7 @@ use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\Loader\PageLoader;
 use Closure;
 use Illuminate\Contracts\View\View;
+use Override;
 use Throwable;
 
 class Content extends AbstractElement
@@ -22,6 +23,7 @@ class Content extends AbstractElement
 
     protected static string $defaultView = 'capell-foundation-theme::components.element.page.content';
 
+    #[Override]
     public function render(array $data = []): View|string|Closure
     {
         return parent::render([

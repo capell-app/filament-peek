@@ -12,6 +12,7 @@ use Capell\HtmlCache\Providers\HtmlCacheServiceProvider;
 use Capell\Tests\AbstractTestCase;
 use Livewire\LivewireServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
+use Override;
 
 class FrontendAuthoringTestCase extends AbstractTestCase
 {
@@ -30,6 +31,7 @@ class FrontendAuthoringTestCase extends AbstractTestCase
         return FrontendAuthoringServiceProvider::$packageName;
     }
 
+    #[Override]
     protected function getEnvironmentSetUp(mixed $app): void
     {
         parent::getEnvironmentSetUp($app);
@@ -42,6 +44,7 @@ class FrontendAuthoringTestCase extends AbstractTestCase
     /**
      * @return class-string[]
      */
+    #[Override]
     protected function getPackageProviders(mixed $app): array
     {
         return [

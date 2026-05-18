@@ -37,6 +37,7 @@ class PreviewLinksRelationManager extends RelationManager
         return __('capell-publishing-studio::workspace.user_bridge.preview_links');
     }
 
+    #[Override]
     public function getRelationship(): Relation|Builder
     {
         return static::scopedQueryForUser($this->getOwnerRecord());

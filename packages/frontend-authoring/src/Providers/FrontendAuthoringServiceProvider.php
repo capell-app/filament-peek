@@ -12,6 +12,7 @@ use Capell\FrontendAuthoring\Support\EditableRegionSigner;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Override;
 
 class FrontendAuthoringServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,7 @@ class FrontendAuthoringServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
     }
 
+    #[Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/capell-frontend-authoring.php', 'capell-frontend-authoring');

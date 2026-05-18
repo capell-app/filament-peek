@@ -32,20 +32,15 @@ use Throwable;
  */
 final class ResolveWorkspaceContext
 {
-    /** @var string */
-    public const QUERY_PARAM = '__workspace';
+    public const string QUERY_PARAM = '__workspace';
 
-    /** @var string */
-    public const TOKEN_PARAM = '__pl';
+    public const string TOKEN_PARAM = '__pl';
 
-    /** @var string */
-    public const COOKIE_NAME = 'cms_workspace';
+    public const string COOKIE_NAME = 'cms_workspace';
 
-    /** @var int */
-    public const COOKIE_TTL_MINUTES = 240;
+    public const int COOKIE_TTL_MINUTES = 240;
 
-    /** @var string */
-    public const SESSION_KEY = 'cms_workspace_id';
+    public const string SESSION_KEY = 'cms_workspace_id';
 
     public function handle(Request $request, Closure $next): Response
     {

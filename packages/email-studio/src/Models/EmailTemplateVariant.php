@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * @property string $subject
@@ -41,6 +42,7 @@ class EmailTemplateVariant extends Model
 
     protected static string $factory = EmailTemplateVariantFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.template_variants');
@@ -66,6 +68,7 @@ class EmailTemplateVariant extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

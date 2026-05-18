@@ -21,11 +21,13 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
+use Override;
 
 final class AlertsWidgetAbstract extends ResourceAlertsWidget
 {
     protected static ?int $sort = -1;
 
+    #[Override]
     public static function canView(): bool
     {
         if (! parent::canView()) {

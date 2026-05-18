@@ -8,6 +8,7 @@ use Capell\Tests\AbstractTestCase;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Livewire\LivewireServiceProvider;
+use Override;
 
 final class FooterSocialLinksTest extends AbstractTestCase
 {
@@ -45,6 +46,7 @@ final class FooterSocialLinksTest extends AbstractTestCase
      * @param  Application  $app
      * @return class-string[]
      */
+    #[Override]
     protected function getPackageProviders(mixed $app): array
     {
         return [

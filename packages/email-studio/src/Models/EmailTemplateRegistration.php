@@ -7,6 +7,7 @@ namespace Capell\EmailStudio\Models;
 use Capell\EmailStudio\Database\Factories\EmailTemplateRegistrationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 class EmailTemplateRegistration extends Model
 {
@@ -26,6 +27,7 @@ class EmailTemplateRegistration extends Model
 
     protected static string $factory = EmailTemplateRegistrationFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.template_registrations');
@@ -36,6 +38,7 @@ class EmailTemplateRegistration extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

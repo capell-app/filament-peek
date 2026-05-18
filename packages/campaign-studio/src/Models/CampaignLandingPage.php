@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * @property int $id
@@ -38,6 +39,7 @@ class CampaignLandingPage extends Model
 
     protected static string $factory = CampaignLandingPageFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-campaign-studio.tables.landing_pages');
@@ -68,6 +70,7 @@ class CampaignLandingPage extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

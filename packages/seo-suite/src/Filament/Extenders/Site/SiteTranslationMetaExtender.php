@@ -8,9 +8,11 @@ use Capell\Admin\Enums\PageTranslationSchemaHookEnum;
 use Capell\Admin\Support\Schemas\AbstractSiteSchemaExtender;
 use Capell\SeoSuite\Filament\Components\Forms\Site\TranslationMetaSchema;
 use Filament\Schemas\Schema;
+use Override;
 
 class SiteTranslationMetaExtender extends AbstractSiteSchemaExtender
 {
+    #[Override]
     public function extendTranslationComponentsForHook(Schema $configurator, PageTranslationSchemaHookEnum $hook): array
     {
         if ($hook !== PageTranslationSchemaHookEnum::AfterTitle) {

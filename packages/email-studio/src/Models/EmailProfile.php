@@ -9,6 +9,7 @@ use Capell\EmailStudio\Enums\EmailProviderType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 class EmailProfile extends Model
 {
@@ -34,6 +35,7 @@ class EmailProfile extends Model
 
     protected static string $factory = EmailProfileFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.profiles');
@@ -59,6 +61,7 @@ class EmailProfile extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

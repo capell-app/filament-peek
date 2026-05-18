@@ -14,6 +14,7 @@ use Capell\Newsletter\Models\SyncAttempt;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Override;
 
 class NewsletterOverviewStatsWidget extends StatsOverviewWidget implements CapellWidgetContract
 {
@@ -29,6 +30,7 @@ class NewsletterOverviewStatsWidget extends StatsOverviewWidget implements Capel
 
     protected static ?int $sort = 25;
 
+    #[Override]
     protected function getStats(): array
     {
         return [

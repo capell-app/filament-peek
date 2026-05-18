@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\PublishingStudio\Data\Workflow;
 
+use Override;
 use Spatie\LaravelData\Data;
 
 final class PublishingWorkflowActionData extends Data
@@ -22,6 +23,7 @@ final class PublishingWorkflowActionData extends Data
     /**
      * @return array<string, mixed>
      */
+    #[Override]
     public function toArray(): array
     {
         return array_filter([

@@ -11,6 +11,7 @@ use Capell\Core\ThemeStudio\Rendering\BladeThemeRenderer;
 use Capell\Core\ThemeStudio\Rendering\ViewSectionRenderer;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Illuminate\Support\ServiceProvider;
+use Override;
 
 class AgencyThemeServiceProvider extends ServiceProvider
 {
@@ -80,6 +81,7 @@ class AgencyThemeServiceProvider extends ServiceProvider
         );
     }
 
+    #[Override]
     public function register(): void {}
 
     public function boot(ThemeRegistry $registry): void

@@ -11,12 +11,14 @@ use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
+use Override;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListSegments extends ListRecords
 {
     protected static string $resource = SegmentResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [

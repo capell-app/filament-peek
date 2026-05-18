@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
+use Override;
 
 /**
  * @property int $id
@@ -49,6 +50,7 @@ class SchedulerIcalToken extends Model
         return $this->revoked_at !== null;
     }
 
+    #[Override]
     protected static function booted(): void
     {
         static::creating(function (self $token): void {
@@ -58,6 +60,7 @@ class SchedulerIcalToken extends Model
         });
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

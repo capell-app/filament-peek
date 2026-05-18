@@ -16,11 +16,11 @@ use JsonException;
 
 final class GA4ReportsDataClient implements GA4ReportsDataClientInterface
 {
-    private const SCOPE = 'https://www.googleapis.com/auth/insights.readonly';
+    private const string SCOPE = 'https://www.googleapis.com/auth/insights.readonly';
 
-    private const PAGE_METRIC_PAGE_SIZE = 250;
+    private const int PAGE_METRIC_PAGE_SIZE = 250;
 
-    private const MAX_PAGE_METRIC_ROWS = 5000;
+    private const int MAX_PAGE_METRIC_ROWS = 5000;
 
     /**
      * @param  array<string, mixed>  $config

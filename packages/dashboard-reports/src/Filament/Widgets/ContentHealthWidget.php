@@ -10,6 +10,7 @@ use Capell\Admin\Data\Dashboard\ContentHealthData;
 use Capell\Admin\Filament\Concerns\GatedByRoleAndSettings;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Computed;
+use Override;
 
 final class ContentHealthWidget extends Widget implements CapellWidgetContract
 {
@@ -27,6 +28,7 @@ final class ContentHealthWidget extends Widget implements CapellWidgetContract
 
     protected static ?int $sort = 2;
 
+    #[Override]
     public static function canView(): bool
     {
         return self::canViewCheck() && self::hasContentHealthData();

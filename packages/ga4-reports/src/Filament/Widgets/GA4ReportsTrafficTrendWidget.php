@@ -11,6 +11,7 @@ use Capell\GA4Reports\Actions\BuildGA4ReportsTrendAction;
 use Capell\GA4Reports\Data\GA4ReportsTrendPointData;
 use Capell\GA4Reports\Filament\Widgets\Concerns\BuildsGA4ReportsDashboardWindow;
 use Filament\Widgets\ChartWidget;
+use Override;
 
 final class GA4ReportsTrafficTrendWidget extends ChartWidget implements CapellWidgetContract
 {
@@ -28,11 +29,13 @@ final class GA4ReportsTrafficTrendWidget extends ChartWidget implements CapellWi
 
     protected static ?int $sort = 22;
 
+    #[Override]
     public function getHeading(): string
     {
         return __('capell-ga4-reports::widgets.traffic_trend');
     }
 
+    #[Override]
     protected function getData(): array
     {
         $points = BuildGA4ReportsTrendAction::run($this->getGA4ReportsWindow());

@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 use Spatie\MediaLibrary\HasMedia;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
@@ -231,6 +232,7 @@ class Event extends Model implements HasMedia, Pageable, Publishable, Translatab
         return $this->type->meta['url_params'] ?? null;
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

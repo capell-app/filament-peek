@@ -9,6 +9,7 @@ use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\Grant;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<BrowserToken>
@@ -17,6 +18,7 @@ class BrowserTokenFactory extends Factory
 {
     protected $model = BrowserToken::class;
 
+    #[Override]
     public function configure(): static
     {
         return $this->afterCreating(function (BrowserToken $browserToken): void {

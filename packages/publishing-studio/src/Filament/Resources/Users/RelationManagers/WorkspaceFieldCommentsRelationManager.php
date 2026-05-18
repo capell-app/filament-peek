@@ -36,6 +36,7 @@ class WorkspaceFieldCommentsRelationManager extends RelationManager
         return __('capell-publishing-studio::workspace.user_bridge.field_comments');
     }
 
+    #[Override]
     public function getRelationship(): Relation|Builder
     {
         return static::scopedQueryForUser($this->getOwnerRecord());

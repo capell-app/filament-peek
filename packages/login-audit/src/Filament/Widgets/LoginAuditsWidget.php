@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Override;
 
 final class LoginAuditsWidget extends BaseWidget implements CapellWidgetContract
 {
@@ -37,6 +38,7 @@ final class LoginAuditsWidget extends BaseWidget implements CapellWidgetContract
 
     protected static ?int $sort = 6;
 
+    #[Override]
     public function table(Table $table): Table
     {
         return $table

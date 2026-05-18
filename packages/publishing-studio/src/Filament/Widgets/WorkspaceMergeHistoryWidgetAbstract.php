@@ -13,6 +13,7 @@ use Capell\PublishingStudio\Data\Dashboard\WorkspaceMergeHistoryData;
 use Capell\PublishingStudio\Support\WorkspaceSchema;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\Computed;
+use Override;
 use Spatie\LaravelData\DataCollection;
 
 final class WorkspaceMergeHistoryWidgetAbstract extends Widget implements CapellWidgetContract
@@ -30,6 +31,7 @@ final class WorkspaceMergeHistoryWidgetAbstract extends Widget implements Capell
     /** @var int|string|array<string, int|null> */
     protected int|string|array $columnSpan = ['md' => 2];
 
+    #[Override]
     public static function canView(): bool
     {
         return WorkspaceSchema::isReady() && self::canViewCheck();

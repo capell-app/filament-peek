@@ -8,6 +8,7 @@ use Capell\EmailStudio\Database\Factories\EmailTrackingTokenFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class EmailTrackingToken extends Model
 {
@@ -28,6 +29,7 @@ class EmailTrackingToken extends Model
 
     protected static string $factory = EmailTrackingTokenFactory::class;
 
+    #[Override]
     public function getTable(): string
     {
         $tableName = config('capell-email-studio.tables.tracking_tokens');
@@ -43,6 +45,7 @@ class EmailTrackingToken extends Model
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -69,21 +69,25 @@ class ProviderAudienceResource extends Resource
             });
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-admin::navigation.group_marketing');
     }
 
+    #[Override]
     public static function getNavigationLabel(): string
     {
         return __('capell-newsletter::navigation.provider_audiences');
     }
 
+    #[Override]
     public static function shouldRegisterNavigation(): bool
     {
         return CapellCore::isPackageInstalled(NewsletterServiceProvider::$packageName);
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [

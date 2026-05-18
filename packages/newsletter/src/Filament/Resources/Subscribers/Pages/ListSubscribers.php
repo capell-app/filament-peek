@@ -10,12 +10,14 @@ use Capell\Newsletter\Filament\Resources\Subscribers\SubscriberResource;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Override;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListSubscribers extends ListRecords
 {
     protected static string $resource = SubscriberResource::class;
 
+    #[Override]
     protected function getHeaderActions(): array
     {
         return [

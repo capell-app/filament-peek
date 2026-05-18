@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog;
 
 /**
@@ -67,6 +68,7 @@ class LoginAudit extends AuthenticationLog
     /**
      * @return array<string, string>
      */
+    #[Override]
     public function getCasts(): array
     {
         return [

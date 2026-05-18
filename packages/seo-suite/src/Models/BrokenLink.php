@@ -8,6 +8,7 @@ use Capell\Core\Models\Page;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class BrokenLink extends Model
 {
@@ -25,6 +26,7 @@ class BrokenLink extends Model
         return $this->belongsTo(Page::class);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

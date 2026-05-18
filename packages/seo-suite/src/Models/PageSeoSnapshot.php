@@ -10,6 +10,7 @@ use Capell\Core\Models\Site;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 class PageSeoSnapshot extends Model
 {
@@ -32,6 +33,7 @@ class PageSeoSnapshot extends Model
         return $this->belongsTo(Language::class);
     }
 
+    #[Override]
     protected function casts(): array
     {
         return [

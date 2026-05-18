@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Override;
 
 /**
  * @property int $id
@@ -66,6 +67,7 @@ class BrowserToken extends AccessGateModel
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -74,16 +74,19 @@ class WorkspaceResource extends Resource
             ]);
     }
 
+    #[Override]
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'slug', 'description'];
     }
 
+    #[Override]
     public static function canAccess(): bool
     {
         return WorkspaceSchema::isReady() && parent::canAccess();
     }
 
+    #[Override]
     public static function canGloballySearch(): bool
     {
         return WorkspaceSchema::isReady() && parent::canGloballySearch();
@@ -103,21 +106,25 @@ class WorkspaceResource extends Resource
         return Workspace::class;
     }
 
+    #[Override]
     public static function getNavigationGroup(): ?string
     {
         return __('capell-admin::navigation.group_workflow');
     }
 
+    #[Override]
     public static function getNavigationIcon(): string|BackedEnum|Htmlable|null
     {
         return config('capell-admin.resources.workspace.icon', static::$navigationIcon);
     }
 
+    #[Override]
     public static function getActiveNavigationIcon(): string|BackedEnum|Htmlable|null
     {
         return config('capell-admin.resources.workspace.active_icon', static::$activeNavigationIcon);
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [
