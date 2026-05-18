@@ -1,4 +1,4 @@
-<div>
+<div class="capell-release-workspace-summary-panel">
     @if ($visible)
         <section class="space-y-4">
             <div>

@@ -65,8 +65,9 @@ it('executes navigation commands and records successful command palette runs', f
 });
 
 it('executes artisan commands with validated parameters and stores command output', function (): void {
+    $user = $this->createUser();
+
     Artisan::command('capell:test-output {name} {--loud}', function (): int {
-        // @phpstan-ignore variable.undefined
         $message = 'Hello ' . $this->argument('name');
 
         if ($this->option('loud') === true) {
@@ -79,8 +80,6 @@ it('executes artisan commands with validated parameters and stores command outpu
     });
     app()->instance(TestCommandPaletteProvider::class, new TestCommandPaletteProvider);
     app()->tag([TestCommandPaletteProvider::class], 'capell.diagnostics.command-palette-provider');
-
-    $user = $this->createUser();
 
     $result = ExecuteCommandPaletteCommandAction::run('test.artisan', [
         'name' => 'Ben',

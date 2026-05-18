@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-registry-health">
     <x-filament::section heading="Registry health">
         <div class="space-y-4">
             @foreach ($this->data->sections as $section)

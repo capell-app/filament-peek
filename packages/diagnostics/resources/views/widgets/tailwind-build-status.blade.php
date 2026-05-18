@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-tailwind-build-status">
     <x-filament::section heading="Tailwind build status">
         @php
             $data = $this->data;

@@ -13,7 +13,7 @@
 @endphp
 
 <x-capell-layout-builder::element.wrapper
-    class="element-campaign-cta-block"
+    class="capell-element-campaign-cta-block element-campaign-cta-block"
     :$container
     :$containerKey
     :$containerWidth

@@ -23,7 +23,7 @@
 
 @if ($bannerItems->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <section
-        class="element-assets-banner relative flex w-full items-center justify-center overflow-hidden"
+        class="capell-asset-banners element-assets-banner relative flex w-full items-center justify-center overflow-hidden"
         style="
             --swiper-pagination-bottom: 2rem;
             --swiper-pagination-color: #111827;

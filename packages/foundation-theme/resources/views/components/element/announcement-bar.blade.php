@@ -10,7 +10,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-announcement-bar"
+    class="capell-element-announcement-bar element-announcement-bar"
     container-class="text-center"
     :$container
     :$containerKey

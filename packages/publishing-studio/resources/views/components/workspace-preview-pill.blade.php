@@ -13,7 +13,7 @@ $exitUrl = route('capell-frontend.preview.exit', ['redirect' => $currentUrl]);
 ?>
 
 <div
-    class="workspace-preview-pill"
+    class="capell-workspace-preview-pill workspace-preview-pill"
     data-workspace-preview="{{ $workspace->uuid }}"
     style="
         position: fixed;

@@ -15,7 +15,7 @@
 ])
 
 <x-capell-layout-builder::element.wrapper
-    class="element-campaign-hero"
+    class="capell-element-campaign-hero element-campaign-hero"
     :$container
     :$containerKey
     :$containerWidth

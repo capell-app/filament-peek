@@ -7,7 +7,7 @@
 ])
 
 <x-capell-layout-builder::element.wrapper
-    class="element-campaign-lead-form"
+    class="capell-element-campaign-lead-form element-campaign-lead-form"
     :$container
     :$containerKey
     :$containerWidth

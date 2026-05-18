@@ -6,7 +6,7 @@
     $mediaDiffService = new MediaDiffService;
 @endphp
 
-<div>
+<div class="capell-diff-panel">
     {{-- Toolbar --}}
     <div class="mb-4 flex items-center gap-3">
         <x-filament::button wire:click="toggleMode" color="gray" size="sm">

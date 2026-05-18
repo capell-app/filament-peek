@@ -20,7 +20,7 @@
 @endphp
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-testimonials"
+    class="capell-modern-testimonials element-ap-testimonials"
     :$container
     :$containerKey
     :$containerWidth

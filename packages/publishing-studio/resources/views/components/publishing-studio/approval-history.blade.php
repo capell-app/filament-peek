@@ -5,7 +5,7 @@
     /** @var Collection<int, WorkspaceApproval> $approvals */
 @endphp
 
-<div class="space-y-3">
+<div class="capell-approval-history space-y-3">
     <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
         {{ __('capell-admin::workspace.approval_history.title') }}
     </h3>

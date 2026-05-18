@@ -12,6 +12,7 @@
 <x-filament::dropdown
     placement="bottom-end"
     x-on:close-dropdown="if ($event.detail.id === 'workspace-switcher-dropdown') close()"
+    class="capell-header-workspace-switcher"
 >
     <x-slot name="trigger">
         <button

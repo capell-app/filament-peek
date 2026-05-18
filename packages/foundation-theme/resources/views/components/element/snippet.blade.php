@@ -10,7 +10,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-snippet"
+    class="capell-element-snippet element-snippet"
     :$container
     :$containerKey
     :$containerWidth

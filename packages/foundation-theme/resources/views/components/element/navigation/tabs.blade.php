@@ -45,7 +45,7 @@
 ])
 @if ($items->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        class="element-navigation-tabs"
+        class="capell-navigation-tabs element-navigation-tabs"
         :$container
         :$containerKey
         :$containerWidth

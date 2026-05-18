@@ -75,6 +75,7 @@
         {!! $pageElementOutput !!}
     @else
         <x-dynamic-component
+            class="capell-foundation-theme-layout-element"
             :component="$component"
             :$container
             :$containerColspan

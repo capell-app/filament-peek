@@ -5,7 +5,7 @@
 
 <section
     id="{{ $sectionId }}"
-    class="border-b border-slate-200/80 bg-[#f7f8f6] dark:border-white/10 dark:bg-slate-950"
+    class="capell-theme-corporate-content-listing border-b border-slate-200/80 bg-[#f7f8f6] dark:border-white/10 dark:bg-slate-950"
 >
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:py-16">
         <div

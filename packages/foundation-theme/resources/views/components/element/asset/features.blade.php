@@ -26,7 +26,7 @@
 
 @if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        class="element-assets element-assets-features"
+        class="capell-asset-features element-assets element-assets-features"
         :$container
         :$containerKey
         :$containerWidth

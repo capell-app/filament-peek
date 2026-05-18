@@ -58,7 +58,7 @@
         :$containerWidth
         :index="$loop->index"
         :$element
-        class="element-page-content"
+        class="capell-page-content element-page-content"
         tag="article"
     >
         @if (in_array('content', $pageContents, true))

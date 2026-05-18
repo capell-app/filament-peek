@@ -1,5 +1,5 @@
 <nav
-    class="dark:bg-slate-950/88 sticky top-0 z-40 border-b border-slate-200/80 bg-[#f7f8f6]/90 backdrop-blur dark:border-white/10"
+    class="capell-theme-corporate-navigation dark:bg-slate-950/88 sticky top-0 z-40 border-b border-slate-200/80 bg-[#f7f8f6]/90 backdrop-blur dark:border-white/10"
 >
     <div
         class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-5 gap-y-3 px-4 py-3 sm:px-6 sm:py-4"

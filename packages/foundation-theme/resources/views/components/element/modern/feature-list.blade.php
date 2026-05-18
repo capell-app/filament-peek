@@ -8,7 +8,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-feature-list"
+    class="capell-modern-feature-list element-ap-feature-list"
     :$container
     :$containerKey
     :$containerWidth

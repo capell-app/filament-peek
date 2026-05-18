@@ -107,7 +107,7 @@
 >
     @if ($backgroundOverlay)
         <div
-            class="absolute inset-0 z-0 bg-black/40 shadow-[inset_0_0_8rem_4rem_rgba(0,0,0,0.7)]"
+            class="capell-element-wrapper absolute inset-0 z-0 bg-black/40 shadow-[inset_0_0_8rem_4rem_rgba(0,0,0,0.7)]"
         ></div>
     @endif
 

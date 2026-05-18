@@ -11,7 +11,7 @@
 @endphp
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-alternating-content"
+    class="capell-modern-alternating-content element-ap-alternating-content"
     :$container
     :$containerKey
     :$containerWidth

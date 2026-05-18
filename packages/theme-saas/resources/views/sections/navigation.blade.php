@@ -1,5 +1,5 @@
 <nav
-    class="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur"
+    class="capell-theme-saas-navigation sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur"
 >
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <a href="/" class="font-bold text-[var(--theme-primary)]">

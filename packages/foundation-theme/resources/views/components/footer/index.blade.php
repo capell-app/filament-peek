@@ -69,7 +69,7 @@
 
 <a
     href="javascript:void(0)"
-    class="scroll-top hover:bg-primary focus:bg-primary text-primary z-999 sticky bottom-0 left-full hidden h-10 w-10 -translate-x-6 items-center justify-center rounded-t-sm bg-gray-200 transition hover:text-white focus:text-white"
+    class="capell-foundation-theme-footer scroll-top hover:bg-primary focus:bg-primary text-primary z-999 sticky bottom-0 left-full hidden h-10 w-10 -translate-x-6 items-center justify-center rounded-t-sm bg-gray-200 transition hover:text-white focus:text-white"
     title="{{ __('Scroll to top') }}"
 >
     @svg('heroicon-o-chevron-up', 'h-6 w-6')

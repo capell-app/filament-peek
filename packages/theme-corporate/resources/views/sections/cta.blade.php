@@ -1,5 +1,5 @@
 <section
-    class="border-b border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900"
+    class="capell-theme-corporate-cta border-b border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900"
 >
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:py-16">
         <div

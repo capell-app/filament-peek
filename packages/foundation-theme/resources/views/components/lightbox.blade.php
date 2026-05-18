@@ -4,6 +4,7 @@
     @keyup.escape.window="close()"
     @keyup.left.window="loadPrevious()"
     @keyup.right.window="loadNext()"
+    class="capell-lightbox"
 >
     <div
         class="fixed left-0 top-0 z-[9999] flex h-screen w-screen items-center justify-center bg-[#000000c9] md:p-5 lg:p-10"

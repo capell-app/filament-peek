@@ -83,6 +83,7 @@ $theme = Frontend::theme();
 @if ($element->assets->isNotEmpty() || $page->translation->getMeta('hero') || ! config('capell-layout-builder.element.skip_render_empty', true))
     <section
         @class([
+            'capell-element',
             'element-hero relative z-10 grid w-full',
             'mb-10' => ! $loop->last,
             'mt-10' => ! $loop->first,

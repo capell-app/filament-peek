@@ -1,4 +1,4 @@
-<div>
+<div class="capell-page-events-listing">
     @foreach ($results ?? [] as $occurrence)
         <article>
             <h2>

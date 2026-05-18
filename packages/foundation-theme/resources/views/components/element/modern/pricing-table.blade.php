@@ -9,7 +9,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-pricing-table"
+    class="capell-modern-pricing-table element-ap-pricing-table"
     :$container
     :$containerKey
     :$containerWidth
@@ -18,9 +18,7 @@
 >
     <section class="px-6 py-12 md:px-12 md:py-16">
         @if ($element->translation)
-            <div
-                class="mx-auto mb-12 max-w-2xl text-center"
-            >
+            <div class="mx-auto mb-12 max-w-2xl text-center">
                 @if ($element->translation->title)
                     <h2
                         class="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl"
@@ -30,9 +28,7 @@
                 @endif
 
                 @if ($element->translation->content)
-                    <p
-                        class="mt-3 text-lg text-gray-500"
-                    >
+                    <p class="mt-3 text-lg text-gray-500">
                         {{ strip_tags($element->translation->content) }}
                     </p>
                 @endif

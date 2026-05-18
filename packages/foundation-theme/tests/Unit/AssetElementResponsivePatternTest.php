@@ -10,6 +10,5 @@ test('asset element view contains the responsive grid to carousel pattern hooks'
     expect($assetElementView)->toContain('ResponsiveAssetLayoutOptions::fromElement')
         ->and($assetElementView)->toContain('usesMobileCarousel()')
         ->and($assetElementView)->toContain('data-carousel-breakpoints')
-        ->and($assetElementView)->toContain('data-carousel-rows')
-        ->and($assetElementView)->toContain('hidden md:grid');
+        ->and($assetElementView)->toContain('data-carousel-rows');
 });

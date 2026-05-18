@@ -31,6 +31,7 @@ $runtimeManifest = Frontend::getFrontendData('runtimeManifest');
         <x-dynamic-component
             :component="$icon"
             @class([
+                'capell-button',
                 'h-5 w-5' => $size === 'lg',
                 'h-4 w-4' => $size !== 'sm' && $size !== 'lg',
                 'h-3 w-3' => $size === 'sm',

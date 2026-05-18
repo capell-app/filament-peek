@@ -17,6 +17,7 @@
 
 <div
     @class([
+        'capell-asset-feature-item',
         'element-features-item flex items-start gap-x-4 pt-1',
         'lg:flex-row-reverse lg:text-right' => (int) $column === 1 && $element->image,
     ])

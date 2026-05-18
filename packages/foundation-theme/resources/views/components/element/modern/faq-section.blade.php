@@ -31,7 +31,7 @@
 </style>
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-faq-section"
+    class="capell-modern-faq-section element-ap-faq-section"
     :$container
     :$containerKey
     :$containerWidth

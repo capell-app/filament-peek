@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-diagnostics-content-health">
     <x-filament::section heading="Content health">
         <div class="space-y-2">
             @foreach ($this->data->issues as $issue)

@@ -5,7 +5,7 @@
     $workspace = $this->workspace;
 @endphp
 
-<div>
+<div class="capell-header-workspace-context-banner">
     @if ($workspace !== null)
         <div
             class="border-warning-500/30 bg-warning-50 text-warning-800 dark:bg-warning-950/50 dark:text-warning-200 sticky top-0 z-30 flex items-center gap-3 border-b px-4 py-2 text-sm"

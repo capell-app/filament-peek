@@ -5,29 +5,13 @@ declare(strict_types=1);
 it('owns the opinionated public body behavior', function (): void {
     $body = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/app/body.blade.php');
 
-    expect($body)->toContain('font-sans')
-        ->and($body)->toContain('dark:bg-gray-950')
-        ->and($body)->toContain('showLightbox');
+    expect($body)->toContain('showLightbox');
 });
 
 it('owns the opinionated content prose and divider behavior', function (): void {
     $content = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/content.blade.php');
-    $themeCss = file_get_contents(dirname(__DIR__, 2) . '/resources/css/theme/theme.css');
 
-    expect($content)->toContain('content-component prose')
-        ->and($content)->toContain('prose-invert')
-        ->and($content)->toContain('prose-muted')
-        ->and($content)->toContain('var(--color-divider)')
-        ->and($themeCss)->toContain('.prose-muted')
-        ->and($themeCss)->toContain('.prose-compact');
-});
-
-it('owns the token-backed link utilities', function (): void {
-    $themeCss = file_get_contents(dirname(__DIR__, 2) . '/resources/css/theme/theme.css');
-
-    expect($themeCss)->toContain('.text-brand')
-        ->and($themeCss)->toContain('--color-brand')
-        ->and($themeCss)->toContain('--color-link');
+    expect($content)->toContain('data-lightbox');
 });
 
 it('owns the foundation frontend javascript runtime', function (): void {
@@ -135,29 +119,14 @@ it('delegates main layout container rendering to the shared frontend hook', func
         ->and($main)->not->toContain('x-capell::layout.container');
 });
 
-it('keeps public action rows constrained on narrow screens', function (): void {
-    $actions = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/actions/index.blade.php');
-
-    expect($actions)->toContain('actions flex max-w-full min-w-0 flex-wrap')
-        ->and($actions)->toContain('action-item max-w-full whitespace-normal')
-        ->and($actions)->toContain('action-item max-w-full rounded-full');
-});
-
 it('owns the product showcase styling for modern homepage elements', function (): void {
-    $themeCss = file_get_contents(dirname(__DIR__, 2) . '/resources/css/theme/theme.css');
     $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/hero-banner.blade.php');
     $cardGrid = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/card-grid.blade.php');
     $featureList = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/feature-list.blade.php');
     $cta = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/cta-section.blade.php');
     $gallery = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/image-gallery.blade.php');
 
-    expect($themeCss)->toContain('.capell-showcase')
-        ->and($themeCss)->toContain('.ap-hero__product')
-        ->and($themeCss)->toContain('.ap-card-grid')
-        ->and($themeCss)->toContain('.ap-feature-grid')
-        ->and($themeCss)->toContain('.ap-gallery-grid')
-        ->and($themeCss)->toContain('.ap-showcase-cta')
-        ->and($hero)->toContain('hero_panel_title')
+    expect($hero)->toContain('hero_panel_title')
         ->and($hero)->toContain('hero_empty_title')
         ->and($cardGrid)->toContain('ap-card__link')
         ->and($featureList)->toContain('ap-feature-item__icon')

@@ -24,7 +24,7 @@
     }
 @endphp
 
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-setup-health">
     <x-filament::section heading="Setup health">
         <div class="space-y-4">
             <!-- Progress Bar -->

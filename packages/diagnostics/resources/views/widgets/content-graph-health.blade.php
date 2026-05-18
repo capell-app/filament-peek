@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-content-graph-health">
     <x-filament::section
         heading="{{ __('capell-diagnostics::package.content_graph_health_heading') }}"
     >

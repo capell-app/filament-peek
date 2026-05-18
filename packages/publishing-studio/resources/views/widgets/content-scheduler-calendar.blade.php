@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-content-scheduler-calendar">
     <x-filament::section>
         <x-slot name="heading">
             {{ __('capell-publishing-studio::scheduler.calendar.heading') }}

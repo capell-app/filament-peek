@@ -13,7 +13,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-cta-section"
+    class="capell-modern-cta-section element-ap-cta-section"
     :$container
     :$containerKey
     :$containerWidth

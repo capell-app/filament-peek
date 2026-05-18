@@ -57,7 +57,7 @@
 
 {{-- format-ignore-start --}}
 @if ($backgroundImage)
-    <div class="relative">
+    <div class="capell-foundation-theme-layout-container relative">
         <div
             @if ($backgroundImage)
                 style="{{ $backgroundImage ? 'background-image:url('.$backgroundImage->getAvailableUrl([MediaConversionEnum::Large->value]).');' : '' }}"

@@ -17,7 +17,7 @@
         : route('capell-access-gate.request.store', ['area' => $areaKey]);
 @endphp
 
-<form method="post" action="{{ $targetUrl }}">
+<form method="post" action="{{ $targetUrl }}" class="capell-request-cta">
     @csrf
     <input type="hidden" name="area" value="{{ $areaKey }}" />
 

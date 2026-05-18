@@ -8,7 +8,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-process-steps"
+    class="capell-modern-process-steps element-ap-process-steps"
     :$container
     :$containerKey
     :$containerWidth

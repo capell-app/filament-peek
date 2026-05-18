@@ -5,7 +5,7 @@
     /** @var Collection<int, WorkspaceFieldComment> $comments */
 @endphp
 
-<div class="space-y-4">
+<div class="capell-field-comment-thread space-y-4">
     @if ($comments->isEmpty())
         <p class="text-sm text-gray-500 dark:text-gray-400">
             {{ __('capell-admin::workspace.field_comments.empty') }}

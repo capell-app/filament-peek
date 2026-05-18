@@ -42,7 +42,7 @@
 
 @if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        class="element-media-carousel"
+        class="capell-asset-carousel element-media-carousel"
         :$container
         :$containerKey
         :$containerWidth

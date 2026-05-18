@@ -1,4 +1,7 @@
-<footer id="footer" class="bg-slate-950 text-white dark:bg-black">
+<footer
+    id="footer"
+    class="capell-theme-corporate-footer bg-slate-950 text-white dark:bg-black"
+>
     <div
         class="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 sm:py-12 md:grid-cols-[1.2fr_2fr]"
     >

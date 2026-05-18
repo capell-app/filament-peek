@@ -13,12 +13,6 @@ parameters:
         # Local query scopes called through generic builder contracts in table/filter closures.
         - message: '#Call to an undefined method (Illuminate\\Database\\Eloquent\\Builder(?:<.*?>)?|Illuminate\\Contracts\\Database\\Eloquent\\Builder(?:<.*?>)?|Illuminate\\Database\\Query\\Builder(?:<.*?>)?)::(adminResource|alphabetical|publishedDate|pending|expired|withWhereHasLanguage|defaultOrder|withAssets|withLayoutsCount)\(\)#'
 
-        # morphWith() is available on concrete morph-to relations/builders but is often typed as the generic builder contract in callbacks.
-        - message: '#Call to an undefined method Illuminate\\Contracts\\Database\\Eloquent\\Builder::morphWith\(\)#'
-
-        # Filament references the optional BelongsToThrough relation type in union returns even when the package is not installed locally.
-        - message: '#unknown class Znck\\Eloquent\\Relations\\BelongsToThrough#i'
-
         # These packages implement Pageable directly for first-class page-like models; Capell core's custom rule still assumes only Page subclasses.
         - identifier: class.missingExtends
           paths:
@@ -37,34 +31,14 @@ parameters:
           reportUnmatched: false
         - message: '#Call to an undefined method .*Model::(getComponent|getDomainKey|getMeta|getMetaComponentType)\(\)#'
           reportUnmatched: false
-        - message: '#Call to an undefined method Illuminate\\Database\\Eloquent\\Collection<int, Capell\\Core\\Models\\Page>::toTree\(\)#'
-          paths:
-              - packages/seo-suite/src/Support/Sitemap/Pages/PagesSitemap.php
-        - message: '#Call to an undefined method Sinnbeck\\DomAssertions\\Asserts\\AssertElement::containsAttribute\(\)#'
-          paths:
-              - packages/layout-builder/tests/Feature/Widgets/ApHeroBannerWidgetTest.php
-        - message: '#Call to an undefined method Filament\\Schemas\\Components\\Component::(getName|getOptions)\(\)#'
-          paths:
-              - packages/seo-suite/tests/Feature/Filament/RobotsDirectiveSchemaExtenderTest.php
-        - identifier: variable.undefined
-          message: '#Undefined variable: \$this#'
-          paths:
-              - packages/diagnostics/tests/Feature/Actions/CommandPaletteActionsTest.php
-        - message: '#Call to an undefined method Capell\\DemoKit\\Support\\Creator\\DemoCreator::(setupMainNavigation|setupFooterNavigation|subFooterNavigation)\(\)#'
-          paths:
-              - packages/navigation/tests/Integration/Adapters/DemoNavigationCreatorAdapterTest.php
         - message: '#Call to an undefined method Capell\\Core\\Contracts\\Pageable::tags\(\)#'
           paths:
               - packages/blog/src/Support/Loader/TagLoader.php
-        - message: '#Call to an undefined method Capell\\Core\\Models\\Site::sections\(\)#'
-          paths:
-              - packages/layout-builder/src/Actions/CreateLayoutBuilderDemoSiteAction.php
 
         # Filament table arguments are available on concrete table Livewire components, not on the HasTable contract.
         - message: '#Call to an undefined method Filament\\Tables\\Contracts\\HasTable::getTableArguments\(\)#'
           paths:
               - packages/content-sections/src/Filament/Resources/Sections/Tables/SectionSelectionTable.php
-              - packages/layout-builder/src/Filament/Resources/Pages/Tables/PageSelectionTable.php
 
         # Livewire test methods are added dynamically to Testable at runtime.
         - message: '#Call to an undefined method Livewire\\Features\\SupportTesting\\Testable<Livewire\\Component>::.*#'
@@ -78,25 +52,6 @@ parameters:
         - message: '#Call to an undefined method Illuminate\\Testing\\TestResponse::.*#'
           reportUnmatched: false
 
-        # Laravel HTTP helpers are mixed into the package test case at runtime.
-        - identifier: method.notFound
-          message: '#Call to an undefined method PHPUnit\\Framework\\TestCase::postJson\(\)#'
-          paths:
-              - packages/newsletter/tests/Integration/Actions/NewsletterReviewFixTest.php
-        - identifier: method.notFound
-          message: '#Call to an undefined method PHPUnit\\Framework\\TestCase::travelTo\(\)#'
-          paths:
-              - packages/login-audit/tests/Unit/Actions/LoginAuditQueryAndIpResolverTest.php
-              - packages/login-audit/tests/Feature/Http/LoginAuditActivityMiddlewareTest.php
-        - identifier: method.notFound
-          message: '#Call to an undefined method PHPUnit\\Framework\\TestCase::artisan\(\)#'
-          paths:
-              - packages/access-gate/tests/Feature/AccessGateDoctorCommandTest.php
-        - identifier: method.notFound
-          message: '#Call to an undefined method PHPUnit\\Framework\\TestCase::(get|getJson|post|withCookie|withHeader|withUnencryptedCookie)\(\)#'
-          paths:
-              - packages/access-gate/tests/Feature/AccessGateMiddlewareTest.php
-
         # Pest global functions and closures use dynamic helpers and property injection.
         - message: '#Call to an undefined method Pest\\.*#'
 
@@ -109,9 +64,4 @@ parameters:
             message: '#Capell\\Core\\Models\\PageTranslation#'
         -
             identifier: larastan.relationExistence
-            message: '#layoutWidgets#'
-        -
-            identifier: larastan.relationExistence
             message: '#workspace#'
-        -
-            identifier: typeCoverage.constantTypeCoverage

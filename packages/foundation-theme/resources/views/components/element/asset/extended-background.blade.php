@@ -5,6 +5,7 @@
 
 <div
     @class([
+        'capell-asset-extended-background',
         '-z-1 absolute top-0 h-full w-1/2',
         match ($position) {
             'left' => 'left-0',

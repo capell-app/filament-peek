@@ -106,6 +106,7 @@
                 scrollUp: {{ $theme->scroll_up_header ? 'true' : 'false' }},
             })" @endif
     @class([
+        'capell-foundation-theme-header',
         'capell-product-header transition-padding left-0 right-0 top-0 z-50 flex min-h-[var(--header-height)] w-full text-[var(--color-header)] transition-transform duration-300 ease-in-out lg:h-auto',
         'border-b border-[var(--border-header)]' => $headerBorderColor,
         'shadow-sm shadow-black/5 dark:shadow-black/20' => $headerShadow === 'subtle',
@@ -116,10 +117,10 @@
     ])
     id="header"
     @if ($usesAlpine)
-        :class="{
-                                                                                                                                                                                                                                                                                                                                                                                        'h-screen': isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                                                                                                                                                        '-translate-y-full': scrollUp && isHidden && !isNavigationOverlayOpen,
-                                                                                                                                                                                                                                                                                                                                                                                    }"
+        x-bind:class="{
+            'h-screen': isNavigationOverlayOpen,
+            '-translate-y-full': scrollUp && isHidden && ! isNavigationOverlayOpen,
+        }"
     @endif
 >
     <div

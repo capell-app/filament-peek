@@ -1,5 +1,5 @@
 <div
-    class="no-results font-semibold tracking-tight text-gray-600 dark:text-gray-400"
+    class="capell-no-results no-results font-semibold tracking-tight text-gray-600 dark:text-gray-400"
 >
     @if ($slot->isNotEmpty())
         {{ $slot }}

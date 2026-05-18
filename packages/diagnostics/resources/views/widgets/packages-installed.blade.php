@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-packages-installed">
     <x-filament::section
         heading="{{ __('capell-diagnostics::package.packages_installed_heading') }}"
     >

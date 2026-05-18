@@ -42,7 +42,7 @@
     $componentItem = ResolveRenderableComponentAction::run(RenderableTypeEnum::Asset, $componentItem);
 @endphp
 
-<div class="contents">
+<div class="capell-asset-pages contents">
     @if ($pages->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
         <x-capell-foundation-theme::element.wrapper
             class="element-pages widget-pages"

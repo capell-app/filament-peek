@@ -44,7 +44,7 @@
 
 @if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        class="element-assets element-assets-grid"
+        class="capell-foundation-theme-element-asset element-assets element-assets-grid"
         :$container
         :$containerKey
         :$containerWidth

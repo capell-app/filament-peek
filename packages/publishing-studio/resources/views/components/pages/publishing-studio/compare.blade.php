@@ -7,7 +7,7 @@
     /** @var array<int, PublishCheckResult> $checkResults */
 @endphp
 
-<x-filament-panels::page>
+<x-filament-panels::page class="capell-pages-compare">
     @livewire('capell-publishing-studio::diff-panel', ['workspaceId' => $workspace->id])
 
     @if ($checkResults)

@@ -1,4 +1,4 @@
-<section class="mx-auto max-w-7xl px-6 py-16">
+<section class="capell-theme-saas-cta mx-auto max-w-7xl px-6 py-16">
     <div class="rounded-2xl bg-slate-950 p-10 text-center text-white">
         <h2 class="text-3xl font-bold tracking-tight">
             {{ $section->heading }}

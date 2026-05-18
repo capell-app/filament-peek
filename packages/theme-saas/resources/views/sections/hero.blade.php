@@ -1,4 +1,4 @@
-<section class="relative overflow-hidden">
+<section class="capell-theme-saas-hero relative overflow-hidden">
     <div
         class="from-[var(--theme-primary)]/15 to-[var(--theme-accent)]/15 absolute inset-x-0 top-0 h-80 bg-gradient-to-br"
     ></div>

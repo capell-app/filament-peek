@@ -12,7 +12,7 @@
 @endphp
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-card-grid"
+    class="capell-modern-card-grid element-ap-card-grid"
     :$container
     :$containerKey
     :$containerWidth

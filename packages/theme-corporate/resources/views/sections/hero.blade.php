@@ -8,7 +8,7 @@
 @endphp
 
 <section
-    class="border-b border-slate-200/80 bg-[#f7f8f6] dark:border-white/10 dark:bg-slate-950"
+    class="capell-theme-corporate-hero border-b border-slate-200/80 bg-[#f7f8f6] dark:border-white/10 dark:bg-slate-950"
 >
     <div
         class="lg:py-18 mx-auto grid max-w-7xl items-end gap-5 px-4 py-6 sm:px-6 sm:py-10 md:py-14 lg:grid-cols-[0.88fr_1.12fr] lg:gap-10"

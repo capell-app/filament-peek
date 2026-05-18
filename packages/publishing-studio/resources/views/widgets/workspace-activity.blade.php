@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-workspace-activity">
     <x-filament::section heading="Workspace activity">
         @php
             $data = $this->data;

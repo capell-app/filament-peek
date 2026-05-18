@@ -8,7 +8,7 @@
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-stats-section"
+    class="capell-modern-stats-section element-ap-stats-section"
     :$container
     :$containerKey
     :$containerWidth

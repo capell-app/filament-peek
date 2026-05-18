@@ -14,7 +14,7 @@
 
 @if ($page && $ancestors)
     <nav
-        class="breadcrumbs my-4 text-gray-800"
+        class="capell-page-breadcrumbs breadcrumbs my-4 text-gray-800"
         aria-label="{{ __('capell-frontend::generic.breadcrumbs') }}"
     >
         <x-capell-foundation-theme::element.wrapper

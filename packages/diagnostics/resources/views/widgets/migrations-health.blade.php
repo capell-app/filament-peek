@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-migrations-health">
     <x-filament::section heading="Migrations health">
         @php
             $data = $this->data;

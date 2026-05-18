@@ -48,6 +48,7 @@
         x-data="{{ $dropdownData }}"
         {{ $containerAttributes }}
         x-id="['{{ $dropdownName }}-dropdown-button']"
+        class="capell-dropdown"
     >
         <button
             @if ($triggerType === 'button')

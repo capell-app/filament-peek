@@ -1,35 +1,15 @@
-@props([
-    'layout',
-    'layoutNeighborLinks' => null,
-    'containerClass' => null,
-    'mainClass' => null,
-    'mainContainerClass' => null,
-    'pageSlot' => null,
-    'page',
-    'theme' => [],
-])
 @php
     use Capell\Core\Actions\ColorConverterAction;
     use Capell\Core\Contracts\Pageable;
-    use Capell\Core\Enums\ContentStructure;
     use Capell\Frontend\Data\MainContentRenderHookData;
     use Capell\Frontend\Enums\RenderHookLocation;
-    use Capell\Frontend\Facades\Frontend;
     use Capell\Frontend\Support\Render\RenderHookRegistry;
-
-    $themeModel = Frontend::theme();
-    $themeData = is_array($theme) ? $theme : [];
-    $previousPage = $layoutNeighborLinks?->previousPage;
-    $nextPage = $layoutNeighborLinks?->nextPage;
-    $finalCta = $page->getMeta('final_cta');
-    $translation = method_exists($page, 'relationLoaded') && $page->relationLoaded('translation') ? $page->translation : null;
-    $type = method_exists($page, 'relationLoaded') && $page->relationLoaded('type') ? $page->type : null;
 
     $mainContentHookData = new MainContentRenderHookData(
         layout: $layout,
         page: $page,
         pageSlot: $pageSlot,
-        theme: $themeData,
+        theme: $theme,
         containerClass: $containerClass,
         mainClass: $mainClass,
         mainContainerClass: $mainContainerClass,
@@ -57,8 +37,9 @@
 <main
     id="main"
     @class([
+        'capell-layout-main',
         'relative z-0 flex min-h-full flex-1 flex-col overflow-x-hidden bg-[var(--bg-color-main)] lg:!min-h-0',
-        $themeData['meta']['main_class'] ?? '',
+        $theme['meta']['main_class'] ?? '',
         $mainClass ?? '',
     ])
 >
@@ -74,9 +55,9 @@
         @else
             <x-capell::content
                 class="px-6 py-10"
-                :content="$translation?->content ?? ''"
-                :content-type="$type?->content_structure ?? ContentStructure::Html"
-                :title="$translation?->title ?? ''"
+                :content="$pageContentRenderData->content ?? ''"
+                :content-type="$pageContentRenderData->contentStructure"
+                :title="$pageContentRenderData->title ?? ''"
                 heading-tag="h1"
             />
         @endif

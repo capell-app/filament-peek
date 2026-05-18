@@ -13,7 +13,7 @@
     <form
         method="post"
         action="{{ route('capell-public-actions.submit', ['action' => $actionKey]) }}"
-        class="inline-flex"
+        class="capell-action-button inline-flex"
     >
         @csrf
 

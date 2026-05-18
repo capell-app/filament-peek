@@ -47,7 +47,7 @@
 @endphp
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-hero-banner"
+    class="capell-modern-hero-banner element-ap-hero-banner"
     :$container
     :$containerKey
     :$containerWidth

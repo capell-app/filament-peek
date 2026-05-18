@@ -2,7 +2,7 @@
     use Capell\Admin\Enums\SetupHealthEnum;
 @endphp
 
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-site-health">
     <x-filament::section
         :heading="__('capell-admin::dashboard.health_heading')"
     >

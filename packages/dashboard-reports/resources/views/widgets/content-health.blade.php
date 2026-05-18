@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-dashboard-reports-content-health">
     <x-filament::section
         :heading="__('capell-dashboard-reports::dashboard.widget_content_health')"
     >

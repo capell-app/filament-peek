@@ -18,7 +18,7 @@
 @endphp
 
 @capellBuffer($content)
-    <span class="truncate">
+    <span class="capell-badge truncate">
         {{ $slot }}
     </span>
     @if ($count)

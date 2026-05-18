@@ -28,7 +28,7 @@
 @endphp
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-team-members"
+    class="capell-modern-team-members element-ap-team-members"
     :$container
     :$containerKey
     :$containerWidth

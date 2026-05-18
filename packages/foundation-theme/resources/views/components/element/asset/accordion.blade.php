@@ -25,7 +25,7 @@
 ])
 @if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        class="element-section-grid element-accordion space-y-6"
+        class="capell-asset-accordion element-section-grid element-accordion space-y-6"
         :$container
         :$containerKey
         :$containerWidth

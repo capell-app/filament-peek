@@ -14,7 +14,7 @@
 @endphp
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-ap-image-gallery"
+    class="capell-modern-image-gallery element-ap-image-gallery"
     :$container
     :$containerKey
     :$containerWidth

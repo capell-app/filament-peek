@@ -40,7 +40,7 @@
 
 @if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        class="element-assets element-assets-testimonials"
+        class="capell-asset-testimonials element-assets element-assets-testimonials"
         :$container
         :$containerKey
         :$containerWidth

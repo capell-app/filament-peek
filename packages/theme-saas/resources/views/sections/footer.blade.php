@@ -1,4 +1,4 @@
-<footer class="border-t border-slate-200">
+<footer class="capell-theme-saas-footer border-t border-slate-200">
     <div class="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-[1fr_2fr]">
         <div>
             <p class="font-bold text-[var(--theme-primary)]">

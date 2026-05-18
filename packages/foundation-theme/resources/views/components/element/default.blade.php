@@ -21,7 +21,7 @@ $theme = Frontend::theme();
 ])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-default"
+    class="capell-element-default element-default"
     :container-class="
         'flex flex-col gap-x-5 gap-y-3 lg:gap-x-10 '
         . (match ($style) {

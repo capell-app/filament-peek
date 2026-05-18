@@ -19,7 +19,7 @@ $theme = Frontend::theme();
 ])
 <x-capell::dropdown
     name="{{ $name }}"
-    :attributes="$attributes->class(['inline-flex'])"
+    :attributes="$attributes->class(['capell-languages', 'inline-flex'])"
     :label="__('capell-frontend::generic.languages')"
     :dark-mode="$darkMode"
     :placement="$align === 'right' ? 'top-end' : 'top-start'"

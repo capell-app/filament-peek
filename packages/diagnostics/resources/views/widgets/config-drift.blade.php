@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-config-drift">
     <x-filament::section heading="Config drift">
         @php
             $data = $this->data;

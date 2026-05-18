@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-cache-health">
     <x-filament::section heading="Cache health">
         {{-- Site selector --}}
         @if (count($this->sites) > 1)

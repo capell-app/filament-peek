@@ -1,4 +1,4 @@
-<section class="capell-events-calendar">
+<section class="capell-event-calendar capell-events-calendar">
     <div class="flex items-center justify-between gap-4">
         <button type="button" wire:click="previousMonth">
             {{ __('capell-events::generic.previous') }}

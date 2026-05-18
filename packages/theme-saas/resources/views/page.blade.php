@@ -57,7 +57,7 @@
 <div
     data-capell-theme="{{ $themeKey }}"
     style="{{ collect($brand->tokens())->map(fn ($value, $token) => $token . ':' . $value)->implode(';') }}"
-    class="min-h-screen bg-white text-slate-950 antialiased"
+    class="capell-theme-saas-page min-h-screen bg-white text-slate-950 antialiased"
 >
     {!! $content !!}
 </div>

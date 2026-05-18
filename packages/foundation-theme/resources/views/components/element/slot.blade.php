@@ -1,7 +1,7 @@
 @props(['pageSlot', 'container' => null, 'containerKey' => null, 'containerWidth' => null, 'loop' => null, 'element' => null])
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-page-slot"
+    class="capell-element-slot element-page-slot"
     :$container
     :$containerKey
     :$containerWidth

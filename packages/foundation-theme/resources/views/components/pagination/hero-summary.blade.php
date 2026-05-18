@@ -14,7 +14,7 @@
 <div
     {{
         $attributes
-            ->class('pagination-info tracking-loose text-sm font-normal leading-none text-gray-500 dark:text-gray-400')
+            ->class('capell-pagination-hero-summary pagination-info tracking-loose text-sm font-normal leading-none text-gray-500 dark:text-gray-400')
     }}
 >
     @if ($isPaginated)

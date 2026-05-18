@@ -22,7 +22,7 @@
 ])
 @if ($element->assets->isNotEmpty() || ! config('capell-layout-builder.element.skip_render_empty', true))
     <x-capell-foundation-theme::element.wrapper
-        :class="'element-media-gallery' . ($containerWidth === ContainerWidthEnum::Full ? ' px-4' : '')"
+        :class="'capell-asset-media element-media-gallery' . ($containerWidth === ContainerWidthEnum::Full ? ' px-4' : '')"
         :$container
         :$containerKey
         :$containerWidth

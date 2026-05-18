@@ -1,4 +1,4 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="capell-workspace-merge-history">
     <x-filament::section heading="Workspace merge history">
         @php
             $data = $this->data;

@@ -56,6 +56,7 @@
         --swiper-pagination-bullet-inactive-color: #fff;
     "
     @class([
+        'capell-wrapper',
         'grid min-h-full w-full',
         'swiper relative' => $total > 1,
     ])

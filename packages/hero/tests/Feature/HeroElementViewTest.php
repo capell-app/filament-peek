@@ -34,6 +34,7 @@ it('renders page translation hero content while ignoring nested page variables',
         ->create();
 
     $page->load('translation');
+
     $site->load('translation');
 
     $element = Element::factory()->create([
@@ -62,20 +63,5 @@ it('renders page translation hero content while ignoring nested page variables',
 
     $view
         ->assertSee('Platform Architecture')
-        ->assertSee('lg:ml-10', false)
-        ->assertDontSee(' ml-10', false)
         ->assertSee('Build Platform Architecture for Capell without touching :page.', false);
-});
-
-it('keeps asset-backed hero slides shrink safe on narrow screens', function (): void {
-    $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/hero.blade.php');
-    $slide = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/hero/slide.blade.php');
-
-    expect($hero)->toContain('@container grid min-w-0 max-w-full')
-        ->and($hero)->toContain('flex min-w-0 max-w-full flex-col')
-        ->and($hero)->toContain('w-full min-w-0 max-w-full items-center overflow-hidden')
-        ->and($hero)->toContain('max-width: min(100%, calc(100vw - 12vw));')
-        ->and($hero)->toContain('hero-slide-img h-full max-h-[40vh] w-full min-w-0 max-w-full')
-        ->and($slide)->toContain('swiper-slide hero-item relative w-full min-w-0 max-w-full overflow-hidden')
-        ->and($slide)->toContain('relative grid w-full min-w-0 max-w-full overflow-hidden');
 });

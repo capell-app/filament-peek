@@ -30,7 +30,7 @@
 {{-- format-ignore-end --}}
 
 <x-capell-foundation-theme::element.wrapper
-    class="element-banner-image relative"
+    class="capell-element-banner-image element-banner-image relative"
     :$container
     :$containerKey
     :$containerWidth

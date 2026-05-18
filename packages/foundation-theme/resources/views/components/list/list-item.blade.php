@@ -18,6 +18,7 @@
 
 <li
     @class([
+        'capell-list-list-item',
         '@container/item list-item',
         'py-1.5' => $size === 'sm',
         'py-2' => $size !== 'sm',

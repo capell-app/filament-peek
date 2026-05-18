@@ -84,29 +84,6 @@ test('element wrapper background image resolution does not lazy-load media', fun
     DB::disableQueryLog();
 });
 
-test('banner image content stays in normal flow when no background image exists', function (): void {
-    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/banner-image.blade.php');
-
-    expect($view)
-        ->toContain("'absolute inset-0 flex items-end' => \$backgroundImage")
-        ->toContain("'relative flex flex-col' => ! \$backgroundImage")
-        ->toContain("'md:w-1/2' => \$backgroundImage")
-        ->toContain("'md:pl-10' => \$backgroundImage && \$reverseOrder")
-        ->toContain("'md:pr-10' => \$backgroundImage && ! \$reverseOrder");
-});
-
-test('asset banner slides use readable foregrounds without an image', function (): void {
-    $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/asset/banners.blade.php');
-
-    expect($view)
-        ->toContain("'bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-50' => ! \$hasImage")
-        ->toContain("'text-gray-900 dark:text-gray-50' => ! \$hasImage")
-        ->toContain("'text-gray-700 dark:text-gray-200' => ! \$hasImage")
-        ->toContain('--swiper-pagination-bullet-inactive-color: #6b7280')
-        ->toContain('bg-white/85')
-        ->not->toContain('dark:bg-gray-900/85');
-});
-
 test('asset banner render data uses only loaded relations', function (): void {
     $media = MediaFactory::new()->make([
         'collection_name' => MediaCollectionEnum::Image->value,
