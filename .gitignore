@@ -9,6 +9,7 @@
 # Claude Code
 .claude/
 .superpowers/
+docs/superpowers/
 
 # Environment
 .env*
