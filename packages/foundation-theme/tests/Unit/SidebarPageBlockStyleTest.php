@@ -208,7 +208,7 @@ test('public livewire blocks resolve the scoped layout block clone', function ()
 
         protected function mountBlock(): void
         {
-            $this->assetIds = $this->block->assets
+            $this->assetIds = $this->block()->assets
                 ->pluck('asset_id')
                 ->map(fn (mixed $assetId): int => (int) $assetId)
                 ->values()
@@ -291,7 +291,7 @@ test('public livewire blocks reject references without scoped page and site ids'
     {
         protected function mountBlock(): void
         {
-            $this->block;
+            $this->block();
         }
     };
 
@@ -346,7 +346,7 @@ test('public livewire blocks can hydrate blocks from global layouts', function (
 
         protected function mountBlock(): void
         {
-            $this->resolvedKey = $this->block->key;
+            $this->resolvedKey = $this->block()->key;
         }
     };
 
@@ -398,7 +398,7 @@ test('public livewire blocks reject global layout references replayed under anot
     {
         protected function mountBlock(): void
         {
-            $this->block;
+            $this->block();
         }
     };
 
@@ -587,7 +587,7 @@ test('public livewire blocks reject references from another frontend site', func
     {
         protected function mountBlock(): void
         {
-            $this->block;
+            $this->block();
         }
     };
 

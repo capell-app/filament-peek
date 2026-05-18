@@ -48,7 +48,7 @@ function seedAgentBridgeSettings(): void
 
 function seedAdminSettings(): void
 {
-    $settingsMigration = require dirname(__DIR__, 5) . '/capell-4/packages/admin/database/settings/2026_05_10_190834_01_add_admin_settings.php';
+    $settingsMigration = require dirname(__DIR__, 4) . '/vendor/capell-app/admin/database/settings/2026_05_10_190834_01_add_admin_settings.php';
     $settingsMigration->up();
 }
 

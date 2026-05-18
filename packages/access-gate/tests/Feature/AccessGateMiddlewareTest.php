@@ -98,12 +98,14 @@ it('allows protected content before a scheduled access area opens', function ():
 
     Route::middleware('access-gate:preview')->get('/access-gate-test/before-window', fn (): string => 'secret');
 
-    $this
+    $response = $this
         ->get('/access-gate-test/before-window')
         ->assertOk()
-        ->assertSee('secret')
-        ->assertHeaderContains('Cache-Control', 'no-store')
-        ->assertHeaderContains('Cache-Control', 'private');
+        ->assertSee('secret');
+
+    expect($response->baseResponse->headers->get('Cache-Control'))
+        ->toContain('no-store')
+        ->toContain('private');
 });
 
 it('blocks protected content during a scheduled access area window', function (): void {
@@ -143,12 +145,14 @@ it('allows protected content after a scheduled access area closes', function ():
 
     Route::middleware('access-gate:preview')->get('/access-gate-test/after-window', fn (): string => 'secret');
 
-    $this
+    $response = $this
         ->get('/access-gate-test/after-window')
         ->assertOk()
-        ->assertSee('secret')
-        ->assertHeaderContains('Cache-Control', 'no-store')
-        ->assertHeaderContains('Cache-Control', 'private');
+        ->assertSee('secret');
+
+    expect($response->baseResponse->headers->get('Cache-Control'))
+        ->toContain('no-store')
+        ->toContain('private');
 });
 
 it('blocks protected content when the active access area is assigned to the current site', function (): void {

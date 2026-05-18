@@ -147,7 +147,7 @@ abstract class AbstractBlock extends Component
             'urlParams' => $this->frontendParams(),
             'site' => $this->currentSite(),
             'theme' => $this->currentTheme(),
-            'block' => $this->block,
+            'block' => $this->block(),
             'blockData' => $this->blockData(),
         ], $data);
 
@@ -173,13 +173,13 @@ abstract class AbstractBlock extends Component
     protected function getComponent(): string
     {
         return FoundationThemeViewName::canonical(
-            $this->block->getViewFile() ?? static::$defaultView,
+            $this->block()->getViewFile() ?? static::$defaultView,
         );
     }
 
     protected function getComponentItem(): string
     {
-        return $this->block->getComponentItem() ?? $this->getDefaultComponentItem();
+        return $this->block()->getComponentItem() ?? $this->getDefaultComponentItem();
     }
 
     protected function getDefaultComponentItem(): string
