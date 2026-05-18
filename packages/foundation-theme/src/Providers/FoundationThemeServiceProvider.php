@@ -332,6 +332,14 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         Blade::component(PageSiblingsComponent::class, 'capell::block.page.siblings');
 
         $registerLivewireComponents = function (): void {
+            Livewire::component('capell::block.pages', Pages::class);
+            Livewire::component('capell-foundation-theme::block.pages', Pages::class);
+            Livewire::component('capell-foundation-theme::assets.table.page-assets', PageAssets::class);
+
+            if (! method_exists(Livewire::getFacadeRoot(), 'addNamespace')) {
+                return;
+            }
+
             Livewire::addNamespace(
                 namespace: 'capell',
                 classNamespace: 'Capell\\FoundationTheme\\Livewire',
@@ -347,6 +355,10 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
                 classPath: __DIR__ . '/../Livewire',
                 classViewPath: __DIR__ . '/../../resources/views/livewire',
             );
+
+            if (! $this->app->bound('livewire.factory')) {
+                return;
+            }
 
             resolve('livewire.factory')->resolveMissingComponent(
                 static fn (string $name): ?string => match ($name) {
