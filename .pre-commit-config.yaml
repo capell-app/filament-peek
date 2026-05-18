@@ -50,3 +50,10 @@ repos:
         pass_filenames: false
         files: ^composer\.(json|lock)$
         stages: [pre-commit]
+      - id: composer-lock-in-sync
+        name: Composer lock file is in sync
+        entry: composer validate --no-check-publish
+        language: system
+        pass_filenames: false
+        files: ^composer\.(json|lock)$
+        stages: [pre-commit]

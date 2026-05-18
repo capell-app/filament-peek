@@ -29,6 +29,7 @@
         "prettier": "npx prettier --write \"packages/**/*.{css,js,yml,json,md,blade.php}\"",
         "eslint": "npx eslint 'packages/**/resources/js/**/*.js' --max-warnings=0",
         "check:composer-paths": "@php scripts/check-composer-local-paths.php",
+        "check:composer-lock": "composer validate --no-check-publish",
         "preflight": [
             "@check:composer-paths",
             "@lint:changed"
@@ -36,6 +37,8 @@
         "preflight:all": [
             "@php -r \"echo PHP_EOL . 'Checking Composer path repositories...' . PHP_EOL;\"",
             "@check:composer-paths",
+            "@php -r \"echo PHP_EOL . 'Checking Composer lock file...' . PHP_EOL;\"",
+            "@check:composer-lock",
             "@php -r \"echo PHP_EOL . 'Running Rector...' . PHP_EOL;\"",
             "@rector",
             "@php -r \"echo PHP_EOL . 'Running Pint...' . PHP_EOL;\"",
@@ -51,11 +54,11 @@
         ],
         "coverage": "@php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=. -d pcov.exclude='~vendor|tests|storage|bootstrap|.temp~' vendor/bin/pest --coverage --min=80 --colors=always --configuration=phpunit.xml",
         "coverage-report": "@php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=. -d pcov.exclude='~vendor|tests|storage|bootstrap|.temp~' vendor/bin/pest --coverage --coverage-html=coverage --colors=always --configuration=phpunit.xml",
-        "test:unit": "@php -d memory_limit=-1 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:fast": "@php -d memory_limit=-1 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --stop-on-error --stop-on-failure --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:fast:ci": "@php -d memory_limit=-1 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:all": "@php -d memory_limit=-1 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --stop-on-error --stop-on-failure --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
-        "test:all:ci": "@php -d memory_limit=-1 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
+        "test:unit": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
+        "test:fast": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --stop-on-error --stop-on-failure --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
+        "test:fast:ci": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --shard=${PEST_SHARD:-1/1} --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
+        "test:all": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --stop-on-error --stop-on-failure --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
+        "test:all:ci": "@php -d memory_limit=-1 -d max_execution_time=0 -d pcov.enabled=0 vendor/bin/pest --colors=always --parallel --configuration=phpunit.xml --do-not-fail-on-phpunit-warning",
         "test": [
             "@clear",
             "@test:unit"
@@ -116,7 +119,6 @@
         "capell-app/frontend": "4.x-dev",
         "capell-app/installer": "4.x-dev",
         "capell-app/marketplace": "4.x-dev",
-        "capell-app/welcome-tour": "4.x-dev",
         "cms-multi/filament-clear-cache": "^3.0",
         "codewithdennis/filament-select-tree": "^4.0",
         "croustibat/filament-jobs-monitor": "^4.4",

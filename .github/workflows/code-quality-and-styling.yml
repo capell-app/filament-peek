@@ -47,6 +47,9 @@ jobs:
       - name: Check Composer public files
         run: php scripts/check-composer-local-paths.php
 
+      - name: Check Composer lock file
+        run: composer run check:composer-lock
+
       - name: Cache Composer dependencies
         id: composer-cache
         uses: actions/cache@v5

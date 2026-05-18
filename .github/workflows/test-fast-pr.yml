@@ -8,6 +8,8 @@ on:
     paths:
       - 'packages/**/*.php'
       - 'tests/**/*.php'
+      - 'composer.json'
+      - 'composer.lock'
       - '.github/workflows/test-fast-pr.yml'
       - '.github/workflows/test-full.yml'
       - 'phpunit.xml'
@@ -58,6 +60,9 @@ jobs:
 
       - name: Check Composer public files
         run: php scripts/check-composer-local-paths.php
+
+      - name: Check Composer lock file
+        run: composer run check:composer-lock
 
       - name: Install PHP dependencies
         if: steps.php-cache.outputs.cache-hit != 'true'
