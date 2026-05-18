@@ -57,6 +57,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\Factory as ViewFactory;
 use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
+use Livewire\Livewire;
 use Lorisleiva\Actions\ActionServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
@@ -153,11 +154,15 @@ abstract class AbstractTestCase extends TestCase
         Blade::component(Siblings::class, 'capell-layout-builder::element.page.siblings');
         Blade::component(Siblings::class, 'capell-layout-builder::block.page.siblings');
         Blade::component(Siblings::class, 'capell-layout-builder::widget.page.siblings');
-        resolve('livewire.factory')->resolveMissingComponent(
-            static fn (string $name): ?string => $name === 'capell-layout-builder::filament.layout-builder'
-                ? LayoutBuilder::class
-                : null,
-        );
+        Livewire::component('capell-layout-builder::filament.layout-builder', LayoutBuilder::class);
+
+        if ($this->app->bound('livewire.factory')) {
+            resolve('livewire.factory')->resolveMissingComponent(
+                static fn (string $name): ?string => $name === 'capell-layout-builder::filament.layout-builder'
+                    ? LayoutBuilder::class
+                    : null,
+            );
+        }
 
         Http::preventStrayRequests();
 
