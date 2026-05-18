@@ -99,4 +99,4 @@ jobs:
           echo "DB_DATABASE=:memory:" >> .env
 
       - name: Execute fast PR tests
-        run: composer test:all:ci
+        run: composer run test:all:ci
