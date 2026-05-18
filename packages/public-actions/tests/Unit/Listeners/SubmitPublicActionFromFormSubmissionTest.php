@@ -14,6 +14,12 @@ it('submits form builder event payloads when submissions are not stored', functi
     PublicAction::factory()->create([
         'key' => 'lead-capture',
         'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'type' => 'email', 'required' => true],
+                ['key' => 'name', 'type' => 'text', 'required' => false],
+            ],
+        ],
     ]);
 
     resolve(SubmitPublicActionFromFormSubmission::class)->handle(new class

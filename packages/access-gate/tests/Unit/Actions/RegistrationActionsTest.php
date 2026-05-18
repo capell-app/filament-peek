@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use Capell\AccessGate\Actions\ApproveRegistrationAction;
 use Capell\AccessGate\Actions\CreateRegistrationAction;
-use Capell\AccessGate\Contracts\RegistrationField;
-use Capell\AccessGate\Data\RegistrationFieldValue;
 use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Enums\EventType;
@@ -22,9 +20,9 @@ use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Notifications\AccessApprovedNotification;
 use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
+use Capell\AccessGate\Tests\Fixtures\Autoload\TestProviderUsernameRegistrationField;
 use Illuminate\Support\Facades\Event as EventFacade;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 it('stores host application registration field values', function (): void {
@@ -279,36 +277,3 @@ it('does not accept public registrations after a scheduled access area closes', 
 
     expect(Registration::query()->count())->toBe(0);
 });
-
-final class TestProviderUsernameRegistrationField implements RegistrationField
-{
-    public function key(): string
-    {
-        return 'provider_username';
-    }
-
-    public function label(): string
-    {
-        return 'Provider username';
-    }
-
-    /**
-     * @param  array<string, mixed>  $input
-     */
-    public function validate(array $input): RegistrationFieldValue
-    {
-        $validated = Validator::make($input, [
-            'provider_username' => ['required', 'string', 'alpha_dash:ascii'],
-        ])->validate();
-
-        $username = strtolower((string) $validated['provider_username']);
-
-        return new RegistrationFieldValue(
-            key: $this->key(),
-            value: $username,
-            metadata: [
-                'avatar_url' => sprintf('https://avatars.example.test/%s.png', $username),
-            ],
-        );
-    }
-}

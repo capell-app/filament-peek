@@ -112,16 +112,6 @@
             "notes": "Show stale workspace detection, review nudges, and cleanup actions for unfinished draft work."
         },
         {
-            "id": "recovery-imports",
-            "title": "Recovery imports",
-            "package": "publishing-studio",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "ImportPagesPage",
-            "required": true,
-            "notes": "Show recovery-center page import validation, relation resolution, execution state, and rollback reporting."
-        },
-        {
             "id": "activity-history",
             "title": "Activity history",
             "package": "publishing-studio",

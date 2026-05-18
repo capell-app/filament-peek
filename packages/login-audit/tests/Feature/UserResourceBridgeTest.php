@@ -8,22 +8,14 @@ use Capell\LoginAudit\Extenders\LoginAuditUserSchemaExtender;
 use Capell\LoginAudit\Filament\Resources\Users\RelationManagers\LoginAuditsRelationManager;
 use Capell\LoginAudit\Models\LoginAudit;
 use Capell\LoginAudit\Settings\LoginAuditSettings;
-use Capell\Tests\Fixtures\Models\User;
+use Capell\LoginAudit\Tests\Fixtures\Autoload\LoginAuditBridgeTestUser;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
-use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 use Spatie\LaravelSettings\Migrations\SettingsMigrator;
-
-final class LoginAuditBridgeTestUser extends User
-{
-    use AuthenticationLoggable;
-
-    protected $table = 'users';
-}
 
 function seedBridgeSetting(string $settingKey, mixed $value): void
 {

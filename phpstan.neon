@@ -1,8 +1,13 @@
 includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-mockery/extension.neon
+    - vendor/larastan/larastan/extension.neon
+    - ./phpstan.peststan.neon
+    - vendor/tomasvotruba/type-coverage/config/extension.neon
     - ./phpstan.common.neon
 
 parameters:
     paths:
         - packages
         - tests
-    tmpDir: /tmp/phpstan/capell-packages-full
+    tmpDir: /tmp/phpstan/capell-packages

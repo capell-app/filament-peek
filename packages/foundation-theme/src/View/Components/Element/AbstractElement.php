@@ -54,22 +54,19 @@ abstract class AbstractElement extends Component
             return '';
         }
 
-        if (isset($this->element->meta['view_file']) && $this->element->meta['view_file'] !== '') {
-            $component = $this->element->meta['view_file'];
-        } elseif (isset($this->element->type->meta['view_file']) && $this->element->type->meta['view_file'] !== '') {
-            $component = $this->element->type->meta['view_file'];
-        } else {
-            $component = static::$defaultView;
-        }
-
         $data['component_item'] = $this->getComponentItem();
 
-        return view(FoundationThemeViewName::canonical($component), $data);
+        return view(FoundationThemeViewName::canonical($this->getViewFile()), $data);
     }
 
     protected function getComponentItem(): ?string
     {
-        return $this->element->meta['component_item'] ?? $this->element->type->meta['component_item'] ?? null;
+        return $this->element->getComponentItem();
+    }
+
+    protected function getViewFile(): string
+    {
+        return $this->element->getViewFile() ?? static::$defaultView;
     }
 
     protected function mountElement(): void {}

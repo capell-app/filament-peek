@@ -6,7 +6,10 @@ use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\MigrationAssistant\Contracts\PageCollisionDetector;
+use Capell\MigrationAssistant\Contracts\PageImportTargetResolver;
 use Capell\MigrationAssistant\Data\ExportOptions;
+use Capell\MigrationAssistant\Data\PageReviewRow;
 use Capell\MigrationAssistant\Services\Export\PageExportService;
 use Capell\MigrationAssistant\Services\Import\PackageReader;
 use Capell\MigrationAssistant\Services\Import\PackageReadResult;
@@ -15,7 +18,10 @@ use Capell\MigrationAssistant\Services\Import\ResolutionMap;
 use Capell\MigrationAssistant\Services\Import\Resolvers\MatchResolution;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\Support\PublishingStudioMigrationAssistantContextResolver;
+use Capell\PublishingStudio\Support\PublishingStudioPageImportTargetResolver;
+use Capell\PublishingStudio\Support\PublishingStudioPageUrlCollisionDetector;
 use Capell\PublishingStudio\WorkspaceContext;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 it('forces live context when no export source workspace is selected', function (): void {
@@ -143,4 +149,48 @@ it('runs page imports inside the target workspace context', function (): void {
 
     expect($report->isSuccess())->toBeTrue()
         ->and((int) $page->workspace_id)->toBe((int) $workspace->id);
+});
+
+it('binds a page import target resolver that creates import workspaces', function (): void {
+    $resolver = resolve(PageImportTargetResolver::class);
+
+    expect($resolver)->toBeInstanceOf(PublishingStudioPageImportTargetResolver::class);
+
+    $target = $resolver->create('Recovered pages');
+    $workspace = Workspace::query()->findOrFail($target->id);
+
+    expect($target->type)->toBe('publishing_studio_workspace')
+        ->and($target->legacyWorkspaceId)->toBe((int) $workspace->getKey())
+        ->and($workspace->name)->toBe('Recovered pages');
+});
+
+it('binds workspace-aware page URL collision detection', function (): void {
+    $site = Site::factory()->create();
+
+    DB::table('page_urls')->insert([
+        'workspace_id' => 999,
+        'site_id' => $site->getKey(),
+        'language_id' => 1,
+        'url' => '/draft-conflict',
+        'status' => 'draft',
+        'pageable_type' => 'page',
+        'pageable_id' => 42,
+        'type' => 'alias',
+        'is_manual' => 0,
+        'status_code' => 200,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    $detector = resolve(PageCollisionDetector::class);
+
+    expect($detector)->toBeInstanceOf(PublishingStudioPageUrlCollisionDetector::class)
+        ->and($detector->detect([
+            ['site_id' => (int) $site->getKey(), 'language_id' => 1, 'url' => '/draft-conflict'],
+        ], (int) $site->getKey()))
+        ->toBe([
+            PageReviewRow::COLLISION_URL_WORKSPACE,
+            ['URL "/draft-conflict" is already claimed by another workspace.'],
+            PageReviewRow::ACTION_SKIP,
+        ]);
 });

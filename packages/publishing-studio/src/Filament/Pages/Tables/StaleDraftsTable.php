@@ -41,10 +41,7 @@ class StaleDraftsTable implements TableConfigurator
                     ->alignEnd()
                     ->size('sm')
                     ->state(fn (Workspace $record): int => (int) $record->updated_at?->diffInDays(now()))
-                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy(
-                        'updated_at',
-                        $direction === 'asc' ? 'desc' : 'asc',
-                    )),
+                    ->sortable(query: self::applyDaysStaleSort(...)),
             ])
             ->filters([
                 Filter::make('days_threshold')
@@ -67,5 +64,13 @@ class StaleDraftsTable implements TableConfigurator
                 DiscardDraftsBulkAction::make(),
             ])
             ->defaultSort('updated_at', 'asc');
+    }
+
+    protected static function applyDaysStaleSort(Builder $query, string $direction): Builder
+    {
+        return $query->orderBy(
+            'updated_at',
+            $direction === 'asc' ? 'desc' : 'asc',
+        );
     }
 }

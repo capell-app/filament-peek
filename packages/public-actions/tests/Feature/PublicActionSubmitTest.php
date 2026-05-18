@@ -67,6 +67,12 @@ it('ignores public payload redirects to other hosts', function (): void {
     PublicAction::factory()->create([
         'key' => 'redirect-action',
         'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'type' => 'email', 'required' => true],
+                ['key' => 'redirect', 'type' => 'url', 'required' => false],
+            ],
+        ],
     ]);
 
     $this
@@ -82,6 +88,12 @@ it('allows public payload redirects on the current host', function (): void {
     PublicAction::factory()->create([
         'key' => 'same-host-redirect-action',
         'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'type' => 'email', 'required' => true],
+                ['key' => 'redirect', 'type' => 'url', 'required' => false],
+            ],
+        ],
     ]);
 
     $this
@@ -143,6 +155,7 @@ it('marks the submission failed when the handler validation fails', function ():
     PublicAction::factory()->create([
         'key' => 'failing-action',
         'handler_key' => 'test.validation-handler',
+        'payload_schema' => [],
     ]);
 
     $response = $this->postJson('/actions/failing-action', [
@@ -154,6 +167,53 @@ it('marks the submission failed when the handler validation fails', function ():
         ->assertJsonValidationErrors(['email']);
 
     expect(PublicActionSubmission::query()->firstOrFail()->status)->toBe(PublicActionSubmissionStatus::Failed);
+});
+
+it('validates submitted payload against the configured action schema before creating a submission', function (): void {
+    PublicAction::factory()->create([
+        'key' => 'schema-action',
+        'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'label' => 'Email address', 'type' => 'email', 'required' => true],
+            ],
+        ],
+    ]);
+
+    $response = $this->postJson('/actions/schema-action', [
+        'email' => 'not-an-email',
+    ]);
+
+    $response
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['email']);
+
+    expect(PublicActionSubmission::query()->count())->toBe(0);
+});
+
+it('stores only declared schema fields plus source metadata for schema-backed actions', function (): void {
+    PublicAction::factory()->create([
+        'key' => 'allowlisted-schema-action',
+        'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'label' => 'Email address', 'type' => 'email', 'required' => true],
+            ],
+        ],
+    ]);
+
+    $this->post('/actions/allowlisted-schema-action', [
+        'email' => 'person@example.test',
+        'unexpected' => 'stored by mistake',
+        'source_type' => 'button',
+        'source_id' => 'footer',
+    ])->assertRedirect();
+
+    $submission = PublicActionSubmission::query()->firstOrFail();
+
+    expect($submission->payload)->toBe(['email' => 'person@example.test'])
+        ->and($submission->source_type)->toBe('button')
+        ->and($submission->source_id)->toBe('footer');
 });
 
 it('renders an enabled public action page without exposing package internals', function (): void {

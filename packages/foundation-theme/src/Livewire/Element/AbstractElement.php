@@ -173,13 +173,13 @@ abstract class AbstractElement extends Component
     protected function getComponent(): string
     {
         return FoundationThemeViewName::canonical(
-            $this->element->meta['view_file'] ?? $this->element->type->meta['view_file'] ?? static::$defaultView,
+            $this->element->getViewFile() ?? static::$defaultView,
         );
     }
 
     protected function getComponentItem(): string
     {
-        return $this->element->meta['component_item'] ?? $this->element->type->meta['component_item'] ?? $this->getDefaultComponentItem();
+        return $this->element->getComponentItem() ?? $this->getDefaultComponentItem();
     }
 
     protected function getDefaultComponentItem(): string

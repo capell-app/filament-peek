@@ -1,7 +1,0 @@
-includes:
-    - ./phpstan.common.neon
-
-parameters:
-    paths:
-        - packages
-    tmpDir: /tmp/phpstan/capell-packages-source

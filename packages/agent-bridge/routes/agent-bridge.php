@@ -32,7 +32,8 @@ if (is_string($homeRoute) && $homeRoute !== '') {
 
 if (class_exists(Mcp::class)) {
     if (is_string($knowledgeRoute) && $knowledgeRoute !== '') {
-        Mcp::web($knowledgeRoute, CapellKnowledgeServer::class);
+        Mcp::web($knowledgeRoute, CapellKnowledgeServer::class)
+            ->middleware(AuthenticateCapellAgentBridgeToken::class);
     }
 
     if (is_string($siteRoute) && $siteRoute !== '') {

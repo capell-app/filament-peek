@@ -15,7 +15,7 @@ use Override;
 
 class AgencyThemeServiceProvider extends ServiceProvider
 {
-    public const THEME_KEY = 'agency';
+    public const string THEME_KEY = 'agency';
 
     public static string $packageName = 'capell-app/theme-agency';
 

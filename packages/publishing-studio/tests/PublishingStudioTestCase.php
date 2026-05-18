@@ -25,7 +25,6 @@ use Capell\MigrationAssistant\Providers\MigrationAssistantServiceProvider;
 use Capell\PublishingStudio\Extenders\PublishingStudioPageEditExtender;
 use Capell\PublishingStudio\Extenders\PublishingStudioPageResourcePageExtender;
 use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
-use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
 use Capell\PublishingStudio\Filament\Pages\PublishingWorkflowPage;
 use Capell\PublishingStudio\Filament\Pages\ScheduledPublishingPage;
 use Capell\PublishingStudio\Filament\Pages\StaleDraftsPage;
@@ -184,7 +183,6 @@ class PublishingStudioTestCase extends AbstractTestCase
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(PreviewLinkResource::class, group: 'PreviewLink'));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ImportSitesPage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ActivityTrailPage::class));
-        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ImportPagesPage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(PublishingWorkflowPage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ScheduledPublishingPage::class));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(StaleDraftsPage::class));

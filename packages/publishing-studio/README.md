@@ -88,7 +88,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 ## Admin Surface
 
 - Resources: `PreviewLinkResource`, `WorkspaceResource`.
-- Pages: `ActivityTrailPage`, `ActivityTrailTable`, `CompareVersionPage`, `DiscardDraftsBulkAction`, `ImportPagesPage`, `ManagePreviewLinks`, `ManagePublishingStudio`, `PageVersionHistoryPage`, `PublishPageAction`, `PublishingWorkflowPage`, `RequestReviewBulkAction`, `ResubmitForReviewAction`, `SaveAsDraftFormAction`, `ScheduledPublishingPage`, and related pages.
+- Pages: `ActivityTrailPage`, `ActivityTrailTable`, `CompareVersionPage`, `DiscardDraftsBulkAction`, `ManagePreviewLinks`, `ManagePublishingStudio`, `PageVersionHistoryPage`, `PublishPageAction`, `PublishingWorkflowPage`, `RequestReviewBulkAction`, `ResubmitForReviewAction`, `SaveAsDraftFormAction`, `ScheduledPublishingPage`, and related pages.
 - Widgets: `ContentSchedulerCalendarWidget`, `ContentSchedulerOverviewWidget`, `PageAlertsWidget`, `WorkspaceActivityWidgetAbstract`, `WorkspaceMergeHistoryWidgetAbstract`.
 - Settings: `PublishingStudioSettings`.
 
@@ -129,7 +129,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Adds admin resources/pages/widgets and frontend preview route.
 - Adds middleware to resolve workspace context.
 - Adds commands for install, load testing, and pruning abandoned publishing-studio.
-- Adds recovery-center import screens for moving imported pages through validation, relation resolution, execution, and rollback reporting.
+- Adds Migration Assistant adapters so page imports can stage content into Publishing Studio workspaces.
 
 ## Install And Setup
 
@@ -140,7 +140,6 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 ## Admin And Access
 
 - ActivityTrailPage (packages/publishing-studio/src/Filament/Pages/ActivityTrailPage.php, slug `dashboard-dashboard_reports/activity-trail`)
-- ImportPagesPage (packages/publishing-studio/src/Filament/Pages/ImportPagesPage.php, slug `recovery-center/import-pages`)
 - ScheduledPublishingPage (packages/publishing-studio/src/Filament/Pages/ScheduledPublishingPage.php, slug `scheduled-publishing`)
 - StaleDraftsPage (packages/publishing-studio/src/Filament/Pages/StaleDraftsPage.php, slug `stale-drafts`)
 - PageVersionHistoryPage (packages/publishing-studio/src/Filament/Resources/Pages/Pages/PageVersionHistoryPage.php, slug `{record}/history`)
@@ -152,7 +151,6 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 - Policy: WorkspacePolicy (packages/publishing-studio/src/Policies/WorkspacePolicy.php)
 - Gate: ContentSchedulerOverviewWidget: `admin`, `super_admin`
-- Gate: ImportPagesPage: Filament Shield page permissions
 - Gate: ScheduledPublishingPage: Filament Shield page permissions
 - Gate: StaleDraftsPage: Filament Shield page permissions
 - Gate: WorkspaceActivityWidgetAbstract: `admin`, `super_admin`
@@ -165,7 +163,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Publish checks, stale workspace analysis, URL collisions, and release windows can block publishing.
 - Preview links need expiry, revocation, and access-count review.
 - Schedule release windows, unpublish dates, embargo rules, and review reminders must match site operations.
-- Import recovery screens depend on the MigrationAssistant-backed import session tables when page import workflows are enabled.
+- Recovery Center page import screens are owned by Migration Assistant; Publishing Studio contributes workspace target, context, and collision adapters when both packages are installed.
 
 ## Docs
 

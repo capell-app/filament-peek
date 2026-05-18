@@ -45,6 +45,6 @@ final class SiteHealthWidgetAbstract extends Widget implements CapellWidgetContr
     #[Computed]
     public function allGood(): bool
     {
-        return $this->setupHealth->allGreen && $this->contentHealth->issues->toCollection()->every(fn (ContentHealthIssueData $issue): bool => $issue->count === 0);
+        return $this->setupHealth()->allGreen && $this->contentHealth()->issues->toCollection()->every(fn (ContentHealthIssueData $issue): bool => $issue->count === 0);
     }
 }

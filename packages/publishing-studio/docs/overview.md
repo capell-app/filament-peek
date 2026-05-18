@@ -14,7 +14,7 @@ PublishingStudio is Capell's premium editorial timeline package. It brings the p
 - Release Workspaces for grouped editorial releases that move coordinated content and package-owned draftable changes live atomically.
 - Approval history for submit, approve, reject, and request-changes decisions.
 - Scheduled publishing with release windows, unpublish dates, embargo windows, review reminders, immediate publishing, version history, rollback, and entity restore.
-- Activity timeline, stale drafts, recovery import screens, load-test fixtures, and prune commands for editorial and operational audit trails.
+- Activity timeline, stale drafts, Migration Assistant import adapters, load-test fixtures, and prune commands for editorial and operational audit trails.
 
 ## Developer Notes
 
@@ -35,7 +35,7 @@ Gives editorial teams a Statamic-style content history feel while remaining a se
 - Adds admin resources/pages/widgets and frontend preview route.
 - Adds middleware to resolve workspace context.
 - Adds commands for install, load testing, and pruning abandoned publishing-studio.
-- Adds recovery-center import screens for validation, relation resolution, execution, and rollback reporting when import workflows are enabled.
+- Adds Migration Assistant adapters so page imports can stage content into workspaces when import workflows are enabled.
 
 ## Data And Retention
 
@@ -77,7 +77,7 @@ The live preview, preview banner, recovery import, and activity history screensh
 - Publish checks, stale workspace analysis, URL collisions, and release windows can block publishing.
 - Preview links need expiry, revocation, and access-count review.
 - Schedule release windows, unpublish dates, embargo rules, and review reminders must match site operations.
-- Import recovery screens depend on the MigrationAssistant-backed import session tables when page import workflows are enabled.
+- Recovery Center page import screens are owned by Migration Assistant; Publishing Studio contributes workspace target, context, and collision adapters.
 
 ## Verification
 
@@ -104,7 +104,6 @@ The live preview, preview banner, recovery import, and activity history screensh
 ## Admin Surfaces
 
 - ActivityTrailPage (packages/publishing-studio/src/Filament/Pages/ActivityTrailPage.php, slug `dashboard-dashboard_reports/activity-trail`)
-- ImportPagesPage (packages/publishing-studio/src/Filament/Pages/ImportPagesPage.php, slug `recovery-center/import-pages`)
 - ScheduledPublishingPage (packages/publishing-studio/src/Filament/Pages/ScheduledPublishingPage.php, slug `scheduled-publishing`)
 - StaleDraftsPage (packages/publishing-studio/src/Filament/Pages/StaleDraftsPage.php, slug `stale-drafts`)
 - PageVersionHistoryPage (packages/publishing-studio/src/Filament/Resources/Pages/Pages/PageVersionHistoryPage.php, slug `{record}/history`)
@@ -128,7 +127,6 @@ The live preview, preview banner, recovery import, and activity history screensh
 
 - Policy: WorkspacePolicy (packages/publishing-studio/src/Policies/WorkspacePolicy.php)
 - Gate: ContentSchedulerOverviewWidget: `admin`, `super_admin`
-- Gate: ImportPagesPage: Filament Shield page permissions
 - Gate: ScheduledPublishingPage: Filament Shield page permissions
 - Gate: StaleDraftsPage: Filament Shield page permissions
 - Gate: WorkspaceActivityWidgetAbstract: `admin`, `super_admin`

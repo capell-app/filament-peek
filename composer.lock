@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a942d0713595bafc563cf6cfd08833de",
+    "content-hash": "3718f2f21c170f69958cc8b8e9281dfb",
     "packages": [
         {
             "name": "aimeos/laravel-nestedset",
@@ -712,16 +712,10 @@
         {
             "name": "capell-app/admin",
             "version": "4.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:capell-app/admin.git",
-                "reference": "54ea716f70c4834abaef6043a9996f32336255c6"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/capell-app/admin/zipball/54ea716f70c4834abaef6043a9996f32336255c6",
-                "reference": "54ea716f70c4834abaef6043a9996f32336255c6",
-                "shasum": ""
+                "type": "path",
+                "url": "../capell-4/packages/admin",
+                "reference": "186346d49f6b5c99ba59f4000a4a5509573462dd"
             },
             "require": {
                 "amidesfahani/filament-tinyeditor": "^4.0",
@@ -744,7 +738,7 @@
                 "laravel/prompts": "^0.2|^0.3",
                 "lorisleiva/laravel-actions": "^2.8",
                 "pboivin/filament-peek": "^3.0|^4.0",
-                "php": "^8.2",
+                "php": "^8.3",
                 "saade/filament-adjacency-list": "dev-feat/laravel-13-support",
                 "spatie/laravel-package-tools": "^1.15",
                 "stechstudio/filament-impersonate": "^5.3",
@@ -753,7 +747,6 @@
             "conflict": {
                 "firebase/php-jwt": "<7.0.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -790,36 +783,30 @@
                 "filamentphp",
                 "laravel"
             ],
-            "support": {
-                "source": "https://github.com/capell-app/admin/tree/v2.0.24",
-                "issues": "https://github.com/capell-app/admin/issues"
-            },
-            "time": "2026-05-05T16:10:55+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "capell-app/core",
             "version": "4.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:capell-app/core.git",
-                "reference": "c747574beb79a9fa17d38bd8bd7c62ce7eacd058"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/capell-app/core/zipball/c747574beb79a9fa17d38bd8bd7c62ce7eacd058",
-                "reference": "c747574beb79a9fa17d38bd8bd7c62ce7eacd058",
-                "shasum": ""
+                "type": "path",
+                "url": "../capell-4/packages/core",
+                "reference": "6282f83e8edc7cf66de762c1d8cb17149d2da23d"
             },
             "require": {
                 "aimeos/laravel-nestedset": "^7.0",
                 "awobaz/compoships": "^2.3",
                 "bkwld/cloner": "^3.10",
+                "ext-intl": "*",
                 "filament/support": "^4.0|^5.0",
                 "illuminate/database": "^11.0|^12.0|^13.0",
                 "illuminate/support": "^11.0|^12.0|^13.0",
                 "livewire/blaze": "^1.0",
                 "lorisleiva/laravel-actions": "^2.8",
-                "php": "^8.2",
+                "php": "^8.3",
                 "silber/page-cache": "^1.0",
                 "spatie/laravel-activitylog": "^4.0",
                 "spatie/laravel-data": "^4.5",
@@ -831,7 +818,6 @@
                 "symfony/filesystem": "^7.2|^8.0",
                 "symfony/process": "^7.2|^8.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -862,25 +848,18 @@
                 }
             ],
             "description": "Core for Capell.",
-            "support": {
-                "source": "https://github.com/capell-app/core/tree/v2.0.24",
-                "issues": "https://github.com/capell-app/core/issues"
-            },
-            "time": "2026-05-05T16:10:49+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "capell-app/frontend",
             "version": "4.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:capell-app/frontend.git",
-                "reference": "1226ddbeb96beea7d43cb2642b415c2b75b8aff1"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/capell-app/frontend/zipball/1226ddbeb96beea7d43cb2642b415c2b75b8aff1",
-                "reference": "1226ddbeb96beea7d43cb2642b415c2b75b8aff1",
-                "shasum": ""
+                "type": "path",
+                "url": "../capell-4/packages/frontend",
+                "reference": "a40a5a71fd9bcc542884cea8835d023c80b4e828"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
@@ -892,13 +871,13 @@
                 "livewire/livewire": "*",
                 "lorisleiva/laravel-actions": "^2.6",
                 "michaloravec/laravel-paginateroute": "^1.0",
-                "php": "^8.2",
+                "php": "^8.3",
                 "silber/page-cache": "^1.0",
                 "spatie/laravel-permission": "^5.0|^6.0",
                 "spatie/laravel-translatable": "^6.0",
-                "symfony/html-sanitizer": "^7.0|^8.0"
+                "symfony/html-sanitizer": "^7.0|^8.0",
+                "voku/html-min": "^4.5"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -935,32 +914,25 @@
                 "frontend",
                 "laravel"
             ],
-            "support": {
-                "source": "https://github.com/capell-app/frontend/tree/v2.0.24",
-                "issues": "https://github.com/capell-app/frontend/issues"
-            },
-            "time": "2026-05-05T16:10:55+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "capell-app/installer",
             "version": "4.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:capell-app/installer.git",
-                "reference": "ad8b42fe34a2cd9e48d6bf1d09234d9fcb489d0f"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/capell-app/installer/zipball/ad8b42fe34a2cd9e48d6bf1d09234d9fcb489d0f",
-                "reference": "ad8b42fe34a2cd9e48d6bf1d09234d9fcb489d0f",
-                "shasum": ""
+                "type": "path",
+                "url": "../capell-4/packages/installer",
+                "reference": "4b063aa2f7b627b7a8591ac7d61be9288b45b221"
             },
             "require": {
                 "capell-app/core": "self.version",
-                "php": "^8.2",
+                "ext-intl": "*",
+                "php": "^8.3",
                 "spatie/laravel-package-tools": "^1.14.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -992,7 +964,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Installer assistant for the Capell CMS.",
+            "description": "Installer ai-orchestrator for the Capell CMS.",
             "homepage": "https://github.com/capell-app/capell",
             "keywords": [
                 "capell",
@@ -1000,32 +972,25 @@
                 "filamentphp",
                 "laravel"
             ],
-            "support": {
-                "source": "https://github.com/capell-app/installer/tree/v2.0.24",
-                "issues": "https://github.com/capell-app/installer/issues"
-            },
-            "time": "2026-05-05T16:10:49+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "capell-app/marketplace",
             "version": "4.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:capell-app/marketplace.git",
-                "reference": "58ff855b50bc0e270f76f2b2d8540da957159db6"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/capell-app/marketplace/zipball/58ff855b50bc0e270f76f2b2d8540da957159db6",
-                "reference": "58ff855b50bc0e270f76f2b2d8540da957159db6",
-                "shasum": ""
+                "type": "path",
+                "url": "../capell-4/packages/marketplace",
+                "reference": "9942d10abde646aa3dc873ca68ce1fb7682758da"
             },
             "require": {
                 "capell-app/admin": "*",
                 "capell-app/core": "*",
                 "laravel/framework": "^11.45.3|^12.41.1|^13.0",
                 "lorisleiva/laravel-actions": "^2.8",
-                "php": "^8.2",
+                "php": "^8.3",
                 "spatie/laravel-data": "^4.5",
                 "spatie/laravel-package-tools": "^1.14.1"
             },
@@ -1035,7 +1000,6 @@
                 "pestphp/pest-plugin-laravel": "^3.0|^4.0",
                 "pestphp/pest-plugin-livewire": "^3.0|^4.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1064,11 +1028,10 @@
                 "proprietary"
             ],
             "description": "Extension marketplace browsing and acquisition for Capell CMS.",
-            "support": {
-                "source": "https://github.com/capell-app/marketplace/tree/v2.0.24",
-                "issues": "https://github.com/capell-app/marketplace/issues"
-            },
-            "time": "2026-05-05T16:10:56+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -14832,64 +14795,6 @@
             "time": "2026-03-04T14:03:08+00:00"
         },
         {
-            "name": "canvural/larastan-strict-rules",
-            "version": "3.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/canvural/larastan-strict-rules.git",
-                "reference": "53d60b6e4b852d3944361d31c55205b2c4c61b0c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/canvural/larastan-strict-rules/zipball/53d60b6e4b852d3944361d31c55205b2c4c61b0c",
-                "reference": "53d60b6e4b852d3944361d31c55205b2c4c61b0c",
-                "shasum": ""
-            },
-            "require": {
-                "larastan/larastan": "^3.0",
-                "php": "^8.2",
-                "phpstan/phpstan": "^2.0"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^12.0",
-                "orchestra/testbench": "^9.0",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^10.0",
-                "roave/security-advisories": "dev-latest"
-            },
-            "type": "phpstan-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Vural\\LarastanStrictRules\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Extra strict and opinionated PHPStan rules for Laravel.",
-            "support": {
-                "issues": "https://github.com/canvural/larastan-strict-rules/issues",
-                "source": "https://github.com/canvural/larastan-strict-rules/tree/3.0.3"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.me/canvural",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/canvural",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-04-29T07:22:23+00:00"
-        },
-        {
             "name": "composer/class-map-generator",
             "version": "1.7.3",
             "source": {
@@ -16087,16 +15992,16 @@
         },
         {
             "name": "mrpunyapal/peststan",
-            "version": "0.1.5",
+            "version": "0.2.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MrPunyapal/PestStan.git",
-                "reference": "c4cbb7a041cbdc4e255a72a45b098c7d8cab5fd0"
+                "reference": "750859a911050915cb6e3efbfde30e900ad717bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MrPunyapal/PestStan/zipball/c4cbb7a041cbdc4e255a72a45b098c7d8cab5fd0",
-                "reference": "c4cbb7a041cbdc4e255a72a45b098c7d8cab5fd0",
+                "url": "https://api.github.com/repos/MrPunyapal/PestStan/zipball/750859a911050915cb6e3efbfde30e900ad717bf",
+                "reference": "750859a911050915cb6e3efbfde30e900ad717bf",
                 "shasum": ""
             },
             "require": {
@@ -16106,6 +16011,7 @@
             "require-dev": {
                 "laravel/pint": "^1.18",
                 "mrpunyapal/rector-pest": "^0.2.0",
+                "nunomaduro/pao": "^0.1.4",
                 "pestphp/pest": "^3.0 || ^4.0 || ^5.0",
                 "phpstan/extension-installer": "^1.4",
                 "phpstan/phpstan-strict-rules": "^2.0",
@@ -16137,7 +16043,7 @@
             ],
             "support": {
                 "issues": "https://github.com/MrPunyapal/PestStan/issues",
-                "source": "https://github.com/MrPunyapal/PestStan/tree/0.1.5"
+                "source": "https://github.com/MrPunyapal/PestStan/tree/0.2.10"
             },
             "funding": [
                 {
@@ -16145,7 +16051,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-27T15:57:46+00:00"
+            "time": "2026-05-10T16:55:11+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -17648,60 +17554,12 @@
             "time": "2025-08-16T11:10:48+00:00"
         },
         {
-            "name": "phpstan/extension-installer",
-            "version": "1.4.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/extension-installer.git",
-                "reference": "85e90b3942d06b2326fba0403ec24fe912372936"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/extension-installer/zipball/85e90b3942d06b2326fba0403ec24fe912372936",
-                "reference": "85e90b3942d06b2326fba0403ec24fe912372936",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^2.0",
-                "php": "^7.2 || ^8.0",
-                "phpstan/phpstan": "^1.9.0 || ^2.0"
-            },
-            "require-dev": {
-                "composer/composer": "^2.0",
-                "php-parallel-lint/php-parallel-lint": "^1.2.0",
-                "phpstan/phpstan-strict-rules": "^0.11 || ^0.12 || ^1.0"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "PHPStan\\ExtensionInstaller\\Plugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "PHPStan\\ExtensionInstaller\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Composer plugin for automatic installation of PHPStan extensions",
-            "keywords": [
-                "dev",
-                "static analysis"
-            ],
-            "support": {
-                "issues": "https://github.com/phpstan/extension-installer/issues",
-                "source": "https://github.com/phpstan/extension-installer/tree/1.4.3"
-            },
-            "time": "2024-09-04T20:21:43+00:00"
-        },
-        {
             "name": "phpstan/phpstan",
-            "version": "2.1.54",
+            "version": "2.1.55",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
-                "reference": "8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9eaac3826ed5e9b8427350a43cac825eeca3f566",
+                "reference": "9eaac3826ed5e9b8427350a43cac825eeca3f566",
                 "shasum": ""
             },
             "require": {
@@ -17746,56 +17604,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-29T13:31:09+00:00"
-        },
-        {
-            "name": "phpstan/phpstan-beberlei-assert",
-            "version": "2.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/phpstan-beberlei-assert.git",
-                "reference": "8699be838df954190b657c8defc2777c74ebb44e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-beberlei-assert/zipball/8699be838df954190b657c8defc2777c74ebb44e",
-                "reference": "8699be838df954190b657c8defc2777c74ebb44e",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.0"
-            },
-            "require-dev": {
-                "beberlei/assert": "^3.3.0",
-                "php-parallel-lint/php-parallel-lint": "^1.4",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^9.6"
-            },
-            "type": "phpstan-extension",
-            "extra": {
-                "phpstan": {
-                    "includes": [
-                        "extension.neon"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PHPStan\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHPStan beberlei/assert extension",
-            "support": {
-                "issues": "https://github.com/phpstan/phpstan-beberlei-assert/issues",
-                "source": "https://github.com/phpstan/phpstan-beberlei-assert/tree/2.0.2"
-            },
-            "time": "2025-10-06T09:51:30+00:00"
+            "time": "2026-05-18T11:57:34+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
@@ -17845,57 +17654,6 @@
                 "source": "https://github.com/phpstan/phpstan-mockery/tree/2.0.0"
             },
             "time": "2024-10-14T03:18:12+00:00"
-        },
-        {
-            "name": "phpstan/phpstan-strict-rules",
-            "version": "2.0.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/phpstan-strict-rules.git",
-                "reference": "9b000a578b85b32945b358b172c7b20e91189024"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/9b000a578b85b32945b358b172c7b20e91189024",
-                "reference": "9b000a578b85b32945b358b172c7b20e91189024",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.1.39"
-            },
-            "require-dev": {
-                "php-parallel-lint/php-parallel-lint": "^1.2",
-                "phpstan/phpstan-deprecation-rules": "^2.0",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.6"
-            },
-            "type": "phpstan-extension",
-            "extra": {
-                "phpstan": {
-                    "includes": [
-                        "rules.neon"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PHPStan\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Extra strict and opinionated rules for PHPStan",
-            "keywords": [
-                "static analysis"
-            ],
-            "support": {
-                "issues": "https://github.com/phpstan/phpstan-strict-rules/issues",
-                "source": "https://github.com/phpstan/phpstan-strict-rules/tree/2.0.11"
-            },
-            "time": "2026-05-02T06:54:10+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -19438,80 +19196,6 @@
                 "source": "https://github.com/sinnbeck/laravel-dom-assertions/tree/v3.0.6"
             },
             "time": "2026-05-17T11:34:45+00:00"
-        },
-        {
-            "name": "soyhuce/phpstan-extension",
-            "version": "2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Soyhuce/phpstan-extension.git",
-                "reference": "2849abb82498f241a56ec0773d0b42a3b778abaa"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Soyhuce/phpstan-extension/zipball/2849abb82498f241a56ec0773d0b42a3b778abaa",
-                "reference": "2849abb82498f241a56ec0773d0b42a3b778abaa",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^11.0|^12.0",
-                "nesbot/carbon": "^3.0",
-                "php": "^8.3",
-                "phpstan/phpstan": "^2.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.7",
-                "larastan/larastan": "^3.0",
-                "nunomaduro/collision": "^8.0",
-                "orchestra/testbench": "^9.0|^10.0",
-                "pestphp/pest": "^3.0|^4.0",
-                "pestphp/pest-plugin-laravel": "^3.0|^4.0",
-                "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan-deprecation-rules": "^2.0",
-                "phpstan/phpstan-phpunit": "^2.0"
-            },
-            "type": "library",
-            "extra": {
-                "phpstan": {
-                    "includes": [
-                        "extension.neon"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Soyhuce\\PhpstanExtension\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bastien Philippe",
-                    "email": "bastien.philippe@soyhuce.fr",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Extra rules for phpstan analysis",
-            "homepage": "https://github.com/soyhuce/phpstan-extension",
-            "keywords": [
-                "PHPStan",
-                "laravel",
-                "soyhuce"
-            ],
-            "support": {
-                "issues": "https://github.com/Soyhuce/phpstan-extension/issues",
-                "source": "https://github.com/Soyhuce/phpstan-extension/tree/2.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/soyhuce",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-03-02T09:37:09+00:00"
         },
         {
             "name": "spatie/backtrace",

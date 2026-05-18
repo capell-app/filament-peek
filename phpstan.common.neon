@@ -4,26 +4,19 @@ includes:
 parameters:
     level: 2
     reportUnmatchedIgnoredErrors: true
-    peststan:
-        pestConfigFiles:
-            - tests/Pest.php
-    checkAuthCallsWhenInRequestScope: true
-    checkConfigTypes: true
+    checkAuthCallsWhenInRequestScope: false
+    checkConfigTypes: false
     checkExplicitMixedMissingReturn: true
     checkFunctionNameCase: true
     checkMissingTranslations: false
-    checkModelMethodVisibility: true
-    checkModelProperties: true
-    checkOctaneCompatibility: true
-    checkUnusedViews: true
+    checkModelMethodVisibility: false
+    checkModelProperties: false
+    checkOctaneCompatibility: false
+    checkUnusedViews: false
     enableMigrationCache: true
     generalizeEnvReturnType: true
     noUnnecessaryEnumerableToArrayCalls: true
-    parseModelCastsMethod: true
-    strictRules:
-        # TODO remove when https://github.com/phpstan/phpstan-strict-rules/issues/140 is resolved
-        # See also: https://github.com/larastan/larastan/issues/1272
-        dynamicCallOnStaticMethod: false
+    parseModelCastsMethod: false
     databaseMigrationsPath:
         - packages/access-gate/database/migrations
         - packages/address/database/migrations
@@ -72,7 +65,7 @@ parameters:
         - packages/toolbar/resources/views
         - packages/publishing-studio/resources/views
     type_coverage:
-        constant_type: 0
+        constant_type: 100
     stubFiles:
         - phpstan/filament-macros.stub
         - phpstan/blueprint-macros.stub

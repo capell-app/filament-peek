@@ -3,19 +3,17 @@
 declare(strict_types=1);
 
 use Capell\AccessGate\Actions\SubmitAccessGatePublicAction;
-use Capell\AccessGate\Contracts\RegistrationField;
-use Capell\AccessGate\Data\RegistrationFieldValue;
 use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
+use Capell\AccessGate\Tests\Fixtures\Autoload\PublicActionProviderUsernameRegistrationField;
 use Capell\PublicActions\Data\PublicActionMetadataData;
 use Capell\PublicActions\Data\PublicActionPayloadData;
 use Capell\PublicActions\Data\PublicActionSubmissionData;
 use Capell\PublicActions\Support\PublicActionHandlerRegistry;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 it('creates an access gate registration from a public action submission', function (): void {
@@ -134,32 +132,4 @@ function accessGatePublicActionSubmission(array $payload): PublicActionSubmissio
         sourceType: 'public_action',
         sourceId: 'hero-button',
     );
-}
-
-final class PublicActionProviderUsernameRegistrationField implements RegistrationField
-{
-    public function key(): string
-    {
-        return 'provider_username';
-    }
-
-    public function label(): string
-    {
-        return 'Provider username';
-    }
-
-    /**
-     * @param  array<string, mixed>  $input
-     */
-    public function validate(array $input): RegistrationFieldValue
-    {
-        $validated = Validator::make($input, [
-            'provider_username' => ['required', 'string', 'alpha_dash:ascii'],
-        ])->validate();
-
-        return new RegistrationFieldValue(
-            key: $this->key(),
-            value: strtolower((string) $validated['provider_username']),
-        );
-    }
 }

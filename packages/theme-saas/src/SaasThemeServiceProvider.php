@@ -15,7 +15,7 @@ use Override;
 
 class SaasThemeServiceProvider extends ServiceProvider
 {
-    public const THEME_KEY = 'saas';
+    public const string THEME_KEY = 'saas';
 
     public static string $packageName = 'capell-app/theme-saas';
 

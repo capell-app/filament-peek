@@ -14,7 +14,7 @@ abstract class AbstractPagesElement extends AbstractElement
 {
     public ?string $componentItem = null;
 
-    public Collection $pages;
+    public ?Collection $pages = null;
 
     protected static string $defaultView = 'capell-foundation-theme::components.element.asset.pages';
 
@@ -27,7 +27,7 @@ abstract class AbstractPagesElement extends AbstractElement
 
         return parent::render([
             ...$data,
-            'pages' => $this->pages,
+            'pages' => $this->pages ?? collect(),
         ]);
     }
 }

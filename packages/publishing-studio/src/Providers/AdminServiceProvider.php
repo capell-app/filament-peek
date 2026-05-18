@@ -16,6 +16,7 @@ use Capell\Admin\Facades\CapellAdmin;
 use Capell\Admin\Filament\Widgets\Dashboard\MyWorkQueueWidget;
 use Capell\Admin\Filament\Widgets\Dashboard\RecentlyPublishedWidget;
 use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
+use Capell\Admin\Support\CapellAdminManager;
 use Capell\Admin\Support\Dashboard\DefaultSiteStatsDataProvider;
 use Capell\Admin\Support\Dashboard\NullContentHealthDataProvider;
 use Capell\Admin\Support\Dashboard\NullMyWorkQueueDataProvider;
@@ -33,7 +34,6 @@ use Capell\PublishingStudio\Enums\SchedulerEventTypeEnum;
 use Capell\PublishingStudio\Events\WorkspaceStateChanged;
 use Capell\PublishingStudio\Extenders\PublishingStudioUserSchemaExtender;
 use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
-use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
 use Capell\PublishingStudio\Filament\Pages\PublishingWorkflowPage;
 use Capell\PublishingStudio\Filament\Pages\ScheduledPublishingPage;
 use Capell\PublishingStudio\Filament\Pages\StaleDraftsPage;
@@ -241,11 +241,10 @@ class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerDashboardWidget(WorkspaceActivityWidgetAbstract::class, DashboardEnum::Main);
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(WorkspaceResource::class, group: 'Workspace'));
         CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::resource(PreviewLinkResource::class, group: 'PreviewLink'));
-        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, PublishingWorkflowPage::class);
-        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, ActivityTrailPage::class);
-        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, ImportPagesPage::class);
-        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, ScheduledPublishingPage::class);
-        CapellAdmin::registerExtensionPage(PublishingStudioServiceProvider::$packageName, StaleDraftsPage::class);
+        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(PublishingWorkflowPage::class));
+        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ActivityTrailPage::class));
+        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(ScheduledPublishingPage::class));
+        CapellAdmin::contributeToAdminSurface(AdminSurfaceContributionData::page(StaleDraftsPage::class));
 
         return $this;
     }
@@ -258,9 +257,11 @@ class AdminServiceProvider extends ServiceProvider
             return false;
         }
 
+        $managerMethods = get_class_methods(CapellAdminManager::class);
+
         return is_object($admin)
-            && method_exists($admin, 'registerAdminBridge')
-            && method_exists($admin, 'bootAdminBridges')
+            && in_array('registerAdminBridge', $managerMethods, true)
+            && in_array('bootAdminBridges', $managerMethods, true)
             && class_exists(PublishingStudioAdminBridge::class)
             && class_exists(AdminBridgeRegistrar::class)
             && method_exists(AdminBridgeRegistrar::class, 'schemaExtender')

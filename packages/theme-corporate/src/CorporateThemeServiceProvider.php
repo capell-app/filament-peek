@@ -16,7 +16,7 @@ use Override;
 
 class CorporateThemeServiceProvider extends ServiceProvider
 {
-    public const THEME_KEY = 'corporate';
+    public const string THEME_KEY = 'corporate';
 
     public static string $packageName = 'capell-app/theme-corporate';
 

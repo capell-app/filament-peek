@@ -47,7 +47,7 @@ final class SubmitPublicActionAction
 
         $this->assertActionIsAvailable($publicAction);
 
-        $payload = $this->validatedPayload($input);
+        $payload = $this->validatedPayload($publicAction, $input);
         $submission = PublicActionSubmission::query()->create([
             'public_action_id' => $publicAction->getKey(),
             'site_id' => $publicAction->site_id,
@@ -137,23 +137,125 @@ final class SubmitPublicActionAction
      * @param  array<string, mixed>  $input
      * @return array<string, mixed>
      */
-    private function validatedPayload(array $input): array
+    private function validatedPayload(PublicAction $action, array $input): array
     {
         $validated = Validator::make($input, [
             'source_type' => ['nullable', 'string', 'max:255'],
             'source_id' => ['nullable', 'string', 'max:255'],
         ])->validate();
 
-        $payload = Arr::except($input, [
-            '_token',
-            '_method',
-            'g-recaptcha-response',
-        ]);
+        $payload = $this->validatedSchemaPayload($action, $input)
+            ?? Arr::except($input, [
+                '_token',
+                '_method',
+                'g-recaptcha-response',
+            ]);
 
         return [
             ...$payload,
             ...Arr::only($validated, ['source_type', 'source_id']),
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>|null
+     */
+    private function validatedSchemaPayload(PublicAction $action, array $input): ?array
+    {
+        $fields = $this->schemaFields($action);
+
+        if ($fields === []) {
+            return null;
+        }
+
+        $rules = [];
+        $fieldKeys = [];
+
+        foreach ($fields as $field) {
+            $fieldKey = $this->schemaFieldKey($field);
+
+            if ($fieldKey === null) {
+                continue;
+            }
+
+            $fieldKeys[] = $fieldKey;
+            $rules[$fieldKey] = $this->schemaFieldRules($field);
+        }
+
+        if ($rules === []) {
+            return null;
+        }
+
+        Validator::make($input, $rules)->validate();
+
+        return Arr::only($input, $fieldKeys);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function schemaFields(PublicAction $action): array
+    {
+        $fields = data_get($action->payload_schema, 'fields');
+
+        if (! is_array($fields)) {
+            return [];
+        }
+
+        return array_values(array_filter(
+            $fields,
+            is_array(...),
+        ));
+    }
+
+    /**
+     * @param  array<string, mixed>  $field
+     */
+    private function schemaFieldKey(array $field): ?string
+    {
+        $fieldKey = $field['key'] ?? null;
+
+        if (! is_string($fieldKey) || trim($fieldKey) === '') {
+            return null;
+        }
+
+        return $fieldKey;
+    }
+
+    /**
+     * @param  array<string, mixed>  $field
+     * @return list<string>
+     */
+    private function schemaFieldRules(array $field): array
+    {
+        $rules = [(bool) ($field['required'] ?? false) ? 'required' : 'nullable'];
+        $fieldType = is_string($field['type'] ?? null) ? $field['type'] : 'text';
+
+        if ($fieldType === 'email') {
+            $rules[] = 'email:rfc';
+            $rules[] = 'max:255';
+
+            return $rules;
+        }
+
+        if ($fieldType === 'checkbox') {
+            $rules[] = (bool) ($field['required'] ?? false) ? 'accepted' : 'boolean';
+
+            return $rules;
+        }
+
+        if ($fieldType === 'textarea') {
+            $rules[] = 'string';
+            $rules[] = 'max:10000';
+
+            return $rules;
+        }
+
+        $rules[] = 'string';
+        $rules[] = 'max:255';
+
+        return $rules;
     }
 
     private function resolveHandler(PublicAction $action): PublicActionHandler

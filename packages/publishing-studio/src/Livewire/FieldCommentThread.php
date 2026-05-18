@@ -89,7 +89,7 @@ class FieldCommentThread extends Component
     public function render(): View
     {
         return view('capell-publishing-studio::components.publishing-studio.field-comment-thread', [
-            'comments' => $this->comments,
+            'comments' => $this->getCommentsProperty(),
         ]);
     }
 

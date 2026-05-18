@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use Capell\AgentBridge\Http\Middleware\AuthenticateCapellAgentBridgeToken;
+use Illuminate\Routing\Route as IlluminateRoute;
+use Illuminate\Support\Facades\Route;
+use Laravel\Mcp\Facades\Mcp;
+
 it('does not expose agent-bridge discovery or knowledge routes by default', function (): void {
     $this->get('/')
         ->assertNotFound();
@@ -27,4 +32,34 @@ it('can return agent-bridge discovery details from a configured home route', fun
                 'site' => 'http://localhost/agent-bridge/capell',
             ],
         ]);
+});
+
+it('protects the configured knowledge server route with bearer token middleware', function (): void {
+    config()->set('capell-agent-bridge.routes.home');
+    config()->set('capell-agent-bridge.routes.knowledge', 'agent-bridge/capell/knowledge');
+    config()->set('capell-agent-bridge.routes.site');
+
+    require __DIR__ . '/../../routes/agent-bridge.php';
+
+    if (! class_exists(Mcp::class)) {
+        expect(true)->toBeTrue();
+
+        return;
+    }
+
+    $knowledgeRoute = collect(Route::getRoutes())
+        ->first(function (mixed $route): bool {
+            if (! $route instanceof IlluminateRoute) {
+                return false;
+            }
+
+            return str_contains($route->uri(), 'agent-bridge/capell/knowledge')
+                && in_array('POST', $route->methods(), true);
+        });
+
+    expect($knowledgeRoute)->toBeInstanceOf(IlluminateRoute::class);
+    assert($knowledgeRoute instanceof IlluminateRoute);
+
+    expect($knowledgeRoute)->not->toBeNull()
+        ->and($knowledgeRoute->gatherMiddleware())->toContain(AuthenticateCapellAgentBridgeToken::class);
 });

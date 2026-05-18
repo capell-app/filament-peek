@@ -39,27 +39,43 @@ class FormMappingResource extends Resource
     public static function form(Schema $configurator): Schema
     {
         return $configurator->components([
-            SiteSelect::make('site_id')->required(),
-            Select::make('form_id')->relationship('form', 'name'),
-            TextInput::make('name')->label(__('capell-newsletter::form.name'))->required(),
-            TextInput::make('form_handle')->label(__('capell-newsletter::form.form_handle')),
-            TextInput::make('email_field')->label(__('capell-newsletter::form.email_field'))->required(),
-            TextInput::make('first_name_field')->label(__('capell-newsletter::form.first_name_field')),
-            TextInput::make('last_name_field')->label(__('capell-newsletter::form.last_name_field')),
-            TextInput::make('consent_field')->label(__('capell-newsletter::form.consent_field')),
-            TextInput::make('consent_text')->label(__('capell-newsletter::form.consent_text')),
-            TextInput::make('consent_version')->label(__('capell-newsletter::form.consent_version')),
+            SiteSelect::make('site_id')
+                ->required(),
+            Select::make('form_id')
+                ->relationship('form', 'name'),
+            TextInput::make('name')
+                ->label(__('capell-newsletter::form.name'))
+                ->required(),
+            TextInput::make('form_handle')
+                ->label(__('capell-newsletter::form.form_handle')),
+            TextInput::make('email_field')
+                ->label(__('capell-newsletter::form.email_field'))
+                ->required(),
+            TextInput::make('first_name_field')
+                ->label(__('capell-newsletter::form.first_name_field')),
+            TextInput::make('last_name_field')
+                ->label(__('capell-newsletter::form.last_name_field')),
+            TextInput::make('consent_field')
+                ->label(__('capell-newsletter::form.consent_field')),
+            TextInput::make('consent_text')
+                ->label(__('capell-newsletter::form.consent_text')),
+            TextInput::make('consent_version')
+                ->label(__('capell-newsletter::form.consent_version')),
             Select::make('fixed_tag_ids')
                 ->multiple()
                 ->options(fn (): array => self::newsletterTagOptions()),
             KeyValue::make('field_tag_mappings'),
-            Toggle::make('requires_double_opt_in')->label(__('capell-newsletter::form.requires_double_opt_in'))->default(true),
+            Toggle::make('requires_double_opt_in')
+                ->label(__('capell-newsletter::form.requires_double_opt_in'))
+                ->default(true),
             Select::make('confirmation_mode')
                 ->label(__('capell-newsletter::form.confirmation_mode'))
                 ->options(self::confirmationModeOptions())
                 ->default(ConfirmationMode::CapellOwned->value)
                 ->required(),
-            Toggle::make('is_active')->label(__('capell-newsletter::form.active'))->default(true),
+            Toggle::make('is_active')
+                ->label(__('capell-newsletter::form.active'))
+                ->default(true),
         ]);
     }
 
@@ -67,10 +83,19 @@ class FormMappingResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('name')->label(__('capell-newsletter::form.name'))->searchable()->sortable(),
-            TextColumn::make('form_handle')->label(__('capell-newsletter::form.form_handle'))->searchable(),
-            TextColumn::make('email_field')->label(__('capell-newsletter::form.email_field')),
-            TextColumn::make('updated_at')->label(__('capell-newsletter::table.updated_at'))->dateTime()->sortable(),
+            TextColumn::make('name')
+                ->label(__('capell-newsletter::form.name'))
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('form_handle')
+                ->label(__('capell-newsletter::form.form_handle'))
+                ->searchable(),
+            TextColumn::make('email_field')
+                ->label(__('capell-newsletter::form.email_field')),
+            TextColumn::make('updated_at')
+                ->label(__('capell-newsletter::table.updated_at'))
+                ->dateTime()
+                ->sortable(),
         ]);
     }
 

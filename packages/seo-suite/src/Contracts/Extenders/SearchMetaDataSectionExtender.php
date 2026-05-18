@@ -9,8 +9,7 @@ use Filament\Schemas\Components\Section;
 
 interface SearchMetaDataSectionExtender
 {
-    /** @var string */
-    public const TAG = 'capell-admin:search-meta-data-section';
+    public const string TAG = 'capell-admin:search-meta-data-section';
 
     /**
      * @return array<int, Action>

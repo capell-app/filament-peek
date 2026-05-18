@@ -20,12 +20,7 @@
         "rector": "@php vendor/bin/rector",
         "lint": "@php vendor/bin/pint --parallel packages tests",
         "lint:changed": "zsh ./scripts/lint-changed.sh",
-        "analyze": "@analyze:fast",
-        "analyze:fast": "@php vendor/bin/phpstan analyse --memory-limit=-1 --configuration=phpstan.fast.neon",
-        "analyze:source": "@php vendor/bin/phpstan analyse --memory-limit=-1 --configuration=phpstan.source.neon",
-        "analyze:tests": "@php vendor/bin/phpstan analyse --memory-limit=-1 --configuration=phpstan.tests.neon",
-        "analyze:full": "@php vendor/bin/phpstan analyse --memory-limit=-1 --configuration=phpstan.neon",
-        "analyze:all": "@analyze:full",
+        "analyze": "PHP_INI_SCAN_DIR= vendor/bin/phpstan analyse --memory-limit=-1 --configuration=phpstan.neon",
         "prettier": "npx prettier --write \"packages/**/*.{css,js,yml,json,md,blade.php}\"",
         "eslint": "npx eslint 'packages/**/resources/js/**/*.js' --max-warnings=0",
         "check:composer-paths": "@php scripts/check-composer-local-paths.php",
@@ -48,7 +43,7 @@
             "@php -r \"echo PHP_EOL . 'Running ESLint...' . PHP_EOL;\"",
             "@eslint",
             "@php -r \"echo PHP_EOL . 'Running PHPStan...' . PHP_EOL;\"",
-            "@analyze:full",
+            "@analyze",
             "@php -r \"echo PHP_EOL . 'Running Pest...' . PHP_EOL;\"",
             "@test"
         ],
@@ -77,6 +72,20 @@
         ]
     },
     "repositories": [
+        {
+            "type": "path",
+            "url": "./packages/*",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../capell-4/packages/*",
+            "options": {
+                "symlink": true
+            }
+        },
         {
             "type": "vcs",
             "url": "https://github.com/capell-app/admin"
@@ -169,7 +178,6 @@
         "awcodes/filament-curator": "^4.0|^5.0",
         "barryvdh/laravel-ide-helper": "*",
         "calebdw/larastan-livewire": "^2.4",
-        "canvural/larastan-strict-rules": "^3.0",
         "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.24.1",
         "larastan/larastan": "^3.0",
@@ -177,7 +185,7 @@
         "laravel/pao": "^1.0",
         "laravel/pint": "^1.25.0",
         "mockery/mockery": "^1.6.12",
-        "mrpunyapal/peststan": "^0.1.0",
+        "mrpunyapal/peststan": "^0.2.10",
         "nunomaduro/collision": "^8.8.3",
         "orchestra/testbench": "*",
         "pestphp/pest": "^3.0|^4.1",
@@ -185,13 +193,9 @@
         "pestphp/pest-plugin-laravel": "^3.0|^4.0",
         "pestphp/pest-plugin-livewire": "^3.0|^4.0",
         "pestphp/pest-plugin-type-coverage": "^3.0|^4.0",
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan-beberlei-assert": "^2.0",
         "phpstan/phpstan-mockery": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0",
         "rector/rector": "^2.0",
         "sinnbeck/laravel-dom-assertions": "^3.0",
-        "soyhuce/phpstan-extension": "^1.1|^2.1",
         "spatie/laravel-ray": "^1.36"
     },
     "autoload": {
@@ -326,7 +330,6 @@
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
             "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true,
             "php-http/discovery": true
         }
     },

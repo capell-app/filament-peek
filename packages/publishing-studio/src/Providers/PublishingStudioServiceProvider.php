@@ -24,6 +24,8 @@ use Capell\Core\Support\Database\RuntimeSchemaState;
 use Capell\Frontend\Enums\RenderHookLocation;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\MigrationAssistant\Contracts\MigrationAssistantContextResolver;
+use Capell\MigrationAssistant\Contracts\PageCollisionDetector;
+use Capell\MigrationAssistant\Contracts\PageImportTargetResolver;
 use Capell\PublishingStudio\Actions\CopyOnWriteAction;
 use Capell\PublishingStudio\Actions\EnsurePublishingStudioPermissionsAction;
 use Capell\PublishingStudio\BelongsToWorkspace;
@@ -49,6 +51,8 @@ use Capell\PublishingStudio\Models\WorkspaceReviewAssignment;
 use Capell\PublishingStudio\ReleaseWorkspaceItemRegistry;
 use Capell\PublishingStudio\Support\PublishingStudioManager;
 use Capell\PublishingStudio\Support\PublishingStudioMigrationAssistantContextResolver;
+use Capell\PublishingStudio\Support\PublishingStudioPageImportTargetResolver;
+use Capell\PublishingStudio\Support\PublishingStudioPageUrlCollisionDetector;
 use Capell\PublishingStudio\WorkspaceContext;
 use Capell\PublishingStudio\WorkspaceContextScope;
 use Capell\PublishingStudio\WorkspaceRegistry;
@@ -59,6 +63,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Spatie\Activitylog\Models\Activity;
@@ -137,6 +142,8 @@ class PublishingStudioServiceProvider extends ServiceProvider
         $this->app->singleton(WorkspaceEventDispatcher::class);
         $this->app->singleton('capell.workspace.page-draft-handler', WorkspacePageDraftHandler::class);
         $this->app->singleton(MigrationAssistantContextResolver::class, PublishingStudioMigrationAssistantContextResolver::class);
+        $this->app->singleton(PageImportTargetResolver::class, PublishingStudioPageImportTargetResolver::class);
+        $this->app->singleton(PageCollisionDetector::class, PublishingStudioPageUrlCollisionDetector::class);
 
         return $this;
     }
@@ -145,11 +152,20 @@ class PublishingStudioServiceProvider extends ServiceProvider
     {
         $table = config('permission.table_names.permissions', 'permissions');
 
-        if (is_string($table) && resolve(RuntimeSchemaState::class)->hasTable($table)) {
+        if (is_string($table) && $this->hasPermissionTable($table)) {
             EnsurePublishingStudioPermissionsAction::run();
         }
 
         return $this;
+    }
+
+    private function hasPermissionTable(string $table): bool
+    {
+        if (class_exists(RuntimeSchemaState::class)) {
+            return resolve(RuntimeSchemaState::class)->hasTable($table);
+        }
+
+        return Schema::hasTable($table);
     }
 
     private function registerExtenders(): self

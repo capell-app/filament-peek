@@ -5,13 +5,13 @@ declare(strict_types=1);
 use Capell\Diagnostics\Actions\CommandPalette\DiscoverCommandPaletteCommandsAction;
 use Capell\Diagnostics\Actions\CommandPalette\ExecuteCommandPaletteCommandAction;
 use Capell\Diagnostics\Actions\CommandPalette\ValidateCommandPaletteParametersAction;
-use Capell\Diagnostics\Contracts\CommandPaletteProvider;
 use Capell\Diagnostics\Data\CommandPaletteCommandData;
 use Capell\Diagnostics\Data\CommandPaletteParameterData;
 use Capell\Diagnostics\Enums\CommandPaletteParameterType;
 use Capell\Diagnostics\Enums\CommandPaletteType;
 use Capell\Diagnostics\Models\CommandPaletteRun;
 use Capell\Diagnostics\Palette\CapellArtisanPaletteCommandProvider;
+use Capell\Diagnostics\Tests\Fixtures\Autoload\TestCommandPaletteProvider;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\ValidationException;
@@ -140,32 +140,4 @@ function testPaletteArtisanCommand(): CommandPaletteCommandData
         ],
         sort: 20,
     );
-}
-
-final class TestCommandPaletteProvider implements CommandPaletteProvider
-{
-    /**
-     * @return array<string, CommandPaletteCommandData>
-     */
-    public function commandPaletteCommands(): array
-    {
-        return [
-            'test.artisan' => testPaletteArtisanCommand(),
-            'test.navigate' => new CommandPaletteCommandData(
-                id: 'test.navigate',
-                label: 'Open system health',
-                type: CommandPaletteType::Navigation,
-                url: '/admin/system-health',
-                sort: 10,
-            ),
-            'test.confirmed' => new CommandPaletteCommandData(
-                id: 'test.confirmed',
-                label: 'Confirmed command',
-                type: CommandPaletteType::Navigation,
-                url: '/admin/system-health',
-                requiresConfirmation: true,
-                sort: 30,
-            ),
-        ];
-    }
 }

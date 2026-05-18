@@ -36,6 +36,37 @@ arch('publishing-studio does not import unrelated packages')
         'Capell\Themes',
     ]);
 
+it('publishing-studio source only uses migration assistant public adapter surfaces', function (): void {
+    $packagePath = dirname(__DIR__, 2);
+    $forbiddenNamespaces = [
+        'Capell\\MigrationAssistant\\Actions',
+        'Capell\\MigrationAssistant\\Filament',
+        'Capell\\MigrationAssistant\\Jobs',
+        'Capell\\MigrationAssistant\\Services',
+    ];
+    $violations = [];
+
+    $files = (new Finder)
+        ->files()
+        ->in($packagePath . '/src')
+        ->name('*.php');
+
+    foreach ($files as $file) {
+        $relativePath = str_replace($packagePath . '/', '', $file->getPathname());
+        $contents = $file->getContents();
+
+        foreach ($forbiddenNamespaces as $namespace) {
+            if (! str_contains($contents, $namespace)) {
+                continue;
+            }
+
+            $violations[] = sprintf('%s references %s', $relativePath, $namespace);
+        }
+    }
+
+    expect($violations)->toBeEmpty();
+});
+
 it('publishing-studio source contains no direct plugin package references', function (): void {
     $packagePath = dirname(__DIR__, 2);
     $forbiddenNamespaces = [

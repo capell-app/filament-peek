@@ -5,9 +5,6 @@ declare(strict_types=1);
 use Capell\AccessGate\Actions\CreateAccessGateBrowserTokenAction;
 use Capell\AccessGate\Actions\CreateAccessGateClaimTokenAction;
 use Capell\AccessGate\Actions\CreateAccessGateGrantAction;
-use Capell\AccessGate\Contracts\AccessRequestMethod;
-use Capell\AccessGate\Contracts\RegistrationField;
-use Capell\AccessGate\Data\RegistrationFieldValue;
 use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Enums\BrowserTokenStatus;
@@ -21,17 +18,17 @@ use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\AccessRequestMethodRegistry;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
+use Capell\AccessGate\Tests\Fixtures\Autoload\AccessGateTestUser;
+use Capell\AccessGate\Tests\Fixtures\Autoload\PublicRequestProviderField;
+use Capell\AccessGate\Tests\Fixtures\Autoload\PublicRequestProviderMethod;
 use Capell\AccessGate\Tests\Support\FakePageCacheMiddleware;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Foundation\Auth\User as AuthenticatableUser;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Validator;
 
 it('blocks protected content before the route renders', function (): void {
     $rendered = false;
@@ -597,13 +594,6 @@ it('revokes the local browser token on access gate logout', function (): void {
     expect(BrowserToken::query()->firstOrFail()->status)->toBe(BrowserTokenStatus::Revoked);
 });
 
-final class AccessGateTestUser extends AuthenticatableUser
-{
-    use HasFactory;
-
-    protected $guarded = [];
-}
-
 function defineAccessGateSiteTables(): void
 {
     if (! Schema::hasTable('sites')) {
@@ -649,68 +639,4 @@ function defineAccessGateSiteDomain(int $siteId, string $domain): void
         'created_at' => now(),
         'updated_at' => now(),
     ]);
-}
-
-final class PublicRequestProviderField implements RegistrationField
-{
-    public function key(): string
-    {
-        return 'provider_username';
-    }
-
-    public function label(): string
-    {
-        return 'Provider username';
-    }
-
-    /**
-     * @param  array<string, mixed>  $input
-     */
-    public function validate(array $input): RegistrationFieldValue
-    {
-        $validated = Validator::make($input, [
-            'provider_username' => ['required', 'string'],
-        ])->validate();
-
-        return new RegistrationFieldValue(
-            key: $this->key(),
-            value: strtolower((string) $validated['provider_username']),
-        );
-    }
-}
-
-final class PublicRequestProviderMethod implements AccessRequestMethod
-{
-    public function key(): string
-    {
-        return 'provider';
-    }
-
-    public function label(): string
-    {
-        return 'Continue with Provider';
-    }
-
-    public function description(): string
-    {
-        return 'Request access using the host application provider.';
-    }
-
-    public function isEnabled(Area $area): bool
-    {
-        return $area->key === 'preview';
-    }
-
-    public function isPrimary(Area $area): bool
-    {
-        return $area->key === 'preview';
-    }
-
-    public function url(Area $area, ?string $requestedUrl = null): string
-    {
-        return url('/host-provider/start?' . http_build_query([
-            'area' => $area->key,
-            'redirect' => $requestedUrl,
-        ]));
-    }
 }

@@ -14,7 +14,6 @@ use Capell\Admin\Support\Bridges\AdminBridgeRegistrar;
 use Capell\Admin\Support\Extensions\ExtensionPageRegistry;
 use Capell\PublishingStudio\Extenders\PublishingStudioUserSchemaExtender;
 use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
-use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
 use Capell\PublishingStudio\Filament\Pages\PublishingWorkflowPage;
 use Capell\PublishingStudio\Filament\Pages\ScheduledPublishingPage;
 use Capell\PublishingStudio\Filament\Pages\StaleDraftsPage;
@@ -40,7 +39,6 @@ final class PublishingStudioAdminBridge implements AdminBridge
 
         $this->extensionPage($registrar, $context->packageName, PublishingWorkflowPage::class);
         $this->extensionPage($registrar, $context->packageName, ActivityTrailPage::class);
-        $this->extensionPage($registrar, $context->packageName, ImportPagesPage::class);
         $this->extensionPage($registrar, $context->packageName, ScheduledPublishingPage::class);
         $this->extensionPage($registrar, $context->packageName, StaleDraftsPage::class);
     }

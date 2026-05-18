@@ -28,7 +28,7 @@ Release Workspaces are the campaign-shaped form of the same workflow: editors gr
 - StaleDraftsPage for old draft cleanup and review nudges.
 - ActivityTrailPage and widgets for audit-friendly workflow history.
 - PageVersionHistoryPage for revisions, published versions, rollback lineage, and restore context.
-- ImportPagesPage for recovery-center page import validation, relation resolution, execution, and rollback reporting.
+- Migration Assistant owns the recovery-center page import workflow; Publishing Studio contributes workspace staging, context, and URL-collision adapters.
 
 ## Gates
 

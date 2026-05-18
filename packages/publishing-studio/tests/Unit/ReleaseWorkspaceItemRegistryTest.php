@@ -6,6 +6,7 @@ use Capell\PublishingStudio\Contracts\ReleaseWorkspaceItemContributor;
 use Capell\PublishingStudio\Data\ReleaseWorkspaceItemData;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\ReleaseWorkspaceItemRegistry;
+use Capell\PublishingStudio\Tests\Fixtures\Autoload\ReleaseWorkspaceItemContributorFixture;
 
 it('registers release workspace item contributors in insertion order', function (): void {
     $registry = new ReleaseWorkspaceItemRegistry;
@@ -58,11 +59,3 @@ it('deduplicates contributor classes', function (): void {
 
     expect($registry->contributors())->toBe([ReleaseWorkspaceItemContributorFixture::class]);
 });
-
-final class ReleaseWorkspaceItemContributorFixture implements ReleaseWorkspaceItemContributor
-{
-    public function itemsFor(Workspace $workspace): array
-    {
-        return [];
-    }
-}

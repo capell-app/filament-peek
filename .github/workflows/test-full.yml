@@ -85,7 +85,8 @@ jobs:
           composer require --no-interaction --no-progress --ansi --dev --no-update \
             "orchestra/testbench:${{ matrix.testbench }}"
 
-          if [ "${{ matrix.php }}" = "8.2" ]; then
+          # PHP 8.3 / Laravel 11 uses the Pest 3 stack; Pest 4 workers crash under this matrix.
+          if [ "${{ matrix.php }}" = "8.3" ]; then
             composer remove --no-interaction --no-progress --ansi --dev --no-update mrpunyapal/peststan pestphp/pest-plugin-livewire calebdw/larastan-livewire
             composer require --no-interaction --no-progress --ansi --dev --no-update \
               soyhuce/phpstan-extension:^1.1 \

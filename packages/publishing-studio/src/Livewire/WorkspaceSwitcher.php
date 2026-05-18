@@ -19,11 +19,9 @@ use Livewire\Component;
 
 class WorkspaceSwitcher extends Component
 {
-    /** @var string */
-    public const LAST_WORKSPACE_COOKIE = 'capell_last_workspace';
+    public const string LAST_WORKSPACE_COOKIE = 'capell_last_workspace';
 
-    /** @var int */
-    private const LAST_WORKSPACE_COOKIE_TTL = 60 * 24 * 30;
+    private const int LAST_WORKSPACE_COOKIE_TTL = 60 * 24 * 30;
 
     public function switchTo(int $workspaceId): void
     {

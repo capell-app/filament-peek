@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "capell-app/core": "^4.0",
         "laravel/framework": "^11.45.3|^12.41.1|^13.0",
         "lorisleiva/laravel-actions": "^2.8"

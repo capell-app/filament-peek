@@ -40,24 +40,38 @@ parameters:
           paths:
               - packages/content-sections/src/Filament/Resources/Sections/Tables/SectionSelectionTable.php
 
-        # Livewire test methods are added dynamically to Testable at runtime.
-        - message: '#Call to an undefined method Livewire\\Features\\SupportTesting\\Testable<Livewire\\Component>::.*#'
-        - message: '#Call to an undefined method Livewire\\Features\\SupportTesting\\Testable::.*#'
+        # Bleeding Edge reports vendor @internal APIs used by test helpers and Pest Arch fluency.
+        - identifier: staticMethod.internalClass
           reportUnmatched: false
-        - message: '#Call to an undefined method TComponent of Livewire\\Component::.*#'
+        - identifier: method.internalInterface
           reportUnmatched: false
-
-        # Laravel TestResponse uses __call magic to proxy assertion methods from Livewire,
-        # Filament, and DOM assertion packages.
-        - message: '#Call to an undefined method Illuminate\\Testing\\TestResponse::.*#'
+        - identifier: method.internalClass
           reportUnmatched: false
-
-        # Pest global functions and closures use dynamic helpers and property injection.
-        - message: '#Call to an undefined method Pest\\.*#'
+        - identifier: return.internalClass
+          reportUnmatched: false
+        - identifier: method.internal
+          reportUnmatched: false
 
         # Mockery fluent chaining methods (once/never/andReturn/etc.) live on the concrete Expectation
         # class but are absent from ExpectationInterface and HigherOrderMessage.
-        - message: '#Call to an undefined method Mockery\\ExpectationInterface\|Mockery\\HigherOrderMessage::(once|twice|never|atLeast|atMost|between|andReturn[A-Za-z]*|andThrow[A-Za-z]*|withArgs|withNoArgs|withAnyArgs|byDefault|ordered|passthru)\(\)#'
+        - message: '#Call to an undefined method Mockery\\ExpectationInterface\|Mockery\\HigherOrderMessage::(once|twice|never|zeroOrMoreTimes|atLeast|atMost|between|andReturn[A-Za-z]*|andThrow[A-Za-z]*|with|withArgs|withNoArgs|withAnyArgs|byDefault|ordered|passthru)\(\)#'
+          reportUnmatched: false
+        - message: '#Call to an undefined method Mockery\\LegacyMockInterface::(once|withArgs)\(\)#'
+          reportUnmatched: false
+
+        # Pest higher-order expectation proxies are runtime-valid but PestStan cannot infer every custom chain.
+        - message: '#Call to an undefined method Pest\\Expectation<.*>::is\(\)\.#'
+          path: packages/campaign-studio/tests/Unit/Actions/CampaignDashboardActionsTest.php
+        - message: '#Call to an undefined method Pest\\Expectation<.*>::isConfigured\(\)\.#'
+          path: packages/ga4-reports/tests/Unit/Support/GA4ReportsDataClientTest.php
+        - message: '#Call to an undefined method Pest\\Expectation<.*>::first\(\)\.#'
+          paths:
+              - packages/layout-builder/tests/Feature/Filament/Resources/Element/Pages/CreateElementTest.php
+              - packages/navigation/tests/Integration/Models/NavigationItemsCastTest.php
+        - message: '#Call to an undefined method Pest\\Expectations\\HigherOrderExpectation<.*>::first\(\)\.#'
+          path: packages/navigation/tests/Integration/Models/NavigationItemsCastTest.php
+        - message: '#Call to an undefined method Pest\\Expectation<.*>::pluck\(\)\.#'
+          path: tests/Packages/Integration/Sitemap/ArticlesSitemapTest.php
 
         -
             identifier: class.notFound
@@ -65,3 +79,4 @@ parameters:
         -
             identifier: larastan.relationExistence
             message: '#workspace#'
+            reportUnmatched: false

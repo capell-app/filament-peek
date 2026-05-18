@@ -17,11 +17,7 @@
     <script>
         ;(function () {
             function setupTheme() {
-                const isDarkMode =
-                    localStorage.theme === 'dark' ||
-                    (!localStorage.theme &&
-                        window.matchMedia('(prefers-color-scheme: dark)')
-                            .matches)
+                const isDarkMode = localStorage.theme === 'dark'
 
                 document.documentElement.classList.toggle('dark', isDarkMode)
             }

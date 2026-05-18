@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Capell\PublishingStudio\Events\Contracts\WorkspaceEventSubscriber;
 use Capell\PublishingStudio\Facades\CapellPublishingStudio;
-use Capell\PublishingStudio\Models\Workspace;
+use Capell\PublishingStudio\Tests\Fixtures\Autoload\AnotherTestSubscriber;
+use Capell\PublishingStudio\Tests\Fixtures\Autoload\TestSubscriber;
 
 test('can register subscriber via facade', function (): void {
     $subscriberClass = TestSubscriber::class;
@@ -36,55 +36,3 @@ test('does not register duplicate subscribers', function (): void {
 
     expect($subscribers)->toHaveCount(1);
 });
-
-class TestSubscriber implements WorkspaceEventSubscriber
-{
-    public function handle(string $event, object $context): void {}
-
-    public function beforeClone(Workspace $source, Workspace $target): bool
-    {
-        return true;
-    }
-
-    public function afterClone(Workspace $source, Workspace $target): void {}
-
-    public function beforePublish(Workspace $workspace): bool
-    {
-        return true;
-    }
-
-    public function afterPublish(Workspace $workspace): void {}
-
-    public function beforeDelete(Workspace $workspace): bool
-    {
-        return true;
-    }
-
-    public function afterDelete(Workspace $workspace): void {}
-}
-
-class AnotherTestSubscriber implements WorkspaceEventSubscriber
-{
-    public function handle(string $event, object $context): void {}
-
-    public function beforeClone(Workspace $source, Workspace $target): bool
-    {
-        return true;
-    }
-
-    public function afterClone(Workspace $source, Workspace $target): void {}
-
-    public function beforePublish(Workspace $workspace): bool
-    {
-        return true;
-    }
-
-    public function afterPublish(Workspace $workspace): void {}
-
-    public function beforeDelete(Workspace $workspace): bool
-    {
-        return true;
-    }
-
-    public function afterDelete(Workspace $workspace): void {}
-}

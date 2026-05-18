@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class CanonicalUrl
 {
-    public const DEFAULT_STRIP_PARAMS = [
+    public const array DEFAULT_STRIP_PARAMS = [
         'utm_source',
         'utm_medium',
         'utm_campaign',

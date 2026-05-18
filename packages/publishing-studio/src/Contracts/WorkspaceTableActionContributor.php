@@ -9,7 +9,7 @@ use Filament\Actions\ActionGroup;
 
 interface WorkspaceTableActionContributor
 {
-    public const TAG = 'capell.publishing-studio.table_action_contributors';
+    public const string TAG = 'capell.publishing-studio.table_action_contributors';
 
     /**
      * @return array<int, Action|ActionGroup>

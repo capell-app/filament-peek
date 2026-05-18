@@ -33,21 +33,21 @@ class InstallWorkspaceRolesAction
 {
     use AsAction;
 
-    public const ROLE_EDITOR = 'workspace_editor';
+    public const string ROLE_EDITOR = 'workspace_editor';
 
-    public const ROLE_REVIEWER = 'workspace_reviewer';
+    public const string ROLE_REVIEWER = 'workspace_reviewer';
 
-    public const ROLE_RELEASE_MANAGER = 'workspace_release_manager';
+    public const string ROLE_RELEASE_MANAGER = 'workspace_release_manager';
 
-    public const PERMISSION_SUBMIT = 'submit_workspace_for_approval';
+    public const string PERMISSION_SUBMIT = 'submit_workspace_for_approval';
 
-    public const PERMISSION_APPROVE = 'approve_workspace';
+    public const string PERMISSION_APPROVE = 'approve_workspace';
 
-    public const PERMISSION_PUBLISH = 'publish_workspace';
+    public const string PERMISSION_PUBLISH = 'publish_workspace';
 
-    public const PERMISSION_ROLLBACK = 'rollback_workspace';
+    public const string PERMISSION_ROLLBACK = 'rollback_workspace';
 
-    public const PERMISSION_PUBLISH_OUTSIDE_WINDOW = 'publish_outside_release_window';
+    public const string PERMISSION_PUBLISH_OUTSIDE_WINDOW = 'publish_outside_release_window';
 
     public function handle(?string $guardName = null): void
     {

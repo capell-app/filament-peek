@@ -28,20 +28,7 @@ final class BuildRedirectOpportunityReportAction
         return BrokenLink::query()
             ->where('http_status', '>=', 400)
             ->when($pageId !== null, fn (Builder $query): Builder => $query->where('page_id', $pageId))
-            ->whereHas('page', fn (Builder $query): Builder => $query
-                ->when($siteId !== null, fn (Builder $query): Builder => $query->where('site_id', $siteId))
-                ->when(
-                    $languageId !== null,
-                    fn (Builder $query): Builder => $query->where(function (Builder $query) use ($languageId): void {
-                        $query->whereHas(
-                            'pageUrls',
-                            fn (Builder $query): Builder => $query->where('language_id', $languageId),
-                        )->orWhereHas(
-                            'translations',
-                            fn (Builder $query): Builder => $query->where('language_id', $languageId),
-                        );
-                    }),
-                ))
+            ->whereHas('page', fn (Builder $query): Builder => $this->applyPageScope($query, $siteId, $languageId))
             ->with([
                 'page.site',
                 'page.pageUrls.siteDomain',
@@ -57,6 +44,28 @@ final class BuildRedirectOpportunityReportAction
             ->sortByDesc(fn (RedirectOpportunityData $opportunity): int => $opportunity->hits)
             ->values()
             ->all();
+    }
+
+    private static function applyNonRedirectUrlScope(Builder $query): void
+    {
+        $query->whereNull('type')
+            ->orWhere('type', '!=', UrlTypeEnum::Redirect->value);
+    }
+
+    private function applyPageScope(Builder $query, ?int $siteId, ?int $languageId): Builder
+    {
+        return $query
+            ->when($siteId !== null, fn (Builder $query): Builder => $query->where('site_id', $siteId))
+            ->when($languageId !== null, fn (Builder $query): Builder => $this->applyPageLanguageScope($query, $languageId));
+    }
+
+    private function applyPageLanguageScope(Builder $query, int $languageId): Builder
+    {
+        return $query->where(
+            fn (Builder $query): Builder => $query
+                ->whereRelation('pageUrls', 'language_id', $languageId)
+                ->orWhereRelation('translations', 'language_id', $languageId),
+        );
     }
 
     /**
@@ -98,10 +107,7 @@ final class BuildRedirectOpportunityReportAction
             ->where('site_id', $siteId)
             ->where('language_id', $languageId)
             ->where('status', true)
-            ->where(function (Builder $query): void {
-                $query->whereNull('type')
-                    ->orWhere('type', '!=', UrlTypeEnum::Redirect->value);
-            })
+            ->where(self::applyNonRedirectUrlScope(...))
             ->when(
                 $candidatePath !== null,
                 fn (Builder $query): Builder => $query->whereIn('url', [$sourceUrl, $candidatePath]),

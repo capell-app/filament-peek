@@ -21,7 +21,6 @@ use Capell\PublishingStudio\Enums\ReviewDecisionEnum;
 use Capell\PublishingStudio\Enums\WorkspaceApprovalActionEnum;
 use Capell\PublishingStudio\Extenders\PublishingStudioUserSchemaExtender;
 use Capell\PublishingStudio\Filament\Pages\ActivityTrailPage;
-use Capell\PublishingStudio\Filament\Pages\ImportPagesPage;
 use Capell\PublishingStudio\Filament\Pages\ScheduledPublishingPage;
 use Capell\PublishingStudio\Filament\Pages\StaleDraftsPage;
 use Capell\PublishingStudio\Filament\Resources\PreviewLinks\PreviewLinkResource;
@@ -173,10 +172,6 @@ it('registers the current publishing studio admin bridge surface', function (): 
         ])
         ->and($extensionPages)->toContain([
             'packageName' => PublishingStudioServiceProvider::$packageName,
-            'page' => ImportPagesPage::class,
-        ])
-        ->and($extensionPages)->toContain([
-            'packageName' => PublishingStudioServiceProvider::$packageName,
             'page' => ScheduledPublishingPage::class,
         ])
         ->and($extensionPages)->toContain([
@@ -204,7 +199,6 @@ it('keeps the legacy admin fallback when the bridge host is unavailable', functi
             ->and($registeredSurfaceClasses)->toContain(WorkspaceResource::class)
             ->and($registeredSurfaceClasses)->toContain(PreviewLinkResource::class)
             ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ActivityTrailPage::class)
-            ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ImportPagesPage::class)
             ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(ScheduledPublishingPage::class)
             ->and($host->extensionPages[PublishingStudioServiceProvider::$packageName] ?? [])->toContain(StaleDraftsPage::class);
     } finally {

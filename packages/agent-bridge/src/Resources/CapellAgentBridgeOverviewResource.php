@@ -26,7 +26,7 @@ final class CapellAgentBridgeOverviewResource extends Resource
 
             Capell Agent Bridge uses two servers:
 
-            - `CapellKnowledgeServer` is public and read-only.
+            - `CapellKnowledgeServer` is read-only and requires bearer-token authentication when exposed over HTTP.
             - `CapellSiteServer` is installed into a Capell site and requires bearer-token authentication.
 
             Site actions are registered capabilities. Mutating capabilities return a preview and confirmation token before execution.
