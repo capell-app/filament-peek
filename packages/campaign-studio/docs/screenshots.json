@@ -46,8 +46,8 @@
             "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
         },
         {
-            "id": "campaign-dashboard-elements",
-            "title": "Campaign dashboard elements.",
+            "id": "campaign-dashboard-blocks",
+            "title": "Campaign dashboard blocks.",
             "package": "campaign-studio",
             "surface": "admin",
             "targetType": "admin-surface",
@@ -56,8 +56,8 @@
             "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
         },
         {
-            "id": "frontend-landing-page-with-campaign-elements",
-            "title": "Frontend landing page with campaign elements.",
+            "id": "frontend-landing-page-with-campaign-blocks",
+            "title": "Frontend landing page with campaign blocks.",
             "package": "campaign-studio",
             "surface": "frontend",
             "targetType": "frontend-url",

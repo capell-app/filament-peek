@@ -10,8 +10,8 @@ use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Translation;
 use Capell\Core\Support\Creator\LayoutCreator;
-use Capell\LayoutBuilder\Actions\CreateHeroElementAction;
-use Capell\LayoutBuilder\Support\Creator\ElementCreator;
+use Capell\LayoutBuilder\Actions\CreateHeroBlockAction;
+use Capell\LayoutBuilder\Support\Creator\BlockCreator;
 use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
@@ -27,9 +27,9 @@ final class InstallHeroLayoutDefaultsAction
     public function handle(bool $force = false): array
     {
         resolve(LayoutCreator::class)->setup();
-        resolve(ElementCreator::class)->pageContentElement();
+        resolve(BlockCreator::class)->pageContentBlock();
 
-        $heroElement = CreateHeroElementAction::run(height: 'small', meta: [
+        $heroBlock = CreateHeroBlockAction::run(height: 'small', meta: [
             'color' => 'light',
             'content_align' => 'center',
             'content_width' => 'balanced',
@@ -55,13 +55,13 @@ final class InstallHeroLayoutDefaultsAction
                         'colspan' => 12,
                         'container' => ContainerWidthEnum::Full,
                     ],
-                    'elements' => [
-                        ['element_key' => $heroElement->key],
+                    'blocks' => [
+                        ['block_key' => $heroBlock->key],
                     ],
                 ],
                 ...$this->mainContainer($homeLayout->containers),
             ],
-            'elements' => [$heroElement->key, 'page-content'],
+            'blocks' => [$heroBlock->key, 'page-content'],
         ]);
 
         return [
@@ -86,8 +86,8 @@ final class InstallHeroLayoutDefaultsAction
         return [
             'main' => [
                 ...$main,
-                'elements' => [
-                    ['element_key' => 'page-content'],
+                'blocks' => [
+                    ['block_key' => 'page-content'],
                 ],
             ],
         ];

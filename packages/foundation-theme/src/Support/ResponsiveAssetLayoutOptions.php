@@ -6,7 +6,7 @@ namespace Capell\FoundationTheme\Support;
 
 use Capell\Core\Models\Blueprint;
 use Capell\LayoutBuilder\Enums\ResponsiveLayoutPattern;
-use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Models\Block;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
@@ -40,41 +40,41 @@ class ResponsiveAssetLayoutOptions
         public readonly string $carouselAlign,
     ) {}
 
-    public static function fromElement(Element $element, int $total): self
+    public static function fromBlock(Block $block, int $total): self
     {
-        $legacyColumns = (int) self::meta($element, 'columns');
+        $legacyColumns = (int) self::meta($block, 'columns');
         $fallbackColumns = $legacyColumns > 0 ? $legacyColumns : max(1, min($total, 4));
 
         return new self(
-            pattern: ResponsiveLayoutPattern::fromNullable(self::meta($element, 'responsive_layout_pattern')),
-            hasGridOverrides: self::hasAnyMeta($element, [
+            pattern: ResponsiveLayoutPattern::fromNullable(self::meta($block, 'responsive_layout_pattern')),
+            hasGridOverrides: self::hasAnyMeta($block, [
                 'responsive_grid_sm_columns',
                 'responsive_grid_md_columns',
                 'responsive_grid_lg_columns',
                 'responsive_grid_xl_columns',
                 'responsive_grid_rows',
             ]),
-            smColumns: self::intMeta($element, 'responsive_grid_sm_columns', min(2, $fallbackColumns), 1, 12),
-            mdColumns: self::intMeta($element, 'responsive_grid_md_columns', $fallbackColumns, 1, 12),
-            lgColumns: self::intMeta($element, 'responsive_grid_lg_columns', $fallbackColumns, 1, 12),
-            xlColumns: self::intMeta($element, 'responsive_grid_xl_columns', $fallbackColumns, 1, 12),
-            gridRows: self::intMeta($element, 'responsive_grid_rows', 0, 0, 12),
-            mobileSlides: self::floatMeta($element, 'responsive_carousel_mobile_slides', 1.1, 1.0, 6.0),
-            smSlides: self::floatMeta($element, 'responsive_carousel_sm_slides', 2.0, 1.0, 6.0),
-            carouselRows: self::intMeta($element, 'responsive_carousel_rows', 1, 1, 4),
-            highlightActive: (bool) self::meta($element, 'responsive_carousel_highlight_active', false),
-            carouselArrows: (bool) self::meta($element, 'carousel_arrows', false),
-            carouselPagination: (bool) self::meta($element, 'carousel_pagination', true),
-            carouselLoop: (bool) self::meta($element, 'carousel_loop', false),
-            carouselRewind: (bool) self::meta($element, 'carousel_rewind', true),
-            carouselDrag: (bool) self::meta($element, 'carousel_drag', true),
-            carouselTouch: (bool) self::meta($element, 'carousel_touch', true),
-            carouselAutoPlay: (bool) self::meta($element, 'carousel_auto_play', false),
-            carouselPauseOnHover: (bool) self::meta($element, 'carousel_pause_on_hover', true),
-            carouselDisableOnInteraction: (bool) self::meta($element, 'carousel_disable_on_interaction', true),
-            carouselAutoDelay: self::intMeta($element, 'carousel_auto_delay', 5000, 100, 60000),
-            carouselSpeed: self::intMeta($element, 'carousel_speed', 300, 0, 10000),
-            carouselAlign: (string) self::meta($element, 'carousel_align', 'start'),
+            smColumns: self::intMeta($block, 'responsive_grid_sm_columns', min(2, $fallbackColumns), 1, 12),
+            mdColumns: self::intMeta($block, 'responsive_grid_md_columns', $fallbackColumns, 1, 12),
+            lgColumns: self::intMeta($block, 'responsive_grid_lg_columns', $fallbackColumns, 1, 12),
+            xlColumns: self::intMeta($block, 'responsive_grid_xl_columns', $fallbackColumns, 1, 12),
+            gridRows: self::intMeta($block, 'responsive_grid_rows', 0, 0, 12),
+            mobileSlides: self::floatMeta($block, 'responsive_carousel_mobile_slides', 1.1, 1.0, 6.0),
+            smSlides: self::floatMeta($block, 'responsive_carousel_sm_slides', 2.0, 1.0, 6.0),
+            carouselRows: self::intMeta($block, 'responsive_carousel_rows', 1, 1, 4),
+            highlightActive: (bool) self::meta($block, 'responsive_carousel_highlight_active', false),
+            carouselArrows: (bool) self::meta($block, 'carousel_arrows', false),
+            carouselPagination: (bool) self::meta($block, 'carousel_pagination', true),
+            carouselLoop: (bool) self::meta($block, 'carousel_loop', false),
+            carouselRewind: (bool) self::meta($block, 'carousel_rewind', true),
+            carouselDrag: (bool) self::meta($block, 'carousel_drag', true),
+            carouselTouch: (bool) self::meta($block, 'carousel_touch', true),
+            carouselAutoPlay: (bool) self::meta($block, 'carousel_auto_play', false),
+            carouselPauseOnHover: (bool) self::meta($block, 'carousel_pause_on_hover', true),
+            carouselDisableOnInteraction: (bool) self::meta($block, 'carousel_disable_on_interaction', true),
+            carouselAutoDelay: self::intMeta($block, 'carousel_auto_delay', 5000, 100, 60000),
+            carouselSpeed: self::intMeta($block, 'carousel_speed', 300, 0, 10000),
+            carouselAlign: (string) self::meta($block, 'carousel_align', 'start'),
         );
     }
 
@@ -170,10 +170,10 @@ HTML);
     /**
      * @param  array<int, string>  $keys
      */
-    private static function hasAnyMeta(Element $element, array $keys): bool
+    private static function hasAnyMeta(Block $block, array $keys): bool
     {
         foreach ($keys as $key) {
-            if (self::meta($element, $key) !== null) {
+            if (self::meta($block, $key) !== null) {
                 return true;
             }
         }
@@ -181,25 +181,25 @@ HTML);
         return false;
     }
 
-    private static function intMeta(Element $element, string $key, int $default, int $min, int $max): int
+    private static function intMeta(Block $block, string $key, int $default, int $min, int $max): int
     {
-        $value = self::meta($element, $key, $default);
+        $value = self::meta($block, $key, $default);
         $value = is_numeric($value) ? (int) $value : $default;
 
         return min($max, max($min, $value));
     }
 
-    private static function floatMeta(Element $element, string $key, float $default, float $min, float $max): float
+    private static function floatMeta(Block $block, string $key, float $default, float $min, float $max): float
     {
-        $value = self::meta($element, $key, $default);
+        $value = self::meta($block, $key, $default);
         $value = is_numeric($value) ? (float) $value : $default;
 
         return min($max, max($min, $value));
     }
 
-    private static function meta(Element $element, string $key, mixed $default = null): mixed
+    private static function meta(Block $block, string $key, mixed $default = null): mixed
     {
-        $meta = $element->meta ?? [];
+        $meta = $block->meta ?? [];
 
         if (Arr::has($meta, $key)) {
             $value = data_get($meta, $key);
@@ -209,9 +209,9 @@ HTML);
             }
         }
 
-        $type = $element->relationLoaded('type')
-            ? $element->getRelation('type')
-            : (Model::getConnectionResolver() === null ? null : $element->getRelationValue('type'));
+        $type = $block->relationLoaded('type')
+            ? $block->getRelation('type')
+            : (Model::getConnectionResolver() === null ? null : $block->getRelationValue('type'));
 
         if ($type instanceof Blueprint) {
             return $type->getMeta($key, $default);

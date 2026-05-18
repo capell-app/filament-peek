@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Capell\FoundationTheme\Actions;
 
 use Capell\Core\Contracts\Pageable;
-use Capell\FoundationTheme\Data\ElementAssetRenderData;
-use Capell\LayoutBuilder\Models\Element;
-use Capell\LayoutBuilder\Models\ElementAsset;
+use Capell\FoundationTheme\Data\BlockAssetRenderData;
+use Capell\LayoutBuilder\Models\Block;
+use Capell\LayoutBuilder\Models\BlockAsset;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsObject;
@@ -17,24 +17,24 @@ final class BuildHeroRailItemsRenderDataAction
     use AsObject;
 
     /**
-     * @return Collection<int, ElementAssetRenderData>
+     * @return Collection<int, BlockAssetRenderData>
      */
-    public function handle(Element $element, ?Pageable $page, string $source, int $limit = 4): Collection
+    public function handle(Block $block, ?Pageable $page, string $source, int $limit = 4): Collection
     {
-        $elementAssets = $this->loadedAssets($element);
+        $blockAssets = $this->loadedAssets($block);
         $pageAssets = in_array($source, ['page', 'mixed'], true)
             ? $this->loadedPageHeroAssets($page)
             : collect();
 
         $assets = match ($source) {
             'page' => $pageAssets,
-            'mixed' => $pageAssets->merge($elementAssets),
-            default => $elementAssets,
+            'mixed' => $pageAssets->merge($blockAssets),
+            default => $blockAssets,
         };
 
         return $assets
-            ->filter(static fn (mixed $asset): bool => $asset instanceof ElementAsset)
-            ->map(static fn (ElementAsset $asset): ElementAssetRenderData => BuildElementAssetRenderDataAction::run($asset))
+            ->filter(static fn (mixed $asset): bool => $asset instanceof BlockAsset)
+            ->map(static fn (BlockAsset $asset): BlockAssetRenderData => BuildBlockAssetRenderDataAction::run($asset))
             ->take(max(0, $limit))
             ->values();
     }
@@ -64,11 +64,11 @@ final class BuildHeroRailItemsRenderDataAction
 
         return $this->loadedAssets($page)
             ->filter(function (mixed $attachment): bool {
-                if (! $attachment instanceof ElementAsset) {
+                if (! $attachment instanceof BlockAsset) {
                     return false;
                 }
 
-                $renderData = BuildElementAssetRenderDataAction::run($attachment);
+                $renderData = BuildBlockAssetRenderDataAction::run($attachment);
                 $role = $renderData->role;
 
                 return is_string($role) && str_starts_with($role, 'hero');

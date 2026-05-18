@@ -69,7 +69,7 @@
             @endphp
         @endif
 
-        @if (! $mainContentHookData->pageContentElementRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
+        @if (! $mainContentHookData->pageContentBlockRendered && ($previousPage instanceof Pageable || $nextPage instanceof Pageable))
             <nav
                 class="capell-neighbor-links-mobile px-6 pb-12"
                 aria-label="{{ __('capell-foundation-theme::generic.page_navigation') }}"

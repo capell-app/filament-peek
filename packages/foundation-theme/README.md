@@ -14,9 +14,9 @@ Capell default theme - ships the standard Tailwind asset pipeline, Blade directi
 ## What It Adds
 
 - Capell default theme - ships the standard Tailwind asset pipeline, Blade directives, URL generator, and SVG media component.
-- Livewire components: `AbstractAssets`, `AbstractElement`, `PageAssets`, `Pages`.
+- Livewire components: `AbstractAssets`, `AbstractBlock`, `PageAssets`, `Pages`.
 - Package setup or maintenance commands.
-- A `header` Layout Builder area so editors can place normal layout elements inside the Foundation header chrome.
+- A `header` Layout Builder area so editors can place normal layout blocks inside the Foundation header chrome.
 
 ## Why It Matters
 
@@ -54,11 +54,11 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Config file: capell-foundation-theme.php.
 - Settings migration creates default theme settings.
 - Registers the `capell` Blade namespace and anonymous `capell::...` components.
-- Registers core layout builder frontend rendering views and element components.
+- Registers core layout builder frontend rendering views and block components.
 - Registers the `header` Layout Builder area and renders it from `capell::header.index`.
 - Runtime theme data layers parent defaults, child defaults, and database edits in that order.
 - GenerateTailwindAssetsCommand writes one frontend Tailwind directive file; runtime theme colours are emitted as CSS variables by the theme head tokens.
-- core layout builder JavaScript is registered as a conditional vendor build asset and only loads when the resolved frontend layout contains elements.
+- core layout builder JavaScript is registered as a conditional vendor build asset and only loads when the resolved frontend layout contains blocks.
 - BladeDirectives and CapellUrlGenerator support rendering.
 - The beacon client is generic. It must not ship authoring controls or authoring metadata in theme HTML; `capell-app/frontend-authoring` owns the admin-only response that decorates the page.
 
@@ -68,7 +68,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 | --------- | ----------------------------------------- | ----------------------------------------------------------------- |
 | Actions   | `packages/foundation-theme/src/Actions`   | Domain operations. Test these directly where possible.            |
 | Enums     | `packages/foundation-theme/src/Enums`     | Persisted states and Filament option values.                      |
-| Filament  | `packages/foundation-theme/src/Filament`  | Admin resources, pages, elements, and settings UI.                |
+| Filament  | `packages/foundation-theme/src/Filament`  | Admin resources, pages, blocks, and settings UI.                  |
 | Livewire  | `packages/foundation-theme/src/Livewire`  | Interactive frontend or admin components.                         |
 | Providers | `packages/foundation-theme/src/Providers` | Registration, extension hooks, routes, migrations, and resources. |
 | Resources | `packages/foundation-theme/resources`     | Views, translations, assets, and package resources.               |
@@ -82,7 +82,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 ## Runtime Surface
 
-- Livewire: `AbstractAssets`, `AbstractElement`, `PageAssets`, `Pages`.
+- Livewire: `AbstractAssets`, `AbstractBlock`, `PageAssets`, `Pages`.
 
 ## Commands
 
@@ -104,7 +104,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 ## Layout Builder Areas
 
-Foundation Theme exposes the first non-main Layout Builder area: `header`. Editors still work with ordinary containers and elements in the Layout Builder, but containers assigned to the header area render in the site header instead of the main page-content loop.
+Foundation Theme exposes the first non-main Layout Builder area: `header`. Editors still work with ordinary containers and blocks in the Layout Builder, but containers assigned to the header area render in the site header instead of the main page-content loop.
 
 The service provider registers the area with `Capell\LayoutBuilder\Support\LayoutAreas\LayoutAreaRegistry`:
 

@@ -1,6 +1,6 @@
 {
     "name": "capell-app/hero",
-    "description": "Hero element rendering and default home hero setup for Capell.",
+    "description": "Hero block rendering and default home hero setup for Capell.",
     "keywords": [
         "capell",
         "hero",

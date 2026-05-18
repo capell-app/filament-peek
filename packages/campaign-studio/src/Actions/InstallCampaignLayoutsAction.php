@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\CampaignStudio\Actions;
 
-use Capell\CampaignStudio\Enums\CampaignElementComponentEnum;
-use Capell\CampaignStudio\Filament\Configurators\Elements\CampaignCtaBlockElementConfigurator;
-use Capell\CampaignStudio\Filament\Configurators\Elements\CampaignHeroElementConfigurator;
-use Capell\CampaignStudio\Filament\Configurators\Elements\CampaignLeadFormElementConfigurator;
+use Capell\CampaignStudio\Enums\CampaignBlockComponentEnum;
+use Capell\CampaignStudio\Filament\Configurators\Blocks\CampaignCtaBlockBlockConfigurator;
+use Capell\CampaignStudio\Filament\Configurators\Blocks\CampaignHeroBlockConfigurator;
+use Capell\CampaignStudio\Filament\Configurators\Blocks\CampaignLeadFormBlockConfigurator;
 use Capell\CampaignStudio\Support\LayoutPresets\CampaignLayoutPreset;
 use Capell\CampaignStudio\Support\LayoutPresets\LeadGenerationPreset;
 use Capell\CampaignStudio\Support\LayoutPresets\ProductLaunchPreset;
@@ -15,8 +15,8 @@ use Capell\CampaignStudio\Support\LayoutPresets\WebinarPreset;
 use Capell\Core\Models\Blueprint;
 use Capell\Core\Models\Layout;
 use Capell\LayoutBuilder\Enums\LayoutTypeEnum;
-use Capell\LayoutBuilder\Filament\Configurators\Types\ElementTypeConfigurator;
-use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Filament\Configurators\Types\BlockTypeConfigurator;
+use Capell\LayoutBuilder\Models\Block;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 final class InstallCampaignLayoutsAction
@@ -24,25 +24,25 @@ final class InstallCampaignLayoutsAction
     use AsAction;
 
     /**
-     * @var array<string, array{name: string, component: CampaignElementComponentEnum, configurator: class-string, icon: string}>
+     * @var array<string, array{name: string, component: CampaignBlockComponentEnum, configurator: class-string, icon: string}>
      */
     private const array WIDGET_DEFINITIONS = [
         'campaign-hero' => [
             'name' => 'Campaign hero',
-            'component' => CampaignElementComponentEnum::CampaignHero,
-            'configurator' => CampaignHeroElementConfigurator::class,
+            'component' => CampaignBlockComponentEnum::CampaignHero,
+            'configurator' => CampaignHeroBlockConfigurator::class,
             'icon' => 'heroicon-o-megaphone',
         ],
         'campaign-cta-block' => [
             'name' => 'Campaign CTA block',
-            'component' => CampaignElementComponentEnum::CampaignCtaBlock,
-            'configurator' => CampaignCtaBlockElementConfigurator::class,
+            'component' => CampaignBlockComponentEnum::CampaignCtaBlock,
+            'configurator' => CampaignCtaBlockBlockConfigurator::class,
             'icon' => 'heroicon-o-cursor-arrow-rays',
         ],
         'campaign-lead-form' => [
             'name' => 'Campaign lead form',
-            'component' => CampaignElementComponentEnum::CampaignLeadForm,
-            'configurator' => CampaignLeadFormElementConfigurator::class,
+            'component' => CampaignBlockComponentEnum::CampaignLeadForm,
+            'configurator' => CampaignLeadFormBlockConfigurator::class,
             'icon' => 'heroicon-o-clipboard-document-list',
         ],
     ];
@@ -63,17 +63,17 @@ final class InstallCampaignLayoutsAction
                 continue;
             }
 
-            $elements = $this->elementsForPreset($preset);
+            $blocks = $this->blocksForPreset($preset);
 
             Layout::query()->updateOrCreate(
                 ['key' => $preset->key()],
                 [
                     'name' => $preset->name(),
                     'group' => 'CampaignStudio',
-                    'containers' => $this->containersForPreset($preset, $elements),
+                    'containers' => $this->containersForPreset($preset, $blocks),
                     'status' => true,
-                    'elements' => collect($elements)
-                        ->map(fn (Element $element): string => $element->key)
+                    'blocks' => collect($blocks)
+                        ->map(fn (Block $block): string => $block->key)
                         ->values()
                         ->all(),
                 ],
@@ -98,28 +98,28 @@ final class InstallCampaignLayoutsAction
     }
 
     /**
-     * @return array<string, Element>
+     * @return array<string, Block>
      */
-    private function elementsForPreset(CampaignLayoutPreset $preset): array
+    private function blocksForPreset(CampaignLayoutPreset $preset): array
     {
-        $elements = [];
-        $type = $this->campaignElementType();
+        $blocks = [];
+        $type = $this->campaignBlockType();
 
-        foreach ($preset->elements() as $elementDefinition) {
-            $elementType = $elementDefinition['type'] ?? null;
-            if (! is_string($elementType)) {
+        foreach ($preset->blocks() as $blockDefinition) {
+            $blockType = $blockDefinition['type'] ?? null;
+            if (! is_string($blockType)) {
                 continue;
             }
 
-            if (! isset(self::WIDGET_DEFINITIONS[$elementType])) {
+            if (! isset(self::WIDGET_DEFINITIONS[$blockType])) {
                 continue;
             }
 
-            $definition = self::WIDGET_DEFINITIONS[$elementType];
-            $elementKey = $preset->key() . '-' . $elementType;
+            $definition = self::WIDGET_DEFINITIONS[$blockType];
+            $blockKey = $preset->key() . '-' . $blockType;
 
-            $elements[$elementType] = Element::query()->updateOrCreate(
-                ['key' => $elementKey],
+            $blocks[$blockType] = Block::query()->updateOrCreate(
+                ['key' => $blockKey],
                 [
                     'name' => $preset->name() . ' - ' . $definition['name'],
                     'blueprint_id' => $type->getKey(),
@@ -135,14 +135,14 @@ final class InstallCampaignLayoutsAction
             );
         }
 
-        return $elements;
+        return $blocks;
     }
 
     /**
-     * @param  array<string, Element>  $elements
-     * @return array<string, array{elements: array<int, array{element_key: string, occurrence: int}>, meta: array<string, mixed>}>
+     * @param  array<string, Block>  $blocks
+     * @return array<string, array{blocks: array<int, array{block_key: string, occurrence: int}>, meta: array<string, mixed>}>
      */
-    private function containersForPreset(CampaignLayoutPreset $preset, array $elements): array
+    private function containersForPreset(CampaignLayoutPreset $preset, array $blocks): array
     {
         $containers = [];
 
@@ -157,16 +157,16 @@ final class InstallCampaignLayoutsAction
             }
 
             $containers[$containerKey] = [
-                'elements' => [],
+                'blocks' => [],
                 'meta' => [
                     'container' => $containerDefinition['width'] ?? null,
                 ],
             ];
         }
 
-        foreach ($preset->elements() as $elementDefinition) {
-            $containerKey = $elementDefinition['container'] ?? null;
-            $elementType = $elementDefinition['type'] ?? null;
+        foreach ($preset->blocks() as $blockDefinition) {
+            $containerKey = $blockDefinition['container'] ?? null;
+            $blockType = $blockDefinition['type'] ?? null;
             if (! is_string($containerKey)) {
                 continue;
             }
@@ -175,16 +175,16 @@ final class InstallCampaignLayoutsAction
                 continue;
             }
 
-            if (! is_string($elementType)) {
+            if (! is_string($blockType)) {
                 continue;
             }
 
-            if (! isset($elements[$elementType])) {
+            if (! isset($blocks[$blockType])) {
                 continue;
             }
 
-            $containers[$containerKey]['elements'][] = [
-                'element_key' => $elements[$elementType]->key,
+            $containers[$containerKey]['blocks'][] = [
+                'block_key' => $blocks[$blockType]->key,
                 'occurrence' => 1,
             ];
         }
@@ -192,22 +192,22 @@ final class InstallCampaignLayoutsAction
         return $containers;
     }
 
-    private function campaignElementType(): Blueprint
+    private function campaignBlockType(): Blueprint
     {
         return Blueprint::query()->firstOrCreate(
             [
                 'key' => 'campaign',
-                'type' => LayoutTypeEnum::Element,
+                'type' => LayoutTypeEnum::Block,
             ],
             [
                 'name' => __('capell-campaign-studio::generic.campaign'),
                 'group' => 'campaign-studio',
                 'admin' => [
-                    'type_configurator' => ElementTypeConfigurator::getKey(),
+                    'type_configurator' => BlockTypeConfigurator::getKey(),
                     'icon' => 'heroicon-o-megaphone',
                 ],
                 'meta' => [
-                    'component' => CampaignElementComponentEnum::CampaignHero,
+                    'component' => CampaignBlockComponentEnum::CampaignHero,
                 ],
             ],
         );

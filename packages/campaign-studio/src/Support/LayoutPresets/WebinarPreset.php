@@ -25,7 +25,7 @@ final class WebinarPreset extends CampaignLayoutPreset
         ];
     }
 
-    public function elements(): array
+    public function blocks(): array
     {
         return [
             ['container' => 'hero', 'type' => 'campaign-hero'],

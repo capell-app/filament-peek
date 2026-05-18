@@ -9,8 +9,8 @@ use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Media;
 use Capell\FoundationTheme\Data\AssetBannerItemData;
-use Capell\LayoutBuilder\Models\Element;
-use Capell\LayoutBuilder\Models\ElementAsset;
+use Capell\LayoutBuilder\Models\Block;
+use Capell\LayoutBuilder\Models\BlockAsset;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsObject;
@@ -23,35 +23,35 @@ final class BuildAssetBannerItemsAction
     /**
      * @return Collection<int, AssetBannerItemData>
      */
-    public function handle(Element $element): Collection
+    public function handle(Block $block): Collection
     {
-        $elementAssets = $element->relationLoaded('assets') ? $element->getRelation('assets') : collect();
+        $blockAssets = $block->relationLoaded('assets') ? $block->getRelation('assets') : collect();
 
-        if (! $elementAssets instanceof Collection) {
+        if (! $blockAssets instanceof Collection) {
             return collect();
         }
 
-        return $elementAssets
-            ->filter(fn (mixed $elementAsset): bool => $elementAsset instanceof ElementAsset)
-            ->map(fn (ElementAsset $elementAsset): AssetBannerItemData => $this->item($element, $elementAsset))
+        return $blockAssets
+            ->filter(fn (mixed $blockAsset): bool => $blockAsset instanceof BlockAsset)
+            ->map(fn (BlockAsset $blockAsset): AssetBannerItemData => $this->item($block, $blockAsset))
             ->values();
     }
 
-    private function item(Element $element, ElementAsset $elementAsset): AssetBannerItemData
+    private function item(Block $block, BlockAsset $blockAsset): AssetBannerItemData
     {
-        $asset = $elementAsset->relationLoaded('asset') ? $elementAsset->getRelation('asset') : null;
-        $linkedPage = $this->linkedPage($elementAsset, $asset);
+        $asset = $blockAsset->relationLoaded('asset') ? $blockAsset->getRelation('asset') : null;
+        $linkedPage = $this->linkedPage($blockAsset, $asset);
         $translation = $asset instanceof Model && $asset->relationLoaded('translation')
             ? $asset->getRelation('translation')
             : null;
 
-        $assetDefinition = $this->assetDefinition($elementAsset);
+        $assetDefinition = $this->assetDefinition($blockAsset);
         $hasTranslations = $asset instanceof Model
             && is_object($assetDefinition)
             && (bool) ($assetDefinition->hasTranslations ?? false);
 
         return new AssetBannerItemData(
-            image: $this->image($element, $elementAsset, $asset),
+            image: $this->image($block, $blockAsset, $asset),
             alt: (string) ($translation?->label ?? $translation?->title ?? ''),
             title: $hasTranslations ? $translation?->title : null,
             content: $hasTranslations ? $translation?->content : null,
@@ -60,14 +60,14 @@ final class BuildAssetBannerItemsAction
         );
     }
 
-    private function image(Element $element, ElementAsset $elementAsset, mixed $asset): mixed
+    private function image(Block $block, BlockAsset $blockAsset, mixed $asset): mixed
     {
-        return $this->firstLoadedMedia($elementAsset, MediaCollectionEnum::Image->value)
+        return $this->firstLoadedMedia($blockAsset, MediaCollectionEnum::Image->value)
             ?? ($asset instanceof Model && $asset->relationLoaded('image') ? $asset->getRelation('image') : null)
-            ?? $this->firstLoadedMedia($element, MediaCollectionEnum::BackgroundImage->value);
+            ?? $this->firstLoadedMedia($block, MediaCollectionEnum::BackgroundImage->value);
     }
 
-    private function linkedPage(ElementAsset $elementAsset, mixed $asset): mixed
+    private function linkedPage(BlockAsset $blockAsset, mixed $asset): mixed
     {
         if ($asset instanceof Pageable) {
             return $asset;
@@ -77,7 +77,7 @@ final class BuildAssetBannerItemsAction
             return $asset->getRelation('linkedPage');
         }
 
-        return $elementAsset->relationLoaded('linkedPage') ? $elementAsset->getRelation('linkedPage') : null;
+        return $blockAsset->relationLoaded('linkedPage') ? $blockAsset->getRelation('linkedPage') : null;
     }
 
     private function pageUrl(mixed $linkedPage): ?string
@@ -121,14 +121,14 @@ final class BuildAssetBannerItemsAction
         return $match instanceof Media ? $match : null;
     }
 
-    private function assetDefinition(ElementAsset $elementAsset): mixed
+    private function assetDefinition(BlockAsset $blockAsset): mixed
     {
-        if (! is_string($elementAsset->asset_type) || $elementAsset->asset_type === '') {
+        if (! is_string($blockAsset->asset_type) || $blockAsset->asset_type === '') {
             return null;
         }
 
         try {
-            return CapellCore::getAsset($elementAsset->asset_type);
+            return CapellCore::getAsset($blockAsset->asset_type);
         } catch (Throwable) {
             return null;
         }

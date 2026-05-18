@@ -21,7 +21,7 @@ use Capell\FoundationTheme\Enums\FoundationThemeAssetEnum;
 use Capell\FoundationTheme\Filament\Settings\FoundationThemeSettingsSchema;
 use Capell\FoundationTheme\Listeners\RunTailwindAssetsOnPackageChange;
 use Capell\FoundationTheme\Livewire\Assets\Table\PageAssets;
-use Capell\FoundationTheme\Livewire\Element\Pages;
+use Capell\FoundationTheme\Livewire\Block\Pages;
 use Capell\FoundationTheme\Settings\FoundationThemeSettings;
 use Capell\FoundationTheme\Support\Assets\FoundationThemeAssetContributor;
 use Capell\FoundationTheme\Support\Blade\BladeDirectives;
@@ -29,12 +29,12 @@ use Capell\FoundationTheme\Support\Interceptors\Themes\FoundationThemeIntercepto
 use Capell\FoundationTheme\Support\Media\CapellUrlGenerator;
 use Capell\FoundationTheme\Support\Tailwind\TailwindAssetsGenerator;
 use Capell\FoundationTheme\View\Components\Actions as ActionsComponent;
-use Capell\FoundationTheme\View\Components\Element\Page\Breadcrumbs as PageBreadcrumbsComponent;
-use Capell\FoundationTheme\View\Components\Element\Page\Children as PageChildrenComponent;
-use Capell\FoundationTheme\View\Components\Element\Page\Content as PageContentComponent;
-use Capell\FoundationTheme\View\Components\Element\Page\Latest as PageLatestComponent;
-use Capell\FoundationTheme\View\Components\Element\Page\Siblings as PageSiblingsComponent;
-use Capell\FoundationTheme\View\Components\Element\Slot as SlotComponent;
+use Capell\FoundationTheme\View\Components\Block\Page\Breadcrumbs as PageBreadcrumbsComponent;
+use Capell\FoundationTheme\View\Components\Block\Page\Children as PageChildrenComponent;
+use Capell\FoundationTheme\View\Components\Block\Page\Content as PageContentComponent;
+use Capell\FoundationTheme\View\Components\Block\Page\Latest as PageLatestComponent;
+use Capell\FoundationTheme\View\Components\Block\Page\Siblings as PageSiblingsComponent;
+use Capell\FoundationTheme\View\Components\Block\Slot as SlotComponent;
 use Capell\FoundationTheme\View\Components\Footer\Index as FooterIndexComponent;
 use Capell\FoundationTheme\View\Components\Layout\Index as LayoutIndexComponent;
 use Capell\FoundationTheme\View\Components\Media\Svg;
@@ -262,7 +262,7 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         );
 
         CapellCore::registerVendorAsset(
-            VendorAssetData::tailwindImport('resources/css/elements/foundation-elements.css', self::$packageName),
+            VendorAssetData::tailwindImport('resources/css/blocks/foundation-blocks.css', self::$packageName),
         );
 
         CapellCore::registerVendorAsset(
@@ -320,16 +320,16 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
         Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell-foundation-theme');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell');
         Blade::componentNamespace('Capell\\FoundationTheme\\View\\Components', 'capell-foundation-theme');
-        Blade::component(PageBreadcrumbsComponent::class, 'capell::element.page.breadcrumbs');
+        Blade::component(PageBreadcrumbsComponent::class, 'capell::block.page.breadcrumbs');
         Blade::component(ActionsComponent::class, 'capell::actions');
         Blade::component(ActionsComponent::class, 'capell-foundation-theme::actions');
-        Blade::component(PageContentComponent::class, 'capell-element-page-content');
-        Blade::component(PageContentComponent::class, 'capell::element.page.content');
-        Blade::component(SlotComponent::class, 'capell::element.slot');
-        Blade::component('capell-foundation-theme::components.element.wrapper', 'capell-layout-builder::widget.wrapper');
-        Blade::component(PageChildrenComponent::class, 'capell::element.page.children');
-        Blade::component(PageLatestComponent::class, 'capell::element.page.latest');
-        Blade::component(PageSiblingsComponent::class, 'capell::element.page.siblings');
+        Blade::component(PageContentComponent::class, 'capell-block-page-content');
+        Blade::component(PageContentComponent::class, 'capell::block.page.content');
+        Blade::component(SlotComponent::class, 'capell::block.slot');
+        Blade::component('capell-foundation-theme::components.block.wrapper', 'capell-layout-builder::widget.wrapper');
+        Blade::component(PageChildrenComponent::class, 'capell::block.page.children');
+        Blade::component(PageLatestComponent::class, 'capell::block.page.latest');
+        Blade::component(PageSiblingsComponent::class, 'capell::block.page.siblings');
 
         $registerLivewireComponents = function (): void {
             Livewire::addNamespace(
@@ -350,8 +350,8 @@ final class FoundationThemeServiceProvider extends AbstractPackageServiceProvide
 
             resolve('livewire.factory')->resolveMissingComponent(
                 static fn (string $name): ?string => match ($name) {
-                    'capell::element.pages' => Pages::class,
-                    'capell-foundation-theme::element.pages' => Pages::class,
+                    'capell::block.pages' => Pages::class,
+                    'capell-foundation-theme::block.pages' => Pages::class,
                     'capell-foundation-theme::assets.table.page-assets' => PageAssets::class,
                     default => null,
                 },

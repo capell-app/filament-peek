@@ -7,7 +7,7 @@ namespace Capell\FoundationTheme\Actions;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\Media;
 use Capell\FoundationTheme\Data\BannerImageRenderData;
-use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Models\Block;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsObject;
 
@@ -15,13 +15,13 @@ final class BuildBannerImageRenderDataAction
 {
     use AsObject;
 
-    public function handle(Element $element, mixed $content, mixed $title, bool $rounded, mixed $reverseOrder): BannerImageRenderData
+    public function handle(Block $block, mixed $content, mixed $title, bool $rounded, mixed $reverseOrder): BannerImageRenderData
     {
-        $backgroundImage = $this->firstLoadedElementMedia($element, MediaCollectionEnum::BackgroundImage->value)
-            ?? $this->firstLoadedElementMedia($element, MediaCollectionEnum::Image->value)
-            ?? $this->firstAssetMedia($element);
+        $backgroundImage = $this->firstLoadedBlockMedia($block, MediaCollectionEnum::BackgroundImage->value)
+            ?? $this->firstLoadedBlockMedia($block, MediaCollectionEnum::Image->value)
+            ?? $this->firstAssetMedia($block);
 
-        $meta = is_array($element->meta) ? $element->meta : [];
+        $meta = is_array($block->meta) ? $block->meta : [];
         $actions = $meta['actions'] ?? null;
         $hasContent = filled($content) || filled($title) || filled($actions);
 
@@ -33,13 +33,13 @@ final class BuildBannerImageRenderDataAction
         );
     }
 
-    private function firstLoadedElementMedia(Element $element, string $collectionName): ?Media
+    private function firstLoadedBlockMedia(Block $block, string $collectionName): ?Media
     {
-        if (! $element->relationLoaded('media')) {
+        if (! $block->relationLoaded('media')) {
             return null;
         }
 
-        $media = $element->getRelation('media');
+        $media = $block->getRelation('media');
 
         if (! $media instanceof Collection) {
             return null;
@@ -52,13 +52,13 @@ final class BuildBannerImageRenderDataAction
         return $match instanceof Media ? $match : null;
     }
 
-    private function firstAssetMedia(Element $element): mixed
+    private function firstAssetMedia(Block $block): mixed
     {
-        if (! $element->relationLoaded('assets')) {
+        if (! $block->relationLoaded('assets')) {
             return null;
         }
 
-        $assets = $element->getRelation('assets');
+        $assets = $block->getRelation('assets');
 
         if (! method_exists($assets, 'first')) {
             return null;

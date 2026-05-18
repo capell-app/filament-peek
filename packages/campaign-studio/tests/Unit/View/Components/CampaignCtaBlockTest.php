@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 use Capell\CampaignStudio\Models\CampaignCtaBlock;
-use Capell\CampaignStudio\View\Components\Element\CampaignCtaBlock as CampaignCtaBlockComponent;
-use Capell\LayoutBuilder\Models\Element;
+use Capell\CampaignStudio\View\Components\Block\CampaignCtaBlock as CampaignCtaBlockComponent;
+use Capell\LayoutBuilder\Models\Block;
 
-it('hydrates CTA blocks for campaign elements in one batch', function (): void {
+it('hydrates CTA blocks for campaign blocks in one batch', function (): void {
     $firstCtaBlock = CampaignCtaBlock::factory()->create(['headline' => 'First CTA']);
     $secondCtaBlock = CampaignCtaBlock::factory()->create(['headline' => 'Second CTA']);
-    $firstElement = Element::factory()->create(['meta' => ['cta_block_id' => $firstCtaBlock->getKey()]]);
-    $secondElement = Element::factory()->create(['meta' => ['cta_block_id' => $secondCtaBlock->getKey()]]);
+    $firstBlock = Block::factory()->create(['meta' => ['cta_block_id' => $firstCtaBlock->getKey()]]);
+    $secondBlock = Block::factory()->create(['meta' => ['cta_block_id' => $secondCtaBlock->getKey()]]);
 
-    CampaignCtaBlockComponent::hydrateElements(collect([$firstElement, $secondElement]));
+    CampaignCtaBlockComponent::hydrateBlocks(collect([$firstBlock, $secondBlock]));
 
-    expect($firstElement->relationLoaded('campaignCtaBlock'))->toBeTrue()
-        ->and($firstElement->getRelation('campaignCtaBlock')->headline)->toBe('First CTA')
-        ->and($secondElement->relationLoaded('campaignCtaBlock'))->toBeTrue()
-        ->and($secondElement->getRelation('campaignCtaBlock')->headline)->toBe('Second CTA');
+    expect($firstBlock->relationLoaded('campaignCtaBlock'))->toBeTrue()
+        ->and($firstBlock->getRelation('campaignCtaBlock')->headline)->toBe('First CTA')
+        ->and($secondBlock->relationLoaded('campaignCtaBlock'))->toBeTrue()
+        ->and($secondBlock->getRelation('campaignCtaBlock')->headline)->toBe('Second CTA');
 });

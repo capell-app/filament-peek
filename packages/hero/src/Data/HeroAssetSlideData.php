@@ -7,8 +7,8 @@ namespace Capell\Hero\Data;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
-use Capell\LayoutBuilder\Models\Element;
-use Capell\LayoutBuilder\Models\ElementAsset;
+use Capell\LayoutBuilder\Models\Block;
+use Capell\LayoutBuilder\Models\BlockAsset;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -26,13 +26,13 @@ final readonly class HeroAssetSlideData
         public ?Collection $images,
     ) {}
 
-    public static function fromElementAsset(ElementAsset $elementAsset, Element $element, string $fallbackColor): self
+    public static function fromBlockAsset(BlockAsset $blockAsset, Block $block, string $fallbackColor): self
     {
-        $asset = $elementAsset->asset;
+        $asset = $blockAsset->asset;
         $color = $asset->getMeta('color', $fallbackColor);
         $linkedPage = $asset instanceof Page ? $asset : $asset->linkedPage;
-        $backgroundImage = self::resolveBackgroundImage($elementAsset);
-        $images = self::resolveImages($elementAsset);
+        $backgroundImage = self::resolveBackgroundImage($blockAsset);
+        $images = self::resolveImages($blockAsset);
 
         return new self(
             asset: $asset,
@@ -44,16 +44,16 @@ final readonly class HeroAssetSlideData
         );
     }
 
-    private static function resolveBackgroundImage(ElementAsset $elementAsset): ?Media
+    private static function resolveBackgroundImage(BlockAsset $blockAsset): ?Media
     {
-        if ($elementAsset->asset instanceof Media) {
-            return $elementAsset->asset;
+        if ($blockAsset->asset instanceof Media) {
+            return $blockAsset->asset;
         }
 
         $collection = MediaCollectionEnum::BackgroundImage->value;
 
-        $media = $elementAsset->media?->firstWhere('collection_name', $collection)
-            ?? $elementAsset->asset->media?->firstWhere('collection_name', $collection);
+        $media = $blockAsset->media?->firstWhere('collection_name', $collection)
+            ?? $blockAsset->asset->media?->firstWhere('collection_name', $collection);
 
         return $media instanceof Media ? $media : null;
     }
@@ -61,18 +61,18 @@ final readonly class HeroAssetSlideData
     /**
      * @return Collection<int, Media>|null
      */
-    private static function resolveImages(ElementAsset $elementAsset): ?Collection
+    private static function resolveImages(BlockAsset $blockAsset): ?Collection
     {
-        if ($elementAsset->asset instanceof Media) {
+        if ($blockAsset->asset instanceof Media) {
             return null;
         }
 
         $collection = MediaCollectionEnum::Image->value;
 
-        $images = $elementAsset->media?->where('collection_name', $collection);
+        $images = $blockAsset->media?->where('collection_name', $collection);
 
         if (! $images?->isNotEmpty()) {
-            $images = $elementAsset->asset->media?->where('collection_name', $collection);
+            $images = $blockAsset->asset->media?->where('collection_name', $collection);
         }
 
         return $images?->isNotEmpty() ? $images->values() : null;

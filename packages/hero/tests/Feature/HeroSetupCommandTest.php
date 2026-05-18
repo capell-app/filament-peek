@@ -6,7 +6,7 @@ use Capell\Core\Enums\LayoutEnum;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Support\Creator\LayoutCreator;
-use Capell\LayoutBuilder\Models\Element;
+use Capell\LayoutBuilder\Models\Block;
 
 it('installs compact natural home hero defaults', function (): void {
     resolve(LayoutCreator::class)->setup();
@@ -15,7 +15,7 @@ it('installs compact natural home hero defaults', function (): void {
         ->where('key', LayoutEnum::Home->value)
         ->firstOrFail();
 
-    $homeLayout->update(['containers' => [], 'elements' => []]);
+    $homeLayout->update(['containers' => [], 'blocks' => []]);
 
     Page::factory()
         ->layout($homeLayout)
@@ -25,23 +25,23 @@ it('installs compact natural home hero defaults', function (): void {
         ])
         ->create(['name' => 'Home']);
 
-    Element::query()->where('key', 'hero')->delete();
+    Block::query()->where('key', 'hero')->delete();
 
     test()->artisan('capell:hero-setup')->assertSuccessful();
 
     $homeLayout = Layout::query()->where('key', LayoutEnum::Home->value)->firstOrFail();
-    $heroElement = Element::query()->where('key', 'hero')->firstOrFail();
+    $heroBlock = Block::query()->where('key', 'hero')->firstOrFail();
 
     expect(array_keys($homeLayout->containers))->toBe(['hero', 'main'])
-        ->and($homeLayout->containers['hero']['elements'])->toBe([
-            ['element_key' => 'hero'],
+        ->and($homeLayout->containers['hero']['blocks'])->toBe([
+            ['block_key' => 'hero'],
         ])
-        ->and($homeLayout->elements)->toBe(['hero', 'page-content'])
-        ->and($heroElement->getMeta('height'))->toBe('small')
-        ->and($heroElement->getMeta('color'))->toBe('light')
-        ->and($heroElement->getMeta('content_align'))->toBe('center')
-        ->and($heroElement->getMeta('content_width'))->toBe('balanced')
-        ->and($heroElement->getMeta('media_position'))->toBe('right');
+        ->and($homeLayout->blocks)->toBe(['hero', 'page-content'])
+        ->and($heroBlock->getMeta('height'))->toBe('small')
+        ->and($heroBlock->getMeta('color'))->toBe('light')
+        ->and($heroBlock->getMeta('content_align'))->toBe('center')
+        ->and($heroBlock->getMeta('content_width'))->toBe('balanced')
+        ->and($heroBlock->getMeta('media_position'))->toBe('right');
 
     $homePage = Page::query()
         ->where('layout_id', $homeLayout->id)
@@ -59,9 +59,9 @@ it('does not duplicate hero defaults on repeated setup', function (): void {
     Layout::query()
         ->where('key', LayoutEnum::Home->value)
         ->firstOrFail()
-        ->update(['containers' => [], 'elements' => []]);
+        ->update(['containers' => [], 'blocks' => []]);
 
-    Element::query()->where('key', 'hero')->delete();
+    Block::query()->where('key', 'hero')->delete();
 
     test()->artisan('capell:hero-setup')->assertSuccessful();
     test()->artisan('capell:hero-setup')->assertSuccessful();
@@ -69,6 +69,6 @@ it('does not duplicate hero defaults on repeated setup', function (): void {
     $homeLayout = Layout::query()->where('key', LayoutEnum::Home->value)->firstOrFail();
 
     expect(array_keys($homeLayout->containers))->toBe(['hero', 'main'])
-        ->and($homeLayout->elements)->toBe(['hero', 'page-content'])
-        ->and(Element::query()->where('key', 'hero')->count())->toBe(1);
+        ->and($homeLayout->blocks)->toBe(['hero', 'page-content'])
+        ->and(Block::query()->where('key', 'hero')->count())->toBe(1);
 });

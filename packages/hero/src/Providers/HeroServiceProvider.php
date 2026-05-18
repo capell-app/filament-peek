@@ -9,7 +9,7 @@ use Capell\Core\Enums\PackageTypeEnum;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Hero\Console\Commands\SetupCommand;
-use Capell\Hero\View\Components\Element\Hero;
+use Capell\Hero\View\Components\Block\Hero;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
@@ -57,7 +57,7 @@ final class HeroServiceProvider extends AbstractPackageServiceProvider
     private function registerBladeComponents(): void
     {
         Blade::anonymousComponentPath(__DIR__ . '/../../resources/views/components', 'capell-hero');
-        Blade::component(Hero::class, 'capell::element.hero');
+        Blade::component(Hero::class, 'capell::block.hero');
     }
 
     private function registerTailwindSources(): void

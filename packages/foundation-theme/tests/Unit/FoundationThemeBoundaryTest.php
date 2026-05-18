@@ -29,7 +29,7 @@ it('bundles layout builder javascript into the foundation frontend runtime', fun
     $provider = file_get_contents(dirname(__DIR__, 2) . '/src/Providers/FoundationThemeServiceProvider.php');
     $entrypoint = file_get_contents(dirname(__DIR__, 2) . '/resources/js/capell-frontend.js');
 
-    expect($entrypoint)->toContain('./elements/element/carousel')
+    expect($entrypoint)->toContain('./blocks/block/carousel')
         ->and($provider)->toContain("path: 'vendor/capell-foundation-theme'")
         ->and($provider)->toContain('foundation-theme-runtime')
         ->and($provider)->toContain('VendorAssetConditionRegistry')
@@ -114,22 +114,22 @@ it('delegates main layout container rendering to the shared frontend hook', func
         ->and($main)->toContain('$mainContentHookOutput !==')
         ->and($main)->toContain('<x-capell::content')
         ->and($main)->not->toContain('Capell\\LayoutBuilder')
-        ->and($main)->not->toContain('LayoutElementData')
+        ->and($main)->not->toContain('LayoutBlockData')
         ->and($main)->not->toContain('CapellLayoutManager')
         ->and($main)->not->toContain('x-capell::layout.container');
 });
 
-it('owns the product showcase styling for modern homepage elements', function (): void {
-    $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/hero-banner.blade.php');
-    $cardGrid = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/card-grid.blade.php');
-    $featureList = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/feature-list.blade.php');
-    $cta = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/cta-section.blade.php');
-    $gallery = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/element/modern/image-gallery.blade.php');
+it('owns the product showcase styling for modern homepage blocks', function (): void {
+    $hero = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/block/modern/hero-banner.blade.php');
+    $cardGrid = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/block/modern/card-grid.blade.php');
+    $featureList = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/block/modern/feature-list.blade.php');
+    $cta = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/block/modern/cta-section.blade.php');
+    $gallery = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/block/modern/image-gallery.blade.php');
 
     expect($hero)->toContain('hero_panel_title')
         ->and($hero)->toContain('hero_empty_title')
         ->and($cardGrid)->toContain('ap-card__link')
         ->and($featureList)->toContain('ap-feature-item__icon')
-        ->and($cta)->toContain('Homepage content is element, media, and layout driven.')
+        ->and($cta)->toContain('Homepage content is block, media, and layout driven.')
         ->and($gallery)->toContain('ap-gallery-caption');
 });

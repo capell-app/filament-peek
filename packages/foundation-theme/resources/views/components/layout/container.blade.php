@@ -4,11 +4,11 @@
     use Capell\FoundationTheme\Actions\ResolveLoadedLayoutContainerBackgroundImageAction;
     use Capell\Frontend\Actions\GetLayoutContainerWidthAction;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\LayoutBuilder\Enums\BlockComponentEnum;
     use Capell\LayoutBuilder\Enums\ContainerAlignmentEnum;
-    use Capell\LayoutBuilder\Enums\ElementComponentEnum;
     use Capell\LayoutBuilder\Enums\ResponsiveVisibilityEnum;
     use Capell\LayoutBuilder\Support\CapellLayoutManager;
-    use Capell\LayoutBuilder\Support\LayoutElementData;
+    use Capell\LayoutBuilder\Support\LayoutBlockData;
 @endphp
 
 @props([
@@ -133,46 +133,46 @@
         'mb-20' => in_array('b-xl', $margin, true),
     ])
 >
-    @foreach (LayoutElementData::normalizeMany($container['elements'] ?? []) as $elementIndex => $elementData)
+    @foreach (LayoutBlockData::normalizeMany($container['blocks'] ?? []) as $blockIndex => $blockData)
         {{-- format-ignore-start --}}
                                     @php
-                                        $elementKey = LayoutElementData::key($elementData);
-                                        if ($elementKey === null) {
+                                        $blockKey = LayoutBlockData::key($blockData);
+                                        if ($blockKey === null) {
                                             continue;
                                         }
 
-                                        $element = CapellLayoutManager::getStoredContainerElement(
+                                        $block = CapellLayoutManager::getStoredContainerBlock(
                                             $containerKey,
-                                            $elementKey,
-                                            LayoutElementData::occurrence($elementData),
+                                            $blockKey,
+                                            LayoutBlockData::occurrence($blockData),
                                         );
 
-                                        if (! $element) {
+                                        if (! $block) {
                                             continue;
                                         }
 
-                                        $component = $element->getComponent();
+                                        $component = $block->getComponent();
                                         if (! $component) {
                                             continue;
                                         }
 
                                         $componentKey = (string) $component;
                                         if (! $showHero && in_array($componentKey, [
-                                            ElementComponentEnum::Hero->value,
-                                            ElementComponentEnum::BannerImage->value,
-                                            ElementComponentEnum::ApHeroBanner->value,
+                                            BlockComponentEnum::Hero->value,
+                                            BlockComponentEnum::BannerImage->value,
+                                            BlockComponentEnum::ApHeroBanner->value,
                                         ], true)) {
                                             continue;
                                         }
 
-                                        $type = $element->getMetaComponentType();
+                                        $type = $block->getMetaComponentType();
                                         $currentColspan = $previousColspan + $colspan;
                                         if ($columnStart) {
                                             $currentColspan += $columnStart - 1;
                                         }
                                     @endphp
                                     {{-- format-ignore-end --}}
-        <x-capell::layout.element
+        <x-capell::layout.block
             :$component
             :container-colspan="$colspan"
             :$container
@@ -182,9 +182,9 @@
             :$loop
             :$layout
             :$type
-            :$element
-            :$elementIndex
-            :$elementData
+            :$block
+            :$blockIndex
+            :$blockData
             :page-slot="$pageSlot"
         />
     @endforeach

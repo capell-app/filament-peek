@@ -18,5 +18,5 @@ abstract class CampaignLayoutPreset
     /**
      * @return array<int, array<string, mixed>>
      */
-    abstract public function elements(): array;
+    abstract public function blocks(): array;
 }

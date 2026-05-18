@@ -92,7 +92,7 @@
         "deferredContributions": [
             "admin-resource",
             "configurator",
-            "dashboard-element",
+            "dashboard-block",
             "model",
             "overview-stat"
         ]

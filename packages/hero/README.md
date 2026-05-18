@@ -1,6 +1,6 @@
 # Hero
 
-Hero renders and seeds the default home-page hero element used by Capell frontend themes.
+Hero renders and seeds the default home-page hero block used by Capell frontend themes.
 
 ## At A Glance
 
@@ -13,7 +13,7 @@ Hero renders and seeds the default home-page hero element used by Capell fronten
 
 ## What It Adds
 
-- Hero renders and seeds the default home-page hero element used by Capell frontend themes.
+- Hero renders and seeds the default home-page hero block used by Capell frontend themes.
 - Package setup or maintenance commands.
 
 ## Technical Shape
