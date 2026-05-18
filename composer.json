@@ -103,7 +103,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-fileinfo": "*",
         "ext-intl": "*",
         "ext-simplexml": "*",
@@ -319,6 +319,9 @@
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true,
+        "platform": {
+            "php": "8.3.0"
+        },
         "process-timeout": 0,
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
