@@ -29,6 +29,7 @@
     'padding' => Arr::wrap($block->getMeta('padding')),
     'tag' => 'section',
     'block',
+    'widget' => null,
 ])
 @php
     $isDefaultColor = in_array($backgroundColor, DefaultColorEnum::cases(), true);

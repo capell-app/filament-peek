@@ -7,6 +7,10 @@
     'block',
 ])
 
+@php
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
+@endphp
+
 <x-capell-foundation-theme::block.wrapper
     class="capell-modern-process-steps block-ap-process-steps"
     :$container
@@ -40,13 +44,15 @@
                     class="absolute left-0 right-0 top-12 hidden h-px bg-stone-200 md:block"
                 ></div>
 
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-4 md:gap-6">
+                <div class="{{ $responsiveGrid }} md:grid-cols-4 md:gap-6">
                     @forelse ($block->assets as $blockAsset)
                         @php
                             $icon = (string) $blockAsset->asset->getMeta('icon', $loop->index + 1);
                         @endphp
 
-                        <div class="relative text-center">
+                        <div
+                            class="relative min-w-full snap-start rounded-lg border border-stone-200 bg-white p-5 text-center md:min-w-0 md:border-0 md:bg-transparent md:p-0"
+                        >
                             <div class="relative z-10 mx-auto mb-4 h-24 w-24">
                                 <div
                                     class="flex h-24 w-24 items-center justify-center rounded-full border-2 border-stone-200 bg-white text-blue-700 shadow-sm"

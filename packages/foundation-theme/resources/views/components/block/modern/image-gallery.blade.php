@@ -11,6 +11,9 @@
 
 @php
     use Capell\FoundationTheme\Actions\BuildBlockAssetRenderDataAction;
+
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
+    $responsiveItem = 'min-w-full snap-start md:min-w-0';
 @endphp
 
 <x-capell-foundation-theme::block.wrapper
@@ -43,7 +46,7 @@
 
             @if ($block->assets->isNotEmpty())
                 <div
-                    class="ap-gallery-grid"
+                    class="ap-gallery-grid {{ $responsiveGrid }}"
                     style="
                         --ap-gallery-columns: {{ max(1, min(4, $columns)) }};
                     "
@@ -60,7 +63,7 @@
 
                         @if ($media)
                             <figure
-                                class="ap-gallery-item"
+                                class="ap-gallery-item {{ $responsiveItem }}"
                                 data-accent="{{ $accent }}"
                                 data-role="{{ $role }}"
                             >
@@ -85,7 +88,7 @@
                             @endphp
 
                             <figure
-                                class="ap-gallery-item ap-gallery-item--placeholder"
+                                class="ap-gallery-item ap-gallery-item--placeholder {{ $responsiveItem }}"
                                 data-accent="{{ $accent }}"
                                 data-role="{{ $role }}"
                             >
@@ -112,12 +115,12 @@
                 </div>
             @elseif ($block->image)
                 <div
-                    class="ap-gallery-grid"
+                    class="ap-gallery-grid {{ $responsiveGrid }}"
                     style="
                         --ap-gallery-columns: {{ max(1, min(4, $columns)) }};
                     "
                 >
-                    <figure class="ap-gallery-item">
+                    <figure class="ap-gallery-item {{ $responsiveItem }}">
                         <x-capell::media
                             :media="$block->image"
                             :alt="$block->image->name"

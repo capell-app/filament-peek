@@ -16,6 +16,7 @@
     ];
 
     $gridClass = $gridClasses[(int) $columns] ?? $gridClasses[2];
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
     $assets = $block->assets;
 @endphp
 
@@ -155,7 +156,7 @@
                 @endif
             </div>
         @else
-            <div class="{{ $gridClass }} grid gap-6">
+            <div class="{{ $responsiveGrid }} {{ $gridClass }}">
                 @forelse ($assets as $blockAsset)
                     @php
                         $icon = $blockAsset->asset->getMeta('icon');
@@ -163,7 +164,7 @@
                     @endphp
 
                     <div
-                        class="rounded-xl border border-stone-200 bg-white p-8"
+                        class="min-w-full snap-start rounded-xl border border-stone-200 bg-white p-6 md:min-w-0 md:p-8"
                     >
                         <div
                             class="mb-4 font-serif text-5xl leading-none text-indigo-200"

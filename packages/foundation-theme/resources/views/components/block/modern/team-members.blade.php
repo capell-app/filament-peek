@@ -17,13 +17,14 @@
     ];
 
     $gridClass = $gridClasses[(int) $columns] ?? $gridClasses[3];
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
 
     $socialIcons = [
         'twitter' => '𝕏',
         'linkedin' => 'in',
-        'github' => '🐙',
-        'website' => '🌐',
-        'email' => '✉',
+        'github' => 'GH',
+        'website' => 'Web',
+        'email' => 'Email',
     ];
 @endphp
 
@@ -54,7 +55,7 @@
             </div>
         @endif
 
-        <div class="{{ $gridClass }} grid gap-6">
+        <div class="{{ $responsiveGrid }} {{ $gridClass }}">
             @forelse ($block->assets as $blockAsset)
                 @php
                     $assetRenderData = BuildBlockAssetRenderDataAction::run($blockAsset);
@@ -67,7 +68,7 @@
                 @endphp
 
                 <div
-                    class="rounded-xl border border-stone-200 bg-white p-6 text-center"
+                    class="min-w-full snap-start rounded-xl border border-stone-200 bg-white p-6 text-center md:min-w-0"
                 >
                     @if ($media)
                         <div
@@ -81,9 +82,13 @@
                         </div>
                     @elseif ($icon)
                         <div
-                            class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 text-5xl"
+                            class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-lg bg-emerald-50 text-[#0f766e]"
                         >
-                            {{ $icon }}
+                            @if (str_starts_with((string) $icon, 'heroicon-'))
+                                @svg($icon, 'h-10 w-10')
+                            @else
+                                <span class="text-4xl">{{ $icon }}</span>
+                            @endif
                         </div>
                     @endif
 
@@ -113,7 +118,7 @@
                         <div class="mb-4 flex flex-wrap justify-center gap-2">
                             @foreach ($tags as $tag)
                                 <span
-                                    class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800"
+                                    class="rounded-md bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800"
                                 >
                                     {{ $tag }}
                                 </span>
@@ -132,7 +137,7 @@
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         title="{{ ucfirst($platform) }}"
-                                        class="font-semibold text-gray-400 transition-colors hover:text-emerald-700"
+                                        class="text-sm font-semibold text-gray-600 transition-colors hover:text-emerald-700"
                                     >
                                         {{ $socialIcons[$platform] }}
                                     </a>

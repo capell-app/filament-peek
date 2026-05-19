@@ -9,6 +9,9 @@
 
 @php
     use Capell\FoundationTheme\Actions\BuildBlockAssetRenderDataAction;
+
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
+    $responsiveItem = 'min-w-full snap-start md:min-w-0';
 @endphp
 
 <x-capell-foundation-theme::block.wrapper
@@ -42,7 +45,7 @@
             @endif
 
             <div
-                class="ap-card-grid"
+                class="ap-card-grid {{ $responsiveGrid }}"
                 style="--ap-card-columns: {{ max(1, min(4, $columns)) }}"
             >
                 @if ($block->assets->isNotEmpty())
@@ -56,7 +59,7 @@
                         @endphp
 
                         <article
-                            class="ap-card layout-builder-card"
+                            class="ap-card layout-builder-card {{ $responsiveItem }}"
                             data-accent="{{ $accent }}"
                             data-role="{{ $role }}"
                         >
@@ -99,7 +102,9 @@
                     @endforeach
                 @elseif ($block->getMeta('cards'))
                     @foreach ($block->getMeta('cards') as $card)
-                        <article class="ap-card layout-builder-card">
+                        <article
+                            class="ap-card layout-builder-card {{ $responsiveItem }}"
+                        >
                             @if (! empty($card['icon']))
                                 <span class="ap-card__icon">
                                     {{ $card['icon'] }}

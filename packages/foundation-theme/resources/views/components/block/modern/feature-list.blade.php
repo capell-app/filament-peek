@@ -7,6 +7,11 @@
     'block',
 ])
 
+@php
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
+    $responsiveItem = 'min-w-full snap-start md:min-w-0';
+@endphp
+
 <x-capell-foundation-theme::block.wrapper
     class="capell-modern-feature-list block-ap-feature-list"
     :$container
@@ -40,7 +45,7 @@
             <div
                 @class([
                     'ap-feature-list' => $layout === 'vertical',
-                    'ap-feature-grid' => $layout !== 'vertical',
+                    'ap-feature-grid ' . $responsiveGrid => $layout !== 'vertical',
                 ])
             >
                 @forelse ($block->assets as $blockAsset)
@@ -49,7 +54,12 @@
                         $icon = (string) $asset->getMeta('icon', '');
                     @endphp
 
-                    <article class="ap-feature-item layout-builder-card">
+                    <article
+                        @class([
+                            'ap-feature-item layout-builder-card',
+                            $responsiveItem => $layout !== 'vertical',
+                        ])
+                    >
                         @if ($icon !== '')
                             <span class="ap-feature-item__icon">
                                 @if (str_starts_with($icon, 'heroicon-'))

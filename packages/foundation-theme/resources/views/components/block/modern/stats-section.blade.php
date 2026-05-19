@@ -7,6 +7,10 @@
     'block',
 ])
 
+@php
+    $responsiveGrid = '!flex snap-x gap-4 !overflow-x-auto pb-3 [scrollbar-width:none] md:!grid md:!overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden';
+@endphp
+
 <x-capell-foundation-theme::block.wrapper
     class="capell-modern-stats-section block-ap-stats-section"
     :$container
@@ -36,9 +40,9 @@
 
         <div
             @class([
-                'mx-auto grid gap-6',
-                'max-w-md grid-cols-1' => $layout === 'vertical',
-                'max-w-5xl grid-cols-2 md:grid-cols-4' => $layout !== 'vertical',
+                'mx-auto',
+                'grid max-w-md grid-cols-1 gap-6' => $layout === 'vertical',
+                'max-w-5xl ' . $responsiveGrid . ' md:grid-cols-4' => $layout !== 'vertical',
             ])
         >
             @forelse ($block->assets as $blockAsset)
@@ -47,7 +51,7 @@
                 @endphp
 
                 <div
-                    class="rounded-xl border border-stone-200 bg-white p-8 text-center"
+                    class="min-w-full snap-start rounded-xl border border-stone-200 bg-white p-6 text-center md:min-w-0 md:p-8"
                 >
                     @if ($icon !== '')
                         <div
