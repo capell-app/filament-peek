@@ -5,8 +5,8 @@
     use Capell\FoundationTheme\View\Components\Block\Page\Siblings as PageSiblingsComponent;
     use Capell\FoundationTheme\View\Components\Block\Slot as SlotComponent;
     use Capell\Frontend\Facades\Frontend;
+    use Capell\LayoutBuilder\Support\Livewire\OpaqueBlockReference;
     use Illuminate\Contracts\View\View as ViewContract;
-    use Illuminate\Support\Facades\Crypt;
     use Livewire\Blaze\Blaze;
 @endphp
 
@@ -95,7 +95,7 @@
     @endif
 @elseif ($type === 'livewire')
     @php
-        $blockReference = Crypt::encryptString(json_encode([
+        $blockReference = OpaqueBlockReference::encode([
             'container_key' => $containerKey,
             'block_key' => $blockData['block_key'] ?? $block->key,
             'layout_id' => $layout?->getKey(),
@@ -106,7 +106,7 @@
             'site_id' => Frontend::site()?->getKey(),
             'block_data' => $blockData,
             'block_index' => $blockIndex,
-        ], JSON_THROW_ON_ERROR));
+        ]);
     @endphp
 
     @livewire($component,

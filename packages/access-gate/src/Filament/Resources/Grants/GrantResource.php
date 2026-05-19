@@ -93,6 +93,7 @@ final class GrantResource extends Resource
                 Action::make('revoke')
                     ->label(__('capell-access-gate::filament.actions.revoke'))
                     ->color('danger')
+                    ->authorize('update')
                     ->visible(fn (Grant $record): bool => $record->status === GrantStatus::Active)
                     ->requiresConfirmation()
                     ->action(fn (Grant $record): mixed => RevokeAccessGateGrantAction::run($record, revokedByUserId: auth()->id())),

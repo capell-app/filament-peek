@@ -15,6 +15,11 @@ use Capell\PublicActions\Models\PublicActionDestination;
 use Capell\PublicActions\Models\PublicActionDispatchAttempt;
 use Capell\PublicActions\Models\PublicActionIntegrationToken;
 use Capell\PublicActions\Models\PublicActionSubmission;
+use Capell\PublicActions\Policies\PublicActionDestinationPolicy;
+use Capell\PublicActions\Policies\PublicActionDispatchAttemptPolicy;
+use Capell\PublicActions\Policies\PublicActionIntegrationTokenPolicy;
+use Capell\PublicActions\Policies\PublicActionPolicy;
+use Capell\PublicActions\Policies\PublicActionSubmissionPolicy;
 use Capell\PublicActions\Support\Providers\HttpWebhookPublicActionAdapter;
 use Capell\PublicActions\Support\PublicActionDestinationAdapterRegistry;
 use Capell\PublicActions\Support\PublicActionHandlerRegistry;
@@ -22,6 +27,7 @@ use Capell\PublicActions\Support\PublicActionProviderPresetRegistry;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
@@ -71,6 +77,7 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
 
             $this
                 ->registerModels()
+                ->registerPolicies()
                 ->registerAdminResources()
                 ->registerListeners()
                 ->registerProtectedTables();
@@ -100,6 +107,17 @@ class PublicActionsServiceProvider extends AbstractPackageServiceProvider
             PublicActionDispatchAttempt::class,
             PublicActionIntegrationToken::class,
         ]);
+
+        return $this;
+    }
+
+    private function registerPolicies(): self
+    {
+        Gate::policy(PublicAction::class, PublicActionPolicy::class);
+        Gate::policy(PublicActionDestination::class, PublicActionDestinationPolicy::class);
+        Gate::policy(PublicActionSubmission::class, PublicActionSubmissionPolicy::class);
+        Gate::policy(PublicActionDispatchAttempt::class, PublicActionDispatchAttemptPolicy::class);
+        Gate::policy(PublicActionIntegrationToken::class, PublicActionIntegrationTokenPolicy::class);
 
         return $this;
     }

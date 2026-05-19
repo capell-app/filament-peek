@@ -20,6 +20,12 @@ use Capell\AccessGate\Models\ClaimToken;
 use Capell\AccessGate\Models\Event;
 use Capell\AccessGate\Models\Grant;
 use Capell\AccessGate\Models\Registration;
+use Capell\AccessGate\Policies\AccessAreaPolicy;
+use Capell\AccessGate\Policies\AccessGateEventPolicy;
+use Capell\AccessGate\Policies\BrowserTokenPolicy;
+use Capell\AccessGate\Policies\ClaimTokenPolicy;
+use Capell\AccessGate\Policies\GrantPolicy;
+use Capell\AccessGate\Policies\RegistrationPolicy;
 use Capell\AccessGate\Support\AccessRequestMethodRegistry;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\Admin\Data\AdminSurfaceContributionData;
@@ -34,6 +40,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -90,6 +97,7 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
 
             $this
                 ->registerModels()
+                ->registerPolicies()
                 ->registerAdminResources()
                 ->registerFrontendRuleConditions()
                 ->registerProtectedTables();
@@ -272,6 +280,18 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
             BrowserToken::class,
             Event::class,
         ]);
+
+        return $this;
+    }
+
+    private function registerPolicies(): self
+    {
+        Gate::policy(Area::class, AccessAreaPolicy::class);
+        Gate::policy(Registration::class, RegistrationPolicy::class);
+        Gate::policy(Grant::class, GrantPolicy::class);
+        Gate::policy(ClaimToken::class, ClaimTokenPolicy::class);
+        Gate::policy(BrowserToken::class, BrowserTokenPolicy::class);
+        Gate::policy(Event::class, AccessGateEventPolicy::class);
 
         return $this;
     }

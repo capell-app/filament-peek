@@ -20,10 +20,10 @@ use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\CapellFrontendContext;
 use Capell\LayoutBuilder\Models\Block;
 use Capell\LayoutBuilder\Models\BlockAsset;
+use Capell\LayoutBuilder\Support\Livewire\OpaqueBlockReference;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Livewire\Blaze\Blaze;
 
@@ -156,9 +156,32 @@ test('layout livewire blocks preserve extension block data mount parameters', fu
     $view = file_get_contents(dirname(__DIR__, 2) . '/resources/views/components/layout/block.blade.php');
 
     expect($view)
+        ->toContain('OpaqueBlockReference::encode')
         ->toContain("'blockReference' => \$blockReference")
         ->toContain("'block_data' => \$blockData")
         ->not->toContain("'blockData' => \$blockData");
+});
+
+test('opaque block references do not expose raw public context', function (): void {
+    $reference = OpaqueBlockReference::encode([
+        'container_key' => 'main',
+        'block_key' => 'private-livewire-block',
+        'page_id' => 123,
+        'site_id' => 456,
+    ]);
+
+    expect($reference)
+        ->not->toContain('container_key')
+        ->not->toContain('private-livewire-block')
+        ->not->toContain('page_id')
+        ->not->toContain('site_id')
+        ->and(OpaqueBlockReference::decode($reference))
+        ->toMatchArray([
+            'container_key' => 'main',
+            'block_key' => 'private-livewire-block',
+            'page_id' => 123,
+            'site_id' => 456,
+        ]);
 });
 
 test('public livewire blocks resolve the scoped layout block clone', function (): void {
@@ -216,7 +239,7 @@ test('public livewire blocks resolve the scoped layout block clone', function ()
         }
     };
 
-    $component->mount(Crypt::encryptString(json_encode([
+    $component->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
@@ -226,7 +249,7 @@ test('public livewire blocks resolve the scoped layout block clone', function ()
         'page_type' => $page->getMorphClass(),
         'site_id' => $site->getKey(),
         'block_index' => 1,
-    ], JSON_THROW_ON_ERROR)));
+    ]));
 
     expect($component->assetIds)->toBe([(int) $secondOccurrenceAsset->getKey()]);
 
@@ -252,7 +275,7 @@ test('public livewire blocks resolve the scoped layout block clone', function ()
         protected function mountBlock(): void {}
     };
 
-    $hydratedComponent->mount(Crypt::encryptString(json_encode([
+    $hydratedComponent->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
@@ -266,7 +289,7 @@ test('public livewire blocks resolve the scoped layout block clone', function ()
             'tracking_key' => 'kept-in-reference',
         ],
         'block_index' => 1,
-    ], JSON_THROW_ON_ERROR)));
+    ]));
     $hydratedData = $hydratedComponent->render()->getData();
 
     expect($hydratedData['blockData']['tracking_key'])->toBe('kept-in-reference')
@@ -295,14 +318,14 @@ test('public livewire blocks reject references without scoped page and site ids'
         }
     };
 
-    expect(fn (): null => $component->mount(Crypt::encryptString(json_encode([
+    expect(fn (): null => $component->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
         'layout_id' => $layout->getKey(),
         'occurrence' => 1,
         'block_index' => 0,
-    ], JSON_THROW_ON_ERROR))))
+    ])))
         ->toThrow(Exception::class, 'Block reference is invalid');
 });
 
@@ -350,7 +373,7 @@ test('public livewire blocks can hydrate blocks from global layouts', function (
         }
     };
 
-    $component->mount(Crypt::encryptString(json_encode([
+    $component->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
@@ -360,7 +383,7 @@ test('public livewire blocks can hydrate blocks from global layouts', function (
         'page_type' => $page->getMorphClass(),
         'site_id' => $site->getKey(),
         'block_index' => 0,
-    ], JSON_THROW_ON_ERROR)));
+    ]));
 
     expect($component->resolvedKey)->toBe('global-featured-pages');
 });
@@ -402,7 +425,7 @@ test('public livewire blocks reject global layout references replayed under anot
         }
     };
 
-    expect(fn (): null => $component->mount(Crypt::encryptString(json_encode([
+    expect(fn (): null => $component->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
@@ -412,7 +435,7 @@ test('public livewire blocks reject global layout references replayed under anot
         'page_type' => $referencePage->getMorphClass(),
         'site_id' => $referenceSite->getKey(),
         'block_index' => 0,
-    ], JSON_THROW_ON_ERROR))))
+    ])))
         ->toThrow(Exception::class, 'Block not found');
 });
 
@@ -455,7 +478,7 @@ test('public livewire page content blocks render from encrypted context without 
         protected function mountBlock(): void {}
     };
 
-    $component->mount(Crypt::encryptString(json_encode([
+    $component->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
@@ -471,7 +494,7 @@ test('public livewire page content blocks render from encrypted context without 
             ],
         ],
         'block_index' => 0,
-    ], JSON_THROW_ON_ERROR)));
+    ]));
 
     $view = $component->render();
     $renderData = $view->getData();
@@ -591,7 +614,7 @@ test('public livewire blocks reject references from another frontend site', func
         }
     };
 
-    expect(fn (): null => $component->mount(Crypt::encryptString(json_encode([
+    expect(fn (): null => $component->mount(OpaqueBlockReference::encode([
         'container_key' => 'main',
         'block_key' => $block->key,
         'language_id' => $language->getKey(),
@@ -601,6 +624,6 @@ test('public livewire blocks reject references from another frontend site', func
         'page_type' => $page->getMorphClass(),
         'site_id' => $currentSite->getKey(),
         'block_index' => 0,
-    ], JSON_THROW_ON_ERROR))))
+    ])))
         ->toThrow(Exception::class, 'Block not found');
 });

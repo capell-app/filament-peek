@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublicActions\Tests;
 
 use Capell\Admin\Providers\AdminServiceProvider;
+use Capell\Admin\Providers\Filament\AdminPanelProvider;
 use Capell\Core\Facades\CapellCore;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\PublicActions\Providers\PublicActionsServiceProvider;
@@ -41,6 +42,7 @@ abstract class PublicActionsTestCase extends AbstractTestCase
     {
         return [
             ...parent::getPackageProviders($app),
+            AdminPanelProvider::class,
             AdminServiceProvider::class,
             FrontendServiceProvider::class,
             PublicActionsServiceProvider::class,

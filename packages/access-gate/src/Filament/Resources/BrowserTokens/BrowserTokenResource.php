@@ -82,6 +82,7 @@ final class BrowserTokenResource extends Resource
                 Action::make('revoke')
                     ->label(__('capell-access-gate::filament.actions.revoke'))
                     ->color('danger')
+                    ->authorize('update')
                     ->visible(fn (BrowserToken $record): bool => $record->status === BrowserTokenStatus::Active)
                     ->requiresConfirmation()
                     ->action(fn (BrowserToken $record): mixed => RevokeAccessGateBrowserTokenRecordAction::run($record)),

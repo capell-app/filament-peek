@@ -18,13 +18,13 @@ use Capell\Frontend\Facades\Frontend;
 use Capell\LayoutBuilder\Enums\CapellLayoutCacheKeyEnum;
 use Capell\LayoutBuilder\Models\Block;
 use Capell\LayoutBuilder\Support\LayoutBlockData;
+use Capell\LayoutBuilder\Support\Livewire\OpaqueBlockReference;
 use Capell\LayoutBuilder\Support\Loader\LayoutLoader;
 use Closure;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Crypt;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Throwable;
@@ -198,11 +198,7 @@ abstract class AbstractBlock extends Component
 
     private function initializeFromBlockReference(): void
     {
-        try {
-            $reference = json_decode(Crypt::decryptString($this->blockReference), true, flags: JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
-            $reference = [];
-        }
+        $reference = OpaqueBlockReference::decode($this->blockReference);
 
         $containerKey = $reference['container_key'] ?? null;
         $blockKey = $reference['block_key'] ?? null;

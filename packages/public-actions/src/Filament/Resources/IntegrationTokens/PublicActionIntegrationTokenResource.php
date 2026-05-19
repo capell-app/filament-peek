@@ -54,6 +54,7 @@ final class PublicActionIntegrationTokenResource extends Resource
                 Action::make('revoke')
                     ->label(__('capell-public-actions::filament.actions.revoke'))
                     ->requiresConfirmation()
+                    ->authorize('update')
                     ->visible(fn (PublicActionIntegrationToken $record): bool => ! $record->isRevoked())
                     ->action(fn (PublicActionIntegrationToken $record): PublicActionIntegrationToken => RevokePublicActionIntegrationTokenAction::run($record)),
             ]);

@@ -110,20 +110,24 @@ final class RegistrationResource extends Resource
                 ActionGroup::make([
                     Action::make('approve')
                         ->label(__('capell-access-gate::filament.actions.approve'))
+                        ->authorize('update')
                         ->visible(fn (Registration $record): bool => $record->status === RegistrationStatus::Pending)
                         ->action(fn (Registration $record): mixed => ApproveRegistrationAction::run($record, approvedByUserId: auth()->id())),
                     Action::make('reject')
                         ->label(__('capell-access-gate::filament.actions.reject'))
                         ->color('danger')
+                        ->authorize('update')
                         ->visible(fn (Registration $record): bool => $record->status === RegistrationStatus::Pending)
                         ->action(fn (Registration $record): mixed => RejectRegistrationAction::run($record, rejectedByUserId: auth()->id())),
                     Action::make('resendClaim')
                         ->label(__('capell-access-gate::filament.actions.resend_claim'))
+                        ->authorize('update')
                         ->visible(fn (Registration $record): bool => in_array($record->status, [RegistrationStatus::Approved, RegistrationStatus::Claimed], true))
                         ->action(fn (Registration $record): mixed => ResendAccessGateClaimTokenAction::run($record)),
                     Action::make('retryGithubInvites')
                         ->label(__('capell-access-gate::filament.actions.retry_github_invites'))
                         ->icon(Heroicon::ArrowPath)
+                        ->authorize('update')
                         ->visible(fn (Registration $record): bool => self::canRetryGithubInvites($record))
                         ->requiresConfirmation()
                         ->action(function (Registration $record): void {
@@ -132,6 +136,7 @@ final class RegistrationResource extends Resource
                     Action::make('expire')
                         ->label(__('capell-access-gate::filament.actions.expire'))
                         ->color('danger')
+                        ->authorize('update')
                         ->visible(fn (Registration $record): bool => ! in_array($record->status, [RegistrationStatus::Claimed, RegistrationStatus::Expired], true))
                         ->action(fn (Registration $record): mixed => ExpireRegistrationAction::run($record, expiredByUserId: auth()->id())),
                 ]),
