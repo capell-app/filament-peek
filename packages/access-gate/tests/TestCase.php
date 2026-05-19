@@ -27,7 +27,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function defineEnvironment($app): void
     {
         $app->make(Repository::class)->set('access-gate.middleware.page_cache_aliases', [
-            'page-cache',
+            'frontend.cache',
             FakePageCacheMiddleware::class,
         ]);
         $app->make(Repository::class)->set('access-gate.status_endpoint_enabled', true);

@@ -462,14 +462,14 @@ it('uses the authenticated email when creating authenticated-mode requests', fun
         ->and(Grant::query()->where('subject_type', GrantSubjectType::User->value)->where('subject_id', '123')->exists())->toBeTrue();
 });
 
-it('runs access gate before route-level page cache middleware', function (): void {
+it('runs access gate before route-level frontend cache middleware', function (): void {
     $rendered = false;
 
     FakePageCacheMiddleware::$ran = false;
     FakePageCacheMiddleware::$sawProtectedRequest = false;
 
     $router = resolve(Router::class);
-    $router->aliasMiddleware('page-cache', FakePageCacheMiddleware::class);
+    $router->aliasMiddleware('frontend.cache', FakePageCacheMiddleware::class);
 
     $middlewarePriority = collect([AccessGateMiddleware::class, 'access-gate', FakePageCacheMiddleware::class])
         ->merge($router->middlewarePriority)
@@ -484,18 +484,18 @@ it('runs access gate before route-level page cache middleware', function (): voi
         'identity_mode' => IdentityMode::Hybrid,
     ]);
 
-    Route::middleware(['web', 'page-cache', 'access-gate:preview'])
-        ->get('/access-gate-test/page-cache-priority', function () use (&$rendered): string {
+    Route::middleware(['web', 'frontend.cache', 'access-gate:preview'])
+        ->get('/access-gate-test/frontend-cache-priority', function () use (&$rendered): string {
             $rendered = true;
 
             return 'secret';
         });
 
     $this
-        ->get('/access-gate-test/page-cache-priority')
+        ->get('/access-gate-test/frontend-cache-priority')
         ->assertRedirect(route('capell-access-gate.request', [
             'area' => 'preview',
-            'redirect' => 'http://localhost/access-gate-test/page-cache-priority',
+            'redirect' => 'http://localhost/access-gate-test/frontend-cache-priority',
         ]))
         ->assertDontSee('cached secret');
 
@@ -503,12 +503,12 @@ it('runs access gate before route-level page cache middleware', function (): voi
         ->and(FakePageCacheMiddleware::$ran)->toBeFalse();
 });
 
-it('marks allowed protected requests so compatible page cache middleware can skip reads and writes', function (): void {
+it('marks allowed protected requests so compatible frontend cache middleware can skip reads and writes', function (): void {
     FakePageCacheMiddleware::$ran = false;
     FakePageCacheMiddleware::$sawProtectedRequest = false;
 
     $router = resolve(Router::class);
-    $router->aliasMiddleware('page-cache', FakePageCacheMiddleware::class);
+    $router->aliasMiddleware('frontend.cache', FakePageCacheMiddleware::class);
 
     $middlewarePriority = collect([AccessGateMiddleware::class, 'access-gate', FakePageCacheMiddleware::class])
         ->merge($router->middlewarePriority)
@@ -525,12 +525,12 @@ it('marks allowed protected requests so compatible page cache middleware can ski
     $grant = Grant::factory()->for($area, 'area')->create();
     $issuedToken = resolve(CreateAccessGateBrowserTokenAction::class)->handle($grant);
 
-    Route::middleware(['web', 'page-cache', 'access-gate:preview'])
-        ->get('/access-gate-test/page-cache-allowed', fn (): string => 'secret');
+    Route::middleware(['web', 'frontend.cache', 'access-gate:preview'])
+        ->get('/access-gate-test/frontend-cache-allowed', fn (): string => 'secret');
 
     $this
         ->withUnencryptedCookie(config('access-gate.cookies.browser_token.name'), $issuedToken->plainTextToken)
-        ->get('/access-gate-test/page-cache-allowed')
+        ->get('/access-gate-test/frontend-cache-allowed')
         ->assertOk()
         ->assertSee('secret')
         ->assertDontSee('cached secret')

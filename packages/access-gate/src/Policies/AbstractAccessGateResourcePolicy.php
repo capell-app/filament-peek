@@ -126,7 +126,7 @@ abstract class AbstractAccessGateResourcePolicy
         }
 
         try {
-            return $user->checkPermissionTo(static::permission($ability, static::subject()));
+            return $user->checkPermissionTo(self::permission($ability, static::subject()));
         } catch (Throwable) {
             return false;
         }

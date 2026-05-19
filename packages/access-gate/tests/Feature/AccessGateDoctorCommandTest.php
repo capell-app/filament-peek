@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Capell\AccessGate\Enums\AccessAreaStatus;
 use Capell\AccessGate\Models\Area;
+use Capell\AccessGate\Tests\Support\FakePageCacheMiddleware;
 use Illuminate\Routing\Router;
 
 afterEach(function (): void {
@@ -19,8 +20,10 @@ it('passes doctor checks for the default test installation', function (): void {
         ->assertSuccessful();
 });
 
-it('passes doctor checks when middleware priority forces the gate before page cache', function (): void {
-    resolve(Router::class)->pushMiddlewareToGroup('web', 'page-cache');
+it('passes doctor checks when middleware priority forces the gate before frontend cache', function (): void {
+    $router = resolve(Router::class);
+    $router->aliasMiddleware('frontend.cache', FakePageCacheMiddleware::class);
+    $router->pushMiddlewareToGroup('web', 'frontend.cache');
 
     $this->artisan('capell:access-gate-doctor')
         ->assertSuccessful();

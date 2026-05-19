@@ -82,6 +82,7 @@ class AccessGateServiceProvider extends AbstractPackageServiceProvider
         $this->registerMiddlewareAliases();
         $this->registerMiddlewarePriority();
         $this->app->booted(function (): void {
+            $this->applyMiddlewarePriority($this->app->make(Router::class));
             $this->registerRateLimiters();
             $this->registerConfiguredRegistrationFields();
             $this->registerConfiguredAccessRequestMethods();

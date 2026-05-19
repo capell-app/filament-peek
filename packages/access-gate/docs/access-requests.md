@@ -173,4 +173,4 @@ Use `capell:access-gate-doctor` when a gated route behaves like a public cached 
 
 ## Cache And Gated Pages
 
-Do not let a denied or personalized gated response be written as anonymous HTML. Keep the page-cache middleware aliases in `access-gate.middleware.page_cache_aliases` current when the host app changes cache middleware names.
+Do not let a denied or personalized gated response be written as anonymous HTML. Keep the frontend cache middleware aliases in `access-gate.middleware.page_cache_aliases` current when the host app changes cache middleware names.
