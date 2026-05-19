@@ -65,7 +65,6 @@ use Orchestra\Testbench\TestCase;
 use Orchestra\Workbench\WorkbenchServiceProvider;
 use Override;
 use Saade\FilamentAdjacencyList\FilamentAdjacencyListServiceProvider;
-use Silber\PageCache\LaravelServiceProvider;
 use Sinnbeck\DomAssertions\DomAssertionsServiceProvider;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\ImageOptimizer\Optimizers\Svgo;
@@ -248,7 +247,6 @@ abstract class AbstractTestCase extends TestCase
             ActivitylogServiceProvider::class,
             LaravelDataServiceProvider::class,
             NestedSetServiceProvider::class,
-            LaravelServiceProvider::class,
             PermissionServiceProvider::class,
             IconPickerServiceProvider::class,
             DomAssertionsServiceProvider::class,
