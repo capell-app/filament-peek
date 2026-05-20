@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.0.14 - 2026-05-20
+
+### Fixes
+
+- Create missing split repositories and initialize their 4.x branches.
+- Update the monorepo split matrix to match current package directories.
+- Remove stale split targets for packages that no longer exist.
+
 ## v2.0.13 - 2026-05-20
 
 ### What's Changed
