@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.0.13 - 2026-05-20
+
+### What's Changed
+
+* chore(deps): bump danharrin/monorepo-split-github-action from 2.4.4 to 2.4.5 by @dependabot[bot] in https://github.com/capell-app/packages/pull/80
+
+**Full Changelog**: https://github.com/capell-app/packages/compare/v2.0.12...v2.0.13
+
 ## v2.0.12 - 2026-05-05
 
 **Full Changelog**: https://github.com/capell-app/packages/compare/v2.0.11...v2.0.12
