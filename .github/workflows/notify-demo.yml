@@ -1,6 +1,10 @@
 name: Notify demo site
 
 on:
+  push:
+    branches:
+      - main
+      - 4.x
   release:
     types: [published]
   workflow_dispatch:
@@ -45,7 +49,7 @@ jobs:
 
             await github.rest.repos.createDispatchEvent({
               owner: 'capell-app',
-              repo: 'demo',
+              repo: 'capell-demo',
               event_type: 'capell-packages-release',
               client_payload,
             });
