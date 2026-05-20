@@ -57,6 +57,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\Factory as ViewFactory;
 use LaraZeus\SpatieTranslatable\SpatieTranslatableServiceProvider;
+use Livewire\Blaze\BlazeServiceProvider;
 use Livewire\Livewire;
 use Lorisleiva\Actions\ActionServiceProvider;
 use MichalOravec\PaginateRoute\PaginateRouteServiceProvider;
@@ -252,6 +253,7 @@ abstract class AbstractTestCase extends TestCase
             DomAssertionsServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
             CapellServiceProvider::class,
+            BlazeServiceProvider::class,
             MediaLibraryServiceProvider::class,
             ActivitylogServiceProvider::class,
             LaravelSettingsServiceProvider::class,

@@ -7,7 +7,11 @@ namespace Capell\Tests\Support\Concerns;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\Tests\AbstractTestCase;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\File;
+use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Blaze\Blaze;
+use Livewire\Blaze\BlazeServiceProvider;
+use ReflectionProperty;
 
 /**
  * @mixin AbstractTestCase
@@ -20,9 +24,31 @@ trait TestingFrontend
             return;
         }
 
-        if (class_exists(Blaze::class)) {
+        if (class_exists(Blaze::class) && class_exists(BlazeServiceProvider::class)) {
+            if (! app()->bound('blaze')) {
+                app()->register(BlazeServiceProvider::class);
+            }
+
             Blaze::disable();
             Blaze::optimize()->clear();
+        }
+
+        $compiledViewPath = config('view.compiled');
+
+        if (is_string($compiledViewPath) && $compiledViewPath !== '') {
+            $compiledViewPath = $compiledViewPath . DIRECTORY_SEPARATOR . 'frontend-' . getmypid();
+
+            config(['view.compiled' => $compiledViewPath]);
+
+            if (app()->bound('blade.compiler')) {
+                $cachePath = new ReflectionProperty(BladeCompiler::class, 'cachePath');
+                $cachePath->setAccessible(true);
+                $cachePath->setValue(app('blade.compiler'), $compiledViewPath);
+            }
+        }
+
+        if (is_string($compiledViewPath) && $compiledViewPath !== '' && File::isDirectory($compiledViewPath)) {
+            File::cleanDirectory($compiledViewPath);
         }
 
         // Clear page cache storage if present

@@ -10,6 +10,7 @@ use Capell\Events\Filament\Resources\Occurrences\EventOccurrenceResource;
 use Capell\Events\Filament\Resources\Registrations\EventRegistrationResource;
 use Capell\Events\Filament\Resources\Venues\EventVenueResource;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
+use Composer\InstalledVersions;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Support\Icons\Heroicon;
@@ -48,15 +49,25 @@ it('keeps the approved top-level navigation groups in order on the booted admin 
     Filament::bootCurrentPanel();
     Filament::setServingStatus();
 
-    $approvedGroups = [
-        __('capell-admin::navigation.group_dashboard'),
-        __('capell-admin::navigation.group_content'),
-        __('capell-admin::navigation.group_workflow'),
-        __('capell-admin::navigation.group_monitoring'),
-        __('capell-admin::navigation.group_websites'),
-        __('capell-admin::navigation.group_marketing'),
-        __('capell-admin::navigation.group_system'),
-    ];
+    $approvedGroups = version_compare((string) InstalledVersions::getVersion('filament/filament'), '5.0.0', '>=')
+        ? [
+            __('capell-admin::navigation.group_dashboard'),
+            __('capell-admin::navigation.group_content'),
+            __('capell-admin::navigation.group_websites'),
+            __('capell-admin::navigation.group_marketing'),
+            __('capell-admin::navigation.group_workflow'),
+            __('capell-admin::navigation.group_monitoring'),
+            __('capell-admin::navigation.group_system'),
+        ]
+        : [
+            __('capell-admin::navigation.group_dashboard'),
+            __('capell-admin::navigation.group_content'),
+            __('capell-admin::navigation.group_workflow'),
+            __('capell-admin::navigation.group_monitoring'),
+            __('capell-admin::navigation.group_websites'),
+            __('capell-admin::navigation.group_marketing'),
+            __('capell-admin::navigation.group_system'),
+        ];
 
     $labels = collect(Filament::getCurrentPanel()->getNavigationGroups())
         ->filter(fn (mixed $navigationGroup): bool => $navigationGroup instanceof NavigationGroup)
