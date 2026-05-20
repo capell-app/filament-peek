@@ -8,7 +8,7 @@ Capell default theme - ships the standard Tailwind asset pipeline, Blade directi
 - Namespace: `Capell\FoundationTheme\`
 - Surfaces: Livewire, console
 - Service providers: `packages/foundation-theme/src/Providers/AdminServiceProvider.php`, `packages/foundation-theme/src/Providers/FoundationThemeServiceProvider.php`
-- Capell dependencies: `capell-app/frontend`
+- Capell dependencies: `capell-app/frontend`, `capell-app/layout-builder`
 - Third-party dependencies: `lorisleiva/laravel-actions`, `spatie/laravel-data`, `spatie/laravel-package-tools`
 
 ## What It Adds

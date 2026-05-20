@@ -26,6 +26,8 @@ final class PublicActionDispatchAttemptResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPaperAirplane;
 
+    protected static ?int $navigationSort = 43;
+
     #[Override]
     public static function form(Schema $schema): Schema
     {
@@ -61,6 +63,12 @@ final class PublicActionDispatchAttemptResource extends Resource
 
     #[Override]
     public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-admin::navigation.group_websites');
+    }
+
+    #[Override]
+    public static function getNavigationParentItem(): ?string
     {
         return __('capell-public-actions::filament.navigation_group');
     }

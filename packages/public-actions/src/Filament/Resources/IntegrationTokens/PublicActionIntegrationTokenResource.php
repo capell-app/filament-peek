@@ -28,6 +28,8 @@ final class PublicActionIntegrationTokenResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
+    protected static ?int $navigationSort = 44;
+
     #[Override]
     public static function form(Schema $schema): Schema
     {
@@ -69,6 +71,12 @@ final class PublicActionIntegrationTokenResource extends Resource
 
     #[Override]
     public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-admin::navigation.group_websites');
+    }
+
+    #[Override]
+    public static function getNavigationParentItem(): ?string
     {
         return __('capell-public-actions::filament.navigation_group');
     }

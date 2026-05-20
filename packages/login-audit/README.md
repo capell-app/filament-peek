@@ -1,6 +1,6 @@
 # Login Audit
 
-Login Audit records login, failed login, logout, and admin/user activity metadata for Capell users.
+Login Audit records Capell user access history. It wraps Rappasoft's authentication log package with Capell settings, a Filament resource, a dashboard widget, user-resource bridge fields, and IP retention controls.
 
 ## At A Glance
 
@@ -13,18 +13,19 @@ Login Audit records login, failed login, logout, and admin/user activity metadat
 
 ## What It Adds
 
-Login Audit records login, failed login, logout, and admin/user activity metadata for Capell users.
+Login Audit records login, failed login, logout, and last-activity metadata for Capell users.
 
 - Filament resource for authentication logs.
-- Dashboard widget for recent authentication activity.
-- Settings schema for authentication log behaviour.
-- Middleware for admin and user activity tracking.
+- Dashboard widget for recent access activity.
+- Settings schema for retention, IP tracking, resource visibility, and user-resource bridge fields.
+- Persistent admin middleware and frontend middleware alias for activity tracking.
+- User edit sidebar summary and relation manager when the bridge is enabled.
 
 ## Why It Matters
 
-**For developers:** Wraps Rappasoft Laravel Login Audit with Capell settings, resources, widgets, query actions, and IP resolution policy.
+**For developers:** The package keeps vendor logging in place but routes Capell-specific behaviour through Actions, settings, bridges, and resource configurators.
 
-**For teams:** Helps site operators review access activity and spot account behaviour that needs follow-up.
+**For teams:** Operators can review access history, failed logins, IP addresses, user agents, and recent activity without opening database records.
 
 ## Built With
 
@@ -53,15 +54,15 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Authentication log table filters.
 - Dashboard widget.
 - Authentication log settings screen.
+- User edit access summary.
+- User authentication logs relation manager.
 
 ## Technical Shape
 
-- LoginAuditServiceProvider and AdminServiceProvider register the package.
-- Config file: login-audit.php.
-- Migration creates login_audit.
-- Model: LoginAudit.
-- Filament resource: LoginAuditResource.
-- Middleware: AdminActivityMiddleware and UserActivityMiddleware.
+- `LoginAuditServiceProvider` registers config, translations, migrations, settings, protected table metadata, the `frontend.activity` middleware alias, and the `LoginAudit` model override.
+- `AdminServiceProvider` registers the admin bridge, Filament resource, dashboard widget, settings contributor, persistent admin middleware, and monthly `login-audit:purge` schedule.
+- `LoginAuditResource` extends `Tapp\FilamentAuthenticationLog\Resources\AuthenticationLogResource` and replaces the table with `LoginAuditsTable`.
+- `AdminActivityMiddleware` and `UserActivityMiddleware` update matching audit rows without changing unrelated vendor audit state.
 
 ## Code Map
 
@@ -81,13 +82,16 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 - Resources: `LoginAuditResource`.
 - Widgets: `LoginAuditsWidget`.
-- Settings: `LoginAuditSettings`.
+- Settings: `LoginAuditSettingsSchema`.
+- User resource bridge: `LoginAuditUserSchemaExtender` adds access summary state and `LoginAuditsRelationManager` when the host user model supports authentication logs.
 
 ## Data And Persistence
 
 - login_audit stores authenticatable type/id, IP address, user agent, login time, and logout time.
 - Records belong polymorphically to authenticatable users.
 - Config purge value defaults to 365 days.
+- `ApplyLoginAuditSettingsAction` applies retention and IP tracking settings before the scheduled purge runs.
+- `ResolveLoginAuditIpAddressAction` reads the configured CDN header when `login-audit.behind_cdn` is enabled; otherwise it uses the request IP.
 
 - Models: `LoginAudit`.
 - Migrations: `2026_05_10_190857_01_create_login_audit_table.php`.
@@ -111,17 +115,46 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Run migrations through the host application package install flow.
 - In this repository, verify package changes with `vendor/bin/pest`; do not use `php artisan`.
 
+### Laravel 13 dependency note
+
+Until `rappasoft/laravel-authentication-log` merges Laravel 13 support from [PR #140](https://github.com/rappasoft/laravel-authentication-log/pull/140), host Laravel 13 apps need the PR fork as a root Composer repository and alias:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/fdemb/laravel-authentication-log"
+        }
+    ],
+    "require": {
+        "rappasoft/laravel-authentication-log": "dev-main as 6.0.1"
+    }
+}
+```
+
+The package itself keeps the normal `^6.0|^5.0` dependency so it can move back to upstream tags when Laravel 13 support is released.
+
 ## Admin And Access
 
-- LoginAuditResource (packages/login-audit/src/Filament/Resources/LoginAudits/LoginAuditResource.php)
+- `LoginAuditResource` (`packages/login-audit/src/Filament/Resources/LoginAudits/LoginAuditResource.php`)
+- `LoginAuditsWidget` (`packages/login-audit/src/Filament/Widgets/LoginAuditsWidget.php`)
+- `LoginAuditSettingsSchema` (`packages/login-audit/src/Filament/Settings/LoginAuditSettingsSchema.php`)
+- `LoginAuditsRelationManager` (`packages/login-audit/src/Filament/Resources/Users/RelationManagers/LoginAuditsRelationManager.php`)
 
-- Gate: LoginAuditsWidget: `admin`, `super_admin`
+- `LoginAuditsWidget` is gated by `admin` and `super_admin` roles and the `login_audits` dashboard setting.
+- The user-resource bridge is controlled by the package settings and the host admin bridge support.
+
+## Screenshot Coverage
+
+The Laravel 13 demo harness has screenshots for the Login Audit resource, table filters, settings schema, dashboard/widget configuration, user edit access summary, and user relation use case. The relation use case requires the host user model to expose Rappasoft's `authentications()` relationship, normally by using `AuthenticationLoggable`.
 
 ## Common Pitfalls
 
 - Set CDN IP header config before trusting IP addresses behind a proxy.
 - Confirm notification settings before production rollout.
 - Run migrations before loading the resource.
+- In Laravel 13 apps, install the Rappasoft PR fork at the root app level until upstream ships a compatible tag.
 
 ## Docs
 

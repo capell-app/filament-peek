@@ -1,0 +1,63 @@
+---
+title: 'Document Lifecycle Overview'
+description: 'How the Capell Document Lifecycle package tracks controlled documents, publication versions, and acceptances.'
+---
+
+# Document Lifecycle Overview
+
+Document Lifecycle tracks controlled documents across publication and acceptance workflows. It is built for legal, policy, terms, and operational documents where the system needs to prove which version was published and accepted.
+
+## Hard Dependencies
+
+- `capell-app/admin`
+- `capell-app/core`
+- `capell-app/publishing-studio`
+
+## What It Adds
+
+- `DocumentResource` in the admin Websites navigation group.
+- Read/edit access to controlled document records.
+- Publication and acceptance relation managers on each document.
+- Actions for registering documents, publishing versioned content, resolving the latest publication, and recording acceptances.
+- Publishing Studio revision listener that creates document publications when a matching registered document is published.
+- Protected table registration for document and acceptance audit tables.
+
+## Admin Surfaces
+
+| Surface                       | Purpose                                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| `DocumentResource` index      | Lists controlled documents with key, title, status, publication count, and update time. |
+| `EditDocument`                | Edits title, status, and metadata for a controlled document.                            |
+| `PublicationsRelationManager` | Shows version labels, content hashes, publishing revision IDs, and publish times.       |
+| `AcceptancesRelationManager`  | Shows accepted versions, hashes, contexts, acceptors, and acceptance times.             |
+
+## Frontend Surfaces
+
+This package does not register public frontend routes or Blade views in the current implementation. Public projects should call package actions from their own consent, legal, or account flows when recording acceptances.
+
+## Screenshot Coverage
+
+The screenshot contract is stored in [screenshots.json](screenshots.json). The first isolated audit pass expects screenshots for:
+
+- controlled documents index;
+- controlled document edit form;
+- publications relation manager;
+- acceptances relation manager.
+
+## Install And Verify
+
+Install in a Capell app with Publishing Studio:
+
+```bash
+composer require capell-app/document-lifecycle
+```
+
+Then verify package behaviour from this repository:
+
+```bash
+vendor/bin/pest packages/document-lifecycle/tests --configuration=phpunit.xml
+```
+
+## Known Audit Notes
+
+Document Lifecycle is admin/database-only in this pass. It has no package-owned frontend output, so public screenshots should only be added when a host package wires these actions into a visible consent or legal-document flow.

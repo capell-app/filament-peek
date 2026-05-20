@@ -1,0 +1,45 @@
+{
+    "package": "password-policy",
+    "composerName": "capell-app/password-policy",
+    "generatedFor": "deployment-screenshot-runner",
+    "requiresInstalledPackage": true,
+    "outputDirectory": "public/docs/screenshots/packages/password-policy",
+    "entries": [
+        {
+            "id": "password-policy-settings",
+            "title": "Password Policy settings page.",
+            "package": "password-policy",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "PasswordPolicySettingsPage",
+            "required": true,
+            "notes": "Capture the System navigation settings page after the package is installed.",
+            "useCase": "An administrator configures password age, reuse, complexity, and enforcement rules.",
+            "screenshotPath": "public/docs/screenshots/packages/password-policy/password-policy-settings.png"
+        },
+        {
+            "id": "forced-password-change",
+            "title": "Forced password change form.",
+            "package": "password-policy",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "ForcedPasswordChangePage",
+            "required": true,
+            "notes": "Capture with a user flagged for password change so the form is visible.",
+            "useCase": "A flagged administrator is forced through the password-change form before continuing in the admin panel.",
+            "screenshotPath": "public/docs/screenshots/packages/password-policy/forced-password-change.png"
+        },
+        {
+            "id": "user-password-policy-columns",
+            "title": "User table password policy columns and filters.",
+            "package": "password-policy",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "UserResource",
+            "required": true,
+            "notes": "Capture the core Users table with package-added password status columns, filters, and require-password-change action.",
+            "useCase": "An administrator reviews password status columns, filters users by policy state, and triggers require-password-change actions.",
+            "screenshotPath": "public/docs/screenshots/packages/password-policy/user-password-policy-columns.png"
+        }
+    ]
+}

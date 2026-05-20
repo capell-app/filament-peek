@@ -28,6 +28,8 @@ final class AccessGateEventResource extends Resource
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Clock;
 
+    protected static ?int $navigationSort = 35;
+
     #[Override]
     public static function form(Schema $schema): Schema
     {
@@ -82,6 +84,12 @@ final class AccessGateEventResource extends Resource
 
     #[Override]
     public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-admin::navigation.group_websites');
+    }
+
+    #[Override]
+    public static function getNavigationParentItem(): ?string
     {
         return __('capell-access-gate::filament.navigation_group');
     }

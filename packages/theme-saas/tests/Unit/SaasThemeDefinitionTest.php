@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\ThemeStudio\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Data\ContentListingSectionData;
+use Capell\Core\ThemeStudio\Data\CtaSectionData;
+use Capell\Core\ThemeStudio\Data\FeatureSectionData;
+use Capell\Core\ThemeStudio\Data\FooterData;
+use Capell\Core\ThemeStudio\Data\HeroSectionData;
 use Capell\Core\ThemeStudio\Data\NavigationData;
+use Capell\Core\ThemeStudio\Data\ProofSectionData;
 use Capell\Core\ThemeStudio\Data\ThemePageData;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\ThemeStudio\Saas\SaasThemeServiceProvider;
@@ -58,7 +64,7 @@ it('registers saas only when the theme package is installed', function (): void 
         ->and($registry->definition('saas')->package)->toBe(SaasThemeServiceProvider::$packageName);
 });
 
-it('renders the saas theme page wrapper', function (): void {
+it('renders public theme markup without package identifiers', function (): void {
     CapellCore::clearPackages();
     CapellCore::forcePackageInstalled(SaasThemeServiceProvider::$packageName);
 
@@ -68,10 +74,53 @@ it('renders the saas theme page wrapper', function (): void {
     $provider->boot($registry);
 
     $html = $registry->renderer('saas')->render(new ThemePageData(
-        title: 'Birds',
+        title: 'Launchdeck',
         brand: new BrandProfileData,
-        sections: [],
+        sections: [
+            new HeroSectionData(
+                heading: 'Turn onboarding into activation',
+                eyebrow: 'Growth platform',
+                summary: 'A product-led page for teams improving conversion.',
+                actions: [['label' => 'Start trial', 'url' => '/signup']],
+            ),
+            new FeatureSectionData(
+                heading: 'Move faster with less friction',
+                features: [['title' => 'Activation paths', 'description' => 'Guide new users to the first valuable action.']],
+            ),
+            new ProofSectionData(
+                heading: 'Proof',
+                items: [['metric' => '31%', 'name' => 'Activation lift']],
+            ),
+            new ContentListingSectionData(
+                heading: 'Resources',
+                items: [['title' => 'Onboarding teardown', 'summary' => 'A practical checklist.', 'url' => '/resources/onboarding']],
+            ),
+            new CtaSectionData(
+                heading: 'Launch the next test',
+                actions: [['label' => 'Start trial', 'url' => '/signup']],
+            ),
+        ],
+        navigation: new NavigationData(
+            brandName: 'Launchdeck',
+            items: [['label' => 'Product', 'url' => '/product']],
+            ctaLabel: 'Start trial',
+            ctaUrl: '/signup',
+        ),
+        footer: new FooterData(
+            brandName: 'Launchdeck',
+            columns: [
+                ['heading' => 'Company', 'links' => [['label' => 'Contact', 'url' => '/contact']]],
+            ],
+        ),
     ));
 
-    expect($html)->toContain('data-capell-theme="saas"');
+    expect($html)
+        ->toContain('Launchdeck')
+        ->not->toContain('data-capell-theme')
+        ->not->toContain('capell-theme')
+        ->not->toContain('capell-app/theme-saas')
+        ->not->toContain('capell-theme-saas')
+        ->not->toContain('signed')
+        ->not->toContain('filament')
+        ->not->toContain('editor');
 });

@@ -13,7 +13,9 @@
             "targetType": "admin-surface",
             "target": null,
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture after installing capell-app/foundation-theme in the isolated demo harness and seeding the data required for this use case.",
+            "useCase": "A site owner adjusts Foundation Theme settings and reviews theme defaults.",
+            "screenshotPath": "public/docs/screenshots/packages/foundation-theme/foundation-theme-settings-screen.png"
         },
         {
             "id": "frontend-page-using-the-foundation-theme",
@@ -23,7 +25,9 @@
             "targetType": "frontend-url",
             "target": null,
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture after installing capell-app/foundation-theme in the isolated demo harness and seeding the data required for this use case.",
+            "useCase": "A visitor sees a seeded page rendered by Foundation Theme with its header, footer, tokens, and components.",
+            "screenshotPath": "public/docs/screenshots/packages/foundation-theme/frontend-page-using-the-foundation-theme.png"
         },
         {
             "id": "generated-tailwind-asset-output-review",
@@ -33,7 +37,21 @@
             "targetType": "admin-surface",
             "target": null,
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture after installing capell-app/foundation-theme in the isolated demo harness and seeding the data required for this use case.",
+            "useCase": "A developer verifies the generated Tailwind entrypoint after package/theme asset registration.",
+            "screenshotPath": "public/docs/screenshots/packages/foundation-theme/generated-tailwind-asset-output-review.png"
+        },
+        {
+            "id": "foundation-theme-header-area",
+            "title": "Foundation header Layout Builder area.",
+            "package": "foundation-theme",
+            "surface": "frontend",
+            "targetType": "frontend-url",
+            "target": null,
+            "required": true,
+            "notes": "Capture a public page with a seeded header-area block to prove Foundation Theme renders the registered Layout Builder header area.",
+            "useCase": "A maintainer verifies the registered Layout Builder header area renders through Foundation Theme.",
+            "screenshotPath": "public/docs/screenshots/packages/foundation-theme/foundation-theme-header-area.png"
         }
     ]
 }

@@ -25,6 +25,21 @@ Email Studio does not own:
 
 Those boundaries keep the package useful for transactional email without turning it into a newsletter platform.
 
+## Visible Surfaces
+
+Email Studio currently has no package-owned Filament resource, page, widget, public route, or public Blade screen to capture. `AdminServiceProvider` and `FrontendServiceProvider` reserve those integration surfaces for later slices, while `routes/web.php` is intentionally empty in the current package.
+
+The active runtime surface is service-level:
+
+- package actions for registering templates, rendering variants, suppressing recipients, sending messages, and delivering queued mail;
+- `SendEmailJob`;
+- provider adapter contracts and registries;
+- database records for templates, profiles, messages, recipients, events, replies, suppressions, registrations, and tracking tokens.
+
+## Screenshot Coverage
+
+The screenshot contract is stored in [screenshots.json](screenshots.json). It intentionally contains no required entries until an admin or frontend UI ships.
+
 ## Workflow
 
 ```mermaid

@@ -60,6 +60,7 @@ This package makes its Composer dependencies visible because they are part of th
 ## Data And Persistence
 
 - Migrations: `2026_05_10_190863_01_add_password_policy_columns_to_users_table.php`, `2026_05_10_190863_02_create_password_policy_password_histories_table.php`.
+- Settings migration: `2026_05_10_190864_01_create_password_policy_settings.php`.
 - Config: `packages/password-policy/config/capell-password-policy.php`.
 - Data objects live in `src/Data/`; use them for payloads, form state, and view models.
 
@@ -70,12 +71,13 @@ This package makes its Composer dependencies visible because they are part of th
 ## Install And Setup
 
 - Install with `composer require capell-app/password-policy` in the host Capell application.
-- Run migrations through the host application package install flow.
+- Run the host application package install flow so both `database/migrations` and `database/settings` files are published before migrations run.
 - In this repository, verify package changes with `vendor/bin/pest`; do not use `php artisan`.
 
 ## Docs
 
 - [overview.md](docs/overview.md)
+- [screenshots.json](docs/screenshots.json)
 - [credits-and-acknowledgements.md](docs/credits-and-acknowledgements.md)
 
 ## Testing

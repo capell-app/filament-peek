@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Capell\AccessGate\Policies;
 
+use BezhanSalleh\FilamentShield\Facades\FilamentShield;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Str;
@@ -68,10 +70,10 @@ abstract class AbstractAccessGateResourcePolicy
         return $this->hasPermission($user, 'reorder');
     }
 
-    private static function permission(string $ability, string $subject): string
+    private function permission(string $ability, string $subject): string
     {
-        $utilsClass = 'BezhanSalleh\\FilamentShield\\Support\\Utils';
-        $shieldClass = 'BezhanSalleh\\FilamentShield\\Facades\\FilamentShield';
+        $utilsClass = Utils::class;
+        $shieldClass = FilamentShield::class;
 
         if (class_exists($utilsClass) && class_exists($shieldClass)) {
             try {
@@ -126,7 +128,7 @@ abstract class AbstractAccessGateResourcePolicy
         }
 
         try {
-            return $user->checkPermissionTo(self::permission($ability, static::subject()));
+            return $user->checkPermissionTo($this->permission($ability, static::subject()));
         } catch (Throwable) {
             return false;
         }

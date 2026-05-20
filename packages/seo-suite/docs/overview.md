@@ -69,12 +69,17 @@ SEO Suite contributes content graph edges from page SEO snapshots and broken-lin
 
 ## Screenshot Plan
 
-- Page SEO settings tab, Page SEO panel, edit audit widget, and Pages-list overview widget.
-- SEO audit page.
-- Broken links page.
-- Translation coverage page.
-- AI creator action modal.
-- Search Console insights panel.
+- `seo-audit-page.png`: `SeoAuditPage` with a seeded `page_seo_snapshots` row.
+- `broken-links-page.png`: `BrokenLinksPage` with a seeded `broken_links` row.
+- `not-found-urls-page.png`: `NotFoundUrlsPage` with migrated Insights tables and a seeded missing page-view event.
+- `translation-coverage-page.png`: `TranslationCoveragePage` with seeded site/page/language data.
+- `ai-discovery-page.png`: `AiDiscoveryPage` with seeded site and page profiles.
+- `seo-settings-page.png`: `SeoSuiteSettingsPage`.
+- `page-seo-panel.png`: core Page edit screen with the SEO Suite tab/panel.
+- `search-console-insights-panel.png`: admin dashboard with seeded `search_console_url_metrics`.
+- `llms-txt-output.png`: `/llms.txt`.
+- `robots-txt-output.png`: `/robots.txt`.
+- `page-markdown-output.png`: `/index.md`.
 
 ## Screenshots
 
@@ -84,10 +89,17 @@ SEO Suite contributes content graph edges from page SEO snapshots and broken-lin
 
 ![Translation coverage settings](../../../public/docs/screenshots/packages/seo-suite/translation-coverage-page.png)
 
-The sitemap page, page SEO panel, and AI creator modal screenshots should be republished after those capture routes are stable.
+![AI Discovery page](../../../public/docs/screenshots/packages/seo-suite/ai-discovery-page.png)
+
+![Page SEO panel](../../../public/docs/screenshots/packages/seo-suite/page-seo-panel.png)
+
+The AI creator modal still needs a dedicated interaction capture once the demo profile can open the modal without external AI credentials.
 
 ## Pitfalls
 
+- `capell:seo-suite-install` must publish all SEO Suite schema migrations. The screenshot pass caught missing AI creator, broken link, page snapshot, and Search Console tables; the install command now publishes the complete set.
+- SEO Suite depends on Insights for `NotFoundUrlsPage` and dashboard widgets. In a disposable app, install and migrate `capell-app/insights` before capturing those surfaces.
+- Regenerate Filament Shield permissions after installing SEO Suite in a demo app: `php artisan shield:generate --all --panel=admin`.
 - Do not enable AI creator without checking provider credentials and review workflow.
 - Search Console requires credentials and property URL.
 - Publish gates can block publishing when required metadata is missing.
@@ -98,7 +110,7 @@ The sitemap page, page SEO panel, and AI creator modal screenshots should be rep
 
 ## Verification
 
-- Run `vendor/bin/pest packages/seo-suite/tests` when package tests exist.
+- Run `vendor/bin/pest packages/seo-suite/tests --configuration=phpunit.xml`.
 - Run the relevant host-app migration or package install flow in a disposable database.
 - Open the listed admin or frontend surface and compare it with the screenshot plan.
 
@@ -110,7 +122,7 @@ The sitemap page, page SEO panel, and AI creator modal screenshots should be rep
 - Tier: premium
 - Bundle: search-seo
 - Contexts: `admin`, `frontend`, `console`
-- Requires: `capell-app/admin`, `capell-app/frontend`, `capell-app/site-discovery`
+- Requires: `capell-app/admin`, `capell-app/frontend`, `capell-app/insights`, `capell-app/site-discovery`
 - Optional dependencies: None listed.
 
 SEO Suite relies on Site Discovery for public page discovery and sitemap outputs.
@@ -201,7 +213,9 @@ Deployment should read [screenshots.json](screenshots.json), install the package
 - Page SEO panel.
 - SEO audit page.
 - Broken links page.
-- Sitemap page.
+- Not-found URLs page.
 - Translation coverage page.
-- AI creator action modal.
+- AI Discovery page.
+- SEO Suite settings page.
 - Search Console insights panel.
+- Public AI Discovery outputs: `/llms.txt`, `/robots.txt`, and `/index.md`.

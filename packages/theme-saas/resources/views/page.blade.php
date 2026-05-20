@@ -1,6 +1,6 @@
 @once
     <style>
-        [data-capell-theme='saas'] {
+        .site-theme-shell {
             background:
                 radial-gradient(
                     circle at 20% 0%,
@@ -16,17 +16,17 @@
             font-family: var(--theme-body-font, Inter, system-ui, sans-serif);
         }
 
-        [data-capell-theme='saas'] section {
+        .site-theme-shell section {
             padding: clamp(4rem, 7vw, 7rem) 1.5rem;
         }
 
-        [data-capell-theme='saas'] section > div {
+        .site-theme-shell section > div {
             max-width: 74rem;
             margin-inline: auto;
         }
 
-        [data-capell-theme='saas'] h1,
-        [data-capell-theme='saas'] h2 {
+        .site-theme-shell h1,
+        .site-theme-shell h2 {
             max-width: 14ch;
             color: #0f172a;
             font-family: var(--theme-heading-font, inherit);
@@ -36,28 +36,27 @@
             letter-spacing: 0;
         }
 
-        [data-capell-theme='saas'] p {
+        .site-theme-shell p {
             max-width: 42rem;
             color: #475569;
             font-size: 1.125rem;
             line-height: 1.8;
         }
 
-        [data-capell-theme='saas'] a {
+        .site-theme-shell a {
             color: var(--theme-primary, #6366f1);
         }
 
-        [data-capell-theme='saas'] img,
-        [data-capell-theme='saas'] section div:empty {
+        .site-theme-shell img,
+        .site-theme-shell section div:empty {
             border-radius: 1rem;
         }
     </style>
 @endonce
 
 <div
-    data-capell-theme="{{ $themeKey }}"
     style="{{ collect($brand->tokens())->map(fn ($value, $token) => $token . ':' . $value)->implode(';') }}"
-    class="capell-theme-saas-page min-h-screen bg-white text-slate-950 antialiased"
+    class="site-theme-shell min-h-screen bg-white text-slate-950 antialiased"
 >
     {!! $content !!}
 </div>

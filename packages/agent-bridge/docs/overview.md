@@ -69,18 +69,20 @@ Lets trusted ai-orchestrator clients inspect Capell and request controlled site 
 
 ## Package Manifest
 
-- Composer name: No Composer manifest is present.
-- Product group: Not declared.
-- Kind: Not declared.
-- Tier: Not declared.
-- Bundle: Not declared.
-- Contexts: Not declared.
-- Requires: Not declared.
+- Composer name: `capell-app/agent-bridge`
+- Product group: Capell Operations
+- Kind: package
+- Tier: premium
+- Bundle: operations
+- Contexts: `admin`
+- Requires: `capell-app/admin`, `capell-app/core`
 - Optional dependencies: None listed.
 
 ## Admin Surfaces
 
 - CapellAgentBridgePromptBuilderPage (packages/agent-bridge/src/Filament/Pages/CapellAgentBridgePromptBuilderPage.php, slug `capell-agent-bridge/prompt-builder`)
+- User relation managers: `AgentBridgeTokensRelationManager`, `AgentBridgeConfirmationsRelationManager`, `AgentBridgeAuditEntriesRelationManager`
+- Settings schema: `AgentBridgeSettingsSchema`
 
 ## Commands
 

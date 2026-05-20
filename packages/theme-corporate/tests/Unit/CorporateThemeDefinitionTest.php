@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\ThemeStudio\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Data\ContentListingSectionData;
+use Capell\Core\ThemeStudio\Data\CtaSectionData;
+use Capell\Core\ThemeStudio\Data\FeatureSectionData;
+use Capell\Core\ThemeStudio\Data\FooterData;
+use Capell\Core\ThemeStudio\Data\HeroSectionData;
 use Capell\Core\ThemeStudio\Data\NavigationData;
+use Capell\Core\ThemeStudio\Data\ProofSectionData;
 use Capell\Core\ThemeStudio\Data\ThemePageData;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\ThemeStudio\Corporate\CorporateThemeServiceProvider;
@@ -59,7 +65,7 @@ it('registers corporate only when the theme package is installed', function (): 
         ->and($registry->definition('corporate')->package)->toBe(CorporateThemeServiceProvider::$packageName);
 });
 
-it('renders the corporate theme page wrapper', function (): void {
+it('renders public theme markup without package identifiers', function (): void {
     CapellCore::clearPackages();
     CapellCore::forcePackageInstalled(CorporateThemeServiceProvider::$packageName);
 
@@ -69,10 +75,53 @@ it('renders the corporate theme page wrapper', function (): void {
     $provider->boot($registry);
 
     $html = $registry->renderer('corporate')->render(new ThemePageData(
-        title: 'Birds',
+        title: 'Advisory',
         brand: new BrandProfileData,
-        sections: [],
+        sections: [
+            new HeroSectionData(
+                heading: 'Governance for growing teams',
+                eyebrow: 'Advisory',
+                summary: 'Practical strategy, compliance, and delivery support.',
+                actions: [['label' => 'Explore services', 'url' => '/services']],
+            ),
+            new FeatureSectionData(
+                heading: 'Trusted operating support',
+                features: [['title' => 'Risk reviews', 'description' => 'Structured reviews for critical decisions.']],
+            ),
+            new ProofSectionData(
+                heading: 'Evidence',
+                items: [['metric' => '24%', 'name' => 'Faster approvals']],
+            ),
+            new ContentListingSectionData(
+                heading: 'Insights',
+                items: [['title' => 'Board reporting', 'summary' => 'A clearer monthly reporting model.', 'url' => '/insights/board-reporting']],
+            ),
+            new CtaSectionData(
+                heading: 'Talk to an advisor',
+                actions: [['label' => 'Book a call', 'url' => '/contact']],
+            ),
+        ],
+        navigation: new NavigationData(
+            brandName: 'Northbridge Advisory',
+            items: [['label' => 'Services', 'url' => '/services']],
+            ctaLabel: 'Contact',
+            ctaUrl: '/contact',
+        ),
+        footer: new FooterData(
+            brandName: 'Northbridge Advisory',
+            columns: [
+                ['heading' => 'Company', 'links' => [['label' => 'Contact', 'url' => '/contact']]],
+            ],
+        ),
     ));
 
-    expect($html)->toContain('data-capell-theme="corporate"');
+    expect($html)
+        ->toContain('Northbridge Advisory')
+        ->not->toContain('data-capell-theme')
+        ->not->toContain('capell-theme')
+        ->not->toContain('capell-app/theme-corporate')
+        ->not->toContain('capell-theme-corporate')
+        ->not->toContain('signed')
+        ->not->toContain('filament')
+        ->not->toContain('editor');
 });

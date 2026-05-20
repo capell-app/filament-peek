@@ -1,4 +1,4 @@
-<section class="capell-theme-saas-content-listing mx-auto max-w-7xl px-6 py-16">
+<section class="theme-content-listing mx-auto max-w-7xl px-6 py-16">
     <div class="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
             <h2 class="text-3xl font-bold tracking-tight">

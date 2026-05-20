@@ -31,6 +31,8 @@ final class GrantResource extends Resource
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Key;
 
+    protected static ?int $navigationSort = 32;
+
     protected static ?string $recordTitleAttribute = 'email';
 
     #[Override]
@@ -109,6 +111,12 @@ final class GrantResource extends Resource
 
     #[Override]
     public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-admin::navigation.group_websites');
+    }
+
+    #[Override]
+    public static function getNavigationParentItem(): ?string
     {
         return __('capell-access-gate::filament.navigation_group');
     }

@@ -41,6 +41,8 @@ final class AccessAreaResource extends Resource
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::LockClosed;
 
+    protected static ?int $navigationSort = 30;
+
     protected static ?string $recordTitleAttribute = 'name';
 
     #[Override]
@@ -175,13 +177,13 @@ final class AccessAreaResource extends Resource
     #[Override]
     public static function getNavigationGroup(): ?string
     {
-        return __('capell-access-gate::filament.navigation_group');
+        return (string) __('capell-admin::navigation.group_websites');
     }
 
     #[Override]
     public static function getNavigationLabel(): string
     {
-        return __('capell-access-gate::filament.resources.access_areas');
+        return __('capell-access-gate::filament.navigation_group');
     }
 
     #[Override]

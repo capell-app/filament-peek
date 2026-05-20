@@ -6,24 +6,16 @@
     "outputDirectory": "public/docs/screenshots/packages/seo-suite",
     "entries": [
         {
-            "id": "page-seo-panel",
-            "title": "Page SEO panel.",
-            "package": "seo-suite",
-            "surface": "admin",
-            "targetType": "admin-surface",
-            "target": "BrokenLinksPage",
-            "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
-        },
-        {
             "id": "seo-audit-page",
             "title": "SEO audit page.",
             "package": "seo-suite",
             "surface": "admin",
             "targetType": "admin-surface",
-            "target": "BrokenLinksPage",
+            "target": "SeoAuditPage",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Seed at least one page_seo_snapshots row so score, severity, and status columns are visible.",
+            "useCase": "An administrator reviews SEO audit scores and remediation state for seeded pages.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/seo-audit-page.png"
         },
         {
             "id": "broken-links-page",
@@ -33,17 +25,21 @@
             "targetType": "admin-surface",
             "target": "BrokenLinksPage",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Seed a broken_links row connected to a page so the source page, target URL, status, and redirect action are visible.",
+            "useCase": "An administrator reviews broken link findings and their source pages.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/broken-links-page.png"
         },
         {
-            "id": "sitemap-page",
-            "title": "Sitemap page.",
+            "id": "not-found-urls-page",
+            "title": "Not-found URLs page.",
             "package": "seo-suite",
             "surface": "admin",
             "targetType": "admin-surface",
-            "target": "BrokenLinksPage",
+            "target": "NotFoundUrlsPage",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Install and migrate capell-app/insights, then seed at least one page_view event for a missing URL.",
+            "useCase": "An administrator reviews missing frontend URLs grouped by visitor count and latest view.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/not-found-urls-page.png"
         },
         {
             "id": "translation-coverage-page",
@@ -51,19 +47,47 @@
             "package": "seo-suite",
             "surface": "admin",
             "targetType": "admin-surface",
-            "target": "BrokenLinksPage",
+            "target": "TranslationCoveragePage",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Seed at least one site/page/language combination so translation coverage rows are visible.",
+            "useCase": "An administrator reviews missing or stale translation coverage for SEO-relevant content.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/translation-coverage-page.png"
         },
         {
-            "id": "ai-creator-action-modal",
-            "title": "AI creator action modal.",
+            "id": "ai-discovery-page",
+            "title": "AI Discovery page.",
             "package": "seo-suite",
             "surface": "admin",
             "targetType": "admin-surface",
-            "target": "BrokenLinksPage",
+            "target": "AiDiscoveryPage",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Seed AI Discovery site and page profiles so inclusion, summary, readiness, and Markdown columns are visible.",
+            "useCase": "An administrator manages which public pages appear in AI-readable discovery output.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/ai-discovery-page.png"
+        },
+        {
+            "id": "seo-settings-page",
+            "title": "SEO Suite settings page.",
+            "package": "seo-suite",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "SeoSuiteSettingsPage",
+            "required": true,
+            "notes": "Capture the extension settings page after running capell:seo-suite-install so settings rows exist.",
+            "useCase": "An administrator reviews SEO audit, AI Discovery, crawler, Search Console, and AI provider settings.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/seo-settings-page.png"
+        },
+        {
+            "id": "page-seo-panel",
+            "title": "Page SEO panel.",
+            "package": "seo-suite",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "EditPage",
+            "required": true,
+            "notes": "Open a seeded Page edit screen and capture the SEO tab/panel added by SEO Suite.",
+            "useCase": "An editor edits page-level metadata, canonical state, social metadata, and SEO checks.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/page-seo-panel.png"
         },
         {
             "id": "search-console-insights-panel",
@@ -71,9 +95,47 @@
             "package": "seo-suite",
             "surface": "admin",
             "targetType": "admin-surface",
-            "target": "BrokenLinksPage",
+            "target": "Dashboard",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Seed search_console_url_metrics so dashboard widgets show clicks, impressions, movement, and opportunities.",
+            "useCase": "An administrator reviews Search Console-style performance panels when metrics are seeded.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/search-console-insights-panel.png"
+        },
+        {
+            "id": "llms-txt-output",
+            "title": "llms.txt output.",
+            "package": "seo-suite",
+            "surface": "frontend",
+            "targetType": "frontend-url",
+            "target": "/llms.txt",
+            "required": true,
+            "notes": "Seed AI Discovery site/page profiles and use visitor-facing summary text only.",
+            "useCase": "An AI crawler reads the concise public page index for the site.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/llms-txt-output.png"
+        },
+        {
+            "id": "robots-txt-output",
+            "title": "robots.txt output.",
+            "package": "seo-suite",
+            "surface": "frontend",
+            "targetType": "frontend-url",
+            "target": "/robots.txt",
+            "required": true,
+            "notes": "Seed crawler rules or settings and capture the public crawler directives.",
+            "useCase": "A crawler or operator reviews the public robot directives generated by SEO Suite.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/robots-txt-output.png"
+        },
+        {
+            "id": "page-markdown-output",
+            "title": "Page Markdown output.",
+            "package": "seo-suite",
+            "surface": "frontend",
+            "targetType": "frontend-url",
+            "target": "/index.md",
+            "required": true,
+            "notes": "Enable Markdown pages on the AI Discovery site profile and capture visitor-safe Markdown.",
+            "useCase": "An AI crawler reads the Markdown representation of a public page.",
+            "screenshotPath": "public/docs/screenshots/packages/seo-suite/page-markdown-output.png"
         }
     ]
 }

@@ -6,6 +6,7 @@ namespace Capell\LoginAudit\Filament\Resources\LoginAudits;
 
 use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\LoginAudit\Filament\Resources\LoginAudits\Tables\LoginAuditsTable;
+use Capell\LoginAudit\Models\LoginAudit;
 use Filament\Tables\Table;
 use Override;
 use Tapp\FilamentAuthenticationLog\Resources\AuthenticationLogResource;
@@ -13,6 +14,8 @@ use Tapp\FilamentAuthenticationLog\Resources\AuthenticationLogResource;
 class LoginAuditResource extends AuthenticationLogResource
 {
     use HasConfiguredTable;
+
+    protected static ?string $model = LoginAudit::class;
 
     protected static string $tableConfigurator = LoginAuditsTable::class;
 

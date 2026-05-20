@@ -2,14 +2,15 @@
 
 Status: **Available, no schema impact** · Kind: **theme** · Tier: **premium** · Bundle: **themes** · Contexts: **frontend** · Product group: **Capell Themes**
 
-This page is the consolidated implementation overview for the Theme SaaS package. It is extracted from the package README, service providers, migrations, config files, routes, resources, models, actions, and the shared Capell ERD notes where available.
+This page documents the renderer-only Theme SaaS package from the code that ships in this repository. It covers the package boundary, the browser surfaces used for screenshots, and the setup checks needed in a disposable Capell app.
 
 ## What This Package Adds
 
 Theme SaaS is a standalone Capell theme package. It registers the `saas` theme key, extends Foundation Theme, and adds product-focused renderer views for software and subscription sites.
 
 - SaaS theme service provider.
-- Theme renderer/views for SaaS theme output.
+- Theme renderer/views for SaaS page output.
+- Section Blade views for navigation, hero, features, proof, content listing, CTA, and footer.
 - Dependency on Foundation Theme.
 
 ## Developer Notes
@@ -21,12 +22,13 @@ Adds a renderer package that uses Foundation Theme runtime contracts while leavi
 - Uses Foundation Theme runtime data and standard section keys, while rendering its own page and section Blade views.
 - Ships Blade resources for the page wrapper and standard theme sections.
 - No migrations, config, routes, models, admin navigation, or package-owned settings are present.
+- Public theme output must not expose package identifiers, signed admin URLs, Filament/editor markers, or other authoring metadata. The package test renders every section and checks for those leak tokens.
 
 ## Operational Notes
 
 Provides a SaaS-oriented visual option for product sites managed through the normal Theme admin page and install flow.
 
-- Adds a SaaS renderer to theme system.
+- Adds a SaaS renderer to the theme system.
 - No database changes.
 - No admin navigation by itself.
 - No public routes by itself.
@@ -38,21 +40,24 @@ Provides a SaaS-oriented visual option for product sites managed through the nor
 
 ## Screenshot Plan
 
-- Theme preset selection showing SaaS.
-- Frontend page rendered with SaaS theme.
-- Theme preview URL output.
+- Theme admin list showing SaaS.
+- Frontend page rendered with SaaS theme at `/theme-saas-demo`.
+- Theme preview URL output from `capell.admin.theme-preview`.
 
 ## Pitfalls
 
+- Install Layout Builder before Foundation Theme in a disposable harness; Foundation Theme setup expects the layout stack to be available.
 - Install Foundation Theme before using this renderer.
-- Verify Foundation Theme assets are generated.
+- Build both frontend and Filament assets. Missing Foundation Theme manifests make screenshots fail even when the Composer install succeeds.
+- Keep Theme Studio settings aligned with `activeTheme: "saas"` and a SaaS preset such as `launch`, `platform`, or `labs`. Stale settings from another theme can render the wrong token set.
 - Do not install a Studio metapackage; this package installs independently.
 
 ## Verification
 
-- Run `vendor/bin/pest packages/theme-saas/tests` when package tests exist.
-- Run the relevant host-app migration or package install flow in a disposable database.
-- Open the listed admin or frontend surface and compare it with the screenshot plan.
+- Run `vendor/bin/pest packages/theme-saas/tests --configuration=phpunit.xml`.
+- In a disposable Capell app, install only the core stack, Layout Builder, Foundation Theme, and `capell-app/theme-saas`.
+- Open `/theme-saas-demo` anonymously and scan the response for `capell-theme`, `data-capell-theme`, `theme-saas`, `signed`, `filament`, `editor`, and `/admin`.
+- Capture the screenshots listed in [screenshots.json](screenshots.json).
 
 ## Package Manifest
 
@@ -68,11 +73,11 @@ Provides a SaaS-oriented visual option for product sites managed through the nor
 
 ## Admin Surfaces
 
-- None proven in this package directory.
+- Core Themes resource: `ThemeResource:index`. This is a core/admin surface that lists the installed SaaS theme once the package is installed.
 
 ## Commands
 
-- None proven in this package directory.
+- Disposable screenshot route used by the audit harness: `/theme-saas-demo`. The package itself does not register this route.
 
 ## Routes And Config
 
@@ -94,6 +99,6 @@ This package has no committed ERD excerpt. Use implementation notes and extensio
 
 Deployment should read [screenshots.json](screenshots.json), install the package with demo data, resolve each admin surface or frontend URL, and write images to `public/docs/screenshots/packages/theme-saas`.
 
-- Theme preset selection showing SaaS.
+- Theme admin list showing SaaS.
 - Frontend page rendered with SaaS theme.
 - Theme preview URL output.

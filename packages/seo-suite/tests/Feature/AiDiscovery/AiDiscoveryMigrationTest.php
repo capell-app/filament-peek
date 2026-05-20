@@ -223,14 +223,21 @@ it('adds ai discovery seo suite settings defaults', function (): void {
         ->and($settings->ai_discovery_crawler_policy)->toBe('search_visible_training_restricted');
 });
 
-it('publishes the ai discovery settings migration during seo suite install', function (): void {
+it('publishes the complete seo suite schema and settings migrations during install', function (): void {
     $command = new ReflectionClass(InstallCommand::class);
     $source = file_get_contents((string) $command->getFileName());
 
-    expect($source)->toContain('create_ai_discovery_site_profiles_table')
+    expect($source)->toContain('create_ai_creator_contexts_table')
+        ->and($source)->toContain('create_ai_generation_histories_table')
+        ->and($source)->toContain('create_ai_creator_sessions_table')
+        ->and($source)->toContain('create_ai_discovery_site_profiles_table')
         ->and($source)->toContain('create_ai_discovery_page_profiles_table')
         ->and($source)->toContain('create_ai_discovery_crawler_rules_table')
         ->and($source)->toContain('create_ai_discovery_snapshots_table')
+        ->and($source)->toContain('create_broken_links_table')
+        ->and($source)->toContain('create_page_seo_snapshots_table')
+        ->and($source)->toContain('create_search_console_url_metrics_table')
+        ->and($source)->toContain('2026_05_10_190871_01_create_ai-orchestrator_settings')
         ->and($source)->toContain('2026_05_10_190871_03_create_seo_suite_settings');
 });
 

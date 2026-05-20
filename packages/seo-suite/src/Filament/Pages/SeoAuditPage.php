@@ -29,6 +29,8 @@ class SeoAuditPage extends Page implements HasActions, HasTable
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::MagnifyingGlass;
 
+    protected static ?int $navigationSort = 10;
+
     protected string $view = 'capell-admin::components.pages.table';
 
     protected static ?string $slug = 'seo-audit';

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7fc145bacbe531837631baf870e5da9",
+    "content-hash": "bc5f8b6d8e0e81b36e0bc64a086e1bce",
     "packages": [
         {
             "name": "aimeos/laravel-nestedset",
@@ -800,10 +800,16 @@
         {
             "name": "capell-app/content-blocks",
             "version": "4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:capell-app/block-library.git",
+                "reference": "80852ce17cbc92384482645b9fa832859aa1ec09"
+            },
             "dist": {
-                "type": "path",
-                "url": "./packages/block-library",
-                "reference": "4816d2d632ff6690b1143edca59ecb1e0f111a95"
+                "type": "zip",
+                "url": "https://api.github.com/repos/capell-app/block-library/zipball/80852ce17cbc92384482645b9fa832859aa1ec09",
+                "reference": "80852ce17cbc92384482645b9fa832859aa1ec09",
+                "shasum": ""
             },
             "require": {
                 "capell-app/core": "*",
@@ -816,6 +822,7 @@
                 "capell-app/content-sections": "Registers reusable section blocks against typed block definitions.",
                 "capell-app/foundation-theme": "Renders package block views through the default frontend theme."
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -848,10 +855,11 @@
                 "filamentphp",
                 "laravel"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/capell-app/block-library/tree/4.x",
+                "issues": "https://github.com/capell-app/block-library/issues"
+            },
+            "time": "2026-05-18T19:48:57+00:00"
         },
         {
             "name": "capell-app/core",
@@ -3760,16 +3768,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.9.0",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884"
+                "reference": "d5ddaf5743c42a61cb6100f83dc9d5a2bafe75ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/7d0ed42f28e42d61352a7a79de682e5e67fec884",
-                "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/d5ddaf5743c42a61cb6100f83dc9d5a2bafe75ca",
+                "reference": "d5ddaf5743c42a61cb6100f83dc9d5a2bafe75ca",
                 "shasum": ""
             },
             "require": {
@@ -3784,9 +3792,9 @@
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
-                "http-interop/http-factory-tests": "0.9.0",
+                "http-interop/http-factory-tests": "1.1.0",
                 "jshttp/mime-db": "1.54.0.1",
-                "phpunit/phpunit": "^8.5.44 || ^9.6.25"
+                "phpunit/phpunit": "^8.5.52 || ^9.6.34"
             },
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
@@ -3857,7 +3865,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.9.0"
+                "source": "https://github.com/guzzle/psr7/tree/2.10.0"
             },
             "funding": [
                 {
@@ -3873,7 +3881,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-10T16:41:02+00:00"
+            "time": "2026-05-19T17:32:11+00:00"
         },
         {
             "name": "guzzlehttp/uri-template",
@@ -8808,31 +8816,32 @@
         },
         {
             "name": "rappasoft/laravel-authentication-log",
-            "version": "v6.0.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rappasoft/laravel-authentication-log.git",
-                "reference": "9a810376ea1624aeca3bc983c33be9a82593f991"
+                "url": "https://github.com/fdemb/laravel-authentication-log.git",
+                "reference": "1fbdbdc575a5185c395116d2e1b7701aae56ca39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rappasoft/laravel-authentication-log/zipball/9a810376ea1624aeca3bc983c33be9a82593f991",
-                "reference": "9a810376ea1624aeca3bc983c33be9a82593f991",
+                "url": "https://api.github.com/repos/fdemb/laravel-authentication-log/zipball/1fbdbdc575a5185c395116d2e1b7701aae56ca39",
+                "reference": "1fbdbdc575a5185c395116d2e1b7701aae56ca39",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^11.0|^12.0",
-                "php": "^8.1",
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.4.3"
             },
             "require-dev": {
                 "nunomaduro/collision": "^8.0",
-                "orchestra/testbench": "^8.0|^9.0|^10.0",
-                "pestphp/pest": "^3.7",
-                "pestphp/pest-plugin-laravel": "^3.1",
+                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.7|^4.0",
+                "pestphp/pest-plugin-laravel": "^3.1|^4.0",
                 "spatie/laravel-ray": "^1.29",
                 "vimeo/psalm": "^4.20|^5.0|^6.6"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -8847,7 +8856,16 @@
                     "Rappasoft\\LaravelAuthenticationLog\\Database\\Factories\\": "database/factories"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Rappasoft\\LaravelAuthenticationLog\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "./vendor/bin/pest --no-coverage"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -8866,16 +8884,15 @@
                 "rappasoft"
             ],
             "support": {
-                "issues": "https://github.com/rappasoft/laravel-authentication-log/issues",
-                "source": "https://github.com/rappasoft/laravel-authentication-log/tree/v6.0.1"
+                "source": "https://github.com/fdemb/laravel-authentication-log/tree/main"
             },
             "funding": [
                 {
-                    "url": "https://github.com/rappasoft",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/rappasoft"
                 }
             ],
-            "time": "2025-12-08T14:26:03+00:00"
+            "time": "2026-04-03T09:03:50+00:00"
         },
         {
             "name": "rize/uri-template",
@@ -20237,7 +20254,14 @@
             "time": "2026-02-13T19:45:34+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "rappasoft/laravel-authentication-log",
+            "version": "dev-main",
+            "alias": "6.0.1",
+            "alias_normalized": "6.0.1.0"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "capell-app/admin": 20,
@@ -20245,6 +20269,7 @@
         "capell-app/frontend": 20,
         "capell-app/installer": 20,
         "capell-app/marketplace": 20,
+        "rappasoft/laravel-authentication-log": 20,
         "saade/filament-adjacency-list": 20
     },
     "prefer-stable": true,

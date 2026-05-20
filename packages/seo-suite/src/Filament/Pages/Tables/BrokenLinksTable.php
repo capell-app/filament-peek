@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Capell\SeoSuite\Filament\Pages\Tables;
 
 use Capell\Admin\Filament\Components\Tables\Columns\DateColumn;
-use Capell\Admin\Filament\Components\Tables\Columns\Page\PageNameColumn;
 use Capell\Admin\Filament\Contracts\TableConfigurator;
 use Capell\Admin\Support\SafeAdminUrl;
+use Capell\Core\Actions\GetEditPageResourceUrlAction;
 use Capell\SeoSuite\Actions\DashboardReports\BuildBrokenLinksQueryAction;
 use Capell\SeoSuite\Filament\Actions\CreateRedirectFromBrokenLinkAction;
+use Capell\SeoSuite\Models\BrokenLink;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,9 +22,12 @@ class BrokenLinksTable implements TableConfigurator
         return $table
             ->query(fn (): Builder => BuildBrokenLinksQueryAction::run())
             ->columns([
-                PageNameColumn::make('page.name')
+                TextColumn::make('page.name')
                     ->label(__('capell-admin::table.page'))
                     ->size('sm')
+                    ->url(fn (BrokenLink $record): ?string => $record->page === null
+                        ? null
+                        : GetEditPageResourceUrlAction::run($record->page))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('target_url')

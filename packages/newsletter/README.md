@@ -84,6 +84,8 @@ Newsletter manages audiences, subscriptions, consent state, imports, notificatio
 
 ## Docs
 
+- [overview.md](docs/overview.md)
+- [screenshots.json](docs/screenshots.json)
 - [subscription-workflow.md](docs/subscription-workflow.md)
 
 ## Testing

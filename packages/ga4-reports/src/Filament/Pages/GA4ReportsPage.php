@@ -25,6 +25,8 @@ final class GA4ReportsPage extends Page
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ChartBarSquare;
 
+    protected static ?int $navigationSort = 2;
+
     protected string $view = 'capell-ga4-reports::filament.pages.ga4-reports';
 
     protected static ?string $slug = 'ga4-reports';

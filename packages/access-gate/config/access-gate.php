@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Capell\HtmlCache\Http\Middleware\HtmlCacheMiddleware;
+
 return [
     'connection' => env('ACCESS_GATE_DB_CONNECTION'),
 
@@ -33,7 +35,7 @@ return [
         ],
         'page_cache_aliases' => [
             'frontend.cache',
-            'Capell\\HtmlCache\\Http\\Middleware\\HtmlCacheMiddleware',
+            HtmlCacheMiddleware::class,
         ],
     ],
 

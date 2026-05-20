@@ -112,7 +112,7 @@ class AdminServiceProvider extends ServiceProvider
         CapellAdmin::registerNavigationGroup(
             label: 'capell-admin::navigation.group_marketing',
             position: NavigationGroupPositionEnum::After,
-            relativeTo: 'capell-admin::navigation.group_content',
+            relativeTo: 'capell-admin::navigation.group_websites',
         );
 
         return $this;

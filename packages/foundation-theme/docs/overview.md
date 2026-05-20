@@ -79,12 +79,14 @@ Gives each Capell installation a standard frontend foundation before a custom or
 - Tier: free
 - Bundle: foundation
 - Contexts: `frontend`, `admin`
-- Requires: Not declared.
+- Requires: `capell-app/frontend`, `capell-app/layout-builder`.
 - Optional dependencies: None listed.
 
 ## Admin Surfaces
 
-- None proven in this package directory.
+- Settings schema: `FoundationThemeSettingsSchema`.
+- Theme chrome registrations: Foundation header and footer choices for theme settings.
+- Layout Builder area: `header`, rendered from the Foundation header chrome.
 
 ## Commands
 
@@ -113,3 +115,4 @@ Deployment should read [screenshots.json](screenshots.json), install the package
 - Default theme settings screen.
 - Frontend page using the default theme.
 - Generated Tailwind asset output review.
+- Header Layout Builder area rendered inside the Foundation header.

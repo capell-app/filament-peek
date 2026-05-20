@@ -14,7 +14,9 @@
             "target": "WorkspaceResource",
             "required": true,
             "capturedFile": "docs/images/screenshots/10-workflow-dashboard.png",
-            "notes": "Show the flagship timeline entry point with active drafts, review status, publish readiness, and recent workflow activity."
+            "notes": "Show the flagship timeline entry point with active drafts, review status, publish readiness, and recent workflow activity. Existing documentation image: docs/images/screenshots/10-workflow-dashboard.png.",
+            "useCase": "An editor reviews active drafts, review status, publish readiness, and recent workflow activity.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/editorial-timeline-dashboard.png"
         },
         {
             "id": "editor-responsibility",
@@ -25,7 +27,9 @@
             "target": "WorkspaceResource",
             "required": true,
             "capturedFile": "docs/images/screenshots/11-workspaces-editor-submit.png",
-            "notes": "Show editors managing draft changes while content remains isolated from the live page until a release action runs."
+            "notes": "Show editors managing draft changes while content remains isolated from the live page until a release action runs. Existing documentation image: docs/images/screenshots/11-workspaces-editor-submit.png.",
+            "useCase": "An editor manages draft changes while live content remains isolated until release.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/editor-responsibility.png"
         },
         {
             "id": "reviewer-responsibility",
@@ -36,7 +40,9 @@
             "target": "WorkspaceResource",
             "required": true,
             "capturedFile": "docs/images/screenshots/12-review-approval.png",
-            "notes": "Show reviewers approving, rejecting, or requesting changes before publish controls become available."
+            "notes": "Show reviewers approving, rejecting, or requesting changes before publish controls become available. Existing documentation image: docs/images/screenshots/12-review-approval.png.",
+            "useCase": "A reviewer approves, rejects, or requests changes before publish controls become available.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/reviewer-responsibility.png"
         },
         {
             "id": "live-preview",
@@ -46,7 +52,9 @@
             "targetType": "frontend-url",
             "target": null,
             "required": true,
-            "notes": "Show a signed preview URL rendering draft content before it reaches the live version."
+            "notes": "Show a signed preview URL rendering draft content before it reaches the live version.",
+            "useCase": "An editor opens a signed preview URL that renders draft content before it reaches the live page.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/live-preview.png"
         },
         {
             "id": "preview-link-management",
@@ -57,7 +65,9 @@
             "target": "PreviewLinkResource",
             "required": true,
             "capturedFile": "docs/images/screenshots/13-preview-links.png",
-            "notes": "Show issued preview links with expiry, revocation, last accessed time, and access count."
+            "notes": "Show issued preview links with expiry, revocation, last accessed time, and access count. Existing documentation image: docs/images/screenshots/13-preview-links.png.",
+            "useCase": "An editor manages issued preview links, expiry, revocation, last access, and access count.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/preview-link-management.png"
         },
         {
             "id": "compare-readiness",
@@ -67,7 +77,9 @@
             "targetType": "admin-surface",
             "target": "CompareVersionPage",
             "required": true,
-            "notes": "Show side-by-side changes, field comments, and publish checks before approval or release."
+            "notes": "Show side-by-side changes, field comments, and publish checks before approval or release.",
+            "useCase": "A reviewer compares field-level changes and publish checks before approving or releasing content.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/compare-readiness.png"
         },
         {
             "id": "approval-history",
@@ -77,7 +89,9 @@
             "targetType": "admin-surface",
             "target": "WorkspaceResource",
             "required": true,
-            "notes": "Show reviewer assignments and approve, reject, or request-changes decisions in timeline order."
+            "notes": "Show reviewer assignments and approve, reject, or request-changes decisions in timeline order.",
+            "useCase": "An editor reviews reviewer assignments and approval decisions in timeline order.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/approval-history.png"
         },
         {
             "id": "scheduled-publishing",
@@ -88,7 +102,9 @@
             "target": "ScheduledPublishingPage",
             "required": true,
             "capturedFile": "docs/images/screenshots/14-scheduled-publishing.png",
-            "notes": "Show release timing, scheduled publishing-studio, embargo-aware publishing windows, and queue state."
+            "notes": "Show release timing, scheduled publishing-studio, embargo-aware publishing windows, and queue state. Existing documentation image: docs/images/screenshots/14-scheduled-publishing.png.",
+            "useCase": "An editor schedules release timing and reviews queue state for future publication.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/scheduled-publishing.png"
         },
         {
             "id": "scheduler-metadata",
@@ -98,7 +114,9 @@
             "targetType": "admin-surface",
             "target": "WorkspaceResource",
             "required": true,
-            "notes": "Show unpublish dates, embargo windows, and review reminders attached to a workspace."
+            "notes": "Show unpublish dates, embargo windows, and review reminders attached to a workspace.",
+            "useCase": "An editor reviews unpublish dates, embargo windows, and review reminders on a workspace.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/scheduler-metadata.png"
         },
         {
             "id": "stale-drafts",
@@ -109,7 +127,9 @@
             "target": "StaleDraftsPage",
             "required": true,
             "capturedFile": "docs/images/screenshots/15-stale-drafts.png",
-            "notes": "Show stale workspace detection, review nudges, and cleanup actions for unfinished draft work."
+            "notes": "Show stale workspace detection, review nudges, and cleanup actions for unfinished draft work. Existing documentation image: docs/images/screenshots/15-stale-drafts.png.",
+            "useCase": "An editor identifies stale workspaces and uses review nudges or cleanup actions.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/stale-drafts.png"
         },
         {
             "id": "activity-history",
@@ -119,7 +139,9 @@
             "targetType": "admin-surface",
             "target": "ActivityTrailPage",
             "required": true,
-            "notes": "Show the audit-friendly content history across previews, comments, approvals, publishing, and rollback events."
+            "notes": "Show the audit-friendly content history across previews, comments, approvals, publishing, and rollback events.",
+            "useCase": "An auditor reviews content history across previews, comments, approvals, publishing, and rollback events.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/activity-history.png"
         },
         {
             "id": "rollback-restore",
@@ -129,7 +151,9 @@
             "targetType": "admin-surface",
             "target": "PageVersionHistoryPage",
             "required": true,
-            "notes": "Show version history with restore context, rollback lineage, and the currently live version."
+            "notes": "Show version history with restore context, rollback lineage, and the currently live version.",
+            "useCase": "An administrator reviews version history, rollback lineage, and the currently live version before restore.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/rollback-restore.png"
         },
         {
             "id": "preview-banner",
@@ -139,7 +163,9 @@
             "targetType": "frontend-url",
             "target": null,
             "required": true,
-            "notes": "Show the frontend workspace banner that confirms editors are viewing draft content and can exit preview mode."
+            "notes": "Show the frontend workspace banner that confirms editors are viewing draft content and can exit preview mode.",
+            "useCase": "An editor sees the frontend preview banner confirming draft preview mode and offering an exit path.",
+            "screenshotPath": "public/docs/screenshots/packages/publishing-studio/preview-banner.png"
         }
     ]
 }

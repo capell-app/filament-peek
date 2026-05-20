@@ -72,6 +72,8 @@ Access gating foundations for Capell CMS.
 ## Docs
 
 - [access-requests.md](docs/access-requests.md)
+- [overview.md](docs/overview.md)
+- [screenshots.json](docs/screenshots.json)
 
 ## Testing
 

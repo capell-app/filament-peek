@@ -1,5 +1,5 @@
 <section
-    class="capell-theme-corporate-proof border-b border-slate-800 bg-slate-950 text-white dark:border-white/10 dark:bg-black"
+    class="theme-proof border-b border-slate-800 bg-slate-950 text-white dark:border-white/10 dark:bg-black"
 >
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:py-16">
         <div class="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-8">

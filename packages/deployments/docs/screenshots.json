@@ -13,7 +13,21 @@
             "targetType": "admin-surface",
             "target": "DeploymentConnectionPage",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture as a user with View:DeploymentConnectionPage. The empty state only shows provider OAuth buttons; seed one active connection when the screenshot should include repository details.",
+            "screenshotPath": "public/docs/screenshots/packages/deployments/deployment-connection-page.png",
+            "useCase": "An operator connects or reviews the Git provider repository used for package install pull requests."
+        },
+        {
+            "id": "deployment-connection-widget",
+            "title": "Deployment connection widget.",
+            "package": "deployments",
+            "surface": "admin",
+            "targetType": "admin-widget",
+            "target": "DeploymentConnectionWidget",
+            "required": true,
+            "notes": "Capture with one active DeploymentConnection when possible; otherwise the widget honestly shows the not-connected state.",
+            "screenshotPath": "public/docs/screenshots/packages/deployments/deployment-connection-widget.png",
+            "useCase": "An administrator checks from the dashboard whether package deployment publishing has an active repository connection."
         }
     ]
 }

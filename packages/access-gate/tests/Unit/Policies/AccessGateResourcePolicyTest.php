@@ -15,6 +15,7 @@ use Capell\AccessGate\Policies\BrowserTokenPolicy;
 use Capell\AccessGate\Policies\ClaimTokenPolicy;
 use Capell\AccessGate\Policies\GrantPolicy;
 use Capell\AccessGate\Policies\RegistrationPolicy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 
@@ -22,6 +23,8 @@ function accessGatePolicyActor(array $permissions = [], array $roles = []): User
 {
     return new class($permissions, $roles) extends User
     {
+        use HasFactory;
+
         /**
          * @param  list<string>  $permissions
          * @param  list<string>  $roles

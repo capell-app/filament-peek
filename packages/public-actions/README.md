@@ -66,6 +66,8 @@ Reusable public submit actions, outbound automation dispatch, and integration en
 
 ## Docs
 
+- [overview.md](docs/overview.md)
+- [screenshots.json](docs/screenshots.json)
 - [actions-and-integrations.md](docs/actions-and-integrations.md)
 - [provider-presets.md](docs/provider-presets.md)
 

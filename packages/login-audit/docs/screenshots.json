@@ -13,7 +13,9 @@
             "targetType": "admin-surface",
             "target": "LoginAuditResource",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Captured in the Laravel 13 demo harness after publishing the package migration and seeding three login audit rows.",
+            "screenshotPath": "public/docs/screenshots/packages/login-audit/login-audits-admin-index.png",
+            "useCase": "An administrator reviews successful and failed authentication events for the demo admin user."
         },
         {
             "id": "login-audit-table-filters",
@@ -23,7 +25,9 @@
             "targetType": "admin-surface",
             "target": "LoginAuditResource",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Captured with the table filter panel open on the Login Audit resource.",
+            "screenshotPath": "public/docs/screenshots/packages/login-audit/login-audit-table-filters.png",
+            "useCase": "An administrator filters authentication events by success state, login date range, or cleared-by-user state."
         },
         {
             "id": "dashboard-widget",
@@ -33,7 +37,9 @@
             "targetType": "admin-surface",
             "target": "LoginAuditResource",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "The widget is registered through the Capell dashboard contribution system and is surfaced in dashboard configuration; it does not appear on the default main dashboard layout in the core-only harness.",
+            "screenshotPath": "public/docs/screenshots/packages/login-audit/dashboard-widget.png",
+            "useCase": "A site owner confirms that Access Logs is available in dashboard/widget configuration after the package is installed."
         },
         {
             "id": "login-audit-settings-screen",
@@ -41,9 +47,35 @@
             "package": "login-audit",
             "surface": "admin",
             "targetType": "admin-surface",
-            "target": "LoginAuditResource",
+            "target": "LoginAuditSettingsSchema",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Captured on the shared Capell settings page after the Login Audit settings schema was registered.",
+            "screenshotPath": "public/docs/screenshots/packages/login-audit/login-audit-settings-screen.png",
+            "useCase": "A site owner configures retention, IP tracking, visibility, and the user-resource bridge for login audit data."
+        },
+        {
+            "id": "user-edit-access-summary",
+            "title": "User edit access summary.",
+            "package": "login-audit",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "LoginAuditUserSchemaExtender",
+            "required": true,
+            "notes": "Captured after adding Rappasoft AuthenticationLoggable to the disposable demo app user model and seeding audit rows.",
+            "screenshotPath": "public/docs/screenshots/packages/login-audit/user-edit-access-summary.png",
+            "useCase": "An administrator checks recent login counts, failed attempts, devices, and active sessions while editing a user."
+        },
+        {
+            "id": "user-login-audits-relation-manager",
+            "title": "User authentication logs relation manager.",
+            "package": "login-audit",
+            "surface": "admin",
+            "targetType": "admin-surface",
+            "target": "LoginAuditsRelationManager",
+            "required": true,
+            "notes": "Requires the host user model to expose authentications(); the default Laravel demo user model needs Rappasoft AuthenticationLoggable for this surface.",
+            "screenshotPath": "public/docs/screenshots/packages/login-audit/user-login-audits-relation-manager.png",
+            "useCase": "An administrator opens the user-owned authentication history when the host user model supports the authentication log relation."
         }
     ]
 }

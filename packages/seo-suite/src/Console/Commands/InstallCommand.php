@@ -28,11 +28,16 @@ class InstallCommand extends Command
 
         $this->call('capell:publish-migrations', [
             '--items' => [
+                '2026_05_10_190870_01_create_ai_creator_contexts_table',
                 '2026_05_10_190870_02_create_ai_generation_histories_table',
-                '2026_05_10_190870_06_create_ai_discovery_site_profiles_table',
-                '2026_05_10_190870_05_create_ai_discovery_page_profiles_table',
+                '2026_05_10_190870_03_create_ai_creator_sessions_table',
                 '2026_05_10_190870_04_create_ai_discovery_crawler_rules_table',
+                '2026_05_10_190870_05_create_ai_discovery_page_profiles_table',
+                '2026_05_10_190870_06_create_ai_discovery_site_profiles_table',
                 '2026_05_10_190870_07_create_ai_discovery_snapshots_table',
+                '2026_05_10_190870_08_create_broken_links_table',
+                '2026_05_10_190870_09_create_page_seo_snapshots_table',
+                '2026_05_10_190870_10_create_search_console_url_metrics_table',
             ],
             '--path' => $migrations,
         ]);

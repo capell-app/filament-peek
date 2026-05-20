@@ -38,21 +38,24 @@ Provides a corporate visual option for sites that need restrained, trust-focused
 
 ## Screenshot Plan
 
-- Theme preset selection showing Corporate.
-- Frontend page rendered with Corporate theme.
-- Theme preview URL output.
+- Themes admin list showing the Corporate theme record in the host `ThemeResource`.
+- Seeded frontend page at `/theme-corporate-demo` rendering navigation, hero, features, proof, content listing, CTA, and footer.
+- Temporary signed `capell.admin.theme-preview` output for an authenticated administrator.
 
 ## Pitfalls
 
 - Install Foundation Theme before using this renderer.
-- Verify Foundation Theme assets are generated.
+- Install Layout Builder before running `capell:foundation-theme-setup`; Foundation Theme layout defaults need the `blocks` table.
+- Build both frontend and Filament assets in demo apps. The frontend build needs Foundation Theme npm dependencies such as `swiper`, `tippy.js`, `@tailwindcss/typography`, `@awcodes/alpine-floating-ui`, and `@ryangjchandler/alpine-tooltip`.
+- Theme Studio settings must use a Corporate preset such as `boardroom`, `civic`, or `advisory`. A preset from another theme fails at render time.
+- Public theme token CSS filenames must stay opaque. Do not expose theme keys or preset keys in cached public HTML.
 - Do not install a Studio metapackage; this package installs independently.
 
 ## Verification
 
-- Run `vendor/bin/pest packages/theme-corporate/tests` when package tests exist.
-- Run the relevant host-app migration or package install flow in a disposable database.
-- Open the listed admin or frontend surface and compare it with the screenshot plan.
+- `vendor/bin/pest packages/theme-corporate/tests --configuration=phpunit.xml` passes.
+- The isolated harness rendered `/theme-corporate-demo` and the signed theme preview without 500s.
+- Public HTML for the seeded frontend demo was scanned for `capell-theme`, `data-capell-theme`, `theme-corporate`, `signed`, `filament`, `editor`, and `/admin`.
 
 ## Package Manifest
 
@@ -94,6 +97,6 @@ This package has no committed ERD excerpt. Use implementation notes and extensio
 
 Deployment should read [screenshots.json](screenshots.json), install the package with demo data, resolve each admin surface or frontend URL, and write images to `public/docs/screenshots/packages/theme-corporate`.
 
-- Theme preset selection showing Corporate.
-- Frontend page rendered with Corporate theme.
+- Themes admin list showing Corporate.
+- Frontend page rendered with every Corporate section.
 - Theme preview URL output.

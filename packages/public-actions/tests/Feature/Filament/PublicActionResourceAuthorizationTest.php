@@ -10,6 +10,7 @@ use Capell\PublicActions\Filament\Resources\Submissions\PublicActionSubmissionRe
 use Capell\PublicActions\Models\PublicActionIntegrationToken;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Spatie\Permission\Models\Permission;
 
 uses(CreatesAdminUser::class);
@@ -21,7 +22,7 @@ beforeEach(function (): void {
 it('requires view permissions for public actions admin resources', function (string $resourceClass, string $permission): void {
     test()->actingAsUser();
 
-    /** @var class-string<\Filament\Resources\Resource> $resourceClass */
+    /** @var class-string<resource> $resourceClass */
     expect($resourceClass::canAccess())->toBeFalse()
         ->and($resourceClass::canViewAny())->toBeFalse();
 

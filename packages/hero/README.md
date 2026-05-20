@@ -6,14 +6,15 @@ Hero renders and seeds the default home-page hero block used by Capell frontend 
 
 - Package: `capell-app/hero`
 - Namespace: `Capell\Hero\`
-- Surfaces: console
+- Surfaces: frontend Blade components, console
 - Service providers: `packages/hero/src/Providers/HeroServiceProvider.php`
-- Capell dependencies: `capell-app/core`, `capell-app/frontend`
+- Capell dependencies: `capell-app/core`, `capell-app/frontend`, `capell-app/layout-builder`
 - Third-party dependencies: `lorisleiva/laravel-actions`, `spatie/laravel-package-tools`
 
 ## What It Adds
 
 - Hero renders and seeds the default home-page hero block used by Capell frontend themes.
+- Blade component: `capell::block.hero`.
 - Package setup or maintenance commands.
 
 ## Technical Shape
@@ -48,6 +49,7 @@ Hero renders and seeds the default home-page hero block used by Capell frontend 
 
 - Adds default hero rendering support for frontend themes.
 - Adds setup/demo commands for home hero content.
+- Adds no Filament admin screen, public route, settings screen, or package-owned table.
 
 ## Install And Setup
 
@@ -56,7 +58,8 @@ Hero renders and seeds the default home-page hero block used by Capell frontend 
 
 ## Docs
 
-No deeper package docs are currently published under `docs/`. Add design notes there when the README would become too long.
+- [overview.md](docs/overview.md)
+- [screenshots.json](docs/screenshots.json)
 
 ## Testing
 

@@ -104,3 +104,43 @@
 - `agent-bridge` has `docs/screenshots.json`, but its manifest entries still need composer name cleanup where `composerName` is null.
 - `packages/foundation-theme/` is the single canonical `capell-app/foundation-theme` package after consolidating the old compatibility resources.
 - `frontend-authoring` is using `capell-app/frontend-authoring` in screenshot metadata, which is worth keeping consistent while the manifest is audited.
+
+## 2026-05-19 isolated package demo audit
+
+The package demo audit harness was created at `/Users/ben/Sites/packages/capell/capell-package-demo-audit` and documented in [package-demo-audit-harness.md](package-demo-audit-harness.md). The core baseline is documented in [core-demo-baseline.md](internal/core-demo-baseline.md), with structured admin baseline data in [core-admin-menu-baseline.json](internal/core-admin-menu-baseline.json).
+
+All 45 package directories now have `docs/screenshots.json`, and the aggregate screenshot manifest regenerates successfully:
+
+```bash
+npm run screenshots:manifest
+npm run screenshots:validate
+```
+
+Validation result: `Screenshot manifests are in sync.`
+
+Detailed package notes and feature suggestions are stored in:
+
+- [batch-1.md](internal/package-audits/batch-1.md): `access-gate`, `address`, `agent-bridge`, `ai-orchestrator`, `api`, `block-library`, `blog`, `campaign-studio`
+- [batch-2.md](internal/package-audits/batch-2.md): `content-sections`, `dashboard-reports`, `demo-kit`, `deployments`, `diagnostics`, `document-lifecycle`, `email-studio`, `events`
+- [batch-3.md](internal/package-audits/batch-3.md): `form-builder`, `foundation-theme`, `frontend-authoring`, `frontend-optimizer`, `ga4-reports`, `hero`, `html-cache`, `insights`
+- [batch-4.md](internal/package-audits/batch-4.md): `layout-builder`, `login-audit`, `media-ai`, `media-library`, `migration-assistant`, `navigation`, `newsletter`, `notes`
+- [batch-5.md](internal/package-audits/batch-5.md): `password-policy`, `public-actions`, `publishing-studio`, `search`, `seo-suite`, `site-discovery`, `tags`, `theme-agency`
+- [batch-6.md](internal/package-audits/batch-6.md): `theme-corporate`, `theme-saas`, `translation-manager`, `welcome-tour`, `wordpress-importer`
+
+### Audit status
+
+| Area                     | Status                                                                                                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package inventory        | Complete: 45 package directories audited                                                                                                                            |
+| Screenshot contracts     | Complete: 45 package manifests, 229 aggregate entries                                                                                                               |
+| Package tests            | Complete: focused package Pest suites passed for all audited packages                                                                                               |
+| Isolated install checks  | Complete for `login-audit` after adding the Laravel 13 Rappasoft fork alias; remaining package results stay as recorded in batch notes                              |
+| Final visual screenshots | In progress: `login-audit` admin screenshots are captured in the shared Laravel 13 harness; frontend/theme package screenshots still require a theme asset baseline |
+
+### Blockers and risks
+
+- `login-audit` now installs in the Laravel 13 harness when the host app requires `rappasoft/laravel-authentication-log` from the `fdemb` PR #140 fork as `dev-main as 6.0.1`. Keep this root-app alias until upstream releases Laravel 13 support.
+- The baseline harness now publishes `public/vendor/capell-frontend/manifest.json` through `php artisan capell:frontend-install --no-interaction --ansi`. It still reports missing generated Capell frontend Tailwind CSS because the core baseline is installed with `--theme=none`; the generator binding is provided by `capell-app/foundation-theme`.
+- Dependency-heavy packages such as `blog`, `campaign-studio`, `foundation-theme`, `hero`, and theme packages require hard dependencies to be installed as Capell extensions, not just Composer packages, before the target extension is marked installed.
+- Some Composer remove cycles in isolated harnesses logged pre-uninstall event handler errors but still completed; keep clearing `bootstrap/cache/packages.php` and `bootstrap/cache/services.php` between package cycles.
+- This pass mapped required screenshots and use cases. The Login Audit screenshots are captured; the remaining packages still need the same image-backed pass.

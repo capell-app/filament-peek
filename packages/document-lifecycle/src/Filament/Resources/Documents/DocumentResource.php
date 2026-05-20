@@ -28,6 +28,8 @@ final class DocumentResource extends Resource
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
 
+    protected static ?int $navigationSort = 50;
+
     protected static ?string $recordTitleAttribute = 'title';
 
     #[Override]
@@ -90,7 +92,7 @@ final class DocumentResource extends Resource
     #[Override]
     public static function getNavigationGroup(): ?string
     {
-        return __('capell-document-lifecycle::navigation.group');
+        return (string) __('capell-admin::navigation.group_websites');
     }
 
     #[Override]

@@ -6,14 +6,16 @@
     "outputDirectory": "public/docs/screenshots/packages/theme-saas",
     "entries": [
         {
-            "id": "theme-preset-selection-showing-saas",
-            "title": "Theme preset selection showing SaaS.",
+            "id": "theme-admin-list-showing-saas",
+            "title": "Theme admin list showing SaaS.",
             "package": "theme-saas",
             "surface": "admin",
-            "targetType": "admin-surface",
-            "target": null,
+            "targetType": "filament-resource",
+            "target": "ThemeResource:index",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture with only the core Capell stack, Foundation Theme, Layout Builder, and capell-app/theme-saas installed in the isolated demo harness.",
+            "useCase": "An administrator confirms the SaaS theme is available through the core Themes resource without installing another theme package.",
+            "screenshotPath": "public/docs/screenshots/packages/theme-saas/theme-admin-list-showing-saas.png"
         },
         {
             "id": "frontend-page-rendered-with-saas-theme",
@@ -21,19 +23,23 @@
             "package": "theme-saas",
             "surface": "frontend",
             "targetType": "frontend-url",
-            "target": null,
+            "target": "/theme-saas-demo",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture the seeded Launchdeck page after installing capell-app/theme-saas and building the Foundation Theme/frontend assets.",
+            "useCase": "A visitor sees a seeded product page rendered through the SaaS navigation, hero, features, proof, content listing, CTA, and footer sections.",
+            "screenshotPath": "public/docs/screenshots/packages/theme-saas/frontend-page-rendered-with-saas-theme.png"
         },
         {
             "id": "theme-preview-url-output",
             "title": "Theme preview URL output.",
             "package": "theme-saas",
             "surface": "admin",
-            "targetType": "admin-surface",
-            "target": null,
+            "targetType": "admin-url",
+            "target": "capell.admin.theme-preview",
             "required": true,
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture a signed preview URL generated with CreateThemePreviewUrlAction for the seeded SaaS theme, site, and page.",
+            "useCase": "An administrator opens a signed preview URL to inspect a page with the SaaS theme applied before publishing the theme choice.",
+            "screenshotPath": "public/docs/screenshots/packages/theme-saas/theme-preview-url-output.png"
         }
     ]
 }

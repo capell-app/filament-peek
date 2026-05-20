@@ -31,6 +31,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\get;
 
+use Spatie\LaravelPackageTools\Package;
 use Spatie\Permission\Models\Permission;
 
 uses(CreatesAdminUser::class)->group('password-policy');
@@ -67,6 +68,17 @@ it('keeps package settings out of the global settings page', function (): void {
     get(SettingsPage::getUrl())
         ->assertSuccessful()
         ->assertDontSeeHtml('password_expiry_enabled');
+});
+
+it('declares its installable database migrations', function (): void {
+    $package = new Package;
+
+    (new PasswordPolicyServiceProvider(app()))->configurePackage($package);
+
+    expect($package->migrationFileNames)->toBe([
+        '2026_05_10_190863_01_add_password_policy_columns_to_users_table',
+        '2026_05_10_190863_02_create_password_policy_password_histories_table',
+    ]);
 });
 
 it('registers password policy settings as an extension page', function (): void {

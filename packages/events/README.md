@@ -83,6 +83,8 @@ Events adds event records, venues, occurrences, registrations, calendar pages, n
 ## Docs
 
 - [event-extension-points.md](docs/event-extension-points.md)
+- [overview.md](docs/overview.md)
+- [screenshots.json](docs/screenshots.json)
 
 ## Testing
 

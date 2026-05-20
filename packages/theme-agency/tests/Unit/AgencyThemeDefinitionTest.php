@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\ThemeStudio\Data\BrandProfileData;
+use Capell\Core\ThemeStudio\Data\ContentListingSectionData;
+use Capell\Core\ThemeStudio\Data\CtaSectionData;
+use Capell\Core\ThemeStudio\Data\FeatureSectionData;
+use Capell\Core\ThemeStudio\Data\FooterData;
+use Capell\Core\ThemeStudio\Data\HeroSectionData;
 use Capell\Core\ThemeStudio\Data\NavigationData;
+use Capell\Core\ThemeStudio\Data\ProofSectionData;
 use Capell\Core\ThemeStudio\Data\ThemePageData;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\ThemeStudio\Agency\AgencyThemeServiceProvider;
@@ -58,7 +64,7 @@ it('registers agency only when the theme package is installed', function (): voi
         ->and($registry->definition('agency')->package)->toBe(AgencyThemeServiceProvider::$packageName);
 });
 
-it('renders the agency theme page wrapper', function (): void {
+it('renders public theme markup without package identifiers', function (): void {
     CapellCore::clearPackages();
     CapellCore::forcePackageInstalled(AgencyThemeServiceProvider::$packageName);
 
@@ -68,10 +74,53 @@ it('renders the agency theme page wrapper', function (): void {
     $provider->boot($registry);
 
     $html = $registry->renderer('agency')->render(new ThemePageData(
-        title: 'Birds',
+        title: 'Studio',
         brand: new BrandProfileData,
-        sections: [],
+        sections: [
+            new HeroSectionData(
+                heading: 'Focused launch systems',
+                eyebrow: 'Studio',
+                summary: 'Strategy, identity, and delivery for growing teams.',
+                actions: [['label' => 'View work', 'url' => '/work']],
+            ),
+            new FeatureSectionData(
+                heading: 'What we ship',
+                features: [['title' => 'Positioning', 'description' => 'Clear market stories.']],
+            ),
+            new ProofSectionData(
+                heading: 'Proof',
+                items: [['quote' => 'Faster campaigns', 'name' => 'Launch team']],
+            ),
+            new ContentListingSectionData(
+                heading: 'Selected work',
+                items: [['title' => 'Product launch', 'summary' => 'A focused campaign.', 'url' => '/work/product-launch']],
+            ),
+            new CtaSectionData(
+                heading: 'Plan the next launch',
+                actions: [['label' => 'Contact', 'url' => '/contact']],
+            ),
+        ],
+        navigation: new NavigationData(
+            brandName: 'Northstar Studio',
+            items: [['label' => 'Work', 'url' => '/work']],
+            ctaLabel: 'Start',
+            ctaUrl: '/contact',
+        ),
+        footer: new FooterData(
+            brandName: 'Northstar Studio',
+            columns: [
+                ['heading' => 'Company', 'links' => [['label' => 'Contact', 'url' => '/contact']]],
+            ],
+        ),
     ));
 
-    expect($html)->toContain('data-capell-theme="agency"');
+    expect($html)
+        ->toContain('Northstar Studio')
+        ->not->toContain('data-capell-theme')
+        ->not->toContain('capell-theme')
+        ->not->toContain('capell-app/theme-agency')
+        ->not->toContain('capell-theme-agency')
+        ->not->toContain('signed')
+        ->not->toContain('filament')
+        ->not->toContain('editor');
 });

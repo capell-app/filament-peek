@@ -1,4 +1,4 @@
-# Theme Saas
+# Theme SaaS
 
 Conversion-led SaaS theme for Capell.
 
@@ -11,6 +11,7 @@ Conversion-led SaaS theme for Capell.
 ## What It Adds
 
 - Conversion-led SaaS theme for Capell.
+- Public views for navigation, hero, features, proof, content listing, CTA, and footer sections.
 
 ## Why It Matters
 
@@ -35,7 +36,7 @@ This package makes its Composer dependencies visible because they are part of th
 
 Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-- Theme preset selection showing SaaS.
+- Theme admin list showing SaaS.
 - Frontend page rendered with SaaS theme.
 - Theme preview URL output.
 
@@ -46,6 +47,7 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Uses Foundation Theme runtime data and standard section keys, while rendering its own page and section Blade views.
 - Ships Blade resources for the page wrapper and standard theme sections.
 - No migrations, config, routes, models, admin navigation, or package-owned settings are present.
+- Public theme output must stay free of package identifiers, signed admin URLs, Filament/editor markers, and other authoring metadata.
 
 ## Code Map
 
@@ -70,15 +72,18 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 - Install with `composer require capell-app/theme-saas` in the host Capell application.
 - In this repository, verify package changes with `vendor/bin/pest`; do not use `php artisan`.
+- For screenshots, use a disposable Capell app with the core stack, Layout Builder, Foundation Theme, and only this theme package installed.
 
 ## Admin And Access
 
-- None proven in this package directory.
+- The package appears through the core Themes resource after install. It does not add a package-owned admin page.
 
 ## Common Pitfalls
 
+- Install Layout Builder before Foundation Theme in the disposable harness.
 - Install Foundation Theme before using this renderer.
-- Verify Foundation Theme assets are generated.
+- Build both frontend and Filament assets before browser capture.
+- Keep Theme Studio settings aligned with a SaaS preset such as `launch`, `platform`, or `labs`; stale settings from another theme can make screenshots misleading.
 - Do not install a Studio metapackage; this package installs independently.
 
 ## Docs

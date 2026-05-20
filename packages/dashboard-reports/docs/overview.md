@@ -28,6 +28,14 @@ Dashboard Reports registers these widgets through `CapellAdmin::registerDashboar
 
 `ContentHealthWidget` is only visible when the resolved content health provider returns at least one issue. Its data is computed and cached by Livewire for 300 seconds.
 
+## Frontend Surface
+
+Dashboard Reports is admin-only. It does not register public frontend routes, public Blade renders, render hooks, or frontend assets in the current implementation.
+
+## Screenshot Coverage
+
+The screenshot contract is stored in [screenshots.json](screenshots.json). Final capture should seed enough page state to show both the publishing trend chart and content health widget on the admin dashboard.
+
 ## Data Sources
 
 The package reads Capell core `Page` records through `SiteScope::applyForCurrentActor(...)`, so editors only see counts for sites they can access.

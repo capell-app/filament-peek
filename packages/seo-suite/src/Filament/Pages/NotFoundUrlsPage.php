@@ -39,6 +39,8 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ExclamationTriangle;
 
+    protected static ?int $navigationSort = 12;
+
     protected string $view = 'capell-admin::components.pages.table';
 
     protected static ?string $slug = 'missing-pages';
@@ -69,6 +71,12 @@ class NotFoundUrlsPage extends Page implements HasActions, HasTable
     public static function getNavigationGroup(): ?string
     {
         return (string) (__('capell-admin::navigation.group_monitoring'));
+    }
+
+    #[Override]
+    public static function getNavigationParentItem(): ?string
+    {
+        return (string) __('capell-seo-suite::generic.seo_audit');
     }
 
     public static function table(Table $table): Table

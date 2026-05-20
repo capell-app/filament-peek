@@ -20,7 +20,11 @@ it('stores token css under isolated theme preset and brand keys', function (): v
 
     expect($firstPath)->not->toBe($secondPath)
         ->and(file_exists($firstPath))->toBeTrue()
-        ->and(file_get_contents($firstPath))->toContain('--theme-primary: #123456;');
+        ->and(file_get_contents($firstPath))->toContain('--theme-primary: #123456;')
+        ->and(basename($firstPath))->not->toContain('corporate')
+        ->and(basename($firstPath))->not->toContain('boardroom')
+        ->and(basename($secondPath))->not->toContain('saas')
+        ->and(basename($secondPath))->not->toContain('launchpad');
 });
 
 it('does not rewrite token css when the generated content is unchanged', function (): void {

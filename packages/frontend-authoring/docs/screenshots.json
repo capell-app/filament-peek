@@ -53,7 +53,9 @@
             "required": true,
             "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
             "output": "packages/frontend-authoring/docs/images/screenshots/frontend-page-with-authoring-enabled.png",
-            "notes": "Authenticated frontend capture. The runner logs in as an admin, opens the public Capell app homepage, waits for the beacon to decorate editable regions, and hovers the first editable region so the authoring control is visible."
+            "notes": "Authenticated frontend capture. The runner logs in as an admin, opens the public Capell app homepage, waits for the beacon to decorate editable regions, and hovers the first editable region so the authoring control is visible.",
+            "useCase": "An authenticated admin opens a public page and sees post-load editable regions after the beacon succeeds.",
+            "screenshotPath": "public/docs/screenshots/packages/frontend-authoring/frontend-page-with-authoring-enabled.png"
         },
         {
             "id": "capell-app-frontend-authoring-working",
@@ -73,7 +75,9 @@
             "required": true,
             "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
             "output": "packages/frontend-authoring/docs/images/screenshots/capell-app-frontend-authoring-working.png",
-            "notes": "Documentation proof that capell-app renders the frontend authoring package working: an authenticated admin beacon decorates the public homepage with editable regions and visible edit controls."
+            "notes": "Documentation proof that capell-app renders the frontend authoring package working: an authenticated admin beacon decorates the public homepage with editable regions and visible edit controls.",
+            "useCase": "An authenticated admin verifies inline authoring controls against a real Capell app homepage.",
+            "screenshotPath": "public/docs/screenshots/packages/frontend-authoring/capell-app-frontend-authoring-working.png"
         },
         {
             "id": "capell-app-frontend-authoring-mobile",
@@ -94,7 +98,9 @@
             "required": true,
             "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
             "output": "packages/frontend-authoring/docs/images/screenshots/capell-app-frontend-authoring-mobile.png",
-            "notes": "Mobile proof that the authoring overlay works against the Capell app frontend without adding public authoring metadata to cached HTML."
+            "notes": "Mobile proof that the authoring overlay works against the Capell app frontend without adding public authoring metadata to cached HTML.",
+            "useCase": "An authenticated admin verifies the authoring overlay remains usable on a mobile viewport.",
+            "screenshotPath": "public/docs/screenshots/packages/frontend-authoring/capell-app-frontend-authoring-mobile.png"
         },
         {
             "id": "beacon-network-request",
@@ -105,7 +111,9 @@
             "target": null,
             "required": true,
             "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture after installing capell-app/frontend-authoring in the isolated demo harness and seeding the data required for this use case.",
+            "useCase": "A developer verifies the beacon request returns authoring data only for authenticated admins.",
+            "screenshotPath": "public/docs/screenshots/packages/frontend-authoring/beacon-network-request.png"
         },
         {
             "id": "frontend-authoring-enabled-disabled-configuration-proof",
@@ -116,7 +124,9 @@
             "target": null,
             "required": true,
             "docsPage": "packages/frontend-authoring/docs/in-page-editing.md",
-            "notes": "Resolved by the deployment screenshot runner after the package is installed and demo data is prepared."
+            "notes": "Capture after installing capell-app/frontend-authoring in the isolated demo harness and seeding the data required for this use case.",
+            "useCase": "A site owner confirms authoring can be enabled or disabled without leaking controls to public users.",
+            "screenshotPath": "public/docs/screenshots/packages/frontend-authoring/frontend-authoring-enabled-disabled-configuration-proof.png"
         }
     ]
 }

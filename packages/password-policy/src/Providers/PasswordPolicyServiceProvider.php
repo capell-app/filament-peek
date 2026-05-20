@@ -39,7 +39,11 @@ class PasswordPolicyServiceProvider extends AbstractPackageServiceProvider
             ->name(self::$name)
             ->hasConfigFile()
             ->hasViews(self::$name)
-            ->hasTranslations();
+            ->hasTranslations()
+            ->hasMigrations([
+                '2026_05_10_190863_01_add_password_policy_columns_to_users_table',
+                '2026_05_10_190863_02_create_password_policy_password_histories_table',
+            ]);
     }
 
     public function registeringPackage(): void

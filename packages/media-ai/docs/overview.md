@@ -1,6 +1,6 @@
-# Media AIOrchestrator
+# Media AI
 
-The Media AIOrchestrator package adds optional AI-backed image actions to Capell's existing media resource. It does not replace the media backend, crop system, or localized metadata model.
+The Media AI package adds optional AI-backed image actions to Capell's existing media resource. It does not replace the media backend, crop system, or localized metadata model.
 
 Status: `Optional` · Surface: `Admin` · Depends on: `capell-app/admin`, `capell-app/core`
 

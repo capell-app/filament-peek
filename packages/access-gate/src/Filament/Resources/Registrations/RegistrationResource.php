@@ -37,6 +37,8 @@ final class RegistrationResource extends Resource
 
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Envelope;
 
+    protected static ?int $navigationSort = 31;
+
     protected static ?string $recordTitleAttribute = 'email';
 
     #[Override]
@@ -152,6 +154,12 @@ final class RegistrationResource extends Resource
 
     #[Override]
     public static function getNavigationGroup(): ?string
+    {
+        return (string) __('capell-admin::navigation.group_websites');
+    }
+
+    #[Override]
+    public static function getNavigationParentItem(): ?string
     {
         return __('capell-access-gate::filament.navigation_group');
     }

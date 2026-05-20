@@ -1,22 +1,22 @@
 @once
     <style>
-        [data-capell-theme='agency'] {
+        .site-theme-shell {
             background: #09090b;
             color: #f8fafc;
             font-family: var(--theme-body-font, Inter, system-ui, sans-serif);
         }
 
-        [data-capell-theme='agency'] section {
+        .site-theme-shell section {
             padding: clamp(4rem, 8vw, 8rem) 1.5rem;
         }
 
-        [data-capell-theme='agency'] section > div {
+        .site-theme-shell section > div {
             max-width: 76rem;
             margin-inline: auto;
         }
 
-        [data-capell-theme='agency'] h1,
-        [data-capell-theme='agency'] h2 {
+        .site-theme-shell h1,
+        .site-theme-shell h2 {
             max-width: 12ch;
             color: #fff;
             font-family: var(--theme-heading-font, inherit);
@@ -26,28 +26,27 @@
             letter-spacing: 0;
         }
 
-        [data-capell-theme='agency'] p {
+        .site-theme-shell p {
             max-width: 42rem;
             color: rgb(255 255 255 / 72%);
             font-size: 1.125rem;
             line-height: 1.8;
         }
 
-        [data-capell-theme='agency'] a {
+        .site-theme-shell a {
             color: inherit;
         }
 
-        [data-capell-theme='agency'] img,
-        [data-capell-theme='agency'] section div:empty {
+        .site-theme-shell img,
+        .site-theme-shell section div:empty {
             border-radius: 1.5rem;
         }
     </style>
 @endonce
 
 <div
-    data-capell-theme="{{ $themeKey }}"
     style="{{ collect($brand->tokens())->map(fn ($value, $token) => $token . ':' . $value)->implode(';') }}"
-    class="capell-theme-agency-page min-h-screen bg-zinc-950 text-zinc-950 antialiased"
+    class="site-theme-shell min-h-screen bg-zinc-950 text-zinc-950 antialiased"
 >
     {!! $content !!}
 </div>

@@ -35,9 +35,9 @@ This package makes its Composer dependencies visible because they are part of th
 
 Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) during package deployment.
 
-- Theme preset selection showing Corporate.
-- Frontend page rendered with Corporate theme.
-- Theme preview URL output.
+- Themes admin list showing Corporate.
+- Frontend page rendered with Corporate theme sections.
+- Theme preview URL output from the host signed preview route.
 
 ## Technical Shape
 
@@ -49,10 +49,10 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 ## Code Map
 
-| Area      | Path                                 | Purpose                                             |
-| --------- | ------------------------------------ | --------------------------------------------------- |
-| Resources | `packages/theme-corporate/resources` | Views, translations, assets, and package resources. |
-| Tests     | `packages/theme-corporate/tests`     | Package-level Pest coverage.                        |
+| Area      | Path                                 | Purpose                                                |
+| --------- | ------------------------------------ | ------------------------------------------------------ |
+| Resources | `packages/theme-corporate/resources` | Blade page wrapper, section views, and Boost guidance. |
+| Tests     | `packages/theme-corporate/tests`     | Package-level Pest coverage.                           |
 
 ## Data And Persistence
 
@@ -78,7 +78,10 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 ## Common Pitfalls
 
 - Install Foundation Theme before using this renderer.
-- Verify Foundation Theme assets are generated.
+- Install Layout Builder before running `capell:foundation-theme-setup`; Foundation Theme layout defaults need `blocks`.
+- Build frontend and Filament assets in demo apps. Foundation Theme frontend CSS needs the npm dependencies published by the theme stack.
+- Keep Theme Studio's active preset aligned with this theme (`boardroom`, `civic`, or `advisory`). A preset from another theme will fail when Corporate renders.
+- Public output must not expose package/theme identifiers. Token CSS filenames are intentionally opaque.
 - Do not install a Studio metapackage; this package installs independently.
 
 ## Docs

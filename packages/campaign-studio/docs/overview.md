@@ -83,7 +83,8 @@ Lets marketing and editorial teams connect landing pages to goals and see which 
 - Tier: premium
 - Bundle: growth
 - Contexts: `admin`, `frontend`
-- Optional dependencies: `capell-app/insights`, `capell-app/seo-suite`
+- Requires: `capell-app/admin`, `capell-app/core`, `capell-app/form-builder`, `capell-app/frontend`, `capell-app/insights`, `capell-app/layout-builder`
+- Optional dependencies: `capell-app/seo-suite`
 
 ## Admin Surfaces
 

@@ -6,7 +6,7 @@ Profile-based CSS and JavaScript delivery for public Capell pages.
 
 - Package: `capell-app/frontend-optimizer`
 - Namespace: `Capell\FrontendOptimizer\`
-- Surfaces: queue, database
+- Surfaces: frontend Blade directive, queue, database
 - Service providers: `packages/frontend-optimizer/src/Providers/FrontendOptimizerServiceProvider.php`
 - Capell dependencies: `capell-app/core`, `capell-app/frontend`
 - Third-party dependencies: `lorisleiva/laravel-actions`, `spatie/laravel-data`, `spatie/laravel-package-tools`, `symfony/process`
@@ -14,6 +14,9 @@ Profile-based CSS and JavaScript delivery for public Capell pages.
 ## What It Adds
 
 - Profile-based CSS and JavaScript delivery for public Capell pages.
+- `@frontendOptimizerAssets(...)` Blade directive for rendering resolved profile assets.
+- Render profile storage and critical CSS generation support.
+- No direct Filament admin surface or public route.
 
 ## Code Map
 
@@ -32,6 +35,7 @@ Profile-based CSS and JavaScript delivery for public Capell pages.
 
 ## Runtime Surface
 
+- Blade directive: `@frontendOptimizerAssets(...)`.
 - Jobs: `GenerateCriticalCssJob`.
 
 ## Data And Persistence
@@ -54,7 +58,9 @@ Profile-based CSS and JavaScript delivery for public Capell pages.
 
 ## Docs
 
+- [overview.md](docs/overview.md)
 - [assets-and-render-profiles.md](docs/assets-and-render-profiles.md)
+- [screenshots.json](docs/screenshots.json)
 
 ## Testing
 

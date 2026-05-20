@@ -38,21 +38,25 @@ Provides an agency-focused visual option for sites managed through the normal Th
 
 ## Screenshot Plan
 
-- Theme preset selection showing Agency.
-- Frontend page rendered with Agency theme.
-- Theme preview URL output.
+- Themes admin list showing the Agency theme record in the host `ThemeResource`.
+- Seeded frontend page at `/theme-agency-demo` rendering navigation, hero, features, proof, content listing, CTA, and footer.
+- Temporary signed `capell.admin.theme-preview` output for an authenticated administrator.
 
 ## Pitfalls
 
 - Install Foundation Theme before using this renderer.
-- Verify frontend assets from Foundation Theme are available.
+- Install Layout Builder before running `capell:foundation-theme-setup`; Foundation Theme layout defaults need the `blocks` table.
+- Build both frontend and Filament assets in demo apps. The frontend build needs Foundation Theme npm dependencies such as `swiper`, `tippy.js`, `@tailwindcss/typography`, `@awcodes/alpine-floating-ui`, and `@ryangjchandler/alpine-tooltip`.
+- Theme Studio settings must use an Agency preset such as `signal`, `gallery`, or `atelier`. A stale preset from another theme, such as `boardroom`, fails at render time.
+- Public theme token CSS filenames must stay opaque. Do not expose theme keys or preset keys in cached public HTML.
 - Do not install a Studio metapackage; this package installs independently.
 
 ## Verification
 
-- Run `vendor/bin/pest packages/theme-agency/tests` when package tests exist.
-- Run the relevant host-app migration or package install flow in a disposable database.
-- Open the listed admin or frontend surface and compare it with the screenshot plan.
+- `vendor/bin/pest packages/theme-agency/tests --configuration=phpunit.xml` passes.
+- `vendor/bin/pest packages/foundation-theme/tests/Unit/ThemeTokenStoreTest.php --configuration=phpunit.xml` passes for opaque public token filenames.
+- The isolated harness rendered `/theme-agency-demo` and the signed theme preview without 500s.
+- Public HTML for the seeded frontend demo was scanned for `capell-theme`, `data-capell-theme`, `theme-agency`, `signed`, `filament`, `editor`, and `/admin`.
 
 ## Package Manifest
 
@@ -94,6 +98,6 @@ This package has no committed ERD excerpt. Use implementation notes and extensio
 
 Deployment should read [screenshots.json](screenshots.json), install the package with demo data, resolve each admin surface or frontend URL, and write images to `public/docs/screenshots/packages/theme-agency`.
 
-- Theme preset selection showing Agency.
-- Frontend page rendered with Agency theme.
+- Themes admin list showing Agency.
+- Frontend page rendered with every Agency section.
 - Theme preview URL output.

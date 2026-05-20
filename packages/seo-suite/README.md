@@ -53,9 +53,12 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 - Page SEO panel.
 - SEO audit page.
 - Broken links page.
+- Not-found URLs page.
 - Translation coverage page.
-- AI creator action modal.
+- AI Discovery page.
+- SEO Suite settings page.
 - Search Console insights panel.
+- Public AI Discovery outputs: `/llms.txt`, `/robots.txt`, and `/index.md`.
 
 ## Technical Shape
 
@@ -133,6 +136,9 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 ## Install And Setup
 
 - Install with `composer require capell-app/seo-suite` in the host Capell application.
+- Install and migrate hard dependencies first: `capell-app/insights` and `capell-app/site-discovery`.
+- Run `php artisan capell:seo-suite-install` in the host app after Composer install. The command publishes all SEO Suite schema migrations and settings migrations.
+- Regenerate Filament Shield permissions in demo/admin apps after installation: `php artisan shield:generate --all --panel=admin`.
 - Run migrations through the host application package install flow.
 - In this repository, verify package changes with `vendor/bin/pest`; do not use `php artisan`.
 
@@ -154,6 +160,8 @@ Screenshots are generated from [docs/screenshots.json](docs/screenshots.json) du
 
 ## Common Pitfalls
 
+- Missing `insights_events` or `insights_visits` tables will break `NotFoundUrlsPage` and some dashboard widgets. That means the Insights dependency has not been migrated in the host app.
+- Missing `broken_links`, `page_seo_snapshots`, `search_console_url_metrics`, or AI creator tables means `capell:seo-suite-install` did not publish the full SEO Suite schema.
 - Do not enable AI creator without checking provider credentials and review workflow.
 - Search Console requires credentials and property URL.
 - Publish gates can block publishing when required metadata is missing.
@@ -179,6 +187,12 @@ Run package tests from the repository root:
 
 ```bash
 vendor/bin/pest packages/seo-suite/tests --configuration=phpunit.xml
+```
+
+Focused install and Filament render checks:
+
+```bash
+vendor/bin/pest packages/seo-suite/tests/Feature/AiDiscovery/AiDiscoveryMigrationTest.php packages/seo-suite/tests/Feature/Filament/Pages/BrokenLinksPageTest.php --configuration=phpunit.xml
 ```
 
 ## Maintenance Notes

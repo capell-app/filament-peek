@@ -11,9 +11,10 @@ const packageDirs = fs
 const failures = []
 
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
-const manifestPackages = new Set(
-    (manifest.entries ?? []).map((entry) => entry.package),
-)
+const manifestPackages = new Set([
+    ...(manifest.packages ?? []).map((entry) => entry.package),
+    ...(manifest.entries ?? []).map((entry) => entry.package),
+])
 
 for (const packageName of packageDirs) {
     const screenshotsPath = path.join(

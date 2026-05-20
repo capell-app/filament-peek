@@ -38,6 +38,8 @@ Password Policy adds:
 
 The settings class is `Capell\PasswordPolicy\Settings\PasswordPolicySettings`.
 
+The package registers its two normal Laravel migrations through `PasswordPolicyServiceProvider`. The package install flow must also publish the settings migration from `database/settings` so the settings rows exist before the Filament settings page is used.
+
 ## Action Boundary
 
 Use the Actions directly when changing password behaviour:
