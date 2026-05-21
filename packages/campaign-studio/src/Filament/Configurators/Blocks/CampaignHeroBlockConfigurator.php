@@ -18,7 +18,7 @@ final class CampaignHeroBlockConfigurator extends DefaultBlockConfigurator
             ->label(__('capell-campaign-studio::generic.campaign'))
             ->schema([
                 TextInput::make('meta.eyebrow')
-                    ->label('Eyebrow'),
+                    ->label(__('capell-campaign-studio::form.eyebrow')),
                 TextInput::make('meta.primary_button_text')
                     ->label(__('capell-layout-builder::form.primary_button_text')),
                 TextInput::make('meta.primary_button_url')

@@ -18,13 +18,13 @@ class PermissionAuditTable implements TableConfigurator
             ->query(fn (): Builder => BuildPermissionAuditQueryAction::run())
             ->columns([
                 TextColumn::make('name')
-                    ->label('Role')
+                    ->label(__('capell-diagnostics::package.role'))
                     ->sortable(),
                 TextColumn::make('users_count')
-                    ->label('Users')
+                    ->label(__('capell-diagnostics::package.users'))
                     ->sortable(),
                 TextColumn::make('permissions_count')
-                    ->label('Permissions')
+                    ->label(__('capell-diagnostics::package.permissions'))
                     ->sortable(),
             ])
             ->striped()

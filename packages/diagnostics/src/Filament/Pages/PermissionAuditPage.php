@@ -25,8 +25,6 @@ class PermissionAuditPage extends Page implements HasActions, HasTable
 
     protected static ?string $slug = 'dashboard-dashboard_reports/permission-audit';
 
-    protected static ?string $title = 'Permission Audit';
-
     protected static ?int $navigationSort = 3;
 
     protected string $view = 'capell-admin::components.pages.table';
@@ -47,6 +45,12 @@ class PermissionAuditPage extends Page implements HasActions, HasTable
     public static function getNavigationGroup(): ?string
     {
         return (string) (__('capell-admin::navigation.group_system'));
+    }
+
+    #[Override]
+    public function getTitle(): string
+    {
+        return __('capell-diagnostics::package.permission_audit');
     }
 
     public function table(Table $table): Table

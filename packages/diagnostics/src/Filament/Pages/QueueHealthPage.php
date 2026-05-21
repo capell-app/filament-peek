@@ -27,8 +27,6 @@ class QueueHealthPage extends Page implements HasActions, HasTable
 
     protected static ?string $slug = 'dashboard-dashboard_reports/queue-health';
 
-    protected static ?string $title = 'Queue Health';
-
     protected static ?int $navigationSort = 2;
 
     protected string $view = 'capell-admin::components.pages.table';
@@ -77,6 +75,12 @@ class QueueHealthPage extends Page implements HasActions, HasTable
     public static function getNavigationGroup(): ?string
     {
         return (string) (__('capell-admin::navigation.group_system'));
+    }
+
+    #[Override]
+    public function getTitle(): string
+    {
+        return __('capell-diagnostics::package.queue_health');
     }
 
     public function table(Table $table): Table

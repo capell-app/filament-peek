@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Testing\Filament\ReadsRawSchemaComponents;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Site;
 use Capell\Events\Filament\Resources\Events\EventResource;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 it('builds visible calendar weeks for a whole month grid', function (): void {
@@ -31,12 +33,20 @@ it('builds the event resource form schema', function (): void {
     $components = EventForm::configure(Schema::make())->getComponents();
 
     expect($components)
+        ->toHaveCount(4)
+        ->each->toBeInstanceOf(Section::class);
+
+    $fields = collect($components)
+        ->flatMap(fn (Section $section): array => ReadsRawSchemaComponents::childComponents($section))
+        ->values();
+
+    expect($fields)
         ->toHaveCount(16)
-        ->and($components[3])->toBeInstanceOf(TextInput::class)
-        ->and($components[4])->toBeInstanceOf(DateTimePicker::class)
-        ->and($components[7])->toBeInstanceOf(Toggle::class)
-        ->and($components[8])->toBeInstanceOf(Select::class)
-        ->and($components[15])->toBeInstanceOf(Textarea::class);
+        ->and($fields[3])->toBeInstanceOf(TextInput::class)
+        ->and($fields[5])->toBeInstanceOf(DateTimePicker::class)
+        ->and($fields[8])->toBeInstanceOf(Toggle::class)
+        ->and($fields[10])->toBeInstanceOf(Select::class)
+        ->and($fields[9])->toBeInstanceOf(Textarea::class);
 });
 
 it('declares event resource metadata and route defaults', function (): void {

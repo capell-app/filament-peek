@@ -19,21 +19,21 @@ class QueueHealthTable implements TableConfigurator
             ->query(fn (): Builder => BuildQueueHealthQueryAction::run())
             ->columns([
                 TextColumn::make('payload')
-                    ->label('Job')
+                    ->label(__('capell-diagnostics::package.job'))
                     ->formatStateUsing(function (string $payload): string {
                         $decoded = json_decode($payload, true);
 
                         return $decoded['displayName'] ?? 'Unknown Job';
                     }),
                 TextColumn::make('queue')
-                    ->label('Queue')
+                    ->label(__('capell-diagnostics::package.queue'))
                     ->sortable(),
                 TextColumn::make('exception')
-                    ->label('Exception')
+                    ->label(__('capell-diagnostics::package.exception'))
                     ->formatStateUsing(fn (?string $state): string => SummarizeFailedJobExceptionAction::run($state))
                     ->limit(100),
                 TextColumn::make('failed_at')
-                    ->label('Failed At')
+                    ->label(__('capell-diagnostics::package.failed_at'))
                     ->dateTime('Y-m-d H:i:s')
                     ->sortable(),
             ])

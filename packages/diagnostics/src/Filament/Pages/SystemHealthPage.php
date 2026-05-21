@@ -21,8 +21,6 @@ final class SystemHealthPage extends Dashboard
 
     protected static ?string $slug = 'system-health';
 
-    protected static ?string $title = 'System health';
-
     #[Override]
     public static function getNavigationLabel(): string
     {
@@ -60,6 +58,12 @@ final class SystemHealthPage extends Dashboard
         } catch (BadMethodCallException) {
             return false;
         }
+    }
+
+    #[Override]
+    public function getTitle(): string
+    {
+        return __('capell-diagnostics::package.system_health');
     }
 
     /**

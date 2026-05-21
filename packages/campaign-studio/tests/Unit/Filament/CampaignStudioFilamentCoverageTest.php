@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Admin\Testing\Filament\ReadsRawSchemaComponents;
 use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\CampaignConversionGoalResource;
 use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\Schemas\CampaignConversionGoalForm;
 use Capell\CampaignStudio\Filament\Resources\CampaignCtaBlocks\CampaignCtaBlockResource;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 it('builds campaign studio resource form schemas', function (): void {
@@ -37,11 +39,19 @@ it('builds campaign studio resource form schemas', function (): void {
     $ctaComponents = campaignStudioFormComponents(CampaignCtaBlockForm::class);
 
     expect($ctaComponents)
+        ->toHaveCount(4)
+        ->each->toBeInstanceOf(Section::class);
+
+    $ctaFields = collect($ctaComponents)
+        ->flatMap(fn (Section $section): array => ReadsRawSchemaComponents::childComponents($section))
+        ->values();
+
+    expect($ctaFields)
         ->toHaveCount(9)
-        ->and($ctaComponents[0])->toBeInstanceOf(Select::class)
-        ->and($ctaComponents[6])->toBeInstanceOf(Repeater::class)
-        ->and($ctaComponents[7])->toBeInstanceOf(Fieldset::class)
-        ->and($ctaComponents[8])->toBeInstanceOf(Toggle::class);
+        ->and($ctaFields[0])->toBeInstanceOf(Select::class)
+        ->and($ctaFields[6])->toBeInstanceOf(Repeater::class)
+        ->and($ctaFields[7])->toBeInstanceOf(Fieldset::class)
+        ->and($ctaFields[8])->toBeInstanceOf(Toggle::class);
 });
 
 it('declares campaign studio resource models navigation labels and pages', function (): void {

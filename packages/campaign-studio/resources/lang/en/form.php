@@ -14,6 +14,7 @@ return [
     'cta_block' => 'CTA block',
     'default_utm' => 'Default UTM',
     'ends_at' => 'Ends at',
+    'eyebrow' => 'Eyebrow',
     'form' => 'Form',
     'goal_key' => 'Goal key',
     'headline' => 'Headline',

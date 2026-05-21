@@ -25,8 +25,6 @@ class ActivityTrailPage extends Page implements HasActions, HasTable
 
     protected static ?string $slug = 'dashboard-dashboard_reports/activity-trail';
 
-    protected static ?string $title = 'Activity Trail';
-
     protected static ?int $navigationSort = 1;
 
     protected string $view = 'capell-admin::components.pages.table';
@@ -47,6 +45,12 @@ class ActivityTrailPage extends Page implements HasActions, HasTable
     public static function getNavigationGroup(): ?string
     {
         return (string) (__('capell-admin::navigation.group_system'));
+    }
+
+    #[Override]
+    public function getTitle(): string
+    {
+        return __('capell-publishing-studio::workflow.activity_trail');
     }
 
     public function table(Table $table): Table

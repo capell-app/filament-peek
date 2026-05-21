@@ -33,7 +33,7 @@ class AiCreatorAction extends Action
         parent::setUp();
 
         $this->name('ai-creator')
-            ->label('AI Creator')
+            ->label(__('capell-seo-suite::generic.ai_creator_action'))
             ->icon('heroicon-o-sparkles')
             ->slideOver()
             ->visible(fn (): bool => resolve(AiCreatorPolicy::class)->isEnabledFor(
@@ -51,52 +51,52 @@ class AiCreatorAction extends Action
             Hidden::make('ai_session_id'),
 
             Wizard::make([
-                Step::make('Describe')
-                    ->label('What are we building?')
+                Step::make(__('capell-seo-suite::generic.ai_creator_describe_step'))
+                    ->label(__('capell-seo-suite::generic.ai_creator_describe_step_label'))
                     ->schema([
                         Textarea::make('intent')
-                            ->label('Describe the page you want to create')
-                            ->placeholder('e.g. A homepage for a law firm with a hero, services section, and contact form')
+                            ->label(__('capell-seo-suite::generic.ai_creator_intent'))
+                            ->placeholder(__('capell-seo-suite::generic.ai_creator_intent_placeholder'))
                             ->required()
                             ->rows(4),
                         Select::make('page_count')
-                            ->label('How many pages?')
+                            ->label(__('capell-seo-suite::generic.ai_creator_page_count'))
                             ->options([1 => '1', 2 => '2', 3 => '3', 4 => '4', 5 => '5'])
                             ->default(1)
                             ->visible(fn (): bool => $this->isMountedOnSiteResource()),
                     ]),
 
-                Step::make('Brand')
-                    ->label('Brand & tone')
+                Step::make(__('capell-seo-suite::generic.ai_creator_brand_step'))
+                    ->label(__('capell-seo-suite::generic.ai_creator_brand_step_label'))
                     ->schema(fn (): array => $this->buildBrandStep())
                     ->afterValidation(function (Get $get, Set $set): void {
                         $this->generateLayout($get, $set);
                     }),
 
-                Step::make('Layout')
-                    ->label('Proposed layout')
+                Step::make(__('capell-seo-suite::generic.ai_creator_layout_step'))
+                    ->label(__('capell-seo-suite::generic.ai_creator_layout_step_label'))
                     ->schema([
                         Repeater::make('layout_preview')
-                            ->label('AI-proposed sections (reorder or remove as needed)')
+                            ->label(__('capell-seo-suite::generic.ai_creator_layout_preview'))
                             ->schema([
-                                TextInput::make('section_type')->label('Section type')->disabled(),
-                                Textarea::make('fields_preview')->label('Fields preview')->disabled()->rows(2),
+                                TextInput::make('section_type')->label(__('capell-seo-suite::generic.ai_creator_section_type'))->disabled(),
+                                Textarea::make('fields_preview')->label(__('capell-seo-suite::generic.ai_creator_fields_preview'))->disabled()->rows(2),
                             ])
                             ->addable(false)
                             ->reorderable()
                             ->columns(2),
                     ]),
 
-                Step::make('Review')
-                    ->label('Review & submit')
+                Step::make(__('capell-seo-suite::generic.ai_creator_review_step'))
+                    ->label(__('capell-seo-suite::generic.ai_creator_review_step_label'))
                     ->schema([
                         Textarea::make('review_notes')
-                            ->label('Notes for reviewer (optional)')
+                            ->label(__('capell-seo-suite::generic.ai_creator_review_notes'))
                             ->rows(3),
                     ]),
             ])->submitAction(
                 Action::make('submit')
-                    ->label('Submit for Review')
+                    ->label(__('capell-seo-suite::generic.ai_creator_submit'))
                     ->color('primary'),
             ),
         ];
@@ -109,31 +109,31 @@ class AiCreatorAction extends Action
 
         return [
             Select::make('tone')
-                ->label('Tone of voice')
+                ->label(__('capell-seo-suite::generic.ai_creator_tone'))
                 ->options([
-                    'professional' => 'Professional & formal',
-                    'friendly' => 'Warm & approachable',
-                    'playful' => 'Fun & playful',
-                    'authoritative' => 'Authoritative & expert',
+                    'professional' => __('capell-seo-suite::generic.ai_creator_tone_professional'),
+                    'friendly' => __('capell-seo-suite::generic.ai_creator_tone_friendly'),
+                    'playful' => __('capell-seo-suite::generic.ai_creator_tone_playful'),
+                    'authoritative' => __('capell-seo-suite::generic.ai_creator_tone_authoritative'),
                 ])
                 ->default($existingContext?->tone ?? 'professional')
                 ->required(),
 
             TextInput::make('industry')
-                ->label('Industry / sector')
+                ->label(__('capell-seo-suite::generic.ai_creator_industry'))
                 ->default($existingContext?->industry ?? '')
-                ->placeholder('e.g. Legal, Healthcare, E-commerce'),
+                ->placeholder(__('capell-seo-suite::generic.ai_creator_industry_placeholder')),
 
             Textarea::make('target_audience')
-                ->label('Target audience')
+                ->label(__('capell-seo-suite::generic.ai_creator_target_audience'))
                 ->default($existingContext?->target_audience ?? '')
-                ->placeholder('e.g. Small business owners aged 30-50')
+                ->placeholder(__('capell-seo-suite::generic.ai_creator_target_audience_placeholder'))
                 ->rows(2),
 
             Textarea::make('brand_voice_notes')
-                ->label('Brand voice notes (optional)')
+                ->label(__('capell-seo-suite::generic.ai_creator_brand_voice_notes'))
                 ->default($existingContext?->brand_voice_notes ?? '')
-                ->placeholder('e.g. We never use jargon. Always end with a call to action.')
+                ->placeholder(__('capell-seo-suite::generic.ai_creator_brand_voice_notes_placeholder'))
                 ->rows(2),
         ];
     }
@@ -182,7 +182,7 @@ class AiCreatorAction extends Action
             $set('layout_preview', $previewData);
         } catch (Throwable $throwable) {
             Notification::make()
-                ->title('AI generation failed')
+                ->title(__('capell-seo-suite::generic.ai_creator_generation_failed'))
                 ->body($throwable->getMessage())
                 ->danger()
                 ->send();
@@ -213,8 +213,8 @@ class AiCreatorAction extends Action
 
         if ($session === null) {
             Notification::make()
-                ->title('AI Creator failed')
-                ->body('No AI session found. Please re-run the wizard.')
+                ->title(__('capell-seo-suite::generic.ai_creator_failed'))
+                ->body(__('capell-seo-suite::generic.ai_creator_missing_session'))
                 ->danger()
                 ->send();
 
@@ -225,13 +225,13 @@ class AiCreatorAction extends Action
             resolve(SubmitAiCreatorDraftAction::class)->handle($session, $userId, $siteId);
 
             Notification::make()
-                ->title('Layout submitted for review')
-                ->body('Your AI-generated layout has been sent to the workspace for approval.')
+                ->title(__('capell-seo-suite::generic.ai_creator_submitted'))
+                ->body(__('capell-seo-suite::generic.ai_creator_submitted_body'))
                 ->success()
                 ->send();
         } catch (Throwable $throwable) {
             Notification::make()
-                ->title('AI Creator failed')
+                ->title(__('capell-seo-suite::generic.ai_creator_failed'))
                 ->body($throwable->getMessage())
                 ->danger()
                 ->send();
