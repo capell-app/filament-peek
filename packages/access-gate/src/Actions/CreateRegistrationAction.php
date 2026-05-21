@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Throwable;
 
 final class CreateRegistrationAction
 {
@@ -108,8 +109,12 @@ final class CreateRegistrationAction
             if ($registration->status === RegistrationStatus::Approved || $registration->status === RegistrationStatus::Claimed) {
                 $this->resendClaimToken->handle($registration);
             } else {
-                Notification::route('mail', $registration->email)
-                    ->notify(new AccessRequestReceivedNotification($lockedArea));
+                try {
+                    Notification::route('mail', $registration->email)
+                        ->notify(new AccessRequestReceivedNotification($lockedArea));
+                } catch (Throwable $exception) {
+                    report($exception);
+                }
             }
 
             return $registration;

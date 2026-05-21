@@ -21,6 +21,7 @@ use Capell\AccessGate\Notifications\AccessApprovedNotification;
 use Capell\AccessGate\Notifications\AccessRequestReceivedNotification;
 use Capell\AccessGate\Support\RegistrationFieldRegistry;
 use Capell\AccessGate\Tests\Fixtures\Autoload\TestProviderUsernameRegistrationField;
+use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Support\Facades\Event as EventFacade;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
@@ -47,6 +48,24 @@ it('stores host application registration field values', function (): void {
     ]);
 
     Notification::assertSentOnDemand(AccessRequestReceivedNotification::class);
+});
+
+it('persists pending registrations when request received notification delivery fails', function (): void {
+    $dispatcher = Mockery::mock(Dispatcher::class);
+    $dispatcher
+        ->shouldReceive('send')
+        ->once()
+        ->andThrow(new RuntimeException('Mail transport unavailable.'));
+
+    $this->app->instance(Dispatcher::class, $dispatcher);
+
+    $registration = resolve(CreateRegistrationAction::class)->handle(Area::factory()->create(), [
+        'email' => 'mona@example.test',
+    ]);
+
+    expect($registration->status)->toBe(RegistrationStatus::Pending)
+        ->and(Registration::query()->whereKey($registration->getKey())->exists())->toBeTrue()
+        ->and(Event::query()->where('registration_id', $registration->getKey())->where('type', EventType::RegistrationCreated)->exists())->toBeTrue();
 });
 
 it('approves a registration, creates a grant, records the event, and dispatches the approval event', function (): void {
