@@ -23,7 +23,6 @@ use Capell\PublishingStudio\Models\WorkspaceApproval;
 use Carbon\CarbonImmutable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -87,7 +86,6 @@ it('filters and sorts scheduled publishing table records from scheduler events',
     );
 
     $records = new ReflectionMethod(ScheduledPublishingTable::class, 'records');
-    $records->setAccessible(true);
 
     $allRecords = $records->invoke(null, ['source_type' => ['value' => 'workspace']], 'release', 'title', 'desc');
     $failedRecords = $records->invoke(null, [
@@ -129,15 +127,14 @@ it('builds scheduled publishing table helper values and safe details markup', fu
     );
 
     $sortValue = new ReflectionMethod(ScheduledPublishingTable::class, 'sortValue');
-    $sortValue->setAccessible(true);
+
     $filterValue = new ReflectionMethod(ScheduledPublishingTable::class, 'filterValue');
-    $filterValue->setAccessible(true);
+
     $eventFromRecord = new ReflectionMethod(ScheduledPublishingTable::class, 'eventFromRecord');
-    $eventFromRecord->setAccessible(true);
+
     $canUseSite = new ReflectionMethod(ScheduledPublishingTable::class, 'canUseSite');
-    $canUseSite->setAccessible(true);
+
     $details = new ReflectionMethod(ScheduledPublishingTable::class, 'details');
-    $details->setAccessible(true);
 
     $record = [
         'id' => 'scheduler-event-' . $event->id,
@@ -183,14 +180,14 @@ it('renders page approval status for review and rejected workspaces', function (
 
     $widget = new PageApprovalStatus;
     $widget->record = $reviewPage;
+
     $reviewView = $widget->render();
 
     $visibleFor = new ReflectionMethod(PageApprovalStatus::class, 'isVisibleFor');
-    $visibleFor->setAccessible(true);
+
     $titleFor = new ReflectionMethod(PageApprovalStatus::class, 'titleFor');
-    $titleFor->setAccessible(true);
+
     $approvalsFor = new ReflectionMethod(PageApprovalStatus::class, 'approvalsFor');
-    $approvalsFor->setAccessible(true);
 
     expect($reviewView->getData()['visible'])->toBeTrue()
         ->and($reviewView->getData()['title'])->toBeString()
@@ -221,7 +218,6 @@ it('loads workspace approval history for mounted records only', function (): voi
     $component->mount();
 
     $loadApprovals = new ReflectionMethod(WorkspaceApprovalHistory::class, 'loadApprovals');
-    $loadApprovals->setAccessible(true);
 
     $emptyApprovals = $loadApprovals->invoke($component);
 
@@ -275,7 +271,7 @@ it('builds page alerts for draft cache status deleted site and canonical referen
     $widget = pageAlertsWidgetForCoverage($page->fresh());
     $widget->mount();
 
-    $alerts = $widget->alertsForCoverage();
+    $alerts = $widget->alerts();
 
     expect($alerts->keys()->all())->toContain('pageStatus', 'deleted_site', 'referenced', 'pending', 'cached')
         ->and($alerts->get('pageStatus'))->toBeInstanceOf(MessageData::class)
@@ -302,7 +298,7 @@ it('guards page alerts records and covers missing url deleted and expired branch
     $expiredWidget = pageAlertsWidgetForCoverage($expiredPage->fresh());
     $expiredWidget->mount();
 
-    $expiredAlerts = $expiredWidget->alertsForCoverage();
+    $expiredAlerts = $expiredWidget->alerts();
 
     $deletedPage = Page::factory()->create();
     $deletedPage->delete();
@@ -310,7 +306,7 @@ it('guards page alerts records and covers missing url deleted and expired branch
     $deletedWidget = pageAlertsWidgetForCoverage($deletedPage->fresh());
     $deletedWidget->mount();
 
-    $deletedAlerts = $deletedWidget->alertsForCoverage();
+    $deletedAlerts = $deletedWidget->alerts();
 
     expect($expiredPage->fresh()->publish_status)->toBe(PublishStatusEnum::expired)
         ->and($expiredAlerts->keys()->all())->toContain('missingUrl', 'expired')
@@ -359,14 +355,6 @@ function pageAlertsWidgetForCoverage(?Page $page): PageAlertsWidget
         public function __construct(?Page $page)
         {
             $this->record = $page;
-        }
-
-        /**
-         * @return Collection<string, MessageData>
-         */
-        public function alertsForCoverage(): Collection
-        {
-            return $this->buildAlerts();
         }
     };
 }

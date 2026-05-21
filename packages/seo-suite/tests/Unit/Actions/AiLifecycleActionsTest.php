@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Log;
 
 function makeSeoSuiteLifecycleContext(string $content = 'Draft content'): AiActionContextInterface
 {
-    return new class($content) implements AiActionContextInterface
+    return new readonly class($content) implements AiActionContextInterface
     {
-        public function __construct(private readonly string $content) {}
+        public function __construct(private string $content) {}
 
         public function getContent(): string
         {
@@ -30,7 +30,7 @@ function makeSeoSuiteLifecycleContext(string $content = 'Draft content'): AiActi
             return 'seo';
         }
 
-        public function getPageId(): int|string
+        public function getPageId(): int
         {
             return 99;
         }
@@ -49,7 +49,7 @@ function makeSeoSuiteLifecycleContext(string $content = 'Draft content'): AiActi
 
 it('applies ai draft content to saveable targets and dispatches lifecycle events', function (): void {
     Event::fake();
-    Log::spy();
+    Log::shouldReceive('info')->once();
 
     $target = new class
     {
@@ -76,12 +76,11 @@ it('applies ai draft content to saveable targets and dispatches lifecycle events
     Event::assertDispatched(AiGenerationStarted::class);
     Event::assertDispatched(AiGenerationCompleted::class);
     Event::assertNotDispatched(AiGenerationFailed::class);
-    Log::shouldHaveReceived('info')->once();
 });
 
 it('rejects ai draft targets without content properties', function (): void {
     Event::fake();
-    Log::spy();
+    Log::shouldReceive('error')->once();
 
     expect(fn (): bool => ApplyAiDraftAction::run(makeSeoSuiteLifecycleContext(), [
         'target' => new stdClass,
@@ -90,12 +89,11 @@ it('rejects ai draft targets without content properties', function (): void {
     Event::assertDispatched(AiGenerationStarted::class);
     Event::assertDispatched(AiGenerationFailed::class);
     Event::assertNotDispatched(AiGenerationCompleted::class);
-    Log::shouldHaveReceived('error')->once();
 });
 
 it('records ai generation arrays through the lifecycle wrapper', function (): void {
     Event::fake();
-    Log::spy();
+    Log::shouldReceive('info')->once();
 
     $history = RecordAiGenerationAction::run([
         'action' => 'GeneratePageTitleAction',
@@ -116,7 +114,6 @@ it('records ai generation arrays through the lifecycle wrapper', function (): vo
     Event::assertDispatched(AiGenerationStarted::class);
     Event::assertDispatched(AiGenerationCompleted::class);
     Event::assertNotDispatched(AiGenerationFailed::class);
-    Log::shouldHaveReceived('info')->once();
 });
 
 it('records ai generation result data with response metadata and request details', function (): void {
@@ -174,7 +171,7 @@ it('records ai generation context input when no explicit result payload is suppl
 
 it('rejects unsupported ai generation record inputs', function (): void {
     Event::fake();
-    Log::spy();
+    Log::shouldReceive('error')->once();
 
     expect(fn (): AIGenerationHistory => RecordAiGenerationAction::run('invalid'))
         ->toThrow(InvalidArgumentException::class, 'Invalid input for RecordAiGenerationAction');
@@ -182,5 +179,4 @@ it('rejects unsupported ai generation record inputs', function (): void {
     Event::assertDispatched(AiGenerationStarted::class);
     Event::assertDispatched(AiGenerationFailed::class);
     Event::assertNotDispatched(AiGenerationCompleted::class);
-    Log::shouldHaveReceived('error')->once();
 });

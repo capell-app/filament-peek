@@ -41,9 +41,12 @@ trait TestingFrontend
             config(['view.compiled' => $compiledViewPath]);
 
             if (app()->bound('blade.compiler')) {
-                $cachePath = new ReflectionProperty(BladeCompiler::class, 'cachePath');
-                $cachePath->setAccessible(true);
-                $cachePath->setValue(app('blade.compiler'), $compiledViewPath);
+                $bladeCompiler = $this->app->make('blade.compiler');
+
+                if ($bladeCompiler instanceof BladeCompiler) {
+                    $cachePath = new ReflectionProperty(BladeCompiler::class, 'cachePath');
+                    $cachePath->setValue($bladeCompiler, $compiledViewPath);
+                }
             }
         }
 

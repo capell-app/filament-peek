@@ -56,7 +56,6 @@ it('registers authentication log plugin and admin activity middleware on panels'
 function invokeLoginAuditsWidgetMethod(LoginAuditsWidget $widget, string $methodName, array $parameters = []): mixed
 {
     $reflectionMethod = new ReflectionMethod(LoginAuditsWidget::class, $methodName);
-    $reflectionMethod->setAccessible(true);
 
     return $reflectionMethod->invokeArgs($widget, $parameters);
 }

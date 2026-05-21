@@ -41,15 +41,16 @@ class Pages extends AbstractBlock
     protected function mountBlock(): void
     {
         $page = Frontend::page();
+        $block = $this->block();
 
-        $limit = $this->block->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
+        $limit = $block->meta['limit'] ?? config('capell-frontend.pagination_limit', 12);
 
-        $paginationKey = $this->containerKey . ucfirst((string) $this->block->key) . $this->occurrence;
+        $paginationKey = $this->containerKey . ucfirst((string) $block->key) . $this->occurrence;
         $paginationPage = (int) $this->getPage($paginationKey);
 
-        $selection = $this->block->assets->pluck('asset_id')->toArray();
+        $selection = $block->assets->pluck('asset_id')->toArray();
 
-        $morphModel = $this->block->getMeta('page_model');
+        $morphModel = $block->getMeta('page_model');
 
         if ($morphModel !== null) {
             $morphModel = Relation::getMorphedModel($morphModel);
@@ -61,15 +62,15 @@ class Pages extends AbstractBlock
             page: $page,
             limit: $limit,
             paginationPage: $paginationPage,
-            ordering: ($this->block->meta['order'] ?? '') === '' ? null : PageOrderEnum::from($this->block->meta['order']),
-            pageGroup: $this->block->meta['page_group'] ?? null,
-            withChildrenCount: $this->block->meta['with_children_count'] ?? false,
-            withImage: $this->block->meta['with_image'] ?? false,
-            withPagination: $this->block->meta['pagination'] ?? false,
-            withParent: $this->block->meta['with_parent'] ?? false,
-            withDate: $this->block->meta['with_date'] ?? false,
+            ordering: ($block->meta['order'] ?? '') === '' ? null : PageOrderEnum::from($block->meta['order']),
+            pageGroup: $block->meta['page_group'] ?? null,
+            withChildrenCount: $block->meta['with_children_count'] ?? false,
+            withImage: $block->meta['with_image'] ?? false,
+            withPagination: $block->meta['pagination'] ?? false,
+            withParent: $block->meta['with_parent'] ?? false,
+            withDate: $block->meta['with_date'] ?? false,
             paginationKey: $paginationKey,
-            cacheKeyPrepend: sprintf('page-%d-block-%d-container-%s-%d', $page->id, $this->block->id, $this->containerKey, $this->occurrence),
+            cacheKeyPrepend: sprintf('page-%d-block-%d-container-%s-%d', $page->id, $block->id, $this->containerKey, $this->occurrence),
             morphModel: $morphModel,
             modifyQuery: fn (Builder $query) => $query->whereIn('id', $selection),
         );

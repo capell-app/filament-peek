@@ -15,9 +15,6 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard;
 
-/**
- * @return array<int, string>
- */
 function seoSuiteFakeGet(array $state): Get
 {
     return new class($state) extends Get

@@ -26,6 +26,13 @@ class FakeMigrationFileManager implements MigrationFilesystemInterface
         return $this->overrides['isDir'][$path] ?? true;
     }
 
+    public function isWritable(string $path): bool
+    {
+        $this->calls[] = ['isWritable', $path];
+
+        return $this->overrides['isWritable'][$path] ?? true;
+    }
+
     public function makeDir(string $path): void
     {
         $this->calls[] = ['makeDir', $path];

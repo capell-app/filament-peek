@@ -114,8 +114,8 @@ it('covers scheduler token, media diff, delivery labels, and health boundaries',
     $diff = (new MediaDiffService)->compare('/media/before.jpg', '/media/after.jpg');
 
     expect($plainToken)->toBeString()
-        ->and(strlen($plainToken))->toBe(48)
-        ->and($storedToken->token_hash)->toBe(hash('sha256', $plainToken))
+        ->and(strlen((string) $plainToken))->toBe(48)
+        ->and($storedToken->token_hash)->toBe(hash('sha256', (string) $plainToken))
         ->and($storedToken->scope)->toBe(SchedulerIcalFeedScopeEnum::Mine)
         ->and((new MediaDiffService)->looksLikeMedia('/uploads/photo.webp?v=1'))->toBeTrue()
         ->and((new MediaDiffService)->looksLikeMedia('not-media.txt'))->toBeFalse()

@@ -36,7 +36,9 @@ use Capell\LayoutBuilder\Support\Livewire\OpaqueBlockReference;
 use Capell\Navigation\Enums\NavigationItemType;
 use Capell\Navigation\Models\Navigation as NavigationModel;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Mix;
 use Illuminate\Support\Collection;
@@ -196,7 +198,7 @@ it('mounts the livewire pages block around selected page assets', function (): v
     ]));
 
     $pagesProperty = new ReflectionProperty($component, 'pages');
-    $pagesProperty->setAccessible(true);
+
     $componentPages = $pagesProperty->getValue($component);
 
     $html = $component->render();
@@ -211,6 +213,8 @@ it('covers page asset table query branches and selected record submission', func
     $excludedPage = Page::factory()->withTranslations($language)->create();
     $uuidModel = new class extends Model
     {
+        use HasFactory;
+
         public function getKey(): mixed
         {
             return Uuid::fromString('8fd9d7f7-e9a3-44b5-a9d8-88e5fb308c92');
@@ -249,9 +253,9 @@ it('rewrites media urls for local overrides paths query strings and active domai
     $media->disk = 'public';
     $media->conversions_disk = 'public';
     $media->file_name = 'hero.jpg';
-    $media->updated_at = CarbonImmutable::parse('2026-04-01 12:00:00');
+    $media->setAttribute('updated_at', CarbonImmutable::parse('2026-04-01 12:00:00'));
 
-    $generator = (new CapellUrlGenerator(app('config')))
+    $generator = (new CapellUrlGenerator(resolve(Repository::class)))
         ->setMedia($media)
         ->setPathGenerator(new FoundationThemeFinalPathGenerator);
 
@@ -421,8 +425,10 @@ it('covers content neighbor links and small frontend context helper branches', f
     };
     $slotBlock = new Block;
     $slotBlock->setRelation('type', $slotType);
+
     $media = new Media;
     $media->collection_name = 'background_image';
+
     $backgroundBlock = new Block;
     $backgroundBlock->setRelation('media', new Collection([$media]));
 

@@ -25,7 +25,7 @@ beforeEach(function (): void {
 it('declares beacon validation and passes activity middleware through unchanged', function (): void {
     $request = new BeaconRequest;
     $middleware = new PassThroughActivityMiddleware;
-    $httpRequest = Request::create('/beacon', 'POST', ['url' => 'https://example.test/page']);
+    $httpRequest = Request::create('/beacon', Symfony\Component\HttpFoundation\Request::METHOD_POST, ['url' => 'https://example.test/page']);
 
     $response = $middleware->handle(
         $httpRequest,

@@ -24,7 +24,7 @@ function makeSeoSuiteBaseActionContext(): AiActionContextInterface
             return 'capell, seo';
         }
 
-        public function getPageId(): int|string
+        public function getPageId(): int
         {
             return 123;
         }
@@ -43,7 +43,7 @@ function makeSeoSuiteBaseActionContext(): AiActionContextInterface
 
 it('runs base ai actions through validation, events, logging, and metadata', function (): void {
     Event::fake();
-    Log::spy();
+    Log::shouldReceive('info')->once();
 
     $action = new class extends BaseAction
     {
@@ -67,7 +67,6 @@ it('runs base ai actions through validation, events, logging, and metadata', fun
     Event::assertDispatched(AiGenerationStarted::class);
     Event::assertDispatched(AiGenerationCompleted::class);
     Event::assertNotDispatched(AiGenerationFailed::class);
-    Log::shouldHaveReceived('info')->once();
 });
 
 it('rejects malformed base ai action input before running hooks', function (): void {
@@ -94,7 +93,7 @@ it('rejects malformed base ai action input before running hooks', function (): v
 
 it('dispatches failure events and logs when base ai actions throw', function (): void {
     Event::fake();
-    Log::spy();
+    Log::shouldReceive('error')->once();
 
     $action = new class extends BaseAction
     {
@@ -110,7 +109,6 @@ it('dispatches failure events and logs when base ai actions throw', function ():
     Event::assertDispatched(AiGenerationStarted::class);
     Event::assertDispatched(AiGenerationFailed::class);
     Event::assertNotDispatched(AiGenerationCompleted::class);
-    Log::shouldHaveReceived('error')->once();
 });
 
 it('supports static run dispatch through the container', function (): void {

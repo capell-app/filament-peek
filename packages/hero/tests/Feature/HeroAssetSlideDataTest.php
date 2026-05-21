@@ -17,6 +17,7 @@ it('builds hero asset slide data from a linked page asset', function (): void {
     $blockAsset = new BlockAsset;
     $backgroundImage = new Media;
     $backgroundImage->collection_name = MediaCollectionEnum::BackgroundImage->value;
+
     $image = new Media;
     $image->collection_name = MediaCollectionEnum::Image->value;
 

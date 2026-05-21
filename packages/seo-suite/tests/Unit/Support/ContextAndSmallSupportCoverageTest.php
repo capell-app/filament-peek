@@ -107,6 +107,7 @@ it('registers configured ai features and filters enabled features', function ():
 it('honours site ai creator overrides before global policy settings', function (): void {
     $settings = (new ReflectionClass(AIOrchestratorSettings::class))->newInstanceWithoutConstructor();
     $settings->ai_creator = true;
+
     $policy = new AiCreatorPolicy($settings);
 
     expect($policy->isEnabledFor((object) []))->toBeTrue()

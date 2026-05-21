@@ -54,6 +54,7 @@ use Capell\LayoutBuilder\Support\Livewire\OpaqueBlockReference;
 use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
@@ -100,7 +101,7 @@ it('registers foundation theme provider runtime services and package boot hooks'
     $provider->packageRegistered();
     $provider->packageBooted();
 
-    expect(app('capell.tailwind.generator'))->toBeInstanceOf(TailwindAssetsGenerator::class)
+    expect(resolve('capell.tailwind.generator'))->toBeInstanceOf(TailwindAssetsGenerator::class)
         ->and(config('media-library.url_generator'))->toBe(CapellUrlGenerator::class);
 });
 
@@ -176,7 +177,7 @@ it('declares foundation settings schema and settings migrations', function (): v
         ->and(FoundationThemeSettings::group())->toBe('foundation_theme')
         ->and(FoundationThemeSettings::schema())->toBe(FoundationThemeSettingsSchema::class);
 
-    expect((new AdminServiceProvider(app()))->register())->toBeNull();
+    (new AdminServiceProvider(app()))->register();
 });
 
 it('compiles foundation blade directives across build tools and buffer expressions', function (): void {
@@ -304,7 +305,7 @@ it('rewrites media urls to the active frontend root or configured site base', fu
     $media->disk = 'public';
     $media->conversions_disk = 'public';
     $media->file_name = 'hero image.jpg';
-    $media->updated_at = now();
+    $media->setAttribute('updated_at', now());
 
     $pathGenerator = new class implements PathGenerator
     {
@@ -324,7 +325,7 @@ it('rewrites media urls to the active frontend root or configured site base', fu
         }
     };
 
-    $generator = (new CapellUrlGenerator(app('config')))
+    $generator = (new CapellUrlGenerator(resolve(Repository::class)))
         ->setMedia($media)
         ->setPathGenerator($pathGenerator);
 
@@ -344,6 +345,7 @@ it('skips empty navigation and page listing blocks without public markup', funct
     [$language, $site, $theme, $layout, $page] = foundationThemeCoverageFrontendContext();
     $hiddenType = new Blueprint;
     $hiddenType->meta = ['hidden' => true];
+
     $page->setRelation('type', $hiddenType);
     $page->setRelation('layout', $layout);
 
@@ -408,7 +410,6 @@ it('renders page content and layout components from frontend context', function 
         layout: $layout,
         page: $page,
         theme: ['container' => 'wide'],
-        layoutNeighborLinks: null,
     );
 
     expect($content->previousPage)->toBeNull()

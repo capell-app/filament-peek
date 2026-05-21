@@ -78,8 +78,8 @@ it('covers event model relationships and casts', function (): void {
         ->and($venue->events()->getRelated())->toBeInstanceOf(Event::class)
         ->and($venue->occurrences()->getRelated())->toBeInstanceOf(EventOccurrence::class)
         ->and(EventVenue::query()->ordered()->toBase()->orders)->toHaveCount(1)
-        ->and($venue->metadata)->toBe(['floor' => '2'])
-        ->and($log->payload)->toBe(['subject' => 'Reminder']);
+        ->and($venue->getAttribute('metadata'))->toBe(['floor' => '2'])
+        ->and($log->getAttribute('payload'))->toBe(['subject' => 'Reminder']);
 });
 
 it('covers event model page helpers and publish metadata', function (): void {

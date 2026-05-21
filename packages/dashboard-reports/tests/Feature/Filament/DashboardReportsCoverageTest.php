@@ -33,7 +33,9 @@ it('builds publishing trend widget chart datasets from action data', function ()
     ]);
 
     $widget = new PublishingTrendChartWidget;
-    $data = (fn (): array => $this->getData())->call($widget);
+    $data = (new ReflectionMethod($widget, 'getData'))->invoke($widget);
+
+    throw_unless(is_array($data), RuntimeException::class, 'Publishing trend chart data must be an array.');
 
     expect($data)->toHaveKeys(['datasets', 'labels'])
         ->and($data['datasets'])->toHaveCount(2)

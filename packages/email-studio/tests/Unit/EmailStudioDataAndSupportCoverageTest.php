@@ -156,9 +156,9 @@ it('persists registered email templates through the registry', function (): void
 
     expect($registrations)->toHaveCount(1)
         ->and($registrations[0])->toBeInstanceOf(EmailTemplateRegistration::class)
-        ->and($registrations[0]->template_key)->toBe('welcome')
-        ->and($registrations[0]->variables)->toBe(['name', 'email'])
-        ->and($registrations[0]->site_scope_key)->toBe('primary');
+        ->and($registrations[0]->getAttribute('template_key'))->toBe('welcome')
+        ->and($registrations[0]->getAttribute('variables'))->toBe(['name', 'email'])
+        ->and($registrations[0]->getAttribute('site_scope_key'))->toBe('primary');
 });
 
 it('casts email studio model state and links event tracking records', function (): void {

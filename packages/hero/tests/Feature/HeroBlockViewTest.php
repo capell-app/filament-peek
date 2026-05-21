@@ -86,6 +86,7 @@ it('skips empty hero blocks before exposing public markup', function (): void {
         ->create();
 
     $page->load('translation');
+
     $site->load('translation');
 
     $block = Block::factory()->create([

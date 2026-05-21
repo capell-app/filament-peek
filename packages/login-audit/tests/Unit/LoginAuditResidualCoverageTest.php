@@ -9,6 +9,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 it('builds login audit table columns filters and helper fallbacks', function (): void {
@@ -19,6 +20,8 @@ it('builds login audit table columns filters and helper fallbacks', function ():
     $namedRecord = new LoginAudit;
     $namedRecord->setRelation('authenticatable', new class extends Model
     {
+        use HasFactory;
+
         protected $attributes = [
             'name' => 'Ben Johnson',
         ];
@@ -40,7 +43,10 @@ it('builds login audit table columns filters and helper fallbacks', function ():
 });
 
 it('builds login audit user relation manager table metadata', function (): void {
-    $owner = new class extends Model {};
+    $owner = new class extends Model
+    {
+        use HasFactory;
+    };
     $manager = new LoginAuditsRelationManager;
 
     expect(LoginAuditsRelationManager::getTitle($owner, 'edit'))->toBe(__('capell-login-audit::settings.login_audits'))
@@ -56,7 +62,6 @@ it('builds login audit user relation manager table metadata', function (): void 
 function invokeLoginAuditTableMethod(string $methodName, array $parameters = []): mixed
 {
     $reflectionMethod = new ReflectionMethod(LoginAuditsTable::class, $methodName);
-    $reflectionMethod->setAccessible(true);
 
     return $reflectionMethod->invokeArgs(null, $parameters);
 }
@@ -75,7 +80,6 @@ function loginAuditTableForCoverage(Builder $query): Table
 function invokeLoginAuditRelationManagerMethod(LoginAuditsRelationManager $manager, string $methodName, array $parameters = []): mixed
 {
     $reflectionMethod = new ReflectionMethod($manager, $methodName);
-    $reflectionMethod->setAccessible(true);
 
     return $reflectionMethod->invokeArgs($manager, $parameters);
 }

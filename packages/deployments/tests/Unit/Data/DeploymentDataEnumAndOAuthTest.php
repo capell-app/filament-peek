@@ -58,7 +58,7 @@ it('creates one-time OAuth states per provider', function (): void {
     $state = CreateOAuthStateAction::run(GitProviderType::GitHub);
 
     expect($state)->toBeString()
-        ->and(strlen($state))->toBe(40)
+        ->and(strlen((string) $state))->toBe(40)
         ->and(ValidateOAuthStateAction::run(GitProviderType::GitHub, $state))->toBeTrue()
         ->and(ValidateOAuthStateAction::run(GitProviderType::GitHub, $state))->toBeFalse();
 });

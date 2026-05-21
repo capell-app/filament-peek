@@ -161,7 +161,7 @@ it('covers the fake provider adapter and settings fallback policy', function ():
     );
 
     $syncResult = $adapter->syncSubscriber($connection, $audience, $subscriberData);
-    $webhook = $adapter->normalizeWebhook($connection, Request::create('/newsletter/webhook', 'POST', [
+    $webhook = $adapter->normalizeWebhook($connection, Request::create('/newsletter/webhook', Symfony\Component\HttpFoundation\Request::METHOD_POST, [
         'email' => 'fake@example.test',
         'status' => SubscriberStatus::Subscribed->value,
         'event_type' => 'subscribed',

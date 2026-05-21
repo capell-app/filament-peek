@@ -41,9 +41,9 @@ it('covers campaign studio model relationships and casts', function (): void {
         ->and($group->landingPages()->getRelated())->toBeInstanceOf(CampaignLandingPage::class)
         ->and($group->conversionGoals()->getRelated())->toBeInstanceOf(CampaignConversionGoal::class)
         ->and($group->conversions()->getRelated())->toBeInstanceOf(CampaignConversion::class)
-        ->and($group->status)->toBe(CampaignStatus::Active)
+        ->and($group->getAttribute('status'))->toBe(CampaignStatus::Active)
         ->and($cta->campaignGroup()->getRelated())->toBeInstanceOf(CampaignGroup::class)
-        ->and($cta->actions->toArray()[0])->toMatchArray(['label' => 'Book demo', 'url' => '/demo']);
+        ->and($cta->getAttribute('actions')->toArray()[0])->toMatchArray(['label' => 'Book demo', 'url' => '/demo']);
 });
 
 function campaignStudioTableForCoverage(): Table

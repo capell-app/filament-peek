@@ -149,6 +149,7 @@ it('creates branches, closes pull requests, and fetches pull request details on 
     $provider = resolve(GitHubProvider::class);
 
     $provider->createBranch($conn, 'feature/package', 'base-sha');
+
     $pullRequest = $provider->getPullRequest($conn, 42);
     $provider->closePullRequest($conn, 42);
 

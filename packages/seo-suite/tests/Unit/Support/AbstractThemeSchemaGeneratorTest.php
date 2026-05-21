@@ -49,12 +49,12 @@ it('builds common theme schema payloads with optional organization details', fun
             ];
         }
 
-        protected function resolveOrgLogo(): ?string
+        protected function resolveOrgLogo(): string
         {
             return 'https://example.test/logo.png';
         }
 
-        protected function resolveOrgDescription(): ?string
+        protected function resolveOrgDescription(): string
         {
             return 'A design and publishing studio.';
         }
