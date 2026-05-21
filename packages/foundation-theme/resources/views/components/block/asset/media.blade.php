@@ -70,7 +70,16 @@
                             'block-media-item group relative h-full cursor-pointer overflow-hidden text-center',
                             'md:col-span-1 md:row-span-2' => ($loop->iteration > 5 && $loop->iteration % 5 === 0) || $loop->iteration === 2,
                         ])
+                        role="button"
                         tabindex="0"
+                        onkeydown="
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault()
+                                this.querySelector(
+                                    '[data-lightbox], .lightbox',
+                                )?.click()
+                            }
+                        "
                     >
                         @if (Str::startsWith($image->mime_type, 'video/'))
                             <x-capell::media

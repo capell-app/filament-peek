@@ -12,5 +12,6 @@ return [
     'hero_panel_title' => 'Capell layout composition',
     'latest_pages' => 'Latest Pages',
     'page_navigation' => 'Page navigation',
+    'scroll_to_top' => 'Scroll to top',
     'sub_footer_navigation' => 'Footer utility navigation',
 ];

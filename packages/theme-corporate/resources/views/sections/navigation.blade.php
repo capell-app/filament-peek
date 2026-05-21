@@ -1,5 +1,6 @@
 <nav
     class="theme-navigation dark:bg-slate-950/88 sticky top-0 z-40 border-b border-slate-200/80 bg-[#f7f8f6]/90 backdrop-blur dark:border-white/10"
+    aria-label="{{ __('capell-theme-corporate::generic.main_navigation') }}"
 >
     <div
         class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-5 gap-y-3 px-4 py-3 sm:px-6 sm:py-4"
@@ -16,7 +17,7 @@
             <span>{{ $section->brandName }}</span>
         </a>
         <div
-            class="order-3 flex w-full items-center gap-5 overflow-x-auto text-sm text-slate-600 sm:w-auto md:order-none md:gap-6 dark:text-slate-300"
+            class="order-3 hidden w-full items-center gap-5 overflow-x-auto text-sm text-slate-600 sm:w-auto md:order-none md:flex md:gap-6 dark:text-slate-300"
         >
             @foreach ($section->items as $item)
                 <a
@@ -27,6 +28,25 @@
                 </a>
             @endforeach
         </div>
+        <details class="relative order-3 md:hidden">
+            <summary
+                class="cursor-pointer list-none rounded-[0.35rem] border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 marker:hidden dark:border-white/15 dark:text-slate-200"
+            >
+                {{ __('capell-theme-corporate::generic.menu') }}
+            </summary>
+            <div
+                class="absolute right-0 z-30 mt-3 grid min-w-48 gap-3 rounded-[0.35rem] border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-xl dark:border-white/10 dark:bg-slate-950 dark:text-slate-300"
+            >
+                @foreach ($section->items as $item)
+                    <a
+                        href="{{ $item['url'] }}"
+                        class="transition hover:text-slate-950 dark:hover:text-white"
+                    >
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
+            </div>
+        </details>
         @if ($section->ctaLabel && $section->ctaUrl)
             <a
                 href="{{ $section->ctaUrl }}"
@@ -37,3 +57,4 @@
         @endif
     </div>
 </nav>
+<span id="main-content" tabindex="-1"></span>

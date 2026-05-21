@@ -160,7 +160,16 @@
                             'swiper-slide block-media-item group relative h-64 overflow-hidden text-center text-white',
                             'rounded-lg' => $rounded,
                         ])
+                        role="button"
                         tabindex="0"
+                        onkeydown="
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault()
+                                this.querySelector(
+                                    '[data-lightbox], .lightbox',
+                                )?.click()
+                            }
+                        "
                     >
                         <x-capell::media
                             :class="'swiper-slide-img object-cover h-64 mx-auto bg-gray-50 transition-transform duration-300 group-hover:scale-105 group-focus:scale-105' . ($theme->withDarkMode ? ' dark:bg-gray-900' : '')"

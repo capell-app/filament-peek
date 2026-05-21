@@ -29,6 +29,22 @@
             background: #e5e7eb;
         }
 
+        .site-theme-skip-link {
+            background: #ffffff;
+            color: #0f172a;
+            font-weight: 800;
+            left: 1rem;
+            padding: 0.75rem 1rem;
+            position: fixed;
+            top: 1rem;
+            transform: translateY(-150%);
+            z-index: 50;
+        }
+
+        .site-theme-skip-link:focus {
+            transform: translateY(0);
+        }
+
         @media (prefers-color-scheme: dark) {
             .site-theme-shell {
                 background: #020617;
@@ -41,6 +57,10 @@
         }
     </style>
 @endonce
+
+<a href="#main-content" class="site-theme-skip-link">
+    {{ __('capell-theme-corporate::generic.skip_to_content') }}
+</a>
 
 <div
     style="{{ collect($brand->tokens())->map(fn ($value, $token) => $token . ':' . $value)->implode(';') }}"

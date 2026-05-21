@@ -89,6 +89,7 @@ class CorporateThemeServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'capell-theme-corporate');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'capell-theme-corporate');
 
         $sectionRenderers = $this->sectionRenderers();

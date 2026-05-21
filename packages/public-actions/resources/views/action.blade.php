@@ -24,18 +24,27 @@
                 @csrf
 
                 @foreach ($fields as $field)
-                    <label for="public-action-{{ $field['key'] }}">
+                    @php
+                        $fieldId = 'public-action-' . $field['key'];
+                        $errorId = $fieldId . '-error';
+                    @endphp
+
+                    <label for="{{ $fieldId }}">
                         {{ $field['label'] }}
                     </label>
                     <input
-                        id="public-action-{{ $field['key'] }}"
+                        id="{{ $fieldId }}"
                         name="{{ $field['key'] }}"
                         type="{{ $field['type'] }}"
                         value="{{ old($field['key']) }}"
+                        @if ($errors->has($field['key'])) aria-describedby="{{ $errorId }}" @endif
+                        aria-invalid="{{ $errors->has($field['key']) ? 'true' : 'false' }}"
                         @required($field['required'])
                     />
                     @error($field['key'])
-                        <p>{{ $message }}</p>
+                        <p id="{{ $errorId }}">
+                            {{ $message }}
+                        </p>
                     @enderror
                 @endforeach
 

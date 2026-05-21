@@ -47,12 +47,32 @@
             color: var(--theme-primary, #6366f1);
         }
 
+        .site-theme-skip-link {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 800;
+            left: 1rem;
+            padding: 0.75rem 1rem;
+            position: fixed;
+            top: 1rem;
+            transform: translateY(-150%);
+            z-index: 50;
+        }
+
+        .site-theme-skip-link:focus {
+            transform: translateY(0);
+        }
+
         .site-theme-shell img,
         .site-theme-shell section div:empty {
             border-radius: 1rem;
         }
     </style>
 @endonce
+
+<a href="#main-content" class="site-theme-skip-link">
+    {{ __('capell-theme-saas::generic.skip_to_content') }}
+</a>
 
 <div
     style="{{ collect($brand->tokens())->map(fn ($value, $token) => $token . ':' . $value)->implode(';') }}"

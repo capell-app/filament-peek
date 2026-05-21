@@ -169,3 +169,20 @@ test('ap hero and gallery public output avoid reviewed accessibility and editor 
         ->and($gallery)->not->toContain('No images configured')
         ->and($cardGrid)->not->toContain('No cards configured');
 });
+
+test('reviewed foundation chrome avoids accessibility regressions', function (): void {
+    $themePath = dirname(__DIR__, 2);
+    $footer = file_get_contents($themePath . '/resources/views/components/footer/index.blade.php');
+    $socialLinks = file_get_contents($themePath . '/resources/views/components/footer/social-links.blade.php');
+    $relatedSites = file_get_contents($themePath . '/resources/views/components/footer/related-sites.blade.php');
+    $languages = file_get_contents($themePath . '/resources/views/components/languages.blade.php');
+
+    expect($footer)->not->toContain('href="javascript:void(0)"')
+        ->and($footer)->toContain('type="button"')
+        ->and($footer)->toContain("__('capell-foundation-theme::generic.scroll_to_top')")
+        ->and($socialLinks)->toContain('rel="nofollow noopener"')
+        ->and($relatedSites)->not->toContain('role="menu"')
+        ->and($relatedSites)->not->toContain('role="menuitem"')
+        ->and($languages)->not->toContain('role="menuitem"')
+        ->and($languages)->toContain('alt=""');
+});

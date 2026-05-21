@@ -88,6 +88,7 @@ class SaasThemeServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'capell-theme-saas');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'capell-theme-saas');
 
         $sectionRenderers = $this->sectionRenderers();

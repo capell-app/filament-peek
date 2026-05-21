@@ -1,4 +1,5 @@
 <footer class="theme-footer border-t border-slate-200">
+    <h2 class="sr-only">{{ __('capell-theme-saas::generic.footer') }}</h2>
     <div class="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-[1fr_2fr]">
         <div>
             <p class="font-bold text-[var(--theme-primary)]">

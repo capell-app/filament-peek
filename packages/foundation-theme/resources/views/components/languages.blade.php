@@ -23,7 +23,6 @@ $theme = Frontend::theme();
     :label="__('capell-frontend::generic.languages')"
     :dark-mode="$darkMode"
     :placement="$align === 'right' ? 'top-end' : 'top-start'"
-    role="menu"
 >
     <x-slot:trigger
         @class([
@@ -34,8 +33,7 @@ $theme = Frontend::theme();
         <img
             class="h-4 w-4"
             src="{{ asset("vendor/blade-country-flags/4x3-{$language->flag}.svg") }}"
-            alt="{{ $language->name }}"
-            title="{{ $language->name }}"
+            alt=""
             loading="lazy"
         />
         <span class="{{ $dropdownLabelClass }}">
@@ -49,15 +47,13 @@ $theme = Frontend::theme();
         <div>
             <a
                 href="{{ $siteLanguage['url'] }}"
-                role="menuitem"
-                tabindex="-1"
                 class="{{ $linkClass }}"
                 @wireNavigate
             >
                 <img
                     class="mr-2 inline-block h-4 w-4 align-top"
                     src="{{ asset("vendor/blade-country-flags/4x3-{$siteLanguage['flag']}.svg") }}"
-                    alt="{{ $siteLanguage['name'] }}"
+                    alt=""
                     loading="lazy"
                 />
                 {{ $siteLanguage['name'] }}

@@ -90,6 +90,7 @@ class AgencyThemeServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'capell-theme-agency');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'capell-theme-agency');
 
         $sectionRenderers = $this->sectionRenderers();

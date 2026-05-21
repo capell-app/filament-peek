@@ -227,24 +227,37 @@
                         type="email"
                         value="{{ old('email') }}"
                         autocomplete="email"
+                        @if ($errors->has('email')) aria-describedby="access-gate-email-error" @endif
+                        aria-invalid="{{ $errors->has('email') ? 'true' : 'false' }}"
                         required
                     />
                     @error('email')
-                        <div class="error">{{ $message }}</div>
+                        <div id="access-gate-email-error" class="error">
+                            {{ $message }}
+                        </div>
                     @enderror
 
                     @foreach ($fields as $field)
-                        <label for="access-gate-field-{{ $field->key() }}">
+                        @php
+                            $fieldId = 'access-gate-field-' . $field->key();
+                            $errorId = $fieldId . '-error';
+                        @endphp
+
+                        <label for="{{ $fieldId }}">
                             {{ $field->label() }}
                         </label>
                         <input
-                            id="access-gate-field-{{ $field->key() }}"
+                            id="{{ $fieldId }}"
                             name="{{ $field->key() }}"
                             type="text"
                             value="{{ old($field->key()) }}"
+                            @if ($errors->has($field->key())) aria-describedby="{{ $errorId }}" @endif
+                            aria-invalid="{{ $errors->has($field->key()) ? 'true' : 'false' }}"
                         />
                         @error($field->key())
-                            <div class="error">{{ $message }}</div>
+                            <div id="{{ $errorId }}" class="error">
+                                {{ $message }}
+                            </div>
                         @enderror
                     @endforeach
 

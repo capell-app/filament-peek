@@ -67,13 +67,23 @@
     }
 </style>
 
-<a
-    href="javascript:void(0)"
+<button
+    type="button"
     class="capell-foundation-theme-footer scroll-top hover:bg-primary focus:bg-primary text-primary z-999 sticky bottom-0 left-full hidden h-10 w-10 -translate-x-6 items-center justify-center rounded-t-sm bg-gray-200 transition hover:text-white focus:text-white"
-    title="{{ __('Scroll to top') }}"
+    aria-label="{{ __('capell-foundation-theme::generic.scroll_to_top') }}"
+    title="{{ __('capell-foundation-theme::generic.scroll_to_top') }}"
+    onclick="
+        window.scrollTo({
+            top: 0,
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+                .matches
+                ? 'auto'
+                : 'smooth',
+        })
+    "
 >
-    @svg('heroicon-o-chevron-up', 'h-6 w-6')
-</a>
+    @svg('heroicon-o-chevron-up', 'h-6 w-6', ['aria-hidden' => 'true'])
+</button>
 <footer
     id="footer"
     @class([

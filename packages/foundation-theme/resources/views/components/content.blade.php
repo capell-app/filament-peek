@@ -147,6 +147,7 @@
                 :data-lightbox="$image->getFullUrl()"
                 role="button"
                 tabindex="0"
+                onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
                 aria-label="{{ __('capell-frontend::generic.open_image') }}: {{ $imageTitle ?? $title }}"
                 :alt="$imageTitle ?? $title"
                 fetchpriority="high"

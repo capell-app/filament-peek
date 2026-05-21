@@ -34,7 +34,7 @@
             class="hover:text-primary focus:text-primary group/item flex items-center gap-x-1"
             href="{{ $link['url'] }}"
             target="_blank"
-            rel="nofollow"
+            rel="nofollow noopener"
         >
             @if ($icon)
                 {!! $icon !!}

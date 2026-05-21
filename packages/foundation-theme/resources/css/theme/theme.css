@@ -26,6 +26,17 @@
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
 }
 
 @layer utilities {
@@ -621,6 +632,15 @@
     .ap-hero__button:hover,
     .ap-showcase-button:hover {
         transform: translateY(-1px);
+    }
+
+    .ap-hero__button:focus-visible,
+    .ap-showcase-button:focus-visible,
+    .capell-foundation-theme-footer.scroll-top:focus-visible,
+    .block-media-item:focus-visible,
+    button:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: 3px;
     }
 
     .ap-hero__button--primary,
