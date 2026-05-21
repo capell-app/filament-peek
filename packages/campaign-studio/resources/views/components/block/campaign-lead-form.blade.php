@@ -6,7 +6,7 @@
     'block',
 ])
 
-<x-capell-layout-builder::block.wrapper
+<x-capell-foundation-theme::block.wrapper
     class="capell-block-campaign-lead-form block-campaign-lead-form"
     :$container
     :$containerKey
@@ -35,4 +35,4 @@
             />
         @endif
     </section>
-</x-capell-layout-builder::block.wrapper>
+</x-capell-foundation-theme::block.wrapper>

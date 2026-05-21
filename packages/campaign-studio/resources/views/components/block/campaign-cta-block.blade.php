@@ -12,7 +12,7 @@
     use Capell\CampaignStudio\Data\UtmData;
 @endphp
 
-<x-capell-layout-builder::block.wrapper
+<x-capell-foundation-theme::block.wrapper
     class="capell-block-campaign-cta-block block-campaign-cta-block"
     :$container
     :$containerKey
@@ -45,4 +45,4 @@
             </div>
         </section>
     @endif
-</x-capell-layout-builder::block.wrapper>
+</x-capell-foundation-theme::block.wrapper>
