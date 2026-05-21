@@ -28,7 +28,7 @@ class InstallCommand extends Command
 
         $this->publishMigrations();
 
-        $this->call('migrate');
+        $this->call('migrate', ['--force' => true]);
 
         InstallPackageAction::run();
 

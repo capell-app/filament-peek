@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublicActions\Filament\Resources\PublicActions;
 
 use BackedEnum;
+use Capell\Admin\Support\SiteScope;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Capell\PublicActions\Enums\PublicActionStatus;
@@ -26,6 +27,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Override;
 
@@ -113,6 +115,12 @@ final class PublicActionResource extends Resource
     public static function getModel(): string
     {
         return PublicAction::class;
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return SiteScope::applyForCurrentActor(parent::getEloquentQuery());
     }
 
     #[Override]

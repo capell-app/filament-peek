@@ -21,6 +21,7 @@ use Capell\PublicActions\Support\PublicActionHandlerRegistry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -31,6 +32,13 @@ use Throwable;
 final class SubmitPublicActionAction
 {
     use AsAction;
+
+    /**
+     * Hard cap on accepted payload byte size when an action has no payload_schema.
+     * Keeps anonymous submissions bounded so misconfigured actions cannot become
+     * a data-exfiltration / DoS amplification vector.
+     */
+    private const int UNSCHEMED_PAYLOAD_BYTE_LIMIT = 16 * 1024;
 
     public function __construct(
         private readonly PublicActionHandlerRegistry $handlers,
@@ -145,16 +153,51 @@ final class SubmitPublicActionAction
         ])->validate();
 
         $payload = $this->validatedSchemaPayload($action, $input)
-            ?? Arr::except($input, [
-                '_token',
-                '_method',
-                'g-recaptcha-response',
-            ]);
+            ?? $this->cappedUnschemedPayload($action, $input);
 
         return [
             ...$payload,
             ...Arr::only($validated, ['source_type', 'source_id']),
         ];
+    }
+
+    /**
+     * Apply a hard byte-size cap when the action has no payload schema so that
+     * misconfigured actions cannot accept unbounded submissions. Framework
+     * fields are stripped; oversized payloads raise a validation error so the
+     * caller gets a clear signal instead of silent truncation.
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     *
+     * @throws ValidationException
+     */
+    private function cappedUnschemedPayload(PublicAction $action, array $input): array
+    {
+        $candidate = Arr::except($input, [
+            '_token',
+            '_method',
+            'g-recaptcha-response',
+            'source_type',
+            'source_id',
+        ]);
+
+        $encoded = json_encode($candidate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $byteSize = is_string($encoded) ? strlen($encoded) : self::UNSCHEMED_PAYLOAD_BYTE_LIMIT + 1;
+
+        Log::warning('capell-public-actions: submission accepted without payload schema; payload is capped.', [
+            'action_key' => $action->key,
+            'payload_byte_size' => $byteSize,
+            'payload_field_count' => count($candidate),
+        ]);
+
+        if ($byteSize > self::UNSCHEMED_PAYLOAD_BYTE_LIMIT) {
+            throw ValidationException::withMessages([
+                'payload' => __('capell-public-actions::generic.schema_required'),
+            ]);
+        }
+
+        return $candidate;
     }
 
     /**

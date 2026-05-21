@@ -7,6 +7,7 @@ use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\Core\Models\Theme;
 use Capell\Frontend\Support\State\FrontendState;
+use Capell\Hero\View\Components\Block\Hero;
 use Capell\LayoutBuilder\Enums\BlockComponentEnum;
 use Capell\LayoutBuilder\Models\Block;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -64,4 +65,51 @@ it('renders page translation hero content while ignoring nested page variables',
     $view
         ->assertSee('Platform Architecture')
         ->assertSee('Build Platform Architecture for Capell without touching :page.', false);
+});
+
+it('skips empty hero blocks before exposing public markup', function (): void {
+    $language = Language::factory()->english()->create();
+    $theme = Theme::factory()->defaultMeta()->create();
+    $site = Site::factory()
+        ->language($language)
+        ->theme($theme)
+        ->withTranslations($language, ['title' => 'Capell'])
+        ->create();
+
+    $page = Page::factory()
+        ->site($site)
+        ->withTranslations($language, [
+            'title' => 'Empty Hero',
+            'content' => '<p>Body content.</p>',
+            'meta' => ['slug' => 'empty-hero'],
+        ])
+        ->create();
+
+    $page->load('translation');
+    $site->load('translation');
+
+    $block = Block::factory()->create([
+        'key' => 'hero',
+        'meta' => [
+            'component' => BlockComponentEnum::Hero->value,
+        ],
+    ]);
+    $block->setRelation('assets', new EloquentCollection);
+    $block->setRelation('translation', null);
+
+    resolve(FrontendState::class)
+        ->withLanguage($language)
+        ->withSite($site)
+        ->withTheme($theme)
+        ->withPage($page);
+
+    $component = new Hero(
+        container: [],
+        containerKey: 'main',
+        blockIndex: 0,
+        loop: (object) ['first' => true, 'last' => true],
+        block: $block,
+    );
+
+    expect($component->render())->toBe('');
 });

@@ -21,7 +21,7 @@ class InstallCommand extends Command
             return self::FAILURE;
         }
 
-        $this->call('migrate');
+        $this->call('migrate', ['--force' => true]);
 
         InstallWorkspaceRolesAction::run();
 

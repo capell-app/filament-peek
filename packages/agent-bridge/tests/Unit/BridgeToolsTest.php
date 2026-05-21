@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\AgentBridge\Actions\InvokeAgentBridgeCapabilityPreviewAction;
 use Capell\AgentBridge\Data\AuthenticatedAgentBridgeClientData;
 use Capell\AgentBridge\Data\CapabilityData;
 use Capell\AgentBridge\Enums\CapabilityRiskEnum;
@@ -186,6 +187,63 @@ it('runs and confirms site capability previews for authenticated clients', funct
     expect($preview['mode'])->toBe('preview')
         ->and($confirmed['mode'])->toBe('confirmed')
         ->and($confirmed['result']['message'])->toBe('Executed fake capability.');
+});
+
+it('directly executes read-only site capabilities without confirmation', function (): void {
+    $registry = resolve(CapellAgentBridgeCapabilityRegistry::class);
+    $registry->register(new CapabilityData(
+        key: 'capell.fake.readonly',
+        name: 'Fake readonly',
+        description: 'Readonly fake capability.',
+        scope: 'capell.fake.readonly',
+        server: CapabilityServerEnum::Site,
+        risk: CapabilityRiskEnum::Read,
+        actionClass: FakeCapabilityAction::class,
+        requiresConfirmation: false,
+    ));
+
+    $user = User::query()->create([
+        'name' => 'Readonly Tool User',
+        'email' => 'readonly-tool-user@example.com',
+        'password' => 'secret',
+    ]);
+    auth()->setUser($user);
+
+    $token = new CapellAgentBridgeToken;
+    $token->forceFill([
+        'name' => 'Readonly client',
+        'token_hash' => CapellAgentBridgeToken::hashPlainTextToken('readonly-token'),
+        'scopes' => ['capell.fake.readonly'],
+        'user_type' => $user->getMorphClass(),
+        'user_id' => $user->getKey(),
+    ])->save();
+
+    $response = (new RunSiteCapabilityTool)->handle(
+        new Request([
+            'capability' => 'capell.fake.readonly',
+            'payload' => ['name' => 'Execute me'],
+        ]),
+        new AuthenticatedAgentBridgeClientData(
+            tokenId: (int) $token->getKey(),
+            name: 'Readonly client',
+            scopes: ['capell.fake.readonly'],
+        ),
+        $token,
+    )->getStructuredContent();
+
+    expect($response['mode'])->toBe('executed')
+        ->and($response['capability'])->toBe('capell.fake.readonly')
+        ->and($response['result']['message'])->toBe('Executed fake capability.');
+});
+
+it('hashes capability payloads deterministically regardless of key order', function (): void {
+    expect(InvokeAgentBridgeCapabilityPreviewAction::payloadHash([
+        'second' => ['nested' => true],
+        'first' => 'value',
+    ]))->toBe(InvokeAgentBridgeCapabilityPreviewAction::payloadHash([
+        'first' => 'value',
+        'second' => ['nested' => true],
+    ]));
 });
 
 it('exposes the agent bridge overview resource as markdown text', function (): void {

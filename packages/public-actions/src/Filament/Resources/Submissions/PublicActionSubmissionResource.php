@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\PublicActions\Filament\Resources\Submissions;
 
 use BackedEnum;
+use Capell\Admin\Support\SiteScope;
 use Capell\Core\Facades\CapellCore;
 use Capell\PublicActions\Enums\PublicActionSubmissionStatus;
 use Capell\PublicActions\Filament\Resources\Concerns\PublicActionFilamentOptions;
@@ -57,6 +58,12 @@ final class PublicActionSubmissionResource extends Resource
     public static function getModel(): string
     {
         return PublicActionSubmission::class;
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return SiteScope::applyForCurrentActor(parent::getEloquentQuery());
     }
 
     #[Override]

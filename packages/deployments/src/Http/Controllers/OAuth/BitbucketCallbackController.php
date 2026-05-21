@@ -43,7 +43,7 @@ final class BitbucketCallbackController
         $accessToken = $tokenResponse['access_token'] ?? null;
         $refreshToken = $tokenResponse['refresh_token'] ?? null;
         if (! is_string($accessToken) || $accessToken === '') {
-            Log::warning('capell-deployments: Bitbucket OAuth token exchange failed', $tokenResponse);
+            Log::warning('capell-deployments: Bitbucket OAuth token exchange failed', $this->redactTokenResponse($tokenResponse));
 
             return back()->withErrors([__('capell-deployments::plugins.deployment_connection.oauth_failed', ['provider' => 'Bitbucket'])]);
         }
@@ -67,5 +67,27 @@ final class BitbucketCallbackController
 
         return to_route('filament.admin.pages.deployment-connection')
             ->with('status', __('capell-deployments::plugins.deployment_connection.oauth_connected', ['provider' => 'Bitbucket']));
+    }
+
+    /**
+     * Redact OAuth provider response so secrets never reach the log channel.
+     *
+     * @return array<string, scalar|null>
+     */
+    private function redactTokenResponse(mixed $tokenResponse): array
+    {
+        if (! is_array($tokenResponse)) {
+            return ['response_type' => gettype($tokenResponse)];
+        }
+
+        $safeKeys = ['error', 'error_description', 'error_uri', 'status', 'message'];
+        $redacted = [];
+        foreach ($safeKeys as $safeKey) {
+            if (array_key_exists($safeKey, $tokenResponse) && is_scalar($tokenResponse[$safeKey])) {
+                $redacted[$safeKey] = $tokenResponse[$safeKey];
+            }
+        }
+
+        return $redacted;
     }
 }

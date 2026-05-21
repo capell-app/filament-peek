@@ -24,6 +24,18 @@ class BeaconController extends BaseController
             'csrf_token' => csrf_token(),
         ];
 
+        // Anonymous beacon must be O(1) — never resolve site/page for unauthenticated requests.
+        if ($request->user() === null) {
+            return response()->json($data);
+        }
+
+        // Cross-origin beacons must never receive the admin manifest, even when the
+        // browser presents a valid session cookie (defence-in-depth against CSRF /
+        // cross-site embedding leaking editor metadata to other origins).
+        if (! $this->isSameOriginRequest($request)) {
+            return response()->json($data);
+        }
+
         [$siteDomain, $url] = LoadSiteDomainFromUrlAction::run($request->url, sites: SiteLoader::getSites());
 
         if (! $siteDomain) {
@@ -52,29 +64,55 @@ class BeaconController extends BaseController
             }
         });
 
-        if ($request->user() !== null) {
-            /** @var User $user */
-            $user = $request->user();
+        /** @var User $user */
+        $user = $request->user();
 
-            $data['user'] = [
-                'id' => $user->getKey(),
-                'name' => (string) data_get($user, 'name'),
-            ];
+        $data['user'] = [
+            'id' => $user->getKey(),
+            'name' => (string) data_get($user, 'name'),
+        ];
 
-            if ($this->isAdminUser($user) && config('capell-frontend-authoring.enabled') === true) {
-                $data['user']['admin'] = true;
+        if ($this->isAdminUser($user) && config('capell-frontend-authoring.enabled') === true) {
+            $data['user']['admin'] = true;
 
-                if ($pageUrl instanceof PageUrl) {
-                    $data['scripts'] = [
-                        view('capell::authoring.bootstrap-script', [
-                            'regions' => BuildEditableRegionManifestAction::run($pageUrl),
-                        ])->render(),
-                    ];
-                }
+            if ($pageUrl instanceof PageUrl) {
+                $data['scripts'] = [
+                    view('capell::authoring.bootstrap-script', [
+                        'regions' => BuildEditableRegionManifestAction::run($pageUrl),
+                    ])->render(),
+                ];
             }
         }
 
         return response()->json($data);
+    }
+
+    /**
+     * Confirm the beacon request originated from the same origin as the host we serve.
+     * Browsers send Sec-Fetch-Site for fetch/XHR; we treat anything other than
+     * "same-origin" as cross-origin. When that header is absent (older clients,
+     * server-to-server), fall back to comparing the Origin header host with the
+     * request host.
+     */
+    private function isSameOriginRequest(BeaconRequest $request): bool
+    {
+        $secFetchSite = $request->headers->get('Sec-Fetch-Site');
+        if (is_string($secFetchSite) && $secFetchSite !== '') {
+            return $secFetchSite === 'same-origin' || $secFetchSite === 'none';
+        }
+
+        $origin = $request->headers->get('Origin');
+        if (! is_string($origin) || $origin === '') {
+            // No Origin header — likely same-origin navigation/XHR pre-Sec-Fetch.
+            return true;
+        }
+
+        $originHost = parse_url($origin, PHP_URL_HOST);
+        if (! is_string($originHost) || $originHost === '') {
+            return false;
+        }
+
+        return strcasecmp($originHost, $request->getHost()) === 0;
     }
 
     private function isAdminUser(AuthenticatableContract $user): bool

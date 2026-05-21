@@ -2,11 +2,18 @@
 
 declare(strict_types=1);
 
+use Capell\AccessGate\Enums\AccessAreaStatus;
+use Capell\AccessGate\Enums\ApprovalStrategy;
 use Capell\AccessGate\Enums\GrantSubjectType;
+use Capell\AccessGate\Enums\IdentityMode;
+use Capell\AccessGate\Enums\RegistrationPolicy;
+use Capell\AccessGate\Enums\TokenPolicy;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\ClaimToken;
+use Capell\AccessGate\Models\Event;
 use Capell\AccessGate\Models\Grant;
+use Capell\AccessGate\Models\Registration;
 use Capell\AccessGate\Support\AccessGateDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -63,4 +70,34 @@ it('creates browser token factories scoped to the same area as their grant', fun
     $browserToken = BrowserToken::factory()->create();
 
     expect($browserToken->access_area_id)->toBe($browserToken->grant->access_area_id);
+});
+
+it('covers area relationships and enum casts', function (): void {
+    $area = new Area([
+        'status' => AccessAreaStatus::Active,
+        'identity_mode' => IdentityMode::Hybrid,
+        'approval_strategy' => ApprovalStrategy::Manual,
+        'registration_policy' => RegistrationPolicy::SinglePerEmail,
+        'token_policy' => TokenPolicy::SingleActiveBrowserToken,
+        'public_allowlist' => ['https://example.test'],
+        'claim_url_hosts' => ['example.test'],
+        'metadata' => ['tier' => 'partner'],
+        'discount_metadata' => ['source' => 'launch'],
+    ]);
+
+    expect($area->site()->getForeignKeyName())->toBe('site_id')
+        ->and($area->registrations()->getRelated())->toBeInstanceOf(Registration::class)
+        ->and($area->grants()->getRelated())->toBeInstanceOf(Grant::class)
+        ->and($area->claimTokens()->getRelated())->toBeInstanceOf(ClaimToken::class)
+        ->and($area->browserTokens()->getRelated())->toBeInstanceOf(BrowserToken::class)
+        ->and($area->events()->getRelated())->toBeInstanceOf(Event::class)
+        ->and($area->status)->toBe(AccessAreaStatus::Active)
+        ->and($area->identity_mode)->toBe(IdentityMode::Hybrid)
+        ->and($area->approval_strategy)->toBe(ApprovalStrategy::Manual)
+        ->and($area->registration_policy)->toBe(RegistrationPolicy::SinglePerEmail)
+        ->and($area->token_policy)->toBe(TokenPolicy::SingleActiveBrowserToken)
+        ->and($area->public_allowlist)->toBe(['https://example.test'])
+        ->and($area->claim_url_hosts)->toBe(['example.test'])
+        ->and($area->metadata)->toBe(['tier' => 'partner'])
+        ->and($area->discount_metadata)->toBe(['source' => 'launch']);
 });

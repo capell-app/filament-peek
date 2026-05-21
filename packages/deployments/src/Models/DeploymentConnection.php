@@ -33,7 +33,23 @@ final class DeploymentConnection extends Model
     /** @use HasFactory<DeploymentConnectionFactory> */
     use HasFactory;
 
-    protected $guarded = [];
+    /**
+     * Explicit fillable list — encrypted token columns are deliberately omitted
+     * so they can never be set via mass-assignment from Filament forms or
+     * untrusted request input. Tokens must be written via forceFill in actions.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'provider',
+        'repo_owner',
+        'repo_name',
+        'default_branch',
+        'token_expires_at',
+        'install_policy',
+        'metadata',
+        'is_active',
+    ];
 
     public function repoCoordinate(): string
     {

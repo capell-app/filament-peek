@@ -14,15 +14,19 @@ use Capell\Core\ThemeStudio\Data\ProofSectionData;
 use Capell\Core\ThemeStudio\Data\ThemePageData;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
 use Capell\ThemeStudio\Agency\AgencyThemeServiceProvider;
+use Capell\ThemeStudio\Agency\Health\ThemeAgencyHealthCheck;
 use Illuminate\Support\Facades\View;
 
 it('defines the agency premium renderer contract', function (): void {
     $definition = AgencyThemeServiceProvider::definition();
 
     expect($definition->package)->toBe('capell-app/theme-agency')
+        ->and($definition->key)->toBe(AgencyThemeServiceProvider::THEME_KEY)
+        ->and($definition->assets)->toBe(['css' => 'vendor/capell/themes/agency.css'])
         ->and($definition->includedSections)->toContain('hero', 'features', 'proof', 'cta')
         ->and($definition->presets)->toHaveCount(3)
-        ->and($definition->tags)->toContain('Expressive');
+        ->and($definition->tags)->toContain('Expressive')
+        ->and(ThemeAgencyHealthCheck::compatibleCapellApiVersion())->toBe('^4.0');
 });
 
 it('renders navigation from the agency package views', function (): void {
@@ -43,6 +47,25 @@ it('renders navigation from the agency package views', function (): void {
     expect($html)
         ->toContain('Capell')
         ->toContain('Home');
+});
+
+it('declares renderers for every included agency section', function (): void {
+    View::addNamespace('capell-theme-agency', __DIR__ . '/../../resources/views');
+
+    $provider = new AgencyThemeServiceProvider($this->app);
+    $method = new ReflectionMethod($provider, 'sectionRenderers');
+
+    $renderers = $method->invoke($provider);
+
+    expect(array_keys($renderers))->toBe([
+        'navigation',
+        'hero',
+        'features',
+        'proof',
+        'content-listing',
+        'cta',
+        'footer',
+    ]);
 });
 
 it('registers agency only when the theme package is installed', function (): void {

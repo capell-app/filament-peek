@@ -31,4 +31,16 @@ return [
         'queue' => null,
         'retry_minutes' => [5, 30, 120],
     ],
+    'webhooks' => [
+        'signature_headers' => [
+            'kit' => 'X-Kit-Webhook-Signature',
+            'mailchimp' => 'X-Mailchimp-Signature',
+            'campaign_monitor' => 'X-CM-Signature',
+        ],
+    ],
+    'http' => [
+        'timeout' => 15,
+        'retry_times' => 3,
+        'retry_delay_ms' => 500,
+    ],
 ];

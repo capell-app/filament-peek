@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Capell\Events\Filament\Resources\Occurrences;
 
 use BackedEnum;
+use Capell\Admin\Support\SiteScope;
 use Capell\Events\Filament\Resources\Occurrences\Pages\ManageEventOccurrences;
 use Capell\Events\Models\EventOccurrence;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 class EventOccurrenceResource extends Resource
@@ -58,5 +60,12 @@ class EventOccurrenceResource extends Resource
         return [
             'index' => ManageEventOccurrences::route('/'),
         ];
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('event', fn (Builder $query): Builder => SiteScope::applyForCurrentActor($query));
     }
 }
