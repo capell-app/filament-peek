@@ -13,6 +13,9 @@ use Capell\Newsletter\Models\ProviderConnection;
 use Capell\Newsletter\Models\ProviderSubscriber;
 use Capell\Newsletter\Models\Subscriber;
 use Capell\Newsletter\Models\SyncAttempt;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 it('syncs durable attempts through a provider adapter', function (): void {
     $site = $this->createNewsletterSite();
@@ -70,6 +73,53 @@ it('normalizes provider webhooks into local subscriber state', function (): void
 
     expect(Subscriber::query()->forEmail($site->getKey(), 'webhook@example.com')->first()?->status)
         ->toBe(SubscriberStatus::Unsubscribed);
+});
+
+it('acknowledges duplicate provider webhook retries without re-recording consent', function (): void {
+    if (! Schema::hasTable('newsletter_processed_webhook_events')) {
+        Schema::create('newsletter_processed_webhook_events', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('provider_connection_id')->constrained('newsletter_provider_connections')->cascadeOnDelete();
+            $table->string('remote_event_id');
+            $table->string('event_type');
+            $table->timestamp('processed_at')->useCurrent();
+            $table->timestamps();
+            $table->unique(
+                ['provider_connection_id', 'remote_event_id', 'event_type'],
+                'newsletter_processed_webhook_events_uniq',
+            );
+        });
+    }
+
+    $site = $this->createNewsletterSite();
+    $connection = ProviderConnection::query()->create([
+        'site_id' => $site->getKey(),
+        'name' => 'Fake',
+        'provider' => ProviderType::Fake,
+        'auth_type' => AuthType::ApiKey,
+        'credentials' => ['api_key' => 'fake'],
+        'is_enabled' => true,
+    ]);
+
+    $payload = [
+        'email' => 'webhook-retry@example.com',
+        'status' => SubscriberStatus::Unsubscribed->value,
+        'event_type' => 'unsubscribe',
+        'remoteId' => 'provider-event-1',
+    ];
+
+    $this->postJson(route('capell-newsletter.provider-webhook', ['providerConnection' => $connection]), $payload)
+        ->assertOk();
+
+    $subscriber = Subscriber::query()->forEmail($site->getKey(), 'webhook-retry@example.com')->first();
+    $consentEventsCount = $subscriber?->consentEvents()->count();
+    expect(DB::table('newsletter_processed_webhook_events')->count())->toBe(1);
+
+    $this->postJson(route('capell-newsletter.provider-webhook', ['providerConnection' => $connection]), $payload)
+        ->assertOk();
+
+    expect($subscriber)->not->toBeNull()
+        ->and($subscriber?->refresh()->consentEvents()->count())->toBe($consentEventsCount);
 });
 
 it('requeues due provider sync attempts without touching future attempts', function (): void {

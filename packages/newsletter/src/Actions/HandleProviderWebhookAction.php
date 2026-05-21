@@ -32,8 +32,12 @@ class HandleProviderWebhookAction
             return null;
         }
 
-        if ($this->alreadyProcessed($connection, $event->remoteId, $event->eventType)) {
-            return null;
+        $remoteEventId = $this->remoteEventId($connection, $event->remoteId, $event->eventType, $event->email, $request);
+
+        if ($this->alreadyProcessed($connection, $remoteEventId, $event->eventType)) {
+            return Subscriber::query()
+                ->forEmail($connection->site_id, $event->email)
+                ->first();
         }
 
         $subscriber = UpsertSubscriberAction::run(new SubscriberData(
@@ -59,17 +63,13 @@ class HandleProviderWebhookAction
             $event->payload,
         );
 
-        $this->markProcessed($connection, $event->remoteId, $event->eventType);
+        $this->markProcessed($connection, $remoteEventId, $event->eventType);
 
         return $subscriber;
     }
 
-    private function alreadyProcessed(ProviderConnection $connection, ?string $remoteId, string $eventType): bool
+    private function alreadyProcessed(ProviderConnection $connection, string $remoteId, string $eventType): bool
     {
-        if ($remoteId === null || $remoteId === '') {
-            return false;
-        }
-
         if (! Schema::hasTable('newsletter_processed_webhook_events')) {
             return false;
         }
@@ -81,12 +81,8 @@ class HandleProviderWebhookAction
             ->exists();
     }
 
-    private function markProcessed(ProviderConnection $connection, ?string $remoteId, string $eventType): void
+    private function markProcessed(ProviderConnection $connection, string $remoteId, string $eventType): void
     {
-        if ($remoteId === null || $remoteId === '') {
-            return;
-        }
-
         if (! Schema::hasTable('newsletter_processed_webhook_events')) {
             return;
         }
@@ -101,5 +97,24 @@ class HandleProviderWebhookAction
             'created_at' => $now,
             'updated_at' => $now,
         ]);
+    }
+
+    private function remoteEventId(
+        ProviderConnection $connection,
+        ?string $remoteId,
+        string $eventType,
+        string $email,
+        Request $request,
+    ): string {
+        if (is_string($remoteId) && $remoteId !== '') {
+            return $remoteId;
+        }
+
+        return hash('sha256', implode('|', [
+            $connection->provider->value,
+            $eventType,
+            Subscriber::emailHash($email),
+            hash('sha256', $request->getContent()),
+        ]));
     }
 }

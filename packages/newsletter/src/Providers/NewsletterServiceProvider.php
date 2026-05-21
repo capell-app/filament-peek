@@ -59,6 +59,7 @@ class NewsletterServiceProvider extends AbstractPackageServiceProvider
                 '2026_05_10_190861_09_create_newsletter_sync_attempts_table',
                 '2026_05_10_190861_08_create_newsletter_segments_table',
                 '2026_05_10_190861_11_create_newsletter_import_batches_table',
+                '2026_05_10_190861_12_create_newsletter_processed_webhook_events_table',
             ]);
     }
 

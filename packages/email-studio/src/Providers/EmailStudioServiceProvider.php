@@ -48,6 +48,7 @@ class EmailStudioServiceProvider extends AbstractPackageServiceProvider
                 '2026_05_10_190847_08_create_email_suppressions_table',
                 '2026_05_10_190847_09_create_email_template_registrations_table',
                 '2026_05_10_190847_10_create_email_tracking_tokens_table',
+                '2026_05_21_000001_add_site_foreign_keys_to_email_studio_tables',
             ]);
     }
 

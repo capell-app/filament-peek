@@ -240,6 +240,7 @@ final class GitHubProvider implements GitProviderContract
             ->withToken($conn->access_token_encrypted)
             ->withHeader('Accept', 'application/vnd.github+json')
             ->withHeader('X-GitHub-Api-Version', '2022-11-28')
+            ->retry(2, 200, throw: false)
             ->timeout(10)
             ->connectTimeout(5);
     }
@@ -251,6 +252,7 @@ final class GitHubProvider implements GitProviderContract
             ->withToken($conn->access_token_encrypted)
             ->withHeader('Accept', 'application/vnd.github+json')
             ->withHeader('X-GitHub-Api-Version', '2022-11-28')
+            ->retry(2, 200, throw: false)
             ->timeout(10)
             ->connectTimeout(5);
     }

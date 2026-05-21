@@ -155,6 +155,7 @@ final class BitbucketProvider implements GitProviderContract
         return $this->http
             ->baseUrl('https://api.bitbucket.org/2.0')
             ->withToken($conn->access_token_encrypted)
+            ->retry(2, 200, throw: false)
             ->timeout(10)
             ->connectTimeout(5);
     }

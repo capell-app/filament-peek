@@ -15,30 +15,40 @@ class RequeueDueProviderSyncAttemptsAction
 
     public function handle(?int $limit = null, bool $dispatchJobs = true): int
     {
-        $query = SyncAttempt::query()
-            ->where('sync_status', SyncStatus::RetryScheduled)
-            ->whereNotNull('next_retry_at')
-            ->where('next_retry_at', '<=', now())
-            ->oldest('next_retry_at');
-
-        if (is_int($limit) && $limit > 0) {
-            $query->limit($limit);
-        }
-
+        $remaining = is_int($limit) && $limit > 0 ? $limit : null;
         $count = 0;
 
-        $query->get()->each(function (SyncAttempt $syncAttempt) use (&$count, $dispatchJobs): void {
-            $syncAttempt->forceFill([
-                'sync_status' => SyncStatus::Pending,
-                'next_retry_at' => null,
-            ])->save();
+        while ($remaining === null || $remaining > 0) {
+            $batchLimit = $remaining === null ? 500 : min(500, $remaining);
+            $syncAttempts = SyncAttempt::query()
+                ->where('sync_status', SyncStatus::RetryScheduled)
+                ->whereNotNull('next_retry_at')
+                ->where('next_retry_at', '<=', now())
+                ->oldest('next_retry_at')
+                ->limit($batchLimit)
+                ->get();
 
-            if ($dispatchJobs) {
-                dispatch(new SyncSubscriberToProviderJob($syncAttempt));
+            if ($syncAttempts->isEmpty()) {
+                break;
             }
 
-            $count++;
-        });
+            $syncAttempts->each(function (SyncAttempt $syncAttempt) use (&$count, &$remaining, $dispatchJobs): void {
+                $syncAttempt->forceFill([
+                    'sync_status' => SyncStatus::Pending,
+                    'next_retry_at' => null,
+                ])->save();
+
+                if ($dispatchJobs) {
+                    dispatch(new SyncSubscriberToProviderJob($syncAttempt));
+                }
+
+                $count++;
+
+                if ($remaining !== null) {
+                    $remaining--;
+                }
+            });
+        }
 
         return $count;
     }
