@@ -34,5 +34,24 @@
     "scripts": {
         "test": "pest"
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "homepage": "https://github.com/capell-app/dashboard-reports",
+    "keywords": [
+        "capell",
+        "cms",
+        "laravel",
+        "reports",
+        "dashboard"
+    ],
+    "authors": [
+        {
+            "name": "Capell Team",
+            "email": "team@capell.app",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/capell-app/capell-packages",
+        "docs": "https://docs.capell.app/packages/dashboard-reports"
+    }
 }

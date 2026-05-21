@@ -22,8 +22,8 @@
     },
     "require": {
         "php": "^8.3",
-        "capell-app/admin": "*",
-        "capell-app/core": "*",
+        "capell-app/admin": "^4.0 || 4.x-dev",
+        "capell-app/core": "^4.0 || 4.x-dev",
         "laravel/framework": "^11.45.3|^12.41.1|^13.0",
         "lorisleiva/laravel-actions": "^2.8",
         "spatie/laravel-data": "^4.5",
@@ -45,5 +45,24 @@
     "prefer-stable": true,
     "scripts": {
         "test": "bin/pest --colors=always"
+    },
+    "homepage": "https://github.com/capell-app/password-policy",
+    "keywords": [
+        "capell",
+        "cms",
+        "laravel",
+        "security",
+        "passwords"
+    ],
+    "authors": [
+        {
+            "name": "Capell Team",
+            "email": "team@capell.app",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/capell-app/capell-packages",
+        "docs": "https://docs.capell.app/packages/password-policy"
     }
 }

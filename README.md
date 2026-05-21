@@ -29,6 +29,7 @@ Each package README follows the same shape:
 | Package                                                 | Composer package              | Purpose                                                                                            |
 | ------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------- |
 | [address](packages/address/README.md)                   | `capell-app/address`          | Country, region, and address data for Capell forms and admin records.                              |
+| [block-library](packages/block-library/README.md)       | `capell-app/content-blocks`   | Shared typed content block primitives used by layout and content packages.                         |
 | [blog](packages/blog/README.md)                         | `capell-app/blog`             | Article publishing, archive pages, tag pages, article elements, and sitemap contributions.         |
 | [content-sections](packages/content-sections/README.md) | `capell-app/content-sections` | Reusable content section records and Livewire rendering.                                           |
 | [events](packages/events/README.md)                     | `capell-app/events`           | Event records, venues, occurrences, registrations, calendar pages, and iCalendar feeds.            |
@@ -104,6 +105,12 @@ composer require capell-app/<package>
 ```
 
 Then run the package install command listed in that package README when it owns migrations, settings, generated pages, demo data, or external setup.
+
+### Install Ordering Notes
+
+- Install `capell-app/layout-builder` before `capell-app/blog`.
+- Install `capell-app/layout-builder`, then `capell-app/foundation-theme`, before any premium theme package.
+- Install `capell-app/migration-assistant` before `capell-app/wordpress-importer`.
 
 ## Working In This Repository
 

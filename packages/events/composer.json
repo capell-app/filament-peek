@@ -20,10 +20,10 @@
     ],
     "require": {
         "php": "^8.3",
-        "capell-app/admin": "*",
-        "capell-app/frontend": "*",
-        "capell-app/navigation": "*",
-        "capell-app/publishing-studio": "*",
+        "capell-app/admin": "^4.0 || 4.x-dev",
+        "capell-app/frontend": "^4.0 || 4.x-dev",
+        "capell-app/navigation": "^4.0 || 4.x-dev",
+        "capell-app/publishing-studio": "^4.0 || 4.x-dev",
         "rlanvin/php-rrule": "^2.6",
         "spatie/icalendar-generator": "^3.2"
     },
@@ -43,5 +43,10 @@
     "config": {
         "sort-packages": true
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "type": "library",
+    "support": {
+        "source": "https://github.com/capell-app/capell-packages",
+        "docs": "https://docs.capell.app/packages/events"
+    }
 }

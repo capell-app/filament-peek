@@ -50,6 +50,12 @@ Use package `overview.md` pages for search-facing package summaries and task-lev
 
 For the full documentation site, see [docs.capell.app](https://docs.capell.app). For the package overview and dependency matrix, see the [repository README](../README.md).
 
+## Cross-package install order
+
+- Blog depends on Layout Builder; install `capell-app/layout-builder` before `capell-app/blog`.
+- Theme packages extend Foundation Theme; install `capell-app/layout-builder`, then `capell-app/foundation-theme`, then `capell-app/theme-agency`, `capell-app/theme-corporate`, or `capell-app/theme-saas`.
+- WordPress Importer registers a source for Migration Assistant; install `capell-app/migration-assistant` before `capell-app/wordpress-importer`.
+
 ## Screenshot Automation
 
 Package screenshots are generated from committed manifests during deployment.

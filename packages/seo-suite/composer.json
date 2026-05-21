@@ -14,10 +14,10 @@
     "license": "proprietary",
     "require": {
         "php": "^8.3",
-        "capell-app/admin": "*",
-        "capell-app/insights": "*",
-        "capell-app/frontend": "*",
-        "capell-app/site-discovery": "*",
+        "capell-app/admin": "^4.0 || 4.x-dev",
+        "capell-app/insights": "^4.0 || 4.x-dev",
+        "capell-app/frontend": "^4.0 || 4.x-dev",
+        "capell-app/site-discovery": "^4.0 || 4.x-dev",
         "prism-php/prism": "^0.100"
     },
     "suggest": {
@@ -42,5 +42,18 @@
     "config": {
         "sort-packages": true
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "type": "library",
+    "homepage": "https://github.com/capell-app/seo-suite",
+    "authors": [
+        {
+            "name": "Capell Team",
+            "email": "team@capell.app",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/capell-app/capell-packages",
+        "docs": "https://docs.capell.app/packages/seo-suite"
+    }
 }

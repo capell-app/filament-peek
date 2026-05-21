@@ -54,6 +54,7 @@ Hero renders and seeds the default home-page hero block used by Capell frontend 
 ## Install And Setup
 
 - Install with `composer require capell-app/hero` in the host Capell application.
+- Install after Layout Builder when the host setup flow should seed default home-page hero layout data.
 - In this repository, verify package changes with `vendor/bin/pest`; do not use `php artisan`.
 
 ## Docs

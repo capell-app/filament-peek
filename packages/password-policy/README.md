@@ -14,6 +14,8 @@ Password expiry, forced password changes, and password safety policy for Capell 
 ## What It Adds
 
 - Password expiry, forced password changes, and password safety policy for Capell CMS.
+- Settings-backed policy controls for password age, history, and forced changes.
+- Admin-facing forced password change flow.
 
 ## Built With
 

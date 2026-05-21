@@ -37,6 +37,7 @@ Profile-based CSS and JavaScript delivery for public Capell pages.
 
 - Blade directive: `@frontendOptimizerAssets(...)`.
 - Jobs: `GenerateCriticalCssJob`.
+- Critical CSS generation uses the configured process runner; keep failures visible in optimization run records rather than hiding them in Blade output.
 
 ## Data And Persistence
 

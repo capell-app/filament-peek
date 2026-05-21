@@ -44,5 +44,24 @@
     "prefer-stable": true,
     "scripts": {
         "test": "pest --colors=always"
+    },
+    "homepage": "https://github.com/capell-app/public-actions",
+    "keywords": [
+        "capell",
+        "cms",
+        "laravel",
+        "actions",
+        "integrations"
+    ],
+    "authors": [
+        {
+            "name": "Capell Team",
+            "email": "team@capell.app",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/capell-app/capell-packages",
+        "docs": "https://docs.capell.app/packages/public-actions"
     }
 }

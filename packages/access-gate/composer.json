@@ -45,5 +45,23 @@
     "prefer-stable": true,
     "scripts": {
         "test": "pest --colors=always"
+    },
+    "homepage": "https://github.com/capell-app/access-gate",
+    "keywords": [
+        "capell",
+        "cms",
+        "laravel",
+        "access-control"
+    ],
+    "authors": [
+        {
+            "name": "Capell Team",
+            "email": "team@capell.app",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/capell-app/capell-packages",
+        "docs": "https://docs.capell.app/packages/access-gate"
     }
 }

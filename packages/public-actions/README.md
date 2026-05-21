@@ -15,6 +15,7 @@ Reusable public submit actions, outbound automation dispatch, and integration en
 
 - Reusable public submit actions, outbound automation dispatch, and integration endpoints for Capell CMS.
 - Admin resources: `PublicActionDestinationResource`, `PublicActionDispatchAttemptResource`, `PublicActionIntegrationTokenResource`, `PublicActionResource`, `PublicActionSubmissionResource`.
+- Zapier-facing endpoints for listing and submitting configured public actions.
 
 ## Code Map
 

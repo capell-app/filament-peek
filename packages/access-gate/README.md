@@ -16,6 +16,7 @@ Access gating foundations for Capell CMS.
 - Access gating foundations for Capell CMS.
 - Admin resources: `AccessAreaResource`, `AccessGateEventResource`, `BrowserTokenResource`, `ClaimTokenResource`, `GrantResource`, `RegistrationResource`.
 - Package setup or maintenance commands.
+- Public request, claim, status, and logout endpoints for gated access flows.
 
 ## Code Map
 

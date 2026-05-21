@@ -17,10 +17,11 @@ Optional AI-assisted media actions for Capell.
 - Optional AI-assisted media edit actions.
 - ImageDoctor contract with a safe null implementation.
 - Filament media action extender for admin workflows.
+- No public frontend output and no required AI provider binding.
 
 ## Why It Matters
 
-**For developers:** Keeps Media Ai package responsibilities isolated behind providers, actions, data objects, and package-owned resources where the package needs them.
+**For developers:** Keeps Media AI package responsibilities isolated behind providers, actions, data objects, and package-owned resources where the package needs them.
 
 **For teams:** Makes the Capell Media capability easier to explain, install, and verify during package selection.
 

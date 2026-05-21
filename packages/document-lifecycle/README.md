@@ -18,6 +18,8 @@ Controlled document registration, publication history, and acceptance tracking f
 - Acceptance records stored in or extending the `legal_acceptances` table.
 - Protected table registration for document and acceptance audit data.
 
+Use this package when a site needs evidence that a controlled document was published and accepted. It is not a general file manager; media and downloadable assets stay in the media packages.
+
 ## Admin Surface
 
 - Resource: `DocumentResource`.
