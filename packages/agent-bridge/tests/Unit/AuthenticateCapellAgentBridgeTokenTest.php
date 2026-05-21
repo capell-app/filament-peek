@@ -43,3 +43,33 @@ it('authenticates valid agent bridge bearer tokens and binds client context', fu
         ->and($token->refresh()->last_used_at)->not->toBeNull()
         ->and(resolve(CapellAgentBridgeToken::class)->is($token))->toBeTrue();
 });
+
+it('hashes agent bridge tokens with the application key', function (): void {
+    expect(CapellAgentBridgeToken::hashPlainTextToken('plain-token'))
+        ->toBe(hash_hmac('sha256', 'plain-token', (string) config('app.key')))
+        ->not->toBe(CapellAgentBridgeToken::legacyHashPlainTextToken('plain-token'));
+});
+
+it('authenticates legacy sha256 token hashes and upgrades them on use', function (): void {
+    $user = User::query()->create([
+        'name' => 'Legacy Middleware User',
+        'email' => 'legacy-middleware@example.test',
+        'password' => 'secret',
+    ]);
+    $token = new CapellAgentBridgeToken;
+    $token->forceFill([
+        'name' => 'Legacy middleware token',
+        'token_hash' => CapellAgentBridgeToken::legacyHashPlainTextToken('legacy-token'),
+        'scopes' => ['capell.pages.read'],
+    ]);
+    $token->user()->associate($user);
+    $token->save();
+
+    $response = (new AuthenticateCapellAgentBridgeToken)->handle(
+        Request::create('/agent-bridge/capell', server: ['HTTP_AUTHORIZATION' => 'Bearer legacy-token']),
+        fn (Request $request): Response => response('ok'),
+    );
+
+    expect($response->getStatusCode())->toBe(200)
+        ->and($token->refresh()->token_hash)->toBe(CapellAgentBridgeToken::hashPlainTextToken('legacy-token'));
+});

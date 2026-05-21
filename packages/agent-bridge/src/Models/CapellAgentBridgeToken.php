@@ -36,12 +36,39 @@ final class CapellAgentBridgeToken extends Model
 
     public static function hashPlainTextToken(string $plainTextToken): string
     {
+        return hash_hmac('sha256', $plainTextToken, (string) config('app.key'));
+    }
+
+    public static function legacyHashPlainTextToken(string $plainTextToken): string
+    {
         return hash('sha256', $plainTextToken);
+    }
+
+    public static function findForPlainTextToken(string $plainTextToken): ?self
+    {
+        $token = self::query()
+            ->where('token_hash', self::hashPlainTextToken($plainTextToken))
+            ->first();
+
+        if ($token instanceof self) {
+            return $token;
+        }
+
+        $legacyToken = self::query()
+            ->where('token_hash', self::legacyHashPlainTextToken($plainTextToken))
+            ->first();
+
+        return $legacyToken instanceof self ? $legacyToken : null;
     }
 
     public static function generatePlainTextToken(): string
     {
         return config('capell-agent-bridge.token_prefix', 'cagent-bridge_') . Str::random(48);
+    }
+
+    public function hasLegacyHashForPlainTextToken(string $plainTextToken): bool
+    {
+        return hash_equals($this->token_hash, self::legacyHashPlainTextToken($plainTextToken));
     }
 
     public function canUseScope(string $scope): bool

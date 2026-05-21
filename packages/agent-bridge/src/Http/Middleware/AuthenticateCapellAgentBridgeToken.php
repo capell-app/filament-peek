@@ -24,9 +24,7 @@ final class AuthenticateCapellAgentBridgeToken
             return $this->unauthorized('Missing Agent Bridge bearer token.');
         }
 
-        $token = CapellAgentBridgeToken::query()
-            ->where('token_hash', CapellAgentBridgeToken::hashPlainTextToken($plainTextToken))
-            ->first();
+        $token = CapellAgentBridgeToken::findForPlainTextToken($plainTextToken);
 
         if (! $token instanceof CapellAgentBridgeToken || $token->isExpired()) {
             return $this->unauthorized('Invalid Agent Bridge bearer token.');
@@ -43,7 +41,12 @@ final class AuthenticateCapellAgentBridgeToken
         $authGuard->setUser($user);
         Auth::shouldUse($guard);
 
-        $token->forceFill(['last_used_at' => now()])->save();
+        $tokenUpdates = ['last_used_at' => now()];
+        if ($token->hasLegacyHashForPlainTextToken($plainTextToken)) {
+            $tokenUpdates['token_hash'] = CapellAgentBridgeToken::hashPlainTextToken($plainTextToken);
+        }
+
+        $token->forceFill($tokenUpdates)->save();
 
         app()->instance(CapellAgentBridgeToken::class, $token);
         app()->instance(AuthenticatedAgentBridgeClientData::class, new AuthenticatedAgentBridgeClientData(

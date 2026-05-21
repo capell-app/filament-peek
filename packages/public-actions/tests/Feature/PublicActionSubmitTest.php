@@ -306,6 +306,24 @@ it('stores only declared schema fields plus source metadata for schema-backed ac
         ->and($submission->source_id)->toBe('footer');
 });
 
+it('rejects oversized submissions when an action has no payload schema', function (): void {
+    PublicAction::factory()->create([
+        'key' => 'unschemed-action',
+        'handler_key' => 'test.handler',
+        'payload_schema' => [],
+    ]);
+
+    $response = $this->postJson('/actions/unschemed-action', [
+        'body' => str_repeat('a', 17 * 1024),
+    ]);
+
+    $response
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['payload']);
+
+    expect(PublicActionSubmission::query()->count())->toBe(0);
+});
+
 it('renders an enabled public action page without exposing package internals', function (): void {
     PublicAction::factory()->create([
         'key' => 'page-action',

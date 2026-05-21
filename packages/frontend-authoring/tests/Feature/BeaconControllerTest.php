@@ -90,6 +90,37 @@ it('returns beacon scripts for admin user with url', function (): void {
         ->toContain('.capell-authoring-region:hover > .capell-authoring-button');
 });
 
+it('does not return authoring scripts for cross-origin admin beacons', function (): void {
+    $user = User::factory()->create();
+    actingAs($user);
+
+    fakeAdminAccessChecker();
+
+    $site = Site::factory()->create();
+    $language = Language::factory()->create();
+    SiteDomain::factory()->for($site)->for($language)->create();
+    $page = Page::factory()->site($site)->create();
+    PageUrl::factory()->for($site)->for($language)->page($page)->create();
+
+    $response = postJson(route('capell-frontend.beacon'), [
+        'url' => $page->pageUrl->full_url,
+    ], [
+        'Origin' => 'https://attacker.example',
+        'Sec-Fetch-Site' => 'cross-site',
+    ]);
+
+    $response->assertOk();
+    $response->assertJsonStructure(['csrf_token']);
+    $response->assertJsonMissingPath('scripts');
+    $response->assertJsonMissingPath('user');
+
+    expect($response->getContent())
+        ->not->toContain('CapellFrontendAuthoring')
+        ->not->toContain('capell-authoring')
+        ->not->toContain('edit_url')
+        ->not->toContain('recordKey');
+});
+
 it('does not return authoring scripts or metadata for non-admin authenticated user', function (): void {
     $user = User::factory()->create();
     actingAs($user);

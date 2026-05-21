@@ -14,6 +14,8 @@ return [
     'audit_entries' => 'Audit entries',
     'build_prompt' => 'Build prompt',
     'capability' => 'Capability',
+    'capability_site_forbidden' => 'This Agent Bridge token is not allowed to use the selected site.',
+    'capability_site_requires_user' => 'Agent Bridge site capabilities require an authenticated user.',
     'confirmations' => 'Confirmations',
     'constraints' => 'Constraints',
     'constraints_help' => 'Add anything that must not change, required packages, approval rules, or timing.',

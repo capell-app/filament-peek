@@ -11,6 +11,8 @@ use Capell\AgentBridge\Data\CapabilityInvocationData;
 use Capell\AgentBridge\Enums\CapabilityRiskEnum;
 use Capell\AgentBridge\Enums\CapabilityServerEnum;
 use Capell\AgentBridge\Tests\Fixtures\FakeCapabilityAction;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 it('previews draft page creation with the validated payload', function (): void {
@@ -33,6 +35,24 @@ it('rejects draft page creation payloads without required page fields', function
     (new CreateDraftPageCapabilityAction)->preview(pageInvocation([
         'name' => 'Missing page relationships',
     ]));
+})->throws(ValidationException::class);
+
+it('rejects draft page creation without an authenticated user', function (): void {
+    (new CreateDraftPageCapabilityAction)->preview(pageInvocation([
+        'name' => 'Campaign landing page',
+        'site_id' => 1,
+        'blueprint_id' => 2,
+        'layout_id' => 3,
+    ], user: false));
+})->throws(ValidationException::class);
+
+it('rejects draft page creation for unassigned sites', function (): void {
+    (new CreateDraftPageCapabilityAction)->preview(pageInvocation([
+        'name' => 'Campaign landing page',
+        'site_id' => 99,
+        'blueprint_id' => 2,
+        'layout_id' => 3,
+    ], pageCapabilityUser(collect([1]))));
 })->throws(ValidationException::class);
 
 it('previews safe draft page updates without exposing the page id as a change', function (): void {
@@ -79,8 +99,12 @@ it('rejects readiness inspection payloads without a page id before querying page
 /**
  * @param  array<string, mixed>  $payload
  */
-function pageInvocation(array $payload): CapabilityInvocationData
+function pageInvocation(array $payload, AuthenticatableContract|false|null $user = null): CapabilityInvocationData
 {
+    if ($user === null) {
+        $user = pageCapabilityUser(collect([(int) ($payload['site_id'] ?? 1)]));
+    }
+
     return new CapabilityInvocationData(
         capability: new CapabilityData(
             key: 'capell.pages.test',
@@ -92,5 +116,71 @@ function pageInvocation(array $payload): CapabilityInvocationData
             actionClass: FakeCapabilityAction::class,
         ),
         payload: $payload,
+        user: $user === false ? null : $user,
     );
+}
+
+/**
+ * @param  Collection<int, int>  $assignedSiteIds
+ */
+function pageCapabilityUser(Collection $assignedSiteIds, bool $isGlobalAdmin = false): AuthenticatableContract
+{
+    return new class($assignedSiteIds, $isGlobalAdmin) implements AuthenticatableContract
+    {
+        /**
+         * @param  Collection<int, int>  $assignedSiteIds
+         */
+        public function __construct(
+            private readonly Collection $assignedSiteIds,
+            private readonly bool $isGlobalAdmin,
+        ) {}
+
+        /**
+         * @return Collection<int, int>
+         */
+        public function getAssignedSiteIds(): Collection
+        {
+            return $this->assignedSiteIds;
+        }
+
+        public function hasRole(string $role): bool
+        {
+            return $this->isGlobalAdmin && $role === config('capell.roles.super_admin', 'super_admin');
+        }
+
+        public function getAuthIdentifierName(): string
+        {
+            return 'id';
+        }
+
+        public function getAuthIdentifier(): int
+        {
+            return 1;
+        }
+
+        public function getAuthPasswordName(): string
+        {
+            return 'password';
+        }
+
+        public function getAuthPassword(): string
+        {
+            return '';
+        }
+
+        public function getRememberToken(): ?string
+        {
+            return null;
+        }
+
+        public function setRememberToken(mixed $value): void
+        {
+            //
+        }
+
+        public function getRememberTokenName(): string
+        {
+            return 'remember_token';
+        }
+    };
 }
