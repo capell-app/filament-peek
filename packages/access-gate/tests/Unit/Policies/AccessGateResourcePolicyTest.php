@@ -83,6 +83,8 @@ it('scopes access area resource queries to the current actor sites', function ()
 
     $user = new class extends User
     {
+        use HasFactory;
+
         /** @var SupportCollection<int, int> */
         public SupportCollection $assignedSiteIds;
 

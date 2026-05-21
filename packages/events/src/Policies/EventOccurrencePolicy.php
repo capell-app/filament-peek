@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\Events\Policies;
 
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 final class EventOccurrencePolicy extends AbstractEventResourcePolicy
 {
@@ -13,6 +14,7 @@ final class EventOccurrencePolicy extends AbstractEventResourcePolicy
         return 'EventOccurrence';
     }
 
+    #[Override]
     protected function recordSiteId(Model $record): ?int
     {
         $record->loadMissing('event');

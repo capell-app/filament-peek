@@ -113,7 +113,7 @@ it('rejects a preview token whose workspace uuid does not match the signed URL',
     expect(WorkspaceContext::current())->toBeNull();
 });
 
-it('resolves a workspace from a cookie when no signed URL is present', function (): void {
+it('ignores a raw workspace cookie when no signed URL is present', function (): void {
     $workspace = Workspace::factory()->create();
 
     $request = Request::create('/_workspace-preview-test');
@@ -121,11 +121,11 @@ it('resolves a workspace from a cookie when no signed URL is present', function 
 
     $response = invokeWorkspaceMiddleware($request);
 
-    expect($response->headers->get('X-Workspace-Context-Id'))->toBe((string) $workspace->id)
+    expect($response->headers->get('X-Workspace-Context-Id'))->toBe('')
         ->and(WorkspaceContext::current())->toBeNull();
 });
 
-it('does not drop a cookie when resolution came from an existing cookie', function (): void {
+it('does not refresh an unsigned workspace cookie', function (): void {
     $workspace = Workspace::factory()->create();
 
     $request = Request::create('/_workspace-preview-test');

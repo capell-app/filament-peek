@@ -125,14 +125,14 @@ function pageInvocation(array $payload, AuthenticatableContract|false|null $user
  */
 function pageCapabilityUser(Collection $assignedSiteIds, bool $isGlobalAdmin = false): AuthenticatableContract
 {
-    return new class($assignedSiteIds, $isGlobalAdmin) implements AuthenticatableContract
+    return new readonly class($assignedSiteIds, $isGlobalAdmin) implements AuthenticatableContract
     {
         /**
          * @param  Collection<int, int>  $assignedSiteIds
          */
         public function __construct(
-            private readonly Collection $assignedSiteIds,
-            private readonly bool $isGlobalAdmin,
+            private Collection $assignedSiteIds,
+            private bool $isGlobalAdmin,
         ) {}
 
         /**

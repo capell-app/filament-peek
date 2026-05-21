@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Capell\CampaignStudio\Policies;
 
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 final class CampaignLandingPagePolicy extends AbstractCampaignStudioResourcePolicy
 {
@@ -13,6 +14,7 @@ final class CampaignLandingPagePolicy extends AbstractCampaignStudioResourcePoli
         return 'CampaignLandingPage';
     }
 
+    #[Override]
     protected function recordSiteId(Model $record): ?int
     {
         $record->loadMissing('campaignGroup');

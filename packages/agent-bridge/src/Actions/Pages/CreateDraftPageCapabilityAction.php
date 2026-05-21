@@ -80,7 +80,7 @@ final class CreateDraftPageCapabilityAction implements CapellAgentBridgeCapabili
 
     private function authorizeSite(?Authenticatable $user, int $siteId): void
     {
-        if ($user === null) {
+        if (! $user instanceof Authenticatable) {
             throw ValidationException::withMessages([
                 'site_id' => __('capell-agent-bridge::admin.capability_site_requires_user'),
             ]);

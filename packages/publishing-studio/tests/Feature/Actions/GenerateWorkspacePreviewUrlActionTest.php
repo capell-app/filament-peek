@@ -83,6 +83,7 @@ it('issues and resolves a workspace cookie only when it has a valid session-boun
     $url = (new GenerateWorkspacePreviewUrlAction)->handle($workspace);
     $session = new Store('testing', new ArraySessionHandler(120));
     $session->setId('session-one');
+
     $request = Request::create($url);
     $request->setLaravelSession($session);
 
