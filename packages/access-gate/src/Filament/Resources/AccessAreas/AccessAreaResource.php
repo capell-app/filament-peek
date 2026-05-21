@@ -16,6 +16,7 @@ use Capell\AccessGate\Filament\Resources\AccessAreas\Pages\ListAccessAreas;
 use Capell\AccessGate\Filament\Resources\Concerns\AccessGateFilamentOptions;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Providers\AccessGateServiceProvider;
+use Capell\Admin\Support\SiteScope;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Site;
 use Filament\Actions\EditAction;
@@ -30,6 +31,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema as DatabaseSchema;
 use Override;
 
@@ -165,6 +167,12 @@ final class AccessAreaResource extends Resource
             ->recordActions([
                 EditAction::make(),
             ]);
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return SiteScope::applyForCurrentActor(parent::getEloquentQuery());
     }
 
     /** @return class-string<Area> */

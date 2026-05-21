@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\AccessGate\Filament\Resources\AccessAreas\AccessAreaResource;
 use Capell\AccessGate\Models\Area;
 use Capell\AccessGate\Models\BrowserToken;
 use Capell\AccessGate\Models\ClaimToken;
@@ -18,6 +19,7 @@ use Capell\AccessGate\Policies\RegistrationPolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Collection as SupportCollection;
 
 function accessGatePolicyActor(array $permissions = [], array $roles = []): User
 {
@@ -73,4 +75,32 @@ it('allows the configured super admin role to manage access gate resources', fun
     $registration = new Registration;
 
     expect($policy->update(accessGatePolicyActor(roles: ['super_admin']), $registration))->toBeTrue();
+});
+
+it('scopes access area resource queries to the current actor sites', function (): void {
+    $assignedArea = Area::factory()->create(['site_id' => 10]);
+    Area::factory()->create(['site_id' => 20]);
+
+    $user = new class extends User
+    {
+        /** @var SupportCollection<int, int> */
+        public SupportCollection $assignedSiteIds;
+
+        public function isGlobalAdmin(): bool
+        {
+            return false;
+        }
+
+        /** @return SupportCollection<int, int> */
+        public function getAssignedSiteIds(): SupportCollection
+        {
+            return $this->assignedSiteIds;
+        }
+    };
+    $user->assignedSiteIds = collect([10]);
+
+    auth()->setUser($user);
+
+    expect(AccessAreaResource::getEloquentQuery()->pluck('id')->all())
+        ->toEqualCanonicalizing([$assignedArea->getKey()]);
 });

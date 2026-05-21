@@ -7,6 +7,7 @@ namespace Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals;
 use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasConfiguredForm;
 use Capell\Admin\Filament\Concerns\HasConfiguredTable;
+use Capell\Admin\Support\SiteScope;
 use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\Pages\CreateCampaignConversionGoal;
 use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\Pages\EditCampaignConversionGoal;
 use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\Pages\ListCampaignConversionGoals;
@@ -19,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 final class CampaignConversionGoalResource extends Resource
@@ -46,6 +48,12 @@ final class CampaignConversionGoalResource extends Resource
     public static function table(Table $table): Table
     {
         return self::getTableConfigurator()::configure($table);
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return SiteScope::applyForCurrentActor(parent::getEloquentQuery());
     }
 
     /** @return class-string<CampaignConversionGoal> */

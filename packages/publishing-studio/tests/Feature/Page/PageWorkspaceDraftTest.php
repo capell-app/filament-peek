@@ -50,7 +50,7 @@ test('exit workspace preview clears the workspace cookie', function (): void {
 
 // ─── Workspace preview pill ───────────────────────────────────────────────────
 
-test('workspace preview pill is rendered when workspace cookie is set', function (): void {
+test('workspace preview pill is not rendered for a raw workspace cookie', function (): void {
     $siteDomain = SiteDomain::factory()->default()->create();
     $page = Page::factory()->site($siteDomain->site)->withTranslations()->create();
     $workspace = Workspace::factory()->create(['name' => 'Sprint 2']);
@@ -59,8 +59,8 @@ test('workspace preview pill is rendered when workspace cookie is set', function
         ->withCookie(ResolveWorkspaceContext::COOKIE_NAME, $workspace->uuid)
         ->get($page->pageUrl->full_url)
         ->assertOk()
-        ->assertSee('Sprint 2')
-        ->assertSee('workspace-preview-pill');
+        ->assertDontSee('Sprint 2')
+        ->assertDontSee('workspace-preview-pill');
 });
 
 test('workspace preview pill is not rendered without workspace cookie', function (): void {

@@ -15,12 +15,17 @@ use Capell\CampaignStudio\Models\CampaignConversionGoal;
 use Capell\CampaignStudio\Models\CampaignCtaBlock;
 use Capell\CampaignStudio\Models\CampaignGroup;
 use Capell\CampaignStudio\Models\CampaignLandingPage;
+use Capell\CampaignStudio\Policies\CampaignConversionGoalPolicy;
+use Capell\CampaignStudio\Policies\CampaignCtaBlockPolicy;
+use Capell\CampaignStudio\Policies\CampaignGroupPolicy;
+use Capell\CampaignStudio\Policies\CampaignLandingPagePolicy;
 use Capell\Core\Data\VendorAssetData;
 use Capell\Core\Events\PageSaved;
 use Capell\Core\Facades\CapellCore;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Package;
 
 final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
@@ -68,6 +73,7 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
     {
         return $this
             ->registerModels()
+            ->registerPolicies()
             ->registerComponents()
             ->registerSchemaExtenders()
             ->registerPackageAssets()
@@ -93,6 +99,16 @@ final class CampaignStudioServiceProvider extends AbstractPackageServiceProvider
             CampaignConversionGoal::class,
             CampaignConversion::class,
         ]);
+
+        return $this;
+    }
+
+    private function registerPolicies(): self
+    {
+        Gate::policy(CampaignGroup::class, CampaignGroupPolicy::class);
+        Gate::policy(CampaignLandingPage::class, CampaignLandingPagePolicy::class);
+        Gate::policy(CampaignCtaBlock::class, CampaignCtaBlockPolicy::class);
+        Gate::policy(CampaignConversionGoal::class, CampaignConversionGoalPolicy::class);
 
         return $this;
     }

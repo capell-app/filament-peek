@@ -42,10 +42,11 @@ final class ResolveWorkspaceContext
 
     public const string SESSION_KEY = 'cms_workspace_id';
 
+    private const string COOKIE_VERSION = 'v1';
+
     public function handle(Request $request, Closure $next): Response
     {
-        $viaToken = false;
-        $workspace = $this->resolve($request, $viaToken);
+        $workspace = $this->resolve($request);
         $previousCacheDisabled = config('capell-core.disable_cache');
         $previousWorkspace = WorkspaceContext::current();
 
@@ -63,20 +64,23 @@ final class ResolveWorkspaceContext
         }
 
         if ($workspace instanceof Workspace
-            && ! $viaToken
             && $request->hasValidSignature()
             && $request->query(self::QUERY_PARAM) !== null) {
-            $response->headers->setCookie(cookie(
-                self::COOKIE_NAME,
-                $workspace->uuid,
-                self::COOKIE_TTL_MINUTES,
-                null,
-                null,
-                $request->isSecure(),
-                true,
-                false,
-                'lax',
-            ));
+            $cookieValue = $this->signedCookieValue($request, $workspace);
+
+            if ($cookieValue !== null) {
+                $response->headers->setCookie(cookie(
+                    self::COOKIE_NAME,
+                    $cookieValue,
+                    self::COOKIE_TTL_MINUTES,
+                    null,
+                    null,
+                    $request->isSecure(),
+                    true,
+                    false,
+                    'lax',
+                ));
+            }
         }
 
         if ($workspace instanceof Workspace) {
@@ -88,7 +92,7 @@ final class ResolveWorkspaceContext
         return $response;
     }
 
-    private function resolve(Request $request, bool &$viaToken): ?Workspace
+    private function resolve(Request $request): ?Workspace
     {
         if ($request->hasValidSignature()) {
             $uuid = $request->query(self::QUERY_PARAM);
@@ -112,8 +116,6 @@ final class ResolveWorkspaceContext
                         'access_count' => $link->access_count + 1,
                     ])->save();
 
-                    $viaToken = true;
-
                     return $workspace;
                 }
 
@@ -128,8 +130,8 @@ final class ResolveWorkspaceContext
             }
         }
 
-        $cookieUuid = $request->cookie(self::COOKIE_NAME);
-        if (is_string($cookieUuid) && $cookieUuid !== '') {
+        $cookieUuid = $this->verifiedCookieUuid($request);
+        if ($cookieUuid !== null) {
             $workspace = Workspace::query()->where('uuid', $cookieUuid)->first();
             if ($workspace instanceof Workspace && $this->userMayResolve($request, $workspace)) {
                 return $workspace;
@@ -169,6 +171,88 @@ final class ResolveWorkspaceContext
         } catch (Throwable) {
             return false;
         }
+    }
+
+    private function signedCookieValue(Request $request, Workspace $workspace): ?string
+    {
+        $context = $this->cookieSignatureContext($request);
+
+        if ($context === null) {
+            return null;
+        }
+
+        $signature = $this->cookieSignature($workspace->uuid, $context);
+
+        return implode('|', [self::COOKIE_VERSION, $workspace->uuid, $signature]);
+    }
+
+    private function verifiedCookieUuid(Request $request): ?string
+    {
+        $cookieValue = $request->cookie(self::COOKIE_NAME);
+
+        if (! is_string($cookieValue) || $cookieValue === '') {
+            return null;
+        }
+
+        $parts = explode('|', $cookieValue);
+
+        if (count($parts) !== 3 || $parts[0] !== self::COOKIE_VERSION) {
+            return null;
+        }
+
+        [$version, $uuid, $signature] = $parts;
+        unset($version);
+
+        if ($uuid === '' || $signature === '') {
+            return null;
+        }
+
+        $context = $this->cookieSignatureContext($request);
+
+        if ($context === null) {
+            return null;
+        }
+
+        $expectedSignature = $this->cookieSignature($uuid, $context);
+
+        return hash_equals($expectedSignature, $signature) ? $uuid : null;
+    }
+
+    private function cookieSignature(string $uuid, string $context): string
+    {
+        return hash_hmac('sha256', $uuid . '|' . $context, $this->cookieSigningKey());
+    }
+
+    private function cookieSignatureContext(Request $request): ?string
+    {
+        $user = $request->user();
+
+        if ($user !== null) {
+            return 'user:' . $user->getAuthIdentifier();
+        }
+
+        if (! $request->hasSession()) {
+            return null;
+        }
+
+        $sessionId = $request->session()->getId();
+
+        return $sessionId !== '' ? 'session:' . $sessionId : null;
+    }
+
+    private function cookieSigningKey(): string
+    {
+        $key = (string) config('app.key');
+
+        if (str_starts_with($key, 'base64:')) {
+            $decoded = base64_decode(substr($key, 7), true);
+
+            if (is_string($decoded) && $decoded !== '') {
+                return $decoded;
+            }
+        }
+
+        return $key;
     }
 
     private function tableExists(string $table): bool

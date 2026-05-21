@@ -9,7 +9,10 @@ use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\WorkspaceContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Session\ArraySessionHandler;
+use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Cookie;
 
 beforeEach(function (): void {
     Route::get('/', fn (): string => 'ok')->name('capell-frontend.index');
@@ -70,6 +73,43 @@ it('resolves the signed URL through the middleware and sets the workspace contex
 
     (new ResolveWorkspaceContext)->handle($request, function () use ($workspace): Response {
         expect(WorkspaceContext::currentId())->toBe($workspace->id);
+
+        return new Response('ok');
+    });
+});
+
+it('issues and resolves a workspace cookie only when it has a valid session-bound signature', function (): void {
+    $workspace = Workspace::factory()->create();
+    $url = (new GenerateWorkspacePreviewUrlAction)->handle($workspace);
+    $session = new Store('testing', new ArraySessionHandler(120));
+    $session->setId('session-one');
+    $request = Request::create($url);
+    $request->setLaravelSession($session);
+
+    $response = (new ResolveWorkspaceContext)->handle($request, fn (): Response => new Response('ok'));
+    $cookie = collect($response->headers->getCookies())
+        ->first(fn (Cookie $cookie): bool => $cookie->getName() === ResolveWorkspaceContext::COOKIE_NAME);
+
+    expect($cookie)->not->toBeNull()
+        ->and($cookie->getValue())->not->toBe($workspace->uuid)
+        ->and($cookie->getValue())->toStartWith('v1|' . $workspace->uuid . '|');
+
+    $followUpRequest = Request::create('/');
+    $followUpRequest->setLaravelSession($session);
+    $followUpRequest->cookies->set(ResolveWorkspaceContext::COOKIE_NAME, $cookie->getValue());
+
+    (new ResolveWorkspaceContext)->handle($followUpRequest, function () use ($workspace): Response {
+        expect(WorkspaceContext::currentId())->toBe($workspace->id);
+
+        return new Response('ok');
+    });
+
+    $rawCookieRequest = Request::create('/');
+    $rawCookieRequest->setLaravelSession($session);
+    $rawCookieRequest->cookies->set(ResolveWorkspaceContext::COOKIE_NAME, $workspace->uuid);
+
+    (new ResolveWorkspaceContext)->handle($rawCookieRequest, function (): Response {
+        expect(WorkspaceContext::currentId())->toBeNull();
 
         return new Response('ok');
     });

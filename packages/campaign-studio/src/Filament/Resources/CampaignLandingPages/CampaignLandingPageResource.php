@@ -7,6 +7,7 @@ namespace Capell\CampaignStudio\Filament\Resources\CampaignLandingPages;
 use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasConfiguredForm;
 use Capell\Admin\Filament\Concerns\HasConfiguredTable;
+use Capell\Admin\Support\SiteScope;
 use Capell\CampaignStudio\Filament\Resources\CampaignLandingPages\Pages\CreateCampaignLandingPage;
 use Capell\CampaignStudio\Filament\Resources\CampaignLandingPages\Pages\EditCampaignLandingPage;
 use Capell\CampaignStudio\Filament\Resources\CampaignLandingPages\Pages\ListCampaignLandingPages;
@@ -19,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 final class CampaignLandingPageResource extends Resource
@@ -46,6 +48,13 @@ final class CampaignLandingPageResource extends Resource
     public static function table(Table $table): Table
     {
         return self::getTableConfigurator()::configure($table);
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('campaignGroup', fn (Builder $query): Builder => SiteScope::applyForCurrentActor($query));
     }
 
     /** @return class-string<CampaignLandingPage> */

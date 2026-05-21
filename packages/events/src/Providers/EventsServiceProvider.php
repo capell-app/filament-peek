@@ -17,6 +17,13 @@ use Capell\Events\Enums\LivewireComponentEnum;
 use Capell\Events\Enums\ResourceEnum;
 use Capell\Events\Filament\Pages\EventCalendarPage;
 use Capell\Events\Models\Event;
+use Capell\Events\Models\EventOccurrence;
+use Capell\Events\Models\EventRegistration;
+use Capell\Events\Models\EventVenue;
+use Capell\Events\Policies\EventOccurrencePolicy;
+use Capell\Events\Policies\EventPolicy;
+use Capell\Events\Policies\EventRegistrationPolicy;
+use Capell\Events\Policies\EventVenuePolicy;
 use Capell\Events\Support\EventModelRegistrar;
 use Capell\Events\Support\RenderHooks\RegisterEventSchemaHooks;
 use Capell\Events\Support\Schema\EventSchemaTemplate;
@@ -27,6 +34,7 @@ use Capell\SeoSuite\Support\SchemaTemplates\SchemaTemplateRegistry;
 use Composer\InstalledVersions;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
@@ -76,6 +84,7 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
     {
         return $this
             ->registerModels()
+            ->registerPolicies()
             ->registerAdminResources()
             ->registerPageTypes()
             ->registerPackageAssets()
@@ -110,6 +119,16 @@ class EventsServiceProvider extends AbstractPackageServiceProvider
     private function registerModels(): self
     {
         EventModelRegistrar::register();
+
+        return $this;
+    }
+
+    private function registerPolicies(): self
+    {
+        Gate::policy(Event::class, EventPolicy::class);
+        Gate::policy(EventVenue::class, EventVenuePolicy::class);
+        Gate::policy(EventOccurrence::class, EventOccurrencePolicy::class);
+        Gate::policy(EventRegistration::class, EventRegistrationPolicy::class);
 
         return $this;
     }
