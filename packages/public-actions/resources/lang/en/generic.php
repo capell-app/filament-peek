@@ -7,6 +7,7 @@ return [
     'heading' => 'Submit request',
     'submitted' => 'Your request has been submitted.',
     'unavailable' => 'This action is not available.',
+    'schema_required' => 'This action has no payload schema configured. Add a non-empty payload_schema.fields list before submissions can be accepted.',
     'submit' => 'Submit',
     'api' => [
         'unauthorized' => 'Invalid public actions token.',

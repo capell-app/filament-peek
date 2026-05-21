@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\CampaignConversionGoalResource;
+use Capell\CampaignStudio\Filament\Resources\CampaignConversionGoals\Schemas\CampaignConversionGoalForm;
+use Capell\CampaignStudio\Filament\Resources\CampaignCtaBlocks\CampaignCtaBlockResource;
+use Capell\CampaignStudio\Filament\Resources\CampaignCtaBlocks\Schemas\CampaignCtaBlockForm;
+use Capell\CampaignStudio\Filament\Resources\CampaignGroups\CampaignGroupResource;
+use Capell\CampaignStudio\Filament\Resources\CampaignGroups\Schemas\CampaignGroupForm;
+use Capell\CampaignStudio\Filament\Resources\CampaignLandingPages\CampaignLandingPageResource;
+use Capell\CampaignStudio\Filament\Resources\CampaignLandingPages\Schemas\CampaignLandingPageForm;
+use Capell\CampaignStudio\Models\CampaignConversionGoal;
+use Capell\CampaignStudio\Models\CampaignCtaBlock;
+use Capell\CampaignStudio\Models\CampaignGroup;
+use Capell\CampaignStudio\Models\CampaignLandingPage;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
+
+it('builds campaign studio resource form schemas', function (): void {
+    $components = campaignStudioFormComponents(CampaignGroupForm::class);
+
+    expect($components)
+        ->toHaveCount(11)
+        ->and($components[0])->toBeInstanceOf(TextInput::class)
+        ->and($components[1])->toBeInstanceOf(TextInput::class)
+        ->and($components[2])->toBeInstanceOf(Select::class)
+        ->and(campaignStudioFormComponents(CampaignConversionGoalForm::class))
+        ->toHaveCount(9)
+        ->and(campaignStudioFormComponents(CampaignLandingPageForm::class))
+        ->toHaveCount(7);
+
+    $ctaComponents = campaignStudioFormComponents(CampaignCtaBlockForm::class);
+
+    expect($ctaComponents)
+        ->toHaveCount(9)
+        ->and($ctaComponents[0])->toBeInstanceOf(Select::class)
+        ->and($ctaComponents[6])->toBeInstanceOf(Repeater::class)
+        ->and($ctaComponents[7])->toBeInstanceOf(Fieldset::class)
+        ->and($ctaComponents[8])->toBeInstanceOf(Toggle::class);
+});
+
+it('declares campaign studio resource models navigation labels and pages', function (): void {
+    expect(CampaignGroupResource::getModel())->toBe(CampaignGroup::class)
+        ->and(CampaignGroupResource::getNavigationGroup())->toBe('capell-admin::navigation.group_marketing')
+        ->and(CampaignGroupResource::getNavigationLabel())->toBe('Campaign groups')
+        ->and(CampaignGroupResource::getPluralModelLabel())->toBe('Campaign groups')
+        ->and(CampaignGroupResource::getPages())->toHaveKeys(['index', 'create', 'edit'])
+        ->and(CampaignCtaBlockResource::getModel())->toBe(CampaignCtaBlock::class)
+        ->and(CampaignCtaBlockResource::getNavigationLabel())->toBe('CTA blocks')
+        ->and(CampaignCtaBlockResource::getPages())->toHaveKeys(['index', 'create', 'edit'])
+        ->and(CampaignLandingPageResource::getModel())->toBe(CampaignLandingPage::class)
+        ->and(CampaignLandingPageResource::getNavigationLabel())->toBe('Landing pages')
+        ->and(CampaignLandingPageResource::getPages())->toHaveKeys(['index', 'create', 'edit'])
+        ->and(CampaignConversionGoalResource::getModel())->toBe(CampaignConversionGoal::class)
+        ->and(CampaignConversionGoalResource::getNavigationLabel())->toBe('Conversion goals')
+        ->and(CampaignConversionGoalResource::getPages())->toHaveKeys(['index', 'create', 'edit']);
+});
+
+/**
+ * @param  class-string  $formConfigurator
+ * @return array<int, object>
+ */
+function campaignStudioFormComponents(string $formConfigurator): array
+{
+    return $formConfigurator::configure(Schema::make())->getComponents();
+}

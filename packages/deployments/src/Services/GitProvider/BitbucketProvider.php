@@ -19,6 +19,7 @@ final class BitbucketProvider implements GitProviderContract
     public function getFile(DeploymentConnection $conn, string $path): RepoFile
     {
         $content = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf(
                 '/repositories/%s/%s/src/%s/%s',
                 $conn->repo_owner,
@@ -60,6 +61,7 @@ final class BitbucketProvider implements GitProviderContract
         $request->post(sprintf('/repositories/%s/%s/src', $owner, $repo))->throw();
 
         $branchData = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repositories/%s/%s/refs/branches/%s', $owner, $repo, $branch))
             ->throw()
             ->json();
@@ -108,6 +110,7 @@ final class BitbucketProvider implements GitProviderContract
     public function getPullRequest(DeploymentConnection $conn, int|string $pullRequestId): PullRequestData
     {
         $response = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repositories/%s/%s/pullrequests/%s', $conn->repo_owner, $conn->repo_name, $pullRequestId))
             ->throw()
             ->json();
@@ -125,6 +128,7 @@ final class BitbucketProvider implements GitProviderContract
     public function getDeployStatus(DeploymentConnection $conn, string $commitSha): string
     {
         $response = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repositories/%s/%s/commit/%s/statuses', $conn->repo_owner, $conn->repo_name, $commitSha))
             ->throw()
             ->json();
@@ -150,7 +154,9 @@ final class BitbucketProvider implements GitProviderContract
     {
         return $this->http
             ->baseUrl('https://api.bitbucket.org/2.0')
-            ->withToken($conn->access_token_encrypted);
+            ->withToken($conn->access_token_encrypted)
+            ->timeout(10)
+            ->connectTimeout(5);
     }
 
     /** @param array<string, mixed> $response */

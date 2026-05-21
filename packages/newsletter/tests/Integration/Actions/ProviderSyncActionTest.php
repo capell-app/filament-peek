@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Capell\Newsletter\Actions\RequeueDueProviderSyncAttemptsAction;
 use Capell\Newsletter\Actions\SyncSubscriberToProviderAction;
 use Capell\Newsletter\Enums\AuthType;
 use Capell\Newsletter\Enums\ProviderType;
@@ -69,4 +70,53 @@ it('normalizes provider webhooks into local subscriber state', function (): void
 
     expect(Subscriber::query()->forEmail($site->getKey(), 'webhook@example.com')->first()?->status)
         ->toBe(SubscriberStatus::Unsubscribed);
+});
+
+it('requeues due provider sync attempts without touching future attempts', function (): void {
+    $site = $this->createNewsletterSite();
+    $subscriber = Subscriber::factory()->create(['site_id' => $site->getKey()]);
+    $connection = ProviderConnection::query()->create([
+        'site_id' => $site->getKey(),
+        'name' => 'Fake',
+        'provider' => ProviderType::Fake,
+        'auth_type' => AuthType::ApiKey,
+        'credentials' => ['api_key' => 'fake'],
+        'is_enabled' => true,
+    ]);
+
+    $oldestDueAttempt = SyncAttempt::query()->create([
+        'subscriber_id' => $subscriber->getKey(),
+        'provider_connection_id' => $connection->getKey(),
+        'operation' => 'sync_subscriber',
+        'sync_status' => SyncStatus::RetryScheduled,
+        'payload_hash' => 'oldest',
+        'attempts' => 1,
+        'next_retry_at' => now()->subMinutes(10),
+    ]);
+    $newerDueAttempt = SyncAttempt::query()->create([
+        'subscriber_id' => $subscriber->getKey(),
+        'provider_connection_id' => $connection->getKey(),
+        'operation' => 'sync_subscriber',
+        'sync_status' => SyncStatus::RetryScheduled,
+        'payload_hash' => 'newer',
+        'attempts' => 1,
+        'next_retry_at' => now()->subMinute(),
+    ]);
+    $futureAttempt = SyncAttempt::query()->create([
+        'subscriber_id' => $subscriber->getKey(),
+        'provider_connection_id' => $connection->getKey(),
+        'operation' => 'sync_subscriber',
+        'sync_status' => SyncStatus::RetryScheduled,
+        'payload_hash' => 'future',
+        'attempts' => 1,
+        'next_retry_at' => now()->addMinute(),
+    ]);
+
+    $count = RequeueDueProviderSyncAttemptsAction::run(limit: 1, dispatchJobs: false);
+
+    expect($count)->toBe(1)
+        ->and($oldestDueAttempt->refresh()->sync_status)->toBe(SyncStatus::Pending)
+        ->and($oldestDueAttempt->next_retry_at)->toBeNull()
+        ->and($newerDueAttempt->refresh()->sync_status)->toBe(SyncStatus::RetryScheduled)
+        ->and($futureAttempt->refresh()->sync_status)->toBe(SyncStatus::RetryScheduled);
 });

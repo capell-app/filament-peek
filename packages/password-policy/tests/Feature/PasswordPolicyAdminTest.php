@@ -26,6 +26,7 @@ use Capell\PasswordPolicy\Providers\PasswordPolicyServiceProvider;
 use Capell\PasswordPolicy\Settings\PasswordPolicySettings;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use Capell\Tests\Support\LegacyAdminBridgeFallbackHost;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 
@@ -238,6 +239,31 @@ it('uses the package history policy when admin users are edited with passwords',
         ])
         ->call('save')
         ->assertHasErrors(['password']);
+});
+
+it('adds password policy user table columns, filters, and require-change actions', function (): void {
+    $settings = PasswordPolicySettings::instance();
+    $settings->force_change_enabled = true;
+    $settings->password_expiry_days = 30;
+    $settings->save();
+
+    $extender = new PasswordPolicyUserTableExtender;
+    $user = UserFactory::new()->create([
+        'must_change_password' => false,
+        'password_changed_at' => now()->subDays(60),
+    ]);
+
+    $markUser = new ReflectionMethod($extender, 'markUser');
+    $expiredPasswordQuery = new ReflectionMethod($extender, 'expiredPasswordQuery');
+
+    expect($extender->columns())->toHaveCount(2)
+        ->and($extender->filters())->toHaveCount(3)
+        ->and($extender->recordActions())->toHaveCount(1)
+        ->and($extender->toolbarActions())->toHaveCount(1)
+        ->and($expiredPasswordQuery->invoke($extender, $user->newQuery()))->toBeInstanceOf(Builder::class)
+        ->and($markUser->invoke($extender, $user))->toBeNull();
+
+    expect((bool) $user->refresh()->getAttribute('must_change_password'))->toBeTrue();
 });
 
 it('hides force-change table actions when force-change enforcement is disabled', function (): void {

@@ -30,6 +30,12 @@ class KitProviderAdapter implements NewsletterProviderAdapter
     public function listAudiences(ProviderConnection $connection): array
     {
         $response = Http::withHeaders($this->headers($connection))
+            ->timeout((int) config('capell-newsletter.http.timeout', 15))
+            ->retry(
+                (int) config('capell-newsletter.http.retry_times', 3),
+                (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                throw: false,
+            )
             ->get('https://api.kit.com/v4/forms');
 
         if (! $response->successful()) {
@@ -63,10 +69,22 @@ class KitProviderAdapter implements NewsletterProviderAdapter
         ];
 
         $response = Http::withHeaders($this->headers($connection))
+            ->timeout((int) config('capell-newsletter.http.timeout', 15))
+            ->retry(
+                (int) config('capell-newsletter.http.retry_times', 3),
+                (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                throw: false,
+            )
             ->post('https://api.kit.com/v4/forms/' . $audience->remote_id . '/subscribers', $payload);
 
         foreach ($subscriber->interests as $interest) {
             Http::withHeaders($this->headers($connection))
+                ->timeout((int) config('capell-newsletter.http.timeout', 15))
+                ->retry(
+                    (int) config('capell-newsletter.http.retry_times', 3),
+                    (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                    throw: false,
+                )
                 ->post('https://api.kit.com/v4/tags/' . $interest->remoteId . '/subscribers', [
                     'email_address' => $subscriber->email,
                 ]);
@@ -89,7 +107,21 @@ class KitProviderAdapter implements NewsletterProviderAdapter
             return false;
         }
 
-        return hash_equals($secret, (string) $request->header('X-Kit-Webhook-Secret'));
+        $headerName = (string) config('capell-newsletter.webhooks.signature_headers.kit', 'X-Kit-Webhook-Signature');
+        $signature = (string) $request->header($headerName);
+
+        if ($signature === '') {
+            return false;
+        }
+
+        $expected = hash_hmac('sha256', $request->getContent(), $secret);
+
+        // Support optional "sha256=" prefix some providers use.
+        if (str_starts_with($signature, 'sha256=')) {
+            $signature = substr($signature, 7);
+        }
+
+        return hash_equals($expected, $signature);
     }
 
     public function normalizeWebhook(ProviderConnection $connection, Request $request): ?ProviderWebhookEventData

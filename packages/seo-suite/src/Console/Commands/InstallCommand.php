@@ -60,7 +60,7 @@ class InstallCommand extends Command
 
         $this->info('Migrations published successfully.');
 
-        $this->call('migrate');
+        $this->call('migrate', ['--force' => true]);
         SeedDefaultAiCrawlerRulesAction::run();
 
         $this->newLine();

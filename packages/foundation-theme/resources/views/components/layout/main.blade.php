@@ -5,11 +5,13 @@
     use Capell\Frontend\Enums\RenderHookLocation;
     use Capell\Frontend\Support\Render\RenderHookRegistry;
 
+    $themeData = is_array($theme) ? $theme : [];
+
     $mainContentHookData = new MainContentRenderHookData(
         layout: $layout,
         page: $page,
         pageSlot: $pageSlot,
-        theme: $theme,
+        theme: $themeData,
         containerClass: $containerClass,
         mainClass: $mainClass,
         mainContainerClass: $mainContainerClass,
@@ -39,7 +41,7 @@
     @class([
         'capell-layout-main',
         'relative z-0 flex min-h-full flex-1 flex-col overflow-x-hidden bg-[var(--bg-color-main)] lg:!min-h-0',
-        $theme['meta']['main_class'] ?? '',
+        $themeData['meta']['main_class'] ?? '',
         $mainClass ?? '',
     ])
 >

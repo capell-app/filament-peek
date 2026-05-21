@@ -8,6 +8,7 @@ use BackedEnum;
 use Capell\Admin\Filament\Concerns\HasConfiguredForm;
 use Capell\Admin\Filament\Concerns\HasConfiguredTable;
 use Capell\Admin\Filament\Concerns\HasNavigationBadge;
+use Capell\Admin\Support\SiteScope;
 use Capell\Events\Filament\Resources\Venues\Pages\ManageEventVenues;
 use Capell\Events\Models\EventVenue;
 use Filament\Forms\Components\TextInput;
@@ -16,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 class EventVenueResource extends Resource
@@ -80,5 +82,11 @@ class EventVenueResource extends Resource
         return [
             'index' => ManageEventVenues::route('/'),
         ];
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return SiteScope::applyForCurrentActor(parent::getEloquentQuery());
     }
 }

@@ -29,7 +29,7 @@ final readonly class HeroAssetSlideData
     public static function fromBlockAsset(BlockAsset $blockAsset, Block $block, string $fallbackColor): self
     {
         $asset = $blockAsset->asset;
-        $color = $asset->getMeta('color', $fallbackColor);
+        $color = method_exists($asset, 'getMeta') ? $asset->getMeta('color', $fallbackColor) : $fallbackColor;
         $linkedPage = $asset instanceof Page ? $asset : $asset->linkedPage;
         $backgroundImage = self::resolveBackgroundImage($blockAsset);
         $images = self::resolveImages($blockAsset);

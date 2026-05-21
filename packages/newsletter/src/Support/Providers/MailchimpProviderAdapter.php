@@ -30,6 +30,12 @@ class MailchimpProviderAdapter implements NewsletterProviderAdapter
     public function listAudiences(ProviderConnection $connection): array
     {
         $response = Http::withBasicAuth('capell', $this->apiKey($connection))
+            ->timeout((int) config('capell-newsletter.http.timeout', 15))
+            ->retry(
+                (int) config('capell-newsletter.http.retry_times', 3),
+                (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                throw: false,
+            )
             ->get($this->baseUrl($connection) . '/lists');
 
         if (! $response->successful()) {
@@ -69,6 +75,12 @@ class MailchimpProviderAdapter implements NewsletterProviderAdapter
 
         $subscriberHash = md5(mb_strtolower($subscriber->email));
         $response = Http::withBasicAuth('capell', $this->apiKey($connection))
+            ->timeout((int) config('capell-newsletter.http.timeout', 15))
+            ->retry(
+                (int) config('capell-newsletter.http.retry_times', 3),
+                (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                throw: false,
+            )
             ->put($this->baseUrl($connection) . '/lists/' . $audience->remote_id . '/members/' . $subscriberHash, $payload);
 
         return new ProviderSyncResultData(
@@ -88,6 +100,21 @@ class MailchimpProviderAdapter implements NewsletterProviderAdapter
             return false;
         }
 
+        $headerName = (string) config('capell-newsletter.webhooks.signature_headers.mailchimp', 'X-Mailchimp-Signature');
+        $signature = (string) $request->header($headerName);
+
+        if ($signature !== '') {
+            $expected = hash_hmac('sha256', $request->getContent(), $secret);
+
+            if (str_starts_with($signature, 'sha256=')) {
+                $signature = substr($signature, 7);
+            }
+
+            return hash_equals($expected, $signature);
+        }
+
+        // Mailchimp historically only supports a shared secret query param; keep
+        // as a fallback when no signature header is present.
         return hash_equals($secret, (string) $request->query('secret'));
     }
 

@@ -2,7 +2,15 @@
 
 declare(strict_types=1);
 
+use Capell\Diagnostics\Contracts\CommandPaletteProvider;
+use Capell\Diagnostics\Data\CommandPaletteCommandData;
+use Capell\Diagnostics\Data\CommandPaletteParameterData;
+use Capell\Diagnostics\Enums\CommandPaletteDanger;
+use Capell\Diagnostics\Enums\CommandPaletteParameterType;
+use Capell\Diagnostics\Enums\CommandPaletteType;
+use Capell\Diagnostics\Enums\DiagnosticsPermission;
 use Capell\Diagnostics\Filament\Pages\CommandPalettePage;
+use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Role;
 
 beforeEach(function (): void {
@@ -16,3 +24,96 @@ it('allows super admins to access the command palette', function (): void {
 
     expect(CommandPalettePage::canAccess())->toBeTrue();
 });
+
+it('allows users through diagnostics gates', function (DiagnosticsPermission $permission): void {
+    $this->actingAs($this->createUser());
+
+    Gate::define($permission->value, fn (): bool => true);
+
+    expect(CommandPalettePage::canAccess())->toBeTrue();
+})->with([
+    DiagnosticsPermission::AccessDiagnostics,
+    DiagnosticsPermission::ViewDiagnostics,
+]);
+
+it('groups, filters, selects, and clears visible command palette commands', function (): void {
+    app()->instance(CommandPalettePageTestProvider::class, new CommandPalettePageTestProvider);
+    app()->tag([CommandPalettePageTestProvider::class], 'capell.diagnostics.command-palette-provider');
+
+    $this->actingAs($this->createUser());
+
+    $page = new CommandPalettePage;
+
+    expect(CommandPalettePage::getNavigationLabel())->toBe('Command Palette')
+        ->and(CommandPalettePage::getNavigationGroup())->toBeString()
+        ->and($page->getTitle())->toBe('Command Palette')
+        ->and($page->selectedCommand())->toBeNull();
+
+    $page->query = 'cache';
+
+    expect($page->groupedCommands())->toHaveKey('Operations')
+        ->and($page->groupedCommands()['Operations'])->toHaveCount(1);
+
+    $page->selectCommand('page.cache-clear');
+
+    expect($page->selectedCommand()?->id)->toBe('page.cache-clear')
+        ->and($page->parameters)->toBe(['--force' => false]);
+
+    $page->clearSelection();
+
+    expect($page->selectedCommandId)->toBeNull()
+        ->and($page->parameters)->toBe([])
+        ->and($page->warningFor(new CommandPaletteCommandData(
+            id: 'safe',
+            label: 'Safe',
+            type: CommandPaletteType::Navigation,
+        )))->toBeNull()
+        ->and($page->warningFor(new CommandPaletteCommandData(
+            id: 'confirm',
+            label: 'Confirm',
+            type: CommandPaletteType::Navigation,
+            danger: CommandPaletteDanger::Confirm,
+        )))->toContain('requires confirmation')
+        ->and($page->warningFor(new CommandPaletteCommandData(
+            id: 'dangerous',
+            label: 'Dangerous',
+            type: CommandPaletteType::Navigation,
+            danger: CommandPaletteDanger::Dangerous,
+        )))->toContain('destructive');
+});
+
+final class CommandPalettePageTestProvider implements CommandPaletteProvider
+{
+    /**
+     * @return array<string, CommandPaletteCommandData>
+     */
+    public function commandPaletteCommands(): array
+    {
+        return [
+            'page.cache-clear' => new CommandPaletteCommandData(
+                id: 'page.cache-clear',
+                label: 'Clear cache',
+                type: CommandPaletteType::Navigation,
+                description: 'Refresh runtime caches',
+                url: '/admin/cache',
+                parameters: [
+                    new CommandPaletteParameterData(
+                        name: '--force',
+                        label: 'Force',
+                        type: CommandPaletteParameterType::Boolean,
+                        default: false,
+                    ),
+                ],
+                keywords: ['cache'],
+                group: 'Operations',
+            ),
+            'page.hidden' => new CommandPaletteCommandData(
+                id: 'page.hidden',
+                label: 'Hidden command',
+                type: CommandPaletteType::Navigation,
+                ability: 'missing-command-ability',
+                group: 'Operations',
+            ),
+        ];
+    }
+}

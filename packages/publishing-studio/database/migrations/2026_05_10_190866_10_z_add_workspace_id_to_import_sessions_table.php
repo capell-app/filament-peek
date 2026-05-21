@@ -30,7 +30,7 @@ return new class extends Migration
 
         if (Schema::hasColumn('import_sessions', 'workspace_id')) {
             Schema::table('import_sessions', function (Blueprint $table): void {
-                $table->dropForeignKey(['workspace_id']);
+                $table->dropForeign(['workspace_id']);
                 $table->dropColumn('workspace_id');
             });
         }

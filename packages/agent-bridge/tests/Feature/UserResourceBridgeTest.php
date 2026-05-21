@@ -259,3 +259,47 @@ it('summarizes token status without exposing token secrets', function (): void {
     ])->and($summaryText)->not->toContain($plainTextToken)
         ->and($summaryText)->not->toContain($token->token_hash);
 });
+
+it('extends user sidebar components and relation managers for persisted users', function (): void {
+    $user = createAgentBridgeUser('sidebar@example.test');
+    $expiredToken = createAgentBridgeTokenFor($user, 'Expired token', 'expired-token', now()->subDay());
+
+    $usedConfirmation = new CapellAgentBridgeConfirmation;
+    $usedConfirmation->forceFill([
+        'token' => str_repeat('e', 64),
+        'agent_bridge_token_id' => $expiredToken->getKey(),
+        'capability_key' => 'capell.pages.update_draft',
+        'scope' => 'capell.pages.write',
+        'payload_hash' => str_repeat('f', 64),
+        'payload' => ['page' => 3],
+        'preview' => ['ok' => true],
+        'expires_at' => now()->addMinutes(10),
+        'used_at' => now(),
+    ]);
+    $usedConfirmation->user()->associate($user);
+    $usedConfirmation->save();
+
+    $extender = new AgentBridgeUserSchemaExtender;
+    $context = UserSchemaContextData::forEdit($user, [], 'default');
+
+    expect($extender->extendSidebarComponents(resolve(Filament\Schemas\Schema::class), $context))->toHaveCount(1)
+        ->and($extender->extendRelationManagers($user, [], $context))->toContain(
+            AgentBridgeTokensRelationManager::class,
+            AgentBridgeConfirmationsRelationManager::class,
+            AgentBridgeAuditEntriesRelationManager::class,
+        )
+        ->and($extender->summarizeUserActivity($user))->toMatchArray([
+            'tokens' => 1,
+            'confirmations' => 1,
+            'approved' => 1,
+            'active' => 0,
+            'expired' => 1,
+        ]);
+});
+
+it('does not extend sidebar components without a persisted user record', function (): void {
+    $extender = new AgentBridgeUserSchemaExtender;
+
+    expect($extender->extendSidebarComponents(resolve(Filament\Schemas\Schema::class), UserSchemaContextData::forCreate()))
+        ->toBe([]);
+});

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Capell\Events\Filament\Resources\Registrations;
 
 use BackedEnum;
+use Capell\Admin\Support\SiteScope;
 use Capell\Events\Filament\Resources\Registrations\Pages\ManageEventRegistrations;
 use Capell\Events\Models\EventRegistration;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Override;
 
 class EventRegistrationResource extends Resource
@@ -59,5 +61,12 @@ class EventRegistrationResource extends Resource
         return [
             'index' => ManageEventRegistrations::route('/'),
         ];
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('occurrence.event', fn (Builder $query): Builder => SiteScope::applyForCurrentActor($query));
     }
 }

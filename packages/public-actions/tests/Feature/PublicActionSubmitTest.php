@@ -5,11 +5,13 @@ declare(strict_types=1);
 use Capell\PublicActions\Enums\PublicActionDispatchStatus;
 use Capell\PublicActions\Enums\PublicActionStatus;
 use Capell\PublicActions\Enums\PublicActionSubmissionStatus;
+use Capell\PublicActions\Jobs\DispatchPublicActionDestinationJob;
 use Capell\PublicActions\Models\PublicAction;
 use Capell\PublicActions\Models\PublicActionDestination;
 use Capell\PublicActions\Models\PublicActionDispatchAttempt;
 use Capell\PublicActions\Models\PublicActionSubmission;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 
 it('submits an active public action and redirects with no-store headers', function (): void {
     PublicAction::factory()->create([
@@ -105,6 +107,56 @@ it('allows public payload redirects on the current host', function (): void {
         ->assertRedirect('http://localhost/thanks');
 });
 
+it('allows safe relative payload redirects', function (): void {
+    PublicAction::factory()->create([
+        'key' => 'relative-redirect-action',
+        'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'type' => 'email', 'required' => true],
+                ['key' => 'redirect', 'type' => 'text'],
+            ],
+        ],
+    ]);
+
+    $this
+        ->from('/source-page')
+        ->post('/actions/relative-redirect-action', [
+            'email' => 'person@example.test',
+            'redirect' => '/thanks',
+        ])
+        ->assertRedirect('/thanks');
+});
+
+it('validates checkbox and textarea schema fields while ignoring invalid schema keys', function (): void {
+    PublicAction::factory()->create([
+        'key' => 'typed-schema-action',
+        'handler_key' => 'test.handler',
+        'payload_schema' => [
+            'fields' => [
+                ['key' => 'email', 'type' => 'email', 'required' => true],
+                ['key' => 'consent', 'type' => 'checkbox', 'required' => true],
+                ['key' => 'message', 'type' => 'textarea'],
+                ['key' => ' ', 'type' => 'text'],
+                ['label' => 'Missing key', 'type' => 'text'],
+            ],
+        ],
+    ]);
+
+    $this->postJson('/actions/typed-schema-action', [
+        'email' => 'person@example.test',
+        'consent' => '1',
+        'message' => 'Tell me more.',
+        'ignored' => 'not stored',
+    ])->assertOk();
+
+    expect(PublicActionSubmission::query()->firstOrFail()->payload)->toBe([
+        'email' => 'person@example.test',
+        'consent' => '1',
+        'message' => 'Tell me more.',
+    ]);
+});
+
 it('dispatches active destinations after a successful submission', function (): void {
     Http::fake([
         'https://hooks.example.test/access' => Http::response('', 204),
@@ -125,6 +177,44 @@ it('dispatches active destinations after a successful submission', function (): 
     ])->assertRedirect();
 
     expect(PublicActionDispatchAttempt::query()->firstOrFail()->status)->toBe(PublicActionDispatchStatus::Succeeded);
+});
+
+it('queues asynchronous destination dispatches after successful submissions', function (): void {
+    Queue::fake();
+
+    $action = PublicAction::factory()->create([
+        'key' => 'queued-destination-action',
+        'handler_key' => 'test.handler',
+    ]);
+
+    PublicActionDestination::factory()->for($action, 'action')->create([
+        'settings' => ['sync' => false],
+    ]);
+
+    $this->post('/actions/queued-destination-action', [
+        'email' => 'person@example.test',
+    ])->assertRedirect();
+
+    Queue::assertPushed(DispatchPublicActionDestinationJob::class);
+});
+
+it('marks submissions failed when no handler is registered for the action', function (): void {
+    PublicAction::factory()->create([
+        'key' => 'missing-handler-action',
+        'handler_key' => 'missing.handler',
+    ]);
+
+    $this->postJson('/actions/missing-handler-action', [
+        'email' => 'person@example.test',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['action']);
+
+    $submission = PublicActionSubmission::query()->firstOrFail();
+
+    expect($submission->status)->toBe(PublicActionSubmissionStatus::Failed)
+        ->and($submission->metadata['handler_failed'] ?? null)->toBeTrue()
+        ->and($submission->metadata['handler_error_type'] ?? null)->toBe('InvalidArgumentException');
 });
 
 it('rejects inactive actions without creating a submission', function (): void {

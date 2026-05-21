@@ -1,150 +1,150 @@
-# Test Coverage & Quality Plan — `capell-packages-4`
+# Package Coverage Plan
 
-This plan complements [`docs/test-plan-actions-services.md`](test-plan-actions-services.md), which covers Core/Admin and historical AI planning now superseded by SEO Suite. This document is scoped to **the optional add-on packages** in this repo and focuses on (a) raising meaningful coverage where it is thinnest, (b) making the suite a faster signal of regressions, and (c) catching cross-package install conflicts that single-package suites cannot see.
+This plan is for raising `capell-packages-4` to at least 80% repository coverage while keeping the work package-owned and useful. The current local full coverage run completes with all tests passing, but reports 64.8% total coverage. The single CI coverage authority is `.github/workflows/coverage-release.yml`.
 
-## 1. Where we are today
+## Rules
 
-PHPStan: green (level 1 across `packages` + `tests`).
+- Keep one coverage workflow. Do not add package-specific coverage workflows or Composer aliases that drift from CI.
+- Keep the release coverage workflow strict: `vendor/bin/pest --coverage --min=80 --coverage-clover=coverage/clover.xml`.
+- Add tests around meaningful behavior, not accessor noise.
+- Prefer Action tests via `Action::run()` for domain behavior.
+- Use integration tests only where a package boundary, service provider, render hook, migration, or Filament registration is the behavior under test.
+- Avoid snapshot tests unless the serialized output is intentionally stable.
+- Do not lower coverage thresholds to make a branch green. Raise coverage or narrow `phpunit.xml` source exclusions only when the excluded code is genuinely non-behavioral bootstrapping.
 
-Pest: 1208 / 1458 passing. The 83 failures group into a small number of root causes that pre-date this plan and are tracked separately:
+## Measurement
 
-| Root cause                                                                                                         | Count | Where                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------ | ----- | --------------------------------------------------------------------------------------- |
-| `RenderHookRegistry` short-name lookup in compiled blade (vendor `capell-app/frontend` + `capell-app/admin` views) | ~72   | layout-builder + blog + publishing-studio frontend tests rendering pages                |
-| Blog article ordering returning unexpected order in PageLoader                                                     | 4     | `blog/tests/Integration/Loader/PageLoaderArticleOrderingTest`                           |
-| Workspace cache not invalidated after `PageSavedAction` / `ReplicatePageAction`                                    | 2     | `publishing-studio/tests/Admin/Feature/Dashboard/CacheInvalidationTest`                 |
-| Workspace draft/publish action visibility on `EditPage`                                                            | 2     | `publishing-studio/tests/Feature/EndToEnd/PageDraftPublishFlowTest`                     |
-| Misc snapshot / DOM / cookie expectations                                                                          | 3     | `seo-suite` sitemap snapshot, `themes/agency` accessibility, `publishing-studio` cookie |
+1. Run the single coverage command from the workflow locally:
 
-These are listed so the next pass has a punch list, not as new work for this plan.
+    ```bash
+    php -d memory_limit=-1 -d pcov.enabled=1 -d pcov.directory=packages -d pcov.exclude="~vendor|tests|storage|bootstrap|.temp~" vendor/bin/pest --coverage --min=80 --coverage-clover=coverage/clover.xml --colors=always --stop-on-error --stop-on-failure --configuration=phpunit.xml
+    ```
 
-### Test count vs source count, per package
+2. Use the Clover output to generate a package rollup before each coverage sprint. Group files by `packages/{package}/src`.
+3. Track each package with: current line coverage, uncovered Actions, uncovered providers/registrars, uncovered public render paths, and the next three tests to write.
+4. Ratchet package floors after each batch. A package that reaches 80% should not fall below 80% again.
 
-Skewed ratios are the first place to look for missing coverage:
+## Priority Order
 
-| Package            | tests | src |   tests |
-| ------------------ | ----: | --: | ------: |
-| seo-suite          |    14 | 127 | 0.11 ⚠️ |
-| form-builder       |     1 |   3 |    0.33 |
-| layout-builder     |    85 | 207 |    0.41 |
-| plugins            |    18 |  44 |    0.41 |
-| media-library      |     4 |   8 |    0.50 |
-| tags               |     8 |  16 |    0.50 |
-| blog               |    40 |  71 |    0.56 |
-| navigation         |    27 |  42 |    0.64 |
-| frontend-authoring |     2 |   3 |    0.67 |
-| address            |    19 |  28 |    0.68 |
-| publishing-studio  |   100 | 142 |    0.70 |
+### 1. High-impact low-coverage packages
 
-`seo-suite` is the standout — almost an order of magnitude under the next-lowest package.
+Start with packages that have many source files and broad user-facing behavior:
 
-## 2. Principles
+- `seo-suite`
+- `layout-builder`
+- `blog`
+- `publishing-studio`
+- `migration-assistant`
+- `access-gate`
+- `agent-bridge`
+- `campaign-studio`
 
-These apply to all new tests added under this plan. They follow what is already in `CLAUDE.md` and the Capell standards skill, and we don't want to drift from them.
+For each package:
 
-1. **Test Actions through `::run()`, not via HTTP.** Domain logic lives in `packages/{pkg}/src/Actions/`. Hit it directly with arranged inputs; reserve HTTP for integration smoke tests.
-2. **Every Action gets at least one happy path + one negative/edge path.** Mirror the convention from `docs/test-plan-actions-services.md`.
-3. **Prefer Integration over Feature for anything that crosses a package boundary** (e.g. blog → layout-builder widget rendering, plugins → admin panel registration). Feature tests that boot the full frontend are slow and have a wide blast radius — the Section 4 conflict tests are deliberately the only place we pay that cost.
-4. **Snapshot tests must be reviewed.** A failing snapshot is not a green light to regenerate; the failing seo-suite sitemap snapshot is exactly that anti-pattern.
-5. **No new `Tests/` namespace utilities without a Pest helper test that exercises them.**
+- Cover every Action with at least one happy path and one failure or edge path.
+- Cover data builders and report builders with real model factories where possible.
+- Cover render hooks and public output for anonymous safety where frontend output is involved.
+- Cover settings schemas and package boot registration with focused integration tests.
 
-## 3. Per-package targets
+### 2. Admin and Filament-heavy packages
 
-Order is by impact. Each entry: scope, target coverage delta, and the first three tests to write.
+Next, cover packages where regressions mostly show up in admin resources, settings, or widgets:
 
-### 3.1 seo-suite (priority 1 — coverage gap)
+- `diagnostics`
+- `dashboard-reports`
+- `deployments`
+- `document-lifecycle`
+- `email-studio`
+- `events`
+- `newsletter`
+- `translation-manager`
+- `welcome-tour`
 
-127 source files, 14 tests. The Filament Schemas, AI prompt builders, and sitemap pipeline are the biggest unaudited surfaces.
+For each package:
 
-First three tests:
+- Test query/build Actions directly.
+- Test Filament resource schema/table factories by asserting fields, actions, filters, and validation rules.
+- Add one smoke test that boots the package provider and verifies key resources or pages are registered.
 
-- `Unit/Actions/AI/BuildSitemapPromptTest` — happy path (full data) + missing keywords + truncation behavior.
-- `Unit/Sitemap/SitemapBuilderTest` — split the existing snapshot into a property-style assertion: URL count, `<lastmod>` shape, exclusion of draft/private pages. Drop the brittle full-XML snapshot.
-- `Integration/Filament/SeoSettingsResourceTest` — Filament page renders, save persists settings, validation errors surface.
+### 3. Frontend and rendering packages
 
-Stretch: schema markup tests for `image.blade.php`, `article.blade.php`, `breadcrumb.blade.php` — all currently rendered via Frontend smoke tests that fail for unrelated reasons.
+Then cover packages whose risk is public HTML, render hooks, page cache safety, or frontend state:
 
-### 3.2 layout-builder (priority 1 — Filament/Schemas gap)
+- `foundation-theme`
+- `frontend-authoring`
+- `frontend-optimizer`
+- `hero`
+- `html-cache`
+- `insights`
+- `navigation`
+- `public-actions`
+- `search`
+- `site-discovery`
+- `theme-agency`
+- `theme-corporate`
+- `theme-saas`
 
-The 85 tests focus on widget rendering, but `src/Filament/Schemas/` is largely untested. Schemas are pure data, perfect for unit tests.
+For each package:
 
-First three tests:
+- Assert anonymous and non-admin responses expose no editor or authoring surface.
+- Test render-hook registration with fresh registry instances to catch order-dependent bugs.
+- Test Blade render paths with hydrated data only; public views must not perform queries.
+- Test cache keys, invalidation decisions, and static-safe output.
 
-- `Unit/Filament/Schemas/Widgets/HeroBannerSchemaTest` — `make()` returns expected field set; required/nullable per spec.
-- `Unit/Filament/Schemas/Widgets/CtaSectionSchemaTest` — same shape.
-- `Unit/Actions/CreateHeroWidgetActionTest` — happy path + idempotency on second run.
+### 4. Small and utility packages
 
-Snapshot policy for Filament schemas: assert on **field names, types, and validation rules**, not on the closure-built component tree.
+Finish with the small packages, which should be quick to bring above 80%:
 
-### 3.3 plugins (priority 2 — license + manifest paths)
+- `address`
+- `ai-orchestrator`
+- `api`
+- `block-library`
+- `content-sections`
+- `demo-kit`
+- `form-builder`
+- `ga4-reports`
+- `login-audit`
+- `media-ai`
+- `media-library`
+- `notes`
+- `password-policy`
+- `tags`
+- `wordpress-importer`
 
-44 source files, 18 tests. Manifest validation is well-covered; license lifecycle is thinly tested.
+For each package:
 
-First three tests:
+- Add one provider/registration test.
+- Add direct tests for all Actions and support services.
+- Add model scope or enum label tests only when those methods contain actual behavior.
 
-- `Unit/Actions/HeartbeatLicenseActionTest` — successful heartbeat updates `last_heartbeat_at`; failed heartbeat within grace period leaves status unchanged.
-- `Feature/Console/InstallPluginCommandTest` — installs a plugin from a fixture manifest; verifies migrations recorded once, idempotent on re-run.
-- `Unit/Services/AnystackClientTest` — request shape, retry behavior, error mapping.
+## Execution Loop
 
-### 3.4 form-builder, frontend-authoring, themes-admin, media-library (priority 3 — micro-packages)
+For each package batch:
 
-Each has 1–4 tests. They are small enough that one Action + one provider boot test gives us confidence.
+1. Generate the package coverage rollup from `coverage/clover.xml`.
+2. Pick the lowest uncovered behavior with the highest production risk.
+3. Add tests in small groups, usually one Action or one support class at a time.
+4. Run the narrow package tests:
 
-For each:
+    ```bash
+    vendor/bin/pest packages/{package}/tests --configuration=phpunit.xml
+    ```
 
-- One Action test with `::run()`.
-- One provider boot test under the `tests/Packages/` full-install fixture (Section 4) so we know the package coexists with the others.
+5. Run the workflow coverage command after each package reaches its target.
+6. Update this plan with the new package percentage and remaining gaps.
 
-### 3.5 navigation, blog, address (priority 4 — already covered, fill gaps only)
+## Progress Log
 
-These have healthy ratios. Add tests only when fixing bugs from the punch list (Section 1) — do not bulk-add.
+### `frontend-authoring`
 
-### 3.6 publishing-studio (priority 4 — known issues, not coverage)
+- Added direct coverage for `BuildEditableRegionManifestAction`, including default editable regions, signed edit URLs, selector configuration, and package-supplied region extenders.
+- Verified the package suite with `vendor/bin/pest packages/frontend-authoring/tests --configuration=phpunit.xml` (27 tests, 188 assertions).
+- Remaining gap: generate the next `coverage/clover.xml` package rollup and record the exact package percentage.
 
-100 tests covers the surface; the failures are about correctness, not coverage. Owned by Section 1's punch list.
+## Acceptance Criteria
 
-## 4. Cross-package install conflict tests
-
-Per-package suites cannot detect what only shows up when two packages register against the same registry. Today, `tests/Packages/` boots Address + layout builder + Blog + SeoSuite + Frontend + Admin, but it doesn't include Plugins, Tags, Navigation, Frontend Authoring, PublishingStudio, or any theme — and it doesn't assert on registry contents.
-
-We add tests under `tests/Packages/Integration/` that:
-
-1. **Boot every shipped package together** in one TestCase and assert the application is healthy (`getProviders()`, settings migrations, no duplicate bindings).
-2. **Assert no key collisions** in `CapellCore::getPageTypes()`, `CapellAdmin::getSchemas()`, registered widget keys, render-hook locations, settings classes, and morph-map types.
-3. **Assert manifests match installed providers** — every `capell.json` provider class is registerable by autoload AND is present in the booted app's loaded providers when the package is forced installed.
-4. **Assert no migration filename collisions** across packages (timestamp prefix may match — class name must not).
-5. **Assert the unified Filament panel resolves** — the admin panel boots with all packages on, `Filament\Facades\Filament::getResources()` returns no duplicates.
-
-Implementation lands in this PR (see `tests/Packages/Integration/CrossPackage*Test.php` and the expanded `PackagesTestCase`).
-
-## 4a. Bugs surfaced by the new conflict tests
-
-The cross-package tests added in this PR (`tests/Packages/Arch/`) are passing in their final form, but two of them initially failed against the live tree and revealed pre-existing bugs the per-package suites have never caught. They are tracked separately so we can land the test infrastructure now and address the underlying issues in their own PRs.
-
-1. **`alter_tags_table.php` exists in both `packages/blog/database/migrations/` and `packages/tags/database/migrations/`.** Laravel's migration runner keys by basename, so whichever package boots second is silently skipped. The file likely got duplicated when `tags/` was extracted from `blog/`. Decide which package owns the alteration, delete the other.
-
-To unblock the test suite, the `ManifestProviderClassExistsTest` and `MigrationFileUniquenessTest` checks have been written to fail loudly on these two cases — which is the desired behavior. The tests pass once the bugs above are resolved; they are not currently included in the green test suite.
-
-## 5. Test infrastructure improvements
-
-These are toolchain-level improvements that pay back across all packages.
-
-- **Coverage floor per package.** `composer test` already requires 80% via `coverage`. Today seo-suite and form-builder drag the average. Add per-package `pest.xml` so the suite fails when a package drops below its current floor (ratchet up, never down).
-- **CI sharding.** With 1458 tests at ~60s parallel, a shard split by `Architecture | Unit | Feature | Integration` keeps wall time under ~30s per shard. PHP 8.4 builder image is required (see `composer/platform_check.php`).
-- **Drop the snapshot for `SitemapBuilder`.** Snapshots are appropriate for stable serializers, not for ones whose output evolves with content.
-- **Pest data providers via fixtures, not closures.** `GalleryWidgetTest::with([...])` builds factories inside closures — when those factories drift, the failure message points at Pest internals, not the test. Move to typed `Data` fixtures.
-
-## 6. Sequencing
-
-A 4-week shape that keeps PRs small:
-
-1. **Week 1.** Section 4 conflict tests + ratchet-floor coverage tooling. No production code changes — just visibility.
-2. **Week 2.** seo-suite coverage push (Section 3.1). Side-effect: most remaining seo-suite punch-list items either get fixed or get a documented `it->skip` with a Linear link.
-3. **Week 3.** layout-builder Filament/Schemas (Section 3.2) + plugins license tests (Section 3.3).
-4. **Week 4.** Punch list from Section 1: `RenderHookRegistry` blade fix (vendor coordination), workspace cache invalidation, blog article ordering. These need fixes in the underlying code, not test-only changes.
-
-## 7. Out of scope
-
-- E2E / browser tests (handled separately by the `filament-admin-explorer` skill workflow).
-- Performance/load testing.
-- Mutation testing (consider once coverage > 80% across the board).
+- The single coverage workflow is the only CI coverage entry point.
+- The workflow fails below 80% total coverage.
+- `coverage/clover.xml` is uploaded by the workflow for reporting.
+- Every package has either at least 80% package coverage or a documented short-term gap with the exact uncovered files and the next tests planned.
+- Repository coverage reaches at least 80% with all tests passing.

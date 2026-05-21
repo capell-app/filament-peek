@@ -13,6 +13,7 @@ use Capell\Core\ThemeStudio\Data\NavigationData;
 use Capell\Core\ThemeStudio\Data\ProofSectionData;
 use Capell\Core\ThemeStudio\Data\ThemePageData;
 use Capell\Core\ThemeStudio\Theme\ThemeRegistry;
+use Capell\ThemeStudio\Saas\Health\ThemeSaasHealthCheck;
 use Capell\ThemeStudio\Saas\SaasThemeServiceProvider;
 use Illuminate\Support\Facades\View;
 
@@ -20,9 +21,12 @@ it('defines the saas premium renderer contract', function (): void {
     $definition = SaasThemeServiceProvider::definition();
 
     expect($definition->package)->toBe('capell-app/theme-saas')
+        ->and($definition->key)->toBe(SaasThemeServiceProvider::THEME_KEY)
+        ->and($definition->assets)->toBe(['css' => 'vendor/capell/themes/saas.css'])
         ->and($definition->includedSections)->toContain('hero', 'features', 'proof', 'cta')
         ->and($definition->presets)->toHaveCount(3)
-        ->and($definition->tags)->toContain('Conversion');
+        ->and($definition->tags)->toContain('Conversion')
+        ->and(ThemeSaasHealthCheck::compatibleCapellApiVersion())->toBe('^4.0');
 });
 
 it('renders navigation from the saas package views', function (): void {
@@ -43,6 +47,25 @@ it('renders navigation from the saas package views', function (): void {
     expect($html)
         ->toContain('Capell')
         ->toContain('Home');
+});
+
+it('declares renderers for every included saas section', function (): void {
+    View::addNamespace('capell-theme-saas', __DIR__ . '/../../resources/views');
+
+    $provider = new SaasThemeServiceProvider($this->app);
+    $method = new ReflectionMethod($provider, 'sectionRenderers');
+
+    $renderers = $method->invoke($provider);
+
+    expect(array_keys($renderers))->toBe([
+        'navigation',
+        'hero',
+        'features',
+        'proof',
+        'content-listing',
+        'cta',
+        'footer',
+    ]);
 });
 
 it('registers saas only when the theme package is installed', function (): void {

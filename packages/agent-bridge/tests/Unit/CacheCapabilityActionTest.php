@@ -17,6 +17,14 @@ it('previews registered cache clear commands before executing them', function ()
         ->and($result->data['commands'])->toContain('cache:clear');
 });
 
+it('executes registered cache clear commands and returns command output', function (): void {
+    $result = (new ClearCapellCacheCapabilityAction)->execute(cacheInvocation());
+
+    expect($result->ok)->toBeTrue()
+        ->and($result->message)->toBe('Available Capell cache clear commands have been run.')
+        ->and($result->data['results'])->toHaveKey('cache:clear');
+});
+
 function cacheInvocation(): CapabilityInvocationData
 {
     return new CapabilityInvocationData(

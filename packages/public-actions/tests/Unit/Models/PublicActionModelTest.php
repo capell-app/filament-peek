@@ -2,18 +2,27 @@
 
 declare(strict_types=1);
 
+use Capell\PublicActions\Actions\BuildPublicActionIntegrationQueryAction;
+use Capell\PublicActions\Actions\ListPublicActionOptionsAction;
+use Capell\PublicActions\Actions\ResolvePublicActionForIntegrationTokenAction;
+use Capell\PublicActions\Actions\ResolvePublicActionIntegrationTokenAction;
+use Capell\PublicActions\Actions\RevokePublicActionIntegrationTokenAction;
 use Capell\PublicActions\Enums\PublicActionDestinationStatus;
 use Capell\PublicActions\Enums\PublicActionDispatchStatus;
 use Capell\PublicActions\Enums\PublicActionIntegrationProvider;
+use Capell\PublicActions\Enums\PublicActionIntegrationTokenAbility;
 use Capell\PublicActions\Enums\PublicActionStatus;
 use Capell\PublicActions\Enums\PublicActionSubmissionStatus;
+use Capell\PublicActions\Http\Controllers\Zapier\ShowZapierAccountController;
 use Capell\PublicActions\Models\PublicAction;
 use Capell\PublicActions\Models\PublicActionDestination;
 use Capell\PublicActions\Models\PublicActionDispatchAttempt;
 use Capell\PublicActions\Models\PublicActionIntegrationToken;
 use Capell\PublicActions\Models\PublicActionSubmission;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 it('casts statuses, structured payloads, and timestamps', function (): void {
     $action = PublicAction::factory()->create([
@@ -138,4 +147,100 @@ it('hashes and revokes integration tokens without storing the plain token', func
     $integrationToken->forceFill(['revoked_at' => now()])->save();
 
     expect($integrationToken->refresh()->isRevoked())->toBeTrue();
+});
+
+it('checks integration token abilities from its cast payload', function (): void {
+    $integrationToken = PublicActionIntegrationToken::factory()->create([
+        'abilities' => [
+            PublicActionIntegrationTokenAbility::ListActions->value,
+            PublicActionIntegrationTokenAbility::SubmitActions->value,
+        ],
+    ]);
+
+    expect($integrationToken->hasAbility(PublicActionIntegrationTokenAbility::ListActions))->toBeTrue()
+        ->and($integrationToken->hasAbility(PublicActionIntegrationTokenAbility::SubmitActions))->toBeTrue()
+        ->and($integrationToken->hasAbility(PublicActionIntegrationTokenAbility::ReadSubmissions))->toBeFalse()
+        ->and($integrationToken->site()->getRelated()->getTable())->toBe('sites');
+});
+
+it('resolves active integration tokens and scoped public actions', function (): void {
+    $plainTextToken = 'cpa_test_plain_token';
+    $integrationToken = PublicActionIntegrationToken::factory()->create([
+        'provider' => PublicActionIntegrationProvider::Api,
+        'token_hash' => PublicActionIntegrationToken::hashPlainTextToken($plainTextToken),
+        'revoked_at' => null,
+    ]);
+    $enabledAction = PublicAction::factory()->create([
+        'key' => 'enabled-api-action',
+        'settings' => ['api_enabled' => true],
+    ]);
+    PublicAction::factory()->create([
+        'key' => 'disabled-api-action',
+        'settings' => ['api_enabled' => false],
+    ]);
+
+    $resolveToken = new ResolvePublicActionIntegrationTokenAction;
+    $buildQuery = new BuildPublicActionIntegrationQueryAction;
+    $resolveAction = new ResolvePublicActionForIntegrationTokenAction($buildQuery);
+
+    expect($resolveToken->handle(null))->toBeNull()
+        ->and($resolveToken->handle(''))->toBeNull()
+        ->and($resolveToken->handle('wrong-token'))->toBeNull()
+        ->and($resolveToken->handle($plainTextToken)?->is($integrationToken))->toBeTrue()
+        ->and($integrationToken->refresh()->last_used_at)->not->toBeNull()
+        ->and($buildQuery->handle($integrationToken)->pluck('key')->all())->toBe(['enabled-api-action'])
+        ->and($resolveAction->handle($integrationToken, 'enabled-api-action')?->is($enabledAction))->toBeTrue()
+        ->and($resolveAction->handle($integrationToken, 'disabled-api-action'))->toBeNull();
+
+    (new RevokePublicActionIntegrationTokenAction)->handle($integrationToken);
+
+    expect($resolveToken->handle($plainTextToken))->toBeNull();
+});
+
+it('lists active public action options alphabetically by name', function (): void {
+    PublicAction::factory()->create([
+        'name' => 'Zulu Action',
+        'key' => 'zulu-action',
+        'status' => PublicActionStatus::Active,
+    ]);
+    PublicAction::factory()->create([
+        'name' => 'Alpha Action',
+        'key' => 'alpha-action',
+        'status' => PublicActionStatus::Active,
+    ]);
+    PublicAction::factory()->create([
+        'name' => 'Paused Action',
+        'key' => 'paused-action',
+        'status' => PublicActionStatus::Paused,
+    ]);
+
+    expect((new ListPublicActionOptionsAction)->handle())->toBe([
+        'alpha-action' => 'Alpha Action',
+        'zulu-action' => 'Zulu Action',
+    ]);
+});
+
+it('returns Zapier account details for the resolved integration token', function (): void {
+    $integrationToken = PublicActionIntegrationToken::factory()->create([
+        'name' => 'Zapier workspace',
+        'provider' => PublicActionIntegrationProvider::Zapier,
+    ]);
+    $request = Request::create('/zapier/account');
+    $request->attributes->set('public_action_integration_token', $integrationToken->load('site'));
+
+    $response = (new ShowZapierAccountController)($request);
+    $payload = $response->getData(true);
+
+    expect($payload)->toMatchArray([
+        'id' => (string) $integrationToken->getKey(),
+        'name' => 'Zapier workspace',
+        'provider' => PublicActionIntegrationProvider::Zapier->value,
+        'site_id' => $integrationToken->site_id,
+        'site_name' => $integrationToken->site?->name,
+    ]);
+});
+
+it('rejects Zapier account requests without an integration token', function (): void {
+    expect(fn (): mixed => (new ShowZapierAccountController)(Request::create('/zapier/account')))
+        ->toThrow(HttpException::class);
 });

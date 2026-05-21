@@ -21,16 +21,24 @@ final class ConnectDeploymentAction
         ?string $refreshToken = null,
         ?string $defaultBranch = 'main',
     ): DeploymentConnection {
-        return DeploymentConnection::query()->updateOrCreate([
+        $connection = DeploymentConnection::query()->updateOrCreate([
             'provider' => $provider->value,
             'repo_owner' => $repoOwner,
             'repo_name' => $repoName,
         ], [
-            'access_token_encrypted' => $accessToken,
-            'refresh_token_encrypted' => $refreshToken,
             'default_branch' => $defaultBranch ?? 'main',
             'install_policy' => InstallPolicy::PullRequestAutoMerge,
             'is_active' => true,
         ]);
+
+        // Encrypted token columns are excluded from $fillable on the model so they
+        // can never be assigned through Filament form state or HTTP input. Write
+        // them here through forceFill once the row exists.
+        $connection->forceFill([
+            'access_token_encrypted' => $accessToken,
+            'refresh_token_encrypted' => $refreshToken,
+        ])->save();
+
+        return $connection;
     }
 }

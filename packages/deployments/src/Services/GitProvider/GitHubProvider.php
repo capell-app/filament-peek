@@ -10,6 +10,7 @@ use Capell\Deployments\Data\RepoFile;
 use Capell\Deployments\Models\DeploymentConnection;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
+use RuntimeException;
 
 final class GitHubProvider implements GitProviderContract
 {
@@ -18,6 +19,7 @@ final class GitHubProvider implements GitProviderContract
     public function getFile(DeploymentConnection $conn, string $path): RepoFile
     {
         $response = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repos/%s/%s/contents/%s', $conn->repo_owner, $conn->repo_name, $path))
             ->throw()
             ->json();
@@ -45,6 +47,7 @@ final class GitHubProvider implements GitProviderContract
         $repo = $conn->repo_name;
 
         $branchData = $client
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repos/%s/%s/branches/%s', $owner, $repo, $branch))
             ->throw()
             ->json();
@@ -152,6 +155,8 @@ final class GitHubProvider implements GitProviderContract
             ->throw()
             ->json();
 
+        $this->assertNoGraphqlErrors($nodeIdResponse);
+
         $pullRequestNodeId = $nodeIdResponse['data']['repository']['pullRequest']['id'];
 
         $autoMergeMutation = <<<'GRAPHQL'
@@ -164,19 +169,23 @@ final class GitHubProvider implements GitProviderContract
             }
             GRAPHQL;
 
-        $this->graphqlClient($conn)
+        $mutationResponse = $this->graphqlClient($conn)
             ->post('/graphql', [
                 'query' => $autoMergeMutation,
                 'variables' => [
                     'id' => $pullRequestNodeId,
                 ],
             ])
-            ->throw();
+            ->throw()
+            ->json();
+
+        $this->assertNoGraphqlErrors($mutationResponse);
     }
 
     public function getPullRequest(DeploymentConnection $conn, int|string $pullRequestId): PullRequestData
     {
         $response = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repos/%s/%s/pulls/%s', $conn->repo_owner, $conn->repo_name, $pullRequestId))
             ->throw()
             ->json();
@@ -196,6 +205,7 @@ final class GitHubProvider implements GitProviderContract
     public function getDeployStatus(DeploymentConnection $conn, string $commitSha): string
     {
         $response = $this->client($conn)
+            ->retry(2, 200, throw: false)
             ->get(sprintf('/repos/%s/%s/commits/%s/check-runs', $conn->repo_owner, $conn->repo_name, $commitSha))
             ->throw()
             ->json();
@@ -229,7 +239,9 @@ final class GitHubProvider implements GitProviderContract
             ->baseUrl('https://api.github.com')
             ->withToken($conn->access_token_encrypted)
             ->withHeader('Accept', 'application/vnd.github+json')
-            ->withHeader('X-GitHub-Api-Version', '2022-11-28');
+            ->withHeader('X-GitHub-Api-Version', '2022-11-28')
+            ->timeout(10)
+            ->connectTimeout(5);
     }
 
     private function graphqlClient(DeploymentConnection $conn): PendingRequest
@@ -238,7 +250,24 @@ final class GitHubProvider implements GitProviderContract
             ->baseUrl('https://api.github.com')
             ->withToken($conn->access_token_encrypted)
             ->withHeader('Accept', 'application/vnd.github+json')
-            ->withHeader('X-GitHub-Api-Version', '2022-11-28');
+            ->withHeader('X-GitHub-Api-Version', '2022-11-28')
+            ->timeout(10)
+            ->connectTimeout(5);
+    }
+
+    /**
+     * @param  array<string, mixed>  $json
+     */
+    private function assertNoGraphqlErrors(array $json): void
+    {
+        if (isset($json['errors']) && is_array($json['errors']) && $json['errors'] !== []) {
+            $messages = array_map(
+                static fn (array $error): string => (string) ($error['message'] ?? 'unknown error'),
+                $json['errors'],
+            );
+
+            throw new RuntimeException('GitHub GraphQL error: ' . implode('; ', $messages));
+        }
     }
 
     /** @param array<string, mixed> $response */

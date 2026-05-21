@@ -36,6 +36,12 @@ class CampaignMonitorProviderAdapter implements NewsletterProviderAdapter
         }
 
         $response = Http::withBasicAuth($this->apiKey($connection), '')
+            ->timeout((int) config('capell-newsletter.http.timeout', 15))
+            ->retry(
+                (int) config('capell-newsletter.http.retry_times', 3),
+                (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                throw: false,
+            )
             ->get('https://api.createsend.com/api/v3.3/clients/' . $clientId . '/lists.json');
 
         if (! $response->successful()) {
@@ -77,6 +83,12 @@ class CampaignMonitorProviderAdapter implements NewsletterProviderAdapter
         ];
 
         $response = Http::withBasicAuth($this->apiKey($connection), '')
+            ->timeout((int) config('capell-newsletter.http.timeout', 15))
+            ->retry(
+                (int) config('capell-newsletter.http.retry_times', 3),
+                (int) config('capell-newsletter.http.retry_delay_ms', 500),
+                throw: false,
+            )
             ->post('https://api.createsend.com/api/v3.3/subscribers/' . $audience->remote_id . '.json', $payload);
 
         return new ProviderSyncResultData(
@@ -94,6 +106,19 @@ class CampaignMonitorProviderAdapter implements NewsletterProviderAdapter
 
         if (! is_string($secret) || $secret === '') {
             return false;
+        }
+
+        $headerName = (string) config('capell-newsletter.webhooks.signature_headers.campaign_monitor', 'X-CM-Signature');
+        $signature = (string) $request->header($headerName);
+
+        if ($signature !== '') {
+            $expected = hash_hmac('sha256', $request->getContent(), $secret);
+
+            if (str_starts_with($signature, 'sha256=')) {
+                $signature = substr($signature, 7);
+            }
+
+            return hash_equals($expected, $signature);
         }
 
         return hash_equals($secret, (string) $request->query('secret'));
