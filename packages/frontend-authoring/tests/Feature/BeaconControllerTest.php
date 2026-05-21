@@ -33,6 +33,9 @@ function fakeAdminAccessChecker(bool $isAdmin = true): void
 }
 
 it('returns 404 if no site domain', function (): void {
+    $user = User::factory()->create(['name' => 'Test User']);
+    actingAs($user);
+
     $response = postJson(route('capell-frontend.beacon'), [
         'url' => 'https://example.com/foo',
     ]);
@@ -152,7 +155,7 @@ it('throttles beacon requests', function (): void {
             'url' => 'https://example.com/foo',
         ]);
 
-        $response->assertStatus(404);
+        $response->assertOk();
     }
 
     $response = postJson(route('capell-frontend.beacon'), [

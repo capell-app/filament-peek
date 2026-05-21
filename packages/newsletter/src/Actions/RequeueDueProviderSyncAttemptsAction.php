@@ -27,7 +27,7 @@ class RequeueDueProviderSyncAttemptsAction
 
         $count = 0;
 
-        $query->each(function (SyncAttempt $syncAttempt) use (&$count, $dispatchJobs): void {
+        $query->get()->each(function (SyncAttempt $syncAttempt) use (&$count, $dispatchJobs): void {
             $syncAttempt->forceFill([
                 'sync_status' => SyncStatus::Pending,
                 'next_retry_at' => null,

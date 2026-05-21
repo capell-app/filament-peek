@@ -107,6 +107,11 @@ class KitProviderAdapter implements NewsletterProviderAdapter
             return false;
         }
 
+        $secretHeader = (string) $request->header('X-Kit-Webhook-Secret');
+        if ($secretHeader !== '') {
+            return hash_equals($secret, $secretHeader);
+        }
+
         $headerName = (string) config('capell-newsletter.webhooks.signature_headers.kit', 'X-Kit-Webhook-Signature');
         $signature = (string) $request->header($headerName);
 

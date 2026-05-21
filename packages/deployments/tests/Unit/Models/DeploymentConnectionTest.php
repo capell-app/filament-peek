@@ -8,13 +8,15 @@ use Capell\Deployments\Models\DeploymentConnection;
 use Illuminate\Support\Facades\DB;
 
 it('encrypts access_token at rest', function (): void {
-    $connection = DeploymentConnection::query()->create([
+    $connection = new DeploymentConnection([
         'provider' => GitProviderType::GitHub,
         'repo_owner' => 'acme',
         'repo_name' => 'app',
-        'access_token_encrypted' => 'plain-token-abc',
         'install_policy' => InstallPolicy::PullRequestAutoMerge,
     ]);
+    $connection->forceFill([
+        'access_token_encrypted' => 'plain-token-abc',
+    ])->save();
 
     expect($connection->fresh()->access_token_encrypted)->toBe('plain-token-abc');
     expect(DB::table('deployment_connections')->first()->access_token_encrypted)
