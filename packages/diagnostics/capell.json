@@ -13,7 +13,10 @@
         "bundle": "operations"
     },
     "namespace": "Capell\\Diagnostics",
-    "surfaces": ["admin", "console"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -29,7 +32,9 @@
         "runtime": [
             "Capell\\Diagnostics\\Providers\\DiagnosticsServiceProvider"
         ],
-        "admin": ["Capell\\Diagnostics\\Providers\\AdminServiceProvider"],
+        "admin": [
+            "Capell\\Diagnostics\\Providers\\AdminServiceProvider"
+        ],
         "frontend": []
     },
     "contributes": [],
@@ -52,7 +57,11 @@
         "View:CommandPalettePage",
         "View:QueueHealthPage"
     ],
-    "capabilities": ["diagnostics", "diagnostics-admin", "diagnostics-console"],
+    "capabilities": [
+        "diagnostics",
+        "diagnostics-admin",
+        "diagnostics-console"
+    ],
     "performance": {
         "frontendRenderBudgetMs": 0,
         "adminQueryBudget": 40,
@@ -103,8 +112,18 @@
     },
     "marketplace": {
         "summary": "Diagnostics adds operational diagnostics for cache, configuration drift, migrations, packages, registries, queues, permissions, setup health, and Tailwind build status.",
-        "screenshots": [],
-        "categories": ["admin", "console", "operations"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Diagnostics extension preview image",
+                "caption": "Diagnostics extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "console",
+            "operations"
+        ]
     },
     "contributionTraceability": {
         "deferredContributions": [

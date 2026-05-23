@@ -13,7 +13,11 @@
         "bundle": "search-seo"
     },
     "namespace": "Capell\\SeoSuite",
-    "surfaces": ["admin", "frontend", "console"],
+    "surfaces": [
+        "admin",
+        "frontend",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -27,7 +31,9 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": ["Capell\\SeoSuite\\Providers\\SeoSuiteServiceProvider"],
+        "runtime": [
+            "Capell\\SeoSuite\\Providers\\SeoSuiteServiceProvider"
+        ],
         "admin": [],
         "frontend": []
     },
@@ -54,10 +60,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 40,
-        "cacheTags": ["seo-suite"],
+        "cacheTags": [
+            "seo-suite"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -101,10 +112,25 @@
     },
     "marketplace": {
         "summary": "SEO Suite adds metadata panels, structured data, broken link tracking, Search Console insights, AI-assisted content briefs, and publish checks.",
-        "screenshots": [],
-        "categories": ["admin", "console", "frontend", "search-seo"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "SEO Suite extension preview image",
+                "caption": "SEO Suite extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "console",
+            "frontend",
+            "search-seo"
+        ]
     },
     "contributionTraceability": {
-        "deferredContributions": ["admin-page", "model", "route"]
+        "deferredContributions": [
+            "admin-page",
+            "model",
+            "route"
+        ]
     }
 }

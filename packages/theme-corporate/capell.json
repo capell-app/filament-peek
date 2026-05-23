@@ -13,9 +13,14 @@
         "bundle": "themes"
     },
     "namespace": "Capell\\ThemeStudio\\Corporate",
-    "surfaces": ["frontend"],
+    "surfaces": [
+        "frontend"
+    ],
     "dependencies": {
-        "requires": ["capell-app/core", "capell-app/foundation-theme"],
+        "requires": [
+            "capell-app/core",
+            "capell-app/foundation-theme"
+        ],
         "optional": [],
         "conflicts": []
     },
@@ -42,14 +47,22 @@
     },
     "settings": [],
     "permissions": [],
-    "capabilities": ["theme-corporate", "theme-corporate-frontend"],
+    "capabilities": [
+        "theme-corporate",
+        "theme-corporate-frontend"
+    ],
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 0,
-        "cacheTags": ["theme-corporate"],
+        "cacheTags": [
+            "theme-corporate"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -72,8 +85,17 @@
     },
     "marketplace": {
         "summary": "Theme Corporate registers the corporate theme key and restrained renderer views for B2B, public sector, and professional-service sites.",
-        "screenshots": [],
-        "categories": ["frontend", "themes"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Theme Corporate extension preview image",
+                "caption": "Theme Corporate extension preview"
+            }
+        ],
+        "categories": [
+            "frontend",
+            "themes"
+        ]
     },
     "extends": "capell-app/foundation-theme",
     "themeKey": "corporate"

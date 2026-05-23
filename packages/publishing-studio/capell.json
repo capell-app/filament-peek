@@ -13,7 +13,10 @@
         "bundle": "publishing-pro"
     },
     "namespace": "Capell\\PublishingStudio",
-    "surfaces": ["admin", "console"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -33,7 +36,9 @@
         "runtime": [
             "Capell\\PublishingStudio\\Providers\\PublishingStudioServiceProvider"
         ],
-        "admin": ["Capell\\PublishingStudio\\Providers\\AdminServiceProvider"],
+        "admin": [
+            "Capell\\PublishingStudio\\Providers\\AdminServiceProvider"
+        ],
         "frontend": []
     },
     "contributes": [
@@ -57,7 +62,10 @@
     "database": {
         "migrations": true,
         "settings": false,
-        "requiredTables": ["workspaces", "publishing_revisions"]
+        "requiredTables": [
+            "workspaces",
+            "publishing_revisions"
+        ]
     },
     "commands": {
         "install": null,
@@ -131,8 +139,18 @@
     },
     "marketplace": {
         "summary": "PublishingStudio provides preview, compare, approve, schedule, publish, restore, and rollback workflows for Capell content.",
-        "screenshots": [],
-        "categories": ["admin", "console", "publishing-pro"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Publishing Studio extension preview image",
+                "caption": "Publishing Studio extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "console",
+            "publishing-pro"
+        ]
     },
     "contributionTraceability": {
         "deferredContributions": [

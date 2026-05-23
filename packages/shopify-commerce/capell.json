@@ -13,9 +13,15 @@
         "bundle": "commerce"
     },
     "namespace": "Capell\\ShopifyCommerce",
-    "surfaces": ["admin", "console"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
     "dependencies": {
-        "requires": ["capell-app/admin", "capell-app/core"],
+        "requires": [
+            "capell-app/admin",
+            "capell-app/core"
+        ],
         "optional": [],
         "conflicts": []
     },
@@ -27,7 +33,9 @@
         "runtime": [
             "Capell\\ShopifyCommerce\\Providers\\ShopifyCommerceServiceProvider"
         ],
-        "admin": ["Capell\\ShopifyCommerce\\Providers\\AdminServiceProvider"],
+        "admin": [
+            "Capell\\ShopifyCommerce\\Providers\\AdminServiceProvider"
+        ],
         "frontend": []
     },
     "contributes": [],
@@ -53,8 +61,12 @@
         "demo": null,
         "doctor": null
     },
-    "settings": ["Capell\\ShopifyCommerce\\Settings\\ShopifyCommerceSettings"],
-    "permissions": ["shopify-commerce.manage"],
+    "settings": [
+        "Capell\\ShopifyCommerce\\Settings\\ShopifyCommerceSettings"
+    ],
+    "permissions": [
+        "shopify-commerce.manage"
+    ],
     "capabilities": [
         "shopify-commerce",
         "shopify-commerce-admin",
@@ -63,16 +75,45 @@
     "performance": {
         "frontendRenderBudgetMs": 0,
         "adminQueryBudget": 40,
-        "cacheTags": ["shopify-commerce"],
+        "cacheTags": [
+            "shopify-commerce"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site"],
+            "variesBy": [
+                "site"
+            ],
             "sensitiveOutput": true,
-            "invalidationSources": ["shopify-catalog-sync"],
+            "invalidationSources": [
+                {
+                    "model": "Capell\\ShopifyCommerce\\Models\\ShopifyProduct",
+                    "events": [
+                        "created",
+                        "updated",
+                        "deleted"
+                    ]
+                },
+                {
+                    "model": "Capell\\ShopifyCommerce\\Models\\ShopifyProductVariant",
+                    "events": [
+                        "created",
+                        "updated",
+                        "deleted"
+                    ]
+                }
+            ],
             "queueInvalidation": true
         }
     },
-    "healthChecks": [],
+    "healthChecks": [
+        {
+            "key": "shopify-commerce.package-health",
+            "label": "Shopify Commerce package surfaces, providers, and install health are discoverable by Diagnostics.",
+            "class": "Capell\\ShopifyCommerce\\Health\\ShopifyCommerceHealthCheck",
+            "severity": "critical",
+            "surface": "admin"
+        }
+    ],
     "commercial": {
         "proposedLicense": "paid",
         "requestedCertification": "first-party",
@@ -81,10 +122,24 @@
     },
     "marketplace": {
         "summary": "Site-scoped Shopify Admin API OAuth and catalog sync for Capell.",
-        "screenshots": [],
-        "categories": ["admin", "commerce", "integrations"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Shopify Commerce extension preview image",
+                "caption": "Shopify Commerce extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "commerce",
+            "integrations"
+        ]
     },
     "contributionTraceability": {
-        "deferredContributions": ["admin-page", "model", "route"]
+        "deferredContributions": [
+            "admin-page",
+            "model",
+            "route"
+        ]
     }
 }

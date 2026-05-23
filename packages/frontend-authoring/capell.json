@@ -13,7 +13,10 @@
         "bundle": "foundation"
     },
     "namespace": "Capell\\FrontendAuthoring",
-    "surfaces": ["frontend", "console"],
+    "surfaces": [
+        "frontend",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -51,10 +54,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 0,
-        "cacheTags": ["frontend-authoring"],
+        "cacheTags": [
+            "frontend-authoring"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -79,20 +87,23 @@
         "summary": "Frontend Authoring owns the admin beacon, in-page edit manifest, signed edit routes, and cache-aware field saves.",
         "screenshots": [
             {
-                "path": "public/docs/screenshots/packages/frontend-authoring/capell-app-frontend-authoring-working.png",
-                "alt": "Capell app homepage with Frontend Authoring edit controls visible to an authenticated admin.",
-                "caption": "Frontend Authoring working on the Capell app homepage."
-            },
-            {
-                "path": "public/docs/screenshots/packages/frontend-authoring/capell-app-frontend-authoring-mobile.png",
-                "alt": "Mobile Capell app homepage with Frontend Authoring editable regions enabled for an admin.",
-                "caption": "Mobile proof that editable regions are added by the admin beacon."
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Frontend Authoring extension preview image",
+                "caption": "Frontend Authoring extension preview"
             }
         ],
-        "categories": ["console", "foundation", "frontend"]
+        "categories": [
+            "console",
+            "foundation",
+            "frontend"
+        ]
     },
-    "scopes": ["frontend"],
+    "scopes": [
+        "frontend"
+    ],
     "contributionTraceability": {
-        "deferredContributions": ["route"]
+        "deferredContributions": [
+            "route"
+        ]
     }
 }

@@ -1,5 +1,7 @@
 # Capell Packages
 
+![Capell Packages GitHub banner](docs/assets/github/capell-packages-banner.png)
+
 First-party optional packages for Capell CMS. This repository is the package workspace beside the host application in `../capell-4`; install only the packages a project needs.
 
 Package pages are published at `docs.capell.app/packages/<package>/`. Each package page should be useful on its own for developers searching for a specific Capell capability, and should link to deeper docs when the package owns setup, data, workflow, API, or extension details.

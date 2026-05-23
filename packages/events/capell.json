@@ -13,7 +13,11 @@
         "bundle": "content-product"
     },
     "namespace": "Capell\\Events",
-    "surfaces": ["admin", "frontend", "console"],
+    "surfaces": [
+        "admin",
+        "frontend",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -32,7 +36,9 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": ["Capell\\Events\\Providers\\EventsServiceProvider"],
+        "runtime": [
+            "Capell\\Events\\Providers\\EventsServiceProvider"
+        ],
         "admin": [],
         "frontend": []
     },
@@ -59,10 +65,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 40,
-        "cacheTags": ["events"],
+        "cacheTags": [
+            "events"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -106,8 +117,19 @@
     },
     "marketplace": {
         "summary": "Events adds listings, recurring events, venues, RSVPs, calendar feeds, and Event schema.",
-        "screenshots": [],
-        "categories": ["admin", "console", "content-product", "frontend"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Events extension preview image",
+                "caption": "Events extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "console",
+            "content-product",
+            "frontend"
+        ]
     },
     "contributionTraceability": {
         "deferredContributions": [

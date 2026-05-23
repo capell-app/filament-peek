@@ -13,9 +13,15 @@
         "bundle": "foundation"
     },
     "namespace": "Capell\\FoundationTheme",
-    "surfaces": ["admin", "frontend"],
+    "surfaces": [
+        "admin",
+        "frontend"
+    ],
     "dependencies": {
-        "requires": ["capell-app/frontend", "capell-app/layout-builder"],
+        "requires": [
+            "capell-app/frontend",
+            "capell-app/layout-builder"
+        ],
         "optional": [],
         "conflicts": []
     },
@@ -46,10 +52,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 40,
-        "cacheTags": ["foundation-theme"],
+        "cacheTags": [
+            "foundation-theme"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -72,12 +83,24 @@
     },
     "marketplace": {
         "summary": "Foundation Theme provides the default Capell theme assets, Tailwind pipeline, Blade directives, and media handling.",
-        "screenshots": [],
-        "categories": ["admin", "foundation", "frontend"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Foundation Theme extension preview image",
+                "caption": "Foundation Theme extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "foundation",
+            "frontend"
+        ]
     },
     "extends": null,
     "themeKey": "default",
     "contributionTraceability": {
-        "deferredContributions": ["route"]
+        "deferredContributions": [
+            "route"
+        ]
     }
 }

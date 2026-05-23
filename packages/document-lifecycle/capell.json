@@ -13,7 +13,10 @@
         "bundle": "operations"
     },
     "namespace": "Capell\\DocumentLifecycle",
-    "surfaces": ["admin", "console"],
+    "surfaces": [
+        "admin",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -87,7 +90,15 @@
             "queueInvalidation": false
         }
     },
-    "healthChecks": [],
+    "healthChecks": [
+        {
+            "key": "document-lifecycle.package-health",
+            "label": "Document Lifecycle package surfaces, providers, and install health are discoverable by Diagnostics.",
+            "class": "Capell\\DocumentLifecycle\\Health\\DocumentLifecycleHealthCheck",
+            "severity": "critical",
+            "surface": "admin"
+        }
+    ],
     "commercial": {
         "proposedLicense": "paid",
         "requestedCertification": "first-party",
@@ -96,10 +107,23 @@
     },
     "marketplace": {
         "summary": "Controlled document registry, publication metadata, hashes, and acceptance evidence for Capell CMS.",
-        "screenshots": [],
-        "categories": ["admin", "console", "operations"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Document Lifecycle extension preview image",
+                "caption": "Document Lifecycle extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "console",
+            "operations"
+        ]
     },
     "contributionTraceability": {
-        "deferredContributions": ["model", "migration"]
+        "deferredContributions": [
+            "model",
+            "migration"
+        ]
     }
 }

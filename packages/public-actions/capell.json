@@ -13,14 +13,21 @@
         "bundle": "automation"
     },
     "namespace": "Capell\\PublicActions",
-    "surfaces": ["admin", "frontend", "console"],
+    "surfaces": [
+        "admin",
+        "frontend",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
             "capell-app/core",
             "capell-app/frontend"
         ],
-        "optional": ["capell-app/access-gate", "capell-app/form-builder"],
+        "optional": [
+            "capell-app/access-gate",
+            "capell-app/form-builder"
+        ],
         "conflicts": []
     },
     "providers": {
@@ -55,10 +62,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 40,
-        "cacheTags": ["public-actions"],
+        "cacheTags": [
+            "public-actions"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -102,10 +114,25 @@
     },
     "marketplace": {
         "summary": "Public Actions lets Capell sites run configured server-side actions and outbound automation from safe public submissions.",
-        "screenshots": [],
-        "categories": ["admin", "automation", "console", "frontend"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Public Actions extension preview image",
+                "caption": "Public Actions extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "automation",
+            "console",
+            "frontend"
+        ]
     },
     "contributionTraceability": {
-        "deferredContributions": ["admin-resource", "model", "route"]
+        "deferredContributions": [
+            "admin-resource",
+            "model",
+            "route"
+        ]
     }
 }

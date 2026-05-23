@@ -13,16 +13,23 @@
         "bundle": "themes"
     },
     "namespace": "Capell\\ThemeStudio\\Agency",
-    "surfaces": ["frontend"],
+    "surfaces": [
+        "frontend"
+    ],
     "dependencies": {
-        "requires": ["capell-app/core", "capell-app/foundation-theme"],
+        "requires": [
+            "capell-app/core",
+            "capell-app/foundation-theme"
+        ],
         "optional": [],
         "conflicts": []
     },
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": ["Capell\\ThemeStudio\\Agency\\AgencyThemeServiceProvider"],
+        "runtime": [
+            "Capell\\ThemeStudio\\Agency\\AgencyThemeServiceProvider"
+        ],
         "admin": [],
         "frontend": []
     },
@@ -40,14 +47,22 @@
     },
     "settings": [],
     "permissions": [],
-    "capabilities": ["theme-agency", "theme-agency-frontend"],
+    "capabilities": [
+        "theme-agency",
+        "theme-agency-frontend"
+    ],
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 0,
-        "cacheTags": ["theme-agency"],
+        "cacheTags": [
+            "theme-agency"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -70,8 +85,17 @@
     },
     "marketplace": {
         "summary": "Theme Agency registers the agency theme key and expressive renderer views for studio, portfolio, and brand-led sites.",
-        "screenshots": [],
-        "categories": ["frontend", "themes"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Theme Agency extension preview image",
+                "caption": "Theme Agency extension preview"
+            }
+        ],
+        "categories": [
+            "frontend",
+            "themes"
+        ]
     },
     "extends": "capell-app/foundation-theme",
     "themeKey": "agency"

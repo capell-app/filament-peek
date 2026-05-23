@@ -13,7 +13,10 @@
         "bundle": "growth"
     },
     "namespace": "Capell\\CampaignStudio",
-    "surfaces": ["admin", "frontend"],
+    "surfaces": [
+        "admin",
+        "frontend"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/admin",
@@ -23,7 +26,9 @@
             "capell-app/insights",
             "capell-app/layout-builder"
         ],
-        "optional": ["capell-app/seo-suite"],
+        "optional": [
+            "capell-app/seo-suite"
+        ],
         "conflicts": []
     },
     "providers": {
@@ -32,7 +37,9 @@
         "runtime": [
             "Capell\\CampaignStudio\\Providers\\CampaignStudioServiceProvider"
         ],
-        "admin": ["Capell\\CampaignStudio\\Providers\\AdminServiceProvider"],
+        "admin": [
+            "Capell\\CampaignStudio\\Providers\\AdminServiceProvider"
+        ],
         "frontend": [
             "Capell\\CampaignStudio\\Providers\\FrontendServiceProvider"
         ]
@@ -59,10 +66,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 40,
-        "cacheTags": ["campaign-studio"],
+        "cacheTags": [
+            "campaign-studio"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -85,8 +97,18 @@
     },
     "marketplace": {
         "summary": "CampaignStudio adds campaign groups, landing pages, CTA blocks, conversion goals, UTM attribution, and conversion reporting to Capell.",
-        "screenshots": [],
-        "categories": ["admin", "frontend", "growth"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Campaign Studio extension preview image",
+                "caption": "Campaign Studio extension preview"
+            }
+        ],
+        "categories": [
+            "admin",
+            "frontend",
+            "growth"
+        ]
     },
     "contributionTraceability": {
         "deferredContributions": [

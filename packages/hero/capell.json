@@ -13,7 +13,10 @@
         "bundle": "foundation"
     },
     "namespace": "Capell\\Hero",
-    "surfaces": ["frontend", "console"],
+    "surfaces": [
+        "frontend",
+        "console"
+    ],
     "dependencies": {
         "requires": [
             "capell-app/core",
@@ -26,7 +29,9 @@
     "providers": {
         "metadata": [],
         "install": [],
-        "runtime": ["Capell\\Hero\\Providers\\HeroServiceProvider"],
+        "runtime": [
+            "Capell\\Hero\\Providers\\HeroServiceProvider"
+        ],
         "admin": [],
         "frontend": []
     },
@@ -48,10 +53,15 @@
     "performance": {
         "frontendRenderBudgetMs": 20,
         "adminQueryBudget": 0,
-        "cacheTags": ["hero"],
+        "cacheTags": [
+            "hero"
+        ],
         "cacheSafety": {
             "cacheable": false,
-            "variesBy": ["site", "locale"],
+            "variesBy": [
+                "site",
+                "locale"
+            ],
             "sensitiveOutput": false,
             "invalidationSources": [],
             "queueInvalidation": true
@@ -74,7 +84,17 @@
     },
     "marketplace": {
         "summary": "Hero provides the default Capell home hero block, rendering, and layout setup.",
-        "screenshots": [],
-        "categories": ["console", "foundation", "frontend"]
+        "screenshots": [
+            {
+                "path": "docs/assets/marketplace/extension-card.jpg",
+                "alt": "Hero extension preview image",
+                "caption": "Hero extension preview"
+            }
+        ],
+        "categories": [
+            "console",
+            "foundation",
+            "frontend"
+        ]
     }
 }
