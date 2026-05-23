@@ -53,7 +53,7 @@
         "demo": null,
         "doctor": null
     },
-    "settings": ["capell-shopify-commerce"],
+    "settings": ["Capell\\ShopifyCommerce\\Settings\\ShopifyCommerceSettings"],
     "permissions": ["shopify-commerce.manage"],
     "capabilities": [
         "shopify-commerce",
