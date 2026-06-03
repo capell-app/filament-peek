@@ -7,14 +7,14 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
-use Capell\FilamentPeek\Actions\RegisterLayoutBuilderPreviewBlocksAction;
+use Capell\FilamentPeek\Actions\RegisterLayoutBuilderPreviewWidgetsAction;
 use Capell\FilamentPeek\Data\LayoutBuilderPreviewStateData;
 use Capell\LayoutBuilder\Models\Widget;
 use Capell\LayoutBuilder\Models\WidgetAsset;
 use Capell\LayoutBuilder\Support\CapellLayoutManager;
 
 afterEach(function (): void {
-    CapellLayoutManager::clearContainerBlocks();
+    CapellLayoutManager::clearContainerWidgets();
 });
 
 it('registers preview layout blocks with unsaved widget asset state for public rendering', function (): void {
@@ -37,8 +37,8 @@ it('registers preview layout blocks with unsaved widget asset state for public r
         layoutId: (int) $layout->getKey(),
         containers: [
             'main' => [
-                'blocks' => [
-                    ['block_key' => $block->key, 'occurrence' => 1],
+                'widgets' => [
+                    ['widget_key' => $block->key, 'occurrence' => 1],
                 ],
             ],
         ],
@@ -62,8 +62,8 @@ it('registers preview layout blocks with unsaved widget asset state for public r
         ],
     );
 
-    $registered = RegisterLayoutBuilderPreviewBlocksAction::run($page, $language, $state);
-    $previewBlock = CapellLayoutManager::getStoredContainerBlock('main', 'asset-rail', 1);
+    $registered = RegisterLayoutBuilderPreviewWidgetsAction::run($page, $language, $state);
+    $previewBlock = CapellLayoutManager::getStoredContainerWidget('main', 'asset-rail', 1);
     $previewAsset = $previewBlock?->assets->first();
 
     expect($registered)->toBeTrue()

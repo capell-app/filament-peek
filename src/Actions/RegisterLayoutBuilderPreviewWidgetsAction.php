@@ -11,14 +11,14 @@ use Capell\FilamentPeek\Data\LayoutBuilderPreviewStateData;
 use Capell\LayoutBuilder\Models\Widget;
 use Capell\LayoutBuilder\Models\WidgetAsset;
 use Capell\LayoutBuilder\Support\CapellLayoutManager;
-use Capell\LayoutBuilder\Support\LayoutBlockData;
+use Capell\LayoutBuilder\Support\LayoutWidgetData;
 use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Lorisleiva\Actions\Concerns\AsAction;
 
-final class RegisterLayoutBuilderPreviewBlocksAction
+final class RegisterLayoutBuilderPreviewWidgetsAction
 {
     use AsAction;
 
@@ -29,15 +29,15 @@ final class RegisterLayoutBuilderPreviewBlocksAction
         }
 
         $containers = $state->containers;
-        $blockKeys = $this->blockKeys($containers);
+        $widgetKeys = $this->widgetKeys($containers);
 
-        if ($blockKeys === []) {
+        if ($widgetKeys === []) {
             return false;
         }
 
         /** @var Collection<string, Widget> $blocks */
         $blocks = Widget::query()
-            ->whereIn('key', $blockKeys)
+            ->whereIn('key', $widgetKeys)
             ->with([
                 'blueprint',
                 'type',
@@ -51,21 +51,21 @@ final class RegisterLayoutBuilderPreviewBlocksAction
             return false;
         }
 
-        CapellLayoutManager::clearContainerBlocks();
+        CapellLayoutManager::clearContainerWidgets();
 
         foreach ($containers as $containerKey => $container) {
             if (! is_array($container)) {
                 continue;
             }
 
-            foreach (LayoutBlockData::normalizeMany($container['blocks'] ?? []) as $blockIndex => $blockData) {
-                $blockKey = LayoutBlockData::key($blockData);
+            foreach (LayoutWidgetData::normalizeMany($container['widgets'] ?? []) as $widgetIndex => $widgetData) {
+                $widgetKey = LayoutWidgetData::key($widgetData);
 
-                if ($blockKey === null) {
+                if ($widgetKey === null) {
                     continue;
                 }
 
-                $block = $blocks->get($blockKey);
+                $block = $blocks->get($widgetKey);
 
                 if (! $block instanceof Widget) {
                     continue;
@@ -84,16 +84,16 @@ final class RegisterLayoutBuilderPreviewBlocksAction
                         page: $page,
                         block: $previewBlock,
                         containerKey: (string) $containerKey,
-                        occurrence: LayoutBlockData::occurrence($blockData),
-                        assetState: $state->assets[(string) $containerKey][$blockIndex] ?? [],
+                        occurrence: LayoutWidgetData::occurrence($widgetData),
+                        assetState: $state->assets[(string) $containerKey][$widgetIndex] ?? [],
                     ),
                 );
 
-                CapellLayoutManager::storeContainerBlock(
+                CapellLayoutManager::storeContainerWidget(
                     (string) $containerKey,
-                    $blockKey,
+                    $widgetKey,
                     $previewBlock,
-                    LayoutBlockData::occurrence($blockData),
+                    LayoutWidgetData::occurrence($widgetData),
                 );
             }
         }
@@ -105,12 +105,12 @@ final class RegisterLayoutBuilderPreviewBlocksAction
      * @param  array<string, mixed>  $containers
      * @return array<int, string>
      */
-    private function blockKeys(array $containers): array
+    private function widgetKeys(array $containers): array
     {
         return collect($containers)
             ->filter(fn (mixed $container): bool => is_array($container))
-            ->flatMap(fn (array $container): array => LayoutBlockData::normalizeMany($container['blocks'] ?? []))
-            ->map(static fn (array $blockData): ?string => LayoutBlockData::key($blockData))
+            ->flatMap(fn (array $container): array => LayoutWidgetData::normalizeMany($container['widgets'] ?? []))
+            ->map(static fn (array $widgetData): ?string => LayoutWidgetData::key($widgetData))
             ->filter()
             ->unique()
             ->values()
