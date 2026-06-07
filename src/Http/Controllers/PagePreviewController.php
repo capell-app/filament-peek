@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\FilamentPeek\Http\Controllers;
 
-use Capell\FilamentPeek\Actions\CreatePagePreviewSnapshotAction;
+use Capell\FilamentPeek\Actions\FindPagePreviewSnapshotAction;
 use Capell\FilamentPeek\Actions\RenderPagePreviewSnapshotAction;
 use Filament\Facades\Filament;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ final class PagePreviewController extends Controller
 {
     public function __invoke(string $token): Response
     {
-        $snapshot = resolve(CreatePagePreviewSnapshotAction::class)->find($token);
+        $snapshot = FindPagePreviewSnapshotAction::run($token);
 
         if ($snapshot === null) {
             return $this->errorResponse(
@@ -37,6 +38,12 @@ final class PagePreviewController extends Controller
 
         try {
             $response = RenderPagePreviewSnapshotAction::run($snapshot);
+        } catch (AuthorizationException) {
+            return $this->errorResponse(
+                403,
+                __('capell-filament-peek::errors.forbidden_title'),
+                __('capell-filament-peek::errors.forbidden_body'),
+            );
         } catch (Throwable $throwable) {
             report($throwable);
 
@@ -67,7 +74,7 @@ final class PagePreviewController extends Controller
 
     private function makePrivate(Response $response): void
     {
-        $response->headers->set('Cache-Control', 'private, no-store');
+        $response->headers->set('Cache-Control', 'no-store, private');
         $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
     }
 

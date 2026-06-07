@@ -6,7 +6,7 @@
     "kind": "package",
     "capellApiVersion": "^4.0",
     "version": "4.x-dev",
-    "description": "Filament Peek adds private, unsaved page preview snapshots to Capell Admin.",
+    "description": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme — through a private, expiring, signed link, with nothing written to your content until you save.",
     "product": {
         "group": "Capell Foundation",
         "tier": "free",
@@ -78,12 +78,22 @@
         "privateDocsRequested": false
     },
     "marketplace": {
-        "summary": "Filament Peek adds private page previews for unsaved Capell editor changes.",
+        "summary": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme — through a private, expiring, signed link, with nothing written to your content until you save.",
         "screenshots": [
             {
                 "path": "docs/assets/marketplace/extension-card.jpg",
                 "alt": "Filament Peek extension preview image",
                 "caption": "Filament Peek extension preview"
+            },
+            {
+                "path": "docs/screenshots/page-edit-preview-actions.png",
+                "alt": "Capell Page edit screen with the Filament Peek preview action group",
+                "caption": "Open the Preview action group from a real Capell Page edit screen before reviewing unsaved changes"
+            },
+            {
+                "path": "docs/screenshots/page-edit-preview-actions-dark.png",
+                "alt": "Capell Page edit screen in dark mode with the Filament Peek preview action group",
+                "caption": "Use the same unsaved preview action from Capell's dark admin theme"
             }
         ],
         "categories": ["admin", "editorial"]
