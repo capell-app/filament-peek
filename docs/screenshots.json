@@ -20,6 +20,52 @@
             "useCase": "An editor chooses between a temporary unsaved preview and the saved public page.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/page-edit-preview-actions.png",
             "darkScreenshotPath": "packages/filament-peek/docs/screenshots/page-edit-preview-actions-dark.png"
+        },
+        {
+            "id": "signed-unsaved-preview-modal",
+            "title": "Signed unsaved preview modal.",
+            "package": "filament-peek",
+            "surface": "admin",
+            "scenario": "admin-form",
+            "targetType": "admin-surface",
+            "target": "PageResource/EditPage",
+            "url": "/pages/{first-record}/edit",
+            "waitFor": "body",
+            "required": false,
+            "notes": "Follow-up capture for the Preview Changes modal after a temporary signed snapshot URL has been minted.",
+            "useCase": "An editor previews unsaved Page and Layout Builder changes through the real frontend pipeline without saving.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/signed-unsaved-preview-modal.png"
+        },
+        {
+            "id": "preview-device-presets",
+            "title": "Filament Peek device preset controls.",
+            "package": "filament-peek",
+            "surface": "admin",
+            "scenario": "admin-form",
+            "targetType": "admin-surface",
+            "target": "PageResource/EditPage",
+            "url": "/pages/{first-record}/edit",
+            "waitFor": "body",
+            "required": false,
+            "notes": "Follow-up capture for fullscreen, tablet, and mobile preview device presets exposed through Capell configuration.",
+            "useCase": "An editor checks the unsaved preview at different device widths before publishing.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-presets.png"
+        },
+        {
+            "id": "expired-preview-error",
+            "title": "Expired preview friendly error page.",
+            "package": "filament-peek",
+            "surface": "frontend",
+            "scenario": "frontend-page",
+            "targetType": "frontend-url",
+            "target": "capell-filament-peek.preview",
+            "url": "/capell-filament-peek/preview/expired",
+            "waitFor": "body",
+            "user": false,
+            "required": false,
+            "notes": "Follow-up capture for the private no-store preview error response when a signed snapshot expires or cannot be read.",
+            "useCase": "An editor opening an old preview link sees a safe, friendly error instead of leaked snapshot details.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/expired-preview-error.png"
         }
     ]
 }
