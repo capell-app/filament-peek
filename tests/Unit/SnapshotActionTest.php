@@ -36,6 +36,25 @@ it('returns null for missing preview snapshot tokens', function (): void {
     expect(FindPagePreviewSnapshotAction::run('missing-token'))->toBeNull();
 });
 
+it('expires page preview snapshots after the configured ttl', function (): void {
+    config()->set('capell-filament-peek.preview.ttl_minutes', 1);
+
+    $user = $this->createUserWithRole('super_admin');
+    $this->actingAs($user);
+
+    $page = Page::factory()->create();
+
+    $result = CreatePagePreviewSnapshotAction::run($page, [
+        'name' => 'Short lived preview',
+    ]);
+
+    expect(FindPagePreviewSnapshotAction::run($result['snapshot']->token))->not->toBeNull();
+
+    $this->travel(2)->minutes();
+
+    expect(FindPagePreviewSnapshotAction::run($result['snapshot']->token))->toBeNull();
+});
+
 it('rejects oversized page preview snapshots before caching them', function (): void {
     config()->set('capell-filament-peek.preview.max_payload_kb', 1);
     $logger = Log::spy();
@@ -90,6 +109,31 @@ it('caches the latest layout builder preview state per user and page', function 
         ->and($state->signature)->toBeString();
 
     Cache::store('array')->flush();
+});
+
+it('expires layout builder preview state after the configured ttl', function (): void {
+    config()->set('capell-filament-peek.preview.ttl_minutes', 1);
+
+    $user = $this->createUserWithRole('super_admin');
+    $this->actingAs($user);
+
+    $layout = Layout::factory()->create();
+    $page = Page::factory()->create(['layout_id' => $layout->id]);
+    $action = resolve(StoreLayoutBuilderPreviewStateAction::class);
+
+    StoreLayoutBuilderPreviewStateAction::run(
+        page: $page,
+        layout: $layout,
+        containers: [
+            'main' => ['widgets' => [['widget_key' => 'gallery', 'occurrence' => 1]]],
+        ],
+    );
+
+    expect($action->resolve($page, $user))->toBeInstanceOf(LayoutBuilderPreviewStateData::class);
+
+    $this->travel(2)->minutes();
+
+    expect($action->resolve($page, $user))->toBeNull();
 });
 
 it('rejects oversized layout builder preview state before caching it', function (): void {
