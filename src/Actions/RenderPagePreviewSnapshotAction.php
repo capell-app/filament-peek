@@ -125,8 +125,8 @@ final class RenderPagePreviewSnapshotAction
         $previewPage->setRelation('image', $media->firstWhere('collection_name', MediaCollectionEnum::Image->value));
         $previewPage->setRelation('socialImage', $media->firstWhere('collection_name', MediaCollectionEnum::SocialImage->value));
 
-        if ($page->relationLoaded('type')) {
-            $previewPage->setRelation('type', $page->type);
+        if ($page->relationLoaded('blueprint')) {
+            $previewPage->setRelation('type', $page->blueprint);
         }
 
         return $previewPage;
