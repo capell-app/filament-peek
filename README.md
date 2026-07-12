@@ -2,7 +2,7 @@
 
 <!-- prettier-ignore-start -->
 
-## What This Extension Adds
+## What This Plugin Adds
 
 Filament Peek is an **Available**, **No schema impact** Capell package in the **Capell Foundation** product group. It ships as `capell-app/filament-peek` and extends these surfaces: admin, frontend.
 
@@ -29,7 +29,12 @@ Status details:
 
 Screenshot contract: `docs/screenshots.json`.
 
+![Page edit preview actions](docs/screenshots/page-edit-preview-actions.png)
+
 - Page edit preview actions (admin, required).
+- Signed unsaved preview modal (admin, optional).
+- Filament Peek device preset controls (admin, optional).
+- Expired preview friendly error page (frontend, optional).
 
 ## Technical Shape
 
