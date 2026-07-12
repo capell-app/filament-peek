@@ -4,8 +4,8 @@
     "slug": "filament-peek",
     "displayName": "Filament Peek",
     "kind": "package",
-    "capellApiVersion": "^4.0",
-    "version": "1.x-dev",
+    "capellApiVersion": "^0.0",
+    "version": "0.0.x-dev",
     "description": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme — through a private, expiring, signed link, with nothing written to your content until you save.",
     "product": {
         "group": "Capell Foundation",
