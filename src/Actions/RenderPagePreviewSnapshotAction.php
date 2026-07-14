@@ -20,9 +20,11 @@ use Capell\Frontend\Actions\BuildPublicRenderPerformanceReportAction;
 use Capell\Frontend\Actions\ResolveFrontendRuntimeAction;
 use Capell\Frontend\Contracts\FrontendContextReader;
 use Capell\Frontend\Data\FrontendRenderContextData;
+use Capell\Frontend\Events\FrontendRenderPreparing;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\CapellFrontendContext;
 use Capell\Frontend\Support\Render\FrontendResponseRendererRegistry;
+use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Frontend\Support\State\FrontendState;
 use Capell\Frontend\Support\View\ThemeChainResolver;
 use Capell\Frontend\Support\View\ThemeViewRegistrar;
@@ -33,6 +35,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Lorisleiva\Actions\Concerns\AsAction;
 use RuntimeException;
@@ -51,14 +54,19 @@ final class RenderPagePreviewSnapshotAction
     {
         $page = Page::query()
             ->with([
-                'layout.theme',
+                'blueprint',
+                'layout.theme.blueprint',
                 'media',
                 'image',
                 'pageUrl.siteDomain',
                 'pageUrls.siteDomain',
+                'site.blueprint',
                 'site.language',
-                'site.siteDomains',
-                'site.theme',
+                'site.logo',
+                'site.logoInverted',
+                'site.siteDomains.language',
+                'site.theme.blueprint',
+                'site.translation.language',
                 'socialImage',
                 'translation.language',
                 'translations.language',
@@ -341,6 +349,9 @@ final class RenderPagePreviewSnapshotAction
         $renderContext->runtimeManifest = $runtimeResolution->runtimeManifest;
         $publicRenderData = BuildPublicPageRenderDataAction::run($renderContext);
         $renderContext->publicRenderData = $publicRenderData;
+
+        resolve(RenderHookRegistry::class);
+        Event::dispatch(new FrontendRenderPreparing($context, $renderContext));
 
         $context->setFrontendData('runtimeManifest', $runtimeResolution->runtimeManifest);
         $context->setFrontendData('publicPageRenderData', $publicRenderData);

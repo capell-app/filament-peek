@@ -10,14 +10,19 @@ use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
 use Capell\FilamentPeek\Actions\CreatePagePreviewSnapshotAction;
+use Capell\FilamentPeek\Tests\Fixtures\QueryGuardPreviewResponseRenderer;
 use Capell\Frontend\Contracts\FrontendContextReader;
 use Capell\Frontend\Contracts\FrontendResponseRenderer;
 use Capell\Frontend\Data\FrontendRenderContextData;
+use Capell\Frontend\Events\FrontendRenderPreparing;
 use Capell\Frontend\Facades\Frontend;
 use Capell\Frontend\Support\CapellFrontendContext;
 use Capell\Frontend\Support\Render\FrontendResponseRendererRegistry;
+use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Frontend\Support\State\FrontendState;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
@@ -161,6 +166,43 @@ it('renders unsaved page fields through a private signed preview without saving 
     expect($page->name)->toBe('Saved page name')
         ->and($page->translation->title)->toBe('Saved title')
         ->and($page->translation->content)->toBe('<p>Saved body</p>');
+});
+
+it('primes render hooks before the query-guarded preview render starts', function (): void {
+    config()->set('capell-frontend.public_view_query_guard.enabled', true);
+    config()->set('capell-frontend.public_view_query_guard.mode', 'exception');
+
+    $user = $this->createUserWithRole('super_admin');
+    $this->actingAs($user);
+    resolve(FrontendResponseRendererRegistry::class)->register(new QueryGuardPreviewResponseRenderer);
+
+    app()->forgetInstance(RenderHookRegistry::class);
+    app()->afterResolving(
+        RenderHookRegistry::class,
+        static function (RenderHookRegistry $registry): void {
+            DB::select('select 1');
+        },
+    );
+    Event::listen(
+        FrontendRenderPreparing::class,
+        static function (FrontendRenderPreparing $event): void {
+            $event->context->setFrontendData('test.preview.prepared', true);
+        },
+    );
+
+    $language = Language::factory()->create();
+    $site = Site::factory()->withTranslations($language)->language($language)->create();
+    $layout = Layout::factory()->site($site)->default()->create(['containers' => []]);
+    $page = Page::factory()
+        ->site($site)
+        ->layout($layout)
+        ->withTranslations($language)
+        ->create();
+    $snapshot = CreatePagePreviewSnapshotAction::run($page, ['name' => 'Preview'])['snapshot'];
+
+    $this->get(URL::signedRoute('capell-filament-peek.preview', ['token' => $snapshot->token]))
+        ->assertOk()
+        ->assertSee('Query-safe preview renderer reached');
 });
 
 it('restores the previous frontend context after rendering a signed page preview', function (): void {
