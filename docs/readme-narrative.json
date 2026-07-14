@@ -1,0 +1,39 @@
+{
+    "whatThisPluginAdds": {
+        "text": "Filament Peek stores a private, per-user snapshot of unsaved page and Layout Builder state and renders it through an expiring signed preview route.",
+        "evidence": [
+            "capell.json",
+            "src/Actions/CreatePagePreviewSnapshotAction.php",
+            "src/Actions/RenderPagePreviewSnapshotAction.php",
+            "routes/web.php"
+        ]
+    },
+    "surfaceOutcome": {
+        "text": "Editors open an unsaved preview from the page edit action and can check device presets before saving. Missing or expired snapshots return a private error rather than exposing preview state.",
+        "evidence": [
+            "docs/overview.admin.md",
+            "docs/screenshots.json",
+            "src/Filament/Actions/PeekPagePreviewAction.php",
+            "tests/Feature/PagePreviewRouteTest.php"
+        ]
+    },
+    "whyItMatters": {
+        "developers": {
+            "text": "Snapshot creation, lookup, state storage, and rendering are separate Actions behind typed data and a preview-state contract, with no database schema required.",
+            "evidence": [
+                "src/Data/PagePreviewSnapshotData.php",
+                "src/Contracts/StoresLayoutBuilderPreviewState.php",
+                "src/Actions/StoreLayoutBuilderPreviewStateAction.php",
+                "tests/Unit/SnapshotActionTest.php"
+            ]
+        },
+        "teams": {
+            "text": "Editors can review unsaved copy, media, and layout changes in the active theme before deciding whether to save or publish them.",
+            "evidence": [
+                "docs/screenshots.json",
+                "tests/Feature/PeekPagePreviewActionTest.php",
+                "tests/Feature/PagePreviewRouteTest.php"
+            ]
+        }
+    }
+}
