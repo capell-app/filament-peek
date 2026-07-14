@@ -30,20 +30,26 @@ final class QueryGuardPreviewResponseRenderer implements FrontendResponseRendere
         );
         $site = $context->site;
 
-        return resolve(PublicViewQueryGuard::class)->guard(
+        $response = resolve(PublicViewQueryGuard::class)->guard(
             $context,
             static function () use ($site): Response {
                 resolve(RenderHookRegistry::class);
 
                 if ($site instanceof Site) {
                     $site->getMeta('business_name');
-                    $site->logo;
-                    $site->logoInverted;
-                    $site->translation;
+                    $site->getRelation('logo');
+                    $site->getRelation('logoInverted');
+                    $site->getRelation('translation');
                 }
 
                 return response()->make('<main>Query-safe preview renderer reached</main>');
             },
         );
+
+        if (! $response instanceof Response) {
+            throw new RuntimeException('The guarded preview renderer did not return an HTTP response.');
+        }
+
+        return $response;
     }
 }
