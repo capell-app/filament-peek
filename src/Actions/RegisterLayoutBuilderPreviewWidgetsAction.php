@@ -40,7 +40,6 @@ final class RegisterLayoutBuilderPreviewWidgetsAction
             ->whereIn('key', $widgetKeys)
             ->with([
                 'blueprint',
-                'type',
                 'media' => fn (BuilderContract $query): BuilderContract => $query->ordered(),
                 'translation' => fn (BuilderContract $query): BuilderContract => $query->where('language_id', $language->getKey()),
             ])
