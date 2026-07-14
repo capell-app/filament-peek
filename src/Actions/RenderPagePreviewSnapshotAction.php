@@ -355,7 +355,7 @@ final class RenderPagePreviewSnapshotAction
 
         $context->setFrontendData('runtimeManifest', $runtimeResolution->runtimeManifest);
         $context->setFrontendData('publicPageRenderData', $publicRenderData);
-        $context->setFrontendData('assetManifest', $publicRenderData->assetManifest);
+        $context->setFrontendData('resourcePlan', $publicRenderData->resourcePlan);
         $context->setFrontendData('mediaHints', $publicRenderData->mediaHints);
         $context->setFrontendData(
             'lcpMediaUrl',
