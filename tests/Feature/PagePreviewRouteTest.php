@@ -16,6 +16,7 @@ use Capell\Frontend\Contracts\FrontendResponseRenderer;
 use Capell\Frontend\Data\FrontendRenderContextData;
 use Capell\Frontend\Events\FrontendRenderPreparing;
 use Capell\Frontend\Facades\Frontend;
+use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\Frontend\Support\CapellFrontendContext;
 use Capell\Frontend\Support\Render\FrontendResponseRendererRegistry;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
@@ -23,8 +24,21 @@ use Capell\Frontend\Support\State\FrontendState;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+
+beforeEach(function (): void {
+    $frontendPackageRoot = dirname((new ReflectionClass(FrontendServiceProvider::class))->getFileName(), 3);
+    $publishedBuildPath = public_path('vendor/capell-frontend');
+
+    File::ensureDirectoryExists(dirname($publishedBuildPath));
+    File::copyDirectory($frontendPackageRoot . '/publishes/build', $publishedBuildPath);
+});
+
+afterEach(function (): void {
+    File::deleteDirectory(public_path('vendor/capell-frontend'));
+});
 
 it('rejects unsigned preview URLs', function (): void {
     $user = $this->createUserWithRole('super_admin');
