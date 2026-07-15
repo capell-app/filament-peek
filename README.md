@@ -6,9 +6,11 @@
 
 Filament Peek is an **Available**, **No schema impact** Capell package in the **Capell Foundation** product group. It ships as `capell-app/filament-peek` and extends these surfaces: admin, frontend.
 
-Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme - through a private, expiring, signed link, with nothing written to your content until you save.
+Filament Peek stores a private, per-user snapshot of unsaved page and Layout Builder state and renders it through an expiring signed preview route.
 
-After install, admins get package-owned management surfaces and public users may see package-owned frontend output or routes.
+Editors open an unsaved preview from the page edit action and can check device presets before saving. Missing or expired snapshots return a private error rather than exposing preview state.
+
+Evidence: [`capell.json`](capell.json), [`src/Actions/CreatePagePreviewSnapshotAction.php`](src/Actions/CreatePagePreviewSnapshotAction.php), [`src/Actions/RenderPagePreviewSnapshotAction.php`](src/Actions/RenderPagePreviewSnapshotAction.php), [`routes/web.php`](routes/web.php), [`docs/overview.admin.md`](docs/overview.admin.md), [`docs/screenshots.json`](docs/screenshots.json), [`src/Filament/Actions/PeekPagePreviewAction.php`](src/Filament/Actions/PeekPagePreviewAction.php), [`tests/Feature/PagePreviewRouteTest.php`](tests/Feature/PagePreviewRouteTest.php).
 
 Status details:
 
@@ -21,9 +23,11 @@ Status details:
 
 ## Why It Matters
 
-**For developers:** The package gives developers package-owned service providers, Actions, Data objects, Laravel routes, Filament classes, and Blade views instead of pushing this behaviour into core or application code.
+**For developers:** Snapshot creation, lookup, state storage, and rendering are separate Actions behind typed data and a preview-state contract, with no database schema required.
 
-**For teams:** Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme - through a private, expiring, signed link, with nothing written to your content until you save.
+**For teams:** Editors can review unsaved copy, media, and layout changes in the active theme before deciding whether to save or publish them.
+
+Evidence: [`src/Data/PagePreviewSnapshotData.php`](src/Data/PagePreviewSnapshotData.php), [`src/Contracts/StoresLayoutBuilderPreviewState.php`](src/Contracts/StoresLayoutBuilderPreviewState.php), [`src/Actions/StoreLayoutBuilderPreviewStateAction.php`](src/Actions/StoreLayoutBuilderPreviewStateAction.php), [`tests/Unit/SnapshotActionTest.php`](tests/Unit/SnapshotActionTest.php), [`docs/screenshots.json`](docs/screenshots.json), [`tests/Feature/PeekPagePreviewActionTest.php`](tests/Feature/PeekPagePreviewActionTest.php), [`tests/Feature/PagePreviewRouteTest.php`](tests/Feature/PagePreviewRouteTest.php).
 
 ## Screens And Workflow
 
@@ -42,6 +46,7 @@ Screenshot contract: `docs/screenshots.json`.
 - Config files: `packages/filament-peek/config/capell-filament-peek.php`.
 - Filament classes: `PeekPagePreviewAction`, `FilamentPeekPanelExtender`, `PagePeekPreviewActionExtender`.
 - Route files: `packages/filament-peek/routes/web.php`.
+- Extension contracts: `StoresLayoutBuilderPreviewState`.
 - Actions: `CreatePagePreviewSnapshotAction`, `FindPagePreviewSnapshotAction`, `RegisterLayoutBuilderPreviewWidgetsAction`, `RenderPagePreviewSnapshotAction`, `StoreLayoutBuilderPreviewStateAction`.
 - Data objects: `LayoutBuilderPreviewStateData`, `PagePreviewSnapshotData`.
 - Manifest contributions: `route: Capell\FilamentPeek\Manifest\FilamentPeekRoutesContribution`.
@@ -51,26 +56,29 @@ Screenshot contract: `docs/screenshots.json`.
 
 ## Data Model
 
-This package has no schema impact. It does not declare package-owned migrations or required tables.
-
-Docs gap: document extension points here if the package delegates persistence to a host package.
+This package has no schema impact. It extends Capell through `route` contributions instead of declaring package-owned tables.
 
 ## Install Impact
 
-- Admin navigation: adds package-owned Filament classes when registered.
+- Required packages: `capell-app/admin`, `capell-app/frontend`.
+- Admin navigation: no admin page or resource contribution is declared.
+- Admin/editor extensions: none declared.
 - Permissions: none declared in `capell.json`.
-- Public routes: route files exist and must be reviewed before public enablement.
+- Public routes: loads `routes/web.php`; registers `FilamentPeekRoutesContribution`.
 - Database changes: no package migrations declared.
+- Config: `config/capell-filament-peek.php`.
 - Settings: no package settings declared.
-- Queues or schedules: none detected in standard package paths.
+- Queues or schedules: none declared.
 - Cache tags: `filament-peek-preview`.
 - Commands: none declared.
 
 ## Common Pitfalls
 
-- Review route middleware, throttling, signed URLs, and public-output safety before exposing routes.
+- Keep required Capell packages on compatible v4 releases: `capell-app/admin`, `capell-app/frontend`.
+- Review package configuration before production-like verification: `config/capell-filament-peek.php`.
+- Review middleware, throttling, signatures, and public-output safety in `routes/web.php` before exposing routes.
 - Keep public Blade and cached HTML free of authoring markers, model IDs, permissions, signed editor URLs, and lazy database queries.
-- Keep `composer.json`, `composer.local.json`, `capell.json`, docs, screenshots, and tests aligned when the package surface changes.
+- Custom write integrations must preserve invalidation for `filament-peek-preview` cache tags.
 
 ## Troubleshooting
 
@@ -83,13 +91,15 @@ Docs gap: document extension points here if the package delegates persistence to
 ## Quick Start
 
 1. Install the package: `composer require capell-app/filament-peek`.
-2. Run the required setup: no package migrations are declared; clear cached config and routes if the host app uses caches.
-3. Open the related Capell admin surface and verify Filament Peek appears.
+2. Review `config/capell-filament-peek.php` before enabling the package.
+3. Open the Page edit preview actions and confirm the admin workflow loads.
 
 ## Next Steps
 
 - [Package docs](docs/README.md)
 - [Overview](docs/overview.md)
+- Configuration files: [`config/capell-filament-peek.php`](config/capell-filament-peek.php).
+- [Troubleshooting](#troubleshooting)
 - [Screenshot contract](docs/screenshots.json)
 - [Marketplace assets](docs/assets/marketplace/)
 - [Capell content language plan](../../docs/CONTENT_LANGUAGE_PLAN.md)
