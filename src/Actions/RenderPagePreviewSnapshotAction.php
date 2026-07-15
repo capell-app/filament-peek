@@ -347,7 +347,7 @@ final class RenderPagePreviewSnapshotAction
         throw_if($renderer === null, RuntimeException::class, 'No Capell frontend renderer is available for Filament Peek preview.');
 
         $renderContext->runtimeManifest = $runtimeResolution->runtimeManifest;
-        $publicRenderData = BuildPublicPageRenderDataAction::run($renderContext);
+        $publicRenderData = BuildPublicPageRenderDataAction::make()->handle($renderContext);
         $renderContext->publicRenderData = $publicRenderData;
 
         resolve(RenderHookRegistry::class);
