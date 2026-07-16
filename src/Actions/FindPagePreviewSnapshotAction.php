@@ -7,11 +7,13 @@ namespace Capell\FilamentPeek\Actions;
 use Capell\FilamentPeek\Concerns\ResolvesPreviewContext;
 use Capell\FilamentPeek\Data\PagePreviewSnapshotData;
 use Illuminate\Support\Facades\Cache;
-use Lorisleiva\Actions\Concerns\AsAction;
+use Lorisleiva\Actions\Concerns\AsFake;
+use Lorisleiva\Actions\Concerns\AsObject;
 
 final class FindPagePreviewSnapshotAction
 {
-    use AsAction;
+    use AsFake;
+    use AsObject;
     use ResolvesPreviewContext;
 
     public function handle(string $token): ?PagePreviewSnapshotData

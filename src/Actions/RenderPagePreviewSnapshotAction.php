@@ -37,13 +37,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
-use Lorisleiva\Actions\Concerns\AsAction;
+use Lorisleiva\Actions\Concerns\AsFake;
+use Lorisleiva\Actions\Concerns\AsObject;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 final class RenderPagePreviewSnapshotAction
 {
-    use AsAction;
+    use AsFake;
+    use AsObject;
 
     public function handle(PagePreviewSnapshotData $snapshot): Response
     {
@@ -347,7 +349,7 @@ final class RenderPagePreviewSnapshotAction
         throw_if($renderer === null, RuntimeException::class, 'No Capell frontend renderer is available for Filament Peek preview.');
 
         $renderContext->runtimeManifest = $runtimeResolution->runtimeManifest;
-        $publicRenderData = BuildPublicPageRenderDataAction::make()->handle($renderContext);
+        $publicRenderData = BuildPublicPageRenderDataAction::run($renderContext);
         $renderContext->publicRenderData = $publicRenderData;
 
         resolve(RenderHookRegistry::class);

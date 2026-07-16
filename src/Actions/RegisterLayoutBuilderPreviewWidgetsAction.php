@@ -16,11 +16,13 @@ use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
-use Lorisleiva\Actions\Concerns\AsAction;
+use Lorisleiva\Actions\Concerns\AsFake;
+use Lorisleiva\Actions\Concerns\AsObject;
 
 final class RegisterLayoutBuilderPreviewWidgetsAction
 {
-    use AsAction;
+    use AsFake;
+    use AsObject;
 
     public function handle(Page $page, Language $language, LayoutBuilderPreviewStateData $state): bool
     {

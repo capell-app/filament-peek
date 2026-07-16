@@ -12,11 +12,13 @@ use Capell\FilamentPeek\Data\LayoutBuilderPreviewStateData;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Lorisleiva\Actions\Concerns\AsAction;
+use Lorisleiva\Actions\Concerns\AsFake;
+use Lorisleiva\Actions\Concerns\AsObject;
 
 final class StoreLayoutBuilderPreviewStateAction implements StoresLayoutBuilderPreviewState
 {
-    use AsAction;
+    use AsFake;
+    use AsObject;
     use ResolvesPreviewContext;
 
     /**

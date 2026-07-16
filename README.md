@@ -35,6 +35,8 @@ Screenshot contract: `docs/screenshots.json`.
 
 ![Page edit preview actions](docs/screenshots/page-edit-preview-actions.png)
 
+![Signed unsaved preview modal](docs/screenshots/signed-unsaved-preview-modal.png)
+
 - Page edit preview actions (admin, required).
 - Signed unsaved preview modal (admin, optional).
 - Filament Peek device preset controls (admin, optional).

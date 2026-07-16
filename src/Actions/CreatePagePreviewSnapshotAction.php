@@ -12,14 +12,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Lorisleiva\Actions\Concerns\AsAction;
+use Lorisleiva\Actions\Concerns\AsFake;
+use Lorisleiva\Actions\Concerns\AsObject;
 
 /**
  * @method static array{snapshot: PagePreviewSnapshotData, url: string} run(Page $page, array<string, mixed> $formState)
  */
 final class CreatePagePreviewSnapshotAction
 {
-    use AsAction;
+    use AsFake;
+    use AsObject;
     use ResolvesPreviewContext;
 
     /**
