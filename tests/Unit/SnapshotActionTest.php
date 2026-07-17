@@ -146,13 +146,15 @@ it('rejects oversized layout builder preview state before caching it', function 
     $layout = Layout::factory()->create();
     $page = Page::factory()->create(['layout_id' => $layout->id]);
 
-    expect(fn (): mixed => StoreLayoutBuilderPreviewStateAction::run(
-        page: $page,
-        layout: $layout,
-        containers: [
-            'main' => ['widgets' => [['payload' => str_repeat('x', 2048)]]],
-        ],
-    ))->toThrow(RuntimeException::class, __('capell-filament-peek::errors.payload_too_large'));
+    expect(function () use ($layout, $page): void {
+        StoreLayoutBuilderPreviewStateAction::run(
+            page: $page,
+            layout: $layout,
+            containers: [
+                'main' => ['widgets' => [['payload' => str_repeat('x', 2048)]]],
+            ],
+        );
+    })->toThrow(RuntimeException::class, __('capell-filament-peek::errors.payload_too_large'));
 
     $logger->shouldHaveReceived('warning')->withArgs(fn (string $message, array $context): bool => $message === 'Filament Peek preview payload exceeded the configured cache limit.'
         && ($context['payload_type'] ?? null) === 'layout_builder_preview_state'
