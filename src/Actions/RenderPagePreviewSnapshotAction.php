@@ -21,8 +21,6 @@ use Capell\Frontend\Actions\ResolveFrontendRuntimeAction;
 use Capell\Frontend\Contracts\FrontendContextReader;
 use Capell\Frontend\Data\FrontendRenderContextData;
 use Capell\Frontend\Events\FrontendRenderPreparing;
-use Capell\Frontend\Facades\Frontend;
-use Capell\Frontend\Support\CapellFrontendContext;
 use Capell\Frontend\Support\Render\FrontendResponseRendererRegistry;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Frontend\Support\State\FrontendState;
@@ -92,7 +90,6 @@ final class RenderPagePreviewSnapshotAction
 
         $this->registerThemeViews($theme);
         $previousContextReader = $this->resolvedInstance(FrontendContextReader::class);
-        $previousFrontendContext = $this->resolvedInstance(CapellFrontendContext::class);
         $previewWidgetsRegistered = false;
 
         try {
@@ -104,7 +101,7 @@ final class RenderPagePreviewSnapshotAction
                 CapellLayoutManager::clearContainerWidgets();
             }
 
-            $this->restoreFrontendBindings($previousContextReader, $previousFrontendContext);
+            $this->restoreFrontendContextReader($previousContextReader);
         }
 
         $response = $response instanceof Response ? $response : $response->toResponse(request());
@@ -321,8 +318,6 @@ final class RenderPagePreviewSnapshotAction
         }
 
         app()->instance(FrontendContextReader::class, $state);
-        app()->forgetInstance(CapellFrontendContext::class);
-        Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
         return $state;
     }
@@ -417,11 +412,9 @@ final class RenderPagePreviewSnapshotAction
         return is_object($instance) ? $instance : null;
     }
 
-    private function restoreFrontendBindings(?object $contextReader, ?object $frontendContext): void
+    private function restoreFrontendContextReader(?object $contextReader): void
     {
         $this->restoreInstance(FrontendContextReader::class, $contextReader);
-        $this->restoreInstance(CapellFrontendContext::class, $frontendContext);
-        Frontend::clearResolvedInstance(CapellFrontendContext::class);
     }
 
     /**

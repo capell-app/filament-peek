@@ -15,8 +15,6 @@ use Capell\Frontend\Contracts\FrontendContextReader;
 use Capell\Frontend\Contracts\FrontendResponseRenderer;
 use Capell\Frontend\Data\FrontendRenderContextData;
 use Capell\Frontend\Events\FrontendRenderPreparing;
-use Capell\Frontend\Facades\Frontend;
-use Capell\Frontend\Support\CapellFrontendContext;
 use Capell\Frontend\Support\Render\FrontendResponseRendererRegistry;
 use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Frontend\Support\State\FrontendState;
@@ -211,10 +209,7 @@ it('restores the previous frontend context after rendering a signed page preview
     registerPreviewTestRenderer();
 
     $previousReader = new FrontendState;
-    $previousContext = new CapellFrontendContext($previousReader);
     app()->instance(FrontendContextReader::class, $previousReader);
-    app()->instance(CapellFrontendContext::class, $previousContext);
-    Frontend::clearResolvedInstance(CapellFrontendContext::class);
 
     $language = Language::factory()->create();
     $site = Site::factory()->withTranslations($language)->language($language)->create();
@@ -243,8 +238,7 @@ it('restores the previous frontend context after rendering a signed page preview
     $this->get(URL::signedRoute('capell-filament-peek.preview', ['token' => $snapshot->token]))
         ->assertOk();
 
-    expect(resolve(FrontendContextReader::class))->toBe($previousReader)
-        ->and(resolve(CapellFrontendContext::class))->toBe($previousContext);
+    expect(resolve(FrontendContextReader::class))->toBe($previousReader);
 });
 
 it('overlays an existing unsaved featured image selection in the preview page context', function (): void {
