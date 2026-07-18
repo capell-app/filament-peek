@@ -30,6 +30,8 @@ final class FilamentPeekServiceProvider extends AbstractPackageServiceProvider
 
     public function registeringPackage(): void
     {
+        parent::registeringPackage();
+
         if (! $this->isDiscoveringPackages() && config('capell-filament-peek.enabled', true)) {
             $this->app->tag([FilamentPeekPanelExtender::class], AdminPanelExtender::TAG);
         }
