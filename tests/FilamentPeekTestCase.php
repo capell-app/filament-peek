@@ -16,6 +16,9 @@ use Capell\Core\Facades\CapellCore;
 use Capell\FilamentPeek\Providers\FilamentPeekServiceProvider as CapellFilamentPeekServiceProvider;
 use Capell\Frontend\Providers\FrontendServiceProvider;
 use Capell\LayoutBuilder\LayoutBuilderServiceProvider;
+use Capell\Navigation\Providers\NavigationServiceProvider;
+use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
+use Capell\Socials\Providers\SocialsServiceProvider;
 use Capell\Tests\Packages\PackagesTestCase;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
 use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
@@ -115,6 +118,21 @@ abstract class FilamentPeekTestCase extends PackagesTestCase
         CapellCore::forcePackageInstalled(BlockLibraryServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(FrontendServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(LayoutBuilderServiceProvider::$packageName);
+        CapellCore::registerPackage(
+            NavigationServiceProvider::$packageName,
+            path: realpath(__DIR__ . '/../../navigation') ?: null,
+        );
+        CapellCore::forcePackageInstalled(NavigationServiceProvider::$packageName);
+        CapellCore::registerPackage(
+            PublishingStudioServiceProvider::$packageName,
+            path: realpath(__DIR__ . '/../../publishing-studio') ?: null,
+        );
+        CapellCore::forcePackageInstalled(PublishingStudioServiceProvider::$packageName);
+        CapellCore::registerPackage(
+            SocialsServiceProvider::$packageName,
+            path: realpath(__DIR__ . '/../../socials') ?: null,
+        );
+        CapellCore::forcePackageInstalled(SocialsServiceProvider::$packageName);
         CapellCore::forcePackageInstalled(CapellFilamentPeekServiceProvider::$packageName);
     }
 }
