@@ -123,19 +123,14 @@
         "summary": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme — through a private, expiring, signed link, with nothing written to your content until you save.",
         "screenshots": [
             {
+                "path": "docs/screenshots/page-edit-preview-actions.png",
+                "alt": "Filament Peek page edit preview actions",
+                "caption": "Authentic authenticated Page edit surface showing the real Filament Peek preview action."
+            },
+            {
                 "path": "docs/assets/marketplace/extension-card.jpg",
                 "alt": "Filament Peek extension preview image",
                 "caption": "Filament Peek extension preview"
-            },
-            {
-                "path": "docs/screenshots/page-edit-preview-actions.png",
-                "alt": "Capell Page edit screen with the Filament Peek preview action group",
-                "caption": "Open the Preview action group from a real Capell Page edit screen before reviewing unsaved changes"
-            },
-            {
-                "path": "docs/screenshots/page-edit-preview-actions-dark.png",
-                "alt": "Capell Page edit screen in dark mode with the Filament Peek preview action group",
-                "caption": "Use the same unsaved preview action from Capell's dark admin theme"
             }
         ],
         "categories": ["admin", "editorial"]

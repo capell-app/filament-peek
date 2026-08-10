@@ -13,14 +13,20 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/screenshot-fixtures/regular/filament-peek-preview-actions",
-            "waitFor": "#screenshot-fixture",
+            "url": "/pages/{first-record}/edit",
+            "waitFor": "button[wire\\:click*=\"peekPagePreview\"]",
             "colorSchemes": ["light"],
             "required": true,
-            "notes": "Capture the Page edit header with the Preview group showing the separate `Changes` and `Live page` actions.",
+            "requiresPackages": ["capell-app/layout-builder"],
+            "notes": "Deferred authentic route target. Requires an authenticated admin, one seeded editable Page record, and Layout Builder installed when its editor state is part of the capture.",
             "useCase": "An editor chooses between a temporary unsaved preview and the saved public page.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/page-edit-preview-actions.png",
-            "darkScreenshotPath": "packages/filament-peek/docs/screenshots/page-edit-preview-actions-dark.png"
+            "interactions": [
+                {
+                    "type": "click",
+                    "selector": "button[wire\\:click*=\"peekPagePreview\"]"
+                }
+            ]
         },
         {
             "id": "signed-unsaved-preview-modal",
@@ -30,13 +36,25 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/screenshot-fixtures/regular/filament-peek-unsaved-modal",
-            "waitFor": "[role=\"dialog\"]",
+            "url": "/pages/4/edit",
+            "waitFor": "form",
             "colorSchemes": ["light"],
             "required": false,
-            "notes": "Follow-up capture for the Preview Changes modal after a temporary signed snapshot URL has been minted.",
+            "requiresPackages": ["capell-app/layout-builder"],
+            "notes": "Deferred authentic route target. Requires an authenticated admin and one seeded Page with a renderable layout; the supported Peek action interaction mints the signed snapshot before the modal is captured.",
             "useCase": "An editor previews unsaved Page and Layout Builder changes through the real frontend pipeline without saving.",
-            "screenshotPath": "packages/filament-peek/docs/screenshots/signed-unsaved-preview-modal.png"
+            "screenshotPath": "packages/filament-peek/docs/screenshots/signed-unsaved-preview-modal.png",
+            "interactions": [
+                {
+                    "type": "click",
+                    "selector": "button[wire\\:click*=\"peekPagePreview\"]"
+                },
+                {
+                    "type": "waitFor",
+                    "selector": "[role=\"alertdialog\"]"
+                }
+            ],
+            "waitForFrameContent": "[role=\"alertdialog\"] iframe"
         },
         {
             "id": "preview-device-presets",
@@ -46,29 +64,52 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/screenshot-fixtures/regular/filament-peek-device-presets",
+            "url": "/pages/4/edit",
+            "waitFor": "form",
+            "colorSchemes": ["light"],
+            "required": false,
+            "requiresPackages": ["capell-app/layout-builder"],
+            "notes": "Deferred authentic route target. Requires an authenticated admin and one seeded Page with a renderable layout; the supported Peek action and vendor device-preset interactions expose the real preview controls.",
+            "useCase": "An editor checks the unsaved preview at different device widths before publishing.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-presets.png",
+            "interactions": [
+                {
+                    "type": "click",
+                    "selector": "button[wire\\:click*=\"peekPagePreview\"]"
+                },
+                {
+                    "type": "waitFor",
+                    "selector": "[role=\"alertdialog\"]"
+                },
+                {
+                    "type": "click",
+                    "selector": "[role=\"alertdialog\"]:last-of-type [data-preset-name=\"mobile\"]"
+                }
+            ],
+            "waitForFrameContent": "[role=\"alertdialog\"] iframe"
+        },
+        {
+            "id": "filament-peek-admin-sidebar-menu-open",
+            "title": "Page edit preview actions with admin sidebar menu open.",
+            "package": "filament-peek",
+            "surface": "admin",
+            "scenario": "admin-form",
+            "targetType": "admin-surface",
+            "target": "PageResource/EditPage",
+            "url": "/screenshot-fixtures/regular/filament-peek-preview-actions",
             "waitFor": "#screenshot-fixture",
             "colorSchemes": ["light"],
             "required": false,
-            "notes": "Follow-up capture for fullscreen, tablet, and mobile preview device presets exposed through Capell configuration.",
-            "useCase": "An editor checks the unsaved preview at different device widths before publishing.",
-            "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-presets.png"
-        },
-        {
-            "id": "expired-preview-error",
-            "title": "Expired preview friendly error page.",
-            "package": "filament-peek",
-            "surface": "frontend",
-            "scenario": "frontend-page",
-            "targetType": "frontend-url",
-            "target": "capell-filament-peek.preview",
-            "url": "/screenshot-fixtures/regular/filament-peek-expired-preview",
-            "waitFor": "#screenshot-fixture",
-            "user": false,
-            "required": false,
-            "notes": "Follow-up capture for the private no-store preview error response when a signed snapshot expires or cannot be read.",
-            "useCase": "An editor opening an old preview link sees a safe, friendly error instead of leaked snapshot details.",
-            "screenshotPath": "packages/filament-peek/docs/screenshots/expired-preview-error.png"
+            "requiresPackages": ["capell-app/layout-builder"],
+            "notes": "Deferred authentic route target. Requires an authenticated admin and one seeded editable Page record. Capture this same real Page edit surface with the fully collapsible sidebar opened.",
+            "useCase": "An editor chooses between a temporary unsaved preview and the saved public page.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/filament-peek-admin-sidebar-menu-open.png",
+            "beforeWait": [
+                {
+                    "type": "click",
+                    "selector": ".fi-topbar-open-collapse-sidebar-btn"
+                }
+            ]
         }
     ]
 }
