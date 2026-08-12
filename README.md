@@ -33,14 +33,14 @@ Evidence: [`src/Data/PagePreviewSnapshotData.php`](src/Data/PagePreviewSnapshotD
 
 Screenshot contract: `docs/screenshots.json`.
 
+![Page edit preview actions](docs/screenshots/page-edit-preview-actions.png)
+
 ![Signed unsaved preview modal](docs/screenshots/signed-unsaved-preview-modal.png)
 
-![Filament Peek device preset controls](docs/screenshots/preview-device-presets.png)
-
-- Page edit preview actions (admin, supplementary evidence).
+- Page edit preview actions (admin, required evidence).
 - Signed unsaved preview modal (admin, supplementary evidence).
 - Filament Peek device preset controls (admin, supplementary evidence).
-- Expired preview friendly error page (frontend, supplementary evidence).
+- Page edit preview actions with admin sidebar menu open (admin, supplementary evidence).
 
 ## Technical Shape
 
@@ -94,7 +94,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 
 1. Install the package: `composer require capell-app/filament-peek`.
 2. Review `config/capell-filament-peek.php` before enabling the package.
-3. Run `php artisan route:list` and verify the package routes are registered.
+3. Open the package admin surface at `/pages/{first-record}/edit` and confirm Filament Peek is available.
 
 ## Next Steps
 
