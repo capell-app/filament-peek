@@ -15,34 +15,28 @@
             "target": "PageResource/EditPage",
             "url": "/pages/{first-record}/edit",
             "waitFor": "button[wire\\:click*=\"peekPagePreview\"]",
-            "colorSchemes": ["light"],
+            "colorSchemes": ["light", "dark"],
             "required": true,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Deferred authentic route target. Requires an authenticated admin, one seeded editable Page record, and Layout Builder installed when its editor state is part of the capture.",
-            "useCase": "An editor chooses between a temporary unsaved preview and the saved public page.",
-            "screenshotPath": "packages/filament-peek/docs/screenshots/page-edit-preview-actions.png",
-            "interactions": [
-                {
-                    "type": "click",
-                    "selector": "button[wire\\:click*=\"peekPagePreview\"]"
-                }
-            ]
+            "notes": "Authentic installed-App baseline. Requires an authenticated admin, one seeded editable Page record, and Layout Builder installed when its editor state is part of the capture. The header action reads \"Preview changes\", not an icon-only control.",
+            "useCase": "An editor chooses between a labelled, state-aware unsaved preview and the saved public page.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/page-edit-preview-actions.png"
         },
         {
             "id": "signed-unsaved-preview-modal",
-            "title": "Signed unsaved preview modal.",
+            "title": "Redesigned unsaved preview modal, desktop.",
             "package": "filament-peek",
             "surface": "admin",
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/pages/4/edit",
+            "url": "/pages/{first-record}/edit",
             "waitFor": "form",
-            "colorSchemes": ["light"],
-            "required": false,
+            "colorSchemes": ["light", "dark"],
+            "required": true,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Deferred authentic route target. Requires an authenticated admin and one seeded Page with a renderable layout; the supported Peek action interaction mints the signed snapshot before the modal is captured.",
-            "useCase": "An editor previews unsaved Page and Layout Builder changes through the real frontend pipeline without saving.",
+            "notes": "Authentic installed-App baseline. Requires an authenticated admin and one seeded Page with a renderable layout; the Capell-owned modal mints the signed snapshot before capture and states the unsaved scope and TTL in its own chrome, never the signed URL.",
+            "useCase": "An editor previews unsaved Page and Layout Builder changes through the real frontend pipeline without saving, and can read exactly what is being previewed and for how long the link stays valid.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/signed-unsaved-preview-modal.png",
             "interactions": [
                 {
@@ -51,25 +45,25 @@
                 },
                 {
                     "type": "waitFor",
-                    "selector": "[role=\"alertdialog\"]"
+                    "selector": "[data-capell-page-preview-modal] [role=\"dialog\"]"
                 }
             ],
-            "waitForFrameContent": "[role=\"alertdialog\"] iframe"
+            "waitForFrameContent": "[data-capell-page-preview-modal] iframe"
         },
         {
             "id": "preview-device-presets",
-            "title": "Filament Peek device preset controls.",
+            "title": "Labelled Desktop, Tablet, and Mobile device controls.",
             "package": "filament-peek",
             "surface": "admin",
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/pages/4/edit",
+            "url": "/pages/{first-record}/edit",
             "waitFor": "form",
-            "colorSchemes": ["light"],
-            "required": false,
+            "colorSchemes": ["light", "dark"],
+            "required": true,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Deferred authentic route target. Requires an authenticated admin and one seeded Page with a renderable layout; the supported Peek action and vendor device-preset interactions expose the real preview controls.",
+            "notes": "Authentic installed-App baseline. Requires an authenticated admin and one seeded Page with a renderable layout. Desktop, Tablet, and Mobile are real labelled buttons, not icon-only controls, and the Mobile preview sizes responsively instead of floating in a fixed pixel box.",
             "useCase": "An editor checks the unsaved preview at different device widths before publishing.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-presets.png",
             "interactions": [
@@ -79,14 +73,50 @@
                 },
                 {
                     "type": "waitFor",
-                    "selector": "[role=\"alertdialog\"]"
+                    "selector": "[data-capell-page-preview-modal] [role=\"dialog\"]"
                 },
                 {
                     "type": "click",
-                    "selector": "[role=\"alertdialog\"]:last-of-type [data-preset-name=\"mobile\"]"
+                    "selector": "[data-capell-page-preview-modal] [data-device-preset=\"mobile\"]"
                 }
             ],
-            "waitForFrameContent": "[role=\"alertdialog\"] iframe"
+            "waitForFrameContent": "[data-capell-page-preview-modal] iframe"
+        },
+        {
+            "id": "preview-device-rotate",
+            "title": "Rotating the Mobile preview to landscape.",
+            "package": "filament-peek",
+            "surface": "admin",
+            "scenario": "admin-form",
+            "targetType": "admin-surface",
+            "target": "PageResource/EditPage",
+            "url": "/pages/{first-record}/edit",
+            "waitFor": "form",
+            "colorSchemes": ["light"],
+            "required": false,
+            "requiresPackages": ["capell-app/layout-builder"],
+            "notes": "Authentic installed-App baseline. Rotate is only shown for device presets that support it, and swaps the preview's width and height responsively.",
+            "useCase": "An editor checks the unsaved preview in landscape on a Mobile-width device.",
+            "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-rotate.png",
+            "interactions": [
+                {
+                    "type": "click",
+                    "selector": "button[wire\\:click*=\"peekPagePreview\"]"
+                },
+                {
+                    "type": "waitFor",
+                    "selector": "[data-capell-page-preview-modal] [role=\"dialog\"]"
+                },
+                {
+                    "type": "click",
+                    "selector": "[data-capell-page-preview-modal] [data-device-preset=\"mobile\"]"
+                },
+                {
+                    "type": "click",
+                    "selector": "[data-capell-page-preview-modal] [data-device-rotate]"
+                }
+            ],
+            "waitForFrameContent": "[data-capell-page-preview-modal] iframe"
         },
         {
             "id": "filament-peek-admin-sidebar-menu-open",
@@ -101,7 +131,7 @@
             "colorSchemes": ["light"],
             "required": false,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Deferred authentic route target. Requires an authenticated admin and one seeded editable Page record. Capture this same real Page edit surface with the fully collapsible sidebar opened.",
+            "notes": "Authentic installed-App baseline. Requires an authenticated admin and one seeded editable Page record. Capture this same real Page edit surface with the fully collapsible sidebar opened.",
             "useCase": "An editor chooses between a temporary unsaved preview and the saved public page.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/filament-peek-admin-sidebar-menu-open.png",
             "beforeWait": [

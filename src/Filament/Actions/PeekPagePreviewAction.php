@@ -13,7 +13,6 @@ use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
-use Pboivin\FilamentPeek\Facades\Peek;
 
 final class PeekPagePreviewAction extends Action
 {
@@ -33,20 +32,25 @@ final class PeekPagePreviewAction extends Action
                     return;
                 }
 
+                $formState = $this->formState($livewire);
+
                 $snapshot = CreatePagePreviewSnapshotAction::run(
                     page: $record,
-                    formState: $this->formState($livewire),
+                    formState: $formState,
                 );
 
                 $livewire->dispatch(
-                    'open-preview-modal',
+                    'open-capell-page-preview-modal',
                     modalTitle: __('capell-filament-peek::actions.preview.modal_title'),
+                    scopeLabel: __('capell-filament-peek::actions.preview.scope_label'),
+                    subjectLabel: $this->subjectLabel($record, $formState),
+                    ttlLabel: __('capell-filament-peek::actions.preview.ttl_notice', [
+                        'minutes' => $this->previewTtlMinutes(),
+                    ]),
                     iframeUrl: $snapshot['url'],
-                    iframeContent: null,
+                    livewireId: $livewire->getId(),
                 );
             });
-
-        Peek::registerPreviewModal();
     }
 
     public static function getDefaultName(): string
@@ -60,5 +64,26 @@ final class PeekPagePreviewAction extends Action
     private function formState(EditPage $livewire): array
     {
         return $livewire->data ?? [];
+    }
+
+    /**
+     * @param  array<string, mixed>  $formState
+     */
+    private function subjectLabel(Page $record, array $formState): string
+    {
+        $name = $formState['name'] ?? null;
+
+        if (is_string($name) && trim($name) !== '') {
+            return $name;
+        }
+
+        return (string) ($record->name ?? '');
+    }
+
+    private function previewTtlMinutes(): int
+    {
+        $minutes = config('capell-filament-peek.preview.ttl_minutes', 15);
+
+        return is_int($minutes) && $minutes > 0 ? $minutes : 15;
     }
 }

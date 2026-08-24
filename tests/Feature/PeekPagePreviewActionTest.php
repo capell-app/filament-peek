@@ -40,7 +40,7 @@ it('creates the unsaved preview snapshot when the header action is clicked', fun
     $component = Livewire::test(EditPage::class, ['record' => $page->getRouteKey()])
         ->set('data.translations.0.title', 'Unsaved preview title')
         ->callAction('peekPagePreview')
-        ->assertDispatched('open-preview-modal');
+        ->assertDispatched('open-capell-page-preview-modal');
 
     $dispatches = $component->effects['dispatches'] ?? [];
 
@@ -49,16 +49,27 @@ it('creates the unsaved preview snapshot when the header action is clicked', fun
     }
 
     $event = collect($dispatches)
-        ->firstWhere('name', 'open-preview-modal');
+        ->firstWhere('name', 'open-capell-page-preview-modal');
 
-    expect($event)->not->toBeNull();
+    throw_unless(is_array($event), RuntimeException::class, 'Expected the open-capell-page-preview-modal dispatch to be an array.');
 
-    $iframeUrl = $event['params']['iframeUrl'] ?? null;
+    $params = $event['params'] ?? null;
+
+    throw_unless(is_array($params), RuntimeException::class, 'Expected the dispatched event to carry a params array.');
+
+    $iframeUrl = $params['iframeUrl'] ?? null;
 
     expect($iframeUrl)->toBeString()
-        ->and($iframeUrl)->toContain('/capell-filament-peek/preview/');
+        ->and($iframeUrl)->toContain('/capell-filament-peek/preview/')
+        ->and($params['modalTitle'] ?? null)->toBe('Preview changes')
+        ->and($params['scopeLabel'] ?? null)->toBe('Unsaved changes - not published')
+        ->and($params['subjectLabel'] ?? null)->toBe('Unsaved preview title')
+        ->and($params['ttlLabel'] ?? null)->toBe('This preview link stays valid for 15 minutes.')
+        ->and($params['livewireId'] ?? null)->toBe($component->id());
 
-    expect(config('filament-peek.devicePresets.mobile.width'))->toBe('390px');
+    expect(config('capell-filament-peek.preview.modal_device_presets.mobile.width'))->toBe('390px')
+        ->and(config('capell-filament-peek.preview.modal_device_presets.tablet.rotatable'))->toBeTrue()
+        ->and(config('capell-filament-peek.preview.modal_initial_device_preset'))->toBe('desktop');
 
     $token = Str::between((string) $iframeUrl, '/capell-filament-peek/preview/', '?');
     $snapshot = FindPagePreviewSnapshotAction::run($token);

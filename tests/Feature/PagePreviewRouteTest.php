@@ -157,7 +157,11 @@ it('renders unsaved page fields through a private signed preview without saving 
         ->assertSee('Unsaved preview - not published')
         ->assertSee('Unsaved page name')
         ->assertSee('Unsaved title')
-        ->assertSee('Unsaved body', false);
+        ->assertSee('Unsaved body', false)
+        ->assertDontSee('data-capell-page-preview-modal', false)
+        ->assertDontSee('capell-peek-panel', false)
+        ->assertDontSee('peekPagePreview', false)
+        ->assertDontSee('mountAction', false);
 
     $page->refresh();
 

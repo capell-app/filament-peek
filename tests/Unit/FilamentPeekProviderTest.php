@@ -12,6 +12,7 @@ use Capell\FilamentPeek\Filament\Extenders\PagePeekPreviewActionExtender;
 use Capell\FilamentPeek\Manifest\FilamentPeekRoutesContribution;
 use Capell\FilamentPeek\Providers\FilamentPeekServiceProvider;
 use Filament\Panel;
+use Filament\View\PanelsRenderHook;
 use Pboivin\FilamentPeek\FilamentPeekPlugin;
 
 it('registers the panel and page preview extenders when installed', function (): void {
@@ -33,10 +34,60 @@ it('registers the peek plugin through the panel extender', function (): void {
     expect($panel->hasPlugin(FilamentPeekPlugin::make()->getId()))->toBeTrue();
 });
 
-it('passes Capell device presets to the upstream preview modal', function (): void {
-    expect(config('filament-peek.devicePresets.mobile.width'))->toBe('390px')
+it('configures the Capell-owned device presets used by the redesigned preview modal', function (): void {
+    expect(config('capell-filament-peek.preview.modal_device_presets.mobile.width'))->toBe('390px')
+        ->and(config('capell-filament-peek.preview.modal_device_presets.tablet.rotatable'))->toBeTrue()
+        ->and(config('capell-filament-peek.preview.modal_device_presets.desktop.rotatable'))->toBeFalse()
+        ->and(config('capell-filament-peek.preview.modal_initial_device_preset'))->toBe('desktop');
+});
+
+it('still bridges Capell device presets into the upstream vendor modal config Publishing Studio depends on', function (): void {
+    // PeekPagePreviewAction no longer reads these vendor `filament-peek.*`
+    // keys (it has its own Capell-owned modal), but
+    // WorkspacePeekPreviewAction in Publishing Studio calls
+    // Peek::registerPreviewModal() directly against the *shared* upstream
+    // modal and has no config wiring of its own. Without this bridge it
+    // would silently fall back to the vendor package's own defaults
+    // (a differently-named `tablet-landscape` preset at 1080x810, and a
+    // 375x667 `mobile` preset), which are wrong for Capell.
+    expect(config('filament-peek.devicePresets.fullscreen.icon'))->toBe('heroicon-o-computer-desktop')
+        ->and(config('filament-peek.devicePresets.tablet.width'))->toBe('1024px')
+        ->and(config('filament-peek.devicePresets.tablet.height'))->toBe('768px')
         ->and(config('filament-peek.devicePresets.tablet.canRotatePreset'))->toBeTrue()
-        ->and(config('filament-peek.initialDevicePreset'))->toBe('fullscreen');
+        ->and(config('filament-peek.devicePresets.mobile.width'))->toBe('390px')
+        ->and(config('filament-peek.devicePresets.mobile.height'))->toBe('844px')
+        ->and(config('filament-peek.initialDevicePreset'))->toBe('fullscreen')
+        ->and(config('filament-peek.devicePresets'))->not->toHaveKey('tablet-landscape');
+});
+
+it('registers the page preview modal render hook on the panel', function (): void {
+    $panel = Panel::make();
+
+    (new FilamentPeekPanelExtender)->extend($panel);
+
+    $reflection = new ReflectionProperty($panel, 'renderHooks');
+    $renderHooks = $reflection->getValue($panel);
+
+    throw_unless(is_array($renderHooks), RuntimeException::class, 'Expected the panel render hooks property to be an array.');
+
+    $bodyEndScopes = $renderHooks[PanelsRenderHook::BODY_END] ?? null;
+
+    throw_unless(is_array($bodyEndScopes), RuntimeException::class, 'Expected registered body-end render hook scopes.');
+
+    $bodyEndHooks = $bodyEndScopes[''] ?? null;
+
+    throw_unless(is_array($bodyEndHooks), RuntimeException::class, 'Expected a registered body-end render hook.');
+
+    $rendered = collect($bodyEndHooks)
+        ->map(function (mixed $hook): string {
+            throw_unless($hook instanceof Closure, RuntimeException::class, 'Expected each render hook to be a closure.');
+
+            return (string) $hook();
+        })
+        ->implode('');
+
+    expect($rendered)->toContain('data-capell-page-preview-modal')
+        ->and($rendered)->toContain(__('capell-filament-peek::actions.preview.devices.mobile'));
 });
 
 it('does not boot runtime integrations when the package is not installed', function (): void {

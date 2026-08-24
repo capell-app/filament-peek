@@ -63,6 +63,15 @@ final class FilamentPeekServiceProvider extends AbstractPackageServiceProvider
         return CapellCore::isPackageInstalled(self::$packageName);
     }
 
+    /**
+     * Bridges Capell's own device-preset config into the vendor
+     * pboivin/filament-peek config keys its shared modal reads directly.
+     * PeekPagePreviewAction no longer needs this (it renders its own
+     * Capell-owned modal), but Publishing Studio's
+     * WorkspacePeekPreviewAction still opens the upstream modal via
+     * Peek::registerPreviewModal() and has no config wiring of its own,
+     * so this must keep running regardless of that action's changes.
+     */
     private function configureUpstreamPreviewModal(): void
     {
         $devicePresets = config('capell-filament-peek.preview.device_presets', false);
