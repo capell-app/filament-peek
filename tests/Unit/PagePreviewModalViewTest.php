@@ -12,6 +12,18 @@ it('renders labelled device controls instead of icon-only buttons', function ():
         ->toContain(__('capell-filament-peek::actions.preview.rotate'));
 });
 
+it('exposes every configured toolbar label on the Alpine component state', function (): void {
+    $html = view('capell-filament-peek::page-preview-modal')->render();
+
+    expect($html)
+        ->toContain('closeLabel: config.closeLabel')
+        ->toContain('loadingLabel: config.loadingLabel')
+        ->toContain('unavailableLabel: config.unavailableLabel')
+        ->toContain('recoverLabel: config.recoverLabel')
+        ->toContain('rotateLabel: config.rotateLabel')
+        ->toContain('deviceGroupLabel: config.deviceGroupLabel');
+});
+
 it('renders an accessible, keyboard-reachable dialog with a labelled close action', function (): void {
     $html = view('capell-filament-peek::page-preview-modal')->render();
 

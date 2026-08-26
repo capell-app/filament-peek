@@ -70,7 +70,11 @@
                         class="capell-peek-scope"
                     >
                         <span x-text="scopeLabel"></span>
-                        <span x-show="subjectLabel">&nbsp;&mdash;&nbsp;<span x-text="subjectLabel"></span></span>
+                        <span x-show="subjectLabel"
+                            >&nbsp;&mdash;&nbsp;<span
+                                x-text="subjectLabel"
+                            ></span
+                        ></span>
                     </p>
                     <p
                         class="capell-peek-ttl"
@@ -189,161 +193,161 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
             overflow: hidden;
         }
+        @media(prefers-color-scheme: dark)
+        {
+                   [data-capell-page-preview-modal] .capell-peek-panel {
+                       background: #1e293b;
+                       color: #f8fafc;
+                   }
+               }
 
-        @media (prefers-color-scheme: dark) {
-            [data-capell-page-preview-modal] .capell-peek-panel {
-                background: #1e293b;
-                color: #f8fafc;
-            }
-        }
+               [data-capell-page-preview-modal] .capell-peek-header {
+                   display: flex;
+                   flex-wrap: wrap;
+                   align-items: flex-start;
+                   gap: 0.75rem;
+                   padding: 1rem 1.25rem;
+                   border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.35);
-        }
+               [data-capell-page-preview-modal] .capell-peek-heading {
+                   flex: 1 1 16rem;
+                   min-width: 0;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-heading {
-            flex: 1 1 16rem;
-            min-width: 0;
-        }
+               [data-capell-page-preview-modal] .capell-peek-title {
+                   margin: 0;
+                   font-size: 1rem;
+                   font-weight: 650;
+                   line-height: 1.3;
+                   white-space: nowrap;
+                   overflow: hidden;
+                   text-overflow: ellipsis;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-title {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 650;
-            line-height: 1.3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+               [data-capell-page-preview-modal] .capell-peek-scope {
+                   margin: 0.125rem 0 0;
+                   font-size: 0.8125rem;
+                   color: #64748b;
+                   white-space: nowrap;
+                   overflow: hidden;
+                   text-overflow: ellipsis;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-scope {
-            margin: 0.125rem 0 0;
-            font-size: 0.8125rem;
-            color: #64748b;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+               [data-capell-page-preview-modal] .capell-peek-ttl {
+                   margin: 0.125rem 0 0;
+                   font-size: 0.75rem;
+                   color: #94a3b8;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-ttl {
-            margin: 0.125rem 0 0;
-            font-size: 0.75rem;
-            color: #94a3b8;
-        }
+               [data-capell-page-preview-modal] .capell-peek-devices {
+                   display: flex;
+                   flex-wrap: wrap;
+                   gap: 0.375rem;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-devices {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.375rem;
-        }
+               [data-capell-page-preview-modal] .capell-peek-device-button,
+               [data-capell-page-preview-modal] .capell-peek-rotate-button {
+                   border: 1px solid rgba(148, 163, 184, 0.5);
+                   background: transparent;
+                   color: inherit;
+                   border-radius: 0.375rem;
+                   padding: 0.375rem 0.75rem;
+                   font-size: 0.8125rem;
+                   font-weight: 550;
+                   cursor: pointer;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-device-button,
-        [data-capell-page-preview-modal] .capell-peek-rotate-button {
-            border: 1px solid rgba(148, 163, 184, 0.5);
-            background: transparent;
-            color: inherit;
-            border-radius: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            font-size: 0.8125rem;
-            font-weight: 550;
-            cursor: pointer;
-        }
+               [data-capell-page-preview-modal] .capell-peek-device-button.is-active {
+                   background: #0f172a;
+                   color: #ffffff;
+                   border-color: #0f172a;
+               }
+        @media(prefers-color-scheme: dark)
+        {
+                   [data-capell-page-preview-modal] .capell-peek-device-button.is-active {
+                       background: #f8fafc;
+                       color: #0f172a;
+                       border-color: #f8fafc;
+                   }
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-device-button.is-active {
-            background: #0f172a;
-            color: #ffffff;
-            border-color: #0f172a;
-        }
+               [data-capell-page-preview-modal] .capell-peek-close-button {
+                   border: none;
+                   background: transparent;
+                   color: inherit;
+                   font-size: 1.5rem;
+                   line-height: 1;
+                   cursor: pointer;
+                   padding: 0.25rem 0.5rem;
+               }
 
-        @media (prefers-color-scheme: dark) {
-            [data-capell-page-preview-modal] .capell-peek-device-button.is-active {
-                background: #f8fafc;
-                color: #0f172a;
-                border-color: #f8fafc;
-            }
-        }
+               [data-capell-page-preview-modal] .capell-peek-body {
+                   position: relative;
+                   flex: 1 1 auto;
+                   display: flex;
+                   align-items: center;
+                   justify-content: center;
+                   min-height: 0;
+                   padding: 1rem;
+                   background: #f1f5f9;
+               }
+        @media(prefers-color-scheme: dark)
+        {
+                   [data-capell-page-preview-modal] .capell-peek-body {
+                       background: #0f172a;
+                   }
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-close-button {
-            border: none;
-            background: transparent;
-            color: inherit;
-            font-size: 1.5rem;
-            line-height: 1;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-        }
+               [data-capell-page-preview-modal] .capell-peek-frame {
+                   background: #ffffff;
+                   border-radius: 0.5rem;
+                   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-body {
-            position: relative;
-            flex: 1 1 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 0;
-            padding: 1rem;
-            background: #f1f5f9;
-        }
+               [data-capell-page-preview-modal] .capell-peek-status {
+                   position: absolute;
+                   inset: 1rem;
+                   display: flex;
+                   align-items: center;
+                   justify-content: center;
+                   text-align: center;
+                   background: rgba(241, 245, 249, 0.92);
+                   border-radius: 0.5rem;
+                   padding: 1rem;
+               }
+        @media(prefers-color-scheme: dark)
+        {
+                   [data-capell-page-preview-modal] .capell-peek-status {
+                       background: rgba(15, 23, 42, 0.92);
+                   }
+               }
 
-        @media (prefers-color-scheme: dark) {
-            [data-capell-page-preview-modal] .capell-peek-body {
-                background: #0f172a;
-            }
-        }
+               [data-capell-page-preview-modal] .capell-peek-recovery {
+                   display: flex;
+                   flex-direction: column;
+                   align-items: center;
+                   gap: 0.75rem;
+               }
 
-        [data-capell-page-preview-modal] .capell-peek-frame {
-            background: #ffffff;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        [data-capell-page-preview-modal] .capell-peek-status {
-            position: absolute;
-            inset: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background: rgba(241, 245, 249, 0.92);
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            [data-capell-page-preview-modal] .capell-peek-status {
-                background: rgba(15, 23, 42, 0.92);
-            }
-        }
-
-        [data-capell-page-preview-modal] .capell-peek-recovery {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        [data-capell-page-preview-modal] .capell-peek-recover-button {
-            border: 1px solid rgba(148, 163, 184, 0.5);
-            background: #0f172a;
-            color: #ffffff;
-            border-radius: 0.375rem;
-            padding: 0.5rem 1rem;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            [data-capell-page-preview-modal],
-            [data-capell-page-preview-modal] * {
-                transition: none !important;
-                animation: none !important;
-            }
-        }
+               [data-capell-page-preview-modal] .capell-peek-recover-button {
+                   border: 1px solid rgba(148, 163, 184, 0.5);
+                   background: #0f172a;
+                   color: #ffffff;
+                   border-radius: 0.375rem;
+                   padding: 0.5rem 1rem;
+                   font-size: 0.8125rem;
+                   font-weight: 600;
+                   cursor: pointer;
+               }
+        @media(prefers-reduced-motion: reduce)
+        {
+                   [data-capell-page-preview-modal],
+                   [data-capell-page-preview-modal] * {
+                       transition: none !important;
+                       animation: none !important;
+                   }
+               }
     </style>
 
     <script>
