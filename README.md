@@ -35,11 +35,12 @@ Screenshot contract: `docs/screenshots.json`.
 
 ![Page edit preview actions](docs/screenshots/page-edit-preview-actions.png)
 
-![Signed unsaved preview modal](docs/screenshots/signed-unsaved-preview-modal.png)
+![Redesigned unsaved preview modal, desktop](docs/screenshots/signed-unsaved-preview-modal.png)
 
 - Page edit preview actions (admin, required evidence).
-- Signed unsaved preview modal (admin, supplementary evidence).
-- Filament Peek device preset controls (admin, supplementary evidence).
+- Redesigned unsaved preview modal, desktop (admin, required evidence).
+- Labelled Desktop, Tablet, and Mobile device controls (admin, required evidence).
+- Rotating the Mobile preview to landscape (admin, supplementary evidence).
 - Page edit preview actions with admin sidebar menu open (admin, supplementary evidence).
 
 ## Technical Shape
@@ -53,7 +54,7 @@ Screenshot contract: `docs/screenshots.json`.
 - Data objects: `LayoutBuilderPreviewStateData`, `PagePreviewSnapshotData`.
 - Manifest contributions: `route: Capell\FilamentPeek\Manifest\FilamentPeekRoutesContribution`.
 - Health checks: `Capell\FilamentPeek\Health\FilamentPeekHealthCheck`.
-- Blade views: `packages/filament-peek/resources/views/preview-error.blade.php`, `packages/filament-peek/resources/views/preview-ribbon.blade.php`.
+- Blade views: `packages/filament-peek/resources/views/page-preview-modal.blade.php`, `packages/filament-peek/resources/views/preview-error.blade.php`, `packages/filament-peek/resources/views/preview-ribbon.blade.php`.
 - Cache tags: `filament-peek-preview`.
 
 ## Data Model
