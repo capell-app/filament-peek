@@ -11,6 +11,7 @@ use Capell\Core\Models\Media;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\PageUrl;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\SiteDomain;
 use Capell\Core\Models\Theme;
 use Capell\Core\Models\Translation;
 use Capell\FilamentPeek\Data\LayoutBuilderPreviewStateData;
@@ -94,7 +95,14 @@ final class RenderPagePreviewSnapshotAction
 
         try {
             $previewWidgetsRegistered = $this->registerLayoutBuilderPreviewWidgets($previewPage, $language, $snapshot);
-            $context = $this->seedFrontendContext($site, $language, $previewPage, $layout, $theme);
+            $context = $this->seedFrontendContext(
+                $site,
+                $language,
+                $previewPage,
+                $layout,
+                $theme,
+                $this->previewSiteDomain($site, $previewPage, $language),
+            );
             $response = $this->render($context, $previewPage, $site, $language, $layout, $theme);
         } finally {
             if ($previewWidgetsRegistered && class_exists(CapellLayoutManager::class)) {
@@ -304,6 +312,7 @@ final class RenderPagePreviewSnapshotAction
         Page $page,
         Layout $layout,
         ?Theme $theme,
+        ?SiteDomain $siteDomain,
     ): FrontendState {
         $state = resolve(FrontendState::class)
             ->withSite($site)
@@ -317,9 +326,38 @@ final class RenderPagePreviewSnapshotAction
             $state->withTheme($theme);
         }
 
+        if ($siteDomain instanceof SiteDomain) {
+            $site->setRelation('siteDomain', $siteDomain);
+            $state->withDomain($siteDomain);
+        }
+
         app()->instance(FrontendContextReader::class, $state);
 
         return $state;
+    }
+
+    private function previewSiteDomain(Site $site, Page $page, Language $language): ?SiteDomain
+    {
+        $pageDomain = $page->relationLoaded('pageUrl')
+            ? $page->pageUrl?->siteDomain
+            : null;
+
+        if ($pageDomain instanceof SiteDomain) {
+            $pageDomainLanguageId = filter_var($pageDomain->getAttribute('language_id'), FILTER_VALIDATE_INT);
+            $languageId = filter_var($language->getKey(), FILTER_VALIDATE_INT);
+
+            if (is_int($pageDomainLanguageId) && is_int($languageId) && $pageDomainLanguageId === $languageId) {
+                return $pageDomain;
+            }
+        }
+
+        if (! $site->relationLoaded('siteDomains')) {
+            return null;
+        }
+
+        return $site->siteDomains->firstWhere('language_id', $language->getKey())
+            ?? $site->siteDomains->firstWhere('default', true)
+            ?? $site->siteDomains->first();
     }
 
     private function render(

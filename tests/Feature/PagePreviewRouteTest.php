@@ -9,6 +9,7 @@ use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Page;
 use Capell\Core\Models\Site;
+use Capell\Core\Models\SiteDomain;
 use Capell\FilamentPeek\Actions\CreatePagePreviewSnapshotAction;
 use Capell\FilamentPeek\Tests\Fixtures\QueryGuardPreviewResponseRenderer;
 use Capell\Frontend\Contracts\FrontendContextReader;
@@ -205,6 +206,50 @@ it('primes render hooks before the query-guarded preview render starts', functio
     $this->get(URL::signedRoute('capell-filament-peek.preview', ['token' => $snapshot->token]))
         ->assertOk()
         ->assertSee('Query-safe preview renderer reached');
+});
+
+it('binds the preview site domain into frontend state before rendering', function (): void {
+    $user = $this->createUserWithRole('super_admin');
+    $this->actingAs($user);
+
+    $language = Language::factory()->create();
+    $site = Site::factory()->withTranslations($language)->language($language)->create();
+    $siteDomain = SiteDomain::factory()
+        ->site($site)
+        ->language($language)
+        ->default()
+        ->create();
+    $layout = Layout::factory()->site($site)->default()->create(['containers' => []]);
+    $page = Page::factory()
+        ->site($site)
+        ->layout($layout)
+        ->withTranslations($language, ['title' => 'Preview title'])
+        ->create();
+
+    resolve(FrontendResponseRendererRegistry::class)->register(new class implements FrontendResponseRenderer
+    {
+        public function runtime(): FrontendRuntime
+        {
+            return FrontendRuntime::Blade;
+        }
+
+        public function render(FrontendRenderContextData $context): SymfonyResponse
+        {
+            $state = resolve(FrontendContextReader::class);
+
+            return response()->make($state->domain()?->getKey() === $context->site?->siteDomain?->getKey()
+                ? 'Preview domain bound'
+                : 'Preview domain missing');
+        }
+    });
+
+    $snapshot = CreatePagePreviewSnapshotAction::run($page, ['name' => 'Preview'])['snapshot'];
+
+    $this->get(URL::signedRoute('capell-filament-peek.preview', ['token' => $snapshot->token]))
+        ->assertOk()
+        ->assertSee('Preview domain bound');
+
+    expect($siteDomain->exists)->toBeTrue();
 });
 
 it('restores the previous frontend context after rendering a signed page preview', function (): void {
