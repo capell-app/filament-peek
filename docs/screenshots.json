@@ -48,7 +48,10 @@
                     "selector": "[data-capell-page-preview-modal] [role=\"dialog\"]"
                 }
             ],
-            "waitForFrameContent": "[data-capell-page-preview-modal] iframe"
+            "waitForFrameContent": {
+                "frame": "[data-capell-page-preview-modal] iframe",
+                "content": "[data-capell-preview-ribbon]"
+            }
         },
         {
             "id": "preview-device-presets",
@@ -80,7 +83,10 @@
                     "selector": "[data-capell-page-preview-modal] [data-device-preset=\"mobile\"]"
                 }
             ],
-            "waitForFrameContent": "[data-capell-page-preview-modal] iframe"
+            "waitForFrameContent": {
+                "frame": "[data-capell-page-preview-modal] iframe",
+                "content": "[data-capell-preview-ribbon]"
+            }
         },
         {
             "id": "preview-device-rotate",
@@ -116,7 +122,10 @@
                     "selector": "[data-capell-page-preview-modal] [data-device-rotate]"
                 }
             ],
-            "waitForFrameContent": "[data-capell-page-preview-modal] iframe"
+            "waitForFrameContent": {
+                "frame": "[data-capell-page-preview-modal] iframe",
+                "content": "[data-capell-preview-ribbon]"
+            }
         },
         {
             "id": "filament-peek-admin-sidebar-menu-open",
