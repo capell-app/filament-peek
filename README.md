@@ -10,8 +10,6 @@ Filament Peek stores a private, per-user snapshot of unsaved page and Layout Bui
 
 Editors open an unsaved preview from the page edit action and can check device presets before saving. Missing or expired snapshots return a private error rather than exposing preview state.
 
-Evidence: [`capell.json`](capell.json), [`src/Actions/CreatePagePreviewSnapshotAction.php`](src/Actions/CreatePagePreviewSnapshotAction.php), [`src/Actions/RenderPagePreviewSnapshotAction.php`](src/Actions/RenderPagePreviewSnapshotAction.php), [`routes/web.php`](routes/web.php), [`docs/overview.admin.md`](docs/overview.admin.md), [`docs/screenshots.json`](docs/screenshots.json), [`src/Filament/Actions/PeekPagePreviewAction.php`](src/Filament/Actions/PeekPagePreviewAction.php), [`tests/Feature/PagePreviewRouteTest.php`](tests/Feature/PagePreviewRouteTest.php).
-
 Status details:
 
 - Status: Available
@@ -26,8 +24,6 @@ Status details:
 **For developers:** Snapshot creation, lookup, state storage, and rendering are separate Actions behind typed data and a preview-state contract, with no database schema required.
 
 **For teams:** Editors can review unsaved copy, media, and layout changes in the active theme before deciding whether to save or publish them.
-
-Evidence: [`src/Data/PagePreviewSnapshotData.php`](src/Data/PagePreviewSnapshotData.php), [`src/Contracts/StoresLayoutBuilderPreviewState.php`](src/Contracts/StoresLayoutBuilderPreviewState.php), [`src/Actions/StoreLayoutBuilderPreviewStateAction.php`](src/Actions/StoreLayoutBuilderPreviewStateAction.php), [`tests/Unit/SnapshotActionTest.php`](tests/Unit/SnapshotActionTest.php), [`docs/screenshots.json`](docs/screenshots.json), [`tests/Feature/PeekPagePreviewActionTest.php`](tests/Feature/PeekPagePreviewActionTest.php), [`tests/Feature/PagePreviewRouteTest.php`](tests/Feature/PagePreviewRouteTest.php).
 
 ## Screens And Workflow
 
@@ -136,7 +132,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 ## Quick Start
 
 1. Install the package: `composer require capell-app/filament-peek`.
-2. Open the package admin surface at `/pages/{first-record}/edit` and confirm Filament Peek is available.
+2. Open the package admin surface at `/admin/pages/{first-record}/edit` and confirm Filament Peek is available.
 
 ## Next Steps
 
@@ -151,6 +147,5 @@ This package has no schema impact. It extends Capell through `route` contributio
 - [Capell documentation design system](../../docs/DESIGN_SYSTEM.md)
 - [Capell and package ERD notes](../../docs/erd/capell-and-package-erds.md)
 - Related packages: [Layout Builder](../layout-builder/README.md), [Publishing Studio](../publishing-studio/README.md).
-- Focused tests: `vendor/bin/pest packages/filament-peek/tests --configuration=phpunit.xml`.
 
 <!-- prettier-ignore-end -->

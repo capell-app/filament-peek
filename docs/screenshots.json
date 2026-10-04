@@ -135,18 +135,22 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/screenshot-fixtures/regular/filament-peek-preview-actions",
-            "waitFor": "#screenshot-fixture",
+            "url": "/admin/pages/{first-record}/edit",
+            "waitFor": "button[wire\\:click*=\"peekPagePreview\"]",
             "colorSchemes": ["light"],
             "required": false,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Authentic installed-App baseline. Requires an authenticated admin and one seeded editable Page record. Capture this same real Page edit surface with the fully collapsible sidebar opened.",
+            "notes": "Capture the real installed Filament surface after the manifest fixture commands prepare its data and widget settings.",
             "useCase": "An editor chooses between a temporary unsaved preview and the saved public page.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/filament-peek-admin-sidebar-menu-open.png",
             "beforeWait": [
                 {
                     "type": "click",
                     "selector": ".fi-topbar-open-collapse-sidebar-btn"
+                },
+                {
+                    "type": "waitFor",
+                    "selector": ".fi-sidebar.fi-sidebar-open"
                 }
             ]
         }

@@ -66,7 +66,7 @@ it('creates the unsaved preview snapshot when the header action is clicked', fun
         ->and($iframeUrl)->toContain('/capell-filament-peek/preview/')
         ->and($params['modalTitle'] ?? null)->toBe('Preview changes')
         ->and($params['scopeLabel'] ?? null)->toBe('Unsaved changes - not published')
-        ->and($params['subjectLabel'] ?? null)->toBe('Unsaved preview title')
+        ->and($params['subjectLabel'] ?? null)->toBe('Saved page name')
         ->and($params['ttlLabel'] ?? null)->toBe('This preview link stays valid for 15 minutes.')
         ->and($params['livewireId'] ?? null)->toBe($component->id());
 
@@ -80,7 +80,7 @@ it('creates the unsaved preview snapshot when the header action is clicked', fun
     throw_unless($snapshot instanceof PagePreviewSnapshotData, RuntimeException::class, 'Expected page preview snapshot to be stored.');
 
     expect($snapshot)->not->toBeNull()
-        ->and($snapshot->formState['name'])->toBe('Unsaved preview title')
+        ->and($snapshot->formState['name'])->toBe('Saved page name')
         ->and($snapshot->formState['translations'][0]['title'])->toBe('Unsaved preview title');
 
     $page->refresh();

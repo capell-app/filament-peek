@@ -36,6 +36,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\View\FileViewFinder;
+use LogicException;
 use Lorisleiva\Actions\Concerns\AsFake;
 use Lorisleiva\Actions\Concerns\AsObject;
 use RuntimeException;
@@ -89,11 +91,14 @@ final class RenderPagePreviewSnapshotAction
         abort_unless($language instanceof Language, 404);
         abort_unless($layout instanceof Layout, 404);
 
-        $this->registerThemeViews($theme);
+        $finder = view()->getFinder();
+        throw_unless($finder instanceof FileViewFinder, LogicException::class, 'The preview view finder must support theme namespaces.');
+        $originalThemePaths = $finder->getHints()['capell'] ?? [];
         $previousContextReader = $this->resolvedInstance(FrontendContextReader::class);
         $previewWidgetsRegistered = false;
 
         try {
+            $this->registerThemeViews($theme, $finder);
             $previewWidgetsRegistered = $this->registerLayoutBuilderPreviewWidgets($previewPage, $language, $snapshot);
             $context = $this->seedFrontendContext(
                 $site,
@@ -104,15 +109,17 @@ final class RenderPagePreviewSnapshotAction
                 $this->previewSiteDomain($site, $previewPage, $language),
             );
             $response = $this->render($context, $previewPage, $site, $language, $layout, $theme);
+            $response = $response instanceof Response ? $response : $response->toResponse(request());
         } finally {
+            $finder->flush();
+            $finder->replaceNamespace('capell', $originalThemePaths);
+
             if ($previewWidgetsRegistered && class_exists(CapellLayoutManager::class)) {
                 CapellLayoutManager::clearContainerWidgets();
             }
 
             $this->restoreFrontendContextReader($previousContextReader);
         }
-
-        $response = $response instanceof Response ? $response : $response->toResponse(request());
 
         return $this->withPreviewRibbon($response);
     }
@@ -294,14 +301,19 @@ final class RenderPagePreviewSnapshotAction
         return $pageUrls;
     }
 
-    private function registerThemeViews(?Theme $theme): void
+    private function registerThemeViews(?Theme $theme, FileViewFinder $finder): void
     {
         if (! $theme instanceof Theme || $theme->key === '') {
             return;
         }
 
-        resolve(ThemeViewRegistrar::class)->register(
-            resolve(ThemeChainResolver::class)->resolve($theme),
+        // Theme overrides take priority while other packages' components
+        // remain available for this preview only.
+        new ThemeViewRegistrar($finder)->register(
+            array_values([
+                ...resolve(ThemeChainResolver::class)->resolve($theme),
+                ...array_filter($finder->getHints()['capell'] ?? [], is_string(...)),
+            ]),
             $theme->key,
         );
     }
