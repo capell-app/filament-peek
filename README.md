@@ -101,7 +101,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 
 ## Install Impact
 
-- Required packages: `capell-app/admin`, `capell-app/frontend`.
+- Required packages: `capell-app/admin`, `capell-app/core`, `capell-app/frontend`.
 - Admin navigation: no admin page or resource contribution is declared.
 - Admin/editor extensions: none declared.
 - Permissions: no package permission declarations or Shield gates detected; host access rules still apply.
@@ -115,7 +115,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 
 ## Common Pitfalls
 
-- Keep required Capell packages on compatible v4 releases: `capell-app/admin`, `capell-app/frontend`.
+- Keep required Capell packages on compatible v4 releases: `capell-app/admin`, `capell-app/core`, `capell-app/frontend`.
 - Review package configuration before production-like verification: `config/capell-filament-peek.php`.
 - Review middleware, throttling, signatures, and public-output safety in `routes/web.php` before exposing routes.
 - Keep public Blade and cached HTML free of authoring markers, model IDs, permissions, signed editor URLs, and lazy database queries.
