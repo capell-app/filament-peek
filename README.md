@@ -132,7 +132,7 @@ This package has no schema impact. It extends Capell through `route` contributio
 ## Quick Start
 
 1. Install the package: `composer require capell-app/filament-peek`.
-2. Open the package admin surface at `/admin/pages/{first-record}/edit` and confirm Filament Peek is available.
+2. Run `php artisan route:list` and verify the package routes are registered.
 
 ## Next Steps
 

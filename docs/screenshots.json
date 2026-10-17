@@ -30,12 +30,12 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/pages/{first-record}/edit",
-            "waitFor": "form",
+            "url": "/screenshot-fixtures/filament-peek/home-page",
+            "waitFor": "button[wire\\:click*=\"peekPagePreview\"]",
             "colorSchemes": ["light", "dark"],
             "required": true,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Authentic installed-App baseline. Requires an authenticated admin and one seeded Page with a renderable layout; the Capell-owned modal mints the signed snapshot before capture and states the unsaved scope and TTL in its own chrome, never the signed URL.",
+            "notes": "Select the default site home page with its renderable layout via a guarded fixture redirect. Wait for the actual Preview changes action (the editor has no HTML form), open the Capell modal and require the signed iframe preview ribbon before capture.",
             "useCase": "An editor previews unsaved Page and Layout Builder changes through the real frontend pipeline without saving, and can read exactly what is being previewed and for how long the link stays valid.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/signed-unsaved-preview-modal.png",
             "interactions": [
@@ -51,7 +51,8 @@
             "waitForFrameContent": {
                 "frame": "[data-capell-page-preview-modal] iframe",
                 "content": "[data-capell-preview-ribbon]"
-            }
+            },
+            "fullPage": false
         },
         {
             "id": "preview-device-presets",
@@ -61,12 +62,12 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/pages/{first-record}/edit",
-            "waitFor": "form",
+            "url": "/screenshot-fixtures/filament-peek/home-page",
+            "waitFor": "button[wire\\:click*=\"peekPagePreview\"]",
             "colorSchemes": ["light", "dark"],
             "required": true,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Authentic installed-App baseline. Requires an authenticated admin and one seeded Page with a renderable layout. Desktop, Tablet, and Mobile are real labelled buttons, not icon-only controls, and the Mobile preview sizes responsively instead of floating in a fixed pixel box.",
+            "notes": "Select the default site home page with its renderable layout via a guarded fixture redirect. Wait for the actual Preview changes action (the editor has no HTML form), open the Capell modal and require the signed iframe preview ribbon before capture.",
             "useCase": "An editor checks the unsaved preview at different device widths before publishing.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-presets.png",
             "interactions": [
@@ -86,7 +87,8 @@
             "waitForFrameContent": {
                 "frame": "[data-capell-page-preview-modal] iframe",
                 "content": "[data-capell-preview-ribbon]"
-            }
+            },
+            "fullPage": false
         },
         {
             "id": "preview-device-rotate",
@@ -96,12 +98,12 @@
             "scenario": "admin-form",
             "targetType": "admin-surface",
             "target": "PageResource/EditPage",
-            "url": "/pages/{first-record}/edit",
-            "waitFor": "form",
+            "url": "/screenshot-fixtures/filament-peek/home-page",
+            "waitFor": "button[wire\\:click*=\"peekPagePreview\"]",
             "colorSchemes": ["light"],
             "required": false,
             "requiresPackages": ["capell-app/layout-builder"],
-            "notes": "Authentic installed-App baseline. Rotate is only shown for device presets that support it, and swaps the preview's width and height responsively.",
+            "notes": "Select the default site home page with its renderable layout via a guarded fixture redirect. Wait for the actual Preview changes action (the editor has no HTML form), open the Capell modal and require the signed iframe preview ribbon before capture.",
             "useCase": "An editor checks the unsaved preview in landscape on a Mobile-width device.",
             "screenshotPath": "packages/filament-peek/docs/screenshots/preview-device-rotate.png",
             "interactions": [
@@ -125,7 +127,8 @@
             "waitForFrameContent": {
                 "frame": "[data-capell-page-preview-modal] iframe",
                 "content": "[data-capell-preview-ribbon]"
-            }
+            },
+            "fullPage": false
         },
         {
             "id": "filament-peek-admin-sidebar-menu-open",

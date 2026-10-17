@@ -6,10 +6,15 @@ namespace Capell\FilamentPeek\Providers;
 
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Contracts\Extenders\PagePreviewActionExtender;
-use Capell\Core\Facades\CapellCore;
+use Capell\Admin\Filament\Plugin\CapellAdminPlugin;
+use Capell\Admin\Http\Middleware\EnsureInstalledPanelAvailable;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
+use Capell\Core\Support\Packages\RouteGroupIsolation;
 use Capell\FilamentPeek\Filament\Extenders\FilamentPeekPanelExtender;
 use Capell\FilamentPeek\Filament\Extenders\PagePeekPreviewActionExtender;
+use Filament\Facades\Filament;
+use Illuminate\Routing\Router;
+use Override;
 use Spatie\LaravelPackageTools\Package;
 
 final class FilamentPeekServiceProvider extends AbstractPackageServiceProvider
@@ -18,6 +23,7 @@ final class FilamentPeekServiceProvider extends AbstractPackageServiceProvider
 
     public static string $packageName = 'capell-app/filament-peek';
 
+    #[Override]
     public function configurePackage(Package $package): void
     {
         $package
@@ -28,36 +34,53 @@ final class FilamentPeekServiceProvider extends AbstractPackageServiceProvider
             ->hasRoute('web');
     }
 
-    public function registeringPackage(): void
-    {
-        parent::registeringPackage();
-
-        $this->app->booted(function (): void {
-            if ($this->isDiscoveringPackages()) {
-                return;
-            }
-
-            if (! $this->shouldRegisterRuntime()) {
-                return;
-            }
-
-            $this->app->tag([FilamentPeekPanelExtender::class], AdminPanelExtender::TAG);
-            $this->app->tag([PagePeekPreviewActionExtender::class], PagePreviewActionExtender::TAG);
-        });
-    }
-
+    #[Override]
     public function packageRegistered(): void
     {
         $this->configureUpstreamPreviewModal();
     }
 
-    private function shouldRegisterRuntime(): bool
+    #[Override]
+    protected function bootPackageRoutes(): self
     {
-        if (! config('capell-filament-peek.enabled', true)) {
-            return false;
+        if (! $this->isPackageInstalled()) {
+            $this->registerRoutes();
         }
 
-        return CapellCore::isPackageInstalled(self::$packageName);
+        return $this;
+    }
+
+    #[Override]
+    protected function bootInstalledRuntime(): void
+    {
+        $this->registerRoutes();
+
+        if (! config('capell-filament-peek.enabled', true)) {
+            return;
+        }
+
+        $this->app->tag([FilamentPeekPanelExtender::class], AdminPanelExtender::TAG);
+        $this->app->tag([PagePeekPreviewActionExtender::class], PagePreviewActionExtender::TAG);
+
+        if ($this->app->isBooted()) {
+            // CapellAdminPlugin synchronises its own panels after runtime refresh.
+            // InstalledPanelRuntime marks participating panels with its availability middleware.
+            // Extend only those bare panels: shared synchronisation also changes route middleware.
+            foreach (Filament::getPanels() as $panel) {
+                if (! $panel->hasPlugin(CapellAdminPlugin::ID)
+                    && in_array(EnsureInstalledPanelAvailable::class . ':' . $panel->getId(), $panel->getMiddleware(), true)) {
+                    $this->app->make(FilamentPeekPanelExtender::class)->extend($panel);
+                }
+            }
+        }
+    }
+
+    private function registerRoutes(): void
+    {
+        // Dependants need canonical preview routes before provider boot callbacks.
+        RouteGroupIsolation::run($this->app->make(Router::class), function (): void {
+            $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        });
     }
 
     /**

@@ -5,25 +5,35 @@ declare(strict_types=1);
 use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Contracts\Extenders\PagePreviewActionExtender;
 use Capell\Core\Contracts\Extensions\RegistersExtensionRoute;
-use Capell\Core\Facades\CapellCore;
-use Capell\FilamentPeek\Filament\Actions\PeekPagePreviewAction;
 use Capell\FilamentPeek\Filament\Extenders\FilamentPeekPanelExtender;
-use Capell\FilamentPeek\Filament\Extenders\PagePeekPreviewActionExtender;
 use Capell\FilamentPeek\Manifest\FilamentPeekRoutesContribution;
-use Capell\FilamentPeek\Providers\FilamentPeekServiceProvider;
+use Capell\Tests\Support\InstalledRuntimeParity;
+use Capell\Tests\Support\InstalledRuntimeState;
+use Capell\Tests\Support\InstalledRuntimeTestCase;
+use Filament\Actions\Action;
 use Filament\Panel;
+use Filament\Support\Facades\FilamentView;
+use Filament\Support\View\ViewManager;
 use Filament\View\PanelsRenderHook;
 use Pboivin\FilamentPeek\FilamentPeekPlugin;
 
-it('registers the panel and page preview extenders when installed', function (): void {
-    $panelExtenders = collect(app()->tagged(AdminPanelExtender::TAG))
-        ->map(fn (object $extender): string => $extender::class);
+it('offers the configured preview plugin and labelled page action when installed', function (): void {
+    $panel = Panel::make();
+    foreach (app()->tagged(AdminPanelExtender::TAG) as $extender) {
+        throw_unless($extender instanceof AdminPanelExtender, RuntimeException::class, 'Expected a panel extender.');
+        $extender->extend($panel);
+    }
+    $actions = collect(app()->tagged(PagePreviewActionExtender::TAG))->flatMap(
+        static function (object $extender): array {
+            throw_unless($extender instanceof PagePreviewActionExtender, RuntimeException::class, 'Expected a preview action extender.');
 
-    $previewExtenders = collect(app()->tagged(PagePreviewActionExtender::TAG))
-        ->map(fn (object $extender): string => $extender::class);
-
-    expect($panelExtenders)->toContain(FilamentPeekPanelExtender::class)
-        ->and($previewExtenders)->toContain(PagePeekPreviewActionExtender::class);
+            return $extender->actions();
+        },
+    );
+    $preview = $actions->first(static fn (Action $action): bool => $action->getName() === 'peekPagePreview');
+    throw_unless($preview instanceof Action, RuntimeException::class, 'Expected a preview action.');
+    expect($panel->hasPlugin(FilamentPeekPlugin::make()->getId()))->toBeTrue()
+        ->and($preview->getLabel())->toBe(__('capell-filament-peek::actions.preview.label'));
 });
 
 it('registers the peek plugin through the panel extender', function (): void {
@@ -65,47 +75,31 @@ it('registers the page preview modal render hook on the panel', function (): voi
 
     (new FilamentPeekPanelExtender)->extend($panel);
 
-    $reflection = new ReflectionProperty($panel, 'renderHooks');
-    $renderHooks = $reflection->getValue($panel);
-
-    throw_unless(is_array($renderHooks), RuntimeException::class, 'Expected the panel render hooks property to be an array.');
-
-    $bodyEndScopes = $renderHooks[PanelsRenderHook::BODY_END] ?? null;
-
-    throw_unless(is_array($bodyEndScopes), RuntimeException::class, 'Expected registered body-end render hook scopes.');
-
-    $bodyEndHooks = $bodyEndScopes[''] ?? null;
-
-    throw_unless(is_array($bodyEndHooks), RuntimeException::class, 'Expected a registered body-end render hook.');
-
-    $rendered = collect($bodyEndHooks)
-        ->map(function (mixed $hook): string {
-            throw_unless($hook instanceof Closure, RuntimeException::class, 'Expected each render hook to be a closure.');
-
-            return (string) $hook();
-        })
-        ->implode('');
+    FilamentView::swap(new ViewManager);
+    $panel->boot();
+    $rendered = FilamentView::renderHook(PanelsRenderHook::BODY_END)->toHtml();
 
     expect($rendered)->toContain('data-capell-page-preview-modal')
         ->and($rendered)->toContain(__('capell-filament-peek::actions.preview.devices.mobile'));
 });
 
-it('does not boot runtime integrations when the package is not installed', function (): void {
-    CapellCore::forcePackageInstalled(FilamentPeekServiceProvider::$packageName, false);
-
-    $provider = new FilamentPeekServiceProvider(app());
-    $reflection = new ReflectionMethod($provider, 'shouldRegisterRuntime');
-
-    expect($reflection->invoke($provider))->toBeFalse();
-
-    CapellCore::forcePackageInstalled(FilamentPeekServiceProvider::$packageName);
-});
-
-it('contributes the peek action to the page preview group', function (): void {
-    $extender = new PagePeekPreviewActionExtender;
-
-    expect($extender->actions()[0])->toBeInstanceOf(PeekPagePreviewAction::class);
-});
+it('offers preview integrations only when the package is installed', function (bool $installed): void {
+    InstalledRuntimeState::run(static function () use ($installed): void {
+        $app = InstalledRuntimeTestCase::boot(InstalledRuntimeParity::manifest('filament-peek'), $installed, sourceRoot: dirname(__DIR__, 2));
+        $panel = Panel::make();
+        foreach ($app->tagged(AdminPanelExtender::TAG) as $extender) {
+            throw_unless($extender instanceof AdminPanelExtender, RuntimeException::class, 'Expected a panel extender.');
+            $extender->extend($panel);
+        }
+        $actions = [];
+        foreach ($app->tagged(PagePreviewActionExtender::TAG) as $extender) {
+            throw_unless($extender instanceof PagePreviewActionExtender, RuntimeException::class, 'Expected a preview action extender.');
+            array_push($actions, ...$extender->actions());
+        }
+        expect($panel->hasPlugin(FilamentPeekPlugin::make()->getId()))->toBe($installed)
+            ->and($actions)->toHaveCount($installed ? 1 : 0);
+    });
+})->with(['installed' => true, 'uninstalled' => false]);
 
 it('declares the signed preview route contribution in the manifest', function (): void {
     $manifest = json_decode(
@@ -125,8 +119,7 @@ it('declares the signed preview route contribution in the manifest', function ()
 
     throw_unless(is_array($routeContribution), RuntimeException::class, 'Expected Filament Peek route contribution array.');
 
-    expect($routeContribution)->toBeArray()
-        ->and($routeContribution['type'])->toBe('route')
+    expect($routeContribution['type'])->toBe('route')
         ->and($routeContribution['routes'])->toBe(['capell-filament-peek.preview'])
         ->and($routeContribution['middleware'])->toBe(['web', 'signed'])
         ->and($routeContribution['tokenized'])->toBeTrue()

@@ -6,7 +6,7 @@
     "kind": "package",
     "capellApiVersion": "^1.0",
     "version": "1.0.0",
-    "description": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme — through a private, expiring, signed link, with nothing written to your content until you save.",
+    "description": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme, through a private, expiring, signed link, with nothing written to your content until you save.",
     "product": {
         "group": "Capell Foundation",
         "tier": "free",
@@ -124,7 +124,7 @@
         "privateDocsRequested": false
     },
     "marketplace": {
-        "summary": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme — through a private, expiring, signed link, with nothing written to your content until you save.",
+        "summary": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme, through a private, expiring, signed link, with nothing written to your content until you save.",
         "screenshots": [
             {
                 "path": "docs/screenshots/page-edit-preview-actions.png",
