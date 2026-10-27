@@ -134,6 +134,12 @@ This package has no schema impact. It extends Capell through `route` contributio
 1. Install the package: `composer require capell-app/filament-peek`.
 2. Run `php artisan route:list` and verify the package routes are registered.
 
+## Upgrading
+
+No manual steps between minor versions.
+
+Read [CHANGELOG.md](CHANGELOG.md) before upgrading.
+
 ## Next Steps
 
 - [Package docs](docs/README.md)

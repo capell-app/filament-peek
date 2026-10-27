@@ -378,6 +378,37 @@ it('returns a private friendly response for missing preview snapshots', function
         ->assertSee('Preview expired');
 });
 
+it('places the private preview notice before page content without changing body attributes', function (string $bodyTag): void {
+    $this->actingAs($this->createUserWithRole('super_admin'));
+    $language = Language::factory()->create();
+    $site = Site::factory()->withTranslations($language)->language($language)->create();
+    $layout = Layout::factory()->site($site)->default()->create(['containers' => []]);
+    $page = Page::factory()->site($site)->layout($layout)->withTranslations($language)->create();
+    resolve(FrontendResponseRendererRegistry::class)->register(new readonly class($bodyTag) implements FrontendResponseRenderer
+    {
+        public function __construct(private string $bodyTag) {}
+
+        #[Override]
+        public function runtime(): FrontendRuntime
+        {
+            return FrontendRuntime::Blade;
+        }
+
+        #[Override]
+        public function render(FrontendRenderContextData $context): SymfonyResponse
+        {
+            return new SymfonyResponse('<!doctype html><html>' . $this->bodyTag . '<header id="native-header">Navigation</header><main>Page content</main></body></html>');
+        }
+    });
+    $snapshot = CreatePagePreviewSnapshotAction::run($page, ['name' => 'Preview'])['snapshot'];
+
+    $this->get(URL::signedRoute('capell-filament-peek.preview', ['token' => $snapshot->token]))
+        ->assertOk()
+        ->assertContainsElement('body', ['data-example' => 'a > b'])
+        ->assertContainsElement('body > [data-capell-preview-ribbon]:first-child', ['role' => 'status'])
+        ->assertContainsElement('body > [data-capell-preview-ribbon] + header#native-header', ['text' => 'Navigation']);
+})->with(['standard body' => '<body data-example="a > b">', 'uppercase body' => '<BODY data-example="a > b">']);
+
 function registerPreviewTestRenderer(): void
 {
     resolve(FrontendResponseRendererRegistry::class)->register(new class implements FrontendResponseRenderer
@@ -404,8 +435,8 @@ function registerPreviewTestRenderer(): void
                 e((string) $name),
                 e((string) $title),
                 $content,
-                e((string) $image) . ' Preview renderer reached',
-                e((string) $socialImage),
+                e($image) . ' Preview renderer reached',
+                e($socialImage),
             ));
         }
     });

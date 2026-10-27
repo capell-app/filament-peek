@@ -237,7 +237,14 @@
                [data-capell-page-preview-modal] .capell-peek-ttl {
                    margin: 0.125rem 0 0;
                    font-size: 0.75rem;
-                   color: #94a3b8;
+                   color: #64748b;
+               }
+        @media(prefers-color-scheme: dark)
+        {
+                   [data-capell-page-preview-modal] .capell-peek-scope,
+                   [data-capell-page-preview-modal] .capell-peek-ttl {
+                       color: #94a3b8;
+                   }
                }
 
                [data-capell-page-preview-modal] .capell-peek-devices {

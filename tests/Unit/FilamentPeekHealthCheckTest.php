@@ -18,7 +18,7 @@ it('fails when the configured preview cache store cannot be resolved', function 
 
     $diagnostics = FilamentPeekHealthCheck::runDiagnostics();
 
-    $cacheStoreResult = $diagnostics->firstWhere('label', 'Filament Peek preview cache store');
+    $cacheStoreResult = $diagnostics->firstWhere('id', 'legacy.filament.peek.preview.cache.store');
 
     throw_unless($cacheStoreResult instanceof DoctorCheckResultData, RuntimeException::class, 'Filament Peek preview cache store diagnostic was not returned.');
 

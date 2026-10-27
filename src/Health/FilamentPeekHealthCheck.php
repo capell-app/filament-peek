@@ -65,7 +65,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
         $registered = Route::has(self::PREVIEW_ROUTE_NAME);
 
         return new DoctorCheckResultData(
-            label: 'Filament Peek preview route',
+            label: 'Filament Peek: preview route registered',
             passed: $registered,
             message: $registered
                 ? 'The signed preview route is registered.'
@@ -73,6 +73,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
             remediation: $registered
                 ? null
                 : 'Ensure FilamentPeekServiceProvider loads the package web routes and capell-filament-peek.enabled is true.',
+            id: 'legacy.filament.peek.preview.route',
         );
     }
 
@@ -84,7 +85,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
         $unresolvableActions = $this->unresolvableActions();
 
         return new DoctorCheckResultData(
-            label: 'Filament Peek preview actions',
+            label: 'Filament Peek: preview tools available',
             passed: $unresolvableActions === [],
             message: $unresolvableActions === []
                 ? 'The snapshot create and render actions are resolvable.'
@@ -92,6 +93,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
             remediation: $unresolvableActions === []
                 ? null
                 : 'Ensure the Filament Peek package autoloader and service provider are registered.',
+            id: 'legacy.filament.peek.preview.actions',
         );
     }
 
@@ -103,7 +105,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
         $available = class_exists(FilamentPeekPlugin::class);
 
         return new DoctorCheckResultData(
-            label: 'Filament Peek upstream plugin',
+            label: 'Filament Peek: preview plugin available',
             passed: $available,
             message: $available
                 ? 'The upstream pboivin/filament-peek plugin is installed.'
@@ -111,6 +113,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
             remediation: $available
                 ? null
                 : 'Run composer install to restore the pboivin/filament-peek dependency.',
+            id: 'legacy.filament.peek.upstream.plugin',
         );
     }
 
@@ -125,7 +128,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
         $storeLabel = $storeName ?? 'default';
 
         return new DoctorCheckResultData(
-            label: 'Filament Peek preview cache store',
+            label: 'Filament Peek: preview cache configured',
             passed: $reachable,
             message: $reachable
                 ? sprintf('The preview cache store (%s) is reachable.', $storeLabel)
@@ -133,6 +136,7 @@ final class FilamentPeekHealthCheck implements ChecksExtensionHealth
             remediation: $reachable
                 ? null
                 : 'Set capell-filament-peek.preview.cache_store to a configured cache store, or leave it empty to use the default store.',
+            id: 'legacy.filament.peek.preview.cache.store',
         );
     }
 

@@ -439,9 +439,22 @@ final class RenderPagePreviewSnapshotAction
         }
 
         $ribbon = view('capell-filament-peek::preview-ribbon')->render();
-        $content = str_contains(strtolower($content), '</body>')
-            ? str_ireplace('</body>', $ribbon . '</body>', $content)
-            : $ribbon . $content;
+        $bodyPattern = <<<'REGEX'
+~<body(?=[\s>])(?:[^'">]|"[^"]*"|'[^']*')*>~i
+REGEX;
+        $contentWithRibbon = preg_replace_callback(
+            $bodyPattern,
+            static fn (array $matches): string => $matches[0] . $ribbon,
+            $content,
+            1,
+            $bodyCount,
+        );
+
+        if ($contentWithRibbon === null) {
+            throw new RuntimeException('Unable to insert the private preview notice.');
+        }
+
+        $content = $bodyCount > 0 ? $contentWithRibbon : $ribbon . $content;
 
         $response->setContent($content);
 
