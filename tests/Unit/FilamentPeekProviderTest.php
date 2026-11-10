@@ -123,7 +123,9 @@ it('declares the signed preview route contribution in the manifest', function ()
         ->and($routeContribution['routes'])->toBe(['capell-filament-peek.preview'])
         ->and($routeContribution['middleware'])->toBe(['web', 'signed'])
         ->and($routeContribution['tokenized'])->toBeTrue()
-        ->and($manifest['security']['publicSurface']['tokenizedRoutes'])->toBe(['capell-filament-peek.preview'])
+        // The signed middleware verifies the preview link; tokenizedRoutes lists only token-verifying middleware.
+        ->and($manifest['security']['publicSurface']['signedRoutes'])->toBe(['GET /capell-filament-peek/preview/{token} (capell-filament-peek.preview)'])
+        ->and($manifest['security']['publicSurface']['tokenizedRoutes'])->toBe([])
         ->and($manifest['contributionTraceability']['deferredContributions'])->toBe([])
         ->and(class_implements(FilamentPeekRoutesContribution::class))->toContain(RegistersExtensionRoute::class);
 });

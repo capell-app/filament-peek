@@ -8,7 +8,7 @@
     "version": "1.0.0",
     "description": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme, through a private, expiring, signed link, with nothing written to your content until you save.",
     "product": {
-        "group": "Capell Foundation",
+        "group": "Capell Essentials",
         "tier": "free",
         "bundle": "foundation"
     },
@@ -66,11 +66,15 @@
     "security": {
         "riskTier": "standard",
         "publicSurface": {
-            "routeNames": ["capell-filament-peek.preview"],
+            "routeNames": [
+                "GET /capell-filament-peek/preview/{token} (capell-filament-peek.preview)"
+            ],
             "auth": "public",
             "csrfExemptRoutes": [],
-            "signedRoutes": ["capell-filament-peek.preview"],
-            "tokenizedRoutes": ["capell-filament-peek.preview"],
+            "signedRoutes": [
+                "GET /capell-filament-peek/preview/{token} (capell-filament-peek.preview)"
+            ],
+            "tokenizedRoutes": [],
             "webhookRoutes": [],
             "throttledRoutes": []
         },
@@ -125,6 +129,22 @@
     },
     "marketplace": {
         "summary": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme, through a private, expiring, signed link, with nothing written to your content until you save.",
+        "problem": "Editors cannot check unsaved page changes in context before committing them.",
+        "outcome": "An editor has a private preview of unsaved page and layout changes.",
+        "faq": [
+            {
+                "question": "Can I preview unsaved changes?",
+                "answer": "Yes. Editors can preview unsaved page and Layout Builder state before saving."
+            },
+            {
+                "question": "Who can see a snapshot?",
+                "answer": "Snapshots are private and stored per user."
+            },
+            {
+                "question": "What happens when previews expire?",
+                "answer": "Missing or expired snapshots return a private error."
+            }
+        ],
         "screenshots": [
             {
                 "path": "docs/screenshots/page-edit-preview-actions.png",
