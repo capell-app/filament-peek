@@ -19,7 +19,7 @@ without saving or publishing the page.
 | Store Layout Builder state    | `src/Actions/StoreLayoutBuilderPreviewStateAction.php`                                              |
 | Render signed preview URLs    | `src/Actions/RenderPagePreviewSnapshotAction.php`, `src/Http/Controllers/PagePreviewController.php` |
 | Tune cache and route settings | `config/capell-filament-peek.php`                                                                   |
-| Verify behavior               | `tests/Feature/PagePreviewRouteTest.php`, `tests/Feature/PeekPagePreviewActionTest.php`             |
+| Verify behaviour              | `tests/Feature/PagePreviewRouteTest.php`, `tests/Feature/PeekPagePreviewActionTest.php`             |
 
 ## Safety Checklist
 

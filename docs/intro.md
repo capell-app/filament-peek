@@ -1,0 +1,5 @@
+Press Preview changes on a Page's edit screen and a window opens over the editor, showing the page in your site's real theme with everything you have typed so far. Filament Peek adds that button, and using it saves nothing and publishes nothing.
+
+By default the preview lasts 15 minutes, and only you can open it. A link sent to a colleague or client shows Preview unavailable. To share changes for review and sign-off, use Publishing Studio. It is a separate package that gives reviewers a preview link of their own and lets them approve changes before they are published. Preview changes covers Pages only, for people who may already edit that page.
+
+Your new headline and swapped photo show up, and so does a moved block if you use the page builder. A banner across the top reads Unsaved preview, not published, and clicking inside the frame is limited. The preview will not match the live page pixel for pixel. Desktop, Tablet and Mobile buttons resize the window, and Rotate turns a tablet or phone sideways.

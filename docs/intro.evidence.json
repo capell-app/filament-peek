@@ -1,0 +1,82 @@
+[
+    {
+        "claim": "A Preview changes button sits on a Page's edit screen",
+        "evidence": [
+            "resources/lang/en/actions.php",
+            "src/Filament/Actions/PeekPagePreviewAction.php",
+            "src/Filament/Extenders/PagePeekPreviewActionExtender.php"
+        ]
+    },
+    {
+        "claim": "A window opens over the editor",
+        "evidence": ["resources/views/page-preview-modal.blade.php"]
+    },
+    {
+        "claim": "It shows the real theme and layout with what has been typed so far, including a moved page-builder block",
+        "evidence": [
+            "src/Actions/RenderPagePreviewSnapshotAction.php",
+            "src/Actions/CreatePagePreviewSnapshotAction.php",
+            "src/Actions/StoreLayoutBuilderPreviewStateAction.php"
+        ]
+    },
+    {
+        "claim": "It saves and publishes nothing, and the preview state goes only into the cache",
+        "evidence": [
+            "src/Actions/CreatePagePreviewSnapshotAction.php",
+            "config/capell-filament-peek.php"
+        ]
+    },
+    {
+        "claim": "The preview lasts 15 minutes by default",
+        "evidence": [
+            "config/capell-filament-peek.php",
+            "src/Filament/Actions/PeekPagePreviewAction.php"
+        ]
+    },
+    {
+        "claim": "Only the editor can open it, and others see Preview unavailable",
+        "evidence": [
+            "src/Http/Controllers/PagePreviewController.php",
+            "resources/lang/en/errors.php",
+            "config/capell-filament-peek.php"
+        ]
+    },
+    {
+        "claim": "Preview changes covers Pages only, for people who may edit that page",
+        "evidence": [
+            "src/Filament/Actions/PeekPagePreviewAction.php",
+            "src/Actions/RenderPagePreviewSnapshotAction.php"
+        ]
+    },
+    {
+        "claim": "A banner reads Unsaved preview, not published",
+        "evidence": [
+            "resources/lang/en/actions.php",
+            "resources/views/preview-ribbon.blade.php",
+            "src/Actions/RenderPagePreviewSnapshotAction.php"
+        ]
+    },
+    {
+        "claim": "Clicking inside the frame is limited, so the preview is not pixel-perfect",
+        "evidence": [
+            "config/capell-filament-peek.php",
+            "resources/views/page-preview-modal.blade.php"
+        ]
+    },
+    {
+        "claim": "Desktop, Tablet and Mobile views, with Rotate on the smaller two",
+        "evidence": [
+            "config/capell-filament-peek.php",
+            "resources/lang/en/actions.php",
+            "resources/views/page-preview-modal.blade.php"
+        ]
+    },
+    {
+        "claim": "Previews are not indexed by search engines",
+        "evidence": ["src/Http/Controllers/PagePreviewController.php"]
+    },
+    {
+        "claim": "It adds no new permissions and no database changes",
+        "evidence": ["capell.json"]
+    }
+]

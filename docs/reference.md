@@ -6,7 +6,7 @@ Developer reference for `capell-app/filament-peek`. Start with the [README](../R
 
 ## Package Details
 
-Filament Peek is an **Available**, **No schema impact** Capell package in the **Capell Essentials** product group. It ships as `capell-app/filament-peek` and extends these surfaces: admin, frontend.
+Filament Peek is an **Available** Capell package in the **Capell Essentials** product group. It ships as `capell-app/filament-peek` and extends these surfaces: admin, frontend.
 
 - Status: Available
 - Tier: free
@@ -43,7 +43,6 @@ Filament Peek is an **Available**, **No schema impact** Capell package in the **
 
 - `CreatePagePreviewSnapshotAction`
 - `FindPagePreviewSnapshotAction`
-- `RegisterLayoutBuilderPreviewWidgetsAction`
 - `RenderPagePreviewSnapshotAction`
 - `StoreLayoutBuilderPreviewStateAction`
 

@@ -6,7 +6,7 @@
     "kind": "package",
     "capellApiVersion": "^1.0",
     "version": "1.0.0",
-    "description": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme, through a private, expiring, signed link, with nothing written to your content until you save.",
+    "description": "Adds a Preview changes button to the Page editor that shows your unsaved edits in the real theme, with Desktop, Tablet and Mobile views.",
     "product": {
         "group": "Capell Essentials",
         "tier": "free",
@@ -20,10 +20,7 @@
             "capell-app/core",
             "capell-app/frontend"
         ],
-        "supports": [
-            "capell-app/layout-builder",
-            "capell-app/publishing-studio"
-        ],
+        "supports": ["capell-app/publishing-studio"],
         "conflicts": []
     },
     "providers": {
@@ -128,33 +125,42 @@
         "privateDocsRequested": false
     },
     "marketplace": {
-        "summary": "Preview unsaved page and Layout Builder edits exactly as they'll render on your live theme, through a private, expiring, signed link, with nothing written to your content until you save.",
-        "problem": "Editors cannot check unsaved page changes in context before committing them.",
-        "outcome": "An editor has a private preview of unsaved page and layout changes.",
+        "summary": "See how a new headline or photo will look in your real theme before you save, with nothing saved or published.",
+        "description": "Filament Peek puts a Preview changes button on a Page's edit screen. It renders what is currently in the form, including an unsaved page-builder arrangement, using the site's real theme and layout, with a clear Unsaved preview banner. Editors switch between Desktop, Tablet and Mobile and rotate the smaller sizes. Previews are private to the editor who opened them, expire after 15 minutes by default and are not indexed by search engines. No new permissions are added, and it needs a working cache but no database changes.",
+        "problem": "I save half-finished pages just to see how a headline or image will look.",
+        "outcome": "Editors preview unsaved Page edits in the real theme on three device sizes, then save only when happy.",
         "faq": [
             {
-                "question": "Can I preview unsaved changes?",
-                "answer": "Yes. Editors can preview unsaved page and Layout Builder state before saving."
+                "question": "Does Preview changes save or publish anything?",
+                "answer": "No. It shows the page in your site's real theme with everything you have typed so far, and it saves nothing and publishes nothing."
             },
             {
-                "question": "Who can see a snapshot?",
-                "answer": "Snapshots are private and stored per user."
+                "question": "Can I send the preview to a colleague or client?",
+                "answer": "No. By default the preview lasts 15 minutes and only you can open it, and a link sent to someone else shows Preview unavailable. For review and sign-off, use Publishing Studio, a separate package that gives reviewers a link of their own."
             },
             {
-                "question": "What happens when previews expire?",
-                "answer": "Missing or expired snapshots return a private error."
+                "question": "Which content can I preview?",
+                "answer": "Pages only, and only for people who may already edit that page. A moved block shows up if you use the page builder."
+            },
+            {
+                "question": "Will the preview look exactly like the live page?",
+                "answer": "No. It won't match the live page pixel for pixel. A banner reads Unsaved preview, not published, and clicking inside the frame is limited."
+            },
+            {
+                "question": "Can I see how the page looks on a tablet or phone?",
+                "answer": "Yes. Desktop, Tablet and Mobile buttons resize the window, and Rotate turns a tablet or phone sideways."
             }
         ],
         "screenshots": [
             {
                 "path": "docs/screenshots/page-edit-preview-actions.png",
-                "alt": "Filament Peek page edit preview actions",
-                "caption": "Authentic authenticated Page edit surface showing the real Filament Peek preview action."
+                "alt": "Page edit screen for a page called Events with a Preview changes button in the row of buttons above the title field",
+                "caption": "The Preview changes button sits at the top of a page's edit screen."
             },
             {
                 "path": "docs/assets/marketplace/extension-card.jpg",
-                "alt": "Filament Peek extension preview image",
-                "caption": "Filament Peek extension preview"
+                "alt": "Marketplace card titled Filament Peek with a page edit screen in light and dark beside an edit, preview, save diagram",
+                "caption": "The card that represents Filament Peek on its Marketplace listing."
             }
         ],
         "categories": ["admin", "editorial"]

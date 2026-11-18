@@ -1,6 +1,6 @@
 {
     "name": "capell-app/filament-peek",
-    "description": "Private, expiring previews of unsaved Page and Layout Builder changes for Capell Admin, rendered through the live frontend pipeline without persisting draft state.",
+    "description": "Adds a Preview changes button to the Capell Page editor so editors see unsaved edits in the real theme on desktop, tablet and mobile.",
     "type": "library",
     "license": "proprietary",
     "autoload": {

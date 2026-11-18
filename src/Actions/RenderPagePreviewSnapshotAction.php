@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\FilamentPeek\Actions;
 
+use Capell\Core\Contracts\Capabilities\LayoutWidgetHost;
 use Capell\Core\Enums\MediaCollectionEnum;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
@@ -27,7 +28,6 @@ use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Frontend\Support\State\FrontendState;
 use Capell\Frontend\Support\View\ThemeChainResolver;
 use Capell\Frontend\Support\View\ThemeViewRegistrar;
-use Capell\LayoutBuilder\Support\CapellLayoutManager;
 use Capell\PublishingStudio\Models\Workspace;
 use Capell\PublishingStudio\WorkspaceContext;
 use Illuminate\Contracts\Support\Responsable;
@@ -95,29 +95,32 @@ final class RenderPagePreviewSnapshotAction
         throw_unless($finder instanceof FileViewFinder, LogicException::class, 'The preview view finder must support theme namespaces.');
         $originalThemePaths = $finder->getHints()['capell'] ?? [];
         $previousContextReader = $this->resolvedInstance(FrontendContextReader::class);
-        $previewWidgetsRegistered = false;
 
         try {
             $this->registerThemeViews($theme, $finder);
-            $previewWidgetsRegistered = $this->registerLayoutBuilderPreviewWidgets($previewPage, $language, $snapshot);
-            $context = $this->seedFrontendContext(
-                $site,
-                $language,
-                $previewPage,
-                $layout,
-                $theme,
-                $this->previewSiteDomain($site, $previewPage, $language),
-            );
-            $response = $this->render($context, $previewPage, $site, $language, $layout, $theme);
-            $response = $response instanceof Response ? $response : $response->toResponse(request());
+            $state = $snapshot->layoutBuilderState;
+            $renderPreview = function () use ($site, $language, $previewPage, $layout, $theme): Response {
+                $context = $this->seedFrontendContext(
+                    $site,
+                    $language,
+                    $previewPage,
+                    $layout,
+                    $theme,
+                    $this->previewSiteDomain($site, $previewPage, $language),
+                );
+                $response = $this->render($context, $previewPage, $site, $language, $layout, $theme);
+
+                return $response instanceof Response ? $response : $response->toResponse(request());
+            };
+
+            // Unsaved Layout Builder edits render through whichever package hosts layout widgets;
+            // the host forgets them once the render ends.
+            $response = $state instanceof LayoutBuilderPreviewStateData
+                ? resolve(LayoutWidgetHost::class)->withPreviewWidgets($previewPage, $language, $state->containers, $state->assets, static fn (bool $registered): Response => $renderPreview())
+                : $renderPreview();
         } finally {
             $finder->flush();
             $finder->replaceNamespace('capell', $originalThemePaths);
-
-            if ($previewWidgetsRegistered && class_exists(CapellLayoutManager::class)) {
-                CapellLayoutManager::clearContainerWidgets();
-            }
-
             $this->restoreFrontendContextReader($previousContextReader);
         }
 
@@ -416,18 +419,6 @@ final class RenderPagePreviewSnapshotAction
         );
 
         return $renderer->render($renderContext);
-    }
-
-    private function registerLayoutBuilderPreviewWidgets(
-        Page $page,
-        Language $language,
-        PagePreviewSnapshotData $snapshot,
-    ): bool {
-        if (! $snapshot->layoutBuilderState instanceof LayoutBuilderPreviewStateData || ! class_exists(RegisterLayoutBuilderPreviewWidgetsAction::class)) {
-            return false;
-        }
-
-        return RegisterLayoutBuilderPreviewWidgetsAction::run($page, $language, $snapshot->layoutBuilderState);
     }
 
     private function withPreviewRibbon(Response $response): Response

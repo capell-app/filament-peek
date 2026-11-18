@@ -4,8 +4,8 @@
     "scenarios": {
         "default": {
             "source": {
-                "ref": "HEAD",
-                "commit": "adac26b4ce1e9e1de545f68a1ff272ff73111696",
+                "ref": "origin/main",
+                "commit": "a6931e60ff901ee9a0ff072979ce1cdaf7771066",
                 "providers": {
                     "Providers/FilamentPeekServiceProvider.php": "fd9e5282ab62b7383a7d1764379b6d5c2a5e205940fe1bff1f23cfb0025ca2ed"
                 },
@@ -112,7 +112,23 @@
                 "config-values": {
                     "app.providers": [
                         "Capell\\FilamentPeek\\Providers\\FilamentPeekServiceProvider"
-                    ]
+                    ],
+                    "filament-peek.allowIframeOverflow": false,
+                    "filament-peek.allowIframePointerEvents": false,
+                    "filament-peek.devicePresets.fullscreen.canRotatePreset": false,
+                    "filament-peek.devicePresets.fullscreen.height": "100%",
+                    "filament-peek.devicePresets.fullscreen.icon": "heroicon-o-computer-desktop",
+                    "filament-peek.devicePresets.fullscreen.width": "100%",
+                    "filament-peek.devicePresets.mobile.canRotatePreset": true,
+                    "filament-peek.devicePresets.mobile.height": "844px",
+                    "filament-peek.devicePresets.mobile.icon": "heroicon-o-device-phone-mobile",
+                    "filament-peek.devicePresets.mobile.width": "390px",
+                    "filament-peek.devicePresets.tablet.canRotatePreset": true,
+                    "filament-peek.devicePresets.tablet.height": "768px",
+                    "filament-peek.devicePresets.tablet.icon": "heroicon-o-device-tablet",
+                    "filament-peek.devicePresets.tablet.rotateIcon": true,
+                    "filament-peek.devicePresets.tablet.width": "1024px",
+                    "filament-peek.initialDevicePreset": "fullscreen"
                 },
                 "livewire": {
                     "classComponents": {
@@ -246,7 +262,23 @@
                 "config-values": {
                     "app.providers": [
                         "Capell\\FilamentPeek\\Providers\\FilamentPeekServiceProvider"
-                    ]
+                    ],
+                    "filament-peek.allowIframeOverflow": false,
+                    "filament-peek.allowIframePointerEvents": false,
+                    "filament-peek.devicePresets.fullscreen.canRotatePreset": false,
+                    "filament-peek.devicePresets.fullscreen.height": "100%",
+                    "filament-peek.devicePresets.fullscreen.icon": "heroicon-o-computer-desktop",
+                    "filament-peek.devicePresets.fullscreen.width": "100%",
+                    "filament-peek.devicePresets.mobile.canRotatePreset": true,
+                    "filament-peek.devicePresets.mobile.height": "844px",
+                    "filament-peek.devicePresets.mobile.icon": "heroicon-o-device-phone-mobile",
+                    "filament-peek.devicePresets.mobile.width": "390px",
+                    "filament-peek.devicePresets.tablet.canRotatePreset": true,
+                    "filament-peek.devicePresets.tablet.height": "768px",
+                    "filament-peek.devicePresets.tablet.icon": "heroicon-o-device-tablet",
+                    "filament-peek.devicePresets.tablet.rotateIcon": true,
+                    "filament-peek.devicePresets.tablet.width": "1024px",
+                    "filament-peek.initialDevicePreset": "fullscreen"
                 },
                 "routes": [
                     [
