@@ -83,6 +83,11 @@ trait ResolvesPreviewContext
         return FilamentPeekServiceProvider::$name . ':snapshot:' . $token;
     }
 
+    protected function pageSnapshotIndexCacheKey(int $pageId): string
+    {
+        return FilamentPeekServiceProvider::$name . ':snapshot-index:' . $pageId;
+    }
+
     protected function layoutBuilderPreviewCacheKey(Model $page, Authenticatable $user): string
     {
         return implode(':', [

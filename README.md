@@ -8,9 +8,9 @@ By default the preview lasts 15 minutes, and only you can open it. A link sent t
 
 Your new headline and swapped photo show up, and so does a moved block if you use the page builder. A banner across the top reads Unsaved preview, not published, and clicking inside the frame is limited. The preview will not match the live page pixel for pixel. Desktop, Tablet and Mobile buttons resize the window, and Rotate turns a tablet or phone sideways.
 
-- **Price and availability:** Check current availability and price on the [Capell Marketplace listing](https://capell.app/extensions/filament-peek).
-- **Licence:** Check the licence terms on the [Capell Marketplace listing](https://capell.app/extensions/filament-peek).
-- **Requires:** `PHP ^8.4`, `capell-app/admin ^1.0.66`, `capell-app/core ^1.0.71`, `capell-app/frontend ^1.0.72`, `laravel/framework ^12.41.1|^13.0`, `lorisleiva/laravel-actions ^2.8`, `pboivin/filament-peek ^4.0`, `spatie/laravel-data ^4.5`, `spatie/laravel-package-tools ^1.14.1`.
+- **Price and availability:** Check current availability and price on the [Capell Marketplace listing](https://capell.app/marketplace/extensions/filament-peek).
+- **Licence:** Check the licence terms on the [Capell Marketplace listing](https://capell.app/marketplace/extensions/filament-peek).
+- **Requires:** `PHP ^8.4`, `capell-app/admin ^1.0.66`, `capell-app/core ^1.0.79`, `capell-app/frontend ^1.0.72`, `laravel/framework ^12.41.1|^13.0`, `lorisleiva/laravel-actions ^2.8`, `pboivin/filament-peek ^4.0`, `spatie/laravel-data ^4.5`, `spatie/laravel-package-tools ^1.14.1`.
 - **Install:** `composer require capell-app/filament-peek`.
 
 ## Quick Start
@@ -28,7 +28,7 @@ Snapshot creation, lookup, state storage, and rendering are separate Actions beh
 
 ## Limits And Pitfalls
 
-- Install the required Capell packages at the versions in `composer.json`: `capell-app/admin ^1.0.66`, `capell-app/core ^1.0.71`, `capell-app/frontend ^1.0.72`.
+- Install the required Capell packages at the versions in `composer.json`: `capell-app/admin ^1.0.66`, `capell-app/core ^1.0.79`, `capell-app/frontend ^1.0.72`.
 - Review middleware, throttling, signatures, and public-output safety in `routes/web.php` before exposing routes.
 - Keep public Blade and cached HTML free of authoring markers, model IDs, permissions, signed editor URLs, and lazy database queries.
 - Custom write integrations must preserve invalidation for `filament-peek-preview` cache tags.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Capell\FilamentPeek\Actions;
 
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
 use Capell\FilamentPeek\Concerns\ResolvesPreviewContext;
 use Capell\FilamentPeek\Data\PagePreviewSnapshotData;
@@ -54,6 +55,8 @@ final class CreatePagePreviewSnapshotAction
             now()->addMinutes($this->previewTtlMinutes()),
         );
 
+        $this->indexSnapshotToken($snapshot->pageId, $token);
+
         return [
             'snapshot' => $snapshot,
             'url' => URL::temporarySignedRoute(
@@ -64,9 +67,24 @@ final class CreatePagePreviewSnapshotAction
         ];
     }
 
+    /**
+     * Remember which tokens exist for a page so a save can revoke them. The index
+     * lives as long as the longest-lived token it lists.
+     */
+    private function indexSnapshotToken(int $pageId, string $token): void
+    {
+        $store = Cache::store($this->previewCacheStore());
+        $key = $this->pageSnapshotIndexCacheKey($pageId);
+        $tokens = $store->get($key);
+        $tokens = is_array($tokens) ? array_values(array_filter($tokens, is_string(...))) : [];
+        $tokens[] = $token;
+
+        $store->put($key, $tokens, now()->addMinutes($this->previewTtlMinutes()));
+    }
+
     private function currentWorkspaceId(): ?int
     {
-        if (! class_exists(WorkspaceContext::class)) {
+        if (! CapellCore::isPackageAvailable('capell-app/publishing-studio')) {
             return null;
         }
 

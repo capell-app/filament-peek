@@ -4,6 +4,8 @@ All notable changes to `capell-app/filament-peek` will be documented in this fil
 
 ## Unreleased
 
+- Revoked outstanding preview snapshots for a page when it is saved, so a signed preview URL no longer renders form state from before the save.
+
 ### 2026-06-06
 
 - Demoted and removed the broken product screenshots from `marketplace.screenshots`; real Capell runner captures are still required for the Page edit preview action, signed preview, and expired-preview states.

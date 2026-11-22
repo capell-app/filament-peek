@@ -468,3 +468,35 @@ function registerFailingPreviewTestRenderer(): void
         }
     });
 }
+
+it('stops serving a signed preview URL once the page is saved', function (): void {
+    // Bug caught: an editor previews unsaved changes, saves, and the old signed URL keeps rendering stale pre-save form state.
+    $user = $this->createUserWithRole('super_admin');
+    $this->actingAs($user);
+    registerPreviewTestRenderer();
+
+    $page = Page::factory()->create();
+    $result = CreatePagePreviewSnapshotAction::run($page, ['name' => 'Unsaved name']);
+
+    $this->get($result['url'])->assertOk();
+
+    $page->touch();
+
+    $this->get($result['url'])->assertNotFound();
+});
+
+it('keeps previews for other pages when one page is saved', function (): void {
+    // Bug caught: revocation clearing by user or globally would kill unrelated open previews.
+    $user = $this->createUserWithRole('super_admin');
+    $this->actingAs($user);
+    registerPreviewTestRenderer();
+
+    $saved = Page::factory()->create();
+    $other = Page::factory()->create();
+    CreatePagePreviewSnapshotAction::run($saved, ['name' => 'A']);
+    $otherResult = CreatePagePreviewSnapshotAction::run($other, ['name' => 'B']);
+
+    $saved->touch();
+
+    $this->get($otherResult['url'])->assertOk();
+});

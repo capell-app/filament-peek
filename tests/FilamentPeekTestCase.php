@@ -20,7 +20,6 @@ use Capell\PublishingStudio\Providers\PublishingStudioServiceProvider;
 use Capell\Socials\Providers\SocialsServiceProvider;
 use Capell\Tests\Packages\PackagesTestCase;
 use Capell\Tests\Support\Concerns\CreatesAdminUser;
-use CmsMulti\FilamentClearCache\FilamentClearCacheServiceProvider;
 use CodeWithDennis\FilamentSelectTree\FilamentSelectTreeServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
@@ -82,7 +81,6 @@ abstract class FilamentPeekTestCase extends PackagesTestCase
             FilamentAdjacencyListServiceProvider::class,
             FilamentShieldServiceProvider::class,
             FilamentSelectTreeServiceProvider::class,
-            FilamentClearCacheServiceProvider::class,
             FilamentPeekServiceProvider::class,
             FilamentImpersonateServiceProvider::class,
             FormsServiceProvider::class,

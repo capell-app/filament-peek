@@ -44,6 +44,7 @@ Filament Peek is an **Available** Capell package in the **Capell Essentials** pr
 - `CreatePagePreviewSnapshotAction`
 - `FindPagePreviewSnapshotAction`
 - `RenderPagePreviewSnapshotAction`
+- `RevokePagePreviewSnapshotsAction`
 - `StoreLayoutBuilderPreviewStateAction`
 
 ### Data objects

@@ -8,8 +8,10 @@ use Capell\Admin\Contracts\Extenders\AdminPanelExtender;
 use Capell\Admin\Contracts\Extenders\PagePreviewActionExtender;
 use Capell\Admin\Filament\Plugin\CapellAdminPlugin;
 use Capell\Admin\Http\Middleware\EnsureInstalledPanelAvailable;
+use Capell\Core\Models\Page;
 use Capell\Core\Support\Packages\AbstractPackageServiceProvider;
 use Capell\Core\Support\Packages\RouteGroupIsolation;
+use Capell\FilamentPeek\Actions\RevokePagePreviewSnapshotsAction;
 use Capell\FilamentPeek\Filament\Extenders\FilamentPeekPanelExtender;
 use Capell\FilamentPeek\Filament\Extenders\PagePeekPreviewActionExtender;
 use Filament\Facades\Filament;
@@ -54,6 +56,11 @@ final class FilamentPeekServiceProvider extends AbstractPackageServiceProvider
     protected function bootInstalledRuntime(): void
     {
         $this->registerRoutes();
+
+        // A saved page makes every outstanding unsaved-state snapshot stale.
+        Page::saved(static function (Page $page): void {
+            RevokePagePreviewSnapshotsAction::run($page);
+        });
 
         if (! config('capell-filament-peek.enabled', true)) {
             return;

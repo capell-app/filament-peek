@@ -6,6 +6,7 @@ namespace Capell\FilamentPeek\Actions;
 
 use Capell\Core\Contracts\Capabilities\LayoutWidgetHost;
 use Capell\Core\Enums\MediaCollectionEnum;
+use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Media;
@@ -590,13 +591,13 @@ REGEX;
      */
     private function withWorkspaceContext(PagePreviewSnapshotData $snapshot, callable $callback): mixed
     {
-        if (! class_exists(WorkspaceContext::class)) {
+        if (! CapellCore::isPackageAvailable('capell-app/publishing-studio')) {
             return $callback();
         }
 
         $workspace = null;
 
-        if ($snapshot->workspaceId !== null && class_exists(Workspace::class)) {
+        if ($snapshot->workspaceId !== null) {
             $workspace = Workspace::query()->find($snapshot->workspaceId);
         }
 
