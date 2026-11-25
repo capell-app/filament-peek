@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Capell\FilamentPeek\Actions;
 
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Page;
+use Capell\FilamentPeek\Bridges\PublishingStudio\PeekWorkspaceBridge;
 use Capell\FilamentPeek\Concerns\ResolvesPreviewContext;
 use Capell\FilamentPeek\Data\PagePreviewSnapshotData;
-use Capell\PublishingStudio\WorkspaceContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
@@ -84,12 +83,6 @@ final class CreatePagePreviewSnapshotAction
 
     private function currentWorkspaceId(): ?int
     {
-        if (! CapellCore::isPackageAvailable('capell-app/publishing-studio')) {
-            return null;
-        }
-
-        $workspaceId = WorkspaceContext::currentId();
-
-        return is_int($workspaceId) ? $workspaceId : null;
+        return PeekWorkspaceBridge::currentWorkspaceId();
     }
 }

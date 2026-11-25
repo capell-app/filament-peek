@@ -3,6 +3,9 @@
     "description": "Adds a Preview changes button to the Capell Page editor so editors see unsaved edits in the real theme on desktop, tablet and mobile.",
     "type": "library",
     "license": "proprietary",
+    "suggest": {
+        "capell-app/publishing-studio": "Attaches preview snapshots to the active Publishing Studio workspace."
+    },
     "autoload": {
         "psr-4": {
             "Capell\\FilamentPeek\\": "src/"

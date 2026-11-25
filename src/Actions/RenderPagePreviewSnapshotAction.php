@@ -6,7 +6,6 @@ namespace Capell\FilamentPeek\Actions;
 
 use Capell\Core\Contracts\Capabilities\LayoutWidgetHost;
 use Capell\Core\Enums\MediaCollectionEnum;
-use Capell\Core\Facades\CapellCore;
 use Capell\Core\Models\Language;
 use Capell\Core\Models\Layout;
 use Capell\Core\Models\Media;
@@ -16,6 +15,7 @@ use Capell\Core\Models\Site;
 use Capell\Core\Models\SiteDomain;
 use Capell\Core\Models\Theme;
 use Capell\Core\Models\Translation;
+use Capell\FilamentPeek\Bridges\PublishingStudio\PeekWorkspaceBridge;
 use Capell\FilamentPeek\Data\LayoutBuilderPreviewStateData;
 use Capell\FilamentPeek\Data\PagePreviewSnapshotData;
 use Capell\Frontend\Actions\BuildPublicPageRenderDataAction;
@@ -29,8 +29,6 @@ use Capell\Frontend\Support\Render\RenderHookRegistry;
 use Capell\Frontend\Support\State\FrontendState;
 use Capell\Frontend\Support\View\ThemeChainResolver;
 use Capell\Frontend\Support\View\ThemeViewRegistrar;
-use Capell\PublishingStudio\Models\Workspace;
-use Capell\PublishingStudio\WorkspaceContext;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -591,16 +589,6 @@ REGEX;
      */
     private function withWorkspaceContext(PagePreviewSnapshotData $snapshot, callable $callback): mixed
     {
-        if (! CapellCore::isPackageAvailable('capell-app/publishing-studio')) {
-            return $callback();
-        }
-
-        $workspace = null;
-
-        if ($snapshot->workspaceId !== null) {
-            $workspace = Workspace::query()->find($snapshot->workspaceId);
-        }
-
-        return WorkspaceContext::runWith($workspace, $callback);
+        return PeekWorkspaceBridge::runInWorkspace($snapshot->workspaceId, $callback);
     }
 }
