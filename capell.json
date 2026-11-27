@@ -6,6 +6,7 @@
     "kind": "package",
     "capellApiVersion": "^1.0",
     "version": "1.0.0",
+    "launchStatus": "shipped",
     "description": "Adds a Preview changes button to the Page editor that shows your unsaved edits in the real theme, with Desktop, Tablet and Mobile views.",
     "product": {
         "group": "Capell Essentials",
